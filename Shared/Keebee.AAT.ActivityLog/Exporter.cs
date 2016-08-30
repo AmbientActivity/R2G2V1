@@ -1,6 +1,9 @@
-﻿using System;
+﻿using Keebee.AAT.RESTClient;
+using Keebee.AAT.EventLogging;
+using System;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
-using Keebee.AAT.RESTClient;
 using ExcelLibrary.SpreadSheet;
 
 namespace Keebee.AAT.ActivityLog
@@ -8,22 +11,26 @@ namespace Keebee.AAT.ActivityLog
     public class Exporter
     {
         private readonly OperationsClient _opsClient;
+        private readonly EventLogger _eventLogger;
 
         public Exporter()
         {
             _opsClient = new OperationsClient();
+            _eventLogger = new EventLogger(EventLogType.ActivityLog);
         }
 
-        public void Export(string date)
+        public byte[] Export(string date)
         {
+            byte[] file = null;
+
             try
             {
                 var eventLogs = _opsClient.GetEventLogs(date).ToArray();
                 var gamingEventLogs = _opsClient.GetGamingEventLogs(date).ToArray();
 
-                if (!eventLogs.Any()) return;
+                if (!eventLogs.Any()) return null;
 
-                var filename = $"{Constants.ActivityLog.Path}\\ActivityLog_{date.Replace("/", "_")}_{DateTime.Now.Ticks}.xls";
+                //var filename = $"{Constants.ActivityLog.Path}\\ActivityLog_{date.Replace("/", "_")}_{DateTime.Now.Ticks}.xls";
                 var workbook = new Workbook();
 
                 var worksheet1 = new Worksheet("Activity Log");
@@ -85,13 +92,17 @@ namespace Keebee.AAT.ActivityLog
 
                 workbook.Worksheets.Add(worksheet2);
 
-                workbook.Save(filename);
+                var m = new MemoryStream();
+                workbook.SaveToStream(m);
+                file = m.ToArray();
+                //workbook.Save(filename);
             }
             catch (Exception ex)
             {
-                var message = ex.Message;
-                var innerException = ex.InnerException;
+                _eventLogger?.WriteEntry($"ActivityLog.Export: {ex.Message}", EventLogEntryType.Error);
             }
+
+            return file;
         }
     }
 }

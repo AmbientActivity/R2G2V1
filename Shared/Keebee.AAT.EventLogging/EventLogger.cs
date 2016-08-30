@@ -11,7 +11,8 @@ namespace Keebee.AAT.EventLogging
         KeebeeMessageQueuing = 3,
         StateMachineService = 4,
         RfidReaderService = 5,
-        PhidgetService = 6
+        PhidgetService = 6,
+        ActivityLog = 7
     }
 
     public class EventLogger
@@ -22,6 +23,7 @@ namespace Keebee.AAT.EventLogging
         private const string EventLogStateMachineService = "Keebee State Machine Service";
         private const string EventLogRfidReaderService = "Keebee RFID Reader Service";
         private const string EventLogPhidgetService = "Keebee Phidget Service";
+        private const string EventLogActivityLog = "Keebee Activity Log";
 
         private EventLog _eventLog;
         public EventLog EventLog
@@ -65,6 +67,9 @@ namespace Keebee.AAT.EventLogging
                     break;
                 case EventLogType.PhidgetService:
                     literal = EventLogPhidgetService;
+                    break;
+                case EventLogType.ActivityLog:
+                    literal = EventLogActivityLog;
                     break;
             }
             return literal;

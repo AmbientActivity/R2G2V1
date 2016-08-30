@@ -36,7 +36,7 @@ namespace Keebee.AAT.Administrator
             customScriptBundle.Include(
                 "~/Scripts/Site/Namespaces.js",
                 "~/Scripts/Site/Site.js",
-                "~/Scripts/EventLog/Export.js");
+                "~/Scripts/ActivityLog/Export.js");
             customScriptBundle.Builder = nullBuilder;
             customScriptBundle.Transforms.Add(scriptTransformer);
             bundles.Add(customScriptBundle);

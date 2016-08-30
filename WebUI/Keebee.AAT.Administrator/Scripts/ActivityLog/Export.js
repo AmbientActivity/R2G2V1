@@ -1,17 +1,14 @@
 ﻿/*!
  * 1.0 Keebee AAT Copyright © 2015
- * EventLog/Export.js
+ * ActivityLog/Export.js
  * Author: John Charlton
  * Date: 2016-08
  */
 
 ; (function ($) {
 
-    eventlog.exporter = {
+    activitylog.exporter = {
         init: function () {
-
-            // turn off caching
-            $.ajaxSetup({ cache: false });
 
             // inputs
             var dtDate = $("#export-date");
@@ -21,17 +18,33 @@
 
             // ------------------ private --------------------------
 
+            function initializeExportLinkButton() {
+                cmdExport.attr("href", "DoExport?date=" + dtDate.val());
+            }
+
+            function initializeDate() {
+                var today = new Date();
+                var dd = today.getDate();
+                var mm = today.getMonth() + 1;
+                var yyyy = today.getFullYear();
+                if (dd < 10) dd = "0" + dd;
+                if (mm < 10) mm = "0" + mm;
+                today = mm + "/" + dd + "/" + yyyy;
+                dtDate.val(today);
+            }
+
             function loadScreen() {
-                cmdExport.attr("disabled", "disabled");
-                //var currentDate = new Date();
-                //dtDate.val(currentDate);
+                initializeDate();
+                initializeExportLinkButton();
             }
 
             function validateInput() {
                 if (dtDate.val() === "")
                     cmdExport.attr("disabled", "disabled");
-                else
+                else {
                     cmdExport.removeAttr("disabled");
+                    initializeExportLinkButton();
+                }
             }
 
             // ------------------ private --------------------------
@@ -49,21 +62,7 @@
                 validateInput();
             });
 
-            // upload, validate and import the file
-            cmdExport.click(function () {
-                var date = dtDate.val();
-
-                $.ajax({
-                    url: site.url + "EventLog/DoExport/?date=" + date,
-                    type: "POST",
-                    contentType: false,
-                    processData: false,
-                    success: function (data) {
-                    },
-                    error: function (data) {
-                    }
-                });
-            });
+            // ------------------ events --------------------------
         }
     }
 })(jQuery);

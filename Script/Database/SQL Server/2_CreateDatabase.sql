@@ -1,0 +1,15 @@
+---- Create Database ----
+
+CREATE DATABASE KeebeeAAT
+ON PRIMARY
+(Name = KeebeeAAT,
+FILENAME = 'C:\Program Files\Microsoft SQL Server\MSSQL13.SQLEXPRESS\MSSQL\DATA\KeebeeAAT.mdf'),
+FILEGROUP FTFG CONTAINS FILESTREAM
+(NAME = KeebeeContent_FS,
+FILENAME='C:\Program Files\Microsoft SQL Server\MSSQL13.SQLEXPRESS\MSSQL\DATA\KeebeeAATFilestream')
+LOG ON
+(Name = KeebeeContentLog,
+FILENAME = 'C:\Program Files\Microsoft SQL Server\MSSQL13.SQLEXPRESS\MSSQL\DATA\KeebeeAAT_log.ldf')
+WITH FILESTREAM (NON_TRANSACTED_ACCESS = FULL,
+DIRECTORY_NAME = N'KeebeeAAT');
+GO

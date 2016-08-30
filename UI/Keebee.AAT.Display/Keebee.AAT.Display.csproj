@@ -1,0 +1,353 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{DAA088AD-0B58-4C46-BB93-4F99DC34787A}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Keebee.AAT.Display</RootNamespace>
+    <AssemblyName>Keebee.AAT.Display</AssemblyName>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <NuGetPackageImportStamp>6578a2f3</NuGetPackageImportStamp>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="PresentationCore" />
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Net" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Xaml" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+    <Reference Include="WindowsBase" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Caregiver\ActivityPlayer.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Caregiver\ActivityPlayer.Designer.cs">
+      <DependentUpon>ActivityPlayer.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Caregiver\CustomControls\ListViewLarge.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Caregiver\CustomControls\ListViewLarge.Designer.cs">
+      <DependentUpon>ListViewLarge.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Caregiver\ImageViewer.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Caregiver\ImageViewer.Designer.cs">
+      <DependentUpon>ImageViewer.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Caregiver\Splash.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Caregiver\Splash.Designer.cs">
+      <DependentUpon>Splash.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Caregiver\Thumbnail\Picture.cs" />
+    <Compile Include="Caregiver\VideoPlayer.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Caregiver\VideoPlayer.Designer.cs">
+      <DependentUpon>VideoPlayer.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Caregiver\Thumbnail\Video.cs" />
+    <Compile Include="Caregiver\VolumeAdjuster.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Caregiver\VolumeAdjuster.Designer.cs">
+      <DependentUpon>VolumeAdjuster.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Caregiver\CaregiverInterface.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Caregiver\CaregiverInterface.Designer.cs">
+      <DependentUpon>CaregiverInterface.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Extensions\ListExtensions.cs" />
+    <Compile Include="Extensions\MediaPlayerExtensions.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Extensions\ProgressBarExtensions.cs" />
+    <Compile Include="Helpers\ActivityEventLogger.cs" />
+    <Compile Include="Helpers\AudioControl.cs" />
+    <Compile Include="Helpers\GamingEventLogger.cs" />
+    <Compile Include="Helpers\Taskbar.cs" />
+    <Compile Include="Main.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Main.Designer.cs">
+      <DependentUpon>Main.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Splash.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Splash.Designer.cs">
+      <DependentUpon>Splash.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\AmbientPlayer.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UserControls\AmbientPlayer.Designer.cs">
+      <DependentUpon>AmbientPlayer.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Caregiver\CustomControls\ComboBoxLarge.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Caregiver\CustomControls\ComboBoxLarge.Designer.cs">
+      <DependentUpon>ComboBoxLarge.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\MatchingGame.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UserControls\MatchingGame.Designer.cs">
+      <DependentUpon>MatchingGame.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\MediaPlayer.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UserControls\MediaPlayer.Designer.cs">
+      <DependentUpon>MediaPlayer.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Caregiver\CustomControls\RepeatButton.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Caregiver\CustomControls\RepeatButton.Designer.cs">
+      <DependentUpon>RepeatButton.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\SlideViewerFlash.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UserControls\SlideViewerFlash.Designer.cs">
+      <DependentUpon>SlideViewerFlash.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\SlideViewerSimple.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UserControls\SlideViewerSimple.Designer.cs">
+      <DependentUpon>SlideViewerSimple.cs</DependentUpon>
+    </Compile>
+    <EmbeddedResource Include="Caregiver\ActivityPlayer.resx">
+      <DependentUpon>ActivityPlayer.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Caregiver\CustomControls\ListViewLarge.resx">
+      <DependentUpon>ListViewLarge.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Caregiver\ImageViewer.resx">
+      <DependentUpon>ImageViewer.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Caregiver\Splash.resx">
+      <DependentUpon>Splash.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Caregiver\VideoPlayer.resx">
+      <DependentUpon>VideoPlayer.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Caregiver\VolumeAdjuster.resx">
+      <DependentUpon>VolumeAdjuster.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Caregiver\CaregiverInterface.resx">
+      <DependentUpon>CaregiverInterface.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Main.resx">
+      <DependentUpon>Main.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <SubType>Designer</SubType>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Splash.resx">
+      <DependentUpon>Splash.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UserControls\AmbientPlayer.resx">
+      <DependentUpon>AmbientPlayer.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Caregiver\CustomControls\ComboBoxLarge.resx">
+      <DependentUpon>ComboBoxLarge.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UserControls\MatchingGame.resx">
+      <DependentUpon>MatchingGame.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UserControls\MediaPlayer.resx">
+      <DependentUpon>MediaPlayer.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Caregiver\CustomControls\RepeatButton.resx">
+      <DependentUpon>RepeatButton.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UserControls\SlideViewerFlash.resx">
+      <DependentUpon>SlideViewerFlash.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UserControls\SlideViewerSimple.resx">
+      <DependentUpon>SlideViewerSimple.cs</DependentUpon>
+    </EmbeddedResource>
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <COMReference Include="AxShockwaveFlashObjects">
+      <Guid>{D27CDB6B-AE6D-11CF-96B8-444553540000}</Guid>
+      <VersionMajor>1</VersionMajor>
+      <VersionMinor>0</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>aximp</WrapperTool>
+      <Isolated>False</Isolated>
+    </COMReference>
+    <COMReference Include="AxWMPLib">
+      <Guid>{6BF52A50-394A-11D3-B153-00C04F79FAA6}</Guid>
+      <VersionMajor>1</VersionMajor>
+      <VersionMinor>0</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>aximp</WrapperTool>
+      <Isolated>False</Isolated>
+    </COMReference>
+    <COMReference Include="ShockwaveFlashObjects">
+      <Guid>{D27CDB6B-AE6D-11CF-96B8-444553540000}</Guid>
+      <VersionMajor>1</VersionMajor>
+      <VersionMinor>0</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>tlbimp</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
+    <COMReference Include="WMPLib">
+      <Guid>{6BF52A50-394A-11D3-B153-00C04F79FAA6}</Guid>
+      <VersionMajor>1</VersionMajor>
+      <VersionMinor>0</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>tlbimp</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Images\ZenithRadio.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Images\PhilettaRadio.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Images\PYERadio.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Images\GERadio.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Images\PhilcoRadio.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Images\ZenithRadio2.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Images\PhilcoRadio2.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\RESTClient\Keebee.AAT.RESTClient\Keebee.AAT.RESTClient.csproj">
+      <Project>{a1f90f14-bc01-4ef8-9b3e-a7fe4b1b7f9f}</Project>
+      <Name>Keebee.AAT.RESTClient</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Shared\Keebee.AAT.Constants\Keebee.AAT.Constants.csproj">
+      <Project>{3cb12af2-7655-46f6-9969-990730f73964}</Project>
+      <Name>Keebee.AAT.Constants</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Shared\Keebee.AAT.EventLogging\Keebee.AAT.EventLogging.csproj">
+      <Project>{6f0a1aef-997e-4355-bb38-a4acf6710edf}</Project>
+      <Name>Keebee.AAT.EventLogging</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Shared\Keebee.AAT.MessageQueuing\Keebee.AAT.MessageQueuing.csproj">
+      <Project>{84a25d9a-4747-4b69-9c79-5c23210530d2}</Project>
+      <Name>Keebee.AAT.MessageQueuing</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Caregiver\Icons\arrow-down.ico" />
+    <Content Include="Caregiver\Icons\arrow-left.ico" />
+    <Content Include="Caregiver\Icons\arrow-right.ico" />
+    <Content Include="Caregiver\Icons\close.ico" />
+    <Content Include="Caregiver\Icons\pause.ico" />
+    <Content Include="Caregiver\Icons\pause.png" />
+    <Content Include="Caregiver\Icons\play.png" />
+    <Content Include="Caregiver\Icons\playactive.ico" />
+    <Content Include="Caregiver\Icons\play_active.png" />
+    <Content Include="Caregiver\Icons\speaker.ico" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <UsingTask TaskName="TransformXml" AssemblyFile="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Web\Microsoft.Web.Publishing.Tasks.dll" />
+  <Target Name="AfterCompile" Condition="Exists('App.$(Configuration).config')">
+    <!--Generate transformed app config in the intermediate directory-->
+    <TransformXml Source="App.config" Destination="$(IntermediateOutputPath)$(TargetFileName).config" Transform="App.$(Configuration).config" />
+    <!--Force build process to use the transformed configuration file from now on.-->
+    <ItemGroup>
+      <AppConfigWithTargetPath Remove="App.config" />
+      <AppConfigWithTargetPath Include="$(IntermediateOutputPath)$(TargetFileName).config">
+        <TargetPath>$(TargetFileName).config</TargetPath>
+      </AppConfigWithTargetPath>
+    </ItemGroup>
+  </Target>
+  <!--Override After Publish to support ClickOnce AfterPublish. Target replaces the untransformed config file copied to the deployment directory with the transformed one.-->
+  <Target Name="AfterPublish">
+    <PropertyGroup>
+      <DeployedConfig>$(_DeploymentApplicationDir)$(TargetName)$(TargetExt).config$(_DeploymentFileMappingExtension)</DeployedConfig>
+    </PropertyGroup>
+    <!--Publish copies the untransformed App.config to deployment directory so overwrite it-->
+    <Copy Condition="Exists('$(DeployedConfig)')" SourceFiles="$(IntermediateOutputPath)$(TargetFileName).config" DestinationFiles="$(DeployedConfig)" />
+  </Target>
+</Project>

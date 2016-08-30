@@ -1,0 +1,39 @@
+﻿
+@{
+    ViewBag.Title = "Activity Log Export";
+}
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        eventlog.exporter.init();
+    });
+</script>
+
+@using (Html.BeginForm())
+{
+    <div class="container-fluid">
+        <div class="report-title">
+            <h3>Activity Log Exporter</h3>
+            <span>Exports the activity event log to excel.</span>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <input type="button" id="export" value="Export" class="btn btn-primary btn-lg">
+            </div>
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-sm-3">
+                        <div class="label label-default">For Date</div>
+                        <div class="input-group date" data-provide="datepicker">
+                            <input id="export-date" type="text" class="form-control">
+                            <div class="input-group-addon">
+                                <span class="glyphicon glyphicon-th"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+

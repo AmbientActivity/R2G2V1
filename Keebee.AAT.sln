@@ -51,7 +51,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "WebUI", "WebUI", "{9350B422
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Keebee.AAT.Administrator", "WebUI\Keebee.AAT.Administrator\Keebee.AAT.Administrator.csproj", "{B774C858-867E-4171-9EB3-22073E5FBC21}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Keebee.AAT.ActivityLog", "Shared\Keebee.AAT.ActivityLogExport\Keebee.AAT.ActivityLog.csproj", "{97CA2119-5977-4DE5-9C91-A64D97CB9035}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Keebee.AAT.ActivityLog", "Shared\Keebee.AAT.ActivityLog\Keebee.AAT.ActivityLog.csproj", "{97CA2119-5977-4DE5-9C91-A64D97CB9035}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

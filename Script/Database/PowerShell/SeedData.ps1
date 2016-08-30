@@ -1,6 +1,6 @@
 ﻿$server = $env:COMPUTERNAME + "\SQLEXPRESS"
 $database = "KeebeeAAT"
-$path = "C:\Users\" + $env:USERNAME + "\Source\Repos\keebee\Script\Database\SQL Server\"
+$path = "C:\Users\" + $env:USERNAME + "\Source\Repos\R2G2V1\Script\Database\SQL Server\"
 
 # check if there are any profiles
 $query = Invoke-SqlQuery -Query "SELECT COUNT(*) AS ProfileCount FROM Profiles" -Server $server -Database $database

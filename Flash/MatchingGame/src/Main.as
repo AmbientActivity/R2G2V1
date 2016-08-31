@@ -468,7 +468,7 @@ package
 			addChild(matchThePairsText);
 			TweenLite.to(matchThePairsText, 1, {x:thirdStageWidth, y:35, alpha:1});
 			
-			LogGamingEvent(EventLogTypeId_MatchPairs, currentLevel.toString(), false, "New set of pairs displayed (6 pairs)");
+			LogGamingEvent(EventLogTypeId_MatchPairs, currentLevel.toString(), true, "New set of pairs displayed (6 pairs)");
 		}
 		
 		private function getMatchThePairsText():Bitmap {

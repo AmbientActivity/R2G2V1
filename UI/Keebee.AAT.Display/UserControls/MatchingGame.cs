@@ -19,7 +19,6 @@ namespace Keebee.AAT.Display.UserControls
         }
 
         // event handler
-        public event EventHandler MatchingGameCompleteEvent;
         public event EventHandler MatchingGameTimeoutExpiredEvent;
         public event EventHandler LogGamingEventEvent;
 
@@ -32,7 +31,6 @@ namespace Keebee.AAT.Display.UserControls
         }
 
         // delegate
-        private delegate void RaiseMatchingGameCompleteEventDelegate();
         private delegate void RaiseMatchingGameTimeoutExpiredDelegate();
         private delegate void RaiseLogGamingEventEventDelegate(int eventLogEntryTypeId, int difficultyLevel, bool? success, string description);
 
@@ -189,7 +187,8 @@ namespace Keebee.AAT.Display.UserControls
                     // replace apostrophe escape characters with an apostrophe
                     description = description.Replace("&apos;", "'");
 
-                    if (description == Constants.ActivityLog.GameTimeoutDescription)
+                    var isGameHasExpired = request.Contains("<true/>");
+                    if (isGameHasExpired)
                         RaiseMatchingGameTimeoutExpired();
 
                     RaiseLogGamingEventEvent(eventLogEntryTypeId, difficultyLevel, isSuccess, description);
@@ -198,27 +197,13 @@ namespace Keebee.AAT.Display.UserControls
                 // no arguments implies "raise game complete event"
                 else
                 {
-                    RaiseMatchingGameCompleteEvent();
+                    RaiseMatchingGameTimeoutExpired();
                 }
             }
 
             catch (Exception ex)
             {
                 _eventLogger.WriteEntry($"Display.MatchingGame.FlashCall{Environment.NewLine}{ex.Message}", EventLogEntryType.Error);
-            }
-        }
-
-        private void RaiseMatchingGameCompleteEvent()
-        {
-            if (IsDisposed) return;
-
-            if (InvokeRequired)
-            {
-                Invoke(new RaiseMatchingGameCompleteEventDelegate(RaiseMatchingGameCompleteEvent));
-            }
-            else
-            {
-                MatchingGameCompleteEvent?.Invoke(new object(), new EventArgs());
             }
         }
 

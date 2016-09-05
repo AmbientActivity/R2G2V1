@@ -422,12 +422,12 @@ package
 			clickedImagesPairsInstance = [];
 		}
 		
-		private function LogGamingEvent(success:Number, description:String):void {
+		private function LogGamingEvent(success:Number, description:String, isGameHasExpired:Boolean = false):void {
 			// comment the following line to test
 			var successDesc:String = "NULL";
 			if (success == 0) successDesc = "FALSE";
 			else if (success == 1) successDesc = "TRUE";
-			ExternalInterface.call("FlashCall", currentEventLogTypeId, currentLevel.toString(), successDesc, description);
+			ExternalInterface.call("FlashCall", currentEventLogTypeId, currentLevel.toString(), successDesc, description, isGameHasExpired);
 		}
 			
 		// ----------------------- match-the-pairs (begin) -----------------------------
@@ -750,8 +750,7 @@ package
 		}
 			
 		private function timedFunctionGame():void {
-			LogGamingEvent(-1, "Game timeout has expired");
-			ExternalInterface.call("FlashCall", "MatchingGameComplete");
+			LogGamingEvent(-1, "Game timeout has expired", true);
 		}
 	}
 }

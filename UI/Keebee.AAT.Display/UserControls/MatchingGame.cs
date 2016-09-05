@@ -38,7 +38,6 @@ namespace Keebee.AAT.Display.UserControls
 
         private int _initialDifficultyLevel;
         private bool _enableGameTimeout;
-        private bool _isGameTimeoutExpired;
 
         public MatchingGame()
         {

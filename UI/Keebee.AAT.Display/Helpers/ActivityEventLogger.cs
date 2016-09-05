@@ -1,5 +1,4 @@
-﻿using Keebee.AAT.Constants;
-using Keebee.AAT.EventLogging;
+﻿using Keebee.AAT.SystemEventLogging;
 using Keebee.AAT.RESTClient;
 using System;
 using System.Diagnostics;
@@ -15,30 +14,29 @@ namespace Keebee.AAT.Display.Helpers
             set { _opsClient = value; }
         }
 
-        private EventLogger _eventLogger;
-        public EventLogger EventLogger
+        private SystemEventLogger _systemEventLogger;
+        public SystemEventLogger EventLogger
         {
-            set { _eventLogger = value; }
+            set { _systemEventLogger = value; }
         }
 
         public void Add(int residentId, int activityTypeId, int responseTypeId, string description = null)
         {
             try
             { 
-            var eventLog = new RESTClient.EventLog
-            {
-                ResidentId = (residentId) > 0 ? residentId : (int?)null,
-                EventLogEntryTypeId = UserEventLogEntryType.SensorActivated,
-                ActivityTypeId = activityTypeId,
-                ResponseTypeId = responseTypeId,
-                Description = description
-            };
+                var activityEventLog = new ActivityEventLog
+                {
+                    ResidentId = (residentId) > 0 ? residentId : (int?)null,
+                    ActivityTypeId = activityTypeId,
+                    ResponseTypeId = responseTypeId,
+                    Description = description
+                };
 
-            _opsClient.PostEventLog(eventLog);
+                _opsClient.PostActivityEventLog(activityEventLog);
             }
             catch (Exception ex)
             {
-                _eventLogger?.WriteEntry($"ActivityEventLogger.Add: {ex.Message}", EventLogEntryType.Error);
+                _systemEventLogger?.WriteEntry($"ActivityEventLogger.Add: {ex.Message}", EventLogEntryType.Error);
             }
         }
     }

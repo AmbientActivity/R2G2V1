@@ -2,6 +2,7 @@
 using Keebee.AAT.RESTClient;
 using Keebee.AAT.MessageQueuing;
 using Keebee.AAT.Constants;
+using Keebee.AAT.SystemEventLogging;
 using Keebee.AAT.EventLogging;
 using System.Net;
 using System.Threading;
@@ -24,7 +25,7 @@ namespace Keebee.AAT.StateMachineService
         private readonly CustomMessageQueue _messageQueueResponse;
 
         // event logger
-        private readonly EventLogger _eventLogger;
+        private readonly SystemEventLogger _systemEventLogger;
 
         // active profile
         private Profile _activeProfile;
@@ -32,12 +33,15 @@ namespace Keebee.AAT.StateMachineService
         // display state
         private bool _displayIsActive;
 
+        private readonly System.Timers.Timer _autoLogTimer;
+        private DateTime _scheduleAutoLogTime;
+
         public StateMachineService()
         {
             InitializeComponent();
 
-            _eventLogger = new EventLogger(EventLogType.StateMachineService);
-            _opsClient = new OperationsClient { EventLogger = _eventLogger };
+            _systemEventLogger = new SystemEventLogger(SystemEventLogType.StateMachineService);
+            _opsClient = new OperationsClient { SystemEventLogger = _systemEventLogger };
  
             InitializeMessageQueueListeners();
 
@@ -45,13 +49,13 @@ namespace Keebee.AAT.StateMachineService
             _messageQueueResponse = new CustomMessageQueue(new CustomMessageQueueArgs
             {
                 QueueName = MessageQueueType.Response
-            }) {EventLogger = _eventLogger};
+            }) {SystemEventLogger = _systemEventLogger};
 
             var keepAliveThread = new Thread(KeepAlive);
             keepAliveThread.Start();
 
-            //var activityLogExportThread = new Thread(ExportActivityLog);
-            //activityLogExportThread.Start();
+            _autoLogTimer = new System.Timers.Timer();
+            _scheduleAutoLogTime = DateTime.Today.AddDays(1).AddHours(1);
         }
 
         private void KeepAlive()
@@ -65,7 +69,7 @@ namespace Keebee.AAT.StateMachineService
                     var response = (HttpWebResponse)req.GetResponse();
 
                     if (response.StatusCode != HttpStatusCode.OK)
-                        _eventLogger.WriteEntry(
+                        _systemEventLogger.WriteEntry(
                             $"Error accessing web host.{Environment.NewLine}StatusCode: {response.StatusCode}");
                 }
 
@@ -81,56 +85,31 @@ namespace Keebee.AAT.StateMachineService
             }
         }
 
-        private static void ExportActivityLog()
-        {
-            while (true)
-            {
-                var exporter = new ActivityLog.Exporter();
-
-                exporter.Export(DateTime.Now.ToString("MM/dd/yyyy"));
-
-                try
-                {
-                    var minutesToSleep = (int)(new DateTime(
-                        DateTime.Now.AddDays(1).Year, 
-                        DateTime.Now.AddDays(1).Month, 
-                        DateTime.Now.AddDays(1).Day, 3, 0, 0) - DateTime.Now).TotalMinutes;
-
-                    Thread.Sleep(minutesToSleep);
-                }
-
-                catch (ThreadAbortException)
-                {
-                    break;
-                }
-            }
-        }
-
         private void InitializeMessageQueueListeners()
         {
             var q1 = new CustomMessageQueue(new CustomMessageQueueArgs
             {
                 QueueName = MessageQueueType.Phidget,
                 MessageReceivedCallback = MessageReceivedPhidget
-            }) { EventLogger = _eventLogger };
+            }) { SystemEventLogger = _systemEventLogger };
 
             var q2 = new CustomMessageQueue(new CustomMessageQueueArgs
             {
                 QueueName = MessageQueueType.Video,
                 MessageReceivedCallback = MessageReceivedVideo
-            }) { EventLogger = _eventLogger };
+            }) { SystemEventLogger = _systemEventLogger };
 
             var q3 = new CustomMessageQueue(new CustomMessageQueueArgs
             {
                 QueueName = MessageQueueType.Rfid,
                 MessageReceivedCallback = MessageReceivedRfid
-            }) { EventLogger = _eventLogger };
+            }) { SystemEventLogger = _systemEventLogger };
 
             var q4 = new CustomMessageQueue(new CustomMessageQueueArgs
             {
                 QueueName = MessageQueueType.Display,
                 MessageReceivedCallback = MessageReceivedDisplay
-            }) { EventLogger = _eventLogger };
+            }) { SystemEventLogger = _systemEventLogger };
         }
 
         private void ExecuteUserResponse(int activityTypeId, int sensorValue)
@@ -158,7 +137,7 @@ namespace Keebee.AAT.StateMachineService
             }
             catch (Exception ex)
             {
-                _eventLogger.WriteEntry($"ExecuteUserResponse: {ex.Message}", EventLogEntryType.Error); 
+                _systemEventLogger.WriteEntry($"ExecuteUserResponse: {ex.Message}", EventLogEntryType.Error); 
             }
         }
 
@@ -176,7 +155,7 @@ namespace Keebee.AAT.StateMachineService
             }
             catch (Exception ex)
             {
-                _eventLogger.WriteEntry($"ExecuteSystemResponse: {ex.Message}", EventLogEntryType.Error);
+                _systemEventLogger.WriteEntry($"ExecuteSystemResponse: {ex.Message}", EventLogEntryType.Error);
             }
         }
 
@@ -206,7 +185,7 @@ namespace Keebee.AAT.StateMachineService
             }
             catch (Exception ex)
             {
-                _eventLogger.WriteEntry($"QueueMessageReceivedPhidget: {ex.Message}", EventLogEntryType.Error);
+                _systemEventLogger.WriteEntry($"QueueMessageReceivedPhidget: {ex.Message}", EventLogEntryType.Error);
             }
         }
 
@@ -246,7 +225,7 @@ namespace Keebee.AAT.StateMachineService
 
             catch (Exception ex)
             {
-                _eventLogger.WriteEntry($"MessageReceivedRfid{Environment.NewLine}{ex.Message}", EventLogEntryType.Error);
+                _systemEventLogger.WriteEntry($"MessageReceivedRfid{Environment.NewLine}{ex.Message}", EventLogEntryType.Error);
             }
         }
 
@@ -257,7 +236,7 @@ namespace Keebee.AAT.StateMachineService
             }
             catch (Exception ex)
             {
-                _eventLogger.WriteEntry(ex.Message, EventLogEntryType.Error);
+                _systemEventLogger.WriteEntry(ex.Message, EventLogEntryType.Error);
             }
         }
 
@@ -276,7 +255,7 @@ namespace Keebee.AAT.StateMachineService
             }
             catch (Exception ex)
             {
-                _eventLogger.WriteEntry($"MessageReceivedDisplay{Environment.NewLine}{ex.Message}", EventLogEntryType.Error);
+                _systemEventLogger.WriteEntry($"MessageReceivedDisplay{Environment.NewLine}{ex.Message}", EventLogEntryType.Error);
             }
         }
 
@@ -291,12 +270,34 @@ namespace Keebee.AAT.StateMachineService
 
         protected override void OnStart(string[] args)
         {
-            _eventLogger.WriteEntry("In OnStart");
+            _systemEventLogger.WriteEntry("In OnStart");
+
+            // For first time, set amount of seconds between current time and schedule time
+            _autoLogTimer.Enabled = true;
+            _autoLogTimer.Interval = _scheduleAutoLogTime.Subtract(DateTime.Now).TotalSeconds * 1000;
+            _autoLogTimer.Elapsed += ExportLog;
         }
 
         protected override void OnStop()
         {
-            _eventLogger.WriteEntry("In OnStop");
+            _systemEventLogger.WriteEntry("In OnStop");
+        }
+
+        // This method is called by the timer delegate.
+        public void ExportLog(object sender, System.Timers.ElapsedEventArgs e)
+        {
+            var exporter = new EventLogging.Exporter();
+
+            var date = DateTime.Now.AddDays(-1).ToString("MM/dd/yyyy");
+            exporter.ExportAndSave(date);
+
+            _systemEventLogger.WriteEntry($"Log automatically exported for date: {date}");
+
+            // If tick for the first time, reset next run to every 24 hours
+            if (_autoLogTimer.Interval != 24 * 60 * 60 * 1000)
+            {
+                _autoLogTimer.Interval = 24 * 60 * 60 * 1000;
+            }
         }
     }
 }

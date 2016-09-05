@@ -33,11 +33,13 @@ namespace Keebee.AAT.DataAccess.Models
 
         public DbSet<User> Users { get; set; }
 
-        public DbSet<EventLog> EventLogs { get; set; }
+        public DbSet<ActivityEventLog> ActivityEventLogs { get; set; }
 
-        public DbSet<GamingEventLog> GamingEventLogs { get; set; }
+        public DbSet<GameEventLog> GameEventLogs { get; set; }
 
-        public DbSet<EventLogEntryType> EventLogEntryTypes { get; set; }
+        public DbSet<RfidEventLog> RfidEventLogs { get; set; }
+
+        public DbSet<GameType> GameTypes { get; set; }
 
         public DbSet<PersonalPicture> PersonalPictures { get; set; }
 

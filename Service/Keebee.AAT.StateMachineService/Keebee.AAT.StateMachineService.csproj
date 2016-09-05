@@ -78,17 +78,17 @@
       <Project>{a1f90f14-bc01-4ef8-9b3e-a7fe4b1b7f9f}</Project>
       <Name>Keebee.AAT.RESTClient</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Shared\Keebee.AAT.ActivityLog\Keebee.AAT.ActivityLog.csproj">
+    <ProjectReference Include="..\..\Shared\Keebee.AAT.ActivityLog\Keebee.AAT.EventLogging.csproj">
       <Project>{97ca2119-5977-4de5-9c91-a64d97cb9035}</Project>
-      <Name>Keebee.AAT.ActivityLog</Name>
+      <Name>Keebee.AAT.EventLogging</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Shared\Keebee.AAT.Constants\Keebee.AAT.Constants.csproj">
       <Project>{3cb12af2-7655-46f6-9969-990730f73964}</Project>
       <Name>Keebee.AAT.Constants</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Shared\Keebee.AAT.EventLogging\Keebee.AAT.EventLogging.csproj">
+    <ProjectReference Include="..\..\Shared\Keebee.AAT.EventLogging\Keebee.AAT.SystemEventLogging.csproj">
       <Project>{6f0a1aef-997e-4355-bb38-a4acf6710edf}</Project>
-      <Name>Keebee.AAT.EventLogging</Name>
+      <Name>Keebee.AAT.SystemEventLogging</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Shared\Keebee.AAT.MessageQueuing\Keebee.AAT.MessageQueuing.csproj">
       <Project>{84a25d9a-4747-4b69-9c79-5c23210530d2}</Project>

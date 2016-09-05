@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-// Generation date: 9/5/2016 1:03:46 PM
+// Generation date: 9/5/2016 6:23:48 PM
 namespace Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models
 {
     /// <summary>
@@ -1029,6 +1029,118 @@ namespace Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models
         private string _PhidgetType;
         partial void OnPhidgetTypeChanging(string value);
         partial void OnPhidgetTypeChanged();
+        /// <summary>
+        /// There are no comments for Property Description in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        [global::Microsoft.OData.Client.OriginalNameAttribute("Description")]
+        public string Description
+        {
+            get
+            {
+                return this._Description;
+            }
+            set
+            {
+                this.OnDescriptionChanging(value);
+                this._Description = value;
+                this.OnDescriptionChanged();
+                this.OnPropertyChanged("Description");
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private string _Description;
+        partial void OnDescriptionChanging(string value);
+        partial void OnDescriptionChanged();
+        /// <summary>
+        /// This event is raised when the value of the property is changed
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        public event global::System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        /// <summary>
+        /// The value of the property is changed
+        /// </summary>
+        /// <param name="property">property name</param>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        protected virtual void OnPropertyChanged(string property)
+        {
+            if ((this.PropertyChanged != null))
+            {
+                this.PropertyChanged(this, new global::System.ComponentModel.PropertyChangedEventArgs(property));
+            }
+        }
+    }
+    /// <summary>
+    /// There are no comments for GameTypeSingle in the schema.
+    /// </summary>
+    [global::Microsoft.OData.Client.OriginalNameAttribute("GameTypeSingle")]
+    public partial class GameTypeSingle : global::Microsoft.OData.Client.DataServiceQuerySingle<GameType>
+    {
+        /// <summary>
+        /// Initialize a new GameTypeSingle object.
+        /// </summary>
+        public GameTypeSingle(global::Microsoft.OData.Client.DataServiceContext context, string path)
+            : base(context, path) {}
+
+        /// <summary>
+        /// Initialize a new GameTypeSingle object.
+        /// </summary>
+        public GameTypeSingle(global::Microsoft.OData.Client.DataServiceContext context, string path, bool isComposable)
+            : base(context, path, isComposable) {}
+
+        /// <summary>
+        /// Initialize a new GameTypeSingle object.
+        /// </summary>
+        public GameTypeSingle(global::Microsoft.OData.Client.DataServiceQuerySingle<GameType> query)
+            : base(query) {}
+
+    }
+    /// <summary>
+    /// There are no comments for GameType in the schema.
+    /// </summary>
+    /// <KeyProperties>
+    /// Id
+    /// </KeyProperties>
+    [global::Microsoft.OData.Client.Key("Id")]
+    [global::Microsoft.OData.Client.OriginalNameAttribute("GameType")]
+    public partial class GameType : global::Microsoft.OData.Client.BaseEntityType, global::System.ComponentModel.INotifyPropertyChanged
+    {
+        /// <summary>
+        /// Create a new GameType object.
+        /// </summary>
+        /// <param name="ID">Initial value of Id.</param>
+        /// <param name="description">Initial value of Description.</param>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        public static GameType CreateGameType(int ID, string description)
+        {
+            GameType gameType = new GameType();
+            gameType.Id = ID;
+            gameType.Description = description;
+            return gameType;
+        }
+        /// <summary>
+        /// There are no comments for Property Id in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        [global::Microsoft.OData.Client.OriginalNameAttribute("Id")]
+        public int Id
+        {
+            get
+            {
+                return this._Id;
+            }
+            set
+            {
+                this.OnIdChanging(value);
+                this._Id = value;
+                this.OnIdChanged();
+                this.OnPropertyChanged("Id");
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private int _Id;
+        partial void OnIdChanging(int value);
+        partial void OnIdChanged();
         /// <summary>
         /// There are no comments for Property Description in the schema.
         /// </summary>
@@ -2140,27 +2252,27 @@ namespace Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models
         }
     }
     /// <summary>
-    /// There are no comments for EventLogSingle in the schema.
+    /// There are no comments for ActivityEventLogSingle in the schema.
     /// </summary>
-    [global::Microsoft.OData.Client.OriginalNameAttribute("EventLogSingle")]
-    public partial class EventLogSingle : global::Microsoft.OData.Client.DataServiceQuerySingle<EventLog>
+    [global::Microsoft.OData.Client.OriginalNameAttribute("ActivityEventLogSingle")]
+    public partial class ActivityEventLogSingle : global::Microsoft.OData.Client.DataServiceQuerySingle<ActivityEventLog>
     {
         /// <summary>
-        /// Initialize a new EventLogSingle object.
+        /// Initialize a new ActivityEventLogSingle object.
         /// </summary>
-        public EventLogSingle(global::Microsoft.OData.Client.DataServiceContext context, string path)
+        public ActivityEventLogSingle(global::Microsoft.OData.Client.DataServiceContext context, string path)
             : base(context, path) {}
 
         /// <summary>
-        /// Initialize a new EventLogSingle object.
+        /// Initialize a new ActivityEventLogSingle object.
         /// </summary>
-        public EventLogSingle(global::Microsoft.OData.Client.DataServiceContext context, string path, bool isComposable)
+        public ActivityEventLogSingle(global::Microsoft.OData.Client.DataServiceContext context, string path, bool isComposable)
             : base(context, path, isComposable) {}
 
         /// <summary>
-        /// Initialize a new EventLogSingle object.
+        /// Initialize a new ActivityEventLogSingle object.
         /// </summary>
-        public EventLogSingle(global::Microsoft.OData.Client.DataServiceQuerySingle<EventLog> query)
+        public ActivityEventLogSingle(global::Microsoft.OData.Client.DataServiceQuerySingle<ActivityEventLog> query)
             : base(query) {}
 
         /// <summary>
@@ -2185,28 +2297,6 @@ namespace Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models
         }
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
         private global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ResidentSingle _Resident;
-        /// <summary>
-        /// There are no comments for EventLogEntryType in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        [global::Microsoft.OData.Client.OriginalNameAttribute("EventLogEntryType")]
-        public global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.EventLogEntryTypeSingle EventLogEntryType
-        {
-            get
-            {
-                if (!this.IsComposable)
-                {
-                    throw new global::System.NotSupportedException("The previous function is not composable.");
-                }
-                if ((this._EventLogEntryType == null))
-                {
-                    this._EventLogEntryType = new global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.EventLogEntryTypeSingle(this.Context, GetPath("EventLogEntryType"));
-                }
-                return this._EventLogEntryType;
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.EventLogEntryTypeSingle _EventLogEntryType;
         /// <summary>
         /// There are no comments for ActivityType in the schema.
         /// </summary>
@@ -2253,27 +2343,27 @@ namespace Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models
         private global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ResponseTypeSingle _ResponseType;
     }
     /// <summary>
-    /// There are no comments for EventLog in the schema.
+    /// There are no comments for ActivityEventLog in the schema.
     /// </summary>
     /// <KeyProperties>
     /// Id
     /// </KeyProperties>
     [global::Microsoft.OData.Client.Key("Id")]
-    [global::Microsoft.OData.Client.OriginalNameAttribute("EventLog")]
-    public partial class EventLog : global::Microsoft.OData.Client.BaseEntityType, global::System.ComponentModel.INotifyPropertyChanged
+    [global::Microsoft.OData.Client.OriginalNameAttribute("ActivityEventLog")]
+    public partial class ActivityEventLog : global::Microsoft.OData.Client.BaseEntityType, global::System.ComponentModel.INotifyPropertyChanged
     {
         /// <summary>
-        /// Create a new EventLog object.
+        /// Create a new ActivityEventLog object.
         /// </summary>
         /// <param name="ID">Initial value of Id.</param>
         /// <param name="dateEntry">Initial value of DateEntry.</param>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        public static EventLog CreateEventLog(int ID, global::System.DateTimeOffset dateEntry)
+        public static ActivityEventLog CreateActivityEventLog(int ID, global::System.DateTimeOffset dateEntry)
         {
-            EventLog eventLog = new EventLog();
-            eventLog.Id = ID;
-            eventLog.DateEntry = dateEntry;
-            return eventLog;
+            ActivityEventLog activityEventLog = new ActivityEventLog();
+            activityEventLog.Id = ID;
+            activityEventLog.DateEntry = dateEntry;
+            return activityEventLog;
         }
         /// <summary>
         /// There are no comments for Property Id in the schema.
@@ -2321,29 +2411,6 @@ namespace Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models
         private global::System.Nullable<int> _ResidentId;
         partial void OnResidentIdChanging(global::System.Nullable<int> value);
         partial void OnResidentIdChanged();
-        /// <summary>
-        /// There are no comments for Property EventLogEntryTypeId in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        [global::Microsoft.OData.Client.OriginalNameAttribute("EventLogEntryTypeId")]
-        public global::System.Nullable<int> EventLogEntryTypeId
-        {
-            get
-            {
-                return this._EventLogEntryTypeId;
-            }
-            set
-            {
-                this.OnEventLogEntryTypeIdChanging(value);
-                this._EventLogEntryTypeId = value;
-                this.OnEventLogEntryTypeIdChanged();
-                this.OnPropertyChanged("EventLogEntryTypeId");
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private global::System.Nullable<int> _EventLogEntryTypeId;
-        partial void OnEventLogEntryTypeIdChanging(global::System.Nullable<int> value);
-        partial void OnEventLogEntryTypeIdChanged();
         /// <summary>
         /// There are no comments for Property ActivityTypeId in the schema.
         /// </summary>
@@ -2460,29 +2527,6 @@ namespace Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models
         partial void OnResidentChanging(global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.Resident value);
         partial void OnResidentChanged();
         /// <summary>
-        /// There are no comments for Property EventLogEntryType in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        [global::Microsoft.OData.Client.OriginalNameAttribute("EventLogEntryType")]
-        public global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.EventLogEntryType EventLogEntryType
-        {
-            get
-            {
-                return this._EventLogEntryType;
-            }
-            set
-            {
-                this.OnEventLogEntryTypeChanging(value);
-                this._EventLogEntryType = value;
-                this.OnEventLogEntryTypeChanged();
-                this.OnPropertyChanged("EventLogEntryType");
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.EventLogEntryType _EventLogEntryType;
-        partial void OnEventLogEntryTypeChanging(global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.EventLogEntryType value);
-        partial void OnEventLogEntryTypeChanged();
-        /// <summary>
         /// There are no comments for Property ActivityType in the schema.
         /// </summary>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
@@ -2547,27 +2591,27 @@ namespace Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models
         }
     }
     /// <summary>
-    /// There are no comments for GamingEventLogSingle in the schema.
+    /// There are no comments for GameEventLogSingle in the schema.
     /// </summary>
-    [global::Microsoft.OData.Client.OriginalNameAttribute("GamingEventLogSingle")]
-    public partial class GamingEventLogSingle : global::Microsoft.OData.Client.DataServiceQuerySingle<GamingEventLog>
+    [global::Microsoft.OData.Client.OriginalNameAttribute("GameEventLogSingle")]
+    public partial class GameEventLogSingle : global::Microsoft.OData.Client.DataServiceQuerySingle<GameEventLog>
     {
         /// <summary>
-        /// Initialize a new GamingEventLogSingle object.
+        /// Initialize a new GameEventLogSingle object.
         /// </summary>
-        public GamingEventLogSingle(global::Microsoft.OData.Client.DataServiceContext context, string path)
+        public GameEventLogSingle(global::Microsoft.OData.Client.DataServiceContext context, string path)
             : base(context, path) {}
 
         /// <summary>
-        /// Initialize a new GamingEventLogSingle object.
+        /// Initialize a new GameEventLogSingle object.
         /// </summary>
-        public GamingEventLogSingle(global::Microsoft.OData.Client.DataServiceContext context, string path, bool isComposable)
+        public GameEventLogSingle(global::Microsoft.OData.Client.DataServiceContext context, string path, bool isComposable)
             : base(context, path, isComposable) {}
 
         /// <summary>
-        /// Initialize a new GamingEventLogSingle object.
+        /// Initialize a new GameEventLogSingle object.
         /// </summary>
-        public GamingEventLogSingle(global::Microsoft.OData.Client.DataServiceQuerySingle<GamingEventLog> query)
+        public GameEventLogSingle(global::Microsoft.OData.Client.DataServiceQuerySingle<GameEventLog> query)
             : base(query) {}
 
         /// <summary>
@@ -2593,11 +2637,11 @@ namespace Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
         private global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ResidentSingle _Resident;
         /// <summary>
-        /// There are no comments for EventLogEntryType in the schema.
+        /// There are no comments for GameType in the schema.
         /// </summary>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        [global::Microsoft.OData.Client.OriginalNameAttribute("EventLogEntryType")]
-        public global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.EventLogEntryTypeSingle EventLogEntryType
+        [global::Microsoft.OData.Client.OriginalNameAttribute("GameType")]
+        public global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.GameTypeSingle GameType
         {
             get
             {
@@ -2605,42 +2649,42 @@ namespace Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models
                 {
                     throw new global::System.NotSupportedException("The previous function is not composable.");
                 }
-                if ((this._EventLogEntryType == null))
+                if ((this._GameType == null))
                 {
-                    this._EventLogEntryType = new global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.EventLogEntryTypeSingle(this.Context, GetPath("EventLogEntryType"));
+                    this._GameType = new global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.GameTypeSingle(this.Context, GetPath("GameType"));
                 }
-                return this._EventLogEntryType;
+                return this._GameType;
             }
         }
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.EventLogEntryTypeSingle _EventLogEntryType;
+        private global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.GameTypeSingle _GameType;
     }
     /// <summary>
-    /// There are no comments for GamingEventLog in the schema.
+    /// There are no comments for GameEventLog in the schema.
     /// </summary>
     /// <KeyProperties>
     /// Id
     /// </KeyProperties>
     [global::Microsoft.OData.Client.Key("Id")]
-    [global::Microsoft.OData.Client.OriginalNameAttribute("GamingEventLog")]
-    public partial class GamingEventLog : global::Microsoft.OData.Client.BaseEntityType, global::System.ComponentModel.INotifyPropertyChanged
+    [global::Microsoft.OData.Client.OriginalNameAttribute("GameEventLog")]
+    public partial class GameEventLog : global::Microsoft.OData.Client.BaseEntityType, global::System.ComponentModel.INotifyPropertyChanged
     {
         /// <summary>
-        /// Create a new GamingEventLog object.
+        /// Create a new GameEventLog object.
         /// </summary>
         /// <param name="ID">Initial value of Id.</param>
         /// <param name="difficultylevel">Initial value of Difficultylevel.</param>
         /// <param name="description">Initial value of Description.</param>
         /// <param name="dateEntry">Initial value of DateEntry.</param>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        public static GamingEventLog CreateGamingEventLog(int ID, int difficultylevel, string description, global::System.DateTimeOffset dateEntry)
+        public static GameEventLog CreateGameEventLog(int ID, int difficultylevel, string description, global::System.DateTimeOffset dateEntry)
         {
-            GamingEventLog gamingEventLog = new GamingEventLog();
-            gamingEventLog.Id = ID;
-            gamingEventLog.Difficultylevel = difficultylevel;
-            gamingEventLog.Description = description;
-            gamingEventLog.DateEntry = dateEntry;
-            return gamingEventLog;
+            GameEventLog gameEventLog = new GameEventLog();
+            gameEventLog.Id = ID;
+            gameEventLog.Difficultylevel = difficultylevel;
+            gameEventLog.Description = description;
+            gameEventLog.DateEntry = dateEntry;
+            return gameEventLog;
         }
         /// <summary>
         /// There are no comments for Property Id in the schema.
@@ -2689,28 +2733,28 @@ namespace Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models
         partial void OnResidentIdChanging(global::System.Nullable<int> value);
         partial void OnResidentIdChanged();
         /// <summary>
-        /// There are no comments for Property EventLogEntryTypeId in the schema.
+        /// There are no comments for Property GameTypeId in the schema.
         /// </summary>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        [global::Microsoft.OData.Client.OriginalNameAttribute("EventLogEntryTypeId")]
-        public global::System.Nullable<int> EventLogEntryTypeId
+        [global::Microsoft.OData.Client.OriginalNameAttribute("GameTypeId")]
+        public global::System.Nullable<int> GameTypeId
         {
             get
             {
-                return this._EventLogEntryTypeId;
+                return this._GameTypeId;
             }
             set
             {
-                this.OnEventLogEntryTypeIdChanging(value);
-                this._EventLogEntryTypeId = value;
-                this.OnEventLogEntryTypeIdChanged();
-                this.OnPropertyChanged("EventLogEntryTypeId");
+                this.OnGameTypeIdChanging(value);
+                this._GameTypeId = value;
+                this.OnGameTypeIdChanged();
+                this.OnPropertyChanged("GameTypeId");
             }
         }
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private global::System.Nullable<int> _EventLogEntryTypeId;
-        partial void OnEventLogEntryTypeIdChanging(global::System.Nullable<int> value);
-        partial void OnEventLogEntryTypeIdChanged();
+        private global::System.Nullable<int> _GameTypeId;
+        partial void OnGameTypeIdChanging(global::System.Nullable<int> value);
+        partial void OnGameTypeIdChanged();
         /// <summary>
         /// There are no comments for Property Difficultylevel in the schema.
         /// </summary>
@@ -2827,28 +2871,28 @@ namespace Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models
         partial void OnResidentChanging(global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.Resident value);
         partial void OnResidentChanged();
         /// <summary>
-        /// There are no comments for Property EventLogEntryType in the schema.
+        /// There are no comments for Property GameType in the schema.
         /// </summary>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        [global::Microsoft.OData.Client.OriginalNameAttribute("EventLogEntryType")]
-        public global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.EventLogEntryType EventLogEntryType
+        [global::Microsoft.OData.Client.OriginalNameAttribute("GameType")]
+        public global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.GameType GameType
         {
             get
             {
-                return this._EventLogEntryType;
+                return this._GameType;
             }
             set
             {
-                this.OnEventLogEntryTypeChanging(value);
-                this._EventLogEntryType = value;
-                this.OnEventLogEntryTypeChanged();
-                this.OnPropertyChanged("EventLogEntryType");
+                this.OnGameTypeChanging(value);
+                this._GameType = value;
+                this.OnGameTypeChanged();
+                this.OnPropertyChanged("GameType");
             }
         }
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.EventLogEntryType _EventLogEntryType;
-        partial void OnEventLogEntryTypeChanging(global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.EventLogEntryType value);
-        partial void OnEventLogEntryTypeChanged();
+        private global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.GameType _GameType;
+        partial void OnGameTypeChanging(global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.GameType value);
+        partial void OnGameTypeChanged();
         /// <summary>
         /// This event is raised when the value of the property is changed
         /// </summary>
@@ -2868,52 +2912,76 @@ namespace Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models
         }
     }
     /// <summary>
-    /// There are no comments for EventLogEntryTypeSingle in the schema.
+    /// There are no comments for RfidEventLogSingle in the schema.
     /// </summary>
-    [global::Microsoft.OData.Client.OriginalNameAttribute("EventLogEntryTypeSingle")]
-    public partial class EventLogEntryTypeSingle : global::Microsoft.OData.Client.DataServiceQuerySingle<EventLogEntryType>
+    [global::Microsoft.OData.Client.OriginalNameAttribute("RfidEventLogSingle")]
+    public partial class RfidEventLogSingle : global::Microsoft.OData.Client.DataServiceQuerySingle<RfidEventLog>
     {
         /// <summary>
-        /// Initialize a new EventLogEntryTypeSingle object.
+        /// Initialize a new RfidEventLogSingle object.
         /// </summary>
-        public EventLogEntryTypeSingle(global::Microsoft.OData.Client.DataServiceContext context, string path)
+        public RfidEventLogSingle(global::Microsoft.OData.Client.DataServiceContext context, string path)
             : base(context, path) {}
 
         /// <summary>
-        /// Initialize a new EventLogEntryTypeSingle object.
+        /// Initialize a new RfidEventLogSingle object.
         /// </summary>
-        public EventLogEntryTypeSingle(global::Microsoft.OData.Client.DataServiceContext context, string path, bool isComposable)
+        public RfidEventLogSingle(global::Microsoft.OData.Client.DataServiceContext context, string path, bool isComposable)
             : base(context, path, isComposable) {}
 
         /// <summary>
-        /// Initialize a new EventLogEntryTypeSingle object.
+        /// Initialize a new RfidEventLogSingle object.
         /// </summary>
-        public EventLogEntryTypeSingle(global::Microsoft.OData.Client.DataServiceQuerySingle<EventLogEntryType> query)
+        public RfidEventLogSingle(global::Microsoft.OData.Client.DataServiceQuerySingle<RfidEventLog> query)
             : base(query) {}
 
+        /// <summary>
+        /// There are no comments for Resident in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        [global::Microsoft.OData.Client.OriginalNameAttribute("Resident")]
+        public global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ResidentSingle Resident
+        {
+            get
+            {
+                if (!this.IsComposable)
+                {
+                    throw new global::System.NotSupportedException("The previous function is not composable.");
+                }
+                if ((this._Resident == null))
+                {
+                    this._Resident = new global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ResidentSingle(this.Context, GetPath("Resident"));
+                }
+                return this._Resident;
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ResidentSingle _Resident;
     }
     /// <summary>
-    /// There are no comments for EventLogEntryType in the schema.
+    /// There are no comments for RfidEventLog in the schema.
     /// </summary>
     /// <KeyProperties>
     /// Id
     /// </KeyProperties>
     [global::Microsoft.OData.Client.Key("Id")]
-    [global::Microsoft.OData.Client.OriginalNameAttribute("EventLogEntryType")]
-    public partial class EventLogEntryType : global::Microsoft.OData.Client.BaseEntityType, global::System.ComponentModel.INotifyPropertyChanged
+    [global::Microsoft.OData.Client.OriginalNameAttribute("RfidEventLog")]
+    public partial class RfidEventLog : global::Microsoft.OData.Client.BaseEntityType, global::System.ComponentModel.INotifyPropertyChanged
     {
         /// <summary>
-        /// Create a new EventLogEntryType object.
+        /// Create a new RfidEventLog object.
         /// </summary>
         /// <param name="ID">Initial value of Id.</param>
         /// <param name="description">Initial value of Description.</param>
+        /// <param name="dateEntry">Initial value of DateEntry.</param>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        public static EventLogEntryType CreateEventLogEntryType(int ID, string description)
+        public static RfidEventLog CreateRfidEventLog(int ID, string description, global::System.DateTimeOffset dateEntry)
         {
-            EventLogEntryType eventLogEntryType = new EventLogEntryType();
-            eventLogEntryType.Id = ID;
-            eventLogEntryType.Description = description;
-            return eventLogEntryType;
+            RfidEventLog rfidEventLog = new RfidEventLog();
+            rfidEventLog.Id = ID;
+            rfidEventLog.Description = description;
+            rfidEventLog.DateEntry = dateEntry;
+            return rfidEventLog;
         }
         /// <summary>
         /// There are no comments for Property Id in the schema.
@@ -2939,6 +3007,29 @@ namespace Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models
         partial void OnIdChanging(int value);
         partial void OnIdChanged();
         /// <summary>
+        /// There are no comments for Property ResidentId in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        [global::Microsoft.OData.Client.OriginalNameAttribute("ResidentId")]
+        public global::System.Nullable<int> ResidentId
+        {
+            get
+            {
+                return this._ResidentId;
+            }
+            set
+            {
+                this.OnResidentIdChanging(value);
+                this._ResidentId = value;
+                this.OnResidentIdChanged();
+                this.OnPropertyChanged("ResidentId");
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private global::System.Nullable<int> _ResidentId;
+        partial void OnResidentIdChanging(global::System.Nullable<int> value);
+        partial void OnResidentIdChanged();
+        /// <summary>
         /// There are no comments for Property Description in the schema.
         /// </summary>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
@@ -2961,6 +3052,52 @@ namespace Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models
         private string _Description;
         partial void OnDescriptionChanging(string value);
         partial void OnDescriptionChanged();
+        /// <summary>
+        /// There are no comments for Property DateEntry in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        [global::Microsoft.OData.Client.OriginalNameAttribute("DateEntry")]
+        public global::System.DateTimeOffset DateEntry
+        {
+            get
+            {
+                return this._DateEntry;
+            }
+            set
+            {
+                this.OnDateEntryChanging(value);
+                this._DateEntry = value;
+                this.OnDateEntryChanged();
+                this.OnPropertyChanged("DateEntry");
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private global::System.DateTimeOffset _DateEntry;
+        partial void OnDateEntryChanging(global::System.DateTimeOffset value);
+        partial void OnDateEntryChanged();
+        /// <summary>
+        /// There are no comments for Property Resident in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        [global::Microsoft.OData.Client.OriginalNameAttribute("Resident")]
+        public global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.Resident Resident
+        {
+            get
+            {
+                return this._Resident;
+            }
+            set
+            {
+                this.OnResidentChanging(value);
+                this._Resident = value;
+                this.OnResidentChanged();
+                this.OnPropertyChanged("Resident");
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.Resident _Resident;
+        partial void OnResidentChanging(global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.Resident value);
+        partial void OnResidentChanged();
         /// <summary>
         /// This event is raised when the value of the property is changed
         /// </summary>
@@ -3504,6 +3641,29 @@ namespace Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models
             return new global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ActivityTypeSingle(source.Context, source.GetKeyPath(global::Microsoft.OData.Client.Serializer.GetKeyString(source.Context, keys)));
         }
         /// <summary>
+        /// Get an entity of type global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.GameType as global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.GameTypeSingle specified by key from an entity set
+        /// </summary>
+        /// <param name="source">source entity set</param>
+        /// <param name="keys">dictionary with the names and values of keys</param>
+        public static global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.GameTypeSingle ByKey(this global::Microsoft.OData.Client.DataServiceQuery<global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.GameType> source, global::System.Collections.Generic.Dictionary<string, object> keys)
+        {
+            return new global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.GameTypeSingle(source.Context, source.GetKeyPath(global::Microsoft.OData.Client.Serializer.GetKeyString(source.Context, keys)));
+        }
+        /// <summary>
+        /// Get an entity of type global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.GameType as global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.GameTypeSingle specified by key from an entity set
+        /// </summary>
+        /// <param name="source">source entity set</param>
+        /// <param name="id">The value of id</param>
+        public static global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.GameTypeSingle ByKey(this global::Microsoft.OData.Client.DataServiceQuery<global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.GameType> source,
+            int id)
+        {
+            global::System.Collections.Generic.Dictionary<string, object> keys = new global::System.Collections.Generic.Dictionary<string, object>
+            {
+                { "Id", id }
+            };
+            return new global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.GameTypeSingle(source.Context, source.GetKeyPath(global::Microsoft.OData.Client.Serializer.GetKeyString(source.Context, keys)));
+        }
+        /// <summary>
         /// Get an entity of type global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.Response as global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ResponseSingle specified by key from an entity set
         /// </summary>
         /// <param name="source">source entity set</param>
@@ -3642,73 +3802,73 @@ namespace Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models
             return new global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.UserSingle(source.Context, source.GetKeyPath(global::Microsoft.OData.Client.Serializer.GetKeyString(source.Context, keys)));
         }
         /// <summary>
-        /// Get an entity of type global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.EventLog as global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.EventLogSingle specified by key from an entity set
+        /// Get an entity of type global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ActivityEventLog as global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ActivityEventLogSingle specified by key from an entity set
         /// </summary>
         /// <param name="source">source entity set</param>
         /// <param name="keys">dictionary with the names and values of keys</param>
-        public static global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.EventLogSingle ByKey(this global::Microsoft.OData.Client.DataServiceQuery<global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.EventLog> source, global::System.Collections.Generic.Dictionary<string, object> keys)
+        public static global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ActivityEventLogSingle ByKey(this global::Microsoft.OData.Client.DataServiceQuery<global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ActivityEventLog> source, global::System.Collections.Generic.Dictionary<string, object> keys)
         {
-            return new global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.EventLogSingle(source.Context, source.GetKeyPath(global::Microsoft.OData.Client.Serializer.GetKeyString(source.Context, keys)));
+            return new global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ActivityEventLogSingle(source.Context, source.GetKeyPath(global::Microsoft.OData.Client.Serializer.GetKeyString(source.Context, keys)));
         }
         /// <summary>
-        /// Get an entity of type global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.EventLog as global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.EventLogSingle specified by key from an entity set
+        /// Get an entity of type global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ActivityEventLog as global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ActivityEventLogSingle specified by key from an entity set
         /// </summary>
         /// <param name="source">source entity set</param>
         /// <param name="id">The value of id</param>
-        public static global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.EventLogSingle ByKey(this global::Microsoft.OData.Client.DataServiceQuery<global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.EventLog> source,
+        public static global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ActivityEventLogSingle ByKey(this global::Microsoft.OData.Client.DataServiceQuery<global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ActivityEventLog> source,
             int id)
         {
             global::System.Collections.Generic.Dictionary<string, object> keys = new global::System.Collections.Generic.Dictionary<string, object>
             {
                 { "Id", id }
             };
-            return new global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.EventLogSingle(source.Context, source.GetKeyPath(global::Microsoft.OData.Client.Serializer.GetKeyString(source.Context, keys)));
+            return new global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ActivityEventLogSingle(source.Context, source.GetKeyPath(global::Microsoft.OData.Client.Serializer.GetKeyString(source.Context, keys)));
         }
         /// <summary>
-        /// Get an entity of type global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.GamingEventLog as global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.GamingEventLogSingle specified by key from an entity set
+        /// Get an entity of type global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.GameEventLog as global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.GameEventLogSingle specified by key from an entity set
         /// </summary>
         /// <param name="source">source entity set</param>
         /// <param name="keys">dictionary with the names and values of keys</param>
-        public static global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.GamingEventLogSingle ByKey(this global::Microsoft.OData.Client.DataServiceQuery<global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.GamingEventLog> source, global::System.Collections.Generic.Dictionary<string, object> keys)
+        public static global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.GameEventLogSingle ByKey(this global::Microsoft.OData.Client.DataServiceQuery<global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.GameEventLog> source, global::System.Collections.Generic.Dictionary<string, object> keys)
         {
-            return new global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.GamingEventLogSingle(source.Context, source.GetKeyPath(global::Microsoft.OData.Client.Serializer.GetKeyString(source.Context, keys)));
+            return new global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.GameEventLogSingle(source.Context, source.GetKeyPath(global::Microsoft.OData.Client.Serializer.GetKeyString(source.Context, keys)));
         }
         /// <summary>
-        /// Get an entity of type global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.GamingEventLog as global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.GamingEventLogSingle specified by key from an entity set
+        /// Get an entity of type global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.GameEventLog as global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.GameEventLogSingle specified by key from an entity set
         /// </summary>
         /// <param name="source">source entity set</param>
         /// <param name="id">The value of id</param>
-        public static global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.GamingEventLogSingle ByKey(this global::Microsoft.OData.Client.DataServiceQuery<global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.GamingEventLog> source,
+        public static global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.GameEventLogSingle ByKey(this global::Microsoft.OData.Client.DataServiceQuery<global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.GameEventLog> source,
             int id)
         {
             global::System.Collections.Generic.Dictionary<string, object> keys = new global::System.Collections.Generic.Dictionary<string, object>
             {
                 { "Id", id }
             };
-            return new global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.GamingEventLogSingle(source.Context, source.GetKeyPath(global::Microsoft.OData.Client.Serializer.GetKeyString(source.Context, keys)));
+            return new global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.GameEventLogSingle(source.Context, source.GetKeyPath(global::Microsoft.OData.Client.Serializer.GetKeyString(source.Context, keys)));
         }
         /// <summary>
-        /// Get an entity of type global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.EventLogEntryType as global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.EventLogEntryTypeSingle specified by key from an entity set
+        /// Get an entity of type global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.RfidEventLog as global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.RfidEventLogSingle specified by key from an entity set
         /// </summary>
         /// <param name="source">source entity set</param>
         /// <param name="keys">dictionary with the names and values of keys</param>
-        public static global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.EventLogEntryTypeSingle ByKey(this global::Microsoft.OData.Client.DataServiceQuery<global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.EventLogEntryType> source, global::System.Collections.Generic.Dictionary<string, object> keys)
+        public static global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.RfidEventLogSingle ByKey(this global::Microsoft.OData.Client.DataServiceQuery<global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.RfidEventLog> source, global::System.Collections.Generic.Dictionary<string, object> keys)
         {
-            return new global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.EventLogEntryTypeSingle(source.Context, source.GetKeyPath(global::Microsoft.OData.Client.Serializer.GetKeyString(source.Context, keys)));
+            return new global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.RfidEventLogSingle(source.Context, source.GetKeyPath(global::Microsoft.OData.Client.Serializer.GetKeyString(source.Context, keys)));
         }
         /// <summary>
-        /// Get an entity of type global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.EventLogEntryType as global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.EventLogEntryTypeSingle specified by key from an entity set
+        /// Get an entity of type global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.RfidEventLog as global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.RfidEventLogSingle specified by key from an entity set
         /// </summary>
         /// <param name="source">source entity set</param>
         /// <param name="id">The value of id</param>
-        public static global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.EventLogEntryTypeSingle ByKey(this global::Microsoft.OData.Client.DataServiceQuery<global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.EventLogEntryType> source,
+        public static global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.RfidEventLogSingle ByKey(this global::Microsoft.OData.Client.DataServiceQuery<global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.RfidEventLog> source,
             int id)
         {
             global::System.Collections.Generic.Dictionary<string, object> keys = new global::System.Collections.Generic.Dictionary<string, object>
             {
                 { "Id", id }
             };
-            return new global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.EventLogEntryTypeSingle(source.Context, source.GetKeyPath(global::Microsoft.OData.Client.Serializer.GetKeyString(source.Context, keys)));
+            return new global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.RfidEventLogSingle(source.Context, source.GetKeyPath(global::Microsoft.OData.Client.Serializer.GetKeyString(source.Context, keys)));
         }
         /// <summary>
         /// Get an entity of type global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.PersonalPicture as global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.PersonalPictureSingle specified by key from an entity set
@@ -3882,23 +4042,41 @@ namespace Keebee.AAT.Operations.Service.KeebeeAAT
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
         private global::Microsoft.OData.Client.DataServiceQuery<global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ProfileDetail> _ProfileDetails;
         /// <summary>
-        /// There are no comments for ActionTypes in the schema.
+        /// There are no comments for ActivityTypes in the schema.
         /// </summary>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        [global::Microsoft.OData.Client.OriginalNameAttribute("ActionTypes")]
-        public global::Microsoft.OData.Client.DataServiceQuery<global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ActivityType> ActionTypes
+        [global::Microsoft.OData.Client.OriginalNameAttribute("ActivityTypes")]
+        public global::Microsoft.OData.Client.DataServiceQuery<global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ActivityType> ActivityTypes
         {
             get
             {
-                if ((this._ActionTypes == null))
+                if ((this._ActivityTypes == null))
                 {
-                    this._ActionTypes = base.CreateQuery<global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ActivityType>("ActionTypes");
+                    this._ActivityTypes = base.CreateQuery<global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ActivityType>("ActivityTypes");
                 }
-                return this._ActionTypes;
+                return this._ActivityTypes;
             }
         }
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private global::Microsoft.OData.Client.DataServiceQuery<global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ActivityType> _ActionTypes;
+        private global::Microsoft.OData.Client.DataServiceQuery<global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ActivityType> _ActivityTypes;
+        /// <summary>
+        /// There are no comments for GameTypes in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        [global::Microsoft.OData.Client.OriginalNameAttribute("GameTypes")]
+        public global::Microsoft.OData.Client.DataServiceQuery<global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.GameType> GameTypes
+        {
+            get
+            {
+                if ((this._GameTypes == null))
+                {
+                    this._GameTypes = base.CreateQuery<global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.GameType>("GameTypes");
+                }
+                return this._GameTypes;
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private global::Microsoft.OData.Client.DataServiceQuery<global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.GameType> _GameTypes;
         /// <summary>
         /// There are no comments for Responses in the schema.
         /// </summary>
@@ -4008,59 +4186,59 @@ namespace Keebee.AAT.Operations.Service.KeebeeAAT
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
         private global::Microsoft.OData.Client.DataServiceQuery<global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.User> _Users;
         /// <summary>
-        /// There are no comments for EventLogs in the schema.
+        /// There are no comments for ActivityEventLogs in the schema.
         /// </summary>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        [global::Microsoft.OData.Client.OriginalNameAttribute("EventLogs")]
-        public global::Microsoft.OData.Client.DataServiceQuery<global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.EventLog> EventLogs
+        [global::Microsoft.OData.Client.OriginalNameAttribute("ActivityEventLogs")]
+        public global::Microsoft.OData.Client.DataServiceQuery<global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ActivityEventLog> ActivityEventLogs
         {
             get
             {
-                if ((this._EventLogs == null))
+                if ((this._ActivityEventLogs == null))
                 {
-                    this._EventLogs = base.CreateQuery<global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.EventLog>("EventLogs");
+                    this._ActivityEventLogs = base.CreateQuery<global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ActivityEventLog>("ActivityEventLogs");
                 }
-                return this._EventLogs;
+                return this._ActivityEventLogs;
             }
         }
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private global::Microsoft.OData.Client.DataServiceQuery<global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.EventLog> _EventLogs;
+        private global::Microsoft.OData.Client.DataServiceQuery<global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ActivityEventLog> _ActivityEventLogs;
         /// <summary>
-        /// There are no comments for GamingEventLogs in the schema.
+        /// There are no comments for GameEventLogs in the schema.
         /// </summary>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        [global::Microsoft.OData.Client.OriginalNameAttribute("GamingEventLogs")]
-        public global::Microsoft.OData.Client.DataServiceQuery<global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.GamingEventLog> GamingEventLogs
+        [global::Microsoft.OData.Client.OriginalNameAttribute("GameEventLogs")]
+        public global::Microsoft.OData.Client.DataServiceQuery<global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.GameEventLog> GameEventLogs
         {
             get
             {
-                if ((this._GamingEventLogs == null))
+                if ((this._GameEventLogs == null))
                 {
-                    this._GamingEventLogs = base.CreateQuery<global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.GamingEventLog>("GamingEventLogs");
+                    this._GameEventLogs = base.CreateQuery<global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.GameEventLog>("GameEventLogs");
                 }
-                return this._GamingEventLogs;
+                return this._GameEventLogs;
             }
         }
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private global::Microsoft.OData.Client.DataServiceQuery<global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.GamingEventLog> _GamingEventLogs;
+        private global::Microsoft.OData.Client.DataServiceQuery<global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.GameEventLog> _GameEventLogs;
         /// <summary>
-        /// There are no comments for EventLogEntryTypes in the schema.
+        /// There are no comments for RfidEventLogs in the schema.
         /// </summary>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        [global::Microsoft.OData.Client.OriginalNameAttribute("EventLogEntryTypes")]
-        public global::Microsoft.OData.Client.DataServiceQuery<global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.EventLogEntryType> EventLogEntryTypes
+        [global::Microsoft.OData.Client.OriginalNameAttribute("RfidEventLogs")]
+        public global::Microsoft.OData.Client.DataServiceQuery<global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.RfidEventLog> RfidEventLogs
         {
             get
             {
-                if ((this._EventLogEntryTypes == null))
+                if ((this._RfidEventLogs == null))
                 {
-                    this._EventLogEntryTypes = base.CreateQuery<global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.EventLogEntryType>("EventLogEntryTypes");
+                    this._RfidEventLogs = base.CreateQuery<global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.RfidEventLog>("RfidEventLogs");
                 }
-                return this._EventLogEntryTypes;
+                return this._RfidEventLogs;
             }
         }
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private global::Microsoft.OData.Client.DataServiceQuery<global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.EventLogEntryType> _EventLogEntryTypes;
+        private global::Microsoft.OData.Client.DataServiceQuery<global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.RfidEventLog> _RfidEventLogs;
         /// <summary>
         /// There are no comments for PersonalPictures in the schema.
         /// </summary>
@@ -4122,12 +4300,20 @@ namespace Keebee.AAT.Operations.Service.KeebeeAAT
             base.AddObject("ProfileDetails", profileDetail);
         }
         /// <summary>
-        /// There are no comments for ActionTypes in the schema.
+        /// There are no comments for ActivityTypes in the schema.
         /// </summary>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        public void AddToActionTypes(global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ActivityType activityType)
+        public void AddToActivityTypes(global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ActivityType activityType)
         {
-            base.AddObject("ActionTypes", activityType);
+            base.AddObject("ActivityTypes", activityType);
+        }
+        /// <summary>
+        /// There are no comments for GameTypes in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        public void AddToGameTypes(global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.GameType gameType)
+        {
+            base.AddObject("GameTypes", gameType);
         }
         /// <summary>
         /// There are no comments for Responses in the schema.
@@ -4178,28 +4364,28 @@ namespace Keebee.AAT.Operations.Service.KeebeeAAT
             base.AddObject("Users", user);
         }
         /// <summary>
-        /// There are no comments for EventLogs in the schema.
+        /// There are no comments for ActivityEventLogs in the schema.
         /// </summary>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        public void AddToEventLogs(global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.EventLog eventLog)
+        public void AddToActivityEventLogs(global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ActivityEventLog activityEventLog)
         {
-            base.AddObject("EventLogs", eventLog);
+            base.AddObject("ActivityEventLogs", activityEventLog);
         }
         /// <summary>
-        /// There are no comments for GamingEventLogs in the schema.
+        /// There are no comments for GameEventLogs in the schema.
         /// </summary>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        public void AddToGamingEventLogs(global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.GamingEventLog gamingEventLog)
+        public void AddToGameEventLogs(global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.GameEventLog gameEventLog)
         {
-            base.AddObject("GamingEventLogs", gamingEventLog);
+            base.AddObject("GameEventLogs", gameEventLog);
         }
         /// <summary>
-        /// There are no comments for EventLogEntryTypes in the schema.
+        /// There are no comments for RfidEventLogs in the schema.
         /// </summary>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        public void AddToEventLogEntryTypes(global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.EventLogEntryType eventLogEntryType)
+        public void AddToRfidEventLogs(global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.RfidEventLog rfidEventLog)
         {
-            base.AddObject("EventLogEntryTypes", eventLogEntryType);
+            base.AddObject("RfidEventLogs", rfidEventLog);
         }
         /// <summary>
         /// There are no comments for PersonalPictures in the schema.
@@ -4281,6 +4467,13 @@ namespace Keebee.AAT.Operations.Service.KeebeeAAT
         <Property Name=""PhidgetType"" Type=""Edm.String"" Nullable=""false"" />
         <Property Name=""Description"" Type=""Edm.String"" />
       </EntityType>
+      <EntityType Name=""GameType"">
+        <Key>
+          <PropertyRef Name=""Id"" />
+        </Key>
+        <Property Name=""Id"" Type=""Edm.Int32"" Nullable=""false"" />
+        <Property Name=""Description"" Type=""Edm.String"" Nullable=""false"" />
+      </EntityType>
       <EntityType Name=""Response"">
         <Key>
           <PropertyRef Name=""Id"" />
@@ -4344,22 +4537,18 @@ namespace Keebee.AAT.Operations.Service.KeebeeAAT
         <Property Name=""FirstName"" Type=""Edm.String"" Nullable=""false"" />
         <Property Name=""LastName"" Type=""Edm.String"" Nullable=""false"" />
       </EntityType>
-      <EntityType Name=""EventLog"">
+      <EntityType Name=""ActivityEventLog"">
         <Key>
           <PropertyRef Name=""Id"" />
         </Key>
         <Property Name=""Id"" Type=""Edm.Int32"" Nullable=""false"" />
         <Property Name=""ResidentId"" Type=""Edm.Int32"" />
-        <Property Name=""EventLogEntryTypeId"" Type=""Edm.Int32"" />
         <Property Name=""ActivityTypeId"" Type=""Edm.Int32"" />
         <Property Name=""ResponseTypeId"" Type=""Edm.Int32"" />
         <Property Name=""Description"" Type=""Edm.String"" />
         <Property Name=""DateEntry"" Type=""Edm.DateTimeOffset"" Nullable=""false"" />
         <NavigationProperty Name=""Resident"" Type=""Keebee.AAT.DataAccess.Models.Resident"">
           <ReferentialConstraint Property=""ResidentId"" ReferencedProperty=""Id"" />
-        </NavigationProperty>
-        <NavigationProperty Name=""EventLogEntryType"" Type=""Keebee.AAT.DataAccess.Models.EventLogEntryType"">
-          <ReferentialConstraint Property=""EventLogEntryTypeId"" ReferencedProperty=""Id"" />
         </NavigationProperty>
         <NavigationProperty Name=""ActivityType"" Type=""Keebee.AAT.DataAccess.Models.ActivityType"">
           <ReferentialConstraint Property=""ActivityTypeId"" ReferencedProperty=""Id"" />
@@ -4368,13 +4557,13 @@ namespace Keebee.AAT.Operations.Service.KeebeeAAT
           <ReferentialConstraint Property=""ResponseTypeId"" ReferencedProperty=""Id"" />
         </NavigationProperty>
       </EntityType>
-      <EntityType Name=""GamingEventLog"">
+      <EntityType Name=""GameEventLog"">
         <Key>
           <PropertyRef Name=""Id"" />
         </Key>
         <Property Name=""Id"" Type=""Edm.Int32"" Nullable=""false"" />
         <Property Name=""ResidentId"" Type=""Edm.Int32"" />
-        <Property Name=""EventLogEntryTypeId"" Type=""Edm.Int32"" />
+        <Property Name=""GameTypeId"" Type=""Edm.Int32"" />
         <Property Name=""Difficultylevel"" Type=""Edm.Int32"" Nullable=""false"" />
         <Property Name=""IsSuccess"" Type=""Edm.Boolean"" />
         <Property Name=""Description"" Type=""Edm.String"" Nullable=""false"" />
@@ -4382,16 +4571,21 @@ namespace Keebee.AAT.Operations.Service.KeebeeAAT
         <NavigationProperty Name=""Resident"" Type=""Keebee.AAT.DataAccess.Models.Resident"">
           <ReferentialConstraint Property=""ResidentId"" ReferencedProperty=""Id"" />
         </NavigationProperty>
-        <NavigationProperty Name=""EventLogEntryType"" Type=""Keebee.AAT.DataAccess.Models.EventLogEntryType"">
-          <ReferentialConstraint Property=""EventLogEntryTypeId"" ReferencedProperty=""Id"" />
+        <NavigationProperty Name=""GameType"" Type=""Keebee.AAT.DataAccess.Models.GameType"">
+          <ReferentialConstraint Property=""GameTypeId"" ReferencedProperty=""Id"" />
         </NavigationProperty>
       </EntityType>
-      <EntityType Name=""EventLogEntryType"">
+      <EntityType Name=""RfidEventLog"">
         <Key>
           <PropertyRef Name=""Id"" />
         </Key>
         <Property Name=""Id"" Type=""Edm.Int32"" Nullable=""false"" />
+        <Property Name=""ResidentId"" Type=""Edm.Int32"" />
         <Property Name=""Description"" Type=""Edm.String"" Nullable=""false"" />
+        <Property Name=""DateEntry"" Type=""Edm.DateTimeOffset"" Nullable=""false"" />
+        <NavigationProperty Name=""Resident"" Type=""Keebee.AAT.DataAccess.Models.Resident"">
+          <ReferentialConstraint Property=""ResidentId"" ReferencedProperty=""Id"" />
+        </NavigationProperty>
       </EntityType>
       <EntityType Name=""PersonalPicture"">
         <Key>
@@ -4430,11 +4624,12 @@ namespace Keebee.AAT.Operations.Service.KeebeeAAT
         </EntitySet>
         <EntitySet Name=""ProfileDetails"" EntityType=""Keebee.AAT.DataAccess.Models.ProfileDetail"">
           <NavigationPropertyBinding Path=""Profile"" Target=""Profiles"" />
-          <NavigationPropertyBinding Path=""ActivityType"" Target=""ActionTypes"" />
+          <NavigationPropertyBinding Path=""ActivityType"" Target=""ActivityTypes"" />
           <NavigationPropertyBinding Path=""ResponseType"" Target=""ResponseTypes"" />
           <NavigationPropertyBinding Path=""Responses"" Target=""Responses"" />
         </EntitySet>
-        <EntitySet Name=""ActionTypes"" EntityType=""Keebee.AAT.DataAccess.Models.ActivityType"" />
+        <EntitySet Name=""ActivityTypes"" EntityType=""Keebee.AAT.DataAccess.Models.ActivityType"" />
+        <EntitySet Name=""GameTypes"" EntityType=""Keebee.AAT.DataAccess.Models.GameType"" />
         <EntitySet Name=""Responses"" EntityType=""Keebee.AAT.DataAccess.Models.Response"">
           <NavigationPropertyBinding Path=""MediaFile"" Target=""MediaFiles"" />
         </EntitySet>
@@ -4448,17 +4643,18 @@ namespace Keebee.AAT.Operations.Service.KeebeeAAT
         </EntitySet>
         <EntitySet Name=""Caregivers"" EntityType=""Keebee.AAT.DataAccess.Models.Caregiver"" />
         <EntitySet Name=""Users"" EntityType=""Keebee.AAT.DataAccess.Models.User"" />
-        <EntitySet Name=""EventLogs"" EntityType=""Keebee.AAT.DataAccess.Models.EventLog"">
+        <EntitySet Name=""ActivityEventLogs"" EntityType=""Keebee.AAT.DataAccess.Models.ActivityEventLog"">
           <NavigationPropertyBinding Path=""Resident"" Target=""Residents"" />
-          <NavigationPropertyBinding Path=""EventLogEntryType"" Target=""EventLogEntryTypes"" />
-          <NavigationPropertyBinding Path=""ActivityType"" Target=""ActionTypes"" />
+          <NavigationPropertyBinding Path=""ActivityType"" Target=""ActivityTypes"" />
           <NavigationPropertyBinding Path=""ResponseType"" Target=""ResponseTypes"" />
         </EntitySet>
-        <EntitySet Name=""GamingEventLogs"" EntityType=""Keebee.AAT.DataAccess.Models.GamingEventLog"">
+        <EntitySet Name=""GameEventLogs"" EntityType=""Keebee.AAT.DataAccess.Models.GameEventLog"">
           <NavigationPropertyBinding Path=""Resident"" Target=""Residents"" />
-          <NavigationPropertyBinding Path=""EventLogEntryType"" Target=""EventLogEntryTypes"" />
+          <NavigationPropertyBinding Path=""GameType"" Target=""GameTypes"" />
         </EntitySet>
-        <EntitySet Name=""EventLogEntryTypes"" EntityType=""Keebee.AAT.DataAccess.Models.EventLogEntryType"" />
+        <EntitySet Name=""RfidEventLogs"" EntityType=""Keebee.AAT.DataAccess.Models.RfidEventLog"">
+          <NavigationPropertyBinding Path=""Resident"" Target=""Residents"" />
+        </EntitySet>
         <EntitySet Name=""PersonalPictures"" EntityType=""Keebee.AAT.DataAccess.Models.PersonalPicture"">
           <NavigationPropertyBinding Path=""Resident"" Target=""Residents"" />
           <NavigationPropertyBinding Path=""MediaFile"" Target=""MediaFiles"" />

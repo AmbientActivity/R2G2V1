@@ -1,4 +1,4 @@
-﻿using Keebee.AAT.EventLogging;
+﻿using Keebee.AAT.SystemEventLogging;
 using System;
 using System.Drawing;
 using System.Windows.Forms;
@@ -7,10 +7,10 @@ namespace Keebee.AAT.Display.Caregiver
 {
     public partial class ImageViewer : Form
     {
-        private EventLogger _eventLogger;
-        public EventLogger EventLogger
+        private SystemEventLogger _systemEventLogger;
+        public SystemEventLogger EventLogger
         {
-            set { _eventLogger = value; }
+            set { _systemEventLogger = value; }
         }
 
         private string[] _images;
@@ -103,7 +103,7 @@ namespace Keebee.AAT.Display.Caregiver
 
         private void ImageViewerShown(object sender, EventArgs e)
         {
-            slideViewerSimple1.EventLogger = _eventLogger;
+            slideViewerSimple1.SystemEventLogger = _systemEventLogger;
             slideViewerSimple1.Show(_images);
         }
 

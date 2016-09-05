@@ -1,4 +1,4 @@
-﻿using Keebee.AAT.EventLogging;
+﻿using Keebee.AAT.SystemEventLogging;
 using System.Collections.ObjectModel;
 using System.Drawing.Imaging;
 using System.Linq;
@@ -15,10 +15,10 @@ namespace Keebee.AAT.Display.UserControls
     {
         private const int Interval = 4000;
 
-        private EventLogger _eventLogger;
-        public EventLogger EventLogger
+        private SystemEventLogger _systemEventLogger;
+        public SystemEventLogger SystemEventLogger
         {
-            set { _eventLogger = value; }
+            set { _systemEventLogger = value; }
         }
 
         // slide show
@@ -59,7 +59,7 @@ namespace Keebee.AAT.Display.UserControls
             }
             catch (Exception ex)
             {
-                _eventLogger.WriteEntry($"SlideViewerSimple.Play: {ex.Message}", EventLogEntryType.Error);
+                _systemEventLogger.WriteEntry($"SlideViewerSimple.Play: {ex.Message}", EventLogEntryType.Error);
             }
         }
 

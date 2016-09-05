@@ -1,7 +1,7 @@
 ﻿using Keebee.AAT.RESTClient;
 using Keebee.AAT.MessageQueuing;
 using Keebee.AAT.Constants;
-using Keebee.AAT.EventLogging;
+using Keebee.AAT.SystemEventLogging;
 using Keebee.AAT.Display.UserControls;
 using Keebee.AAT.Display.Caregiver;
 using Keebee.AAT.Display.Helpers;
@@ -30,10 +30,10 @@ namespace Keebee.AAT.Display
             set { _opsClient = value; }
         }
 
-        private EventLogger _eventLogger;
-        public EventLogger EventLogger
+        private SystemEventLogger _systemEventLogger;
+        public SystemEventLogger EventLogger
         {
-            set { _eventLogger = value; }
+            set { _systemEventLogger = value; }
         }
 
         private IWMPPlaylist _ambientPlaylist;
@@ -72,7 +72,7 @@ namespace Keebee.AAT.Display
         private CaregiverInterface _caregiverInterface;
 
         // custom event loggers
-        private readonly GamingEventLogger _gamingEventLogger;
+        private readonly GameEventLogger _gameEventLogger;
         private readonly ActivityEventLogger _activityEventLogger;
 
         public Main()
@@ -94,14 +94,14 @@ namespace Keebee.AAT.Display
             });
 
             // custom event loggers
-            _gamingEventLogger = new GamingEventLogger();
+            _gameEventLogger = new GameEventLogger();
             _activityEventLogger = new ActivityEventLogger();
 
             // response complete event handlers
             slideViewerFlash1.SlideShowCompleteEvent += SlideShowComplete;
             mediaPlayer1.MediaPlayerCompleteEvent += MediaPlayerComplete;
             matchingGame1.MatchingGameTimeoutExpiredEvent += MatchingGameTimeoutExpired;
-            matchingGame1.LogGamingEventEvent += LogGamingEvent;
+            matchingGame1.LogGameEventEvent += LogGameEvent;
             mediaPlayer1.LogActivityEventEvent += LogActivityEvent;
             InitializeStartupPosition();
         }
@@ -142,20 +142,20 @@ namespace Keebee.AAT.Display
 
         private void SetPostLoadProperties()
         {
-            // the _eventLogger is not available in the constructor - this gets called later in MainShown()
-            _opsClient.EventLogger = _eventLogger;
-            _messageQueueDisplay.EventLogger = _eventLogger;
-            _messageQueueResponse.EventLogger = _eventLogger;
+            // the _systemEventLogger is not available in the constructor - this gets called later in MainShown()
+            _opsClient.SystemEventLogger = _systemEventLogger;
+            _messageQueueDisplay.SystemEventLogger = _systemEventLogger;
+            _messageQueueResponse.SystemEventLogger = _systemEventLogger;
 
-            _gamingEventLogger.OperationsClient = _opsClient;
-            _gamingEventLogger.EventLogger = _eventLogger;
+            _gameEventLogger.OperationsClient = _opsClient;
+            _gameEventLogger.SystemEventLogger = _systemEventLogger;
             _activityEventLogger.OperationsClient = _opsClient;
-            _activityEventLogger.EventLogger = _eventLogger;
+            _activityEventLogger.EventLogger = _systemEventLogger;
 
-            ambient1.EventLogger = _eventLogger;
-            mediaPlayer1.EventLogger = _eventLogger;
-            slideViewerFlash1.EventLogger = _eventLogger;
-            matchingGame1.EventLogger = _eventLogger;
+            ambient1.SystemEventLogger = _systemEventLogger;
+            mediaPlayer1.SystemEventLogger = _systemEventLogger;
+            slideViewerFlash1.SystemEventLogger = _systemEventLogger;
+            matchingGame1.SystemEventLogger = _systemEventLogger;
         }
 
         #endregion
@@ -215,7 +215,7 @@ namespace Keebee.AAT.Display
             }
             catch (Exception ex)
             {
-                _eventLogger.WriteEntry($"Main.ExecuteResponse: {ex.Message}", EventLogEntryType.Error);
+                _systemEventLogger.WriteEntry($"Main.ExecuteResponse: {ex.Message}", EventLogEntryType.Error);
             }
         }
 
@@ -441,7 +441,7 @@ namespace Keebee.AAT.Display
                 StopCurrentResponse();
                 _caregiverInterface = new CaregiverInterface
                                          {
-                                            EventLogger = _eventLogger,
+                                            EventLogger = _systemEventLogger,
                                             OperationsClient = _opsClient,
                                             GenericProfile = genericProfile
                 };
@@ -508,7 +508,7 @@ namespace Keebee.AAT.Display
             }
             catch (Exception ex)
             {
-                _eventLogger.WriteEntry($"Main.SlideShowComplete: {ex.Message}", EventLogEntryType.Error);
+                _systemEventLogger.WriteEntry($"Main.SlideShowComplete: {ex.Message}", EventLogEntryType.Error);
             }
         }
 
@@ -522,20 +522,20 @@ namespace Keebee.AAT.Display
             }
             catch (Exception ex)
             {
-                _eventLogger.WriteEntry($"Main.MediaPlayerComplete: {ex.Message}", EventLogEntryType.Error);
+                _systemEventLogger.WriteEntry($"Main.MediaPlayerComplete: {ex.Message}", EventLogEntryType.Error);
             }
         }
 
-        private void LogGamingEvent(object sender, EventArgs e)
+        private void LogGameEvent(object sender, EventArgs e)
         {
             try
             {
-                var args = (MatchingGame.LogGamingEventEventArgs)e;
-                _gamingEventLogger.Add(_currentResidentId, args.EventLogEntryTypeId, args.DifficultyLevel, args.Success, args.Description);
+                var args = (MatchingGame.LogGameEventEventArgs)e;
+                _gameEventLogger.Add(_currentResidentId, args.EventLogEntryTypeId, args.DifficultyLevel, args.Success, args.Description);
             }
             catch (Exception ex)
             {
-                _eventLogger.WriteEntry($"Main.LogGamingEvent: {ex.Message}", EventLogEntryType.Error);
+                _systemEventLogger.WriteEntry($"Main.LogGameEvent: {ex.Message}", EventLogEntryType.Error);
             }
         }
 
@@ -550,7 +550,7 @@ namespace Keebee.AAT.Display
             }
             catch (Exception ex)
             {
-                _eventLogger.WriteEntry($"Main.MatchingGameTimeoutExpiredEvent: {ex.Message}", EventLogEntryType.Error);
+                _systemEventLogger.WriteEntry($"Main.MatchingGameTimeoutExpiredEvent: {ex.Message}", EventLogEntryType.Error);
             }
         }
 
@@ -563,7 +563,7 @@ namespace Keebee.AAT.Display
             }
             catch (Exception ex)
             {
-                _eventLogger.WriteEntry($"Main.LogGamingEvent: {ex.Message}", EventLogEntryType.Error);
+                _systemEventLogger.WriteEntry($"Main.LogGameEvent: {ex.Message}", EventLogEntryType.Error);
             }
         }
 
@@ -576,7 +576,7 @@ namespace Keebee.AAT.Display
             }
             catch (Exception ex)
             {
-                _eventLogger.WriteEntry($"Main.CaregiverComplete: {ex.Message}", EventLogEntryType.Error);
+                _systemEventLogger.WriteEntry($"Main.CaregiverComplete: {ex.Message}", EventLogEntryType.Error);
             }
         }
 
@@ -595,7 +595,7 @@ namespace Keebee.AAT.Display
             }
             catch(Exception ex)
             {
-                _eventLogger.WriteEntry($"Main.MainShown: {ex.Message}", EventLogEntryType.Error);
+                _systemEventLogger.WriteEntry($"Main.MainShown: {ex.Message}", EventLogEntryType.Error);
             }
         }
 

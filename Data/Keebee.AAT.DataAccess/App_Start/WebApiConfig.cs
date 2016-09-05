@@ -14,16 +14,17 @@ namespace Keebee.AAT.DataAccess
             builder.EntitySet<Resident>("Residents");
             builder.EntitySet<Profile>("Profiles");
             builder.EntitySet<ProfileDetail>("ProfileDetails");
-            builder.EntitySet<ActivityType>("ActionTypes");
+            builder.EntitySet<ActivityType>("ActivityTypes");
+            builder.EntitySet<GameType>("GameTypes");
             builder.EntitySet<Response>("Responses");
             builder.EntitySet<ResponseType>("ResponseTypes");
             builder.EntitySet<ResponseTypeCategory>("ResponseTypeCategories");
             builder.EntitySet<AmbientResponse>("AmbientResponses");
             builder.EntitySet<Caregiver>("Caregivers");
             builder.EntitySet<User>("Users");
-            builder.EntitySet<EventLog>("EventLogs");
-            builder.EntitySet<GamingEventLog>("GamingEventLogs");
-            builder.EntitySet<EventLogEntryType>("EventLogEntryTypes");
+            builder.EntitySet<ActivityEventLog>("ActivityEventLogs");
+            builder.EntitySet<GameEventLog>("GameEventLogs");
+            builder.EntitySet<RfidEventLog>("RfidEventLogs");
             builder.EntitySet<PersonalPicture>("PersonalPictures");
             builder.EntitySet<MediaFile>("MediaFiles");
 

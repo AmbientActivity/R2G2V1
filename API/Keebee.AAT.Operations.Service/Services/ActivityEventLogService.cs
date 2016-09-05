@@ -6,41 +6,41 @@ using System;
 
 namespace Keebee.AAT.Operations.Service.Services
 {
-    public interface IEventLogService
+    public interface IActivityEventLogService
     {
-        IEnumerable<EventLog> Get();
-        EventLog Get(int id);
-        IEnumerable<EventLog> GetForDate(string date);
-        void Post(EventLog eventLog);
-        void Patch(int id, EventLog eventLog);
+        IEnumerable<ActivityEventLog> Get();
+        ActivityEventLog Get(int id);
+        IEnumerable<ActivityEventLog> GetForDate(string date);
+        void Post(ActivityEventLog activityEventLog);
+        void Patch(int id, ActivityEventLog activityEventLog);
         void Delete(int id);
     }
 
-    public class EventLogService : IEventLogService
+    public class ActivityEventLogService : IActivityEventLogService
     {
-        public IEnumerable<EventLog> Get()
+        public IEnumerable<ActivityEventLog> Get()
         {
             var container = new Container(new Uri(ODataHost.Url));
 
-            var eventLogs = container.EventLogs
-                .Expand("EventLogEntryType,Resident,ActivityType,ResponseType($expand=ResponseTypeCategory)")
+            var activityEventLogs = container.ActivityEventLogs
+                .Expand("Resident,ActivityType,ResponseType($expand=ResponseTypeCategory)")
                 .AsEnumerable();
 
-            return eventLogs;
+            return activityEventLogs;
         }
 
-        public EventLog Get(int id)
+        public ActivityEventLog Get(int id)
         {
             var container = new Container(new Uri(ODataHost.Url));
 
-            var eventLog = container.EventLogs.ByKey(id)
-                .Expand("EventLogEntryType,Resident,ActivityType,ResponseType($expand=ResponseTypeCategory)")
+            var activityEventLog = container.ActivityEventLogs.ByKey(id)
+                .Expand("Resident,ActivityType,ResponseType($expand=ResponseTypeCategory)")
                 .GetValue();
 
-            return eventLog;
+            return activityEventLog;
         }
 
-        public IEnumerable<EventLog> GetForDate(string date)
+        public IEnumerable<ActivityEventLog> GetForDate(string date)
         {
             var container = new Container(new Uri(ODataHost.Url));
 
@@ -58,39 +58,36 @@ namespace Keebee.AAT.Operations.Service.Services
 
             string filter = $"DateEntry gt {from} and DateEntry lt {to}";
 
-            var eventLogs = container.EventLogs.AddQueryOption("$filter", filter)
-                .Expand("EventLogEntryType,Resident,ActivityType,ResponseType($expand=ResponseTypeCategory)")
+            var activityEventLogs = container.ActivityEventLogs.AddQueryOption("$filter", filter)
+                .Expand("Resident,ActivityType,ResponseType($expand=ResponseTypeCategory)")
                 .ToList();
 
-            return eventLogs;
+            return activityEventLogs;
         }
 
-        public void Post(EventLog eventLog)
+        public void Post(ActivityEventLog activityEventLog)
         {
             var container = new Container(new Uri(ODataHost.Url));
 
-            container.AddToEventLogs(eventLog);
+            container.AddToActivityEventLogs(activityEventLog);
             container.SaveChanges();
         }
 
-        public void Patch(int id, EventLog eventLog)
+        public void Patch(int id, ActivityEventLog activityEventLog)
         {
             var container = new Container(new Uri(ODataHost.Url));
 
-            var el = container.EventLogs.Where(e => e.Id == id).SingleOrDefault();
+            var el = container.ActivityEventLogs.Where(e => e.Id == id).SingleOrDefault();
             if (el == null) return;
 
             if (el.ResidentId != null)
-                el.ResidentId = eventLog.ResidentId;
-
-            if (el.EventLogEntryTypeId != null)
-                el.EventLogEntryTypeId = eventLog.EventLogEntryTypeId;
+                el.ResidentId = activityEventLog.ResidentId;
 
             if (el.ActivityTypeId != null)
-                el.ActivityTypeId = eventLog.ActivityTypeId;
+                el.ActivityTypeId = activityEventLog.ActivityTypeId;
 
             if (el.ResponseTypeId != null)
-                el.ResponseTypeId = eventLog.ResponseTypeId;
+                el.ResponseTypeId = activityEventLog.ResponseTypeId;
 
             container.UpdateObject(el);
             container.SaveChanges();
@@ -100,10 +97,10 @@ namespace Keebee.AAT.Operations.Service.Services
         {
             var container = new Container(new Uri(ODataHost.Url));
 
-            var eventLog = container.EventLogs.Where(e => e.Id == id).SingleOrDefault();
-            if (eventLog == null) return;
+            var activityEventLog = container.ActivityEventLogs.Where(e => e.Id == id).SingleOrDefault();
+            if (activityEventLog == null) return;
 
-            container.DeleteObject(eventLog);
+            container.DeleteObject(activityEventLog);
             container.SaveChanges();
         }
     }

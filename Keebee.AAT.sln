@@ -27,7 +27,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Keebee.AAT.StateMachineServ
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Keebee.AAT.PhidgetService", "Service\Keebee.AAT.PhidgetService\Keebee.AAT.PhidgetService.csproj", "{94E82EF7-EEC2-48AF-9BFD-89EB27D48F6B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Keebee.AAT.RFIDReaderService", "Service\Keebee.AAT.RFIDReaderService\Keebee.AAT.RFIDReaderService.csproj", "{9927DAFE-39BD-4E0C-B04F-0FA8660458DA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Keebee.AAT.RfidReaderService", "Service\Keebee.AAT.RFIDReaderService\Keebee.AAT.RfidReaderService.csproj", "{9927DAFE-39BD-4E0C-B04F-0FA8660458DA}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shared", "Shared", "{BCD47783-6762-4B9D-965C-8E0C677E76C3}"
 EndProject
@@ -37,7 +37,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Keebee.AAT.RESTClient", "RE
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Keebee.AAT.MessageQueuing", "Shared\Keebee.AAT.MessageQueuing\Keebee.AAT.MessageQueuing.csproj", "{84A25D9A-4747-4B69-9C79-5C23210530D2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Keebee.AAT.EventLogging", "Shared\Keebee.AAT.EventLogging\Keebee.AAT.EventLogging.csproj", "{6F0A1AEF-997E-4355-BB38-A4ACF6710EDF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Keebee.AAT.SystemEventLogging", "Shared\Keebee.AAT.EventLogging\Keebee.AAT.SystemEventLogging.csproj", "{6F0A1AEF-997E-4355-BB38-A4ACF6710EDF}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Keebee.AAT.Constants", "Shared\Keebee.AAT.Constants\Keebee.AAT.Constants.csproj", "{3CB12AF2-7655-46F6-9969-990730F73964}"
 EndProject
@@ -51,7 +51,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "WebUI", "WebUI", "{9350B422
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Keebee.AAT.Administrator", "WebUI\Keebee.AAT.Administrator\Keebee.AAT.Administrator.csproj", "{B774C858-867E-4171-9EB3-22073E5FBC21}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Keebee.AAT.ActivityLog", "Shared\Keebee.AAT.ActivityLog\Keebee.AAT.ActivityLog.csproj", "{97CA2119-5977-4DE5-9C91-A64D97CB9035}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Keebee.AAT.EventLogging", "Shared\Keebee.AAT.ActivityLog\Keebee.AAT.EventLogging.csproj", "{97CA2119-5977-4DE5-9C91-A64D97CB9035}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

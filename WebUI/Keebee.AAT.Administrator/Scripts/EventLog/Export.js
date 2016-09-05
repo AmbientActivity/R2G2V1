@@ -1,13 +1,13 @@
 ﻿/*!
  * 1.0 Keebee AAT Copyright © 2015
- * ActivityLog/Export.js
+ * EventLog/Export.js
  * Author: John Charlton
  * Date: 2016-08
  */
 
 ; (function ($) {
 
-    activitylog.exporter = {
+    eventlog.exporter = {
         init: function () {
 
             // inputs

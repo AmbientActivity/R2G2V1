@@ -1,6 +1,6 @@
 ﻿using Keebee.AAT.MessageQueuing;
 using Keebee.AAT.Constants;
-using Keebee.AAT.EventLogging;
+using Keebee.AAT.SystemEventLogging;
 using Keebee.AAT.ServiceModels;
 using Phidgets;
 using Phidgets.Events;
@@ -47,7 +47,7 @@ namespace Keebee.AAT.PhidgetService
         private readonly CustomMessageQueue _messageQueuePhidget;
         
         // event logger
-        private readonly EventLogger _eventLogger;
+        private readonly SystemEventLogger _systemEventLogger;
 
         // sensor value
         private const int StepTolerance = 10;
@@ -57,7 +57,7 @@ namespace Keebee.AAT.PhidgetService
         public PhidgetService()
         {
             InitializeComponent();
-            _eventLogger = new EventLogger(EventLogType.PhidgetService);
+            _systemEventLogger = new SystemEventLogger(SystemEventLogType.PhidgetService);
             _sensorThreshold = ValidateSensorThreshold(ConfigurationManager.AppSettings["TouchSensorThreshold"]);
 
             var interfaceKit = new InterfaceKit();
@@ -68,7 +68,7 @@ namespace Keebee.AAT.PhidgetService
             _messageQueuePhidget = new CustomMessageQueue(new CustomMessageQueueArgs
                                                           {
                                                               QueueName = MessageQueueType.Phidget
-                                                          }) { EventLogger = _eventLogger };
+                                                          }) { SystemEventLogger = _systemEventLogger };
 #if DEBUG
             _messageQueuePhidgetMonitor = new CustomMessageQueue(new CustomMessageQueueArgs
             {
@@ -101,7 +101,7 @@ namespace Keebee.AAT.PhidgetService
                 return thresholdValue;
             }
 
-            _eventLogger.WriteEntry($"Invalid SensorThreshold value: {threshold}", EventLogEntryType.Error);
+            _systemEventLogger.WriteEntry($"Invalid SensorThreshold value: {threshold}", EventLogEntryType.Error);
             return DefaultTouchSensorThreshold;
         }
 
@@ -163,7 +163,7 @@ namespace Keebee.AAT.PhidgetService
             }
             catch (Exception ex)
             {
-                _eventLogger.WriteEntry($"SensorChange: {ex.Message}", EventLogEntryType.Error);
+                _systemEventLogger.WriteEntry($"SensorChange: {ex.Message}", EventLogEntryType.Error);
             }
         }
 
@@ -188,7 +188,7 @@ namespace Keebee.AAT.PhidgetService
             }
             catch (Exception ex)
             {
-                _eventLogger.WriteEntry($"InputChange: {ex.Message}", EventLogEntryType.Error);
+                _systemEventLogger.WriteEntry($"InputChange: {ex.Message}", EventLogEntryType.Error);
             }
         }
 
@@ -232,12 +232,12 @@ namespace Keebee.AAT.PhidgetService
 #endif
         protected override void OnStart(string[] args)
         {
-            _eventLogger.WriteEntry("In OnStart");
+            _systemEventLogger.WriteEntry("In OnStart");
         }
 
         protected override void OnStop()
         {
-            _eventLogger.WriteEntry("In OnStop");
+            _systemEventLogger.WriteEntry("In OnStop");
         }
 
         // phidget command line open functions

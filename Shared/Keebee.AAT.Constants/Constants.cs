@@ -9,9 +9,9 @@
         Value5 = 999
     }
 
-    public static class ActivityLog
+    public static class Log
     {
-        public const string Path = @"sqlexpress\KeebeeAATFilestream\Media\ActivityLog";
+        public const string Path = @"sqlexpress\KeebeeAATFilestream\Media\Log";
     }
 
     //TODO: add an asociatian to this file in the database somehow
@@ -23,6 +23,12 @@
     public static class UserProfile
     {
         public const int Generic = 1;
+    }
+
+    public static class UserGameType
+    {
+        public const int MatchThePictures = 1;
+        public const int MatchThePairs = 2;
     }
 
     public static class UserResponse
@@ -54,13 +60,6 @@
         public const int Ambient = -1;
         public const int Caregiver = -2;
         public const int KillDisplay = -3;
-    }
-
-    public static class UserEventLogEntryType
-    {
-        public const int SensorActivated = 1;
-        public const int PicturesMatched = 2;
-        public const int PairsMatched = 3;
     }
 
     public class ResponseMessage

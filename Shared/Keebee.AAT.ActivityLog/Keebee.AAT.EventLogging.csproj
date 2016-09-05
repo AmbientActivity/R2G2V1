@@ -7,8 +7,8 @@
     <ProjectGuid>{97CA2119-5977-4DE5-9C91-A64D97CB9035}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Keebee.AAT.ActivityLog</RootNamespace>
-    <AssemblyName>Keebee.AAT.ActivityLog</AssemblyName>
+    <RootNamespace>Keebee.AAT.EventLogging</RootNamespace>
+    <AssemblyName>Keebee.AAT.EventLogging</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
@@ -60,9 +60,9 @@
       <Project>{3cb12af2-7655-46f6-9969-990730f73964}</Project>
       <Name>Keebee.AAT.Constants</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Keebee.AAT.EventLogging\Keebee.AAT.EventLogging.csproj">
+    <ProjectReference Include="..\Keebee.AAT.EventLogging\Keebee.AAT.SystemEventLogging.csproj">
       <Project>{6f0a1aef-997e-4355-bb38-a4acf6710edf}</Project>
-      <Name>Keebee.AAT.EventLogging</Name>
+      <Name>Keebee.AAT.SystemEventLogging</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

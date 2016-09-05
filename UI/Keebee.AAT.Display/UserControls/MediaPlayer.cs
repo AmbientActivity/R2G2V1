@@ -1,5 +1,5 @@
 ﻿using Keebee.AAT.Constants;
-using Keebee.AAT.EventLogging;
+using Keebee.AAT.SystemEventLogging;
 using Keebee.AAT.Display.Extensions;
 using System;
 using System.Diagnostics;
@@ -12,10 +12,10 @@ namespace Keebee.AAT.Display.UserControls
     {
         private const string PlaylistProfile = "profile";
 
-        private EventLogger _eventLogger;
-        public EventLogger EventLogger
+        private SystemEventLogger _systemEventLogger;
+        public SystemEventLogger SystemEventLogger
         {
-            set { _eventLogger = value; }
+            set { _systemEventLogger = value; }
         }
 
         // event handler
@@ -61,7 +61,7 @@ namespace Keebee.AAT.Display.UserControls
             }
             catch (Exception ex)
             {
-                _eventLogger.WriteEntry($"MediaPlayer.Play: {ex.Message}", EventLogEntryType.Error);
+                _systemEventLogger.WriteEntry($"MediaPlayer.Play: {ex.Message}", EventLogEntryType.Error);
             }
         }
 
@@ -75,7 +75,7 @@ namespace Keebee.AAT.Display.UserControls
             }
             catch (Exception ex)
             {
-                _eventLogger.WriteEntry($"MediaPlayer.PlayNext: {ex.Message}", EventLogEntryType.Error);
+                _systemEventLogger.WriteEntry($"MediaPlayer.PlayNext: {ex.Message}", EventLogEntryType.Error);
             }
         }
 
@@ -89,7 +89,7 @@ namespace Keebee.AAT.Display.UserControls
             }
             catch (Exception ex)
             {
-                _eventLogger.WriteEntry($"MediaPlayer.PlayPrevious: {ex.Message}", EventLogEntryType.Error);
+                _systemEventLogger.WriteEntry($"MediaPlayer.PlayPrevious: {ex.Message}", EventLogEntryType.Error);
             }
         }
 
@@ -149,7 +149,7 @@ namespace Keebee.AAT.Display.UserControls
                 }
                 catch (Exception ex)
                 {
-                    _eventLogger.WriteEntry($"MediaPlayer.PlayMedia: {ex.Message}", EventLogEntryType.Error);
+                    _systemEventLogger.WriteEntry($"MediaPlayer.PlayMedia: {ex.Message}", EventLogEntryType.Error);
                 }
             }
         }

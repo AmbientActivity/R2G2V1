@@ -1,4 +1,4 @@
-﻿using Keebee.AAT.EventLogging;
+﻿using Keebee.AAT.SystemEventLogging;
 using Keebee.AAT.Display.Extensions;
 using System;
 using System.Diagnostics;
@@ -17,10 +17,10 @@ namespace Keebee.AAT.Display.Caregiver
         private string _lastPlaylistItem;
         private int _maxIndex;
 
-        private EventLogger _eventLogger;
-        public EventLogger EventLogger
+        private SystemEventLogger _systemEventLogger;
+        public SystemEventLogger EventLogger
         {
-            set { _eventLogger = value; }
+            set { _systemEventLogger = value; }
         }
 
         private string[] _videos;
@@ -75,7 +75,7 @@ namespace Keebee.AAT.Display.Caregiver
             }
             catch (Exception ex)
             {
-                _eventLogger.WriteEntry($"VideoPlayer.Play: {ex.Message}", EventLogEntryType.Error);
+                _systemEventLogger.WriteEntry($"VideoPlayer.Play: {ex.Message}", EventLogEntryType.Error);
             }
         }
 

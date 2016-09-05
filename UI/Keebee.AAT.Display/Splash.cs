@@ -1,6 +1,6 @@
 ﻿using Keebee.AAT.Display.Properties;
 using Keebee.AAT.RESTClient;
-using Keebee.AAT.EventLogging;
+using Keebee.AAT.SystemEventLogging;
 using Keebee.AAT.Display.Extensions;
 using System;
 using System.Linq;
@@ -25,12 +25,12 @@ namespace Keebee.AAT.Display
         private IWMPPlaylist _ambientPlaylist;
 
         // event logger
-        private readonly EventLogger _eventLogger;
+        private readonly SystemEventLogger _systemEventLogger;
 
         public Splash()
         {
             InitializeComponent();
-            _eventLogger = new EventLogger(EventLogType.Display);
+            _systemEventLogger = new SystemEventLogger(SystemEventLogType.Display);
             _opsClient = new OperationsClient();
 
             Location = new Point(
@@ -43,7 +43,7 @@ namespace Keebee.AAT.Display
             var main = new Main()
                        {
                            AmbientPlaylist = _ambientPlaylist,
-                           EventLogger = _eventLogger,
+                           EventLogger = _systemEventLogger,
                            OperationsClient = _opsClient
                        };
             main.Show();
@@ -89,7 +89,7 @@ namespace Keebee.AAT.Display
 
                     if (_ambientPlaylist == null)
                     {
-                        _eventLogger.WriteEntry(
+                        _systemEventLogger.WriteEntry(
                             $"Splash.LoadAmbientMediaPlaylist{Environment.NewLine}Failed to read the database.{Environment.NewLine}Number of attempts {_numAttempt}", EventLogEntryType.Warning);
 
                         _timer.Start();
@@ -99,7 +99,7 @@ namespace Keebee.AAT.Display
             }
             catch(Exception ex)
             {
-                _eventLogger.WriteEntry($"Splash.LoadAmbientMediaPlaylist: {ex.Message}", EventLogEntryType.Error);
+                _systemEventLogger.WriteEntry($"Splash.LoadAmbientMediaPlaylist: {ex.Message}", EventLogEntryType.Error);
                 _timer.Start();
                 return false;       // fail - will need to try again
             }
@@ -137,7 +137,7 @@ namespace Keebee.AAT.Display
             }
             catch (Exception ex)
             {
-                _eventLogger.WriteEntry($"Splash.TimerTick: {ex.Message}", EventLogEntryType.Error);
+                _systemEventLogger.WriteEntry($"Splash.TimerTick: {ex.Message}", EventLogEntryType.Error);
             }
         }
 
@@ -151,7 +151,7 @@ namespace Keebee.AAT.Display
             }
             catch (Exception ex)
             {
-                _eventLogger.WriteEntry($"Splash.SplashShown: {ex.Message}", EventLogEntryType.Error);
+                _systemEventLogger.WriteEntry($"Splash.SplashShown: {ex.Message}", EventLogEntryType.Error);
             }
         }
     }

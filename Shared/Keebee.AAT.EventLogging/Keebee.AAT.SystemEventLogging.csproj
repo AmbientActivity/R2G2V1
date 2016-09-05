@@ -7,8 +7,8 @@
     <ProjectGuid>{6F0A1AEF-997E-4355-BB38-A4ACF6710EDF}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Keebee.AAT.EventLogging</RootNamespace>
-    <AssemblyName>Keebee.AAT.EventLogging</AssemblyName>
+    <RootNamespace>Keebee.AAT.SystemEventLogging</RootNamespace>
+    <AssemblyName>Keebee.AAT.SystemEventLogging</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
@@ -40,7 +40,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="EventLogger.cs" />
+    <Compile Include="SystemEventLogger.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -1,4 +1,4 @@
-﻿using Keebee.AAT.EventLogging;
+﻿using Keebee.AAT.SystemEventLogging;
 using System;
 using System.Diagnostics;
 using System.Messaging;
@@ -45,10 +45,10 @@ namespace Keebee.AAT.MessageQueuing
         private const string QueueNameRFIDMonitor = "RFID-Monitor";
         private const string QueueNameRFIDMonitorState = "RFID-Monitor-State";
 #endif
-        private EventLogger _eventLogger;
-        public EventLogger EventLogger
+        private SystemEventLogger _systemEventLogger;
+        public SystemEventLogger SystemEventLogger
         {
-            set { _eventLogger = value; }
+            set { _systemEventLogger = value; }
         }
 
         public EventHandler<MessageEventArgs> MessageReceivedCallback;
@@ -83,7 +83,7 @@ namespace Keebee.AAT.MessageQueuing
 
             catch(Exception ex)
             {
-                _eventLogger?.WriteEntry($"CustomMessageQueue.Send: {ex.Message}", EventLogEntryType.Error);
+                _systemEventLogger?.WriteEntry($"CustomMessageQueue.Send: {ex.Message}", EventLogEntryType.Error);
             }
 
             finally
@@ -100,7 +100,7 @@ namespace Keebee.AAT.MessageQueuing
             }
             catch (Exception ex)
             {
-                _eventLogger?.WriteEntry($"CustomMessageQueue.Send: {ex.Message}", EventLogEntryType.Error);
+                _systemEventLogger?.WriteEntry($"CustomMessageQueue.Send: {ex.Message}", EventLogEntryType.Error);
             }
         }
 
@@ -164,7 +164,7 @@ namespace Keebee.AAT.MessageQueuing
             }
             catch (Exception ex)
             {
-                _eventLogger?.WriteEntry($"CustomMessageQueue.Create: {ex.Message}", EventLogEntryType.Error);
+                _systemEventLogger?.WriteEntry($"CustomMessageQueue.Create: {ex.Message}", EventLogEntryType.Error);
                 return null;
             }
             

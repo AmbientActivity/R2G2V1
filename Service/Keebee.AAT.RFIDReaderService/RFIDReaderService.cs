@@ -1,5 +1,5 @@
 ﻿using Keebee.AAT.RESTClient;
-using Keebee.AAT.EventLogging;
+using Keebee.AAT.SystemEventLogging;
 using Keebee.AAT.MessageQueuing;
 #if DEBUG
 using Keebee.AAT.Constants;
@@ -16,7 +16,7 @@ using System.Threading;
 
 namespace Keebee.AAT.RFIDReaderService
 {
-    partial class RFIDReaderService : ServiceBase
+    internal partial class RfidReaderService : ServiceBase
     {
 #if DEBUG
         private readonly CustomMessageQueue _messageQueueRfidMonitor;
@@ -27,7 +27,7 @@ namespace Keebee.AAT.RFIDReaderService
         private readonly IOperationsClient _opsClient;
 
         // event logger
-        private readonly EventLogger _eventLogger;
+        private readonly SystemEventLogger _systemEventLogger;
 
         // message queue sender
         private readonly CustomMessageQueue _messageQueueRfid;
@@ -42,17 +42,17 @@ namespace Keebee.AAT.RFIDReaderService
         private const int MaxReads = 15;
         private const int ReadInterval = 300;   // in milliseconds
 
-        public RFIDReaderService()
+        public RfidReaderService()
         {
             InitializeComponent();
-            _eventLogger = new EventLogger(EventLogType.RfidReaderService);
-            _opsClient = new OperationsClient { EventLogger = _eventLogger };
+            _systemEventLogger = new SystemEventLogger(SystemEventLogType.RfidReaderService);
+            _opsClient = new OperationsClient { SystemEventLogger = _systemEventLogger };
 
             // message queue sender
             _messageQueueRfid = new CustomMessageQueue(new CustomMessageQueueArgs
                                                        {
                                                            QueueName = MessageQueueType.Rfid
-                                                       }) {EventLogger = _eventLogger};
+                                                       }) { SystemEventLogger = _systemEventLogger };
 #if DEBUG
             _messageQueueRfidMonitor = new CustomMessageQueue(new CustomMessageQueueArgs
             {
@@ -62,7 +62,7 @@ namespace Keebee.AAT.RFIDReaderService
             var q = new CustomMessageQueue(new CustomMessageQueueArgs
             {
                 QueueName = MessageQueueType.RfidMonitorState,
-                MessageReceivedCallback = RFIDReaderMonitorMessageReceived
+                MessageReceivedCallback = RfidReaderMonitorMessageReceived
             });
 #endif
 
@@ -76,7 +76,7 @@ namespace Keebee.AAT.RFIDReaderService
             Device[] devices = USBDeviceFactory.Enumerate();
             if (devices.Length == 0)
             {
-                _eventLogger.WriteEntry("No USB devices found", EventLogEntryType.Warning);
+                _systemEventLogger.WriteEntry("No USB devices found", EventLogEntryType.Warning);
             }
             else
             {
@@ -199,7 +199,7 @@ namespace Keebee.AAT.RFIDReaderService
 
             catch (Exception ex)
             {
-                _eventLogger.WriteEntry($"Read: {ex.Message}", EventLogEntryType.Error);
+                _systemEventLogger.WriteEntry($"Read: {ex.Message}", EventLogEntryType.Error);
             }
 
             return residentId;
@@ -215,7 +215,7 @@ namespace Keebee.AAT.RFIDReaderService
             return messageBody;
         }
 
-        private void RFIDReaderMonitorMessageReceived(object sender, MessageEventArgs e)
+        private void RfidReaderMonitorMessageReceived(object sender, MessageEventArgs e)
         {
             var message = (e.MessageBody);
 
@@ -224,15 +224,28 @@ namespace Keebee.AAT.RFIDReaderService
         }
 #endif
 
+        private void LogRfidEvent(object sender, EventArgs e)
+        {
+            try
+            {
+                //var args = (MatchingGame.LogGameEventEventArgs)e;
+                //_gamingEventLogger.Add(_currentResidentId, args.EventLogEntryTypeId, args.DifficultyLevel, args.Success, args.Description);
+            }
+            catch (Exception ex)
+            {
+                _systemEventLogger.WriteEntry($"RFIDReaderService.LogRfidEvent: {ex.Message}", EventLogEntryType.Error);
+            }
+        }
+
         protected override void OnStart(string[] args)
         {
-            _eventLogger.WriteEntry("In OnStart");
+            _systemEventLogger.WriteEntry("In OnStart");
         }
 
         protected override void OnStop()
         {
             _readTagThread.Abort();
-            _eventLogger.WriteEntry("In OnStop");
+            _systemEventLogger.WriteEntry("In OnStop");
         }
     }
 }

@@ -14,9 +14,10 @@ END
 IF OBJECT_ID('__MigrationHistory', 'U') IS NOT NULL DROP TABLE __MigrationHistory
 IF OBJECT_ID('Users', 'U') IS NOT NULL DROP TABLE Users
 IF OBJECT_ID('Caregivers', 'U') IS NOT NULL DROP TABLE Caregivers
-IF OBJECT_ID('EventLogs', 'U') IS NOT NULL DROP TABLE EventLogs
-IF OBJECT_ID('GamingEventLogs', 'U') IS NOT NULL DROP TABLE GamingEventLogs
-IF OBJECT_ID('EventLogEntryTypes', 'U') IS NOT NULL DROP TABLE EventLogEntryTypes
+IF OBJECT_ID('ActivityEventLogs', 'U') IS NOT NULL DROP TABLE ActivityEventLogs
+IF OBJECT_ID('GameEventLogs', 'U') IS NOT NULL DROP TABLE GameEventLogs
+IF OBJECT_ID('RfidEventLogs', 'U') IS NOT NULL DROP TABLE RfidEventLogs
+IF OBJECT_ID('GameTypes', 'U') IS NOT NULL DROP TABLE GameTypes
 IF OBJECT_ID('Responses', 'U') IS NOT NULL DROP TABLE Responses
 IF OBJECT_ID('AmbientResponses', 'U') IS NOT NULL DROP TABLE AmbientResponses
 IF OBJECT_ID('PersonalPictures', 'U') IS NOT NULL DROP TABLE PersonalPictures

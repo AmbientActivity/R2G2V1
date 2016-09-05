@@ -1,4 +1,4 @@
-﻿using Keebee.AAT.EventLogging;
+﻿using Keebee.AAT.SystemEventLogging;
 using Keebee.AAT.RESTClient;
 using Keebee.AAT.Display.Helpers;
 using Keebee.AAT.Display.UserControls;
@@ -11,10 +11,10 @@ namespace Keebee.AAT.Display.Caregiver
 {
     public partial class ActivityPlayer : Form
     {
-        private EventLogger _eventLogger;
-        public EventLogger EventLogger
+        private SystemEventLogger _systemEventLogger;
+        public SystemEventLogger SystemEventLogger
         {
-            set { _eventLogger = value; }
+            set { _systemEventLogger = value; }
         }
 
         private OperationsClient _opsClient;
@@ -47,7 +47,7 @@ namespace Keebee.AAT.Display.Caregiver
             set { _residentId = value; }
         }
 
-        private readonly GamingEventLogger _gamingEventLogger;
+        private readonly GameEventLogger _gameEventLogger;
 
 #if DEBUG
         private const int ActivityNameLabelFontSize = 24;
@@ -63,9 +63,9 @@ namespace Keebee.AAT.Display.Caregiver
             InitializeStartupPosition();
 
             // gaming event logger
-            _gamingEventLogger = new GamingEventLogger();
+            _gameEventLogger = new GameEventLogger();
 
-            matchingGame1.LogGamingEventEvent += LogGamingEvent;
+            matchingGame1.LogGameEventEvent += LogGameEvent;
         }
 
         private void ConfigureComponents()
@@ -100,22 +100,22 @@ namespace Keebee.AAT.Display.Caregiver
         {
             lblActivityName.Text = _activityName;
             lblActivityName.Font = new Font("Microsoft Sans Serif", ActivityNameLabelFontSize);
-            _gamingEventLogger.EventLogger = _eventLogger;
-            _gamingEventLogger.OperationsClient = _opsClient;
-            matchingGame1.EventLogger = _eventLogger;
+            _gameEventLogger.SystemEventLogger = _systemEventLogger;
+            _gameEventLogger.OperationsClient = _opsClient;
+            matchingGame1.SystemEventLogger = _systemEventLogger;
             matchingGame1.Play(_files, _difficultyLevel, false);
         }
 
-        private void LogGamingEvent(object sender, EventArgs e)
+        private void LogGameEvent(object sender, EventArgs e)
         {
             try
             {
-                var args = (MatchingGame.LogGamingEventEventArgs)e;
-                _gamingEventLogger.Add(_residentId, args.EventLogEntryTypeId, args.DifficultyLevel, args.Success, args.Description);
+                var args = (MatchingGame.LogGameEventEventArgs)e;
+                _gameEventLogger.Add(_residentId, args.EventLogEntryTypeId, args.DifficultyLevel, args.Success, args.Description);
             }
             catch (Exception ex)
             {
-                _eventLogger.WriteEntry($"Main.LogGamingEvent: {ex.Message}", EventLogEntryType.Error);
+                _systemEventLogger.WriteEntry($"Main.LogGameEvent: {ex.Message}", EventLogEntryType.Error);
             }
         }
     }

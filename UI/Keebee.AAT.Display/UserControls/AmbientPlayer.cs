@@ -1,4 +1,4 @@
-﻿using Keebee.AAT.EventLogging;
+﻿using Keebee.AAT.SystemEventLogging;
 using System;
 using System.Diagnostics;
 using System.Windows.Forms;
@@ -8,10 +8,10 @@ namespace Keebee.AAT.Display.UserControls
 {
     public partial class AmbientPlayer : UserControl
     {
-        private EventLogger _eventLogger;
-        public EventLogger EventLogger
+        private SystemEventLogger _systemEventLogger;
+        public SystemEventLogger SystemEventLogger
         {
-            set { _eventLogger = value; }
+            set { _systemEventLogger = value; }
         }
 
         // delegate
@@ -34,7 +34,7 @@ namespace Keebee.AAT.Display.UserControls
             }
             catch (Exception ex)
             {
-                _eventLogger.WriteEntry($"AmbientPlayer.PlayAmbient: {ex.Message}", EventLogEntryType.Error);
+                _systemEventLogger.WriteEntry($"AmbientPlayer.PlayAmbient: {ex.Message}", EventLogEntryType.Error);
             }
         }
 
@@ -71,7 +71,7 @@ namespace Keebee.AAT.Display.UserControls
                 }
                 catch (Exception ex)
                 {
-                    _eventLogger.WriteEntry($"AmbientPlayer.PlayAmbient: {ex.Message}", EventLogEntryType.Error);
+                    _systemEventLogger.WriteEntry($"AmbientPlayer.PlayAmbient: {ex.Message}", EventLogEntryType.Error);
                 }
             }
         }

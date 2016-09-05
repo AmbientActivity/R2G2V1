@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Keebee.AAT.DataAccess.Models
 {
-    public class GamingEventLog
+    public class GameEventLog
     {
         [Key]
         public int Id { get; set; }
@@ -13,9 +13,9 @@ namespace Keebee.AAT.DataAccess.Models
         public int? ResidentId { get; set; }
         public virtual Resident Resident { get; set; }
 
-        [ForeignKey("EventLogEntryType")]
-        public int EventLogEntryTypeId { get; set; }
-        public virtual EventLogEntryType EventLogEntryType { get; set; }
+        [ForeignKey("GameType")]
+        public int GameTypeId { get; set; }
+        public virtual GameType GameType { get; set; }
 
         public int Difficultylevel{ get; set; }
 

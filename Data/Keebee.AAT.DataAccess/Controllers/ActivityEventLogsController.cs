@@ -1,4 +1,5 @@
 ﻿using Keebee.AAT.DataAccess.Models;
+using System;
 using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Net;
@@ -8,26 +9,26 @@ using System.Web.OData;
 
 namespace Keebee.AAT.DataAccess.Controllers
 {
-    public class EventLogEntryTypesController : ODataController
+    public class ActivityEventLogsController : ODataController
     {
         private KeebeeAATContext db = new KeebeeAATContext();
 
-        // GET: odata/EventLogEntryTypes
+        // GET: odata/ActivityEventLogs
         [EnableQuery]
-        public IQueryable<EventLogEntryType> GetEventLogEntryTypes()
+        public IQueryable<ActivityEventLog> Get()
         {
-            return db.EventLogEntryTypes;
+            return db.ActivityEventLogs;
         }
 
-        // GET: odata/EventLogEntryTypes(5)
+        // GET: odata/ActivityEventLogs(5)
         [EnableQuery]
-        public SingleResult<EventLogEntryType> GetEventLogEntryType([FromODataUri] int key)
+        public SingleResult<ActivityEventLog> Get([FromODataUri] int key)
         {
-            return SingleResult.Create(db.EventLogEntryTypes.Where(eventLogEntryType => eventLogEntryType.Id == key));
+            return SingleResult.Create(db.ActivityEventLogs.Where(activityEventLog => activityEventLog.Id == key));
         }
 
-        // PUT: odata/EventLogEntryTypes(5)
-        public async Task<IHttpActionResult> Put([FromODataUri] int key, Delta<EventLogEntryType> patch)
+        // PUT: odata/ActivityEventLogs(5)
+        public async Task<IHttpActionResult> Put([FromODataUri] int key, Delta<ActivityEventLog> patch)
         {
             Validate(patch.GetEntity());
 
@@ -36,13 +37,13 @@ namespace Keebee.AAT.DataAccess.Controllers
                 return BadRequest(ModelState);
             }
 
-            EventLogEntryType eventLogEntryType = await db.EventLogEntryTypes.FindAsync(key);
-            if (eventLogEntryType == null)
+            ActivityEventLog activityEventLog = await db.ActivityEventLogs.FindAsync(key);
+            if (activityEventLog == null)
             {
                 return NotFound();
             }
 
-            patch.Put(eventLogEntryType);
+            patch.Put(activityEventLog);
 
             try
             {
@@ -50,7 +51,7 @@ namespace Keebee.AAT.DataAccess.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!EventLogEntryTypeExists(key))
+                if (!ActivityEventLogExists(key))
                 {
                     return NotFound();
                 }
@@ -60,26 +61,27 @@ namespace Keebee.AAT.DataAccess.Controllers
                 }
             }
 
-            return Updated(eventLogEntryType);
+            return Updated(activityEventLog);
         }
 
-        // POST: odata/EventLogEntryTypes
-        public async Task<IHttpActionResult> Post(EventLogEntryType eventLogEntryType)
+        // POST: odata/ActivityEventLogs
+        public async Task<IHttpActionResult> Post(ActivityEventLog activityEventLog)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            db.EventLogEntryTypes.Add(eventLogEntryType);
+            activityEventLog.DateEntry = DateTime.Now;
+            db.ActivityEventLogs.Add(activityEventLog);
             await db.SaveChangesAsync();
 
-            return Created(eventLogEntryType);
+            return Created(activityEventLog);
         }
 
-        // PATCH: odata/EventLogEntryTypes(5)
+        // PATCH: odata/ActivityEventLogs(5)
         [AcceptVerbs("PATCH", "MERGE")]
-        public async Task<IHttpActionResult> Patch([FromODataUri] int key, Delta<EventLogEntryType> patch)
+        public async Task<IHttpActionResult> Patch([FromODataUri] int key, Delta<ActivityEventLog> patch)
         {
             Validate(patch.GetEntity());
 
@@ -88,13 +90,13 @@ namespace Keebee.AAT.DataAccess.Controllers
                 return BadRequest(ModelState);
             }
 
-            EventLogEntryType eventLogEntryType = await db.EventLogEntryTypes.FindAsync(key);
-            if (eventLogEntryType == null)
+            ActivityEventLog activityEventLog = await db.ActivityEventLogs.FindAsync(key);
+            if (activityEventLog == null)
             {
                 return NotFound();
             }
 
-            patch.Patch(eventLogEntryType);
+            patch.Patch(activityEventLog);
 
             try
             {
@@ -102,7 +104,7 @@ namespace Keebee.AAT.DataAccess.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!EventLogEntryTypeExists(key))
+                if (!ActivityEventLogExists(key))
                 {
                     return NotFound();
                 }
@@ -112,22 +114,29 @@ namespace Keebee.AAT.DataAccess.Controllers
                 }
             }
 
-            return Updated(eventLogEntryType);
+            return Updated(activityEventLog);
         }
 
-        // DELETE: odata/EventLogEntryTypes(5)
+        // DELETE: odata/ActivityEventLogs(5)
         public async Task<IHttpActionResult> Delete([FromODataUri] int key)
         {
-            EventLogEntryType eventLogEntryType = await db.EventLogEntryTypes.FindAsync(key);
-            if (eventLogEntryType == null)
+            ActivityEventLog activityEventLog = await db.ActivityEventLogs.FindAsync(key);
+            if (activityEventLog == null)
             {
                 return NotFound();
             }
 
-            db.EventLogEntryTypes.Remove(eventLogEntryType);
+            db.ActivityEventLogs.Remove(activityEventLog);
             await db.SaveChangesAsync();
 
             return StatusCode(HttpStatusCode.NoContent);
+        }
+
+        // GET: odata/ActivityEventLogs(5)/Resident
+        [EnableQuery]
+        public SingleResult<Resident> GetResident([FromODataUri] int key)
+        {
+            return SingleResult.Create(db.ActivityEventLogs.Where(m => m.Id == key).Select(m => m.Resident));
         }
 
         protected override void Dispose(bool disposing)
@@ -139,9 +148,9 @@ namespace Keebee.AAT.DataAccess.Controllers
             base.Dispose(disposing);
         }
 
-        private bool EventLogEntryTypeExists(int key)
+        private bool ActivityEventLogExists(int key)
         {
-            return db.EventLogEntryTypes.Count(e => e.Id == key) > 0;
+            return db.ActivityEventLogs.Count(e => e.Id == key) > 0;
         }
     }
 }

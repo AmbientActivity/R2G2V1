@@ -2,11 +2,10 @@
 
 namespace Keebee.AAT.RESTClient
 {
-    public class EventLog
+    public class ActivityEventLog
     {
         // for insert
         public int? ResidentId { get; set; }
-        public int EventLogEntryTypeId { get; set; }
         public int ResponseTypeId { get; set; }
         public int ActivityTypeId { get; set; }
         public string Description { get; set; }
@@ -20,8 +19,8 @@ namespace Keebee.AAT.RESTClient
         public string ResponseTypeCategory { get; set; }
     }
 
-    public class EventLogList
+    public class ActivityEventLogList
     {
-        public IEnumerable<EventLog> EventLogs { get; set; }
+        public IEnumerable<ActivityEventLog> ActivityEventLogs { get; set; }
     }
 }

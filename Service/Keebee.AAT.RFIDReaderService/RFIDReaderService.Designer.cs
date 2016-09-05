@@ -1,6 +1,6 @@
 ﻿namespace Keebee.AAT.RFIDReaderService
 {
-    partial class RFIDReaderService
+    partial class RfidReaderService
     {
         /// <summary> 
         /// Required designer variable.

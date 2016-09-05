@@ -80,8 +80,8 @@
     </Compile>
     <Compile Include="ODataHost.cs" />
     <Compile Include="Services\AmbientResponseService.cs" />
-    <Compile Include="Services\EventLogService.cs" />
-    <Compile Include="Services\GamingEventLogService.cs" />
+    <Compile Include="Services\ActivityEventLogService.cs" />
+    <Compile Include="Services\GameEventLogService.cs" />
     <Compile Include="Services\MediaService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\PersonalPictureService.cs" />
@@ -89,6 +89,7 @@
     <Compile Include="Services\ProfileService.cs" />
     <Compile Include="Services\ResidentService.cs" />
     <Compile Include="Services\ResponseService.cs" />
+    <Compile Include="Services\RfidEventLogService.cs" />
     <Compile Include="Services\StatusService.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -1,4 +1,4 @@
-﻿using Keebee.AAT.EventLogging;
+﻿using Keebee.AAT.SystemEventLogging;
 using AxShockwaveFlashObjects;
 using System;
 using System.Collections.Generic;
@@ -12,17 +12,17 @@ namespace Keebee.AAT.Display.UserControls
 {
     public partial class MatchingGame : UserControl
     {
-        private EventLogger _eventLogger;
-        public EventLogger EventLogger
+        private SystemEventLogger _systemEventLogger;
+        public SystemEventLogger SystemEventLogger
         {
-            set { _eventLogger = value; }
+            set { _systemEventLogger = value; }
         }
 
         // event handler
         public event EventHandler MatchingGameTimeoutExpiredEvent;
-        public event EventHandler LogGamingEventEvent;
+        public event EventHandler LogGameEventEvent;
 
-        public class LogGamingEventEventArgs : EventArgs
+        public class LogGameEventEventArgs : EventArgs
         {
             public int EventLogEntryTypeId { get; set; }
             public string Description { get; set; }
@@ -32,7 +32,7 @@ namespace Keebee.AAT.Display.UserControls
 
         // delegate
         private delegate void RaiseMatchingGameTimeoutExpiredDelegate();
-        private delegate void RaiseLogGamingEventEventDelegate(int eventLogEntryTypeId, int difficultyLevel, bool? success, string description);
+        private delegate void RaiseLogGameEventEventDelegate(int eventLogEntryTypeId, int difficultyLevel, bool? success, string description);
 
         private int _initialDifficultyLevel;
         private bool _enableGameTimeout;
@@ -80,7 +80,7 @@ namespace Keebee.AAT.Display.UserControls
 
             catch (Exception ex)
             {
-                _eventLogger.WriteEntry($"Display.MatchingGame.PlayGame{Environment.NewLine}{ex.Message}", EventLogEntryType.Error);
+                _systemEventLogger.WriteEntry($"Display.MatchingGame.PlayGame{Environment.NewLine}{ex.Message}", EventLogEntryType.Error);
             }
         }
 
@@ -93,7 +93,7 @@ namespace Keebee.AAT.Display.UserControls
             }
             catch (Exception ex)
             {
-                _eventLogger.WriteEntry($"Display.MatchingGame.Stop{Environment.NewLine}{ex.Message}", EventLogEntryType.Error);
+                _systemEventLogger.WriteEntry($"Display.MatchingGame.Stop{Environment.NewLine}{ex.Message}", EventLogEntryType.Error);
             }
             
         }
@@ -129,7 +129,7 @@ namespace Keebee.AAT.Display.UserControls
 
             catch (Exception ex)
             {
-                _eventLogger.WriteEntry($"Display.MatchingGame.GetXmlString{Environment.NewLine}{ex.Message}", EventLogEntryType.Error);
+                _systemEventLogger.WriteEntry($"Display.MatchingGame.GetXmlString{Environment.NewLine}{ex.Message}", EventLogEntryType.Error);
             }
 
             return xmlBuilder.ToString();
@@ -191,7 +191,7 @@ namespace Keebee.AAT.Display.UserControls
                     if (isGameHasExpired)
                         RaiseMatchingGameTimeoutExpired();
 
-                    RaiseLogGamingEventEvent(eventLogEntryTypeId, difficultyLevel, isSuccess, description);
+                    RaiseLogGameEventEvent(eventLogEntryTypeId, difficultyLevel, isSuccess, description);
                 }
 
                 // no arguments implies "raise game complete event"
@@ -203,7 +203,7 @@ namespace Keebee.AAT.Display.UserControls
 
             catch (Exception ex)
             {
-                _eventLogger.WriteEntry($"Display.MatchingGame.FlashCall{Environment.NewLine}{ex.Message}", EventLogEntryType.Error);
+                _systemEventLogger.WriteEntry($"Display.MatchingGame.FlashCall{Environment.NewLine}{ex.Message}", EventLogEntryType.Error);
             }
         }
 
@@ -221,17 +221,17 @@ namespace Keebee.AAT.Display.UserControls
             }
         }
 
-        private void RaiseLogGamingEventEvent(int eventLogEntryTypeId, int difficultyLevel, bool? success, string description)
+        private void RaiseLogGameEventEvent(int eventLogEntryTypeId, int difficultyLevel, bool? success, string description)
         {
             if (IsDisposed) return;
 
             if (InvokeRequired)
             {
-                Invoke(new RaiseLogGamingEventEventDelegate(RaiseLogGamingEventEvent));
+                Invoke(new RaiseLogGameEventEventDelegate(RaiseLogGameEventEvent));
             }
             else
             {
-                var args = new LogGamingEventEventArgs
+                var args = new LogGameEventEventArgs
                            {
                                EventLogEntryTypeId = eventLogEntryTypeId,
                                DifficultyLevel = difficultyLevel,
@@ -239,7 +239,7 @@ namespace Keebee.AAT.Display.UserControls
                                Description = description
                            };
 
-                LogGamingEventEvent?.Invoke(new object(), args);
+                LogGameEventEvent?.Invoke(new object(), args);
             }
         }
     }

@@ -44,12 +44,13 @@
   <ItemGroup>
     <Compile Include="DTO\PersonalPicture.cs" />
     <Compile Include="DTO\ResponseType.cs" />
-    <Compile Include="DTO\EventLog.cs" />
-    <Compile Include="DTO\GamingEventLog.cs" />
+    <Compile Include="DTO\ActivityEventLog.cs" />
+    <Compile Include="DTO\GameEventLog.cs" />
     <Compile Include="DTO\Profile.cs" />
     <Compile Include="DTO\ProfileDetail.cs" />
     <Compile Include="DTO\Resident.cs" />
     <Compile Include="DTO\Response.cs" />
+    <Compile Include="DTO\RfidEventLog.cs" />
     <Compile Include="OperationsClient.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -58,9 +59,9 @@
       <Project>{3cb12af2-7655-46f6-9969-990730f73964}</Project>
       <Name>Keebee.AAT.Constants</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Shared\Keebee.AAT.EventLogging\Keebee.AAT.EventLogging.csproj">
+    <ProjectReference Include="..\..\Shared\Keebee.AAT.EventLogging\Keebee.AAT.SystemEventLogging.csproj">
       <Project>{6f0a1aef-997e-4355-bb38-a4acf6710edf}</Project>
-      <Name>Keebee.AAT.EventLogging</Name>
+      <Name>Keebee.AAT.SystemEventLogging</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

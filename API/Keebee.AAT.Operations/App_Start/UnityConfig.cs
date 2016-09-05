@@ -22,8 +22,9 @@ namespace Keebee.AAT.Operations
             container.RegisterType<IAmbientResponseService, AmbientResponseService>();
             container.RegisterType<IResponseService, ResponseService>();
             container.RegisterType<IPersonalPictureService, PersonalPictureService>();
-            container.RegisterType<IEventLogService, EventLogService>();
-            container.RegisterType<IGamingEventLogService, GamingEventLogService>();
+            container.RegisterType<IActivityEventLogService, ActivityEventLogService>();
+            container.RegisterType<IGameEventLogService, GameEventLogService>();
+            container.RegisterType<IRfidEventLogService, RfidEventLogService>();
             container.RegisterType<IMediaService, MediaService>();
             container.RegisterType<IStatusService, StatusService>();
 

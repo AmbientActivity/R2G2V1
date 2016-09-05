@@ -6,41 +6,41 @@ using System;
 
 namespace Keebee.AAT.Operations.Service.Services
 {
-    public interface IGamingEventLogService
+    public interface IGameEventLogService
     {
-        IEnumerable<GamingEventLog> Get();
-        GamingEventLog Get(int id);
-        IEnumerable<GamingEventLog> GetForDate(string date);
-        void Post(GamingEventLog gamingEventLog);
-        void Patch(int id, GamingEventLog gamingEventLog);
+        IEnumerable<GameEventLog> Get();
+        GameEventLog Get(int id);
+        IEnumerable<GameEventLog> GetForDate(string date);
+        void Post(GameEventLog gameEventLog);
+        void Patch(int id, GameEventLog gameEventLog);
         void Delete(int id);
     }
 
-    public class GamingEventLogService : IGamingEventLogService
+    public class GameEventLogService : IGameEventLogService
     {
-        public IEnumerable<GamingEventLog> Get()
+        public IEnumerable<GameEventLog> Get()
         {
             var container = new Container(new Uri(ODataHost.Url));
 
-            var gamingEventLogs = container.GamingEventLogs
-                .Expand("EventLogEntryType,Resident")
+            var gameEventLogs = container.GameEventLogs
+                .Expand("GameType,Resident")
                 .AsEnumerable();
 
-            return gamingEventLogs;
+            return gameEventLogs;
         }
 
-        public GamingEventLog Get(int id)
+        public GameEventLog Get(int id)
         {
             var container = new Container(new Uri(ODataHost.Url));
 
-            var gamingEventLog = container.GamingEventLogs.ByKey(id)
-                .Expand("EventLogEntryType,Resident")
+            var gameEventLog = container.GameEventLogs.ByKey(id)
+                .Expand("GameType,Resident")
                 .GetValue();
 
-            return gamingEventLog;
+            return gameEventLog;
         }
 
-        public IEnumerable<GamingEventLog> GetForDate(string date)
+        public IEnumerable<GameEventLog> GetForDate(string date)
         {
             var container = new Container(new Uri(ODataHost.Url));
 
@@ -58,36 +58,36 @@ namespace Keebee.AAT.Operations.Service.Services
 
             string filter = $"DateEntry gt {from} and DateEntry lt {to}";
 
-            var eventLogs = container.GamingEventLogs.AddQueryOption("$filter", filter)
-                .Expand("EventLogEntryType,Resident")
+            var gameEventLogs = container.GameEventLogs.AddQueryOption("$filter", filter)
+                .Expand("GameType,Resident")
                 .ToList();
 
-            return eventLogs;
+            return gameEventLogs;
         }
 
-        public void Post(GamingEventLog gamingEventLog)
+        public void Post(GameEventLog gameEventLog)
         {
             var container = new Container(new Uri(ODataHost.Url));
 
-            container.AddToGamingEventLogs(gamingEventLog);
+            container.AddToGameEventLogs(gameEventLog);
             container.SaveChanges();
         }
 
-        public void Patch(int id, GamingEventLog gamingEventLog)
+        public void Patch(int id, GameEventLog gameEventLog)
         {
             var container = new Container(new Uri(ODataHost.Url));
 
-            var el = container.GamingEventLogs.Where(e => e.Id == id).SingleOrDefault();
+            var el = container.GameEventLogs.Where(e => e.Id == id).SingleOrDefault();
             if (el == null) return;
 
             if (el.ResidentId != null)
-                el.ResidentId = gamingEventLog.ResidentId;
+                el.ResidentId = gameEventLog.ResidentId;
 
-            if (el.EventLogEntryTypeId != null)
-                el.EventLogEntryTypeId = gamingEventLog.EventLogEntryTypeId;
+            if (el.GameTypeId != null)
+                el.GameTypeId = gameEventLog.GameTypeId;
 
             if (el.Description != null)
-                el.Description = gamingEventLog.Description;
+                el.Description = gameEventLog.Description;
 
             container.UpdateObject(el);
             container.SaveChanges();
@@ -97,10 +97,10 @@ namespace Keebee.AAT.Operations.Service.Services
         {
             var container = new Container(new Uri(ODataHost.Url));
 
-            var gamingEventLog = container.GamingEventLogs.Where(e => e.Id == id).SingleOrDefault();
-            if (gamingEventLog == null) return;
+            var gameEventLog = container.GameEventLogs.Where(e => e.Id == id).SingleOrDefault();
+            if (gameEventLog == null) return;
 
-            container.DeleteObject(gamingEventLog);
+            container.DeleteObject(gameEventLog);
             container.SaveChanges();
         }
     }

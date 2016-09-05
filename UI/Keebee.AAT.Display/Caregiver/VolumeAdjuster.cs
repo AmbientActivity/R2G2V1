@@ -1,6 +1,6 @@
 ﻿using Keebee.AAT.Display.Extensions;
 using Keebee.AAT.Display.Helpers;
-using Keebee.AAT.EventLogging;
+using Keebee.AAT.SystemEventLogging;
 using Keebee.AAT.Constants;
 using System;
 using System.Diagnostics;
@@ -16,10 +16,10 @@ namespace Keebee.AAT.Display.Caregiver
         // use Cats video for sample audio clip
         private readonly string _catsVideo = $@"\\{Environment.MachineName}\{MediaPath.CatsVideo}";
 
-        private EventLogger _eventLogger;
-        public EventLogger EventLogger
+        private SystemEventLogger _systemEventLogger;
+        public SystemEventLogger EventLogger
         {
-            set { _eventLogger = value; }
+            set { _systemEventLogger = value; }
         }
 
         private bool _isMusicPlaying;
@@ -64,7 +64,7 @@ namespace Keebee.AAT.Display.Caregiver
             }
             catch (Exception ex)
             {
-                _eventLogger.WriteEntry($"Caregiver.VolumeAdjuster.Play: {ex.Message}", EventLogEntryType.Error);
+                _systemEventLogger.WriteEntry($"Caregiver.VolumeAdjuster.Play: {ex.Message}", EventLogEntryType.Error);
             }
         }
 

@@ -11,38 +11,37 @@ using System.Web.Script.Serialization;
 
 namespace Keebee.AAT.Operations.Controllers
 {
-    [RoutePrefix("api/eventlogs")]
-    public class EventLogsController : ApiController
+    [RoutePrefix("api/ActivityEventLogs")]
+    public class ActivityEventLogsController : ApiController
     {
-        private readonly IEventLogService _eventLogService;
+        private readonly IActivityEventLogService _activityEventLogService;
 
-        public EventLogsController(IEventLogService eventLogService)
+        public ActivityEventLogsController(IActivityEventLogService activityEventLogService)
         {
-            _eventLogService = eventLogService;
+            _activityEventLogService = activityEventLogService;
         }
 
-        // GET: api/EventLogs
+        // GET: api/ActivityEventLogs
         [HttpGet]
         public async Task<DynamicJsonObject> Get()
         {
-            IEnumerable<EventLog> eventLogs = new Collection<EventLog>();
+            IEnumerable<ActivityEventLog> activityEventLogs = new Collection<ActivityEventLog>();
 
             await Task.Run(() =>
             {
-                eventLogs = _eventLogService.Get()
+                activityEventLogs = _activityEventLogService.Get()
                     .OrderByDescending(o => o.DateEntry); ;
             });
 
-            if (eventLogs == null) return new DynamicJsonObject(new ExpandoObject());
+            if (activityEventLogs == null) return new DynamicJsonObject(new ExpandoObject());
 
             dynamic exObj = new ExpandoObject();
-            exObj.EventLogs = eventLogs
+            exObj.ActivityEventLogs = activityEventLogs
                 .Select(x => new
                 {
                     Date = $"{x.DateEntry:D}",
                     Time = $"{x.DateEntry:T}",
                     Resident = (x.Resident != null) ? $"{x.Resident.FirstName} {x.Resident.LastName}" : "N/A",
-                    EntryType = x.EventLogEntryType.Description,
                     x.ActivityType.PhidgetType,
                     ActivityType = x.ActivityType.Description,
                     ResponseTypeCategory = x.ResponseType.ResponseTypeCategory.Description,
@@ -54,58 +53,56 @@ namespace Keebee.AAT.Operations.Controllers
             return new DynamicJsonObject(exObj);
         }
 
-        // GET: api/EventLogs/5
+        // GET: api/ActivityEventLogs/5
         [HttpGet]
         [Route("{id}")]
         public async Task<DynamicJsonObject> Get(int id)
         {
-            var eventLog = new EventLog();
+            var activityEventLog = new ActivityEventLog();
 
             await Task.Run(() =>
             {
-                eventLog = _eventLogService.Get(id);
+                activityEventLog = _activityEventLogService.Get(id);
             });
 
-            if (eventLog == null) return new DynamicJsonObject(new ExpandoObject());
+            if (activityEventLog == null) return new DynamicJsonObject(new ExpandoObject());
 
             dynamic exObj = new ExpandoObject();
-            exObj.Date = $"{eventLog.DateEntry:D}";
-            exObj.Time = $"{eventLog.DateEntry:T}";
-            exObj.EventType = eventLog.EventLogEntryType.Description;
-            exObj.Resident = (eventLog.Resident != null)
-                ? $"{eventLog.Resident.FirstName} {eventLog.Resident.LastName}"
+            exObj.Date = $"{activityEventLog.DateEntry:D}";
+            exObj.Time = $"{activityEventLog.DateEntry:T}";
+            exObj.Resident = (activityEventLog.Resident != null)
+                ? $"{activityEventLog.Resident.FirstName} {activityEventLog.Resident.LastName}"
                 : "N/A";
-            exObj.ActivityType = eventLog.ActivityType.Description;
-            exObj.PhidgetType = eventLog.ActivityType.PhidgetType;
-            exObj.ResponseTypeCategory = eventLog.ResponseType.ResponseTypeCategory.Description;
-            exObj.ResponseType = eventLog.ResponseType.Description;
-            exObj.Description = eventLog.Description;
+            exObj.ActivityType = activityEventLog.ActivityType.Description;
+            exObj.PhidgetType = activityEventLog.ActivityType.PhidgetType;
+            exObj.ResponseTypeCategory = activityEventLog.ResponseType.ResponseTypeCategory.Description;
+            exObj.ResponseType = activityEventLog.ResponseType.Description;
+            exObj.Description = activityEventLog.Description;
 
             return new DynamicJsonObject(exObj);
         }
 
-        // GET: api/EventLogs?date=08/26/2016
+        // GET: api/ActivityEventLogs?date=08/26/2016
         [HttpGet]
         public async Task<DynamicJsonObject> Get(string date)
         {
-            IEnumerable<EventLog> eventLogs = new Collection<EventLog>();
+            IEnumerable<ActivityEventLog> activityEventLogs = new Collection<ActivityEventLog>();
 
             await Task.Run(() =>
             {
-                eventLogs = _eventLogService.GetForDate(date)
+                activityEventLogs = _activityEventLogService.GetForDate(date)
                     .OrderBy(o => o.DateEntry);
             });
 
-            if (eventLogs == null) return new DynamicJsonObject(new ExpandoObject());
+            if (activityEventLogs == null) return new DynamicJsonObject(new ExpandoObject());
 
             dynamic exObj = new ExpandoObject();
-            exObj.EventLogs = eventLogs
+            exObj.ActivityEventLogs = activityEventLogs
                 .Select(x => new
                 {
                     Date = $"{x.DateEntry:D}",
                     Time = $"{x.DateEntry:T}",
                     Resident = (x.Resident != null) ? $"{x.Resident.FirstName} {x.Resident.LastName}" : "N/A",
-                    EntryType = x.EventLogEntryType.Description,
                     x.ActivityType.PhidgetType,
                     ActivityType = x.ActivityType.Description,
                     ResponseTypeCategory = x.ResponseType.ResponseTypeCategory.Description,
@@ -117,31 +114,31 @@ namespace Keebee.AAT.Operations.Controllers
             return new DynamicJsonObject(exObj);
         }
 
-        // POST: api/EventLogs
+        // POST: api/ActivityEventLogs
         [HttpPost]
         public void Post([FromBody]string value)
         {
             var serializer = new JavaScriptSerializer();
-            var eventLog = serializer.Deserialize<EventLog>(value);
-            _eventLogService.Post(eventLog);
+            var activityEventLog = serializer.Deserialize<ActivityEventLog>(value);
+            _activityEventLogService.Post(activityEventLog);
         }
 
-        // PATCH: api/EventLogs/5
+        // PATCH: api/ActivityEventLogs/5
         [HttpPatch]
         [Route("{id}")]
         public void Patch(int id, [FromBody]string value)
         {
             var serializer = new JavaScriptSerializer();
-            var eventLog = serializer.Deserialize<EventLog>(value);
-            _eventLogService.Patch(id, eventLog);
+            var activityEventLog = serializer.Deserialize<ActivityEventLog>(value);
+            _activityEventLogService.Patch(id, activityEventLog);
         }
 
-        // DELETE: api/EventLogs/5
+        // DELETE: api/ActivityEventLogs/5
         [HttpDelete]
         [Route("{id}")]
         public void Delete(int id)
         {
-            _eventLogService.Delete(id);
+            _activityEventLogService.Delete(id);
         }
     }
 }

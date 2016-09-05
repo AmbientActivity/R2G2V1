@@ -1,4 +1,4 @@
 ﻿// define global namespaces
 ; (function () {
-    window.activitylog = {};
+    window.eventlog = {};
 })();

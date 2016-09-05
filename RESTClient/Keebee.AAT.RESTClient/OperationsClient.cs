@@ -1,5 +1,5 @@
 ﻿using Keebee.AAT.Constants;
-using Keebee.AAT.EventLogging;
+using Keebee.AAT.SystemEventLogging;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Script.Serialization;
@@ -14,7 +14,7 @@ namespace Keebee.AAT.RESTClient
 {
     public interface IOperationsClient
     {
-        EventLogger EventLogger { set; }
+        SystemEventLogger SystemEventLogger { set; }
 
         // GET
         IEnumerable<Response> GetAmbientResponses();
@@ -26,11 +26,14 @@ namespace Keebee.AAT.RESTClient
         Profile GetProfileMedia(int profileId);
         IEnumerable<Response> GetProfileResponses(int responseId);
 
-        IEnumerable<EventLog> GetEventLogs(string date);
-        IEnumerable<GamingEventLog> GetGamingEventLogs(string date);
+        IEnumerable<ActivityEventLog> GetActivityEventLogs(string date);
+        IEnumerable<GameEventLog> GetGameEventLogs(string date);
+        IEnumerable<RfidEventLog> GetRfidEventLogs(string date);
 
         // POST
-        void PostEventLog(EventLog eventLog);
+        void PostActivityEventLog(ActivityEventLog activityEventLog);
+        void PostGameEventLog(GameEventLog gameEventLog);
+        void PostRfidEventLog(RfidEventLog rfidEventLog);
     }
 
     public class OperationsClient : IOperationsClient
@@ -47,16 +50,18 @@ namespace Keebee.AAT.RESTClient
         private const string UrlResidentProfileDetails = "residents/{0}/profile/details";
         private const string UrlProfileResponses = "profiledetails/{0}/responses";
         private const string UrlAmbientResponses = "ambientresponses";
-        private const string UrlEventLogs = "eventlogs";
-        private const string UrlGamingEventLogs = "gamingeventlogs";
+        private const string UrlActivityEventLogs = "activityeventlogs";
+        private const string UrlGameEventLogs = "gameeventlogs";
+        private const string UrlRfidEventLogs = "rfideventlogs";
 
-        private const string UrlEventLogsForDate = "eventlogs?date={0}";
-        private const string UrlGamingEventLogsForDate = "gamingeventlogs?date={0}";
+        private const string UrlActivityEventLogsForDate = "activityeventlogs?date={0}";
+        private const string UrlGameEventLogsForDate = "gameeventlogs?date={0}";
+        private const string UrlRfidEventLogsForDate = "rfideventlogs?date={0}";
 
-        private EventLogger _eventLogger;
-        public EventLogger EventLogger
+        private SystemEventLogger _systemEventLogger;
+        public SystemEventLogger SystemEventLogger
         {
-            set { _eventLogger = value; }
+            set { _systemEventLogger = value; }
         }
 
         private readonly Uri _uriBase;
@@ -173,43 +178,62 @@ namespace Keebee.AAT.RESTClient
             return details;
         }
 
-        public IEnumerable<EventLog> GetEventLogs(string date)
+        public IEnumerable<ActivityEventLog> GetActivityEventLogs(string date)
         {
-            var data = Get(string.Format(UrlEventLogsForDate, date));
+            var data = Get(string.Format(UrlActivityEventLogsForDate, date));
             if (data == null) return null;
 
             var serializer = new JavaScriptSerializer();
-            var eventLogs = serializer.Deserialize<EventLogList>(data).EventLogs;
+            var activityEventLogs = serializer.Deserialize<ActivityEventLogList>(data).ActivityEventLogs;
 
-            return eventLogs;
+            return activityEventLogs;
         }
 
-        public IEnumerable<GamingEventLog> GetGamingEventLogs(string date)
+        public IEnumerable<GameEventLog> GetGameEventLogs(string date)
         {
-            var data = Get(string.Format(UrlGamingEventLogsForDate, date));
+            var data = Get(string.Format(UrlGameEventLogsForDate, date));
             if (data == null) return null;
 
             var serializer = new JavaScriptSerializer();
-            var eventLogs = serializer.Deserialize<GaminingEventLogList>(data).GamingEventLogs;
+            var gameEventLogs = serializer.Deserialize<GameEventLogList>(data).GameEventLogs;
 
-            return eventLogs;
+            return gameEventLogs;
+        }
+
+        public IEnumerable<RfidEventLog> GetRfidEventLogs(string date)
+        {
+            var data = Get(string.Format(UrlRfidEventLogsForDate, date));
+            if (data == null) return null;
+
+            var serializer = new JavaScriptSerializer();
+            var rfidEventLogs = serializer.Deserialize<RfidEventLogList>(data).RfidEventLogs;
+
+            return rfidEventLogs;
         }
 
         // POST
-        public void PostEventLog(EventLog eventLog)
+        public void PostActivityEventLog(ActivityEventLog activityEventLog)
         {
             var serializer = new JavaScriptSerializer();
-            var el = serializer.Serialize(eventLog);
+            var el = serializer.Serialize(activityEventLog);
 
-            Post(UrlEventLogs, el);
+            Post(UrlActivityEventLogs, el);
         }
 
-        public void PostGamingEventLog(GamingEventLog gamingEventLog)
+        public void PostGameEventLog(GameEventLog gameEventLog)
         {
             var serializer = new JavaScriptSerializer();
-            var el = serializer.Serialize(gamingEventLog);
+            var el = serializer.Serialize(gameEventLog);
 
-            Post(UrlGamingEventLogs, el);
+            Post(UrlGameEventLogs, el);
+        }
+
+        public void PostRfidEventLog(RfidEventLog rfidEventLog)
+        {
+            var serializer = new JavaScriptSerializer();
+            var el = serializer.Serialize(rfidEventLog);
+
+            Post(UrlRfidEventLogs, el);
         }
 
         // private REST
@@ -240,7 +264,7 @@ namespace Keebee.AAT.RESTClient
 
             catch (Exception ex)
             {
-                _eventLogger?.WriteEntry($"RESTClient.Get: {ex.Message}{Environment.NewLine}url:{url}", EventLogEntryType.Error);
+                _systemEventLogger?.WriteEntry($"RESTClient.Get: {ex.Message}{Environment.NewLine}url:{url}", EventLogEntryType.Error);
             }
 
             return result;
@@ -272,7 +296,7 @@ namespace Keebee.AAT.RESTClient
 
             catch (Exception ex)
             {
-                _eventLogger?.WriteEntry($"RESTClient.Exists: {ex.Message}{Environment.NewLine}url:{url}", EventLogEntryType.Error);
+                _systemEventLogger?.WriteEntry($"RESTClient.Exists: {ex.Message}{Environment.NewLine}url:{url}", EventLogEntryType.Error);
             }
 
             return false;
@@ -302,7 +326,7 @@ namespace Keebee.AAT.RESTClient
 
             catch (Exception ex)
             {
-                _eventLogger?.WriteEntry($"RESTClient.Post: {ex.Message}{Environment.NewLine}url:{url}", EventLogEntryType.Error);
+                _systemEventLogger?.WriteEntry($"RESTClient.Post: {ex.Message}{Environment.NewLine}url:{url}", EventLogEntryType.Error);
             }
         }
     }

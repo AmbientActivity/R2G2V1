@@ -2,9 +2,9 @@
 using System.Diagnostics;
 using System.Linq;
 
-namespace Keebee.AAT.EventLogging
+namespace Keebee.AAT.SystemEventLogging
 {
-    public enum EventLogType
+    public enum SystemEventLogType
     {
         Display = 1,
         Simulator = 2,
@@ -12,10 +12,10 @@ namespace Keebee.AAT.EventLogging
         StateMachineService = 4,
         RfidReaderService = 5,
         PhidgetService = 6,
-        ActivityLog = 7
+        EventLog = 7
     }
 
-    public class EventLogger
+    public class SystemEventLogger
     {
         private const string EventLogDisplay = "Keebee Display";
         private const string EventLogSimulator = "Keebee Activity Simulator";
@@ -23,7 +23,7 @@ namespace Keebee.AAT.EventLogging
         private const string EventLogStateMachineService = "Keebee State Machine Service";
         private const string EventLogRfidReaderService = "Keebee RFID Reader Service";
         private const string EventLogPhidgetService = "Keebee Phidget Service";
-        private const string EventLogActivityLog = "Keebee Activity Log";
+        private const string EventLogLog = "Keebee Event Log";
 
         private EventLog _eventLog;
         public EventLog EventLog
@@ -33,10 +33,10 @@ namespace Keebee.AAT.EventLogging
 
         public int EventId { get; private set; }
 
-        public EventLogger(EventLogType eventLogType)
+        public SystemEventLogger(SystemEventLogType systemEventLogType)
         {
             _eventLog = new EventLog();
-            EventId = Initialize(EventLogLiteral(eventLogType));
+            EventId = Initialize(EventLogLiteral(systemEventLogType));
         }
 
         public void WriteEntry(string message, EventLogEntryType type = EventLogEntryType.Information)
@@ -44,32 +44,32 @@ namespace Keebee.AAT.EventLogging
             _eventLog.WriteEntry(message, type, EventId++);
         }
 
-        private static string EventLogLiteral(EventLogType queueName)
+        private static string EventLogLiteral(SystemEventLogType queueName)
         {
             var literal = string.Empty;
 
             switch (queueName)
             {
-                case EventLogType.Display:
+                case SystemEventLogType.Display:
                     literal = EventLogDisplay;
                     break;
-                case EventLogType.Simulator:
+                case SystemEventLogType.Simulator:
                     literal = EventLogSimulator;
                     break;
-                case EventLogType.KeebeeMessageQueuing:
+                case SystemEventLogType.KeebeeMessageQueuing:
                     literal = EventLogMessageQueuing;
                     break;
-                case EventLogType.StateMachineService:
+                case SystemEventLogType.StateMachineService:
                     literal = EventLogStateMachineService;
                     break;
-                case EventLogType.RfidReaderService:
+                case SystemEventLogType.RfidReaderService:
                     literal = EventLogRfidReaderService;
                     break;
-                case EventLogType.PhidgetService:
+                case SystemEventLogType.PhidgetService:
                     literal = EventLogPhidgetService;
                     break;
-                case EventLogType.ActivityLog:
-                    literal = EventLogActivityLog;
+                case SystemEventLogType.EventLog:
+                    literal = EventLogLog;
                     break;
             }
             return literal;

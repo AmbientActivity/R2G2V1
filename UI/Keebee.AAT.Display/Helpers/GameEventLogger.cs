@@ -1,11 +1,11 @@
 ﻿using Keebee.AAT.RESTClient;
-using Keebee.AAT.EventLogging;
+using Keebee.AAT.SystemEventLogging;
 using System;
 using System.Diagnostics;
 
 namespace Keebee.AAT.Display.Helpers
 {
-    public class GamingEventLogger
+    public class GameEventLogger
     {
         private OperationsClient _opsClient;
         public OperationsClient OperationsClient
@@ -13,30 +13,30 @@ namespace Keebee.AAT.Display.Helpers
             set { _opsClient = value; }
         }
 
-        private EventLogger _eventLogger;
-        public EventLogger EventLogger
+        private SystemEventLogger _systemEventLogger;
+        public SystemEventLogger SystemEventLogger
         {
-            set { _eventLogger = value; }
+            set { _systemEventLogger = value; }
         }
 
-        public void Add(int residentId, int eventLogEntryTypeId, int difficultyLevel, bool? isSuccess, string description)
+        public void Add(int residentId, int gameTypeId, int difficultyLevel, bool? isSuccess, string description)
         {
             try
             {
-                var gamingEventLog = new GamingEventLog
+                var gamingEventLog = new GameEventLog
                                      {
                                          ResidentId = residentId > 0 ? residentId : (int?)null,
-                                         EventLogEntryTypeId = eventLogEntryTypeId,
+                                         GameTypeId = gameTypeId,
                                          DifficultyLevel = difficultyLevel,
                                          IsSuccess = isSuccess,
                                          Description = description
                                      };
 
-                _opsClient.PostGamingEventLog(gamingEventLog);
+                _opsClient.PostGameEventLog(gamingEventLog);
             }
             catch (Exception ex)
             {
-                _eventLogger?.WriteEntry($"GamingEventLogger.Add: {ex.Message}", EventLogEntryType.Error);
+                _systemEventLogger?.WriteEntry($"GameEventLogger.Add: {ex.Message}", EventLogEntryType.Error);
             }
         }
     }

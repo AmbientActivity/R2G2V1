@@ -1,5 +1,5 @@
 ﻿using Keebee.AAT.Display.Extensions;
-using Keebee.AAT.EventLogging;
+using Keebee.AAT.SystemEventLogging;
 using AxShockwaveFlashObjects;
 using System;
 using System.Text;
@@ -18,10 +18,10 @@ namespace Keebee.AAT.Display.UserControls
         // event handler
         public event EventHandler SlideShowCompleteEvent;
 
-        private EventLogger _eventLogger;
-        public EventLogger EventLogger
+        private SystemEventLogger _systemEventLogger;
+        public SystemEventLogger SystemEventLogger
         {
-            set { _eventLogger = value; }
+            set { _systemEventLogger = value; }
         }
 
         // delegate
@@ -54,7 +54,7 @@ namespace Keebee.AAT.Display.UserControls
             }
             catch (Exception ex)
             {
-                _eventLogger.WriteEntry($"SlideViewerFlash.Play: {ex.Message}", EventLogEntryType.Error);
+                _systemEventLogger.WriteEntry($"SlideViewerFlash.Play: {ex.Message}", EventLogEntryType.Error);
             }
         }
 

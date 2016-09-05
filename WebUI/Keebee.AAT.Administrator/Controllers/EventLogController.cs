@@ -2,7 +2,7 @@
 
 namespace Keebee.AAT.Administrator.Controllers
 {
-    public class ActivityLogController : Controller
+    public class EventLogController : Controller
     {
         [HttpGet]
         public ActionResult Export()
@@ -13,9 +13,8 @@ namespace Keebee.AAT.Administrator.Controllers
         [HttpGet]
         public FileResult DoExport(string date)
         {
-            var exporter = new ActivityLog.Exporter();
-
-            var filename = $"ActivityLog_{date.Replace("/", "_")}.xls";
+            var exporter = new EventLogging.Exporter();
+            var filename = $"EventLog_{date.Replace("/", "_")}.xls";
             var file = exporter.Export(date);
 
             return File(file, "application/vnd.ms-excel", filename);

@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Keebee.AAT.DataAccess.Models
 {
-    public class EventLog
+    public class ActivityEventLog
     {
         [Key]
         public int Id { get; set; }
@@ -12,10 +12,6 @@ namespace Keebee.AAT.DataAccess.Models
         [ForeignKey("Resident")]
         public int? ResidentId { get; set; }
         public virtual Resident Resident { get; set; }
-
-        [ForeignKey("EventLogEntryType")]
-        public int EventLogEntryTypeId { get; set; }
-        public virtual EventLogEntryType EventLogEntryType { get; set; }
 
         [ForeignKey("ActivityType")]
         public int ActivityTypeId { get; set; }

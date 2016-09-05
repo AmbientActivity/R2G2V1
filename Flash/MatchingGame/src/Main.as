@@ -52,9 +52,9 @@ package
 		private var currentLevel:Number;
 		private var timeoutValue:Number = 900000;
 		
-		private const EventLogTypeId_MatchPictures:Number = 2;
-		private const EventLogTypeId_MatchPairs:Number = 3;
-		private var currentEventLogTypeId:Number;
+		private const GameTypeId_MatchPictures:Number = 1;
+		private const GameTypeId_MatchPairs:Number = 2;
+		private var currentGameTypeId:Number;
 		// uncomment to test
 		//private var xmlShapesTest:String = "<images><image><name>Duck.png</name></image><image><name>Kangaroo.png</name></image><image><name>bear.png</name></image><image><name>bird.png</name></image><image><name>butterfly.png</name></image><image><name>camel.png</name></image><image><name>cat.png</name></image><image><name>chicken.png</name></image><image><name>cow.png</name></image><image><name>deer.png</name></image><image><name>dog.png</name></image><image><name>elephant.png</name></image><image><name>fish.png</name></image><image><name>horse.png</name></image><image><name>leopard.png</name></image><image><name>monkey.png</name></image><image><name>parrot.png</name></image><image><name>pig.png</name></image><image><name>rabbit.png</name></image><image><name>rhinoceros.png</name></image><image><name>snail.png</name></image></images>"
 		//private var pathMediaTest:String = "\\\\Dev1\\sqlexpress\\KeebeeAATFilestream\\Media\\Profiles\\4";
@@ -257,12 +257,12 @@ package
 			}
 			
 			if (currentLevel < 5) {
-				currentEventLogTypeId = EventLogTypeId_MatchPictures;
+				currentGameTypeId = GameTypeId_MatchPictures;
 				loadImages();
 				loadMainImage();
 				drawLine();
 			} else {
-				currentEventLogTypeId = EventLogTypeId_MatchPairs;
+				currentGameTypeId = GameTypeId_MatchPairs;
 				loadImagesMatchThePairs();
 			}
 		}
@@ -427,7 +427,7 @@ package
 			var successDesc:String = "NULL";
 			if (success == 0) successDesc = "FALSE";
 			else if (success == 1) successDesc = "TRUE";
-			ExternalInterface.call("FlashCall", currentEventLogTypeId, currentLevel.toString(), successDesc, description, isGameHasExpired);
+			ExternalInterface.call("FlashCall", currentGameTypeId, currentLevel.toString(), successDesc, description, isGameHasExpired);
 		}
 			
 		// ----------------------- match-the-pairs (begin) -----------------------------

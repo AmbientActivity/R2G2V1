@@ -1,22 +1,22 @@
 ﻿using Keebee.AAT.RESTClient;
-using Keebee.AAT.EventLogging;
+using Keebee.AAT.SystemEventLogging;
 using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using ExcelLibrary.SpreadSheet;
 
-namespace Keebee.AAT.ActivityLog
+namespace Keebee.AAT.EventLogging
 {
     public class Exporter
     {
         private readonly OperationsClient _opsClient;
-        private readonly EventLogger _eventLogger;
+        private readonly SystemEventLogger _systemEventLogger;
 
         public Exporter()
         {
             _opsClient = new OperationsClient();
-            _eventLogger = new EventLogger(EventLogType.ActivityLog);
+            _systemEventLogger = new SystemEventLogger(SystemEventLogType.EventLog);
         }
 
         public byte[] Export(string date)
@@ -33,7 +33,7 @@ namespace Keebee.AAT.ActivityLog
         {
             var workbook = GetWorkbook(date);
 
-            var filename = $@"\\{Environment.MachineName}\{Constants.ActivityLog.Path}\ActivityLog_{date.Replace("/", "_")}_{DateTime.Now.Ticks}.xls";
+            var filename = $@"\\{Environment.MachineName}\{Constants.Log.Path}\EventLog_{date.Replace("/", "_")}.xls";
 
             workbook.Save(filename);
         }
@@ -44,10 +44,10 @@ namespace Keebee.AAT.ActivityLog
 
             try
             {
-                var eventLogs = _opsClient.GetEventLogs(date).ToArray();
-                var gamingEventLogs = _opsClient.GetGamingEventLogs(date).ToArray();
+                var activityEventLogs = _opsClient.GetActivityEventLogs(date).ToArray();
+                var gamingEventLogs = _opsClient.GetGameEventLogs(date).ToArray();
 
-                var worksheet1 = new Worksheet("Activity Log");
+                var worksheet1 = new Worksheet("Log");
 
                 for (var i = 0; i < 100; i++)
                     worksheet1.Cells[i, 0] = new Cell("");
@@ -61,7 +61,7 @@ namespace Keebee.AAT.ActivityLog
                 worksheet1.Cells[0, 6] = new Cell("Description");
 
                 ushort rowIndex = 1;
-                foreach (var eventLog in eventLogs)
+                foreach (var eventLog in activityEventLogs)
                 {
                     worksheet1.Cells[rowIndex, 0] = new Cell(eventLog.Date);
                     worksheet1.Cells[rowIndex, 1] = new Cell(eventLog.Time);
@@ -111,7 +111,7 @@ namespace Keebee.AAT.ActivityLog
             }
             catch (Exception ex)
             {
-                _eventLogger?.WriteEntry($"ActivityLog.GetWorkbook: {ex.Message}", EventLogEntryType.Error);
+                _systemEventLogger?.WriteEntry($"Log.GetWorkbook: {ex.Message}", EventLogEntryType.Error);
             }
 
             return workbook;

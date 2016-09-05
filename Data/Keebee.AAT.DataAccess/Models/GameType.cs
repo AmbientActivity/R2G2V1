@@ -2,7 +2,7 @@
 
 namespace Keebee.AAT.DataAccess.Models
 {
-    public class EventLogEntryType
+    public class GameType
     {
         [Key]
         public int Id { get; set; }

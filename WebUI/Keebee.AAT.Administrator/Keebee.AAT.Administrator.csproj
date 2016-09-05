@@ -215,7 +215,7 @@
     <Content Include="Scripts\bootstrap-datepicker.min.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
-    <Content Include="Scripts\ActivityLog\Export.js" />
+    <Content Include="Scripts\EventLog\Export.js" />
     <Content Include="Scripts\jquery-3.1.0.js" />
     <Content Include="Scripts\jquery-3.1.0.min.js" />
     <Content Include="Scripts\jquery-3.1.0.slim.js" />
@@ -294,7 +294,7 @@
   <ItemGroup>
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
-    <Compile Include="Controllers\ActivityLogController.cs" />
+    <Compile Include="Controllers\EventLogController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -312,7 +312,7 @@
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Scripts\jquery-3.1.0.slim.min.map" />
     <Content Include="Scripts\jquery-3.1.0.min.map" />
-    <Content Include="Views\ActivityLog\Export.cshtml" />
+    <Content Include="Views\EventLog\Export.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -326,9 +326,9 @@
       <Project>{a1f90f14-bc01-4ef8-9b3e-a7fe4b1b7f9f}</Project>
       <Name>Keebee.AAT.RESTClient</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Shared\Keebee.AAT.ActivityLog\Keebee.AAT.ActivityLog.csproj">
+    <ProjectReference Include="..\..\Shared\Keebee.AAT.ActivityLog\Keebee.AAT.EventLogging.csproj">
       <Project>{97ca2119-5977-4de5-9c91-a64d97cb9035}</Project>
-      <Name>Keebee.AAT.ActivityLog</Name>
+      <Name>Keebee.AAT.EventLogging</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup>

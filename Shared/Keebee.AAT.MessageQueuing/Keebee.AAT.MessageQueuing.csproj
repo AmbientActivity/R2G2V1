@@ -49,9 +49,9 @@
       <Project>{3cb12af2-7655-46f6-9969-990730f73964}</Project>
       <Name>Keebee.AAT.Constants</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Keebee.AAT.EventLogging\Keebee.AAT.EventLogging.csproj">
+    <ProjectReference Include="..\Keebee.AAT.EventLogging\Keebee.AAT.SystemEventLogging.csproj">
       <Project>{6f0a1aef-997e-4355-bb38-a4acf6710edf}</Project>
-      <Name>Keebee.AAT.EventLogging</Name>
+      <Name>Keebee.AAT.SystemEventLogging</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -9,26 +9,26 @@ using System.Web.OData;
 
 namespace Keebee.AAT.DataAccess.Controllers
 {
-    public class GamingEventLogsController : ODataController
+    public class RfidEventLogsController : ODataController
     {
         private KeebeeAATContext db = new KeebeeAATContext();
 
-        // GET: odata/GamingEventLogs
+        // GET: odata/RfidEventLogs
         [EnableQuery]
-        public IQueryable<GamingEventLog> GetGamingEventLogs()
+        public IQueryable<RfidEventLog> GetRfidEventLogs()
         {
-            return db.GamingEventLogs;
+            return db.RfidEventLogs;
         }
 
-        // GET: odata/GamingEventLogs(5)
+        // GET: odata/RfidEventLogs(5)
         [EnableQuery]
-        public SingleResult<GamingEventLog> GetGamingEventLog([FromODataUri] int key)
+        public SingleResult<RfidEventLog> GetRfidEventLog([FromODataUri] int key)
         {
-            return SingleResult.Create(db.GamingEventLogs.Where(gamingEventLog => gamingEventLog.Id == key));
+            return SingleResult.Create(db.RfidEventLogs.Where(rfidEventLog => rfidEventLog.Id == key));
         }
 
-        // PUT: odata/GamingEventLogs(5)
-        public async Task<IHttpActionResult> Put([FromODataUri] int key, Delta<GamingEventLog> patch)
+        // PUT: odata/RfidEventLogs(5)
+        public async Task<IHttpActionResult> Put([FromODataUri] int key, Delta<RfidEventLog> patch)
         {
             Validate(patch.GetEntity());
 
@@ -37,13 +37,13 @@ namespace Keebee.AAT.DataAccess.Controllers
                 return BadRequest(ModelState);
             }
 
-            GamingEventLog gamingEventLog = await db.GamingEventLogs.FindAsync(key);
-            if (gamingEventLog == null)
+            RfidEventLog rfidEventLog = await db.RfidEventLogs.FindAsync(key);
+            if (rfidEventLog == null)
             {
                 return NotFound();
             }
 
-            patch.Put(gamingEventLog);
+            patch.Put(rfidEventLog);
 
             try
             {
@@ -51,7 +51,7 @@ namespace Keebee.AAT.DataAccess.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!GamingEventLogExists(key))
+                if (!RfidEventLogExists(key))
                 {
                     return NotFound();
                 }
@@ -61,27 +61,27 @@ namespace Keebee.AAT.DataAccess.Controllers
                 }
             }
 
-            return Updated(gamingEventLog);
+            return Updated(rfidEventLog);
         }
 
-        // POST: odata/GamingEventLogs
-        public async Task<IHttpActionResult> Post(GamingEventLog gamingEventLog)
+        // POST: odata/RfidEventLogs
+        public async Task<IHttpActionResult> Post(RfidEventLog rfidEventLog)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            gamingEventLog.DateEntry = DateTime.Now;
-            db.GamingEventLogs.Add(gamingEventLog);
+            rfidEventLog.DateEntry = DateTime.Now;
+            db.RfidEventLogs.Add(rfidEventLog);
             await db.SaveChangesAsync();
 
-            return Created(gamingEventLog);
+            return Created(rfidEventLog);
         }
 
-        // PATCH: odata/GamingEventLogs(5)
+        // PATCH: odata/RfidEventLogs(5)
         [AcceptVerbs("PATCH", "MERGE")]
-        public async Task<IHttpActionResult> Patch([FromODataUri] int key, Delta<GamingEventLog> patch)
+        public async Task<IHttpActionResult> Patch([FromODataUri] int key, Delta<RfidEventLog> patch)
         {
             Validate(patch.GetEntity());
 
@@ -90,13 +90,13 @@ namespace Keebee.AAT.DataAccess.Controllers
                 return BadRequest(ModelState);
             }
 
-            GamingEventLog gamingEventLog = await db.GamingEventLogs.FindAsync(key);
-            if (gamingEventLog == null)
+            RfidEventLog rfidEventLog = await db.RfidEventLogs.FindAsync(key);
+            if (rfidEventLog == null)
             {
                 return NotFound();
             }
 
-            patch.Patch(gamingEventLog);
+            patch.Patch(rfidEventLog);
 
             try
             {
@@ -104,7 +104,7 @@ namespace Keebee.AAT.DataAccess.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!GamingEventLogExists(key))
+                if (!RfidEventLogExists(key))
                 {
                     return NotFound();
                 }
@@ -114,36 +114,29 @@ namespace Keebee.AAT.DataAccess.Controllers
                 }
             }
 
-            return Updated(gamingEventLog);
+            return Updated(rfidEventLog);
         }
 
-        // DELETE: odata/GamingEventLogs(5)
+        // DELETE: odata/RfidEventLogs(5)
         public async Task<IHttpActionResult> Delete([FromODataUri] int key)
         {
-            GamingEventLog gamingEventLog = await db.GamingEventLogs.FindAsync(key);
-            if (gamingEventLog == null)
+            RfidEventLog rfidEventLog = await db.RfidEventLogs.FindAsync(key);
+            if (rfidEventLog == null)
             {
                 return NotFound();
             }
 
-            db.GamingEventLogs.Remove(gamingEventLog);
+            db.RfidEventLogs.Remove(rfidEventLog);
             await db.SaveChangesAsync();
 
             return StatusCode(HttpStatusCode.NoContent);
         }
 
-        // GET: odata/GamingEventLogs(5)/EventLogEntryType
-        [EnableQuery]
-        public SingleResult<EventLogEntryType> GetEventLogEntryType([FromODataUri] int key)
-        {
-            return SingleResult.Create(db.GamingEventLogs.Where(m => m.Id == key).Select(m => m.EventLogEntryType));
-        }
-
-        // GET: odata/GamingEventLogs(5)/Resident
+        // GET: odata/RfidEventLogs(5)/Resident
         [EnableQuery]
         public SingleResult<Resident> GetResident([FromODataUri] int key)
         {
-            return SingleResult.Create(db.GamingEventLogs.Where(m => m.Id == key).Select(m => m.Resident));
+            return SingleResult.Create(db.RfidEventLogs.Where(m => m.Id == key).Select(m => m.Resident));
         }
 
         protected override void Dispose(bool disposing)
@@ -155,9 +148,9 @@ namespace Keebee.AAT.DataAccess.Controllers
             base.Dispose(disposing);
         }
 
-        private bool GamingEventLogExists(int key)
+        private bool RfidEventLogExists(int key)
         {
-            return db.GamingEventLogs.Count(e => e.Id == key) > 0;
+            return db.RfidEventLogs.Count(e => e.Id == key) > 0;
         }
     }
 }

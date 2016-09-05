@@ -11,38 +11,38 @@ using System.Web.Script.Serialization;
 
 namespace Keebee.AAT.Operations.Controllers
 {
-    [RoutePrefix("api/gamingeventlogs")]
-    public class GamingEventLogsController : ApiController
+    [RoutePrefix("api/GameEventLogs")]
+    public class GameEventLogsController : ApiController
     {
-        private readonly IGamingEventLogService _gamingEventLogService;
+        private readonly IGameEventLogService _gameEventLogService;
 
-        public GamingEventLogsController(IGamingEventLogService gamingEventLogService)
+        public GameEventLogsController(IGameEventLogService gameEventLogService)
         {
-            _gamingEventLogService = gamingEventLogService;
+            _gameEventLogService = gameEventLogService;
         }
 
-        // GET: api/GamingEventLog
+        // GET: api/GameEventLog
         [HttpGet]
         public async Task<DynamicJsonObject> Get()
         {
-            IEnumerable<GamingEventLog> gamingEventLog = new Collection<GamingEventLog>();
+            IEnumerable<GameEventLog> gameEventLog = new Collection<GameEventLog>();
 
             await Task.Run(() =>
             {
-                gamingEventLog = _gamingEventLogService.Get()
+                gameEventLog = _gameEventLogService.Get()
                     .OrderByDescending(o => o.DateEntry);
             });
 
-            if (gamingEventLog == null) return new DynamicJsonObject(new ExpandoObject());
+            if (gameEventLog == null) return new DynamicJsonObject(new ExpandoObject());
 
             dynamic exObj = new ExpandoObject();
-            exObj.GamingEventLog = gamingEventLog
+            exObj.GameEventLog = gameEventLog
                 .Select(x => new
                 {
                     Date = $"{x.DateEntry:D}",
                     Time = x.DateEntry.ToString("hh:mm:ss:ff tt"),
                     Resident = (x.Resident != null) ? $"{x.Resident.FirstName} {x.Resident.LastName}" : "N/A",
-                    EntryType = x.EventLogEntryType.Description,
+                    GameType = x.GameType.Description,
                     x.Difficultylevel,
                     Success = x.IsSuccess,
                     x.Description,
@@ -52,56 +52,56 @@ namespace Keebee.AAT.Operations.Controllers
             return new DynamicJsonObject(exObj);
         }
 
-        // GET: api/GamingEventLog/5
+        // GET: api/GameEventLog/5
         [HttpGet]
         [Route("{id}")]
         public async Task<DynamicJsonObject> Get(int id)
         {
-            var gamingEventLog = new GamingEventLog();
+            var gameEventLog = new GameEventLog();
 
             await Task.Run(() =>
             {
-                gamingEventLog = _gamingEventLogService.Get(id);
+                gameEventLog = _gameEventLogService.Get(id);
             });
 
-            if (gamingEventLog == null) return new DynamicJsonObject(new ExpandoObject());
+            if (gameEventLog == null) return new DynamicJsonObject(new ExpandoObject());
 
             dynamic exObj = new ExpandoObject();
-            exObj.Date = $"{gamingEventLog.DateEntry:D}";
-            exObj.Time = $"{gamingEventLog.DateEntry:T}";
-            exObj.Resident = (gamingEventLog.Resident != null)
-                ? $"{gamingEventLog.Resident.FirstName} {gamingEventLog.Resident.LastName}"
+            exObj.Date = $"{gameEventLog.DateEntry:D}";
+            exObj.Time = $"{gameEventLog.DateEntry:T}";
+            exObj.Resident = (gameEventLog.Resident != null)
+                ? $"{gameEventLog.Resident.FirstName} {gameEventLog.Resident.LastName}"
                 : "N/A";
-            exObj.EventType = gamingEventLog.EventLogEntryType.Description;
-            exObj.DifficultyLevel = gamingEventLog.Difficultylevel;
-            exObj.IsSuccess = gamingEventLog.IsSuccess;
-            exObj.Description = gamingEventLog.Description;
+            exObj.EventType = gameEventLog.GameType.Description;
+            exObj.DifficultyLevel = gameEventLog.Difficultylevel;
+            exObj.IsSuccess = gameEventLog.IsSuccess;
+            exObj.Description = gameEventLog.Description;
 
             return new DynamicJsonObject(exObj);
         }
 
-        // GET: api/GamingEventLogs?date=08/26/2016
+        // GET: api/GameEventLogs?date=08/26/2016
         [HttpGet]
         public async Task<DynamicJsonObject> Get(string date)
         {
-            IEnumerable<GamingEventLog> gamingEventLogs = new Collection<GamingEventLog>();
+            IEnumerable<GameEventLog> gameEventLogs = new Collection<GameEventLog>();
 
             await Task.Run(() =>
             {
-                gamingEventLogs = _gamingEventLogService.GetForDate(date)
+                gameEventLogs = _gameEventLogService.GetForDate(date)
                     .OrderBy(o => o.DateEntry);
             });
 
-            if (gamingEventLogs == null) return new DynamicJsonObject(new ExpandoObject());
+            if (gameEventLogs == null) return new DynamicJsonObject(new ExpandoObject());
 
             dynamic exObj = new ExpandoObject();
-            exObj.GamingEventLogs = gamingEventLogs
+            exObj.GameEventLogs = gameEventLogs
                 .Select(x => new
                 {
                     Date = $"{x.DateEntry:D}",
                     Time = x.DateEntry.ToString("hh:mm:ss:ff tt"),
                     Resident = (x.Resident != null) ? $"{x.Resident.FirstName} {x.Resident.LastName}" : "N/A",
-                    EntryType = x.EventLogEntryType.Description,
+                    GameType = x.GameType.Description,
                     x.Difficultylevel,
                     x.IsSuccess,
                     x.Description,
@@ -111,31 +111,31 @@ namespace Keebee.AAT.Operations.Controllers
             return new DynamicJsonObject(exObj);
         }
 
-        // POST: api/GamingEventLog
+        // POST: api/GameEventLog
         [HttpPost]
         public void Post([FromBody]string value)
         {
             var serializer = new JavaScriptSerializer();
-            var gamingEventLog = serializer.Deserialize<GamingEventLog>(value);
-            _gamingEventLogService.Post(gamingEventLog);
+            var gameEventLog = serializer.Deserialize<GameEventLog>(value);
+            _gameEventLogService.Post(gameEventLog);
         }
 
-        // PATCH: api/GamingEventLog/5
+        // PATCH: api/GameEventLog/5
         [HttpPatch]
         [Route("{id}")]
         public void Patch(int id, [FromBody]string value)
         {
             var serializer = new JavaScriptSerializer();
-            var gamingEventLog = serializer.Deserialize<GamingEventLog>(value);
-            _gamingEventLogService.Patch(id, gamingEventLog);
+            var gameEventLog = serializer.Deserialize<GameEventLog>(value);
+            _gameEventLogService.Patch(id, gameEventLog);
         }
 
-        // DELETE: api/GamingEventLog/5
+        // DELETE: api/GameEventLog/5
         [HttpDelete]
         [Route("{id}")]
         public void Delete(int id)
         {
-            _gamingEventLogService.Delete(id);
+            _gameEventLogService.Delete(id);
         }
     }
 }

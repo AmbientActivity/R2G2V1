@@ -8,7 +8,7 @@ namespace Keebee.AAT.RFIDReaderService
         {
             var servicesToRun = new ServiceBase[] 
                                           { 
-                                              new RFIDReaderService() 
+                                              new RfidReaderService() 
                                           };
 
             ServiceBase.Run(servicesToRun);

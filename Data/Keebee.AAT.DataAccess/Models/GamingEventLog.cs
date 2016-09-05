@@ -19,7 +19,7 @@ namespace Keebee.AAT.DataAccess.Models
 
         public int Difficultylevel{ get; set; }
 
-        public bool IsSuccess { get; set; }
+        public bool? IsSuccess { get; set; }
 
         [Required]
         public string Description { get; set; }

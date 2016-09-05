@@ -19,7 +19,7 @@ namespace Keebee.AAT.Display.Helpers
             set { _eventLogger = value; }
         }
 
-        public void Add(int residentId, int eventLogEntryTypeId, int difficultyLevel, bool success, string description)
+        public void Add(int residentId, int eventLogEntryTypeId, int difficultyLevel, bool? isSuccess, string description)
         {
             try
             {
@@ -28,7 +28,7 @@ namespace Keebee.AAT.Display.Helpers
                                          ResidentId = residentId > 0 ? residentId : (int?)null,
                                          EventLogEntryTypeId = eventLogEntryTypeId,
                                          DifficultyLevel = difficultyLevel,
-                                         IsSuccess = success,
+                                         IsSuccess = isSuccess,
                                          Description = description
                                      };
 

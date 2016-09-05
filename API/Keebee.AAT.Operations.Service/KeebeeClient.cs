@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-// Generation date: 8/26/2016 1:43:17 PM
+// Generation date: 9/5/2016 1:03:46 PM
 namespace Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models
 {
     /// <summary>
@@ -2630,16 +2630,14 @@ namespace Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models
         /// </summary>
         /// <param name="ID">Initial value of Id.</param>
         /// <param name="difficultylevel">Initial value of Difficultylevel.</param>
-        /// <param name="isSuccess">Initial value of IsSuccess.</param>
         /// <param name="description">Initial value of Description.</param>
         /// <param name="dateEntry">Initial value of DateEntry.</param>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        public static GamingEventLog CreateGamingEventLog(int ID, int difficultylevel, bool isSuccess, string description, global::System.DateTimeOffset dateEntry)
+        public static GamingEventLog CreateGamingEventLog(int ID, int difficultylevel, string description, global::System.DateTimeOffset dateEntry)
         {
             GamingEventLog gamingEventLog = new GamingEventLog();
             gamingEventLog.Id = ID;
             gamingEventLog.Difficultylevel = difficultylevel;
-            gamingEventLog.IsSuccess = isSuccess;
             gamingEventLog.Description = description;
             gamingEventLog.DateEntry = dateEntry;
             return gamingEventLog;
@@ -2741,7 +2739,7 @@ namespace Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models
         /// </summary>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
         [global::Microsoft.OData.Client.OriginalNameAttribute("IsSuccess")]
-        public bool IsSuccess
+        public global::System.Nullable<bool> IsSuccess
         {
             get
             {
@@ -2756,8 +2754,8 @@ namespace Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models
             }
         }
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private bool _IsSuccess;
-        partial void OnIsSuccessChanging(bool value);
+        private global::System.Nullable<bool> _IsSuccess;
+        partial void OnIsSuccessChanging(global::System.Nullable<bool> value);
         partial void OnIsSuccessChanged();
         /// <summary>
         /// There are no comments for Property Description in the schema.
@@ -4378,7 +4376,7 @@ namespace Keebee.AAT.Operations.Service.KeebeeAAT
         <Property Name=""ResidentId"" Type=""Edm.Int32"" />
         <Property Name=""EventLogEntryTypeId"" Type=""Edm.Int32"" />
         <Property Name=""Difficultylevel"" Type=""Edm.Int32"" Nullable=""false"" />
-        <Property Name=""IsSuccess"" Type=""Edm.Boolean"" Nullable=""false"" />
+        <Property Name=""IsSuccess"" Type=""Edm.Boolean"" />
         <Property Name=""Description"" Type=""Edm.String"" Nullable=""false"" />
         <Property Name=""DateEntry"" Type=""Edm.DateTimeOffset"" Nullable=""false"" />
         <NavigationProperty Name=""Resident"" Type=""Keebee.AAT.DataAccess.Models.Resident"">

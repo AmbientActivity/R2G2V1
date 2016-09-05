@@ -21,17 +21,31 @@ namespace Keebee.AAT.ActivityLog
 
         public byte[] Export(string date)
         {
-            byte[] file = null;
+            var workbook = GetWorkbook(date);
+            var m = new MemoryStream();
+            workbook.SaveToStream(m);
+            var file = m.ToArray();
+
+            return file;
+        }
+
+        public void ExportAndSave(string date)
+        {
+            var workbook = GetWorkbook(date);
+
+            var filename = $"{Constants.ActivityLog.Path}\\ActivityLog_{date.Replace("/", "_")}_{DateTime.Now.Ticks}.xls";
+
+            workbook.Save(filename);
+        }
+
+        private Workbook GetWorkbook(string date)
+        {
+            var workbook = new Workbook();
 
             try
             {
                 var eventLogs = _opsClient.GetEventLogs(date).ToArray();
                 var gamingEventLogs = _opsClient.GetGamingEventLogs(date).ToArray();
-
-                if (!eventLogs.Any()) return null;
-
-                //var filename = $"{Constants.ActivityLog.Path}\\ActivityLog_{date.Replace("/", "_")}_{DateTime.Now.Ticks}.xls";
-                var workbook = new Workbook();
 
                 var worksheet1 = new Worksheet("Activity Log");
 
@@ -84,25 +98,23 @@ namespace Keebee.AAT.ActivityLog
                     worksheet2.Cells[rowIndex, 2] = new Cell(eventLog.ResidentId);
                     worksheet2.Cells[rowIndex, 3] = new Cell(eventLog.Resident);
                     worksheet2.Cells[rowIndex, 4] = new Cell(eventLog.DifficultyLevel);
-                    worksheet2.Cells[rowIndex, 5] = new Cell(eventLog.IsSuccess);
+                    if (eventLog.IsSuccess != null)
+                        worksheet2.Cells[rowIndex, 5] = new Cell(eventLog.IsSuccess.ToString().ToUpper());
+                    else
+                        worksheet2.Cells[rowIndex, 5] = new Cell(string.Empty);
                     worksheet2.Cells[rowIndex, 6] = new Cell(eventLog.Description);
 
                     rowIndex++;
                 }
 
                 workbook.Worksheets.Add(worksheet2);
-
-                var m = new MemoryStream();
-                workbook.SaveToStream(m);
-                file = m.ToArray();
-                //workbook.Save(filename);
             }
             catch (Exception ex)
             {
-                _eventLogger?.WriteEntry($"ActivityLog.Export: {ex.Message}", EventLogEntryType.Error);
+                _eventLogger?.WriteEntry($"ActivityLog.GetWorkbook: {ex.Message}", EventLogEntryType.Error);
             }
 
-            return file;
+            return workbook;
         }
     }
 }

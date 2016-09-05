@@ -27,12 +27,12 @@ namespace Keebee.AAT.Display.UserControls
             public int EventLogEntryTypeId { get; set; }
             public string Description { get; set; }
             public int DifficultyLevel { get; set; }
-            public bool Success { get; set; }
+            public bool? Success { get; set; }
         }
 
         // delegate
         private delegate void RaiseMatchingGameCompleteEventDelegate();
-        private delegate void RaiseLogGamingEventEventDelegate(int eventLogEntryTypeId, int difficultyLevel, bool success, string description);
+        private delegate void RaiseLogGamingEventEventDelegate(int eventLogEntryTypeId, int difficultyLevel, bool? success, string description);
 
         private int _initialDifficultyLevel;
         private bool _enableGameTimeout;
@@ -147,23 +147,37 @@ namespace Keebee.AAT.Display.UserControls
                     // extract eventLogEntryTypeId
                     const string numberOpen = "<number>";
                     const string numberClose = "</number>";
-                    var eventLogEntryTypeId =
-                        Convert.ToInt32(request.Substring(request.IndexOf(numberOpen) + numberOpen.Length,
+                    var eventLogEntryTypeId = Convert.ToInt32(request.Substring(request.IndexOf(numberOpen) + numberOpen.Length,
                             request.IndexOf(numberClose) - request.IndexOf(numberOpen) - numberOpen.Length));
 
                     const string stringOpen = "<string>";
                     const string stringClose = "</string>";
 
                     // extract difficultyLevel
-                    var difficultyLevel =
-                        Convert.ToInt32(request.Substring(request.IndexOf(stringOpen) + stringOpen.Length,
+                    var difficultyLevel = Convert.ToInt32(request.Substring(request.IndexOf(stringOpen) + stringOpen.Length,
                             request.IndexOf(stringClose) - request.IndexOf(stringOpen) - stringOpen.Length));
 
                     // remove difficultyLevel from the request string
                     request = request.Replace($"{stringOpen}{difficultyLevel}{stringClose}", string.Empty);
 
                     // extract success
-                    var success = request.Contains("<true/>");
+                    var successDesc = request.Substring(request.IndexOf(stringOpen) + stringOpen.Length,
+                            request.IndexOf(stringClose) - request.IndexOf(stringOpen) - stringOpen.Length);
+
+                    bool? isSuccess = null;
+
+                    switch (successDesc)
+                    {
+                        case "TRUE":
+                            isSuccess = true;
+                            break;
+                        case "FALSE":
+                            isSuccess = false;
+                            break;
+                    }
+
+                    // remove success from the request string
+                    request = request.Replace($"{stringOpen}{successDesc}{stringClose}", string.Empty);
 
                     // extract description
                     var description = request.Substring(request.IndexOf(stringOpen) + stringOpen.Length,
@@ -172,7 +186,7 @@ namespace Keebee.AAT.Display.UserControls
                     // replace apostrophe escape characters with an apostrophe
                     description = description.Replace("&apos;", "'");
 
-                    RaiseLogGamingEventEvent(eventLogEntryTypeId, difficultyLevel, success, description);
+                    RaiseLogGamingEventEvent(eventLogEntryTypeId, difficultyLevel, isSuccess, description);
                 }
 
                 // no arguments implies "raise game complete event"
@@ -202,7 +216,7 @@ namespace Keebee.AAT.Display.UserControls
             }
         }
 
-        private void RaiseLogGamingEventEvent(int eventLogEntryTypeId, int difficultyLevel, bool success, string description)
+        private void RaiseLogGamingEventEvent(int eventLogEntryTypeId, int difficultyLevel, bool? success, string description)
         {
             if (IsDisposed) return;
 

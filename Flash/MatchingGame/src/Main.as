@@ -54,6 +54,7 @@ package
 		
 		private const EventLogTypeId_MatchPictures:Number = 2;
 		private const EventLogTypeId_MatchPairs:Number = 3;
+		private var currentEventLogTypeId:Number;
 		// uncomment to test
 		//private var xmlShapesTest:String = "<images><image><name>Duck.png</name></image><image><name>Kangaroo.png</name></image><image><name>bear.png</name></image><image><name>bird.png</name></image><image><name>butterfly.png</name></image><image><name>camel.png</name></image><image><name>cat.png</name></image><image><name>chicken.png</name></image><image><name>cow.png</name></image><image><name>deer.png</name></image><image><name>dog.png</name></image><image><name>elephant.png</name></image><image><name>fish.png</name></image><image><name>horse.png</name></image><image><name>leopard.png</name></image><image><name>monkey.png</name></image><image><name>parrot.png</name></image><image><name>pig.png</name></image><image><name>rabbit.png</name></image><image><name>rhinoceros.png</name></image><image><name>snail.png</name></image></images>"
 		//private var pathMediaTest:String = "\\\\Dev1\\sqlexpress\\KeebeeAATFilestream\\Media\\Profiles\\4";
@@ -219,6 +220,7 @@ package
 			clickedImagesPairs = null;
 			childImagesPairs = null;
 			clickedImagesPairsInstance = null;
+			LogGamingEvent(-1, "Matching Game has been interrupted");
 		}
 		
 		private function loadScreen():void {
@@ -255,10 +257,12 @@ package
 			}
 			
 			if (currentLevel < 5) {
+				currentEventLogTypeId = EventLogTypeId_MatchPictures;
 				loadImages();
 				loadMainImage();
 				drawLine();
 			} else {
+				currentEventLogTypeId = EventLogTypeId_MatchPairs;
 				loadImagesMatchThePairs();
 			}
 		}
@@ -376,7 +380,7 @@ package
 				setTimeout(timedFunctionImage, 3000);
 				SoundMixer.stopAll();
 				playCorrectSound();
-				LogGamingEvent(EventLogTypeId_MatchPictures, currentLevel.toString(), true, "Image '" + RemoveExtension(mainFilename) + "' was matched");
+				LogGamingEvent(1, "Image '" + RemoveExtension(mainFilename) + "' was matched");
 				
 				TweenMax.to(event.target, 2, { transformMatrix:{a:0, tx:event.target.x, ty:event.target.y, scaleX:1.2, scaleY:1.2 }});
 				if (currentLevel < 5) currentLevel++;
@@ -389,7 +393,7 @@ package
 			// incorrect - reload level 1 or go back a level
 			} else if (clickCount == 1) {
 				soundTryAgain.play();
-				LogGamingEvent(EventLogTypeId_MatchPictures, currentLevel.toString(), false, "Image '" + RemoveExtension(mainFilename) + "' was mismatched (Selected Image: '" + RemoveExtension(filename) + "')");
+				LogGamingEvent(0, "Image '" + RemoveExtension(mainFilename) + "' was mismatched (Selected Image: '" + RemoveExtension(filename) + "')");
 				spliceArrays()
 				if (currentLevel > 1) currentLevel--;
 				loadScreen();
@@ -418,9 +422,12 @@ package
 			clickedImagesPairsInstance = [];
 		}
 		
-		private function LogGamingEvent(eventLogEntryType:Number, difficultyLevel:String, isSuccess:Boolean, description:String):void {
+		private function LogGamingEvent(success:Number, description:String):void {
 			// comment the following line to test
-			ExternalInterface.call("FlashCall", eventLogEntryType, difficultyLevel, isSuccess, description);
+			var successDesc:String = "NULL";
+			if (success == 0) successDesc = "FALSE";
+			else if (success == 1) successDesc = "TRUE";
+			ExternalInterface.call("FlashCall", currentEventLogTypeId, currentLevel.toString(), successDesc, description);
 		}
 			
 		// ----------------------- match-the-pairs (begin) -----------------------------
@@ -468,7 +475,7 @@ package
 			addChild(matchThePairsText);
 			TweenLite.to(matchThePairsText, 1, {x:thirdStageWidth, y:35, alpha:1});
 			
-			LogGamingEvent(EventLogTypeId_MatchPairs, currentLevel.toString(), true, "New set of pairs displayed (6 pairs)");
+			LogGamingEvent(-1, "New set of pairs has been displayed (6 pairs)");
 		}
 		
 		private function getMatchThePairsText():Bitmap {
@@ -503,7 +510,8 @@ package
 			var image1obj:String = clickedImagesPairsInstance[0];
 			var image2obj:String = clickedImagesPairsInstance[1];
 			
-			var isSuccess:Boolean;
+			var success:Number;
+			var eventLogDescription:String;
 			var isDecreaseDifficulty:Boolean;
 			var filename1:String = fullPath1.substr(fullPath1.lastIndexOf("\\") + 1).toLowerCase();
 			var filename2:String;
@@ -517,7 +525,7 @@ package
 			
 			// correct
 			if (image1obj != image2obj && filename1 == filename2) {
-				isSuccess = true;
+				success = 1;
 				SoundMixer.stopAll();
 				playCorrectSound();
 				TweenMax.to(childImagesPairs[0], 1, {glowFilter:{color:0x0033cc, alpha:1, blurX:15, blurY:15, strength:4}});
@@ -526,14 +534,14 @@ package
 			
 			// if wrong run again
 			} else if (image1obj == image2obj && clickCount == 2) {
-				isSuccess = false;
+				success = 0;
 				isDecreaseDifficulty = false;
 				SoundMixer.stopAll();
 				soundTryAgain.play();
 				setTimeout(timedFunctionClick2, 100);
 
 			} else if (image1obj != image2obj && clickCount == 2) {
-				isSuccess = false;
+				success = 0;
 				isDecreaseDifficulty = false;
 				SoundMixer.stopAll();
 				soundTryAgain.play();
@@ -541,31 +549,32 @@ package
 			}
 			
 			if (image1obj != image2obj && filename1 == filename2 && numAttempts == 2) {
-				isSuccess = false;
+				success = 0;
 				isDecreaseDifficulty = false;
 				clickCount = 0;
 				numAttempts = 0;
 			} else if (image1obj != image2obj && clickCount == 2 && numAttempts == 2) {
-				isSuccess = false;
+				success = 0;
 				isDecreaseDifficulty = true;
 				SoundMixer.stopAll();
 				soundLetsTrySomethingDifferent.play();
 			} else if (image1obj == image2obj && clickCount == 2 && numAttempts == 2) {
-				isSuccess = false;
+				success = 0;
 				isDecreaseDifficulty = true;
 				SoundMixer.stopAll();
 				soundLetsTrySomethingDifferent.play();
 			}
 			if (fullPath2 != null) {
-				if (isSuccess)
-					LogGamingEvent(EventLogTypeId_MatchPairs, currentLevel.toString(), isSuccess, "Pair for image '" + RemoveExtension(filename1) + "' was matched");
+				if (success == 1)
+					eventLogDescription = "Pair for image '" + RemoveExtension(filename1) + "' was matched";
 				else {
-					LogGamingEvent(EventLogTypeId_MatchPairs, currentLevel.toString(), isSuccess, "Pair for image '" + RemoveExtension(filename1) + "' was mismatched (Selected Image: '" + RemoveExtension(filename2) + "')");
+					eventLogDescription = "Pair for image '" + RemoveExtension(filename1) + "' was mismatched (Selected Image: '" + RemoveExtension(filename2) + "')";
 					if (isDecreaseDifficulty) {
 						currentLevel = 4
 						loadScreen();
 					}
 				}
+				LogGamingEvent(success, eventLogDescription);
 			}
 			
 			if (enableGameTimeout) {
@@ -604,7 +613,7 @@ package
 				gameOver.x = halfStageWidth-gameOver.width / 2;
 				gameOver.y = halfStageHeight-gameOver.height / 2;
 				addChild(gameOver);
-				LogGamingEvent(EventLogTypeId_MatchPairs, currentLevel.toString(), true, "All pairs were matched successfully");
+				LogGamingEvent(1, "All pairs were matched successfully");
 				setTimeout(timedFunctionClick3, 3000);
 			}
 		}
@@ -693,7 +702,7 @@ package
 			addChild(matchThePicturesText);
 			TweenLite.to(matchThePicturesText, 1, {x:120, y:100, alpha:1});
 			
-			LogGamingEvent(EventLogTypeId_MatchPairs, currentLevel.toString(), true, "New target image displayed (Image: '" + RemoveExtension(mainFilename) + "')");
+			LogGamingEvent(-1, "New target image has been displayed (Image: '" + RemoveExtension(mainFilename) + "')");
 		}
 		
 		private function mainImageLoaded(event:Event):void {
@@ -741,6 +750,7 @@ package
 		}
 			
 		private function timedFunctionGame():void {
+			LogGamingEvent(-1, "Matching Game has timed out");
 			ExternalInterface.call("FlashCall", "MatchingGameComplete");
 		}
 	}

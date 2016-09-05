@@ -220,7 +220,7 @@ package
 			clickedImagesPairs = null;
 			childImagesPairs = null;
 			clickedImagesPairsInstance = null;
-			LogGamingEvent(-1, "Matching Game has been interrupted");
+			LogGamingEvent(-1, "Game has been interrupted");
 		}
 		
 		private function loadScreen():void {
@@ -750,7 +750,7 @@ package
 		}
 			
 		private function timedFunctionGame():void {
-			LogGamingEvent(-1, "Matching Game has timed out");
+			LogGamingEvent(-1, "Game timeout has expired");
 			ExternalInterface.call("FlashCall", "MatchingGameComplete");
 		}
 	}

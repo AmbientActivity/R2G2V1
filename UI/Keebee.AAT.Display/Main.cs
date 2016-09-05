@@ -100,7 +100,6 @@ namespace Keebee.AAT.Display
             // response complete event handlers
             slideViewerFlash1.SlideShowCompleteEvent += SlideShowComplete;
             mediaPlayer1.MediaPlayerCompleteEvent += MediaPlayerComplete;
-            matchingGame1.MatchingGameCompleteEvent += MatchingGameComplete;
             matchingGame1.MatchingGameTimeoutExpiredEvent += MatchingGameTimeoutExpired;
             matchingGame1.LogGamingEventEvent += LogGamingEvent;
             mediaPlayer1.LogActivityEventEvent += LogActivityEvent;
@@ -389,9 +388,11 @@ namespace Keebee.AAT.Display
                 if (!shapes.Any()) return;
 
                 StopCurrentResponse();
-                matchingGame1.Show();
                 _isMatchingGameTimeoutExpired = false;
+
+                matchingGame1.Show();
                 matchingGame1.Play(shapes, _gameDifficultyLevel, true);
+
                 _currentResponseTypeId = UserResponseType.MatchingGame;
                 _activityEventLogger.Add(_currentResidentId, _currenActivityTypeId, _currentResponseTypeId);
             }
@@ -525,20 +526,6 @@ namespace Keebee.AAT.Display
             }
         }
 
-        private void MatchingGameComplete(object sender, EventArgs e)
-        {
-            try
-            {
-                matchingGame1.Hide();
-                ResumeAmbient();
-                _isNewResponse = true;
-            }
-            catch (Exception ex)
-            {
-                _eventLogger.WriteEntry($"Main.MatchingGameComplete: {ex.Message}", EventLogEntryType.Error);
-            }
-        }
-
         private void LogGamingEvent(object sender, EventArgs e)
         {
             try
@@ -557,6 +544,9 @@ namespace Keebee.AAT.Display
             try
             {
                 _isMatchingGameTimeoutExpired = true;
+                matchingGame1.Hide();
+                ResumeAmbient();
+                _isNewResponse = true;
             }
             catch (Exception ex)
             {

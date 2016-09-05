@@ -33,7 +33,7 @@ namespace Keebee.AAT.ActivityLog
         {
             var workbook = GetWorkbook(date);
 
-            var filename = $"{Constants.ActivityLog.Path}\\ActivityLog_{date.Replace("/", "_")}_{DateTime.Now.Ticks}.xls";
+            var filename = $@"\\{Environment.MachineName}\{Constants.ActivityLog.Path}\ActivityLog_{date.Replace("/", "_")}_{DateTime.Now.Ticks}.xls";
 
             workbook.Save(filename);
         }

@@ -13,7 +13,7 @@ echo ---------------------------------------------------
 installutil C:\Users\%USERNAME%\Source\Repos\R2G2V1\Service\Keebee.AAT.PhidgetService\bin\Debug\Keebee.AAT.PhidgetService.exe
 echo ---------------------------------------------------
 echo Done.
-echo Installing RFID Reader Service...
+echo Installing Rfid Reader Service...
 echo ---------------------------------------------------
 installutil C:\Users\%USERNAME%\Source\Repos\R2G2V1\Service\Keebee.AAT.RfidReaderService\bin\Debug\Keebee.AAT.RfidReaderService.exe
 echo ---------------------------------------------------

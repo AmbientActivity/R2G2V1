@@ -6,7 +6,7 @@ $url = "http://localhost/Keebee.AAT.Operations/api/Profiles"
 Write-Host "Dropping tables...” -NoNewline
 $queryFile = $path + "DropAll.sql"
 Invoke-SqlQuery -File $queryFile -Server $server -Database $database
-Write-Host "complete.`n”
+Write-Host "done.`n”
 
 # restart IIS
 Write-Host "IIS Restart”

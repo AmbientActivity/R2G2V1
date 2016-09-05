@@ -20,6 +20,7 @@ namespace Keebee.AAT.Display.UserControls
 
         // event handler
         public event EventHandler MatchingGameCompleteEvent;
+        public event EventHandler MatchingGameTimeoutExpiredEvent;
         public event EventHandler LogGamingEventEvent;
 
         public class LogGamingEventEventArgs : EventArgs
@@ -32,10 +33,12 @@ namespace Keebee.AAT.Display.UserControls
 
         // delegate
         private delegate void RaiseMatchingGameCompleteEventDelegate();
+        private delegate void RaiseMatchingGameTimeoutExpiredDelegate();
         private delegate void RaiseLogGamingEventEventDelegate(int eventLogEntryTypeId, int difficultyLevel, bool? success, string description);
 
         private int _initialDifficultyLevel;
         private bool _enableGameTimeout;
+        private bool _isGameTimeoutExpired;
 
         public MatchingGame()
         {
@@ -84,11 +87,12 @@ namespace Keebee.AAT.Display.UserControls
             }
         }
 
-        public void Stop()
+        public void Stop(bool logEvent)
         {
             try
             {
-                axShockwaveFlash1.CallFunction("<invoke name=\"stopMatchingGame\"></invoke>");
+                if (logEvent)
+                    axShockwaveFlash1.CallFunction("<invoke name=\"stopMatchingGame\"></invoke>");
             }
             catch (Exception ex)
             {
@@ -186,6 +190,9 @@ namespace Keebee.AAT.Display.UserControls
                     // replace apostrophe escape characters with an apostrophe
                     description = description.Replace("&apos;", "'");
 
+                    if (description == Constants.ActivityLog.GameTimeoutDescription)
+                        RaiseMatchingGameTimeoutExpired();
+
                     RaiseLogGamingEventEvent(eventLogEntryTypeId, difficultyLevel, isSuccess, description);
                 }
 
@@ -216,6 +223,20 @@ namespace Keebee.AAT.Display.UserControls
             }
         }
 
+        private void RaiseMatchingGameTimeoutExpired()
+        {
+            if (IsDisposed) return;
+
+            if (InvokeRequired)
+            {
+                Invoke(new RaiseMatchingGameTimeoutExpiredDelegate(RaiseMatchingGameTimeoutExpired));
+            }
+            else
+            {
+                MatchingGameTimeoutExpiredEvent?.Invoke(new object(), new EventArgs());
+            }
+        }
+
         private void RaiseLogGamingEventEvent(int eventLogEntryTypeId, int difficultyLevel, bool? success, string description)
         {
             if (IsDisposed) return;
@@ -233,6 +254,7 @@ namespace Keebee.AAT.Display.UserControls
                                Success = success,
                                Description = description
                            };
+
                 LogGamingEventEvent?.Invoke(new object(), args);
             }
         }

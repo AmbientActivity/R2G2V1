@@ -63,6 +63,7 @@ namespace Keebee.AAT.Display
         private int _currentTelevisionResponseValue;
         private int _currentRadioResponseValue;
         private int _gameDifficultyLevel;
+        private bool _isMatchingGameTimeoutExpired;
 
         // current resident
         private int _currentResidentId;
@@ -100,6 +101,7 @@ namespace Keebee.AAT.Display
             slideViewerFlash1.SlideShowCompleteEvent += SlideShowComplete;
             mediaPlayer1.MediaPlayerCompleteEvent += MediaPlayerComplete;
             matchingGame1.MatchingGameCompleteEvent += MatchingGameComplete;
+            matchingGame1.MatchingGameTimeoutExpiredEvent += MatchingGameTimeoutExpired;
             matchingGame1.LogGamingEventEvent += LogGamingEvent;
             mediaPlayer1.LogActivityEventEvent += LogActivityEvent;
             InitializeStartupPosition();
@@ -268,7 +270,7 @@ namespace Keebee.AAT.Display
                     break;
                 case UserResponseType.MatchingGame:
                     matchingGame1.Hide();
-                    matchingGame1.Stop();
+                    matchingGame1.Stop(logEvent: !_isMatchingGameTimeoutExpired);
                     break;
                 case UserResponseType.Radio:
                 case UserResponseType.Television:
@@ -388,6 +390,7 @@ namespace Keebee.AAT.Display
 
                 StopCurrentResponse();
                 matchingGame1.Show();
+                _isMatchingGameTimeoutExpired = false;
                 matchingGame1.Play(shapes, _gameDifficultyLevel, true);
                 _currentResponseTypeId = UserResponseType.MatchingGame;
                 _activityEventLogger.Add(_currentResidentId, _currenActivityTypeId, _currentResponseTypeId);
@@ -546,6 +549,18 @@ namespace Keebee.AAT.Display
             catch (Exception ex)
             {
                 _eventLogger.WriteEntry($"Main.LogGamingEvent: {ex.Message}", EventLogEntryType.Error);
+            }
+        }
+
+        private void MatchingGameTimeoutExpired(object sender, EventArgs e)
+        {
+            try
+            {
+                _isMatchingGameTimeoutExpired = true;
+            }
+            catch (Exception ex)
+            {
+                _eventLogger.WriteEntry($"Main.MatchingGameTimeoutExpiredEvent: {ex.Message}", EventLogEntryType.Error);
             }
         }
 

@@ -11,7 +11,8 @@
 
     public static class ActivityLog
     {
-        public const string Path = @"C:\Keebee\ActivityLog";
+        public const string Path = @"sqlexpress\KeebeeAATFilestream\Media\ActivityLog";
+        public const string GameTimeoutDescription = "Matching Game has timed out";
     }
 
     //TODO: add an asociatian to this file in the database somehow

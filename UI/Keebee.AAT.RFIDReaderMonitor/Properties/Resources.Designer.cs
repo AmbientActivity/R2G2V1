@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Keebee.AAT.RFIDReaderMonitor.Properties {
+namespace Keebee.AAT.RfidReaderMonitor.Properties {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace Keebee.AAT.RFIDReaderMonitor.Properties {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Keebee.AAT.RFIDReaderMonitor.Properties.Resources", typeof(Resources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Keebee.AAT.RfidReaderMonitor.Properties.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Web.Script.Serialization;
 using System.Windows.Forms;
 
-namespace Keebee.AAT.RFIDReaderMonitor
+namespace Keebee.AAT.RfidReaderMonitor
 {
     public partial class Monitor : Form
     {

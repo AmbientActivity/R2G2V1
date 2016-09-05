@@ -275,7 +275,7 @@ namespace Keebee.AAT.StateMachineService
             // For first time, set amount of seconds between current time and schedule time
             _autoLogTimer.Enabled = true;
             _autoLogTimer.Interval = _scheduleAutoLogTime.Subtract(DateTime.Now).TotalSeconds * 1000;
-            _autoLogTimer.Elapsed += ExportLog;
+            _autoLogTimer.Elapsed += ExportEventLog;
         }
 
         protected override void OnStop()
@@ -284,7 +284,7 @@ namespace Keebee.AAT.StateMachineService
         }
 
         // This method is called by the timer delegate.
-        public void ExportLog(object sender, System.Timers.ElapsedEventArgs e)
+        public void ExportEventLog(object sender, System.Timers.ElapsedEventArgs e)
         {
             var exporter = new EventLogging.Exporter();
 

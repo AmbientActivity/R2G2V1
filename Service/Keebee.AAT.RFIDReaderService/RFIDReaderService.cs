@@ -14,7 +14,7 @@ using System.Linq;
 using System.ServiceProcess;
 using System.Threading;
 
-namespace Keebee.AAT.RFIDReaderService
+namespace Keebee.AAT.RfidReaderService
 {
     internal partial class RfidReaderService : ServiceBase
     {
@@ -224,16 +224,16 @@ namespace Keebee.AAT.RFIDReaderService
         }
 #endif
 
-        private void LogRfidEvent(object sender, EventArgs e)
+        private void LogRfidEvent(int residentId, string description)
         {
             try
             {
-                //var args = (MatchingGame.LogGameEventEventArgs)e;
-                //_gamingEventLogger.Add(_currentResidentId, args.EventLogEntryTypeId, args.DifficultyLevel, args.Success, args.Description);
+                var rfidEventLogger = new RfidEventLogger();
+                rfidEventLogger.Add(residentId, description);
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"RFIDReaderService.LogRfidEvent: {ex.Message}", EventLogEntryType.Error);
+                _systemEventLogger.WriteEntry($"RfidReaderService.LogRfidEvent: {ex.Message}", EventLogEntryType.Error);
             }
         }
 

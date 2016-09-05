@@ -1,6 +1,6 @@
 ﻿using System.ServiceProcess;
 
-namespace Keebee.AAT.RFIDReaderService
+namespace Keebee.AAT.RfidReaderService
 {
     internal static class Program
     {

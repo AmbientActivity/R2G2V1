@@ -45,7 +45,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Keebee.AAT.ServiceModels", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Keebee.AAT.PhidgetMonitor", "UI\Keebee.AAT.PhidgetMonitor\Keebee.AAT.PhidgetMonitor.csproj", "{E84127D7-D75E-4D5F-801E-1732D27FA05D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Keebee.AAT.RFIDReaderMonitor", "UI\Keebee.AAT.RFIDReaderMonitor\Keebee.AAT.RFIDReaderMonitor.csproj", "{1CA213E0-D9D8-4823-8EEC-9BDC51F71F22}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Keebee.AAT.RfidReaderMonitor", "UI\Keebee.AAT.RFIDReaderMonitor\Keebee.AAT.RfidReaderMonitor.csproj", "{1CA213E0-D9D8-4823-8EEC-9BDC51F71F22}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "WebUI", "WebUI", "{9350B422-7BC9-490D-8CDB-ED2473917269}"
 EndProject

@@ -60,11 +60,12 @@
       <DependentUpon>ProjectInstaller.cs</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RFIDReaderService.cs">
+    <Compile Include="RfidEventLogger.cs" />
+    <Compile Include="RfidReaderService.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="RFIDReaderService.Designer.cs">
-      <DependentUpon>RFIDReaderService.cs</DependentUpon>
+    <Compile Include="RfidReaderService.Designer.cs">
+      <DependentUpon>RfidReaderService.cs</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>

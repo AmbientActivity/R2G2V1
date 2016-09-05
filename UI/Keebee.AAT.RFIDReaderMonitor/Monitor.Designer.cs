@@ -1,4 +1,4 @@
-﻿namespace Keebee.AAT.RFIDReaderMonitor
+﻿namespace Keebee.AAT.RfidReaderMonitor
 {
     partial class Monitor
     {

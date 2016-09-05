@@ -1,4 +1,4 @@
-﻿namespace Keebee.AAT.RFIDReaderService
+﻿namespace Keebee.AAT.RfidReaderService
 {
     partial class ProjectInstaller
     {

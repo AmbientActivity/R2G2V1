@@ -2,7 +2,7 @@
 using System.Configuration.Install;
 using System.ServiceProcess;
 
-namespace Keebee.AAT.RFIDReaderService
+namespace Keebee.AAT.RfidReaderService
 {
     [RunInstaller(true)]
     public partial class ProjectInstaller : Installer

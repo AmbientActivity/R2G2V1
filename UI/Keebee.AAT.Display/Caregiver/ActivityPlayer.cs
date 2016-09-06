@@ -111,7 +111,7 @@ namespace Keebee.AAT.Display.Caregiver
             try
             {
                 var args = (MatchingGame.LogGameEventEventArgs)e;
-                _gameEventLogger.Add(_residentId, args.EventLogEntryTypeId, args.DifficultyLevel, args.Success, args.Description);
+                _gameEventLogger.Add(_residentId, args.GameTypeId, args.DifficultyLevel, args.Success, args.Description);
             }
             catch (Exception ex)
             {

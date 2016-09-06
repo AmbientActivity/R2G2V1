@@ -391,10 +391,13 @@ namespace Keebee.AAT.Display
                 _isMatchingGameTimeoutExpired = false;
 
                 matchingGame1.Show();
-                matchingGame1.Play(shapes, _gameDifficultyLevel, true);
 
-                _currentResponseTypeId = UserResponseType.MatchingGame;
                 _activityEventLogger.Add(_currentResidentId, _currenActivityTypeId, _currentResponseTypeId);
+                _gameEventLogger.Add(_currentResidentId, UserGameType.MatchThePictures, _gameDifficultyLevel, null, "New game has been initiated");
+
+                matchingGame1.Play(shapes, _gameDifficultyLevel, true);
+                _currentResponseTypeId = UserResponseType.MatchingGame;
+                
             }
         }
 
@@ -531,7 +534,7 @@ namespace Keebee.AAT.Display
             try
             {
                 var args = (MatchingGame.LogGameEventEventArgs)e;
-                _gameEventLogger.Add(_currentResidentId, args.EventLogEntryTypeId, args.DifficultyLevel, args.Success, args.Description);
+                _gameEventLogger.Add(_currentResidentId, args.GameTypeId, args.DifficultyLevel, args.Success, args.Description);
             }
             catch (Exception ex)
             {

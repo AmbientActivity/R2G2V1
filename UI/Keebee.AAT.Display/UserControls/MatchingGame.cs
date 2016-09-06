@@ -24,7 +24,7 @@ namespace Keebee.AAT.Display.UserControls
 
         public class LogGameEventEventArgs : EventArgs
         {
-            public int EventLogEntryTypeId { get; set; }
+            public int GameTypeId { get; set; }
             public string Description { get; set; }
             public int DifficultyLevel { get; set; }
             public bool? Success { get; set; }
@@ -221,7 +221,7 @@ namespace Keebee.AAT.Display.UserControls
             }
         }
 
-        private void RaiseLogGameEventEvent(int eventLogEntryTypeId, int difficultyLevel, bool? success, string description)
+        private void RaiseLogGameEventEvent(int gameTypeId, int difficultyLevel, bool? success, string description)
         {
             if (IsDisposed) return;
 
@@ -233,7 +233,7 @@ namespace Keebee.AAT.Display.UserControls
             {
                 var args = new LogGameEventEventArgs
                            {
-                               EventLogEntryTypeId = eventLogEntryTypeId,
+                               GameTypeId = gameTypeId,
                                DifficultyLevel = difficultyLevel,
                                Success = success,
                                Description = description

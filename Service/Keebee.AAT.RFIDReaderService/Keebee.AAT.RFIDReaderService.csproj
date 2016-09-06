@@ -60,7 +60,6 @@
       <DependentUpon>ProjectInstaller.cs</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RfidEventLogger.cs" />
     <Compile Include="RfidReaderService.cs">
       <SubType>Component</SubType>
     </Compile>

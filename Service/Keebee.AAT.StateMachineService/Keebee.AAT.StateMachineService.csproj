@@ -53,6 +53,7 @@
     <Compile Include="ProjectInstaller.Designer.cs">
       <DependentUpon>ProjectInstaller.cs</DependentUpon>
     </Compile>
+    <Compile Include="RfidEventLogger.cs" />
     <Compile Include="StateMachineService.cs">
       <SubType>Component</SubType>
     </Compile>

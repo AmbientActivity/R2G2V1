@@ -3,12 +3,12 @@ using Keebee.AAT.SystemEventLogging;
 using System;
 using System.Diagnostics;
 
-namespace Keebee.AAT.RfidReaderService
+namespace Keebee.AAT.StateMachineService
 {
     public class RfidEventLogger
     {
-        private OperationsClient _opsClient;
-        public OperationsClient OperationsClient
+        private IOperationsClient _opsClient;
+        public IOperationsClient OperationsClient
         {
             set { _opsClient = value; }
         }

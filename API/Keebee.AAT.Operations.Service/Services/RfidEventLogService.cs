@@ -59,7 +59,7 @@ namespace Keebee.AAT.Operations.Service.Services
             string filter = $"DateEntry gt {from} and DateEntry lt {to}";
 
             var rfidEventLogs = container.RfidEventLogs.AddQueryOption("$filter", filter)
-                .Expand("Resident,ActivityType,ResponseType($expand=ResponseTypeCategory)")
+                .Expand("Resident")
                 .ToList();
 
             return rfidEventLogs;

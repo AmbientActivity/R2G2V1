@@ -45,7 +45,8 @@ namespace Keebee.AAT.EventLogging
             try
             {
                 var activityEventLogs = _opsClient.GetActivityEventLogs(date).ToArray();
-                var gamingEventLogs = _opsClient.GetGameEventLogs(date).ToArray();
+                var gameEventLogs = _opsClient.GetGameEventLogs(date).ToArray();
+                var rfidEventLogs = _opsClient.GetRfidEventLogs(date).ToArray();
 
                 var worksheet1 = new Worksheet("Log");
 
@@ -76,7 +77,7 @@ namespace Keebee.AAT.EventLogging
 
                 workbook.Worksheets.Add(worksheet1);
 
-                var worksheet2 = new Worksheet("Gaming Log")
+                var worksheet2 = new Worksheet("Game Log")
                 {
                     Cells =
                                      {
@@ -91,7 +92,7 @@ namespace Keebee.AAT.EventLogging
                 };
 
                 rowIndex = 1;
-                foreach (var eventLog in gamingEventLogs)
+                foreach (var eventLog in gameEventLogs)
                 {
                     worksheet2.Cells[rowIndex, 0] = new Cell(eventLog.Date) { Format = CellFormat.Date };
                     worksheet2.Cells[rowIndex, 1] = new Cell(eventLog.Time) { Format = CellFormat.Date };
@@ -108,6 +109,33 @@ namespace Keebee.AAT.EventLogging
                 }
 
                 workbook.Worksheets.Add(worksheet2);
+
+                var worksheet3 = new Worksheet("RFID Log")
+                {
+                    Cells =
+                                     {
+                                         [0, 0] = new Cell("Date"),
+                                         [0, 1] = new Cell("Time"),
+                                         [0, 2] = new Cell("RFID"),
+                                         [0, 3] = new Cell("Resident"),
+                                         [0, 4] = new Cell("Description")
+                                     }
+                };
+
+                rowIndex = 1;
+                foreach (var eventLog in rfidEventLogs)
+                {
+                    worksheet3.Cells[rowIndex, 0] = new Cell(eventLog.Date) { Format = CellFormat.Date };
+                    worksheet3.Cells[rowIndex, 1] = new Cell(eventLog.Time) { Format = CellFormat.Date };
+                    worksheet3.Cells[rowIndex, 2] = new Cell(eventLog.ResidentId);
+                    worksheet3.Cells[rowIndex, 3] = new Cell(eventLog.Resident);
+                    worksheet3.Cells[rowIndex, 4] = new Cell(eventLog.Description);
+
+                    rowIndex++;
+                }
+
+                workbook.Worksheets.Add(worksheet3);
+
             }
             catch (Exception ex)
             {

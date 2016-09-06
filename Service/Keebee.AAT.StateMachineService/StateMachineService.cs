@@ -213,13 +213,16 @@ namespace Keebee.AAT.StateMachineService
 
                 if (residentId > 0)
                 {
-                    if (_activeProfile?.ResidentId != residentId)
-                        _activeProfile = _opsClient.GetResidentProfile(residentId);
+                    if (_activeProfile?.ResidentId == residentId) return;
+                    _activeProfile = _opsClient.GetResidentProfile(residentId);
+                    LogRfidEvent(residentId, "New active resident");
                 }
                 else
                 {
-                    if (_activeProfile?.ResidentId != 0)
-                        _activeProfile = _opsClient.GetGenericProfile();
+                    if (_activeProfile?.ResidentId == 0) return;
+                    _activeProfile = _opsClient.GetGenericProfile();
+                    LogRfidEvent(-1, "Active resident is generic");
+
                 }
             }
 
@@ -281,6 +284,23 @@ namespace Keebee.AAT.StateMachineService
         protected override void OnStop()
         {
             _systemEventLogger.WriteEntry("In OnStop");
+        }
+
+        private void LogRfidEvent(int residentId, string description)
+        {
+            try
+            {
+                var rfidEventLogger = new RfidEventLogger()
+                {
+                    OperationsClient = _opsClient,
+                    SystemEventLogger = _systemEventLogger
+                };
+                rfidEventLogger.Add(residentId, description);
+            }
+            catch (Exception ex)
+            {
+                _systemEventLogger.WriteEntry($"RfidReaderService.LogRfidEvent: {ex.Message}", EventLogEntryType.Error);
+            }
         }
 
         // This method is called by the timer delegate.

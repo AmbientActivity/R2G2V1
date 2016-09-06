@@ -90,7 +90,6 @@ namespace Keebee.AAT.RfidReaderService
             while (true)
             {
                 var residentId = GetResidentId();
-
                 if (residentId < 0) continue;
 
                 if ((residentId > 0) && _opsClient.ResidentProfileExists(residentId))
@@ -224,18 +223,7 @@ namespace Keebee.AAT.RfidReaderService
         }
 #endif
 
-        private void LogRfidEvent(int residentId, string description)
-        {
-            try
-            {
-                var rfidEventLogger = new RfidEventLogger();
-                rfidEventLogger.Add(residentId, description);
-            }
-            catch (Exception ex)
-            {
-                _systemEventLogger.WriteEntry($"RfidReaderService.LogRfidEvent: {ex.Message}", EventLogEntryType.Error);
-            }
-        }
+
 
         protected override void OnStart(string[] args)
         {

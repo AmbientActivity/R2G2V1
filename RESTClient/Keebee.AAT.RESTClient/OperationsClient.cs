@@ -32,13 +32,16 @@ namespace Keebee.AAT.RESTClient
         IEnumerable<RfidEventLog> GetRfidEventLogs(string date);
 
         // POST
-        void PostResident(Resident resident);
+        int PostResident(ResidentEdit resident);
         void PostActivityEventLog(ActivityEventLog activityEventLog);
         void PostGameEventLog(GameEventLog gameEventLog);
         void PostRfidEventLog(RfidEventLog rfidEventLog);
 
         // PATCH
-        void PatchResident(int residentId, ResidentUpdate resident);
+        void PatchResident(int residentId, ResidentEdit resident);
+
+        // DELETE
+        void DeleteResident(int residentId);
     }
 
     public class OperationsClient : IOperationsClient
@@ -240,22 +243,13 @@ namespace Keebee.AAT.RESTClient
             return rfidEventLogs;
         }
 
-        // PATCH
-        public void PatchResident(int residentId, ResidentUpdate resident)
-        {
-            var serializer = new JavaScriptSerializer();
-            var el = serializer.Serialize(resident);
-
-            Patch(string.Format(UrlResident, residentId), el);
-        }
-
         // POST
-        public void PostResident(Resident resident)
+        public int PostResident(ResidentEdit resident)
         {
             var serializer = new JavaScriptSerializer();
             var el = serializer.Serialize(resident);
 
-            Post(UrlResidents, el);
+            return Post(UrlResidents, el);
         }
 
         public void PostActivityEventLog(ActivityEventLog activityEventLog)
@@ -280,6 +274,21 @@ namespace Keebee.AAT.RESTClient
             var el = serializer.Serialize(rfidEventLog);
 
             Post(UrlRfidEventLogs, el);
+        }
+
+        // PATCH
+        public void PatchResident(int residentId, ResidentEdit resident)
+        {
+            var serializer = new JavaScriptSerializer();
+            var el = serializer.Serialize(resident);
+
+            Patch(string.Format(UrlResident, residentId), el);
+        }
+
+        // DELETE
+        public void DeleteResident(int residentId)
+        {
+            Delete(string.Format(UrlResident, residentId));
         }
 
         // private REST
@@ -348,6 +357,43 @@ namespace Keebee.AAT.RESTClient
             return false;
         }
 
+        private int Post(string url, string value)
+        {
+            try
+            {
+                using (var client = new HttpClient())
+                {
+                    // added additionally needed back slashes
+                    value = $"\"{value.Replace("\"", "\\\"")}\"";
+
+                    client.BaseAddress = _uriBase;
+
+                    HttpContent content = new StringContent(value, Encoding.UTF8, "application/json");
+                    HttpResponseMessage response = client.PostAsync(url, content).Result;
+
+                    if (!response.IsSuccessStatusCode)
+                    {
+                        throw new Exception(
+                            $"StatusCode: {response.StatusCode}{Environment.NewLine}Message: {response.Content}");
+                    }
+
+                    int newId;
+                    var result = response.Content.ReadAsStringAsync().Result;
+                    var isValid = int.TryParse(result, out newId);
+
+                    if (isValid) return newId;
+                    return -1;
+                }
+            }
+
+            catch (Exception ex)
+            {
+                _systemEventLogger?.WriteEntry($"RESTClient.Post: {ex.Message}{Environment.NewLine}url:{url}", EventLogEntryType.Error);
+            }
+
+            return -1;
+        }
+
         private void Patch(string url, string value)
         {
             try
@@ -358,7 +404,7 @@ namespace Keebee.AAT.RESTClient
                     value = $"\"{value.Replace("\"", "\\\"")}\"";
 
                     client.BaseAddress = _uriBase;
-                    
+
                     var method = new HttpMethod("PATCH");
                     var uri = new Uri($@"{_uriBase}{url}");
                     var request = new HttpRequestMessage(method, uri)
@@ -382,19 +428,15 @@ namespace Keebee.AAT.RESTClient
             }
         }
 
-        private void Post(string url, string value)
+        private void Delete(string url)
         {
             try
             {
                 using (var client = new HttpClient())
                 {
-                    // added additionally needed back slashes
-                    value = $"\"{value.Replace("\"", "\\\"")}\"";
-
                     client.BaseAddress = _uriBase;
 
-                    HttpContent content = new StringContent(value, Encoding.UTF8, "application/json");
-                    HttpResponseMessage response = client.PostAsync(url, content).Result;
+                    HttpResponseMessage response = client.DeleteAsync(url).Result;
 
                     if (!response.IsSuccessStatusCode)
                     {
@@ -406,7 +448,7 @@ namespace Keebee.AAT.RESTClient
 
             catch (Exception ex)
             {
-                _systemEventLogger?.WriteEntry($"RESTClient.Post: {ex.Message}{Environment.NewLine}url:{url}", EventLogEntryType.Error);
+                _systemEventLogger?.WriteEntry($"RESTClient.Delete: {ex.Message}{Environment.NewLine}url:{url}", EventLogEntryType.Error);
             }
         }
     }

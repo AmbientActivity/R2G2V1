@@ -95,7 +95,6 @@ namespace Keebee.AAT.DataAccess.Controllers
                 return NotFound();
             }
 
-            resident.DateUpdated = DateTime.Now;
             patch.Patch(resident);
 
             try

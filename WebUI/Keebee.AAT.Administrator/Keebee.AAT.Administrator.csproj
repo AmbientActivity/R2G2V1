@@ -349,6 +349,10 @@
       <Project>{97ca2119-5977-4de5-9c91-a64d97cb9035}</Project>
       <Name>Keebee.AAT.EventLogging</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Keebee.AAT.BusinessRules\Keebee.AAT.BusinessRules.csproj">
+      <Project>{8b0e0633-3be9-470c-8c3c-ea2960650194}</Project>
+      <Name>Keebee.AAT.BusinessRules</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

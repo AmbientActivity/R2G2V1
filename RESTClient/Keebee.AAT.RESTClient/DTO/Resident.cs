@@ -16,7 +16,7 @@ namespace Keebee.AAT.RESTClient
         public IEnumerable<PersonalPicture> PersonalPictures { get; set; }
     }
 
-    public class ResidentUpdate
+    public class ResidentEdit
     {
         public int Id { get; set; }
         public string FirstName { get; set; }

@@ -166,12 +166,12 @@
                 self.showResidentDeleteDialog = function (row) {
                     var id = (typeof row.id !== "undefined" ? row.id : 0);
                     if (id <= 0) return;
-                    var m = self.getResident(id);
+                    var r = self.getResident(id);
 
                     BootstrapDialog.show({
                         title: "Delete Resident?",
                         message: "Are you sure?" +
-                            "This will permanently delete the resident for resident <i><b>" + m.resident + " " + m.lastname + "</b></i>\n",
+                            "This will permanently delete the resident <i><b>" + r.firstname + " " + r.lastname + "</b></i>\n",
                         closable: false,
                         buttons: [
                             {
@@ -182,7 +182,14 @@
                             }, {
                                 label: "Yes",
                                 cssClass: "btn-primary",
-                                action: self.deleteResident(row.id)
+                                action: function (dialog) {
+                                    var result = self.deleteResident(row.id);
+                                    lists.ResidentList = result.ResidentList;
+                                    createResidentArray(lists.ResidentList);
+                                    self.sort({ afterSave: true });
+                                    dialog.close();
+                                    $("body").css("cursor", "default");
+                                }
                             }
                         ]
                     });
@@ -225,9 +232,8 @@
                                 label: "OK",
                                 cssClass: "btn-primary",
                                 action: function (dialog) {
-                                    $("body").css("cursor", "wait");
                                     var result = self.saveResident();
-                                    $("body").css("cursor", "default");
+                                    
                                     if (result.ErrorMessages === null) {
                                         lists.ResidentList = result.ResidentList;
                                         createResidentArray(lists.ResidentList);
@@ -235,6 +241,7 @@
                                         self.sort({ afterSave: true });
                                         self.highlightRow(self.selectedResident());
                                         dialog.close();
+                                        $("body").css("cursor", "default");
                                     } else {
                                         $("#validation-container").show();
                                         $("#validation-container").html("");
@@ -246,6 +253,7 @@
                                         }
                                         html = html + "</ul>";
                                         $("#validation-container").append(html);
+                                        $("body").css("cursor", "default");
                                     }
                                 }
                             }
@@ -313,7 +321,7 @@
                         },
                         error: function (data) {
                             result = data;
-                    }
+                        }
                     });
 
                     return result;
@@ -322,26 +330,28 @@
                 self.deleteResident = function (id) {
                     $("body").css("cursor", "wait");
 
+                    var result;
+
                     $.ajax({
                         type: "POST",
+                        async: false,
                         url: site.url + "Residents/Delete/",
                         data: { id: id },
                         dataType: "json",
                         traditional: true,
                         failure: function () {
                             $("body").css("cursor", "default");
+                            $("#validation-container").html("");
                         },
                         success: function (data) {
-                            if (data.Success) {
-                                lists.ResidentList = data.ResidentList;
-                                createResidentArray(lists.ResidentList);
-                                self.sort({ afterSave: true });
-                            }
-                            $("body").css("cursor", "default");
+                            result = data;
+                        },
+                        error: function (data) {
+                            result = data;
                         }
                     });
 
-                    return true;
+                    return result;
                 };
 
                 //---------------------------------------------- CONTROLLER (END) -------------------------------------------------------

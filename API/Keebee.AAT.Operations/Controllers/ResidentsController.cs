@@ -304,11 +304,11 @@ namespace Keebee.AAT.Operations.Controllers
 
         // POST: api/Residents
         [HttpPost]
-        public void Post([FromBody]string value)
+        public int Post([FromBody]string value)
         {
             var serializer = new JavaScriptSerializer();
             var resident = serializer.Deserialize<Resident>(value);
-            _residentService.Post(resident);
+            return _residentService.Post(resident);
         }
 
         // PATCH: api/Residents/5

@@ -12,7 +12,7 @@ namespace Keebee.AAT.Operations.Service.Services
         Resident Get(int id);
         IEnumerable<Resident> GetWithMedia();
         Resident GetWithMedia(int id);
-        void Post(Resident resident);
+        int Post(Resident resident);
         void Patch(int id, Resident resident);
         void Delete(int id);
         Profile GetProfile(int id);
@@ -56,14 +56,18 @@ namespace Keebee.AAT.Operations.Service.Services
                 .GetValue();
         }
 
-        public void Post(Resident resident)
+        public int Post(Resident resident)
         {
             var container = new Container(new Uri(ODataHost.Url));
 
-            resident.ProfileId = (resident.ProfileId > 0 ? resident.ProfileId : null);
+            resident.DateCreated = DateTime.Now;
+            resident.DateUpdated = DateTime.Now;
+            resident.ProfileId = (resident.ProfileId > 0 ? resident.ProfileId : Constants.UserProfile.Generic);
 
             container.AddToResidents(resident);
             container.SaveChanges();
+
+            return resident.Id;
         }
 
         public void Patch(int id, Resident resident)
@@ -84,6 +88,8 @@ namespace Keebee.AAT.Operations.Service.Services
 
             if (resident.ProfileId != null)
                 r.ProfileId = resident.ProfileId;
+
+            resident.DateUpdated = DateTime.Now;
 
             container.UpdateObject(r);
             container.SaveChanges();

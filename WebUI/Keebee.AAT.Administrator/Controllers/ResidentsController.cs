@@ -1,5 +1,6 @@
 ﻿using Keebee.AAT.RESTClient;
 using Keebee.AAT.Administrator.ViewModels;
+using Keebee.AAT.BusinessRules;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -44,20 +45,20 @@ namespace Keebee.AAT.Administrator.Controllers
         public JsonResult Save(string resident)
         {
             var r = JsonConvert.DeserializeObject<ResidentDetail>(resident);
-            IEnumerable<string> msgs = null;
+            IEnumerable<string> msgs;
             var residentId = r.Id;
 
             if (residentId > 0)
             {
-                //msgs = ValidateBand(b.Name, false);
-                //if (msgs == null)
+                msgs = ValidateResident(r.FirstName, r.LastName);
+                if (msgs == null)
                     UpdateResident(r);
             }
             else
             {
-                //msgs = ValidateBand(b.Name, true);
-                //if (msgs == null)
-                    AddResident(r);
+                msgs = ValidateResident(r.FirstName, r.LastName);
+                if (msgs == null)
+                    residentId = AddResident(r);
             }
 
             return Json(new
@@ -66,6 +67,18 @@ namespace Keebee.AAT.Administrator.Controllers
                 SelectedId = residentId,
                 Success = (null == msgs),
                 ErrorMessages = msgs
+            }, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        public JsonResult Delete(int id)
+        {
+            _opsClient.DeleteResident(id);
+
+            return Json(new
+            {
+                ResidentList = GetResidentList(),
+                Success = true,
             }, JsonRequestBehavior.AllowGet);
         }
 
@@ -124,7 +137,7 @@ namespace Keebee.AAT.Administrator.Controllers
 
         private void UpdateResident(ResidentDetail residentDetail)
         {
-            var r = new ResidentUpdate
+            var r = new ResidentEdit
             {
                 FirstName = residentDetail.FirstName,
                 LastName = residentDetail.LastName,
@@ -134,25 +147,23 @@ namespace Keebee.AAT.Administrator.Controllers
             _opsClient.PatchResident(residentDetail.Id, r);
         }
 
-        private void AddResident(ResidentDetail residentDetail)
+        private int AddResident(ResidentDetail residentDetail)
         {
-            var r = new Resident
+            var r = new ResidentEdit
             {
                 FirstName = residentDetail.FirstName,
                 LastName = residentDetail.LastName,
                 Gender = residentDetail.Gender
             };
 
-            _opsClient.PostResident(r);
-            //if (id <= 0) return id;
+            var id = _opsClient.PostResident(r);
 
-            //return id;
+            return id;
         }
 
-        private IEnumerable<string> ValidateResident(string firstname, string lastname, bool addNew)
+        private static IEnumerable<string> ValidateResident(string firstname, string lastname)
         {
-            //return _validationRules.ValidateBand(name, addNew);
-            return null;
+            return ValidationRules.ValidateResident(firstname, lastname);
         }
     }
 }

@@ -11,7 +11,7 @@
 
     public static class Log
     {
-        public const string Path = @"sqlexpress\KeebeeAATFilestream\Media\Log";
+        public const string Path = @"sqlexpress\KeebeeAATFilestream\Media\Exports\EventLog";
     }
 
     //TODO: add an asociatian to this file in the database somehow

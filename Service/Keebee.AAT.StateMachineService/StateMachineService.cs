@@ -3,7 +3,6 @@ using Keebee.AAT.RESTClient;
 using Keebee.AAT.MessageQueuing;
 using Keebee.AAT.Constants;
 using Keebee.AAT.SystemEventLogging;
-using Keebee.AAT.EventLogging;
 using System.Net;
 using System.Threading;
 using System.Linq;
@@ -33,9 +32,6 @@ namespace Keebee.AAT.StateMachineService
         // display state
         private bool _displayIsActive;
 
-        private readonly System.Timers.Timer _autoLogTimer;
-        private DateTime _scheduleAutoLogTime;
-
         public StateMachineService()
         {
             InitializeComponent();
@@ -53,9 +49,6 @@ namespace Keebee.AAT.StateMachineService
 
             var keepAliveThread = new Thread(KeepAlive);
             keepAliveThread.Start();
-
-            _autoLogTimer = new System.Timers.Timer();
-            _scheduleAutoLogTime = DateTime.Today.AddDays(1).AddHours(1);
         }
 
         private void KeepAlive()
@@ -274,11 +267,6 @@ namespace Keebee.AAT.StateMachineService
         protected override void OnStart(string[] args)
         {
             _systemEventLogger.WriteEntry("In OnStart");
-
-            // For first time, set amount of seconds between current time and schedule time
-            _autoLogTimer.Enabled = true;
-            _autoLogTimer.Interval = _scheduleAutoLogTime.Subtract(DateTime.Now).TotalSeconds * 1000;
-            _autoLogTimer.Elapsed += ExportEventLog;
         }
 
         protected override void OnStop()
@@ -300,23 +288,6 @@ namespace Keebee.AAT.StateMachineService
             catch (Exception ex)
             {
                 _systemEventLogger.WriteEntry($"RfidReaderService.LogRfidEvent: {ex.Message}", EventLogEntryType.Error);
-            }
-        }
-
-        // This method is called by the timer delegate.
-        public void ExportEventLog(object sender, System.Timers.ElapsedEventArgs e)
-        {
-            var exporter = new EventLogging.Exporter();
-
-            var date = DateTime.Now.AddDays(-1).ToString("MM/dd/yyyy");
-            exporter.ExportAndSave(date);
-
-            _systemEventLogger.WriteEntry($"Log automatically exported for date: {date}");
-
-            // If tick for the first time, reset next run to every 24 hours
-            if (_autoLogTimer.Interval != 24 * 60 * 60 * 1000)
-            {
-                _autoLogTimer.Interval = 24 * 60 * 60 * 1000;
             }
         }
     }

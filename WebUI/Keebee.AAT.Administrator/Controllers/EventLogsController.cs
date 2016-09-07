@@ -1,4 +1,5 @@
-﻿using System.Web.Mvc;
+﻿using Keebee.AAT.Exporting;
+using System.Web.Mvc;
 
 namespace Keebee.AAT.Administrator.Controllers
 {
@@ -19,7 +20,7 @@ namespace Keebee.AAT.Administrator.Controllers
         [HttpGet]
         public FileResult DoExport(string date)
         {
-            var exporter = new EventLogging.Exporter();
+            var exporter = new EventLogExporter();
             var filename = $"EventLog_{date.Replace("/", "_")}.xls";
             var file = exporter.Export(date);
 

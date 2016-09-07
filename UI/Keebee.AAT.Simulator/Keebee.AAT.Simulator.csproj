@@ -100,10 +100,6 @@
       <Project>{3cb12af2-7655-46f6-9969-990730f73964}</Project>
       <Name>Keebee.AAT.Constants</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Shared\Keebee.AAT.EventLogging\Keebee.AAT.SystemEventLogging.csproj">
-      <Project>{6f0a1aef-997e-4355-bb38-a4acf6710edf}</Project>
-      <Name>Keebee.AAT.SystemEventLogging</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\Shared\Keebee.AAT.MessageQueuing\Keebee.AAT.MessageQueuing.csproj">
       <Project>{84a25d9a-4747-4b69-9c79-5c23210530d2}</Project>
       <Name>Keebee.AAT.MessageQueuing</Name>

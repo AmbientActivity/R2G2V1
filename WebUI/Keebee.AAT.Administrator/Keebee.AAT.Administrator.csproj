@@ -345,9 +345,9 @@
       <Project>{a1f90f14-bc01-4ef8-9b3e-a7fe4b1b7f9f}</Project>
       <Name>Keebee.AAT.RESTClient</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Shared\Keebee.AAT.ActivityLog\Keebee.AAT.EventLogging.csproj">
+    <ProjectReference Include="..\..\Shared\Keebee.AAT.Exporting\Keebee.AAT.Exporting.csproj">
       <Project>{97ca2119-5977-4de5-9c91-a64d97cb9035}</Project>
-      <Name>Keebee.AAT.EventLogging</Name>
+      <Name>Keebee.AAT.Exporting</Name>
     </ProjectReference>
     <ProjectReference Include="..\Keebee.AAT.BusinessRules\Keebee.AAT.BusinessRules.csproj">
       <Project>{8b0e0633-3be9-470c-8c3c-ea2960650194}</Project>

@@ -12,18 +12,20 @@ namespace Keebee.AAT.SystemEventLogging
         StateMachineService = 4,
         RfidReaderService = 5,
         PhidgetService = 6,
-        EventLog = 7
+        EventLog = 7,
+        AutomatedExport = 8
     }
 
     public class SystemEventLogger
     {
-        private const string EventLogDisplay = "Keebee Display";
-        private const string EventLogSimulator = "Keebee Activity Simulator";
-        private const string EventLogMessageQueuing = "Keebee Message Queuing";
-        private const string EventLogStateMachineService = "Keebee State Machine Service";
-        private const string EventLogRfidReaderService = "Keebee RFID Reader Service";
-        private const string EventLogPhidgetService = "Keebee Phidget Service";
-        private const string EventLogLog = "Keebee Event Log";
+        private const string EventLogDisplay = "R2G2 Display";
+        private const string EventLogSimulator = "R2G2 Activity Simulator";
+        private const string EventLogMessageQueuing = "R2G2 Message Queuing";
+        private const string EventLogStateMachineService = "R2G2 State Machine Service";
+        private const string EventLogRfidReaderService = "R2G2 RFID Reader Service";
+        private const string EventLogPhidgetService = "R2G2 Phidget Service";
+        private const string EventLogEventLog = "R2G2 Event Log";
+        private const string EventLogAutomatedExport = "R2G2 Automated Export";
 
         private EventLog _eventLog;
         public EventLog EventLog
@@ -69,7 +71,10 @@ namespace Keebee.AAT.SystemEventLogging
                     literal = EventLogPhidgetService;
                     break;
                 case SystemEventLogType.EventLog:
-                    literal = EventLogLog;
+                    literal = EventLogEventLog;
+                    break;
+                case SystemEventLogType.AutomatedExport:
+                    literal = EventLogAutomatedExport;
                     break;
             }
             return literal;

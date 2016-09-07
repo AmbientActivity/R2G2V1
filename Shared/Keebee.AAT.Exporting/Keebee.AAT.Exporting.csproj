@@ -7,8 +7,8 @@
     <ProjectGuid>{97CA2119-5977-4DE5-9C91-A64D97CB9035}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Keebee.AAT.EventLogging</RootNamespace>
-    <AssemblyName>Keebee.AAT.EventLogging</AssemblyName>
+    <RootNamespace>Keebee.AAT.Exporting</RootNamespace>
+    <AssemblyName>Keebee.AAT.Exporting</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
@@ -45,7 +45,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Exporter.cs" />
+    <Compile Include="EventLogExporter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -60,7 +60,7 @@
       <Project>{3cb12af2-7655-46f6-9969-990730f73964}</Project>
       <Name>Keebee.AAT.Constants</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Keebee.AAT.EventLogging\Keebee.AAT.SystemEventLogging.csproj">
+    <ProjectReference Include="..\Keebee.AAT.SystemEventLogging\Keebee.AAT.SystemEventLogging.csproj">
       <Project>{6f0a1aef-997e-4355-bb38-a4acf6710edf}</Project>
       <Name>Keebee.AAT.SystemEventLogging</Name>
     </ProjectReference>

@@ -2,8 +2,14 @@
 
 namespace Keebee.AAT.Administrator.Controllers
 {
-    public class EventLogController : Controller
+    public class EventLogsController : Controller
     {
+        [HttpGet]
+        public ActionResult Index()
+        {
+            return View();
+        }
+
         [HttpGet]
         public ActionResult Export()
         {

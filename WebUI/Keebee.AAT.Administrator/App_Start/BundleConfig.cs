@@ -32,11 +32,21 @@ namespace Keebee.AAT.Administrator
             jQueryValBundle.Transforms.Add(scriptTransformer);
             bundles.Add(jQueryValBundle);
 
+            var thirdPartyScriptBundle = new Bundle("~/bundles/ThirdPartyScripts");
+            thirdPartyScriptBundle.Include(
+                "~/Scripts/knockout-{version}.js",
+                 "~/Scripts/moment.js");
+            thirdPartyScriptBundle.Builder = nullBuilder;
+            thirdPartyScriptBundle.Transforms.Add(scriptTransformer);
+            bundles.Add(thirdPartyScriptBundle);
+
             var customScriptBundle = new ScriptBundle("~/bundles/CustomScripts");
             customScriptBundle.Include(
                 "~/Scripts/Site/Namespaces.js",
                 "~/Scripts/Site/Site.js",
-                "~/Scripts/EventLog/Export.js");
+                "~/Scripts/Residents/Index.js",
+                "~/Scripts/Profiles/Index.js",
+                "~/Scripts/EventLogs/Export.js");
             customScriptBundle.Builder = nullBuilder;
             customScriptBundle.Transforms.Add(scriptTransformer);
             bundles.Add(customScriptBundle);
@@ -63,6 +73,7 @@ namespace Keebee.AAT.Administrator
                 "~/Content/bootstrap.css",
                 "~/Content/bootstrap-theme.css",
                 "~/Content/bootstrap-datepicker.css",
+                "~/Content/bootstrap-dialog.css",
                 "~/Content/site.css");
             commonStylesBundle.Builder = nullBuilder;
             commonStylesBundle.Transforms.Add(styleTransformer);

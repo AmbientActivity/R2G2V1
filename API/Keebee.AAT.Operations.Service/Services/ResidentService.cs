@@ -28,14 +28,14 @@ namespace Keebee.AAT.Operations.Service.Services
         {
             var container = new Container(new Uri(ODataHost.Url));
 
-            return container.Residents;
+            return container.Residents.Expand("Profile").ToList();
         }
 
         public Resident Get(int id)
         {
             var container = new Container(new Uri(ODataHost.Url));
 
-            return container.Residents.ByKey(id).GetValue();
+            return container.Residents.ByKey(id).Expand("Profile").GetValue();
         }
 
         public IEnumerable<Resident> GetWithMedia()
@@ -72,9 +72,6 @@ namespace Keebee.AAT.Operations.Service.Services
 
             var r = container.Residents.Where(e => e.Id == id).SingleOrDefault();
             if (r == null) return;
-
-            if (resident.Tag != null)
-                r.Tag = resident.Tag;
 
             if (resident.FirstName != null)
                 r.FirstName = resident.FirstName;

@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-// Generation date: 9/5/2016 6:23:48 PM
+// Generation date: 9/6/2016 4:20:30 PM
 namespace Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models
 {
     /// <summary>
@@ -94,7 +94,6 @@ namespace Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models
         /// Create a new Resident object.
         /// </summary>
         /// <param name="ID">Initial value of Id.</param>
-        /// <param name="tag">Initial value of Tag.</param>
         /// <param name="firstName">Initial value of FirstName.</param>
         /// <param name="lastName">Initial value of LastName.</param>
         /// <param name="gender">Initial value of Gender.</param>
@@ -102,7 +101,6 @@ namespace Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models
         /// <param name="dateUpdated">Initial value of DateUpdated.</param>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
         public static Resident CreateResident(int ID, 
-                    string tag, 
                     string firstName, 
                     string lastName, 
                     string gender, 
@@ -111,7 +109,6 @@ namespace Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models
         {
             Resident resident = new Resident();
             resident.Id = ID;
-            resident.Tag = tag;
             resident.FirstName = firstName;
             resident.LastName = lastName;
             resident.Gender = gender;
@@ -142,29 +139,6 @@ namespace Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models
         private int _Id;
         partial void OnIdChanging(int value);
         partial void OnIdChanged();
-        /// <summary>
-        /// There are no comments for Property Tag in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        [global::Microsoft.OData.Client.OriginalNameAttribute("Tag")]
-        public string Tag
-        {
-            get
-            {
-                return this._Tag;
-            }
-            set
-            {
-                this.OnTagChanging(value);
-                this._Tag = value;
-                this.OnTagChanged();
-                this.OnPropertyChanged("Tag");
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private string _Tag;
-        partial void OnTagChanging(string value);
-        partial void OnTagChanged();
         /// <summary>
         /// There are no comments for Property FirstName in the schema.
         /// </summary>
@@ -4417,7 +4391,6 @@ namespace Keebee.AAT.Operations.Service.KeebeeAAT
           <PropertyRef Name=""Id"" />
         </Key>
         <Property Name=""Id"" Type=""Edm.Int32"" Nullable=""false"" />
-        <Property Name=""Tag"" Type=""Edm.String"" Nullable=""false"" />
         <Property Name=""FirstName"" Type=""Edm.String"" Nullable=""false"" />
         <Property Name=""LastName"" Type=""Edm.String"" Nullable=""false"" />
         <Property Name=""Gender"" Type=""Edm.String"" Nullable=""false"" />

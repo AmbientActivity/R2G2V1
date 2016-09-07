@@ -19,6 +19,7 @@ namespace Keebee.AAT.RESTClient
         // GET
         IEnumerable<Response> GetAmbientResponses();
         IEnumerable<Resident> GetResidents();
+        Resident GetResident(int residentId);
         IEnumerable<Resident> GetResidentsMedia();
         bool ResidentProfileExists(int residentId);
         Profile GetGenericProfile();
@@ -31,9 +32,13 @@ namespace Keebee.AAT.RESTClient
         IEnumerable<RfidEventLog> GetRfidEventLogs(string date);
 
         // POST
+        void PostResident(Resident resident);
         void PostActivityEventLog(ActivityEventLog activityEventLog);
         void PostGameEventLog(GameEventLog gameEventLog);
         void PostRfidEventLog(RfidEventLog rfidEventLog);
+
+        // PATCH
+        void PatchResident(int residentId, ResidentUpdate resident);
     }
 
     public class OperationsClient : IOperationsClient
@@ -41,9 +46,11 @@ namespace Keebee.AAT.RESTClient
         private const string UriBase = "http://localhost/Keebee.AAT.Operations/api/";
 
         private const string UrlResidents = "residents";
+        private const string UrlResident = "residents/{0}";
         private const string UrlResidentProfile = "residents/{0}/profile";
         private const string UrlResidentsMedia = "residents/media";
         private const string UrlResidentMedia = "residents/{0}/media";
+        private const string UrlProfiles = "profiles";
         private const string UrlProfile = "profiles/{0}";
         private const string UrlProfileDetails = "profiles/{0}/details";
         private const string UrlProfileMedia = "profiles/{0}/media";
@@ -94,6 +101,17 @@ namespace Keebee.AAT.RESTClient
             return residents;
         }
 
+        public Resident GetResident(int residentId)
+        {
+            var data = Get(string.Format(UrlResident, residentId));
+            if (data == null) return null;
+
+            var serializer = new JavaScriptSerializer();
+            var resident = serializer.Deserialize<Resident>(data);
+
+            return resident;
+        }
+
         public IEnumerable<Resident> GetResidentsMedia()
         {
             var data = Get(UrlResidentsMedia);
@@ -121,9 +139,20 @@ namespace Keebee.AAT.RESTClient
             return Exists(string.Format(UrlResidentProfile, residentId));
         }
 
-        public Profile GetProfile()
+        public IEnumerable<Profile> GetProfiles()
         {
-            var data = Get(UrlProfile);
+            var data = Get(UrlProfiles);
+            if (data == null) return null;
+
+            var serializer = new JavaScriptSerializer();
+            var profiles = serializer.Deserialize<ProfileList>(data).Profiles;
+
+            return profiles;
+        }
+
+        public Profile GetProfile(int profileId)
+        {
+            var data = Get(string.Format(UrlProfile, profileId));
             if (data == null) return null;
 
             var serializer = new JavaScriptSerializer();
@@ -211,7 +240,24 @@ namespace Keebee.AAT.RESTClient
             return rfidEventLogs;
         }
 
+        // PATCH
+        public void PatchResident(int residentId, ResidentUpdate resident)
+        {
+            var serializer = new JavaScriptSerializer();
+            var el = serializer.Serialize(resident);
+
+            Patch(string.Format(UrlResident, residentId), el);
+        }
+
         // POST
+        public void PostResident(Resident resident)
+        {
+            var serializer = new JavaScriptSerializer();
+            var el = serializer.Serialize(resident);
+
+            Post(UrlResidents, el);
+        }
+
         public void PostActivityEventLog(ActivityEventLog activityEventLog)
         {
             var serializer = new JavaScriptSerializer();
@@ -300,6 +346,40 @@ namespace Keebee.AAT.RESTClient
             }
 
             return false;
+        }
+
+        private void Patch(string url, string value)
+        {
+            try
+            {
+                using (var client = new HttpClient())
+                {
+                    // added additionally needed back slashes
+                    value = $"\"{value.Replace("\"", "\\\"")}\"";
+
+                    client.BaseAddress = _uriBase;
+                    
+                    var method = new HttpMethod("PATCH");
+                    var uri = new Uri($@"{_uriBase}{url}");
+                    var request = new HttpRequestMessage(method, uri)
+                    {
+                        Content = new StringContent(value, Encoding.UTF8, "application/json")
+                    };
+
+                    HttpResponseMessage response = client.SendAsync(request).Result;
+
+                    if (!response.IsSuccessStatusCode)
+                    {
+                        throw new Exception(
+                            $"StatusCode: {response.StatusCode}{Environment.NewLine}Message: {response.Content}");
+                    }
+                }
+            }
+
+            catch (Exception ex)
+            {
+                _systemEventLogger?.WriteEntry($"RESTClient.Patch: {ex.Message}{Environment.NewLine}url:{url}", EventLogEntryType.Error);
+            }
         }
 
         private void Post(string url, string value)

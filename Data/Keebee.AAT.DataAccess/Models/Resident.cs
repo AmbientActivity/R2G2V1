@@ -11,9 +11,6 @@ namespace Keebee.AAT.DataAccess.Models
         public int Id { get; set; }
 
         [Required]
-        public string Tag { get; set; }
-
-        [Required]
         public string FirstName { get; set; }
 
         [Required]

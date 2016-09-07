@@ -1,0 +1,16 @@
+﻿
+@model Keebee.AAT.Administrator.ViewModels.ResidentEditViewModel
+
+<div class="container">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="label label-default">First Name</div>
+            <input type="text" id="txtFirstName" class="form-control" value="@Model.FirstName" maxlength="50"/>
+            <div class="label label-default">Last Name</div>
+            <input type="text" id="txtLastName" class="form-control" value="@Model.LastName" maxlength="50"/>
+            <div class="label label-default">Gender</div>
+            @Html.DropDownList("ddlGenders", @Model.Genders, new { @class = "form-control"})
+        </div>
+    </div>
+    <div class="validation-container" id="validation-container"></div>
+</div>

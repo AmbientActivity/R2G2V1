@@ -1,4 +1,6 @@
 ﻿// define global namespaces
 ; (function () {
-    window.eventlog = {};
+    window.residents = {};
+    window.profiles = {};
+    window.eventlogs = {};
 })();

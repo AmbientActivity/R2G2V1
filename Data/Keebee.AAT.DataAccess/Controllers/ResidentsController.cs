@@ -1,4 +1,5 @@
-﻿using Keebee.AAT.DataAccess.Models;
+﻿using System;
+using Keebee.AAT.DataAccess.Models;
 using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Net;
@@ -94,6 +95,7 @@ namespace Keebee.AAT.DataAccess.Controllers
                 return NotFound();
             }
 
+            resident.DateUpdated = DateTime.Now;
             patch.Patch(resident);
 
             try

@@ -45,7 +45,6 @@ namespace Keebee.AAT.Operations.Controllers
                     r.Resident.FirstName,
                     r.Resident.LastName,
                     r.Resident.Gender,
-                    r.Resident.Tag,
                     Profile = new
                     {
                         r.Resident.Profile.Id,
@@ -84,7 +83,6 @@ namespace Keebee.AAT.Operations.Controllers
                                  picture.Resident.FirstName,
                                  picture.Resident.LastName,
                                  picture.Resident.Gender,
-                                 picture.Resident.Tag,
                                  Profile = new
                                  {
                                     picture.Resident.Profile.Id,

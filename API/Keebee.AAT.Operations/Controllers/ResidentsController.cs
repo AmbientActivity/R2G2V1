@@ -39,13 +39,19 @@ namespace Keebee.AAT.Operations.Controllers
                 .Select(x => new
                 {
                     x.Id,
-                    x.Tag,
                     x.FirstName,
                     x.LastName,
                     x.Gender,
                     x.DateCreated,
                     x.DateUpdated,
-                    x.ProfileId
+                    Profile = new
+                    {
+                        x.Profile.Id,
+                        x.Profile.Description,
+                        x.Profile.GameDifficultyLevel,
+                        x.Profile.DateCreated,
+                        x.Profile.DateUpdated,
+                    }
                 });
 
             return new DynamicJsonObject(exObj);
@@ -66,13 +72,12 @@ namespace Keebee.AAT.Operations.Controllers
 
             dynamic exObj = new ExpandoObject();
             exObj.Id = resident.Id;
-            exObj.Tag = resident.Tag;
+            exObj.ProfileId = resident.ProfileId;
             exObj.FirstName = resident.FirstName;
             exObj.LastName = resident.LastName;
             exObj.Gender = resident.Gender;
             exObj.DateCreated = resident.DateCreated;
             exObj.DateUpdated = resident.DateUpdated;
-            exObj.ProfileId = resident.ProfileId;
 
             return new DynamicJsonObject(exObj);
         }
@@ -154,7 +159,6 @@ namespace Keebee.AAT.Operations.Controllers
             exObj.FirstName = resident.FirstName;
             exObj.LastName = resident.LastName;
             exObj.Gender = resident.Gender;
-            exObj.Tag = resident.Tag;
             exObj.Profile = new
                 {
                     Id = resident.ProfileId,

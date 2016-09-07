@@ -10,6 +10,12 @@ namespace Keebee.AAT.RESTClient
         public string Description { get; set; }
         public int GameDifficultyLevel { get; set; }
         public DateTime DateCreated { get; set; }
+        public DateTime DateUpdated { get; set; }
         public virtual IList<ProfileDetail> ProfileDetails { get; set; }
+    }
+
+    public class ProfileList
+    {
+        public IEnumerable<Profile> Profiles;
     }
 }

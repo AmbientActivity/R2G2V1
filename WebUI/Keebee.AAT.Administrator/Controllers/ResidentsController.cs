@@ -76,8 +76,8 @@ namespace Keebee.AAT.Administrator.Controllers
         {
             var profile = _opsClient.GetResidentProfile(id);
             if (profile.Id != ProfileId.Generic)
+                _opsClient.DeleteProfile(profile.Id);
 
-                
             _opsClient.DeleteResident(id);
 
             return Json(new

@@ -20,7 +20,6 @@ namespace Keebee.AAT.RESTClient
         IEnumerable<Response> GetAmbientResponses();
         IEnumerable<Resident> GetResidents();
         Resident GetResident(int residentId);
-        IEnumerable<Resident> GetResidentsMedia();
         bool ResidentProfileExists(int residentId);
         Profile GetGenericProfile();
         Profile GetResidentProfile(int residentId);
@@ -44,31 +43,43 @@ namespace Keebee.AAT.RESTClient
 
         // DELETE
         void DeleteResident(int residentId);
+        void DeleteProfile(int profileId);
     }
 
     public class OperationsClient : IOperationsClient
     {
         private const string UriBase = "http://localhost/Keebee.AAT.Operations/api/";
 
+        // configuration
+        private const string UrlConfigDetails = "configs/{0}/details";
+        private const string UrlActiveConfigDetails = "configs/active/details";
+
+        // residents
         private const string UrlResidents = "residents";
         private const string UrlResident = "residents/{0}";
         private const string UrlResidentProfile = "residents/{0}/profile";
-        private const string UrlResidentsMedia = "residents/media";
         private const string UrlResidentMedia = "residents/{0}/media";
+
+        // profiles
         private const string UrlProfiles = "profiles";
         private const string UrlProfile = "profiles/{0}";
         private const string UrlProfileDetails = "profiles/{0}/details";
         private const string UrlProfileMedia = "profiles/{0}/media";
-        private const string UrlConfigDetails = "configs/{0}/details";
-        private const string UrlActiveConfigDetails = "configs/active/details";
         private const string UrlProfileMediaForActivityResponseType = "profiles/{0}/media?activityTypeId={1}&responseTypeId={2}";
-        private const string UrlAmbientResponses = "ambientresponses";
-        private const string UrlActivityEventLogs = "activityeventlogs";
-        private const string UrlGameEventLogs = "gameeventlogs";
-        private const string UrlRfidEventLogs = "rfideventlogs";
 
+        // ambient
+        private const string UrlAmbientResponses = "ambientresponses";
+
+        // activity event logs
+        private const string UrlActivityEventLogs = "activityeventlogs";
         private const string UrlActivityEventLogsForDate = "activityeventlogs?date={0}";
+
+        // game event logs
+        private const string UrlGameEventLogs = "gameeventlogs";
         private const string UrlGameEventLogsForDate = "gameeventlogs?date={0}";
+
+        // rfid event logs
+        private const string UrlRfidEventLogs = "rfideventlogs";
         private const string UrlRfidEventLogsForDate = "rfideventlogs?date={0}";
 
         private SystemEventLogger _systemEventLogger;
@@ -116,17 +127,6 @@ namespace Keebee.AAT.RESTClient
             var resident = serializer.Deserialize<Resident>(data);
 
             return resident;
-        }
-
-        public IEnumerable<Resident> GetResidentsMedia()
-        {
-            var data = Get(UrlResidentsMedia);
-            if (data == null) return null;
-
-            var serializer = new JavaScriptSerializer();
-            var residents = serializer.Deserialize<ResidentList>(data).Residents.ToList();
-
-            return residents;
         }
 
         public Resident GetResidentMedia(int residentId)
@@ -317,7 +317,12 @@ namespace Keebee.AAT.RESTClient
             Delete(string.Format(UrlResident, residentId));
         }
 
-        // private REST
+        public void DeleteProfile(int profileId)
+        {
+            Delete(string.Format(UrlProfile, profileId));
+        }
+
+        // private
         private string Get(string url)
         {
             string result = null;

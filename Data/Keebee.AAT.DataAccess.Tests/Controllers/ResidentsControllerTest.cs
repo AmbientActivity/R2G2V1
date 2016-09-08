@@ -68,7 +68,6 @@ namespace Keebee.AAT.DataAccess.Tests.Controllers
             var result = await _client.For<Resident>()
                 .Key(residentId)
                 .NavigateTo(x => x.Profile)
-                .Expand(x => new { x.ProfileDetails })
                 .FindEntriesAsync();
 
             var resident = result.Single();

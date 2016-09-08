@@ -306,7 +306,6 @@ namespace Keebee.AAT.Display.Caregiver
 
         private IEnumerable<Response> GetMediaResponses(int residentId, int responseTypeId)
         {
-
             IEnumerable<Response> list = new List<Response>();
 
             try

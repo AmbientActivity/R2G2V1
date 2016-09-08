@@ -132,7 +132,14 @@ namespace Keebee.AAT.Operations.Controllers
             exObj.ConfigurationDetails = configuration.ConfigurationDetails
                 .Select(detail => new
                 {
-                    detail.ActivityTypeId,
+                    detail.Id,
+                    detail.ConfigurationId,
+                    ActivityType = new
+                    {
+                        detail.ActivityType.Id,
+                        detail.ActivityType.Description,
+                        detail.ActivityType.PhidgetType
+                    },
                     ResponseType = new
                     {
                         detail.ResponseType.Id,
@@ -178,7 +185,14 @@ namespace Keebee.AAT.Operations.Controllers
             exObj.ConfigurationDetails = configuration.ConfigurationDetails
                 .Select(detail => new
                 {
-                    detail.ActivityTypeId,
+                    detail.Id,
+                    detail.ConfigurationId,
+                    ActivityType = new
+                    {
+                        detail.ActivityType.Id,
+                        detail.ActivityType.Description,
+                        detail.ActivityType.PhidgetType
+                    },
                     ResponseType = new
                     {
                         detail.ResponseType.Id,

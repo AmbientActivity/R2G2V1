@@ -11,7 +11,7 @@ namespace Keebee.AAT.RESTClient
         public int GameDifficultyLevel { get; set; }
         public DateTime DateCreated { get; set; }
         public DateTime DateUpdated { get; set; }
-        public virtual IList<ConfigurationDetail> ConfigurationDetails { get; set; }
+        public IEnumerable<ConfigurationDetail> ConfigurationDetails { get; set; }
     }
 
     public class ProfileList

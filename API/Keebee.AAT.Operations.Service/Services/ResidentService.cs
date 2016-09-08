@@ -11,14 +11,11 @@ namespace Keebee.AAT.Operations.Service.Services
     {
         IEnumerable<Resident> Get();
         Resident Get(int id);
+        Resident GetWithPersonalPictures(int id);
         int Post(Resident resident);
         void Patch(int id, Resident resident);
         void Delete(int id);
-        //Profile GetProfile(int id);
         bool ProfileExists(int id);
-        //Profile GetConfigurationDetails(int id);
-        //Profile GetProfileActivityTypes(int id);
-        //Profile GetResponses(int id);
     }
 
     public class ResidentService : IResidentService
@@ -27,14 +24,25 @@ namespace Keebee.AAT.Operations.Service.Services
         {
             var container = new Container(new Uri(ODataHost.Url));
 
-            return container.Residents.Expand("Profile").ToList();
+            return container.Residents
+                .Expand("Profile")
+                .ToList();
         }
 
         public Resident Get(int id)
         {
             var container = new Container(new Uri(ODataHost.Url));
 
-            return container.Residents.ByKey(id).Expand("Profile").GetValue();
+            return container.Residents.ByKey(id)
+                .Expand("Profile")
+                .GetValue();
+        }
+
+        public Resident GetWithPersonalPictures(int id)
+        {
+            var container = new Container(new Uri(ODataHost.Url));
+
+            return container.Residents.ByKey(id).Expand("Profile,PersonalPictures($expand=MediaFile)").GetValue();
         }
 
         public int Post(Resident resident)
@@ -104,39 +112,5 @@ namespace Keebee.AAT.Operations.Service.Services
                 return false;
             }
         }
-
-        //public Profile GetConfigurationDetails(int id)
-        //{
-        //    var container = new Container(new Uri(ODataHost.Url));
-
-        //    var profile = container.Residents.ByKey(id)
-        //        .Profile
-        //        .Expand("ProfileDetails($expand=ActivityType,ResponseType,Responses)")
-        //        .GetValue();
-
-        //    return profile;
-        //}
-
-        //public Profile GetProfileActivityTypes(int id)
-        //{
-        //    var container = new Container(new Uri(ODataHost.Url));
-
-        //    var profile = container.Residents.ByKey(id)
-        //        .Profile
-        //        .Expand("ProfileDetails($expand=ActivityType)")
-        //        .GetValue();
-
-        //    return profile;
-        //}
-
-        //public Profile GetResponses(int id)
-        //{
-        //    var container = new Container(new Uri(ODataHost.Url));
-
-        //    return container.Residents.ByKey(id)
-        //        .Profile
-        //        .Expand("ProfileDetails($expand=Activity($expand=ActivityType),Response($expand=ResponseType,Responses))")
-        //        .GetValue();
-        //}
     }
 }

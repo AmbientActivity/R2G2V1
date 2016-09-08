@@ -80,7 +80,14 @@ namespace Keebee.AAT.Operations.Controllers
             exObj.Gender = resident.Gender;
             exObj.DateCreated = resident.DateCreated;
             exObj.DateUpdated = resident.DateUpdated;
-
+            exObj.Profile = new
+                {
+                    resident.Profile.Id,
+                    resident.Profile.Description,
+                    resident.Profile.GameDifficultyLevel,
+                    resident.Profile.DateCreated,
+                    resident.Profile.DateUpdated
+            };
             return new DynamicJsonObject(exObj);
         }
 
@@ -156,7 +163,7 @@ namespace Keebee.AAT.Operations.Controllers
 
             await Task.Run(() =>
             {
-                resident = _residentService.Get(id);
+                resident = _residentService.GetWithPersonalPictures(id);
             });
 
             if (resident == null) return new DynamicJsonObject(new ExpandoObject());
@@ -175,13 +182,20 @@ namespace Keebee.AAT.Operations.Controllers
                     resident.Profile.GameDifficultyLevel,
                     ConfigurationDetails = configuration.ConfigurationDetails.Select(detail => new
                     {
+                        detail.Id,
+                        detail.ConfigurationId,
+                        ActivityType = new
+                        {
+                            detail.ActivityType.Id,
+                            detail.ActivityType.Description,
+                            detail.ActivityType.PhidgetType
+                        },
                         ResponseType = new
                         {
                             detail.ResponseType.Id,
                             detail.ResponseType.Description,
                             detail.ResponseType.IsInteractive,
                             Responses = detail.ResponseType.Responses
-                                .Where(r => r.ProfileId == resident.ProfileId)
                                 .Select(response => new
                                 {
                                     response.Id,
@@ -191,8 +205,8 @@ namespace Keebee.AAT.Operations.Controllers
                                     response.MediaFile.FileType,
                                     response.MediaFile.FileSize
                                 })
-                        }
-                    })
+                            }
+                      })
                 };
             exObj.PersonalPictures = resident.PersonalPictures.Select(p => new
                 {
@@ -257,7 +271,12 @@ namespace Keebee.AAT.Operations.Controllers
             {
                 c.Id,
                 c.ConfigurationId,
-                ActivityTypeId = c.ActivityType.Id,
+                ActivityType = new
+                {
+                    c.ActivityType.Id,
+                    c.ActivityType.Description,
+                    c.ActivityType.PhidgetType
+                },
                 ResponseType = new
                 {
                     c.ResponseType.Id,
@@ -265,29 +284,6 @@ namespace Keebee.AAT.Operations.Controllers
                     c.ResponseType.IsInteractive
                 }
             });
-
-            return new DynamicJsonObject(exObj);
-        }
-
-        [Route("{id}/pictures")]
-        [HttpGet]
-        public async Task<DynamicJsonObject> GetPictures(int id)
-        {
-            var profile = new Profile();
-
-            await Task.Run(() =>
-            {
-                profile = _residentService.Get(id).Profile;
-            });
-
-            if (profile == null) return new DynamicJsonObject(new ExpandoObject());
-
-            dynamic exObj = new ExpandoObject();
-            exObj.Id = profile.Id;
-            exObj.Description = profile.Description;
-            exObj.GameDifficultyLevel = profile.GameDifficultyLevel;
-            exObj.DateCreated = profile.DateCreated;
-            exObj.DateCreated = profile.DateUpdated;
 
             return new DynamicJsonObject(exObj);
         }

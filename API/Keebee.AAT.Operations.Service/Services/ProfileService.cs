@@ -10,7 +10,6 @@ namespace Keebee.AAT.Operations.Service.Services
     {
         IEnumerable<Profile> Get();
         Profile Get(int id);
-        //Profile GetWithMedia(int id);
         int Post(Profile profile);
         void Patch(int id, Profile profile);
         void Delete(int id);
@@ -26,15 +25,6 @@ namespace Keebee.AAT.Operations.Service.Services
 
             return profiles;
         }
-
-        //public Profile GetWithMedia(int id)
-        //{
-        //    var container = new Container(new Uri(ODataHost.Url));
-
-        //    return container.Profiles.ByKey(id)
-        //        .Expand("ProfileDetails($expand=ResponseType,Responses($expand=MediaFile))")
-        //        .GetValue();
-        //}
 
         public Profile Get(int id)
         {

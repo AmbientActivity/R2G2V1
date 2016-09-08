@@ -112,7 +112,9 @@ namespace Keebee.AAT.Operations.Service.Services
 
             var configuration = container.Configurations
                     .AddQueryOption("$filter", "IsActive")
-                    .Expand($"ConfigurationDetails($expand=ActivityType,ResponseType($expand=ResponseTypeCategory,Responses($filter=ProfileId eq {profileId};$expand=MediaFile)))")
+                    .Expand("ConfigurationDetails($filter=ResponseType/IsSystem eq false;" +
+                            "$expand=ActivityType,ResponseType($expand=ResponseTypeCategory," +
+                            $"Responses($filter=ProfileId eq {profileId};$expand=MediaFile)))")
                     .Single();
 
             return configuration;

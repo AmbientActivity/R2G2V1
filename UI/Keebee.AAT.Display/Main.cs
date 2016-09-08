@@ -1,6 +1,6 @@
 ﻿using Keebee.AAT.RESTClient;
 using Keebee.AAT.MessageQueuing;
-using Keebee.AAT.Constants;
+using Keebee.AAT.Shared;
 using Keebee.AAT.SystemEventLogging;
 using Keebee.AAT.Display.UserControls;
 using Keebee.AAT.Display.Caregiver;
@@ -52,21 +52,24 @@ namespace Keebee.AAT.Display
 
         // message queue sender
         private readonly CustomMessageQueue _messageQueueDisplay;
+
         // message queue listener
         private readonly CustomMessageQueue _messageQueueResponse;
 
-        // current activity values
-        private bool _isNewResponse;
-        private int _currenActivityTypeId;
-        private int _currentResponseId;
-        private int _currentResponseTypeId;
-        private int _currentTelevisionResponseValue;
-        private int _currentRadioResponseValue;
-        private int _gameDifficultyLevel;
-        private bool _isMatchingGameTimeoutExpired;
+        // current sensor values
+        private int _currentTelevisionSensorValue;
+        private int _currentRadioSensorValue;
 
-        // current resident
-        private int _currentResidentId;
+        // current activity/response
+        private int _currenActivityTypeId;
+        private int _currentResponseTypeId;
+
+        // current profile
+        private ActiveProfile _currentProfile;
+
+        // flags
+        private bool _isNewActivityResponse;
+        private bool _isMatchingGameTimeoutExpired;
 
         // caregiver interface
         private CaregiverInterface _caregiverInterface;
@@ -104,6 +107,8 @@ namespace Keebee.AAT.Display
             matchingGame1.LogGameEventEvent += LogGameEvent;
             mediaPlayer1.LogActivityEventEvent += LogActivityEvent;
             InitializeStartupPosition();
+
+            _currentResponseTypeId = ResponseTypeId.Ambient;
         }
 
         #region initialization
@@ -160,58 +165,52 @@ namespace Keebee.AAT.Display
 
         #endregion
 
-        private void ExecuteSystemResponse(int responseValue)
+        private void ExecuteResponse(int responseTypeId, int sensorValue, bool isSystem)
         {
-            switch (responseValue)
-            {
-                case SystemResponseType.KillDisplay:
-                    KillDisplay();
-                    break;
-                case SystemResponseType.Caregiver:
-                    ShowCaregiver();
-                    break;
-                case SystemResponseType.Ambient:
-                    ResumeAmbient();
-                    break;
-            }
-        }
+            if (!isSystem)
+                if (!IsValidResponse(responseTypeId)) return;
 
-        private void ExecuteUserResponse(int responseTypeId, int responseValue)
-        {
-            switch (responseTypeId)
-            {
-                case UserResponseType.SlidShow:
-                    PlaySlideShow();
-                    break;
-                case UserResponseType.MatchingGame:
-                    PlayMatchingGame();
-                    break;
-                case UserResponseType.Radio:
-                case UserResponseType.Television:
-                case UserResponseType.Cats:
-                    PlayMedia(responseTypeId, responseValue);
-                    break;
-                case UserResponseType.Ambient:
-                    ResumeAmbient();
-                    break;
-            }
-        }
-
-        private void ExecuteResponse(int responseId, int responseTypeId, int responseValue)
-        {
-            if (!IsValidResponse(responseId, responseTypeId)) return;
-            if (_currentResponseId == SystemResponseType.Caregiver) return;
+            if (_currentResponseTypeId == ResponseTypeId.Caregiver) return;
 
             try
             {
-                _currentResponseId = responseId;
+                switch (responseTypeId)
+                {
+                    case ResponseTypeId.SlidShow:
+                        PlaySlideShow();
+                        break;
+                    case ResponseTypeId.MatchingGame:
+                        PlayMatchingGame();
+                        break;
+                    case ResponseTypeId.KillDisplay:
+                        KillDisplay();
+                        break;
+                    case ResponseTypeId.Radio:
+                    case ResponseTypeId.Television:
+                    case ResponseTypeId.Cats:
+                        PlayMedia(responseTypeId, sensorValue);
+                        break;
+                    case ResponseTypeId.Caregiver:
+                        ShowCaregiver();
+                        break;
+                    case ResponseTypeId.Ambient:
+                        ResumeAmbient();
+                        break;
+                }
 
-                if (responseId > 0)
-                    ExecuteUserResponse(responseTypeId, responseValue);
-                else
-                    ExecuteSystemResponse(responseId);
+                // save the current sensor values
+                switch (responseTypeId)
+                {
+                    case ResponseTypeId.Radio:
+                        _currentRadioSensorValue = sensorValue;
+                        break;
+                    case ResponseTypeId.Television:
+                        _currentTelevisionSensorValue = sensorValue;
+                        break;
+                }
 
-                SetCurrentResponseValues(responseTypeId, responseValue);
+                _currentResponseTypeId = responseTypeId;
+
             }
             catch (Exception ex)
             {
@@ -219,65 +218,34 @@ namespace Keebee.AAT.Display
             }
         }
 
-        private void SetCurrentResponseValues(int responseTypeId, int responseValue)
+        private bool IsValidResponse(int responseTypeId)
         {
-            switch (responseTypeId)
-            {
-                case UserResponseType.Radio:
-                    _currentRadioResponseValue = responseValue;
-                    break;
-                case UserResponseType.Television:
-                    _currentTelevisionResponseValue = responseValue;
-                    break;
-            }
-        }
+            // if it is a new activity/response type then execute it
+            if (_isNewActivityResponse) return true;
 
-        private bool IsValidResponse(int responseId, int responseTypeId)
-        {
-            // if the responseId has changed then execute it
-            _isNewResponse = (responseId != _currentResponseId);
-            if (_isNewResponse) return true;
-
-            // if it is a user response
-            if (responseId > 0)
-            {
-                // if it is not a media player response type - do nothing
-                if ((responseTypeId != UserResponseType.Television) &&
-                    (responseTypeId != UserResponseType.Radio))
-                    return false;
-            }
-            else return false;
-
-            // media player response type - execute it
-            return true;
-        }
-
-        private static ResponseMessage GetResponseFromMessageBody(string messageBody)
-        {
-            var serializer = new JavaScriptSerializer();
-            var response = serializer.Deserialize<ResponseMessage>(messageBody);
-            return response;
+            // if it is a media player response type then execute it
+            return (responseTypeId == ResponseTypeId.Television) || (responseTypeId == ResponseTypeId.Radio); 
         }
 
         private void StopCurrentResponse()
         {
             switch (_currentResponseTypeId)
             {
-                case UserResponseType.SlidShow:
+                case ResponseTypeId.SlidShow:
                     slideViewerFlash1.Hide();
                     slideViewerFlash1.Stop();
                     break;
-                case UserResponseType.MatchingGame:
+                case ResponseTypeId.MatchingGame:
                     matchingGame1.Hide();
                     matchingGame1.Stop(logEvent: !_isMatchingGameTimeoutExpired);
                     break;
-                case UserResponseType.Radio:
-                case UserResponseType.Television:
-                case UserResponseType.Cats:
+                case ResponseTypeId.Radio:
+                case ResponseTypeId.Television:
+                case ResponseTypeId.Cats:
                     mediaPlayer1.Hide();
                     mediaPlayer1.Stop();
                     break;
-                case UserResponseType.Ambient:
+                case ResponseTypeId.Ambient:
                     ambient1.Hide();
                     ambient1.Pause();
                     break;
@@ -290,13 +258,13 @@ namespace Keebee.AAT.Display
         {
             if (InvokeRequired)
             {
-                Invoke(new PlayMediaDelegate(PlayMedia), new object[] { responseTypeId, responseValue });
+                Invoke(new PlayMediaDelegate(PlayMedia), responseTypeId, responseValue);
             }
             else
             {
-                if (_isNewResponse)
+                if (_isNewActivityResponse)
                 {
-                    var mediaFiles = GetResponseFiles(_currentResponseId);
+                    var mediaFiles = GetResponseFiles(responseTypeId);
                     if (!mediaFiles.Any()) return;
 
                     StopCurrentResponse();
@@ -329,11 +297,11 @@ namespace Keebee.AAT.Display
 
             switch (responseTypeId)
             {
-                case UserResponseType.Radio:
-                    currentResponseValue = _currentRadioResponseValue;
+                case ResponseTypeId.Radio:
+                    currentResponseValue = _currentRadioSensorValue;
                     break;
-                case UserResponseType.Television:
-                    currentResponseValue = _currentTelevisionResponseValue;
+                case ResponseTypeId.Television:
+                    currentResponseValue = _currentTelevisionSensorValue;
                     break;
                 default:
                     return ResponseValueChangeType.NoDifference;
@@ -365,14 +333,14 @@ namespace Keebee.AAT.Display
             }
             else
             {
-                var images = GetResponseFiles(_currentResponseId);
+                var images = GetResponseFiles(ResponseTypeId.SlidShow);
                 if (!images.Any()) return;
 
                 StopCurrentResponse();
                 slideViewerFlash1.Show();
                 slideViewerFlash1.Play(images);
-                _currentResponseTypeId = UserResponseType.SlidShow;
-                _activityEventLogger.Add(_currentResidentId, _currenActivityTypeId, _currentResponseTypeId);
+                _currentResponseTypeId = ResponseTypeId.SlidShow;
+                _activityEventLogger.Add(_currentProfile.ResidentId, _currenActivityTypeId, _currentResponseTypeId);
             }
         }
 
@@ -384,7 +352,7 @@ namespace Keebee.AAT.Display
             }
             else
             {
-                var shapes = GetResponseFiles(_currentResponseId, "png");
+                var shapes = GetResponseFiles(ResponseTypeId.MatchingGame, "png");
                 if (!shapes.Any()) return;
 
                 StopCurrentResponse();
@@ -392,18 +360,17 @@ namespace Keebee.AAT.Display
 
                 matchingGame1.Show();
 
-                _activityEventLogger.Add(_currentResidentId, _currenActivityTypeId, _currentResponseTypeId);
-                _gameEventLogger.Add(_currentResidentId, UserGameType.MatchThePictures, _gameDifficultyLevel, null, "New game has been initiated");
+                _activityEventLogger.Add(_currentProfile.ResidentId, _currenActivityTypeId, _currentResponseTypeId);
+                _gameEventLogger.Add(_currentProfile.ResidentId, GameTypeId.MatchThePictures, _currentProfile.GameDifficultyLevel, null, "New game has been initiated");
 
-                matchingGame1.Play(shapes, _gameDifficultyLevel, true);
-                _currentResponseTypeId = UserResponseType.MatchingGame;
-                
+                matchingGame1.Play(shapes, _currentProfile.GameDifficultyLevel, true);
+                _currentResponseTypeId = ResponseTypeId.MatchingGame;
             }
         }
 
-        private string[] GetResponseFiles(int profileDetailId, string fileType = null)
+        private string[] GetResponseFiles(int responseTypeId, string fileType = null)
         {
-            var files = _opsClient.GetProfileResponses(profileDetailId)
+            var files = _opsClient.GetProfileMediaForActivityResponseType(_currentProfile.Id, _currenActivityTypeId, responseTypeId)
                     .Where(x => x.FileType == fileType || fileType == null)
                     .OrderBy(x => x.FilePath)
                     .Select(x => x.FilePath)
@@ -423,8 +390,7 @@ namespace Keebee.AAT.Display
                 StopCurrentResponse();
                 ambient1.Show();
                 ambient1.Resume();
-                _currentResponseTypeId = UserResponseType.Ambient;
-                _currentResponseId = UserResponse.Ambient;
+                _currentResponseTypeId = ResponseTypeId.Ambient;
             }
         }
 
@@ -439,7 +405,7 @@ namespace Keebee.AAT.Display
                 var frmSplash = new Caregiver.Splash();
                 frmSplash.Show();
 
-                var genericProfile = _opsClient.GetProfileMedia(UserProfile.Generic);
+                var genericProfile = _opsClient.GetProfileMedia(ProfileId.Generic);
 
                 StopCurrentResponse();
                 _caregiverInterface = new CaregiverInterface
@@ -454,7 +420,7 @@ namespace Keebee.AAT.Display
                 frmSplash.Close();
                 _caregiverInterface.Show();
 
-                _currentResponseTypeId = SystemResponseType.Caregiver;
+                _currentResponseTypeId = ResponseTypeId.Caregiver;
             }
         }
 
@@ -491,15 +457,18 @@ namespace Keebee.AAT.Display
 
         private void MessageReceived(object source, MessageEventArgs e)
         {
-            var message = e.MessageBody;
+            var serializer = new JavaScriptSerializer();
+            var response = serializer.Deserialize<ResponseMessage>(e.MessageBody);
 
-            var response = GetResponseFromMessageBody(message);
+            _currentProfile = response.ActiveProfile;
 
-            _currentResidentId = response.ResidentId;
+            _isNewActivityResponse = 
+                (response.ResponseTypeId != _currentResponseTypeId) ||
+                (response.ActivityTypeId != _currenActivityTypeId);
+
             _currenActivityTypeId = response.ActivityTypeId;
-            _gameDifficultyLevel = response.GameDifficultyLevel;
 
-            ExecuteResponse(response.ProfileDetailId, response.ResponseTypeId, response.ResponseValue);
+            ExecuteResponse(response.ResponseTypeId, response.SensorValue, response.IsSystem);
         }
 
         private void SlideShowComplete(object sender, EventArgs e)
@@ -521,7 +490,7 @@ namespace Keebee.AAT.Display
             {
                 mediaPlayer1.Hide();
                 ResumeAmbient();
-                _isNewResponse = true;
+                _isNewActivityResponse = true;
             }
             catch (Exception ex)
             {
@@ -534,7 +503,7 @@ namespace Keebee.AAT.Display
             try
             {
                 var args = (MatchingGame.LogGameEventEventArgs)e;
-                _gameEventLogger.Add(_currentResidentId, args.GameTypeId, args.DifficultyLevel, args.Success, args.Description);
+                _gameEventLogger.Add(_currentProfile.ResidentId, args.GameTypeId, args.DifficultyLevel, args.Success, args.Description);
             }
             catch (Exception ex)
             {
@@ -549,7 +518,7 @@ namespace Keebee.AAT.Display
                 _isMatchingGameTimeoutExpired = true;
                 matchingGame1.Hide();
                 ResumeAmbient();
-                _isNewResponse = true;
+                _isNewActivityResponse = true;
             }
             catch (Exception ex)
             {
@@ -562,7 +531,7 @@ namespace Keebee.AAT.Display
             try
             {
                 var args = (MediaPlayer.LogActivityEventEventArgs)e;
-                _activityEventLogger.Add(_currentResidentId, _currenActivityTypeId, _currentResponseTypeId, args.Description);
+                _activityEventLogger.Add(_currentProfile.ResidentId, _currenActivityTypeId, _currentResponseTypeId, args.Description);
             }
             catch (Exception ex)
             {
@@ -575,7 +544,7 @@ namespace Keebee.AAT.Display
             try
             {
                 ResumeAmbient();
-                _isNewResponse = true;
+                _isNewActivityResponse = true;
             }
             catch (Exception ex)
             {

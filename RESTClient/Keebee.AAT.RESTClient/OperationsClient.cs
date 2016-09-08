@@ -1,4 +1,4 @@
-﻿using Keebee.AAT.Constants;
+﻿using Keebee.AAT.Shared;
 using Keebee.AAT.SystemEventLogging;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,8 +24,10 @@ namespace Keebee.AAT.RESTClient
         bool ResidentProfileExists(int residentId);
         Profile GetGenericProfile();
         Profile GetResidentProfile(int residentId);
+        Configuration GetActiveConfigurationDetails();
+        Configuration GetConfigurationDetails(int id);
         Profile GetProfileMedia(int profileId);
-        IEnumerable<Response> GetProfileResponses(int responseId);
+        IEnumerable<Response> GetProfileMediaForActivityResponseType(int profileId, int activityTypeId, int responseTypeId);
 
         IEnumerable<ActivityEventLog> GetActivityEventLogs(string date);
         IEnumerable<GameEventLog> GetGameEventLogs(string date);
@@ -57,8 +59,9 @@ namespace Keebee.AAT.RESTClient
         private const string UrlProfile = "profiles/{0}";
         private const string UrlProfileDetails = "profiles/{0}/details";
         private const string UrlProfileMedia = "profiles/{0}/media";
-        private const string UrlResidentProfileDetails = "residents/{0}/profile/details";
-        private const string UrlProfileResponses = "profiledetails/{0}/responses";
+        private const string UrlConfigurationDetails = "configurations/{0}/details";
+        private const string UrlActiveConfigurationDetails = "configurations/active/details";
+        private const string UrlProfileMediaForActivityResponseType = "profiles/{0}/media?activityTypeId={1}&responseTypeId={2}";
         private const string UrlAmbientResponses = "ambientresponses";
         private const string UrlActivityEventLogs = "activityeventlogs";
         private const string UrlGameEventLogs = "gameeventlogs";
@@ -88,10 +91,10 @@ namespace Keebee.AAT.RESTClient
             if (data == null) return null;
 
             var serializer = new JavaScriptSerializer();
-            var ambientDetails = serializer.Deserialize<ProfileDetail>(data).AmbientResponses;
+            var ambientDetails = serializer.Deserialize<ResponseList>(data).AmbientResponses;
 
             return ambientDetails;
-        }
+        } 
 
         public IEnumerable<Resident> GetResidents()
         {
@@ -166,7 +169,7 @@ namespace Keebee.AAT.RESTClient
 
         public Profile GetGenericProfile()
         {
-            var data = Get(string.Format(UrlProfileDetails, UserProfile.Generic));
+            var data = Get(string.Format(UrlProfileDetails, ProfileId.Generic));
             if (data == null) return null;
 
             var serializer = new JavaScriptSerializer();
@@ -178,14 +181,35 @@ namespace Keebee.AAT.RESTClient
 
         public Profile GetResidentProfile(int residentId)
         {
-            var data = Get(string.Format(UrlResidentProfileDetails, residentId));
+            var data = Get(string.Format(UrlResidentProfile, residentId));
             if (data == null) return null;
 
             var serializer = new JavaScriptSerializer();
             var profile = serializer.Deserialize<Profile>(data);
-            profile.ResidentId = residentId;
 
             return profile;
+        }
+
+        public Configuration GetActiveConfigurationDetails()
+        {
+            var data = Get(UrlActiveConfigurationDetails);
+            if (data == null) return null;
+
+            var serializer = new JavaScriptSerializer();
+            var config = serializer.Deserialize<Configuration>(data);
+
+            return config;
+        }
+
+        public Configuration GetConfigurationDetails(int id)
+        {
+            var data = Get(string.Format(UrlConfigurationDetails, id));
+            if (data == null) return null;
+
+            var serializer = new JavaScriptSerializer();
+            var config = serializer.Deserialize<Configuration>(data);
+
+            return config;
         }
 
         public Profile GetProfileMedia(int profileId)
@@ -199,13 +223,15 @@ namespace Keebee.AAT.RESTClient
             return profile;
         }
 
-        public IEnumerable<Response> GetProfileResponses(int profileDetailId)
+        public IEnumerable<Response> GetProfileMediaForActivityResponseType(int profileId, int activityTypeId, int responseTypeId)
         {
-            var data = Get(string.Format(UrlProfileResponses, profileDetailId));
+            var data = Get(string.Format(UrlProfileMediaForActivityResponseType, profileId, activityTypeId, responseTypeId));
             if (data == null) return null;
 
             var serializer = new JavaScriptSerializer();
-            var details = serializer.Deserialize<ProfileDetail>(data).Responses;
+            var details = serializer.Deserialize<ConfigurationDetailList>(data)
+                .ConfigurationDetails.Single()
+                .ResponseType.Responses;
 
             return details;
         }

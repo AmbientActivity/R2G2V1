@@ -98,10 +98,6 @@
       <HintPath>..\..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.Helpers.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="System.Web.Mvc, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Microsoft.AspNet.Mvc.5.2.3\lib\net45\System.Web.Mvc.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="System.Web.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Microsoft.AspNet.Razor.3.2.3\lib\net45\System.Web.Razor.dll</HintPath>
       <Private>True</Private>
@@ -155,15 +151,18 @@
     <Compile Include="App_Start\SwaggerConfig.cs" />
     <Compile Include="App_Start\UnityConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Controllers\ActivityTypesController.cs" />
     <Compile Include="Controllers\AmbientResponsesController.cs" />
     <Compile Include="Controllers\ActivityEventLogsController.cs" />
+    <Compile Include="Controllers\ConfigurationsController.cs" />
+    <Compile Include="Controllers\ConfigurationDetailsController.cs" />
     <Compile Include="Controllers\GameEventLogsController.cs" />
     <Compile Include="Controllers\MediaController.cs" />
     <Compile Include="Controllers\PersonalPicturesController.cs" />
-    <Compile Include="Controllers\ProfileDetailsController.cs" />
     <Compile Include="Controllers\ProfilesController.cs" />
     <Compile Include="Controllers\ResidentsController.cs" />
     <Compile Include="Controllers\ResponsesController.cs" />
+    <Compile Include="Controllers\ResponseTypesController.cs" />
     <Compile Include="Controllers\RfidEventLogsController.cs" />
     <Compile Include="Controllers\StatusController.cs" />
     <Compile Include="Global.asax.cs">
@@ -172,15 +171,13 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="packages.config" />
+    <Content Include="packages.config">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Metadata\deploymentTemplates\apiappconfig.azureresource.json" />
     <Content Include="apiapp.json" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Shared\Keebee.AAT.Constants\Keebee.AAT.Constants.csproj">
-      <Project>{3cb12af2-7655-46f6-9969-990730f73964}</Project>
-      <Name>Keebee.AAT.Constants</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Keebee.AAT.Operations.Service\Keebee.AAT.Operations.Service.csproj">
       <Project>{b68b64da-0945-4963-a12f-3d2017ae442e}</Project>
       <Name>Keebee.AAT.Operations.Service</Name>

@@ -10,7 +10,7 @@ namespace Keebee.AAT.Operations.Service.Services
     {
         IEnumerable<PersonalPicture> Get();
         PersonalPicture Get(int id);
-        void Post(PersonalPicture response);
+        int Post(PersonalPicture response);
         void Patch(int id, PersonalPicture response);
         void Delete(int id);
     }
@@ -39,12 +39,14 @@ namespace Keebee.AAT.Operations.Service.Services
             return picture;
         }
 
-        public void Post(PersonalPicture picture)
+        public int Post(PersonalPicture picture)
         {
             var container = new Container(new Uri(ODataHost.Url));
 
             container.AddToPersonalPictures(picture);
             container.SaveChanges();
+
+            return picture.Id;
         }
 
         public void Patch(int id, PersonalPicture picture)

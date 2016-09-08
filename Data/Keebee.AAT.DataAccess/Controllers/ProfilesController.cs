@@ -131,11 +131,11 @@ namespace Keebee.AAT.DataAccess.Controllers
         }
 
         // GET: odata/Profiles(5)/ProfileDetails
-        [EnableQuery]
-        public IQueryable<ProfileDetail> GetProfileDetails([FromODataUri] int key)
-        {
-            return db.Profiles.Where(m => m.Id == key).SelectMany(m => m.ProfileDetails);
-        }
+        //[EnableQuery]
+        //public IQueryable<ProfileDetail> GetProfileDetails([FromODataUri] int key)
+        //{
+        //    return db.Profiles.Where(m => m.Id == key).SelectMany(m => m.ProfileDetails);
+        //}
 
         protected override void Dispose(bool disposing)
         {

@@ -27,5 +27,5 @@ namespace Keebee.AAT.RESTClient
     public class ResidentList
     {
         public IEnumerable<Resident> Residents;
-}
+    }
 }

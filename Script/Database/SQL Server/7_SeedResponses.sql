@@ -38,24 +38,24 @@ JOIN MediaFiles mf ON a.StreamId = mf.StreamId
 ---------------------------------- GENERIC PROFILE (START) -------------------------------------
 
 --- Activity 1 - ResponseType "SlideShow" ---
-INSERT INTO Responses (ProfileDetailId, StreamId)
-SELECT 1, StreamId FROM MediaFiles WHERE [Path] = @pathProfile + '1\images\' AND [FileType] IN ('jpg', 'jpeg', 'png', 'bmp', 'gif')
+INSERT INTO Responses (ProfileId, ResponseTypeId, StreamId)
+SELECT 1, 1, StreamId FROM MediaFiles WHERE [Path] = @pathProfile + '1\images\' AND [FileType] IN ('jpg', 'jpeg', 'png', 'bmp', 'gif')
 
 --- Activity 2 - ResponseType "MatchingGame" ---
-INSERT INTO Responses (ProfileDetailId, StreamId)
-SELECT 2, StreamId FROM MediaFiles WHERE [Path] = @pathProfile + '1\shapes\' AND [FileType] = 'png'
+INSERT INTO Responses (ProfileId, ResponseTypeId, StreamId)
+SELECT 1, 2, StreamId FROM MediaFiles WHERE [Path] = @pathProfile + '1\shapes\' AND [FileType] = 'png'
 
 --- Activity 3 - ResponseType "Cats" ---
-INSERT INTO Responses (ProfileDetailId, StreamId)
-SELECT 3, StreamId FROM MediaFiles WHERE [Path] = @pathCats
+INSERT INTO Responses (ProfileId, ResponseTypeId, StreamId)
+SELECT 1, 3, StreamId FROM MediaFiles WHERE [Path] = @pathCats
 
 --- Activity 5 - ResponseType "Radio" ---
-INSERT INTO Responses (ProfileDetailId, StreamId)
-SELECT 4, StreamId FROM MediaFiles WHERE [Path] = @pathProfile + '1\music\' AND [FileType] IN ('mp3', 'wav')
+INSERT INTO Responses (ProfileId, ResponseTypeId, StreamId)
+SELECT 1, 5, StreamId FROM MediaFiles WHERE [Path] = @pathProfile + '1\music\' AND [FileType] IN ('mp3', 'wav')
 
 --- Activity 6 - ResponseType "Television" ---
-INSERT INTO Responses (ProfileDetailId, StreamId)
-SELECT 5, StreamId FROM MediaFiles WHERE [Path] = @pathProfile + '1\videos\' AND [FileType] IN ('mp4', 'wmv')
+INSERT INTO Responses (ProfileId, ResponseTypeId, StreamId)
+SELECT 1, 6, StreamId FROM MediaFiles WHERE [Path] = @pathProfile + '1\videos\' AND [FileType] IN ('mp4', 'wmv')
 
 
 --------------------------------- GENERIC PROFILE (END) --------------------------------------
@@ -64,24 +64,24 @@ SELECT 5, StreamId FROM MediaFiles WHERE [Path] = @pathProfile + '1\videos\' AND
 ----------------------------------- ALMA PROFILE (START) --------------------------------------
 
 --- Activity 1 - ResponseType "SlideShow" ---
-INSERT INTO Responses (ProfileDetailId, StreamId)
-SELECT 6, StreamId FROM MediaFiles WHERE [Path] = @pathProfile + '2\images\' AND [FileType] IN ('jpg', 'jpeg', 'png', 'bmp', 'gif')
+INSERT INTO Responses (ProfileId, ResponseTypeId, StreamId)
+SELECT 2, 1, StreamId FROM MediaFiles WHERE [Path] = @pathProfile + '2\images\' AND [FileType] IN ('jpg', 'jpeg', 'png', 'bmp', 'gif')
 
 --- Activity 2 - ResponseType "MatchingGame" ---
-INSERT INTO Responses (ProfileDetailId, StreamId)
-SELECT 7, StreamId FROM MediaFiles WHERE [Path] = @pathProfile + '2\shapes\' AND [FileType] = 'png'
+INSERT INTO Responses (ProfileId, ResponseTypeId, StreamId)
+SELECT 2, 2, StreamId FROM MediaFiles WHERE [Path] = @pathProfile + '2\shapes\' AND [FileType] = 'png'
 
 --- Activity 3 - ResponseType "Cats" ---
-INSERT INTO Responses (ProfileDetailId, StreamId)
-SELECT 8, StreamId FROM MediaFiles WHERE [Path] = @pathCats
+INSERT INTO Responses (ProfileId, ResponseTypeId, StreamId)
+SELECT 2, 3, StreamId FROM MediaFiles WHERE [Path] = @pathCats
 
 --- Activity 5 - ResponseType "Radio" ---
-INSERT INTO Responses (ProfileDetailId, StreamId)
-SELECT 9, StreamId FROM MediaFiles WHERE [Path] = @pathProfile + '2\music\' AND [FileType] IN ('mp3', 'wav')
+INSERT INTO Responses (ProfileId, ResponseTypeId, StreamId)
+SELECT 2, 5, StreamId FROM MediaFiles WHERE [Path] = @pathProfile + '2\music\' AND [FileType] IN ('mp3', 'wav')
 
 --- Activity 6 - ResponseType "Television" ---
-INSERT INTO Responses (ProfileDetailId, StreamId)
-SELECT 10, StreamId FROM MediaFiles WHERE [Path] = @pathProfile + '2\videos\' AND [FileType] IN ('mp4', 'wmv')
+INSERT INTO Responses (ProfileId, ResponseTypeId, StreamId)
+SELECT 2, 6, StreamId FROM MediaFiles WHERE [Path] = @pathProfile + '2\videos\' AND [FileType] IN ('mp4', 'wmv')
 
 --- Personal Pictures ---
 INSERT INTO PersonalPictures (ResidentId, StreamId)
@@ -92,24 +92,24 @@ SELECT 1, StreamId FROM MediaFiles WHERE [Path] = @pathProfile + '2\pictures\' A
 ----------------------------------- EARL PROFILE (START) --------------------------------------
 
 --- Activity 1 - ResponseType "SlideShow" ---
-INSERT INTO Responses (ProfileDetailId, StreamId)
-SELECT 11, StreamId FROM MediaFiles WHERE [Path] = @pathProfile + '3\images\' AND [FileType] IN ('jpg', 'jpeg', 'png', 'bmp', 'gif')
+INSERT INTO Responses (ProfileId, ResponseTypeId, StreamId)
+SELECT 3, 1, StreamId FROM MediaFiles WHERE [Path] = @pathProfile + '3\images\' AND [FileType] IN ('jpg', 'jpeg', 'png', 'bmp', 'gif')
 
 --- Activity 2 - ResponseType "MatchingGame" ---
-INSERT INTO Responses (ProfileDetailId, StreamId)
-SELECT 12, StreamId FROM MediaFiles WHERE [Path] = @pathProfile + '3\shapes\' AND [FileType] = 'png'
+INSERT INTO Responses (ProfileId, ResponseTypeId, StreamId)
+SELECT 3, 2, StreamId FROM MediaFiles WHERE [Path] = @pathProfile + '3\shapes\' AND [FileType] = 'png'
 
 --- Activity 3 - ResponseType "Cats" ---
-INSERT INTO Responses (ProfileDetailId, StreamId)
-SELECT 13, StreamId FROM MediaFiles WHERE [Path] = @pathCats
+INSERT INTO Responses (ProfileId, ResponseTypeId, StreamId)
+SELECT 3, 3, StreamId FROM MediaFiles WHERE [Path] = @pathCats
 
 --- Activity 5 - ResponseType "Radio" ---
-INSERT INTO Responses (ProfileDetailId, StreamId)
-SELECT 14, StreamId FROM MediaFiles WHERE [Path] = @pathProfile + '3\music\' AND [FileType] IN ('mp3', 'wav')
+INSERT INTO Responses (ProfileId, ResponseTypeId, StreamId)
+SELECT 3, 5, StreamId FROM MediaFiles WHERE [Path] = @pathProfile + '3\music\' AND [FileType] IN ('mp3', 'wav')
 
 --- Activity 6 - ResponseType "Television" ---
-INSERT INTO Responses (ProfileDetailId, StreamId)
-SELECT 15, StreamId FROM MediaFiles WHERE [Path] = @pathProfile + '3\videos\' AND [FileType] IN ('mp4', 'wmv')
+INSERT INTO Responses (ProfileId, ResponseTypeId, StreamId)
+SELECT 3, 6, StreamId FROM MediaFiles WHERE [Path] = @pathProfile + '3\videos\' AND [FileType] IN ('mp4', 'wmv')
 
 --- Personal Pictures ---
 INSERT INTO PersonalPictures (ResidentId, StreamId)
@@ -120,24 +120,24 @@ SELECT 2, StreamId FROM MediaFiles WHERE [Path] = @pathProfile + '3\pictures\' A
 ----------------------------------- RUTH PROFILE (START) --------------------------------------
 
 --- Activity 1 - ResponseType "SlideShow" ---
-INSERT INTO Responses (ProfileDetailId, StreamId)
-SELECT 16, StreamId FROM MediaFiles WHERE [Path] = @pathProfile + '4\images\' AND [FileType] IN ('jpg', 'jpeg', 'png', 'bmp', 'gif')
+INSERT INTO Responses (ProfileId, ResponseTypeId, StreamId)
+SELECT 4, 1, StreamId FROM MediaFiles WHERE [Path] = @pathProfile + '4\images\' AND [FileType] IN ('jpg', 'jpeg', 'png', 'bmp', 'gif')
 
 --- Activity 2 - ResponseType "MatchingGame" ---
-INSERT INTO Responses (ProfileDetailId, StreamId)
-SELECT 17, StreamId FROM MediaFiles WHERE [Path] = @pathProfile + '4\shapes\' AND [FileType] = 'png'
+INSERT INTO Responses (ProfileId, ResponseTypeId, StreamId)
+SELECT 4, 2, StreamId FROM MediaFiles WHERE [Path] = @pathProfile + '4\shapes\' AND [FileType] = 'png'
 
 --- Activity 3 - ResponseType "Cats" ---
-INSERT INTO Responses (ProfileDetailId, StreamId)
-SELECT 18, StreamId FROM MediaFiles WHERE [Path] = @pathCats
+INSERT INTO Responses (ProfileId, ResponseTypeId, StreamId)
+SELECT 4, 3, StreamId FROM MediaFiles WHERE [Path] = @pathCats
 
 --- Activity 5 - ResponseType "Radio" ---
-INSERT INTO Responses (ProfileDetailId, StreamId)
-SELECT 19, StreamId FROM MediaFiles WHERE [Path] = @pathProfile + '4\music\' AND [FileType] IN ('mp3', 'wav')
+INSERT INTO Responses (ProfileId, ResponseTypeId, StreamId)
+SELECT 4, 5, StreamId FROM MediaFiles WHERE [Path] = @pathProfile + '4\music\' AND [FileType] IN ('mp3', 'wav')
 
 --- Activity 6 - ResponseType "Television" ---
-INSERT INTO Responses (ProfileDetailId, StreamId)
-SELECT 20, StreamId FROM MediaFiles WHERE [Path] = @pathProfile + '4\videos\' AND [FileType] IN ('mp4', 'wmv')
+INSERT INTO Responses (ProfileId, ResponseTypeId, StreamId)
+SELECT 4, 6, StreamId FROM MediaFiles WHERE [Path] = @pathProfile + '4\videos\' AND [FileType] IN ('mp4', 'wmv')
 
 --- Personal Pictures ---
 INSERT INTO PersonalPictures (ResidentId, StreamId)
@@ -154,20 +154,20 @@ SELECT 3, StreamId FROM MediaFiles WHERE [Path] = @pathProfile + '4\pictures\' A
 ---------------------------------- GENERIC PROFILE (START) -------------------------------------
 
 --- Activity 9 - ResponseType "SlideShow" ---
-INSERT INTO Responses (ProfileDetailId, StreamId)
-SELECT 21, StreamId FROM MediaFiles WHERE [Path] = @pathProfile + '1\images\' AND [FileType] IN ('jpg', 'jpeg', 'png', 'bmp', 'gif')
+--INSERT INTO Responses (ProfileId, ResponseTypeId, StreamId)
+--SELECT 1, 9, StreamId FROM MediaFiles WHERE [Path] = @pathProfile + '1\images\' AND [FileType] IN ('jpg', 'jpeg', 'png', 'bmp', 'gif')
 
---- Activity 10 - ResponseType "MatchingGame" ---
-INSERT INTO Responses (ProfileDetailId, StreamId)
-SELECT 22, StreamId FROM MediaFiles WHERE [Path] = @pathProfile + '1\shapes\' AND [FileType] = 'png'
+----- Activity 10 - ResponseType "MatchingGame" ---
+--INSERT INTO Responses (ProfileId, ResponseTypeId, StreamId)
+--SELECT 1, 10, StreamId FROM MediaFiles WHERE [Path] = @pathProfile + '1\shapes\' AND [FileType] = 'png'
 
---- Activity 13 - ResponseType "Radio" ---
-INSERT INTO Responses (ProfileDetailId, StreamId)
-SELECT 23, StreamId FROM MediaFiles WHERE [Path] = @pathProfile + '1\music\' AND [FileType] IN ('mp3', 'wav')
+----- Activity 13 - ResponseType "Radio" ---
+--INSERT INTO Responses (ProfileId, ResponseTypeId, StreamId)
+--SELECT 1, 13, StreamId FROM MediaFiles WHERE [Path] = @pathProfile + '1\music\' AND [FileType] IN ('mp3', 'wav')
 
---- Activity 14 - ResponseType "Television" ---
-INSERT INTO Responses (ProfileDetailId, StreamId)
-SELECT 24, StreamId FROM MediaFiles WHERE [Path] = @pathProfile + '1\videos\' AND [FileType] IN ('mp4', 'wmv')
+----- Activity 14 - ResponseType "Television" ---
+--INSERT INTO Responses (ProfileId, ResponseTypeId, StreamId)
+--SELECT 1, 14, StreamId FROM MediaFiles WHERE [Path] = @pathProfile + '1\videos\' AND [FileType] IN ('mp4', 'wmv')
 
 
 --------------------------------- GENERIC PROFILE (END) --------------------------------------
@@ -176,60 +176,60 @@ SELECT 24, StreamId FROM MediaFiles WHERE [Path] = @pathProfile + '1\videos\' AN
 ----------------------------------- ALMA PROFILE (START) --------------------------------------
 
 --- Activity 9 - ResponseType "SlideShow" ---
-INSERT INTO Responses (ProfileDetailId, StreamId)
-SELECT 25, StreamId FROM MediaFiles WHERE [Path] = @pathProfile + '2\images\' AND [FileType] IN ('jpg', 'jpeg', 'png', 'bmp', 'gif')
+--INSERT INTO Responses (ProfileId, ResponseTypeId, StreamId)
+--SELECT 2, 9, StreamId FROM MediaFiles WHERE [Path] = @pathProfile + '2\images\' AND [FileType] IN ('jpg', 'jpeg', 'png', 'bmp', 'gif')
 
---- Activity 10 - ResponseType "MatchingGame" ---
-INSERT INTO Responses (ProfileDetailId, StreamId)
-SELECT 26, StreamId FROM MediaFiles WHERE [Path] = @pathProfile + '2\shapes\' AND [FileType] = 'png'
+----- Activity 10 - ResponseType "MatchingGame" ---
+--INSERT INTO Responses (ProfileId, ResponseTypeId, StreamId)
+--SELECT 2, 10, StreamId FROM MediaFiles WHERE [Path] = @pathProfile + '2\shapes\' AND [FileType] = 'png'
 
---- Activity 13 - ResponseType "Radio" ---
-INSERT INTO Responses (ProfileDetailId, StreamId)
-SELECT 27, StreamId FROM MediaFiles WHERE [Path] = @pathProfile + '2\music\' AND [FileType] IN ('mp3', 'wav')
+----- Activity 13 - ResponseType "Radio" ---
+--INSERT INTO Responses (ProfileId, ResponseTypeId, StreamId)
+--SELECT 2, 13, StreamId FROM MediaFiles WHERE [Path] = @pathProfile + '2\music\' AND [FileType] IN ('mp3', 'wav')
 
---- Activity 14 - ResponseType "Television" ---
-INSERT INTO Responses (ProfileDetailId, StreamId)
-SELECT 28, StreamId FROM MediaFiles WHERE [Path] = @pathProfile + '2\videos\' AND [FileType] IN ('mp4', 'wmv')
+----- Activity 14 - ResponseType "Television" ---
+--INSERT INTO Responses (ProfileId, ResponseTypeId, StreamId)
+--SELECT 2, 14, StreamId FROM MediaFiles WHERE [Path] = @pathProfile + '2\videos\' AND [FileType] IN ('mp4', 'wmv')
 
 ----------------------------------- ALMA PROFILE (END) ----------------------------------------
 
 ----------------------------------- EARL PROFILE (START) --------------------------------------
 
 --- Activity 9 - ResponseType "SlideShow" ---
-INSERT INTO Responses (ProfileDetailId, StreamId)
-SELECT 29, StreamId FROM MediaFiles WHERE [Path] = @pathProfile + '3\images\' AND [FileType] IN ('jpg', 'jpeg', 'png', 'bmp', 'gif')
+--INSERT INTO Responses (ProfileId, ResponseTypeId, StreamId)
+--SELECT 3, 9, StreamId FROM MediaFiles WHERE [Path] = @pathProfile + '3\images\' AND [FileType] IN ('jpg', 'jpeg', 'png', 'bmp', 'gif')
 
---- Activity 10 - ResponseType "MatchingGame" ---
-INSERT INTO Responses (ProfileDetailId, StreamId)
-SELECT 30, StreamId FROM MediaFiles WHERE [Path] = @pathProfile + '3\shapes\' AND [FileType] = 'png'
+----- Activity 10 - ResponseType "MatchingGame" ---
+--INSERT INTO Responses (ProfileId, ResponseTypeId, StreamId)
+--SELECT 3, 10, StreamId FROM MediaFiles WHERE [Path] = @pathProfile + '3\shapes\' AND [FileType] = 'png'
 
---- Activity 13 - ResponseType "Radio" ---
-INSERT INTO Responses (ProfileDetailId, StreamId)
-SELECT 31, StreamId FROM MediaFiles WHERE [Path] = @pathProfile + '3\music\' AND [FileType] IN ('mp3', 'wav')
+----- Activity 13 - ResponseType "Radio" ---
+--INSERT INTO Responses (ProfileId, ResponseTypeId, StreamId)
+--SELECT 3, 13, StreamId FROM MediaFiles WHERE [Path] = @pathProfile + '3\music\' AND [FileType] IN ('mp3', 'wav')
 
---- Activity 14 - ResponseType "Television" ---
-INSERT INTO Responses (ProfileDetailId, StreamId)
-SELECT 32, StreamId FROM MediaFiles WHERE [Path] = @pathProfile + '3\videos\' AND [FileType] IN ('mp4', 'wmv')
+----- Activity 14 - ResponseType "Television" ---
+--INSERT INTO Responses (ProfileId, ResponseTypeId, StreamId)
+--SELECT 3, 14, StreamId FROM MediaFiles WHERE [Path] = @pathProfile + '3\videos\' AND [FileType] IN ('mp4', 'wmv')
 
 ----------------------------------- EARL PROFILE (END) ----------------------------------------
 
 ----------------------------------- RUTH PROFILE (START) --------------------------------------
 
---- Activity 0 - ResponseType "SlideShow" ---
-INSERT INTO Responses (ProfileDetailId, StreamId)
-SELECT 33, StreamId FROM MediaFiles WHERE [Path] = @pathProfile + '4\images\' AND [FileType] IN ('jpg', 'jpeg', 'png', 'bmp', 'gif')
+--- Activity 9 - ResponseType "SlideShow" ---
+--INSERT INTO Responses (ProfileId, ResponseTypeId, StreamId)
+--SELECT 4, 9, StreamId FROM MediaFiles WHERE [Path] = @pathProfile + '4\images\' AND [FileType] IN ('jpg', 'jpeg', 'png', 'bmp', 'gif')
 
---- Activity 10 - ResponseType "MatchingGame" ---
-INSERT INTO Responses (ProfileDetailId, StreamId)
-SELECT 34, StreamId FROM MediaFiles WHERE [Path] = @pathProfile + '4\shapes\' AND [FileType] = 'png'
+----- Activity 10 - ResponseType "MatchingGame" ---
+--INSERT INTO Responses (ProfileId, ResponseTypeId, StreamId)
+--SELECT 4, 10, StreamId FROM MediaFiles WHERE [Path] = @pathProfile + '4\shapes\' AND [FileType] = 'png'
 
---- Activity 13 - ResponseType "Radio" ---
-INSERT INTO Responses (ProfileDetailId, StreamId)
-SELECT 35, StreamId FROM MediaFiles WHERE [Path] = @pathProfile + '4\music\' AND [FileType] IN ('mp3', 'wav')
+----- Activity 13 - ResponseType "Radio" ---
+--INSERT INTO Responses (ProfileId, ResponseTypeId, StreamId)
+--SELECT 4, 13, StreamId FROM MediaFiles WHERE [Path] = @pathProfile + '4\music\' AND [FileType] IN ('mp3', 'wav')
 
---- Activity 14 - ResponseType "Television" ---
-INSERT INTO Responses (ProfileDetailId, StreamId)
-SELECT 36, StreamId FROM MediaFiles WHERE [Path] = @pathProfile + '4\videos\' AND [FileType] IN ('mp4', 'wmv')
+----- Activity 14 - ResponseType "Television" ---
+--INSERT INTO Responses (ProfileId, ResponseTypeId, StreamId)
+--SELECT 4, 14, StreamId FROM MediaFiles WHERE [Path] = @pathProfile + '4\videos\' AND [FileType] IN ('mp4', 'wmv')
 
 ----------------------------------- RUTH PROFILE (END) --------------------------------------
 
@@ -241,17 +241,20 @@ SELECT 36, StreamId FROM MediaFiles WHERE [Path] = @pathProfile + '4\videos\' AN
 SELECT 
 	r.Id,
 	p.[Description] AS [Profile],
+	at.Id AS ActivityTypeId,
 	at.[Description] AS [ActivityType],
+	rt.Id AS ResponseTypeId,
 	rt.[Description] AS [ResponseType],
 	mf.[FileType],
 	mf.[Filename],
 	mf.[Path]
 FROM 
-	Responses r
+	Profiles p
+	JOIN Configurations c ON c.IsActive = 1
+	JOIN ConfigurationDetails cd ON c.Id = cd.ConfigurationId
+	JOIN ResponseTypes rt ON cd.ResponseTypeId = rt.Id
+	JOIN ActivityTypes at ON cd.ActivityTypeId = at.Id
+	JOIN Responses r ON cd.ResponseTypeId = r.ResponseTypeId AND p.Id = r.ProfileId
 	JOIN MediaFiles mf ON r.StreamId = mf.StreamId
-	JOIN ProfileDetails pd ON r.ProfileDetailId = pd.Id
-	JOIN ResponseTypes rt ON pd.ResponseTypeId = rt.Id
-	JOIN ActivityTypes at ON pd.ActivityTypeId = at.Id
-	JOIN Profiles p ON pd.ProfileId = p.Id
-ORDER BY p.Id, pd.Id, at.[Description], mf.FileType, mf.[Filename]
+ORDER BY p.Id, cd.Id, at.[Description], mf.FileType, mf.[Filename]
 */

@@ -1,5 +1,5 @@
 ﻿using Keebee.AAT.MessageQueuing;
-using Keebee.AAT.Constants;
+using Keebee.AAT.Shared;
 using Keebee.AAT.SystemEventLogging;
 using Keebee.AAT.ServiceModels;
 using Phidgets;
@@ -137,7 +137,7 @@ namespace Keebee.AAT.PhidgetService
                     // kill the display
                     case SensorType.Sensor3:
                         if (sensorValue >= _sensorThreshold)
-                            _messageQueuePhidget.Send(CreateMessageBodyFromSensor(sensorId, SystemResponseType.KillDisplay));
+                            _messageQueuePhidget.Send(CreateMessageBodyFromSensor(sensorId, ResponseTypeId.KillDisplay));
                         break;
 
                     // radio, television
@@ -151,13 +151,13 @@ namespace Keebee.AAT.PhidgetService
                     // caregiver
                     case SensorType.Sensor6:
                         if (sensorValue >= _sensorThreshold)
-                            _messageQueuePhidget.Send(CreateMessageBodyFromSensor(sensorId, SystemResponseType.Caregiver));
+                            _messageQueuePhidget.Send(CreateMessageBodyFromSensor(sensorId, ResponseTypeId.Caregiver));
                         break;
 
                     // ambient video
                     case SensorType.Sensor7:
                         if (sensorValue >= _sensorThreshold)
-                            _messageQueuePhidget.Send(CreateMessageBodyFromSensor(sensorId, SystemResponseType.Ambient));
+                            _messageQueuePhidget.Send(CreateMessageBodyFromSensor(sensorId, ResponseTypeId.Ambient));
                         break;
                 }
             }

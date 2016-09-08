@@ -1,6 +1,6 @@
 ﻿using Keebee.AAT.RESTClient;
 using Keebee.AAT.MessageQueuing;
-using Keebee.AAT.Constants;
+using Keebee.AAT.Shared;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -166,14 +166,14 @@ namespace Keebee.AAT.Simulator
         {
             UpdateSensorLabel("3");
             UpdateValueLabel(Convert.ToString(MaxSensorValue - 1));
-            _messageQueuePhidget.Send(string.Format("{0}\"SensorId\":3,\"SensorValue\":{1}{2}", "{", SystemResponseType.KillDisplay, "}"));
+            _messageQueuePhidget.Send(string.Format("{0}\"SensorId\":3,\"SensorValue\":{1}{2}", "{", MaxSensorValue - 1, "}"));
         }
 
         private void RadioSensorRightClick(object sender, EventArgs e)
         {
             UpdateSensorLabel("4");
 
-            _currentRadio4Value = GetRotationCurrentValue(UserResponseType.Radio, SensorDirectionType.Right);
+            _currentRadio4Value = GetRotationCurrentValue(ResponseTypeId.Radio, SensorDirectionType.Right);
 
             var valueToSend = (_currentRadio4Value == MaxSensorValue)
                 ? _currentRadio4Value - 1 : _currentRadio4Value;
@@ -188,7 +188,7 @@ namespace Keebee.AAT.Simulator
         {
             UpdateSensorLabel("4");
 
-            _currentRadio4Value = GetRotationCurrentValue(UserResponseType.Radio, SensorDirectionType.Left);
+            _currentRadio4Value = GetRotationCurrentValue(ResponseTypeId.Radio, SensorDirectionType.Left);
 
             var valueToSend = (_currentRadio4Value == MaxSensorValue)
                 ? _currentRadio4Value - 1 : _currentRadio4Value;
@@ -203,7 +203,7 @@ namespace Keebee.AAT.Simulator
         {
             UpdateSensorLabel("5");
 
-            _currentTelevsion5Value = GetRotationCurrentValue(UserResponseType.Television, SensorDirectionType.Right);
+            _currentTelevsion5Value = GetRotationCurrentValue(ResponseTypeId.Television, SensorDirectionType.Right);
 
             var valueToSend = (_currentTelevsion5Value == MaxSensorValue)
                 ? _currentTelevsion5Value - 1 : _currentTelevsion5Value;
@@ -218,7 +218,7 @@ namespace Keebee.AAT.Simulator
         {
             UpdateSensorLabel("5");
 
-            _currentTelevsion5Value = GetRotationCurrentValue(UserResponseType.Television, SensorDirectionType.Left);
+            _currentTelevsion5Value = GetRotationCurrentValue(ResponseTypeId.Television, SensorDirectionType.Left);
 
             var valueToSend = (_currentTelevsion5Value == MaxSensorValue)
                 ? _currentTelevsion5Value - 1 : _currentTelevsion5Value;
@@ -235,10 +235,10 @@ namespace Keebee.AAT.Simulator
 
             switch (responseType)
             {
-                case UserResponseType.Radio:
+                case ResponseTypeId.Radio:
                     currentValue = _currentRadio4Value;
                     break;
-                case UserResponseType.Television:
+                case ResponseTypeId.Television:
                     currentValue = _currentTelevsion5Value;
                     break;
             }
@@ -263,6 +263,18 @@ namespace Keebee.AAT.Simulator
             }
 
             return currentValue;
+        }
+
+        private void CaregiverSensorClick(object sender, EventArgs e)
+        {
+            UpdateSensorLabel("6");
+            _messageQueuePhidget.Send(string.Format("{0}\"SensorId\":6,\"SensorValue\":{1}{2}", "{", MaxSensorValue - 1, "}"));
+        }
+
+        private void AmbientSensorClick(object sender, EventArgs e)
+        {
+            UpdateSensorLabel("7");
+            _messageQueuePhidget.Send(string.Format("{0}\"SensorId\":7,\"SensorValue\":{1}{2}", "{", MaxSensorValue - 1, "}"));
         }
 
         private void SlideShowInputClick(object sender, EventArgs e)
@@ -297,18 +309,6 @@ namespace Keebee.AAT.Simulator
         {
             _messageQueueRfid.Send(cboProfile.SelectedValue.ToString());
             lblProfile.Text = cboProfile.Text;
-        }
-
-        private void CaregiverButton6Click(object sender, EventArgs e)
-        {
-            UpdateSensorLabel("6");
-            _messageQueuePhidget.Send(string.Format("{0}\"SensorId\":6,\"SensorValue\":{1}{2}", "{", SystemResponseType.Caregiver, "}"));
-        }
-
-        private void AmbientButton7Click(object sender, EventArgs e)
-        {
-            UpdateSensorLabel("7");
-            _messageQueuePhidget.Send(string.Format("{0}\"SensorId\":7,\"SensorValue\":{1}{2}", "{", SystemResponseType.Ambient, "}"));
         }
 
         private void TimerSensorTick(object sender)

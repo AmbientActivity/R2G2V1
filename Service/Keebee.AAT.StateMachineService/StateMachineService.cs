@@ -1,15 +1,15 @@
 ﻿using Keebee.AAT.ServiceModels;
 using Keebee.AAT.RESTClient;
 using Keebee.AAT.MessageQueuing;
-using Keebee.AAT.Constants;
+using Keebee.AAT.Shared;
 using Keebee.AAT.SystemEventLogging;
 using System.Net;
 using System.Threading;
-using System.Linq;
 using System;
 using System.Web.Script.Serialization;
 using System.ServiceProcess;
 using System.Diagnostics;
+using System.Linq;
 
 namespace Keebee.AAT.StateMachineService
 {
@@ -25,6 +25,12 @@ namespace Keebee.AAT.StateMachineService
 
         // event logger
         private readonly SystemEventLogger _systemEventLogger;
+
+        // active configuration
+        private Configuration _activeConfiguration;
+
+        // TODO: make this assignable through Admin Interface via a message queue
+        private bool _reloadConfiguration = true;
 
         // active profile
         private Profile _activeProfile;
@@ -105,50 +111,42 @@ namespace Keebee.AAT.StateMachineService
             }) { SystemEventLogger = _systemEventLogger };
         }
 
-        private void ExecuteUserResponse(int activityTypeId, int sensorValue)
-        {
-            if (_activeProfile == null) return;
-
-            try
-            {
-                var profileDetail = _activeProfile.ProfileDetails
-                    .FirstOrDefault(pd => pd.ActivityTypeId == activityTypeId);
-
-                if (profileDetail == null) return;
-
-                var responseMessage = new ResponseMessage
-                {
-                    ResidentId = _activeProfile.ResidentId,
-                    ProfileDetailId = profileDetail.Id,
-                    ActivityTypeId = profileDetail.ActivityTypeId,
-                    ResponseTypeId = profileDetail.ResponseType.Id,
-                    GameDifficultyLevel = _activeProfile.GameDifficultyLevel,
-                    ResponseValue = sensorValue
-                }; 
-
-                _messageQueueResponse.Send(CreateResponseMessageBody(responseMessage));
-            }
-            catch (Exception ex)
-            {
-                _systemEventLogger.WriteEntry($"ExecuteUserResponse: {ex.Message}", EventLogEntryType.Error); 
-            }
-        }
-
-        private void ExecuteSystemResponse(int sensorValue)
+        private void ExecuteResponse(int activityTypeId, int sensorValue)
         {
             try
             {
+                if (_reloadConfiguration)
+                {
+                    _activeConfiguration = _opsClient.GetActiveConfigurationDetails();
+                    _reloadConfiguration = false;
+                }
+
+                var responseType =
+                    _activeConfiguration.ConfigurationDetails
+                    .Single(cd => cd.ActivityType.Id == activityTypeId)
+                    .ResponseType;
+
                 var responseMessage = new ResponseMessage
                 {
-                    ProfileDetailId = sensorValue,
-                    ResponseValue = 0
+                    ActivityTypeId = activityTypeId,
+                    ResponseTypeId = responseType.Id,
+                    SensorValue = sensorValue,
+                    IsSystem = responseType.IsSystem,
+                    ActiveProfile = new ActiveProfile
+                        {
+                            Id = _activeProfile.Id,
+                            ResidentId = _activeProfile.ResidentId,
+                            GameDifficultyLevel = _activeProfile.GameDifficultyLevel
+                        }
                 };
 
-                _messageQueueResponse.Send(CreateResponseMessageBody(responseMessage));
+                var serializer = new JavaScriptSerializer();
+                var responseMessageBody = serializer.Serialize(responseMessage);
+                _messageQueueResponse.Send(responseMessageBody);
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"ExecuteSystemResponse: {ex.Message}", EventLogEntryType.Error);
+                _systemEventLogger.WriteEntry($"ExecuteResponse: {ex.Message}", EventLogEntryType.Error); 
             }
         }
 
@@ -165,16 +163,11 @@ namespace Keebee.AAT.StateMachineService
                 if (phidget == null) return;
 
                 var sensorValue = phidget.SensorValue;
-                if (sensorValue >= 0) // user response
-                {
-                    // sensorId's are base 0 - convert to base 1 for ActivityTypeId
-                    var activityTypeId = phidget.SensorId + 1;
-                    ExecuteUserResponse(activityTypeId, sensorValue);
-                }
-                else // system response
-                {
-                    ExecuteSystemResponse(sensorValue);
-                }
+
+                // sensorId's are base 0 - convert to base 1 for ActivityTypeId
+                var activityTypeId = phidget.SensorId + 1;
+
+                ExecuteResponse(activityTypeId, sensorValue);
             }
             catch (Exception ex)
             {
@@ -189,13 +182,6 @@ namespace Keebee.AAT.StateMachineService
             return phidget;
         }
 
-        private static string CreateResponseMessageBody(ResponseMessage responseMessage)
-        {
-            var serializer = new JavaScriptSerializer();
-            var responseMessageBody = serializer.Serialize(responseMessage);
-            return responseMessageBody;
-        }
-
         private void MessageReceivedRfid(object source, MessageEventArgs e)
         {
             try
@@ -208,13 +194,14 @@ namespace Keebee.AAT.StateMachineService
                 {
                     if (_activeProfile?.ResidentId == residentId) return;
                     _activeProfile = _opsClient.GetResidentProfile(residentId);
-                    LogRfidEvent(residentId, "New active resident");
+                    LogRfidEvent(residentId, "New active profile");
                 }
                 else
                 {
                     if (_activeProfile?.ResidentId == 0) return;
                     _activeProfile = _opsClient.GetGenericProfile();
-                    LogRfidEvent(-1, "Active resident is generic");
+
+                    LogRfidEvent(-1, "Active profile is generic");
 
                 }
             }

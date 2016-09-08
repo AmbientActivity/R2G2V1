@@ -17,10 +17,12 @@ namespace Keebee.AAT.Operations.Controllers
     public class ProfilesController : ApiController
     {
         private readonly IProfileService _profileService;
+        private readonly IConfigurationService _configurationService;
 
-        public ProfilesController(IProfileService profileService)
+        public ProfilesController(IProfileService profileService, IConfigurationService configurationService)
         {
             _profileService = profileService;
+            _configurationService = configurationService;
         }
 
         // GET: api/Profiles
@@ -81,25 +83,27 @@ namespace Keebee.AAT.Operations.Controllers
 
             await Task.Run(() =>
             {
-                profile = _profileService.GetDetails(id);
+                profile = _profileService.Get(id);
             });
 
             if (profile == null) return new DynamicJsonObject(new ExpandoObject());
+
+            var configuration = _configurationService.GetMediaForProfile(profile.Id);
 
             dynamic exObj = new ExpandoObject();
             exObj.Id = profile.Id;
             exObj.Description = profile.Description;
             exObj.GameDifficultyLevel = profile.GameDifficultyLevel;
             exObj.DateCreated = profile.DateCreated;
-            exObj.ProfileDetails = profile.ProfileDetails.Select(pd => new
+            exObj.ConfigurationDetails = configuration.ConfigurationDetails.Select(cd => new
             {
-                pd.Id,
-                pd.ActivityTypeId,
+                cd.Id,
+                cd.ActivityTypeId,
                 ResponseType = new
                 {
-                    pd.ResponseType.Id,
-                    pd.ResponseType.Description,
-                    pd.ResponseType.IsInteractive
+                    cd.ResponseType.Id,
+                    cd.ResponseType.Description,
+                    cd.ResponseType.IsInteractive
                 }
             });
 
@@ -114,33 +118,85 @@ namespace Keebee.AAT.Operations.Controllers
 
             await Task.Run(() =>
             {
-                profile = _profileService.GetWithMedia(id);
+                profile = _profileService.Get(id);
             });
 
             if (profile == null) return new DynamicJsonObject(new ExpandoObject());
+
+            var configuration = _configurationService.GetMediaForProfile(profile.Id);
 
             dynamic exObj = new ExpandoObject();
             exObj.Id = profile.Id;
             exObj.Description = profile.Description;
             exObj.GameDifficultyLevel = profile.GameDifficultyLevel;
-            exObj.ProfileDetails = profile.ProfileDetails
+            exObj.ConfigurationDetails = configuration.ConfigurationDetails
                 .Select(detail => new
                 {
+                    detail.ActivityTypeId,
                     ResponseType = new
                     {
                         detail.ResponseType.Id,
                         detail.ResponseType.Description,
-                        detail.ResponseType.IsInteractive
+                        detail.ResponseType.IsInteractive,
+                        Responses = detail.ResponseType.Responses
+                        .Where(x => x.ProfileId == profile.Id)
+                        .Select(response => new
+                        {
+                            response.Id,
+                            response.StreamId,
+                            Filename = response.MediaFile.Filename.Replace($".{response.MediaFile.FileType}", string.Empty),
+                            FilePath = Path.Combine(response.MediaFile.Path, response.MediaFile.Filename),
+                            response.MediaFile.FileType,
+                            response.MediaFile.FileSize
+                        })
                     },
-                    Responses = detail.Responses.Select(response => new
+                    
+                });
+
+            return new DynamicJsonObject(exObj);
+        }
+
+        [Route("{id}/media")]
+        [HttpGet]
+        public async Task<DynamicJsonObject> GetWithMediaByActivityResponseType(int id, int activityTypeId, int responseTypeId)
+        {
+            Profile profile = new Profile();
+
+            await Task.Run(() =>
+            {
+                profile = _profileService.Get(id);
+            });
+
+            if (profile == null) return new DynamicJsonObject(new ExpandoObject());
+
+            var configuration = _configurationService.GetMediaForProfileActivityResponseType(profile.Id, activityTypeId, responseTypeId);
+
+            dynamic exObj = new ExpandoObject();
+            exObj.Id = profile.Id;
+            exObj.Description = profile.Description;
+            exObj.GameDifficultyLevel = profile.GameDifficultyLevel;
+            exObj.ConfigurationDetails = configuration.ConfigurationDetails
+                .Select(detail => new
+                {
+                    detail.ActivityTypeId,
+                    ResponseType = new
                     {
-                        response.Id,
-                        response.StreamId,
-                        Filename = response.MediaFile.Filename.Replace($".{response.MediaFile.FileType}", string.Empty),
-                        FilePath = Path.Combine(response.MediaFile.Path, response.MediaFile.Filename),
-                        response.MediaFile.FileType,
-                        response.MediaFile.FileSize
-                    })
+                        detail.ResponseType.Id,
+                        detail.ResponseType.Description,
+                        detail.ResponseType.IsInteractive,
+                        Responses = detail.ResponseType.Responses
+                        .Where(x => x.ProfileId == profile.Id)
+                        .Select(response => new
+                        {
+                            response.Id,
+                            response.StreamId,
+                            Filename = response.MediaFile.Filename.Replace($".{response.MediaFile.FileType}", string.Empty),
+                            FilePath = Path.Combine(response.MediaFile.Path, response.MediaFile.Filename),
+                            response.MediaFile.FileType,
+                            response.MediaFile.FileSize
+                        })
+                    },
+
                 });
 
             return new DynamicJsonObject(exObj);
@@ -148,13 +204,13 @@ namespace Keebee.AAT.Operations.Controllers
 
         // POST: api/Profiles
         [HttpPost]
-        public void Post([FromBody]string value)
+        public int Post([FromBody]string value)
         {
             var serializer = new JavaScriptSerializer();
             var profile = serializer.Deserialize<Profile>(value);
             profile.DateCreated = DateTime.Now;
 
-            _profileService.Post(profile);
+            return _profileService.Post(profile);
         }
 
         // PUT: api/Profiles/5

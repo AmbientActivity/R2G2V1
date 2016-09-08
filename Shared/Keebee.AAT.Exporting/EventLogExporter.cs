@@ -1,5 +1,6 @@
 ﻿using Keebee.AAT.RESTClient;
 using Keebee.AAT.SystemEventLogging;
+using Keebee.AAT.Shared;
 using ExcelLibrary.SpreadSheet;
 using System;
 using System.Diagnostics;
@@ -33,7 +34,7 @@ namespace Keebee.AAT.Exporting
         {
             var workbook = GetWorkbook(date);
 
-            var filename = $@"\\{Environment.MachineName}\{Constants.Log.Path}\EventLog_{date.Replace("/", "_")}.xls";
+            var filename = $@"\\{Environment.MachineName}\{CustomEventLog.Path}\EventLog_{date.Replace("/", "_")}.xls";
 
             workbook.Save(filename);
         }

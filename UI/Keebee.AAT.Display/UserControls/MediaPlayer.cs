@@ -1,4 +1,4 @@
-﻿using Keebee.AAT.Constants;
+﻿using Keebee.AAT.Shared;
 using Keebee.AAT.SystemEventLogging;
 using Keebee.AAT.Display.Extensions;
 using System;
@@ -116,12 +116,12 @@ namespace Keebee.AAT.Display.UserControls
 #elif !DEBUG
             switch (responseTypeId)
             {
-                case UserResponseType.Radio:
+                case ResponseTypeId.Radio:
                     pictureBox1.Show();
                     axWindowsMediaPlayer1.uiMode = "invisible";
                     break;
-                case UserResponseType.Television:
-                case UserResponseType.Cats:
+                case ResponseTypeId.Television:
+                case ResponseTypeId.Cats:
                     pictureBox1.Hide();
                     axWindowsMediaPlayer1.uiMode = "none";
                     break;

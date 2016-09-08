@@ -332,6 +332,7 @@
     <Content Include="Views\EventLogs\Index.cshtml" />
     <Content Include="Views\Residents\Index.cshtml" />
     <Content Include="Views\Residents\_ResidentEdit.cshtml" />
+    <Content Include="Views\Profiles\Edit.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

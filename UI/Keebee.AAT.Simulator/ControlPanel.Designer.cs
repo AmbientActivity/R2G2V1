@@ -419,7 +419,7 @@
             this.CaregiverButton6.TabIndex = 30;
             this.CaregiverButton6.Text = "Caregiver (6)";
             this.CaregiverButton6.UseVisualStyleBackColor = true;
-            this.CaregiverButton6.Click += new System.EventHandler(this.CaregiverButton6Click);
+            this.CaregiverButton6.Click += new System.EventHandler(this.CaregiverSensorClick);
             // 
             // AmbientButton7
             // 
@@ -430,7 +430,7 @@
             this.AmbientButton7.TabIndex = 29;
             this.AmbientButton7.Text = "Ambient (7)";
             this.AmbientButton7.UseVisualStyleBackColor = true;
-            this.AmbientButton7.Click += new System.EventHandler(this.AmbientButton7Click);
+            this.AmbientButton7.Click += new System.EventHandler(this.AmbientSensorClick);
             // 
             // CatsSensor
             // 

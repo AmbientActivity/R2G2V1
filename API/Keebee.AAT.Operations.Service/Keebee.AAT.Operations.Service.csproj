@@ -79,16 +79,19 @@
       <DependentUpon>KeebeeClient.tt</DependentUpon>
     </Compile>
     <Compile Include="ODataHost.cs" />
+    <Compile Include="Services\ActivityTypeService.cs" />
     <Compile Include="Services\AmbientResponseService.cs" />
     <Compile Include="Services\ActivityEventLogService.cs" />
+    <Compile Include="Services\ConfigurationDetailService.cs" />
+    <Compile Include="Services\ConfigurationService.cs" />
     <Compile Include="Services\GameEventLogService.cs" />
     <Compile Include="Services\MediaService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\PersonalPictureService.cs" />
-    <Compile Include="Services\ProfileDetailService.cs" />
     <Compile Include="Services\ProfileService.cs" />
     <Compile Include="Services\ResidentService.cs" />
     <Compile Include="Services\ResponseService.cs" />
+    <Compile Include="Services\ResponseTypeService.cs" />
     <Compile Include="Services\RfidEventLogService.cs" />
     <Compile Include="Services\StatusService.cs" />
   </ItemGroup>
@@ -105,9 +108,9 @@
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Shared\Keebee.AAT.Constants\Keebee.AAT.Constants.csproj">
+    <ProjectReference Include="..\..\Shared\Keebee.AAT.Shared\Keebee.AAT.Shared.csproj">
       <Project>{3cb12af2-7655-46f6-9969-990730f73964}</Project>
-      <Name>Keebee.AAT.Constants</Name>
+      <Name>Keebee.AAT.Shared</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

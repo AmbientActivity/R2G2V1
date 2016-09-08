@@ -30,7 +30,7 @@ namespace Keebee.AAT.Operations.Controllers
             await Task.Run(() =>
             {
                 rfidEventLogs = _rfidEventLogService.Get()
-                    .OrderByDescending(o => o.DateEntry); ;
+                    .OrderByDescending(o => o.DateEntry);
             });
 
             if (rfidEventLogs == null) return new DynamicJsonObject(new ExpandoObject());

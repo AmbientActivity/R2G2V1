@@ -1,17 +1,14 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Keebee.AAT.DataAccess.Models
 {
-    public class ProfileDetail
+    public class ConfigurationDetail
     {
         [Key]
         public int Id { get; set; }
 
-        [ForeignKey("Profile")]
-        public int ProfileId { get; set; }
-        public virtual Profile Profile { get; set; }
+        public int ConfigurationId { get; set; }
 
         [ForeignKey("ActivityType")]
         public int ActivityTypeId { get; set; }
@@ -20,7 +17,5 @@ namespace Keebee.AAT.DataAccess.Models
         [ForeignKey("ResponseType")]
         public int ResponseTypeId { get; set; }
         public virtual ResponseType ResponseType { get; set; }
-
-        public virtual IList<Response> Responses { get; set; }
     }
 }

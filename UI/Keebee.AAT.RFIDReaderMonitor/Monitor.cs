@@ -1,5 +1,5 @@
 ﻿using Keebee.AAT.MessageQueuing;
-using Keebee.AAT.Constants;
+using Keebee.AAT.Shared;
 using System;
 using System.Linq;
 using System.Web.Script.Serialization;

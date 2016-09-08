@@ -1,5 +1,6 @@
 ﻿using Keebee.AAT.Operations.Service.KeebeeAAT;
 using Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models;
+using Keebee.AAT.Shared;
 using System.Collections.Generic;
 using System;
 using System.Linq;
@@ -10,16 +11,14 @@ namespace Keebee.AAT.Operations.Service.Services
     {
         IEnumerable<Resident> Get();
         Resident Get(int id);
-        IEnumerable<Resident> GetWithMedia();
-        Resident GetWithMedia(int id);
         int Post(Resident resident);
         void Patch(int id, Resident resident);
         void Delete(int id);
-        Profile GetProfile(int id);
+        //Profile GetProfile(int id);
         bool ProfileExists(int id);
-        Profile GetProfileDetails(int id);
-        Profile GetProfileActivityTypes(int id);
-        Profile GetResponses(int id);
+        //Profile GetConfigurationDetails(int id);
+        //Profile GetProfileActivityTypes(int id);
+        //Profile GetResponses(int id);
     }
 
     public class ResidentService : IResidentService
@@ -38,31 +37,13 @@ namespace Keebee.AAT.Operations.Service.Services
             return container.Residents.ByKey(id).Expand("Profile").GetValue();
         }
 
-        public IEnumerable<Resident> GetWithMedia()
-        {
-            var container = new Container(new Uri(ODataHost.Url));
-
-            return container.Residents
-                .Expand("Profile($expand=ProfileDetails($expand=ResponseType,Responses($expand=MediaFile))),PersonalPictures($expand=MediaFile)")
-                .ToList();
-        }
-
-        public Resident GetWithMedia(int id)
-        {
-            var container = new Container(new Uri(ODataHost.Url));
-
-            return container.Residents.ByKey(id)
-                .Expand("Profile($expand=ProfileDetails($expand=ResponseType,Responses($expand=MediaFile))),PersonalPictures($expand=MediaFile)")
-                .GetValue();
-        }
-
         public int Post(Resident resident)
         {
             var container = new Container(new Uri(ODataHost.Url));
 
             resident.DateCreated = DateTime.Now;
             resident.DateUpdated = DateTime.Now;
-            resident.ProfileId = (resident.ProfileId > 0 ? resident.ProfileId : Constants.UserProfile.Generic);
+            resident.ProfileId = (resident.ProfileId > 0 ? resident.ProfileId : ProfileId.Generic);
 
             container.AddToResidents(resident);
             container.SaveChanges();
@@ -106,15 +87,6 @@ namespace Keebee.AAT.Operations.Service.Services
             container.SaveChanges();
         }
 
-        public Profile GetProfile(int id)
-        {
-            var container = new Container(new Uri(ODataHost.Url));
-
-            var profile = container.Residents.ByKey(id).Profile.GetValue();
-
-            return profile;
-        }
-
         public bool ProfileExists(int id)
         {
             try
@@ -133,38 +105,38 @@ namespace Keebee.AAT.Operations.Service.Services
             }
         }
 
-        public Profile GetProfileDetails(int id)
-        {
-            var container = new Container(new Uri(ODataHost.Url));
+        //public Profile GetConfigurationDetails(int id)
+        //{
+        //    var container = new Container(new Uri(ODataHost.Url));
 
-            var profile = container.Residents.ByKey(id)
-                .Profile
-                .Expand("ProfileDetails($expand=ActivityType,ResponseType,Responses)")
-                .GetValue();
+        //    var profile = container.Residents.ByKey(id)
+        //        .Profile
+        //        .Expand("ProfileDetails($expand=ActivityType,ResponseType,Responses)")
+        //        .GetValue();
 
-            return profile;
-        }
+        //    return profile;
+        //}
 
-        public Profile GetProfileActivityTypes(int id)
-        {
-            var container = new Container(new Uri(ODataHost.Url));
+        //public Profile GetProfileActivityTypes(int id)
+        //{
+        //    var container = new Container(new Uri(ODataHost.Url));
 
-            var profile = container.Residents.ByKey(id)
-                .Profile
-                .Expand("ProfileDetails($expand=ActivityType)")
-                .GetValue();
+        //    var profile = container.Residents.ByKey(id)
+        //        .Profile
+        //        .Expand("ProfileDetails($expand=ActivityType)")
+        //        .GetValue();
 
-            return profile;
-        }
+        //    return profile;
+        //}
 
-        public Profile GetResponses(int id)
-        {
-            var container = new Container(new Uri(ODataHost.Url));
+        //public Profile GetResponses(int id)
+        //{
+        //    var container = new Container(new Uri(ODataHost.Url));
 
-            return container.Residents.ByKey(id)
-                .Profile
-                .Expand("ProfileDetails($expand=Activity($expand=ActivityType),Response($expand=ResponseType,Responses))")
-                .GetValue();
-        }
+        //    return container.Residents.ByKey(id)
+        //        .Profile
+        //        .Expand("ProfileDetails($expand=Activity($expand=ActivityType),Response($expand=ResponseType,Responses))")
+        //        .GetValue();
+        //}
     }
 }

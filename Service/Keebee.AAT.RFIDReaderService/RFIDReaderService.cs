@@ -2,7 +2,7 @@
 using Keebee.AAT.SystemEventLogging;
 using Keebee.AAT.MessageQueuing;
 #if DEBUG
-using Keebee.AAT.Constants;
+using Keebee.AAT.Shared;
 using System.Web.Script.Serialization;
 #endif
 using SkyeTek.Devices;

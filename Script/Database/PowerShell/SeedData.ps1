@@ -16,8 +16,8 @@ else {
     Invoke-SqlQuery -File $queryFile -Server $server -Database $database
     Write-Host "done.`n”
 
-    Write-Host "Seeding initial data...” -NoNewline
-    $queryFile = $path + "6_SeedInitialData.sql"
+    Write-Host "Seeding configuration data...” -NoNewline
+    $queryFile = $path + "6_SeedConfigurationData.sql"
     Invoke-SqlQuery -File $queryFile -Server $server -Database $database
     Write-Host "done.`n”
 

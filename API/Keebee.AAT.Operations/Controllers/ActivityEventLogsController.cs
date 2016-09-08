@@ -30,7 +30,7 @@ namespace Keebee.AAT.Operations.Controllers
             await Task.Run(() =>
             {
                 activityEventLogs = _activityEventLogService.Get()
-                    .OrderByDescending(o => o.DateEntry); ;
+                    .OrderByDescending(o => o.DateEntry);
             });
 
             if (activityEventLogs == null) return new DynamicJsonObject(new ExpandoObject());

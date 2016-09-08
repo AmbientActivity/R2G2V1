@@ -18,7 +18,10 @@ namespace Keebee.AAT.Operations
 
             container.RegisterType<IResidentService, ResidentService>();
             container.RegisterType<IProfileService, ProfileService>();
-            container.RegisterType<IProfileDetailService, ProfileDetailService>();
+            container.RegisterType<IConfigurationService, ConfigurationService>();
+            container.RegisterType<IConfigurationDetailService, ConfigurationDetailService>();
+            container.RegisterType<IActivityTypeService, ActivityTypeService>();
+            container.RegisterType<IResponseTypeService, ResponseTypeService>();
             container.RegisterType<IAmbientResponseService, AmbientResponseService>();
             container.RegisterType<IResponseService, ResponseService>();
             container.RegisterType<IPersonalPictureService, PersonalPictureService>();

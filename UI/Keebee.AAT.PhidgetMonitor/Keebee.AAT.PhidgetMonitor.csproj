@@ -83,10 +83,6 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Shared\Keebee.AAT.Constants\Keebee.AAT.Constants.csproj">
-      <Project>{3cb12af2-7655-46f6-9969-990730f73964}</Project>
-      <Name>Keebee.AAT.Constants</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\Shared\Keebee.AAT.MessageQueuing\Keebee.AAT.MessageQueuing.csproj">
       <Project>{84a25d9a-4747-4b69-9c79-5c23210530d2}</Project>
       <Name>Keebee.AAT.MessageQueuing</Name>

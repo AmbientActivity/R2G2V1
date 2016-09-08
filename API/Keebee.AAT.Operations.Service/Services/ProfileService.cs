@@ -10,11 +10,10 @@ namespace Keebee.AAT.Operations.Service.Services
     {
         IEnumerable<Profile> Get();
         Profile Get(int id);
-        Profile GetWithMedia(int id);
-        void Post(Profile profile);
+        //Profile GetWithMedia(int id);
+        int Post(Profile profile);
         void Patch(int id, Profile profile);
         void Delete(int id);
-        Profile GetDetails(int id);
     }
 
     public class ProfileService : IProfileService
@@ -28,14 +27,14 @@ namespace Keebee.AAT.Operations.Service.Services
             return profiles;
         }
 
-        public Profile GetWithMedia(int id)
-        {
-            var container = new Container(new Uri(ODataHost.Url));
+        //public Profile GetWithMedia(int id)
+        //{
+        //    var container = new Container(new Uri(ODataHost.Url));
 
-            return container.Profiles.ByKey(id)
-                .Expand("ProfileDetails($expand=ResponseType,Responses($expand=MediaFile))")
-                .GetValue();
-        }
+        //    return container.Profiles.ByKey(id)
+        //        .Expand("ProfileDetails($expand=ResponseType,Responses($expand=MediaFile))")
+        //        .GetValue();
+        //}
 
         public Profile Get(int id)
         {
@@ -47,12 +46,19 @@ namespace Keebee.AAT.Operations.Service.Services
             return profile;
         }
 
-        public void Post(Profile profile)
+        public int Post(Profile profile)
         {
             var container = new Container(new Uri(ODataHost.Url));
 
+            profile.DateCreated = DateTime.Now;
+            profile.DateUpdated = DateTime.Now;
+
             container.AddToProfiles(profile);
             container.SaveChanges();
+
+            var profileId = profile.Id;
+
+            return profileId;
         }
 
         public void Patch(int id, Profile profile)
@@ -78,31 +84,6 @@ namespace Keebee.AAT.Operations.Service.Services
 
             container.DeleteObject(profile);
             container.SaveChanges();
-        }
-
-        public Profile GetDetails(int id)
-        {
-            var container = new Container(new Uri(ODataHost.Url));
-
-            var profile = container.Profiles.ByKey(id)
-                .Expand("ProfileDetails($expand=ResponseType)")
-                .GetValue();
-
-            return profile;
-        }
-
-        public ResponseType GetResponseType(int id, int activityTypeId)
-        {
-            var container = new Container(new Uri(ODataHost.Url));
-
-            var profile = container.Residents.ByKey(id)
-                .Profile
-                .Expand("ProfileDetails($expand=ActivityType,ResponseType,Responses)")
-                .GetValue();
-
-            return profile.ProfileDetails
-                .Single(x => x.ActivityTypeId == activityTypeId)
-                .ResponseType;
         }
     }
 }

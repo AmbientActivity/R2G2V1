@@ -35,12 +35,11 @@ namespace Keebee.AAT.Operations.Controllers
             if (responses == null) return new DynamicJsonObject(new ExpandoObject());
 
             dynamic exObj = new ExpandoObject();
-            exObj.Responses = responses.Select(rd => new
+            exObj.Responses = responses.Select(r => new
             {
-                rd.Id,
-                rd.ProfileDetailId,
-                rd.StreamId,
-                rd.MediaFile.Filename
+                r.Id,
+                r.StreamId,
+                r.MediaFile.Filename
             });
 
             return new DynamicJsonObject(exObj);
@@ -61,7 +60,6 @@ namespace Keebee.AAT.Operations.Controllers
 
             dynamic exObj = new ExpandoObject();
             exObj.Id = response.Id;
-            exObj.ProfileDetailId = response.ProfileDetailId;
             exObj.StreamId = response.StreamId;
             exObj.Filename = response.MediaFile.Filename;
 
@@ -75,7 +73,7 @@ namespace Keebee.AAT.Operations.Controllers
         {
             var serializer = new JavaScriptSerializer();
             var response = serializer.Deserialize<Response>(value);
-            response.ProfileDetailId = id;
+            
             _responseService.Post(response);
         }
 

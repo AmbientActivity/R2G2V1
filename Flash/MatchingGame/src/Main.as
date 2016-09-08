@@ -220,7 +220,7 @@ package
 			clickedImagesPairs = null;
 			childImagesPairs = null;
 			clickedImagesPairsInstance = null;
-			LogGamingEvent(-1, "Game has been interrupted");
+			//LogGamingEvent(-1, "Game has been interrupted");
 		}
 		
 		private function loadScreen():void {

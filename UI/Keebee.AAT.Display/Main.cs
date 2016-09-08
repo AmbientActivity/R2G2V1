@@ -168,7 +168,7 @@ namespace Keebee.AAT.Display
         private void ExecuteResponse(int responseTypeId, int sensorValue, bool isSystem)
         {
             if (!isSystem)
-                if (!IsValidResponse(responseTypeId)) return;
+                if (!ShouldExecute(responseTypeId)) return;
 
             if (_currentResponseTypeId == ResponseTypeId.Caregiver) return;
 
@@ -208,9 +208,6 @@ namespace Keebee.AAT.Display
                         _currentTelevisionSensorValue = sensorValue;
                         break;
                 }
-
-                _currentResponseTypeId = responseTypeId;
-
             }
             catch (Exception ex)
             {
@@ -218,7 +215,7 @@ namespace Keebee.AAT.Display
             }
         }
 
-        private bool IsValidResponse(int responseTypeId)
+        private bool ShouldExecute(int responseTypeId)
         {
             // if it is a new activity/response type then execute it
             if (_isNewActivityResponse) return true;
@@ -229,26 +226,33 @@ namespace Keebee.AAT.Display
 
         private void StopCurrentResponse()
         {
-            switch (_currentResponseTypeId)
+            try
             {
-                case ResponseTypeId.SlidShow:
-                    slideViewerFlash1.Hide();
-                    slideViewerFlash1.Stop();
-                    break;
-                case ResponseTypeId.MatchingGame:
-                    matchingGame1.Hide();
-                    matchingGame1.Stop(logEvent: !_isMatchingGameTimeoutExpired);
-                    break;
-                case ResponseTypeId.Radio:
-                case ResponseTypeId.Television:
-                case ResponseTypeId.Cats:
-                    mediaPlayer1.Hide();
-                    mediaPlayer1.Stop();
-                    break;
-                case ResponseTypeId.Ambient:
-                    ambient1.Hide();
-                    ambient1.Pause();
-                    break;
+                switch (_currentResponseTypeId)
+                {
+                    case ResponseTypeId.SlidShow:
+                        slideViewerFlash1.Hide();
+                        slideViewerFlash1.Stop();
+                        break;
+                    case ResponseTypeId.MatchingGame:
+                        matchingGame1.Hide();
+                        matchingGame1.Stop(_isMatchingGameTimeoutExpired);
+                        break;
+                    case ResponseTypeId.Radio:
+                    case ResponseTypeId.Television:
+                    case ResponseTypeId.Cats:
+                        mediaPlayer1.Hide();
+                        mediaPlayer1.Stop();
+                        break;
+                    case ResponseTypeId.Ambient:
+                        ambient1.Hide();
+                        ambient1.Pause();
+                        break;
+                }
+            }
+            catch (Exception ex)
+            {
+                _systemEventLogger.WriteEntry($"Main.StopCurrentResponse: {ex.Message}", EventLogEntryType.Error);
             }
         }
 
@@ -268,8 +272,10 @@ namespace Keebee.AAT.Display
                     if (!mediaFiles.Any()) return;
 
                     StopCurrentResponse();
+
                     mediaPlayer1.Show();
                     mediaPlayer1.Play(responseTypeId, mediaFiles);
+
                     _currentResponseTypeId = responseTypeId;  // radio or television
                 }
                 else
@@ -337,10 +343,13 @@ namespace Keebee.AAT.Display
                 if (!images.Any()) return;
 
                 StopCurrentResponse();
+
                 slideViewerFlash1.Show();
                 slideViewerFlash1.Play(images);
-                _currentResponseTypeId = ResponseTypeId.SlidShow;
+                
                 _activityEventLogger.Add(_currentProfile.ResidentId, _currenActivityTypeId, _currentResponseTypeId);
+
+                _currentResponseTypeId = ResponseTypeId.SlidShow;
             }
         }
 
@@ -364,6 +373,7 @@ namespace Keebee.AAT.Display
                 _gameEventLogger.Add(_currentProfile.ResidentId, GameTypeId.MatchThePictures, _currentProfile.GameDifficultyLevel, null, "New game has been initiated");
 
                 matchingGame1.Play(shapes, _currentProfile.GameDifficultyLevel, true);
+
                 _currentResponseTypeId = ResponseTypeId.MatchingGame;
             }
         }
@@ -390,6 +400,7 @@ namespace Keebee.AAT.Display
                 StopCurrentResponse();
                 ambient1.Show();
                 ambient1.Resume();
+
                 _currentResponseTypeId = ResponseTypeId.Ambient;
             }
         }
@@ -402,12 +413,12 @@ namespace Keebee.AAT.Display
             }
             else
             {
+                StopCurrentResponse();
                 var frmSplash = new Caregiver.Splash();
                 frmSplash.Show();
 
                 var genericProfile = _opsClient.GetProfileMedia(ProfileId.Generic);
 
-                StopCurrentResponse();
                 _caregiverInterface = new CaregiverInterface
                                          {
                                             EventLogger = _systemEventLogger,

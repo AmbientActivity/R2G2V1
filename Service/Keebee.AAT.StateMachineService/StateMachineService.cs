@@ -29,7 +29,7 @@ namespace Keebee.AAT.StateMachineService
         // active configuration
         private Configuration _activeConfiguration;
 
-        // TODO: make this assignable through Admin Interface via a message queue
+        // TODO: make this triggerable through Admin Interface via message queue
         private bool _reloadConfiguration = true;
 
         // active profile
@@ -115,11 +115,15 @@ namespace Keebee.AAT.StateMachineService
         {
             try
             {
-                if (_reloadConfiguration)
+                if (_reloadConfiguration) // TODO: trigger this through the Admin Interface
                 {
                     _activeConfiguration = _opsClient.GetActiveConfigurationDetails();
                     _reloadConfiguration = false;
                 }
+
+                // if the activity type is not defined in this configuration then exit
+                if (_activeConfiguration.ConfigurationDetails.All(x => x.ActivityType.Id != activityTypeId))
+                    return;
 
                 var responseType =
                     _activeConfiguration.ConfigurationDetails

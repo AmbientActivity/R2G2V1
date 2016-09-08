@@ -76,6 +76,8 @@ namespace Keebee.AAT.Display.UserControls
                     $"<number>{_initialDifficultyLevel}</number>" +
                     $"<number>{enableTimeout}</number></arguments></invoke>");
                 axShockwaveFlash1.CallFunction("<invoke name=\"playMatchingGame\"></invoke>");
+
+                axShockwaveFlash1.Show();
             }
 
             catch (Exception ex)
@@ -84,11 +86,14 @@ namespace Keebee.AAT.Display.UserControls
             }
         }
 
-        public void Stop(bool logEvent)
+        public void Stop(bool isTimeoutExpired)
         {
             try
             {
-                if (logEvent)
+                axShockwaveFlash1.Stop();
+                axShockwaveFlash1.Hide();
+
+                if (!isTimeoutExpired)
                     axShockwaveFlash1.CallFunction("<invoke name=\"stopMatchingGame\"></invoke>");
             }
             catch (Exception ex)

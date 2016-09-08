@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Web.Mvc;
+using Keebee.AAT.Shared;
 using Newtonsoft.Json;
 
 namespace Keebee.AAT.Administrator.Controllers
@@ -73,6 +74,10 @@ namespace Keebee.AAT.Administrator.Controllers
         [HttpPost]
         public JsonResult Delete(int id)
         {
+            var profile = _opsClient.GetResidentProfile(id);
+            if (profile.Id != ProfileId.Generic)
+
+                
             _opsClient.DeleteResident(id);
 
             return Json(new

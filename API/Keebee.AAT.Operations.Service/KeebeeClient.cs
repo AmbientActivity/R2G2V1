@@ -8,39 +8,39 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-// Generation date: 9/8/2016 10:59:11 AM
+// Generation date: 9/8/2016 5:26:36 PM
 namespace Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models
 {
     /// <summary>
-    /// There are no comments for ConfigurationSingle in the schema.
+    /// There are no comments for ConfigSingle in the schema.
     /// </summary>
-    [global::Microsoft.OData.Client.OriginalNameAttribute("ConfigurationSingle")]
-    public partial class ConfigurationSingle : global::Microsoft.OData.Client.DataServiceQuerySingle<Configuration>
+    [global::Microsoft.OData.Client.OriginalNameAttribute("ConfigSingle")]
+    public partial class ConfigSingle : global::Microsoft.OData.Client.DataServiceQuerySingle<Config>
     {
         /// <summary>
-        /// Initialize a new ConfigurationSingle object.
+        /// Initialize a new ConfigSingle object.
         /// </summary>
-        public ConfigurationSingle(global::Microsoft.OData.Client.DataServiceContext context, string path)
+        public ConfigSingle(global::Microsoft.OData.Client.DataServiceContext context, string path)
             : base(context, path) {}
 
         /// <summary>
-        /// Initialize a new ConfigurationSingle object.
+        /// Initialize a new ConfigSingle object.
         /// </summary>
-        public ConfigurationSingle(global::Microsoft.OData.Client.DataServiceContext context, string path, bool isComposable)
+        public ConfigSingle(global::Microsoft.OData.Client.DataServiceContext context, string path, bool isComposable)
             : base(context, path, isComposable) {}
 
         /// <summary>
-        /// Initialize a new ConfigurationSingle object.
+        /// Initialize a new ConfigSingle object.
         /// </summary>
-        public ConfigurationSingle(global::Microsoft.OData.Client.DataServiceQuerySingle<Configuration> query)
+        public ConfigSingle(global::Microsoft.OData.Client.DataServiceQuerySingle<Config> query)
             : base(query) {}
 
         /// <summary>
-        /// There are no comments for ConfigurationDetails in the schema.
+        /// There are no comments for ConfigDetails in the schema.
         /// </summary>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        [global::Microsoft.OData.Client.OriginalNameAttribute("ConfigurationDetails")]
-        public global::Microsoft.OData.Client.DataServiceQuery<global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ConfigurationDetail> ConfigurationDetails
+        [global::Microsoft.OData.Client.OriginalNameAttribute("ConfigDetails")]
+        public global::Microsoft.OData.Client.DataServiceQuery<global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ConfigDetail> ConfigDetails
         {
             get
             {
@@ -48,38 +48,38 @@ namespace Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models
                 {
                     throw new global::System.NotSupportedException("The previous function is not composable.");
                 }
-                if ((this._ConfigurationDetails == null))
+                if ((this._ConfigDetails == null))
                 {
-                    this._ConfigurationDetails = Context.CreateQuery<global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ConfigurationDetail>(GetPath("ConfigurationDetails"));
+                    this._ConfigDetails = Context.CreateQuery<global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ConfigDetail>(GetPath("ConfigDetails"));
                 }
-                return this._ConfigurationDetails;
+                return this._ConfigDetails;
             }
         }
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private global::Microsoft.OData.Client.DataServiceQuery<global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ConfigurationDetail> _ConfigurationDetails;
+        private global::Microsoft.OData.Client.DataServiceQuery<global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ConfigDetail> _ConfigDetails;
     }
     /// <summary>
-    /// There are no comments for Configuration in the schema.
+    /// There are no comments for Config in the schema.
     /// </summary>
     /// <KeyProperties>
     /// Id
     /// </KeyProperties>
     [global::Microsoft.OData.Client.Key("Id")]
-    [global::Microsoft.OData.Client.OriginalNameAttribute("Configuration")]
-    public partial class Configuration : global::Microsoft.OData.Client.BaseEntityType, global::System.ComponentModel.INotifyPropertyChanged
+    [global::Microsoft.OData.Client.OriginalNameAttribute("Config")]
+    public partial class Config : global::Microsoft.OData.Client.BaseEntityType, global::System.ComponentModel.INotifyPropertyChanged
     {
         /// <summary>
-        /// Create a new Configuration object.
+        /// Create a new Config object.
         /// </summary>
         /// <param name="ID">Initial value of Id.</param>
         /// <param name="isActive">Initial value of IsActive.</param>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        public static Configuration CreateConfiguration(int ID, bool isActive)
+        public static Config CreateConfig(int ID, bool isActive)
         {
-            Configuration configuration = new Configuration();
-            configuration.Id = ID;
-            configuration.IsActive = isActive;
-            return configuration;
+            Config config = new Config();
+            config.Id = ID;
+            config.IsActive = isActive;
+            return config;
         }
         /// <summary>
         /// There are no comments for Property Id in the schema.
@@ -151,28 +151,28 @@ namespace Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models
         partial void OnIsActiveChanging(bool value);
         partial void OnIsActiveChanged();
         /// <summary>
-        /// There are no comments for Property ConfigurationDetails in the schema.
+        /// There are no comments for Property ConfigDetails in the schema.
         /// </summary>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        [global::Microsoft.OData.Client.OriginalNameAttribute("ConfigurationDetails")]
-        public global::Microsoft.OData.Client.DataServiceCollection<global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ConfigurationDetail> ConfigurationDetails
+        [global::Microsoft.OData.Client.OriginalNameAttribute("ConfigDetails")]
+        public global::Microsoft.OData.Client.DataServiceCollection<global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ConfigDetail> ConfigDetails
         {
             get
             {
-                return this._ConfigurationDetails;
+                return this._ConfigDetails;
             }
             set
             {
-                this.OnConfigurationDetailsChanging(value);
-                this._ConfigurationDetails = value;
-                this.OnConfigurationDetailsChanged();
-                this.OnPropertyChanged("ConfigurationDetails");
+                this.OnConfigDetailsChanging(value);
+                this._ConfigDetails = value;
+                this.OnConfigDetailsChanged();
+                this.OnPropertyChanged("ConfigDetails");
             }
         }
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private global::Microsoft.OData.Client.DataServiceCollection<global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ConfigurationDetail> _ConfigurationDetails = new global::Microsoft.OData.Client.DataServiceCollection<global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ConfigurationDetail>(null, global::Microsoft.OData.Client.TrackingMode.None);
-        partial void OnConfigurationDetailsChanging(global::Microsoft.OData.Client.DataServiceCollection<global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ConfigurationDetail> value);
-        partial void OnConfigurationDetailsChanged();
+        private global::Microsoft.OData.Client.DataServiceCollection<global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ConfigDetail> _ConfigDetails = new global::Microsoft.OData.Client.DataServiceCollection<global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ConfigDetail>(null, global::Microsoft.OData.Client.TrackingMode.None);
+        partial void OnConfigDetailsChanging(global::Microsoft.OData.Client.DataServiceCollection<global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ConfigDetail> value);
+        partial void OnConfigDetailsChanged();
         /// <summary>
         /// This event is raised when the value of the property is changed
         /// </summary>
@@ -192,29 +192,51 @@ namespace Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models
         }
     }
     /// <summary>
-    /// There are no comments for ConfigurationDetailSingle in the schema.
+    /// There are no comments for ConfigDetailSingle in the schema.
     /// </summary>
-    [global::Microsoft.OData.Client.OriginalNameAttribute("ConfigurationDetailSingle")]
-    public partial class ConfigurationDetailSingle : global::Microsoft.OData.Client.DataServiceQuerySingle<ConfigurationDetail>
+    [global::Microsoft.OData.Client.OriginalNameAttribute("ConfigDetailSingle")]
+    public partial class ConfigDetailSingle : global::Microsoft.OData.Client.DataServiceQuerySingle<ConfigDetail>
     {
         /// <summary>
-        /// Initialize a new ConfigurationDetailSingle object.
+        /// Initialize a new ConfigDetailSingle object.
         /// </summary>
-        public ConfigurationDetailSingle(global::Microsoft.OData.Client.DataServiceContext context, string path)
+        public ConfigDetailSingle(global::Microsoft.OData.Client.DataServiceContext context, string path)
             : base(context, path) {}
 
         /// <summary>
-        /// Initialize a new ConfigurationDetailSingle object.
+        /// Initialize a new ConfigDetailSingle object.
         /// </summary>
-        public ConfigurationDetailSingle(global::Microsoft.OData.Client.DataServiceContext context, string path, bool isComposable)
+        public ConfigDetailSingle(global::Microsoft.OData.Client.DataServiceContext context, string path, bool isComposable)
             : base(context, path, isComposable) {}
 
         /// <summary>
-        /// Initialize a new ConfigurationDetailSingle object.
+        /// Initialize a new ConfigDetailSingle object.
         /// </summary>
-        public ConfigurationDetailSingle(global::Microsoft.OData.Client.DataServiceQuerySingle<ConfigurationDetail> query)
+        public ConfigDetailSingle(global::Microsoft.OData.Client.DataServiceQuerySingle<ConfigDetail> query)
             : base(query) {}
 
+        /// <summary>
+        /// There are no comments for Config in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        [global::Microsoft.OData.Client.OriginalNameAttribute("Config")]
+        public global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ConfigSingle Config
+        {
+            get
+            {
+                if (!this.IsComposable)
+                {
+                    throw new global::System.NotSupportedException("The previous function is not composable.");
+                }
+                if ((this._Config == null))
+                {
+                    this._Config = new global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ConfigSingle(this.Context, GetPath("Config"));
+                }
+                return this._Config;
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ConfigSingle _Config;
         /// <summary>
         /// There are no comments for ActivityType in the schema.
         /// </summary>
@@ -261,27 +283,25 @@ namespace Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models
         private global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ResponseTypeSingle _ResponseType;
     }
     /// <summary>
-    /// There are no comments for ConfigurationDetail in the schema.
+    /// There are no comments for ConfigDetail in the schema.
     /// </summary>
     /// <KeyProperties>
     /// Id
     /// </KeyProperties>
     [global::Microsoft.OData.Client.Key("Id")]
-    [global::Microsoft.OData.Client.OriginalNameAttribute("ConfigurationDetail")]
-    public partial class ConfigurationDetail : global::Microsoft.OData.Client.BaseEntityType, global::System.ComponentModel.INotifyPropertyChanged
+    [global::Microsoft.OData.Client.OriginalNameAttribute("ConfigDetail")]
+    public partial class ConfigDetail : global::Microsoft.OData.Client.BaseEntityType, global::System.ComponentModel.INotifyPropertyChanged
     {
         /// <summary>
-        /// Create a new ConfigurationDetail object.
+        /// Create a new ConfigDetail object.
         /// </summary>
         /// <param name="ID">Initial value of Id.</param>
-        /// <param name="configurationId">Initial value of ConfigurationId.</param>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        public static ConfigurationDetail CreateConfigurationDetail(int ID, int configurationId)
+        public static ConfigDetail CreateConfigDetail(int ID)
         {
-            ConfigurationDetail configurationDetail = new ConfigurationDetail();
-            configurationDetail.Id = ID;
-            configurationDetail.ConfigurationId = configurationId;
-            return configurationDetail;
+            ConfigDetail configDetail = new ConfigDetail();
+            configDetail.Id = ID;
+            return configDetail;
         }
         /// <summary>
         /// There are no comments for Property Id in the schema.
@@ -307,28 +327,28 @@ namespace Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models
         partial void OnIdChanging(int value);
         partial void OnIdChanged();
         /// <summary>
-        /// There are no comments for Property ConfigurationId in the schema.
+        /// There are no comments for Property ConfigId in the schema.
         /// </summary>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        [global::Microsoft.OData.Client.OriginalNameAttribute("ConfigurationId")]
-        public int ConfigurationId
+        [global::Microsoft.OData.Client.OriginalNameAttribute("ConfigId")]
+        public global::System.Nullable<int> ConfigId
         {
             get
             {
-                return this._ConfigurationId;
+                return this._ConfigId;
             }
             set
             {
-                this.OnConfigurationIdChanging(value);
-                this._ConfigurationId = value;
-                this.OnConfigurationIdChanged();
-                this.OnPropertyChanged("ConfigurationId");
+                this.OnConfigIdChanging(value);
+                this._ConfigId = value;
+                this.OnConfigIdChanged();
+                this.OnPropertyChanged("ConfigId");
             }
         }
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private int _ConfigurationId;
-        partial void OnConfigurationIdChanging(int value);
-        partial void OnConfigurationIdChanged();
+        private global::System.Nullable<int> _ConfigId;
+        partial void OnConfigIdChanging(global::System.Nullable<int> value);
+        partial void OnConfigIdChanged();
         /// <summary>
         /// There are no comments for Property ActivityTypeId in the schema.
         /// </summary>
@@ -375,6 +395,29 @@ namespace Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models
         private global::System.Nullable<int> _ResponseTypeId;
         partial void OnResponseTypeIdChanging(global::System.Nullable<int> value);
         partial void OnResponseTypeIdChanged();
+        /// <summary>
+        /// There are no comments for Property Config in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        [global::Microsoft.OData.Client.OriginalNameAttribute("Config")]
+        public global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.Config Config
+        {
+            get
+            {
+                return this._Config;
+            }
+            set
+            {
+                this.OnConfigChanging(value);
+                this._Config = value;
+                this.OnConfigChanged();
+                this.OnPropertyChanged("Config");
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.Config _Config;
+        partial void OnConfigChanging(global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.Config value);
+        partial void OnConfigChanged();
         /// <summary>
         /// There are no comments for Property ActivityType in the schema.
         /// </summary>
@@ -1615,6 +1658,50 @@ namespace Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models
             : base(query) {}
 
         /// <summary>
+        /// There are no comments for Profile in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        [global::Microsoft.OData.Client.OriginalNameAttribute("Profile")]
+        public global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ProfileSingle Profile
+        {
+            get
+            {
+                if (!this.IsComposable)
+                {
+                    throw new global::System.NotSupportedException("The previous function is not composable.");
+                }
+                if ((this._Profile == null))
+                {
+                    this._Profile = new global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ProfileSingle(this.Context, GetPath("Profile"));
+                }
+                return this._Profile;
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ProfileSingle _Profile;
+        /// <summary>
+        /// There are no comments for ResponseType in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        [global::Microsoft.OData.Client.OriginalNameAttribute("ResponseType")]
+        public global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ResponseTypeSingle ResponseType
+        {
+            get
+            {
+                if (!this.IsComposable)
+                {
+                    throw new global::System.NotSupportedException("The previous function is not composable.");
+                }
+                if ((this._ResponseType == null))
+                {
+                    this._ResponseType = new global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ResponseTypeSingle(this.Context, GetPath("ResponseType"));
+                }
+                return this._ResponseType;
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ResponseTypeSingle _ResponseType;
+        /// <summary>
         /// There are no comments for MediaFile in the schema.
         /// </summary>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
@@ -1651,15 +1738,11 @@ namespace Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models
         /// Create a new Response object.
         /// </summary>
         /// <param name="ID">Initial value of Id.</param>
-        /// <param name="profileId">Initial value of ProfileId.</param>
-        /// <param name="responseTypeId">Initial value of ResponseTypeId.</param>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        public static Response CreateResponse(int ID, int profileId, int responseTypeId)
+        public static Response CreateResponse(int ID)
         {
             Response response = new Response();
             response.Id = ID;
-            response.ProfileId = profileId;
-            response.ResponseTypeId = responseTypeId;
             return response;
         }
         /// <summary>
@@ -1690,7 +1773,7 @@ namespace Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models
         /// </summary>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
         [global::Microsoft.OData.Client.OriginalNameAttribute("ProfileId")]
-        public int ProfileId
+        public global::System.Nullable<int> ProfileId
         {
             get
             {
@@ -1705,15 +1788,15 @@ namespace Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models
             }
         }
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private int _ProfileId;
-        partial void OnProfileIdChanging(int value);
+        private global::System.Nullable<int> _ProfileId;
+        partial void OnProfileIdChanging(global::System.Nullable<int> value);
         partial void OnProfileIdChanged();
         /// <summary>
         /// There are no comments for Property ResponseTypeId in the schema.
         /// </summary>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
         [global::Microsoft.OData.Client.OriginalNameAttribute("ResponseTypeId")]
-        public int ResponseTypeId
+        public global::System.Nullable<int> ResponseTypeId
         {
             get
             {
@@ -1728,8 +1811,8 @@ namespace Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models
             }
         }
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private int _ResponseTypeId;
-        partial void OnResponseTypeIdChanging(int value);
+        private global::System.Nullable<int> _ResponseTypeId;
+        partial void OnResponseTypeIdChanging(global::System.Nullable<int> value);
         partial void OnResponseTypeIdChanged();
         /// <summary>
         /// There are no comments for Property StreamId in the schema.
@@ -1754,6 +1837,52 @@ namespace Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models
         private global::System.Nullable<global::System.Guid> _StreamId;
         partial void OnStreamIdChanging(global::System.Nullable<global::System.Guid> value);
         partial void OnStreamIdChanged();
+        /// <summary>
+        /// There are no comments for Property Profile in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        [global::Microsoft.OData.Client.OriginalNameAttribute("Profile")]
+        public global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.Profile Profile
+        {
+            get
+            {
+                return this._Profile;
+            }
+            set
+            {
+                this.OnProfileChanging(value);
+                this._Profile = value;
+                this.OnProfileChanged();
+                this.OnPropertyChanged("Profile");
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.Profile _Profile;
+        partial void OnProfileChanging(global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.Profile value);
+        partial void OnProfileChanged();
+        /// <summary>
+        /// There are no comments for Property ResponseType in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        [global::Microsoft.OData.Client.OriginalNameAttribute("ResponseType")]
+        public global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ResponseType ResponseType
+        {
+            get
+            {
+                return this._ResponseType;
+            }
+            set
+            {
+                this.OnResponseTypeChanging(value);
+                this._ResponseType = value;
+                this.OnResponseTypeChanged();
+                this.OnPropertyChanged("ResponseType");
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ResponseType _ResponseType;
+        partial void OnResponseTypeChanging(global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ResponseType value);
+        partial void OnResponseTypeChanged();
         /// <summary>
         /// There are no comments for Property MediaFile in the schema.
         /// </summary>
@@ -3665,50 +3794,50 @@ namespace Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models
     public static class ExtensionMethods
     {
         /// <summary>
-        /// Get an entity of type global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.Configuration as global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ConfigurationSingle specified by key from an entity set
+        /// Get an entity of type global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.Config as global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ConfigSingle specified by key from an entity set
         /// </summary>
         /// <param name="source">source entity set</param>
         /// <param name="keys">dictionary with the names and values of keys</param>
-        public static global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ConfigurationSingle ByKey(this global::Microsoft.OData.Client.DataServiceQuery<global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.Configuration> source, global::System.Collections.Generic.Dictionary<string, object> keys)
+        public static global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ConfigSingle ByKey(this global::Microsoft.OData.Client.DataServiceQuery<global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.Config> source, global::System.Collections.Generic.Dictionary<string, object> keys)
         {
-            return new global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ConfigurationSingle(source.Context, source.GetKeyPath(global::Microsoft.OData.Client.Serializer.GetKeyString(source.Context, keys)));
+            return new global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ConfigSingle(source.Context, source.GetKeyPath(global::Microsoft.OData.Client.Serializer.GetKeyString(source.Context, keys)));
         }
         /// <summary>
-        /// Get an entity of type global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.Configuration as global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ConfigurationSingle specified by key from an entity set
+        /// Get an entity of type global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.Config as global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ConfigSingle specified by key from an entity set
         /// </summary>
         /// <param name="source">source entity set</param>
         /// <param name="id">The value of id</param>
-        public static global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ConfigurationSingle ByKey(this global::Microsoft.OData.Client.DataServiceQuery<global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.Configuration> source,
+        public static global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ConfigSingle ByKey(this global::Microsoft.OData.Client.DataServiceQuery<global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.Config> source,
             int id)
         {
             global::System.Collections.Generic.Dictionary<string, object> keys = new global::System.Collections.Generic.Dictionary<string, object>
             {
                 { "Id", id }
             };
-            return new global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ConfigurationSingle(source.Context, source.GetKeyPath(global::Microsoft.OData.Client.Serializer.GetKeyString(source.Context, keys)));
+            return new global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ConfigSingle(source.Context, source.GetKeyPath(global::Microsoft.OData.Client.Serializer.GetKeyString(source.Context, keys)));
         }
         /// <summary>
-        /// Get an entity of type global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ConfigurationDetail as global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ConfigurationDetailSingle specified by key from an entity set
+        /// Get an entity of type global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ConfigDetail as global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ConfigDetailSingle specified by key from an entity set
         /// </summary>
         /// <param name="source">source entity set</param>
         /// <param name="keys">dictionary with the names and values of keys</param>
-        public static global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ConfigurationDetailSingle ByKey(this global::Microsoft.OData.Client.DataServiceQuery<global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ConfigurationDetail> source, global::System.Collections.Generic.Dictionary<string, object> keys)
+        public static global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ConfigDetailSingle ByKey(this global::Microsoft.OData.Client.DataServiceQuery<global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ConfigDetail> source, global::System.Collections.Generic.Dictionary<string, object> keys)
         {
-            return new global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ConfigurationDetailSingle(source.Context, source.GetKeyPath(global::Microsoft.OData.Client.Serializer.GetKeyString(source.Context, keys)));
+            return new global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ConfigDetailSingle(source.Context, source.GetKeyPath(global::Microsoft.OData.Client.Serializer.GetKeyString(source.Context, keys)));
         }
         /// <summary>
-        /// Get an entity of type global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ConfigurationDetail as global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ConfigurationDetailSingle specified by key from an entity set
+        /// Get an entity of type global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ConfigDetail as global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ConfigDetailSingle specified by key from an entity set
         /// </summary>
         /// <param name="source">source entity set</param>
         /// <param name="id">The value of id</param>
-        public static global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ConfigurationDetailSingle ByKey(this global::Microsoft.OData.Client.DataServiceQuery<global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ConfigurationDetail> source,
+        public static global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ConfigDetailSingle ByKey(this global::Microsoft.OData.Client.DataServiceQuery<global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ConfigDetail> source,
             int id)
         {
             global::System.Collections.Generic.Dictionary<string, object> keys = new global::System.Collections.Generic.Dictionary<string, object>
             {
                 { "Id", id }
             };
-            return new global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ConfigurationDetailSingle(source.Context, source.GetKeyPath(global::Microsoft.OData.Client.Serializer.GetKeyString(source.Context, keys)));
+            return new global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ConfigDetailSingle(source.Context, source.GetKeyPath(global::Microsoft.OData.Client.Serializer.GetKeyString(source.Context, keys)));
         }
         /// <summary>
         /// Get an entity of type global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.Resident as global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ResidentSingle specified by key from an entity set
@@ -4127,41 +4256,41 @@ namespace Keebee.AAT.Operations.Service.KeebeeAAT
             return null;
         }
         /// <summary>
-        /// There are no comments for Configurations in the schema.
+        /// There are no comments for Configs in the schema.
         /// </summary>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        [global::Microsoft.OData.Client.OriginalNameAttribute("Configurations")]
-        public global::Microsoft.OData.Client.DataServiceQuery<global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.Configuration> Configurations
+        [global::Microsoft.OData.Client.OriginalNameAttribute("Configs")]
+        public global::Microsoft.OData.Client.DataServiceQuery<global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.Config> Configs
         {
             get
             {
-                if ((this._Configurations == null))
+                if ((this._Configs == null))
                 {
-                    this._Configurations = base.CreateQuery<global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.Configuration>("Configurations");
+                    this._Configs = base.CreateQuery<global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.Config>("Configs");
                 }
-                return this._Configurations;
+                return this._Configs;
             }
         }
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private global::Microsoft.OData.Client.DataServiceQuery<global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.Configuration> _Configurations;
+        private global::Microsoft.OData.Client.DataServiceQuery<global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.Config> _Configs;
         /// <summary>
-        /// There are no comments for ConfigurationDetails in the schema.
+        /// There are no comments for ConfigDetails in the schema.
         /// </summary>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        [global::Microsoft.OData.Client.OriginalNameAttribute("ConfigurationDetails")]
-        public global::Microsoft.OData.Client.DataServiceQuery<global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ConfigurationDetail> ConfigurationDetails
+        [global::Microsoft.OData.Client.OriginalNameAttribute("ConfigDetails")]
+        public global::Microsoft.OData.Client.DataServiceQuery<global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ConfigDetail> ConfigDetails
         {
             get
             {
-                if ((this._ConfigurationDetails == null))
+                if ((this._ConfigDetails == null))
                 {
-                    this._ConfigurationDetails = base.CreateQuery<global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ConfigurationDetail>("ConfigurationDetails");
+                    this._ConfigDetails = base.CreateQuery<global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ConfigDetail>("ConfigDetails");
                 }
-                return this._ConfigurationDetails;
+                return this._ConfigDetails;
             }
         }
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private global::Microsoft.OData.Client.DataServiceQuery<global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ConfigurationDetail> _ConfigurationDetails;
+        private global::Microsoft.OData.Client.DataServiceQuery<global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ConfigDetail> _ConfigDetails;
         /// <summary>
         /// There are no comments for Residents in the schema.
         /// </summary>
@@ -4433,20 +4562,20 @@ namespace Keebee.AAT.Operations.Service.KeebeeAAT
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
         private global::Microsoft.OData.Client.DataServiceQuery<global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.MediaFile> _MediaFiles;
         /// <summary>
-        /// There are no comments for Configurations in the schema.
+        /// There are no comments for Configs in the schema.
         /// </summary>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        public void AddToConfigurations(global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.Configuration configuration)
+        public void AddToConfigs(global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.Config config)
         {
-            base.AddObject("Configurations", configuration);
+            base.AddObject("Configs", config);
         }
         /// <summary>
-        /// There are no comments for ConfigurationDetails in the schema.
+        /// There are no comments for ConfigDetails in the schema.
         /// </summary>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        public void AddToConfigurationDetails(global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ConfigurationDetail configurationDetail)
+        public void AddToConfigDetails(global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ConfigDetail configDetail)
         {
-            base.AddObject("ConfigurationDetails", configurationDetail);
+            base.AddObject("ConfigDetails", configDetail);
         }
         /// <summary>
         /// There are no comments for Residents in the schema.
@@ -4577,23 +4706,26 @@ namespace Keebee.AAT.Operations.Service.KeebeeAAT
             private const string Edmx = @"<edmx:Edmx Version=""4.0"" xmlns:edmx=""http://docs.oasis-open.org/odata/ns/edmx"">
   <edmx:DataServices>
     <Schema Namespace=""Keebee.AAT.DataAccess.Models"" xmlns=""http://docs.oasis-open.org/odata/ns/edm"">
-      <EntityType Name=""Configuration"">
+      <EntityType Name=""Config"">
         <Key>
           <PropertyRef Name=""Id"" />
         </Key>
         <Property Name=""Id"" Type=""Edm.Int32"" Nullable=""false"" />
         <Property Name=""Description"" Type=""Edm.String"" />
         <Property Name=""IsActive"" Type=""Edm.Boolean"" Nullable=""false"" />
-        <NavigationProperty Name=""ConfigurationDetails"" Type=""Collection(Keebee.AAT.DataAccess.Models.ConfigurationDetail)"" />
+        <NavigationProperty Name=""ConfigDetails"" Type=""Collection(Keebee.AAT.DataAccess.Models.ConfigDetail)"" />
       </EntityType>
-      <EntityType Name=""ConfigurationDetail"">
+      <EntityType Name=""ConfigDetail"">
         <Key>
           <PropertyRef Name=""Id"" />
         </Key>
         <Property Name=""Id"" Type=""Edm.Int32"" Nullable=""false"" />
-        <Property Name=""ConfigurationId"" Type=""Edm.Int32"" Nullable=""false"" />
+        <Property Name=""ConfigId"" Type=""Edm.Int32"" />
         <Property Name=""ActivityTypeId"" Type=""Edm.Int32"" />
         <Property Name=""ResponseTypeId"" Type=""Edm.Int32"" />
+        <NavigationProperty Name=""Config"" Type=""Keebee.AAT.DataAccess.Models.Config"">
+          <ReferentialConstraint Property=""ConfigId"" ReferencedProperty=""Id"" />
+        </NavigationProperty>
         <NavigationProperty Name=""ActivityType"" Type=""Keebee.AAT.DataAccess.Models.ActivityType"">
           <ReferentialConstraint Property=""ActivityTypeId"" ReferencedProperty=""Id"" />
         </NavigationProperty>
@@ -4668,9 +4800,15 @@ namespace Keebee.AAT.Operations.Service.KeebeeAAT
           <PropertyRef Name=""Id"" />
         </Key>
         <Property Name=""Id"" Type=""Edm.Int32"" Nullable=""false"" />
-        <Property Name=""ProfileId"" Type=""Edm.Int32"" Nullable=""false"" />
-        <Property Name=""ResponseTypeId"" Type=""Edm.Int32"" Nullable=""false"" />
+        <Property Name=""ProfileId"" Type=""Edm.Int32"" />
+        <Property Name=""ResponseTypeId"" Type=""Edm.Int32"" />
         <Property Name=""StreamId"" Type=""Edm.Guid"" />
+        <NavigationProperty Name=""Profile"" Type=""Keebee.AAT.DataAccess.Models.Profile"">
+          <ReferentialConstraint Property=""ProfileId"" ReferencedProperty=""Id"" />
+        </NavigationProperty>
+        <NavigationProperty Name=""ResponseType"" Type=""Keebee.AAT.DataAccess.Models.ResponseType"">
+          <ReferentialConstraint Property=""ResponseTypeId"" ReferencedProperty=""Id"" />
+        </NavigationProperty>
         <NavigationProperty Name=""MediaFile"" Type=""Keebee.AAT.DataAccess.Models.MediaFile"">
           <ReferentialConstraint Property=""StreamId"" ReferencedProperty=""StreamId"" />
         </NavigationProperty>
@@ -4786,10 +4924,11 @@ namespace Keebee.AAT.Operations.Service.KeebeeAAT
     </Schema>
     <Schema Namespace=""KeebeeAAT"" xmlns=""http://docs.oasis-open.org/odata/ns/edm"">
       <EntityContainer Name=""Container"">
-        <EntitySet Name=""Configurations"" EntityType=""Keebee.AAT.DataAccess.Models.Configuration"">
-          <NavigationPropertyBinding Path=""ConfigurationDetails"" Target=""ConfigurationDetails"" />
+        <EntitySet Name=""Configs"" EntityType=""Keebee.AAT.DataAccess.Models.Config"">
+          <NavigationPropertyBinding Path=""ConfigDetails"" Target=""ConfigDetails"" />
         </EntitySet>
-        <EntitySet Name=""ConfigurationDetails"" EntityType=""Keebee.AAT.DataAccess.Models.ConfigurationDetail"">
+        <EntitySet Name=""ConfigDetails"" EntityType=""Keebee.AAT.DataAccess.Models.ConfigDetail"">
+          <NavigationPropertyBinding Path=""Config"" Target=""Configs"" />
           <NavigationPropertyBinding Path=""ActivityType"" Target=""ActivityTypes"" />
           <NavigationPropertyBinding Path=""ResponseType"" Target=""ResponseTypes"" />
         </EntitySet>
@@ -4806,6 +4945,8 @@ namespace Keebee.AAT.Operations.Service.KeebeeAAT
         <EntitySet Name=""ResponseTypeCategories"" EntityType=""Keebee.AAT.DataAccess.Models.ResponseTypeCategory"" />
         <EntitySet Name=""GameTypes"" EntityType=""Keebee.AAT.DataAccess.Models.GameType"" />
         <EntitySet Name=""Responses"" EntityType=""Keebee.AAT.DataAccess.Models.Response"">
+          <NavigationPropertyBinding Path=""Profile"" Target=""Profiles"" />
+          <NavigationPropertyBinding Path=""ResponseType"" Target=""ResponseTypes"" />
           <NavigationPropertyBinding Path=""MediaFile"" Target=""MediaFiles"" />
         </EntitySet>
         <EntitySet Name=""AmbientResponses"" EntityType=""Keebee.AAT.DataAccess.Models.AmbientResponse"">

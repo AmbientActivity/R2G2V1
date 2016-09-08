@@ -10,8 +10,8 @@ IF OBJECT_ID('GameTypes', 'U') IS NOT NULL DROP TABLE GameTypes
 IF OBJECT_ID('Responses', 'U') IS NOT NULL DROP TABLE Responses
 IF OBJECT_ID('AmbientResponses', 'U') IS NOT NULL DROP TABLE AmbientResponses
 IF OBJECT_ID('PersonalPictures', 'U') IS NOT NULL DROP TABLE PersonalPictures
-IF OBJECT_ID('ConfigurationDetails', 'U') IS NOT NULL DROP TABLE ConfigurationDetails
-IF OBJECT_ID('Configurations', 'U') IS NOT NULL DROP TABLE [Configurations]
+IF OBJECT_ID('ConfigDetails', 'U') IS NOT NULL DROP TABLE ConfigDetails
+IF OBJECT_ID('Configs', 'U') IS NOT NULL DROP TABLE [Configs]
 IF OBJECT_ID('ResponseTypes', 'U') IS NOT NULL DROP TABLE ResponseTypes
 IF OBJECT_ID('ResponseTypeCategories', 'U') IS NOT NULL DROP TABLE ResponseTypeCategories
 IF OBJECT_ID('ActivityTypes', 'U') IS NOT NULL DROP TABLE ActivityTypes

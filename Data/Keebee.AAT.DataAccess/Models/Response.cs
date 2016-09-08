@@ -9,8 +9,13 @@ namespace Keebee.AAT.DataAccess.Models
         [Key]
         public int Id { get; set; }
 
+        [ForeignKey("Profile")]
         public int ProfileId { get; set; }
+        public virtual Profile Profile { get; set; }
+
+        [ForeignKey("ResponseType")]
         public int ResponseTypeId { get; set; }
+        public virtual ResponseType ResponseType { get; set; }
 
         [ForeignKey("MediaFile")]
         [Required]

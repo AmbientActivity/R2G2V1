@@ -312,13 +312,13 @@ namespace Keebee.AAT.Display.Caregiver
             {
                 list =(residentId > 0)
                     ? _resident
-                        .Profile.ConfigurationDetails
+                        .Profile.ConfigDetails
                         .Where(cd => cd.ResponseType.Id == responseTypeId)
                         .SelectMany(r => r.ResponseType.Responses)
                         .OrderBy(o => o.Filename)
                         .GroupBy(r => r.StreamId, (key, r) => r.FirstOrDefault())
 
-                    : _genericProfile.ConfigurationDetails
+                    : _genericProfile.ConfigDetails
                         .Where(cd => cd.ResponseType.Id == responseTypeId)
                         .SelectMany(r => r.ResponseType.Responses)
                         .OrderBy(o => o.Filename)
@@ -482,13 +482,13 @@ namespace Keebee.AAT.Display.Caregiver
                     : _genericProfile.GameDifficultyLevel; 
 
                 var interactiveResponseTypes = (residentId > 0)
-                    ? _resident.Profile.ConfigurationDetails
+                    ? _resident.Profile.ConfigDetails
                         .Where(rt => rt.ResponseType.IsInteractive)
                         .Select(rt => rt.ResponseType)
                         .GroupBy(rt => rt.Id, (key, r) => r.FirstOrDefault())
                         .ToArray()
 
-                    : _genericProfile.ConfigurationDetails
+                    : _genericProfile.ConfigDetails
                         .Where(rt => rt.ResponseType.IsInteractive)
                         .Select(rt => rt.ResponseType)
                         .GroupBy(rt => rt.Id, (key, r) => r.FirstOrDefault())
@@ -549,12 +549,12 @@ namespace Keebee.AAT.Display.Caregiver
             try
             {
                 filePath = (residentId > 0)
-                    ? _resident.Profile.ConfigurationDetails
+                    ? _resident.Profile.ConfigDetails
                         .SelectMany(r => r.ResponseType.Responses.Where(x => x.StreamId == streamId))
                         .GroupBy(r => r.StreamId, (key, r) => r.FirstOrDefault())
                         .Select(f => f.FilePath).FirstOrDefault()
 
-                    : _genericProfile.ConfigurationDetails
+                    : _genericProfile.ConfigDetails
                         .SelectMany(r => r.ResponseType.Responses.Where(x => x.StreamId == streamId))
                         .GroupBy(r => r.StreamId, (key, r) => r.FirstOrDefault())
                         .Select(f => f.FilePath).FirstOrDefault();
@@ -576,7 +576,7 @@ namespace Keebee.AAT.Display.Caregiver
 
                 files = (residentId > 0)
                      ? new[] { selectedFilePath }
-                     .Union(_resident.Profile.ConfigurationDetails
+                     .Union(_resident.Profile.ConfigDetails
                         .Where(cd => cd.ResponseType.Id == responseTypeId)
                         .SelectMany(r => r.ResponseType.Responses.Where(x => x.StreamId != streamId)
                         .OrderBy(o => o.Filename))
@@ -584,7 +584,7 @@ namespace Keebee.AAT.Display.Caregiver
                         .Select(f => f.FilePath)).ToArray()
 
                     : new [] { selectedFilePath }
-                    .Union(_genericProfile.ConfigurationDetails
+                    .Union(_genericProfile.ConfigDetails
                         .Where(cd => cd.ResponseType.Id == responseTypeId)
                         .SelectMany(r => r.ResponseType.Responses.Where(x => x.StreamId != streamId)
                         .OrderBy(o => o.Filename))
@@ -606,14 +606,14 @@ namespace Keebee.AAT.Display.Caregiver
             try
             {
                 musicFiles = (residentId > 0)
-                    ? _resident.Profile.ConfigurationDetails
+                    ? _resident.Profile.ConfigDetails
                         .Where(cd => cd.ResponseType.Id == ResponseTypeId.Radio)
                         .SelectMany(r => r.ResponseType.Responses)
                         .OrderBy(o => o.Filename)
                         .GroupBy(r => r.StreamId, (key, r) => r.FirstOrDefault())
                         .Select(f => f.FilePath).ToArray()
 
-                    : _genericProfile.ConfigurationDetails
+                    : _genericProfile.ConfigDetails
                         .Where(cd => cd.ResponseType.Id == ResponseTypeId.Radio)
                         .SelectMany(r => r.ResponseType.Responses)
                         .OrderBy(o => o.Filename)
@@ -678,14 +678,14 @@ namespace Keebee.AAT.Display.Caregiver
                 {
                     case ResponseTypeId.MatchingGame:
                         files = (residentId > 0)
-                            ? _resident.Profile.ConfigurationDetails
+                            ? _resident.Profile.ConfigDetails
                                 .Where(cd => cd.ResponseType.Id == responseTypeId)
                                 .SelectMany(r => r.ResponseType.Responses)
                                 .OrderBy(o => o.Filename)
                                 .GroupBy(r => r.StreamId, (key, r) => r.FirstOrDefault())
                                 .Select(f => f.FilePath).ToArray()
 
-                            : _genericProfile.ConfigurationDetails
+                            : _genericProfile.ConfigDetails
                                 .Where(cd => cd.ResponseType.Id == responseTypeId)
                                 .SelectMany(r => r.ResponseType.Responses)
                                 .OrderBy(o => o.Filename)

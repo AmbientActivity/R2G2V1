@@ -6,69 +6,69 @@ using System.Linq;
 
 namespace Keebee.AAT.Operations.Service.Services
 {
-    public interface IConfigurationDetailService
+    public interface IConfigDetailService
     {
-        IEnumerable<ConfigurationDetail> Get();
-        ConfigurationDetail Get(int id);
-        ConfigurationDetail GetWithMedia(int id);
-        int Post(ConfigurationDetail configurationDetail);
-        void Patch(int id, ConfigurationDetail configurationDetail);
+        IEnumerable<ConfigDetail> Get();
+        ConfigDetail Get(int id);
+        ConfigDetail GetWithMedia(int id);
+        int Post(ConfigDetail configDetail);
+        void Patch(int id, ConfigDetail configDetail);
         void Delete(int id);
     }
 
-    public class ConfigurationDetailService : IConfigurationDetailService
+    public class ConfigDetailService : IConfigDetailService
     {
-        public IEnumerable<ConfigurationDetail> Get()
+        public IEnumerable<ConfigDetail> Get()
         {
             var container = new Container(new Uri(ODataHost.Url));
 
-            var configurationDetails = container.ConfigurationDetails
+            var configDetails = container.ConfigDetails
                 .Expand("ActivityType,ResponseType").AsEnumerable();
 
-            return configurationDetails;
+            return configDetails;
         }
 
-        public ConfigurationDetail GetWithMedia(int id)
+        public ConfigDetail GetWithMedia(int id)
         {
             var container = new Container(new Uri(ODataHost.Url));
 
-            return container.ConfigurationDetails.ByKey(id)
+            return container.ConfigDetails.ByKey(id)
                 .Expand("ActivityType,ResponseType")
                 .GetValue();
         }
 
-        public ConfigurationDetail Get(int id)
+        public ConfigDetail Get(int id)
         {
             var container = new Container(new Uri(ODataHost.Url));
 
-            var configurationDetail = container.ConfigurationDetails.ByKey(id)
+            var configDetail = container.ConfigDetails.ByKey(id)
                 .Expand("ActivityType,ResponseType")
                 .GetValue();
 
-            return configurationDetail;
+            return configDetail;
         }
 
-        public int Post(ConfigurationDetail configurationDetail)
+        public int Post(ConfigDetail configDetail)
         {
             var container = new Container(new Uri(ODataHost.Url));
 
-            container.AddToConfigurationDetails(configurationDetail);
+            container.AddToConfigDetails(configDetail);
             container.SaveChanges();
 
-            var configurationDetailId = configurationDetail.Id;
+            var configDetailId = configDetail.Id;
 
-            return configurationDetailId;
+            return configDetailId;
         }
 
-        public void Patch(int id, ConfigurationDetail configurationDetail)
+        public void Patch(int id, ConfigDetail configDetail)
         {
             var container = new Container(new Uri(ODataHost.Url));
 
-            var cd = container.ConfigurationDetails.Where(e => e.Id == id).SingleOrDefault();
+            var cd = container.ConfigDetails.Where(e => e.Id == id).SingleOrDefault();
             if (cd == null) return;
 
-            if (configurationDetail.ResponseTypeId != null)
-                cd.ResponseTypeId = configurationDetail.ResponseTypeId;
+            if (configDetail.ResponseTypeId != null)
+                cd.ResponseTypeId = configDetail.ResponseTypeId;
 
             container.UpdateObject(cd);
             container.SaveChanges();
@@ -78,10 +78,10 @@ namespace Keebee.AAT.Operations.Service.Services
         {
             var container = new Container(new Uri(ODataHost.Url));
 
-            var configurationDetail = container.ConfigurationDetails.Where(e => e.Id == id).SingleOrDefault();
-            if (configurationDetail == null) return;
+            var configDetail = container.ConfigDetails.Where(e => e.Id == id).SingleOrDefault();
+            if (configDetail == null) return;
 
-            container.DeleteObject(configurationDetail);
+            container.DeleteObject(configDetail);
             container.SaveChanges();
         }
     }

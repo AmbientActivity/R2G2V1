@@ -126,8 +126,8 @@
     <Compile Include="Controllers\ActivityTypesController.cs" />
     <Compile Include="Controllers\AmbientResponsesController.cs" />
     <Compile Include="Controllers\CaregiversController.cs" />
-    <Compile Include="Controllers\ConfigurationDetailsController.cs" />
-    <Compile Include="Controllers\ConfigurationsController.cs" />
+    <Compile Include="Controllers\ConfigDetailsController.cs" />
+    <Compile Include="Controllers\ConfigsController.cs" />
     <Compile Include="Controllers\GameTypesController.cs" />
     <Compile Include="Controllers\ActivityEventLogsController.cs" />
     <Compile Include="Controllers\GameEventLogsController.cs" />
@@ -142,8 +142,8 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Models\ConfigurationDetail.cs" />
-    <Compile Include="Models\Configuration.cs" />
+    <Compile Include="Models\ConfigDetail.cs" />
+    <Compile Include="Models\Config.cs" />
     <Compile Include="Models\ActivityType.cs" />
     <Compile Include="Models\AmbientResponse.cs" />
     <Compile Include="Models\Caregiver.cs" />

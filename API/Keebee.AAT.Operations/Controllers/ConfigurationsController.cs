@@ -12,31 +12,31 @@ using System.Web.Script.Serialization;
 
 namespace Keebee.AAT.Operations.Controllers
 {
-    [RoutePrefix("api/configurations")]
-    public class ConfigurationsController : ApiController
+    [RoutePrefix("api/configs")]
+    public class ConfigsController : ApiController
     {
-        private readonly IConfigurationService _configurationService;
+        private readonly IConfigService _configService;
 
-        public ConfigurationsController(IConfigurationService configurationService)
+        public ConfigsController(IConfigService configService)
         {
-            _configurationService = configurationService;
+            _configService = configService;
         }
 
-        // GET: api/Configurations
+        // GET: api/Configs
         [HttpGet]
         public async Task<DynamicJsonObject> Get()
         {
-            IEnumerable<Configuration> configurations = new Collection<Configuration>();
+            IEnumerable<Config> configs = new Collection<Config>();
 
             await Task.Run(() =>
             {
-                configurations = _configurationService.Get();
+                configs = _configService.Get();
             });
 
-            if (configurations == null) return new DynamicJsonObject(new ExpandoObject());
+            if (configs == null) return new DynamicJsonObject(new ExpandoObject());
 
             dynamic exObj = new ExpandoObject();
-            exObj.Configurations = configurations.Select(c => new
+            exObj.Configs = configs.Select(c => new
             {
                 c.Id,
                 c.Description
@@ -45,50 +45,50 @@ namespace Keebee.AAT.Operations.Controllers
             return new DynamicJsonObject(exObj);
         }
 
-        // GET: api/Configurations/5
+        // GET: api/Configs/5
         [Route("{id}")]
         [HttpGet]
         public async Task<DynamicJsonObject> Get(int id)
         {
-            var configuration = new Configuration();
+            var config = new Config();
 
             await Task.Run(() =>
             {
-                configuration = _configurationService.Get(id);
+                config = _configService.Get(id);
             });
 
-            if (configuration == null) return new DynamicJsonObject(new ExpandoObject());
+            if (config == null) return new DynamicJsonObject(new ExpandoObject());
 
             dynamic exObj = new ExpandoObject();
-            exObj.Id = configuration.Id;
-            exObj.Description = configuration.Description;
+            exObj.Id = config.Id;
+            exObj.Description = config.Description;
 
             return new DynamicJsonObject(exObj);
         }
 
-        // GET: api/Configurations/active
+        // GET: api/Configs/active
         [Route("active/details")]
         [HttpGet]
         public async Task<DynamicJsonObject> GetActiveDetails()
         {
-            var configuration = new Configuration();
+            var config = new Config();
 
             await Task.Run(() =>
             {
-                configuration = _configurationService.GetActiveDetails();
+                config = _configService.GetActiveDetails();
             });
 
-            if (configuration == null) return new DynamicJsonObject(new ExpandoObject());
+            if (config == null) return new DynamicJsonObject(new ExpandoObject());
 
             dynamic exObj = new ExpandoObject();
 
-            exObj.Id = configuration.Id;
-            exObj.Description = configuration.Description;
-            exObj.IsActive = configuration.IsActive;
-            exObj.ConfigurationDetails = configuration.ConfigurationDetails.Select(cd => new
+            exObj.Id = config.Id;
+            exObj.Description = config.Description;
+            exObj.IsActive = config.IsActive;
+            exObj.ConfigDetails = config.ConfigDetails.Select(cd => new
             {
                 cd.Id,
-                ConfigurationId = configuration.Id,
+                ConfigId = config.Id,
                 ActivityType = new
                 {
                     cd.ActivityType.Id,
@@ -114,24 +114,24 @@ namespace Keebee.AAT.Operations.Controllers
         [HttpGet]
         public async Task<DynamicJsonObject> GetDetails(int id)
         {
-            var configuration = new Configuration();
+            var config = new Config();
 
             await Task.Run(() =>
             {
-                configuration = _configurationService.GetDetails(id);
+                config = _configService.GetDetails(id);
             });
 
-            if (configuration == null) return new DynamicJsonObject(new ExpandoObject());
+            if (config == null) return new DynamicJsonObject(new ExpandoObject());
 
             dynamic exObj = new ExpandoObject();
 
-            exObj.Id = configuration.Id;
-            exObj.Description = configuration.Description;
-            exObj.IsActive = configuration.IsActive;
-            exObj.ConfigurationDetails = configuration.ConfigurationDetails.Select(cd => new
+            exObj.Id = config.Id;
+            exObj.Description = config.Description;
+            exObj.IsActive = config.IsActive;
+            exObj.ConfigDetails = config.ConfigDetails.Select(cd => new
             {
                 cd.Id,
-                ConfigurationId = configuration.Id,
+                ConfigId = config.Id,
                 ActivityType = new
                 {
                     cd.ActivityType.Id,
@@ -158,20 +158,20 @@ namespace Keebee.AAT.Operations.Controllers
         [HttpGet]
         public async Task<DynamicJsonObject> GeMediaForProfile(int id)
         {
-            var configuration = new Configuration();
+            var config = new Config();
 
             await Task.Run(() =>
             {
-                configuration = _configurationService.GetMediaForProfile(id);
+                config = _configService.GetMediaForProfile(id);
             });
 
-            if (configuration == null) return new DynamicJsonObject(new ExpandoObject());
+            if (config == null) return new DynamicJsonObject(new ExpandoObject());
 
             dynamic exObj = new ExpandoObject();
-            exObj.Id = configuration.Id;
-            exObj.Description = configuration.Description;
-            exObj.IsActive = configuration.IsActive;
-            exObj.ConfigurationDetails = configuration.ConfigurationDetails.Select(cd => new
+            exObj.Id = config.Id;
+            exObj.Description = config.Description;
+            exObj.IsActive = config.IsActive;
+            exObj.ConfigDetails = config.ConfigDetails.Select(cd => new
             {
                 cd.Id,
                 ActivityType = new
@@ -200,32 +200,32 @@ namespace Keebee.AAT.Operations.Controllers
             return new DynamicJsonObject(exObj);
         }
 
-        // POST: api/Configurations
+        // POST: api/Configs
         [HttpPost]
         public int Post([FromBody]string value)
         {
             var serializer = new JavaScriptSerializer();
-            var configuration = serializer.Deserialize<Configuration>(value);
+            var config = serializer.Deserialize<Config>(value);
 
-            return _configurationService.Post(configuration);
+            return _configService.Post(config);
         }
 
-        // PUT: api/Configurations/5
+        // PUT: api/Configs/5
         [HttpPatch]
         [Route("{id}")]
         public void Patch(int id, [FromBody]string value)
         {
             var serializer = new JavaScriptSerializer();
-            var configuration = serializer.Deserialize<Configuration>(value);
-            _configurationService.Patch(id, configuration);
+            var config = serializer.Deserialize<Config>(value);
+            _configService.Patch(id, config);
         }
 
-        // DELETE: api/Configurations/5
+        // DELETE: api/Configs/5
         [HttpDelete]
         [Route("{id}")]
         public void Delete(int id)
         {
-            _configurationService.Delete(id);
+            _configService.Delete(id);
         }
     }
 }

@@ -17,12 +17,12 @@ namespace Keebee.AAT.Operations.Controllers
     public class ProfilesController : ApiController
     {
         private readonly IProfileService _profileService;
-        private readonly IConfigurationService _configurationService;
+        private readonly IConfigService _configService;
 
-        public ProfilesController(IProfileService profileService, IConfigurationService configurationService)
+        public ProfilesController(IProfileService profileService, IConfigService configService)
         {
             _profileService = profileService;
-            _configurationService = configurationService;
+            _configService = configService;
         }
 
         // GET: api/Profiles
@@ -88,14 +88,14 @@ namespace Keebee.AAT.Operations.Controllers
 
             if (profile == null) return new DynamicJsonObject(new ExpandoObject());
 
-            var configuration = _configurationService.GetMediaForProfile(profile.Id);
+            var config = _configService.GetMediaForProfile(profile.Id);
 
             dynamic exObj = new ExpandoObject();
             exObj.Id = profile.Id;
             exObj.Description = profile.Description;
             exObj.GameDifficultyLevel = profile.GameDifficultyLevel;
             exObj.DateCreated = profile.DateCreated;
-            exObj.ConfigurationDetails = configuration.ConfigurationDetails.Select(cd => new
+            exObj.ConfigDetails = config.ConfigDetails.Select(cd => new
             {
                 cd.Id,
                 cd.ActivityTypeId,
@@ -123,17 +123,17 @@ namespace Keebee.AAT.Operations.Controllers
 
             if (profile == null) return new DynamicJsonObject(new ExpandoObject());
 
-            var configuration = _configurationService.GetMediaForProfile(profile.Id);
+            var config = _configService.GetMediaForProfile(profile.Id);
 
             dynamic exObj = new ExpandoObject();
             exObj.Id = profile.Id;
             exObj.Description = profile.Description;
             exObj.GameDifficultyLevel = profile.GameDifficultyLevel;
-            exObj.ConfigurationDetails = configuration.ConfigurationDetails
+            exObj.ConfigDetails = config.ConfigDetails
                 .Select(detail => new
                 {
                     detail.Id,
-                    detail.ConfigurationId,
+                    detail.ConfigId,
                     ActivityType = new
                     {
                         detail.ActivityType.Id,
@@ -176,17 +176,17 @@ namespace Keebee.AAT.Operations.Controllers
 
             if (profile == null) return new DynamicJsonObject(new ExpandoObject());
 
-            var configuration = _configurationService.GetMediaForProfileActivityResponseType(profile.Id, activityTypeId, responseTypeId);
+            var config = _configService.GetMediaForProfileActivityResponseType(profile.Id, activityTypeId, responseTypeId);
 
             dynamic exObj = new ExpandoObject();
             exObj.Id = profile.Id;
             exObj.Description = profile.Description;
             exObj.GameDifficultyLevel = profile.GameDifficultyLevel;
-            exObj.ConfigurationDetails = configuration.ConfigurationDetails
+            exObj.ConfigDetails = config.ConfigDetails
                 .Select(detail => new
                 {
                     detail.Id,
-                    detail.ConfigurationId,
+                    detail.ConfigId,
                     ActivityType = new
                     {
                         detail.ActivityType.Id,

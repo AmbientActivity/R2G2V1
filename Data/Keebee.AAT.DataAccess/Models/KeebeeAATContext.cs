@@ -15,9 +15,9 @@ namespace Keebee.AAT.DataAccess.Models
         {
         }
 
-        public DbSet<Configuration> Configurations { get; set; }
+        public DbSet<Config> Configurations { get; set; }
 
-        public DbSet<ConfigurationDetail> ConfigurationDetails { get; set; }
+        public DbSet<ConfigDetail> ConfigurationDetails { get; set; }
 
         public DbSet<Profile> Profiles { get; set; }
 

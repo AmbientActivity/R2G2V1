@@ -11,31 +11,31 @@ using System.Web.Script.Serialization;
 
 namespace Keebee.AAT.Operations.Controllers
 {
-    [RoutePrefix("api/configurationDetails")]
-    public class ConfigurationDetailsController : ApiController
+    [RoutePrefix("api/configDetails")]
+    public class ConfigDetailsController : ApiController
     {
-        private readonly IConfigurationDetailService _configurationDetailService;
+        private readonly IConfigDetailService _configDetailService;
 
-        public ConfigurationDetailsController(IConfigurationDetailService configurationDetailService)
+        public ConfigDetailsController(IConfigDetailService configDetailService)
         {
-            _configurationDetailService = configurationDetailService;
+            _configDetailService = configDetailService;
         }
 
-        // GET: api/ConfigurationDetails
+        // GET: api/ConfigDetails
         [HttpGet]
         public async Task<DynamicJsonObject> Get()
         {
-            IEnumerable<ConfigurationDetail> configurationDetails = new Collection<ConfigurationDetail>();
+            IEnumerable<ConfigDetail> configDetails = new Collection<ConfigDetail>();
 
             await Task.Run(() =>
             {
-                configurationDetails = _configurationDetailService.Get();
+                configDetails = _configDetailService.Get();
             });
 
-            if (configurationDetails == null) return new DynamicJsonObject(new ExpandoObject());
+            if (configDetails == null) return new DynamicJsonObject(new ExpandoObject());
 
             dynamic exObj = new ExpandoObject();
-            exObj.Configurations = configurationDetails.Select(cd => new
+            exObj.Configurations = configDetails.Select(cd => new
             {
                 cd.Id,
                 ActivityType = new
@@ -54,63 +54,63 @@ namespace Keebee.AAT.Operations.Controllers
             return new DynamicJsonObject(exObj);
         }
 
-        // GET: api/ConfigurationDetails/5
+        // GET: api/ConfigDetails/5
         [Route("{id}")]
         [HttpGet]
         public async Task<DynamicJsonObject> Get(int id)
         {
-            var configurationDetail = new ConfigurationDetail();
+            var configDetail = new ConfigDetail();
 
             await Task.Run(() =>
             {
-                configurationDetail = _configurationDetailService.Get(id);
+                configDetail = _configDetailService.Get(id);
             });
 
-            if (configurationDetail == null) return new DynamicJsonObject(new ExpandoObject());
+            if (configDetail == null) return new DynamicJsonObject(new ExpandoObject());
 
             dynamic exObj = new ExpandoObject();
-            exObj.Id = configurationDetail.Id;
+            exObj.Id = configDetail.Id;
             exObj.ActivityType = new
             {
-                configurationDetail.ActivityType.Id,
-                configurationDetail.ActivityType.Description
+                configDetail.ActivityType.Id,
+                configDetail.ActivityType.Description
             };
             exObj.ResponseType = new
             {
-                configurationDetail.ResponseType.Id,
-                configurationDetail.ResponseType.Description,
-                configurationDetail.ResponseType.IsInteractive
+                configDetail.ResponseType.Id,
+                configDetail.ResponseType.Description,
+                configDetail.ResponseType.IsInteractive
             };
 
             return new DynamicJsonObject(exObj);
         }
 
-        // POST: api/ConfigurationDetails
+        // POST: api/ConfigDetails
         [HttpPost]
         public int Post([FromBody]string value)
         {
             var serializer = new JavaScriptSerializer();
-            var configurationDetail = serializer.Deserialize<ConfigurationDetail>(value);
+            var configDetail = serializer.Deserialize<ConfigDetail>(value);
 
-            return _configurationDetailService.Post(configurationDetail);
+            return _configDetailService.Post(configDetail);
         }
 
-        // PUT: api/ConfigurationDetails/5
+        // PUT: api/ConfigDetails/5
         [HttpPatch]
         [Route("{id}")]
         public void Patch(int id, [FromBody]string value)
         {
             var serializer = new JavaScriptSerializer();
-            var configurationDetail = serializer.Deserialize<ConfigurationDetail>(value);
-            _configurationDetailService.Patch(id, configurationDetail);
+            var configDetail = serializer.Deserialize<ConfigDetail>(value);
+            _configDetailService.Patch(id, configDetail);
         }
 
-        // DELETE: api/ConfigurationDetails/5
+        // DELETE: api/ConfigDetails/5
         [HttpDelete]
         [Route("{id}")]
         public void Delete(int id)
         {
-            _configurationDetailService.Delete(id);
+            _configDetailService.Delete(id);
         }
     }
 }

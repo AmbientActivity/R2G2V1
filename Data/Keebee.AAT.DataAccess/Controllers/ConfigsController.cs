@@ -8,26 +8,26 @@ using System.Web.OData;
 
 namespace Keebee.AAT.DataAccess.Controllers
 {
-    public class ConfigurationsController : ODataController
+    public class ConfigsController : ODataController
     {
         private KeebeeAATContext db = new KeebeeAATContext();
 
         [EnableQuery(MaxExpansionDepth = 4)]
         // GET: odata/Configurations
-        public IQueryable<Configuration> Get()
+        public IQueryable<Config> Get()
         {
             return db.Configurations.OrderBy(o => o.Id);
         }
 
         // GET: odata/Configurations(5)
         [EnableQuery(MaxExpansionDepth = 4)]
-        public SingleResult<Configuration> Get([FromODataUri] int key)
+        public SingleResult<Config> Get([FromODataUri] int key)
         {
             return SingleResult.Create(db.Configurations.Where(configuration => configuration.Id == key));
         }
 
         // PUT: odata/Configurations(5)
-        public async Task<IHttpActionResult> Put([FromODataUri] int key, Delta<Configuration> patch)
+        public async Task<IHttpActionResult> Put([FromODataUri] int key, Delta<Config> patch)
         {
             Validate(patch.GetEntity());
 
@@ -36,7 +36,7 @@ namespace Keebee.AAT.DataAccess.Controllers
                 return BadRequest(ModelState);
             }
 
-            Configuration configuration = await db.Configurations.FindAsync(key);
+            Config configuration = await db.Configurations.FindAsync(key);
             if (configuration == null)
             {
                 return NotFound();
@@ -64,7 +64,7 @@ namespace Keebee.AAT.DataAccess.Controllers
         }
 
         // POST: odata/Configurations
-        public async Task<IHttpActionResult> Post(Configuration configuration)
+        public async Task<IHttpActionResult> Post(Config configuration)
         {
             if (!ModelState.IsValid)
             {
@@ -79,7 +79,7 @@ namespace Keebee.AAT.DataAccess.Controllers
 
         // PATCH: odata/Configurations(5)
         [AcceptVerbs("PATCH", "MERGE")]
-        public async Task<IHttpActionResult> Patch([FromODataUri] int key, Delta<Configuration> patch)
+        public async Task<IHttpActionResult> Patch([FromODataUri] int key, Delta<Config> patch)
         {
             Validate(patch.GetEntity());
 
@@ -88,7 +88,7 @@ namespace Keebee.AAT.DataAccess.Controllers
                 return BadRequest(ModelState);
             }
 
-            Configuration configuration = await db.Configurations.FindAsync(key);
+            Config configuration = await db.Configurations.FindAsync(key);
             if (configuration == null)
             {
                 return NotFound();
@@ -118,7 +118,7 @@ namespace Keebee.AAT.DataAccess.Controllers
         // DELETE: odata/Configurations(5)
         public async Task<IHttpActionResult> Delete([FromODataUri] int key)
         {
-            Configuration configuration = await db.Configurations.FindAsync(key);
+            Config configuration = await db.Configurations.FindAsync(key);
             if (configuration == null)
             {
                 return NotFound();

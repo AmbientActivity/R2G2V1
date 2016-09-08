@@ -2,11 +2,11 @@
 
 namespace Keebee.AAT.RESTClient
 {
-    public class Configuration
+    public class Config
     {
         public int Id { get; set; }
         public string Description { get; set; }
         public bool IsActive { get; set; }
-        public virtual IList<ConfigurationDetail> ConfigurationDetails { get; set; }
+        public virtual IList<ConfigDetail> ConfigDetails { get; set; }
     }
 }

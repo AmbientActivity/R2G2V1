@@ -3,12 +3,14 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Keebee.AAT.DataAccess.Models
 {
-    public class ConfigurationDetail
+    public class ConfigDetail
     {
         [Key]
         public int Id { get; set; }
 
-        public int ConfigurationId { get; set; }
+        [ForeignKey("Config")]
+        public int ConfigId { get; set; }
+        public virtual Config Config { get; set; }
 
         [ForeignKey("ActivityType")]
         public int ActivityTypeId { get; set; }

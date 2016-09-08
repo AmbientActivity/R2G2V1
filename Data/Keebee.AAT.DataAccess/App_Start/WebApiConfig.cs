@@ -11,8 +11,8 @@ namespace Keebee.AAT.DataAccess
         {
             var builder = new ODataConventionModelBuilder { Namespace = "KeebeeAAT" };
 
-            builder.EntitySet<Configuration>("Configurations");
-            builder.EntitySet<ConfigurationDetail>("ConfigurationDetails");
+            builder.EntitySet<Config>("Configs");
+            builder.EntitySet<ConfigDetail>("ConfigDetails");
             builder.EntitySet<Resident>("Residents");
             builder.EntitySet<Profile>("Profiles");
             builder.EntitySet<ActivityType>("ActivityTypes");

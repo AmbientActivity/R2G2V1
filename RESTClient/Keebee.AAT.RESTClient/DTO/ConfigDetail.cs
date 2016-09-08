@@ -2,7 +2,7 @@
 
 namespace Keebee.AAT.RESTClient
 {
-    public class ConfigurationDetail
+    public class ConfigDetail
     {
         public int Id { get; set; }
         public int ConfigurationId { get; set; }
@@ -10,8 +10,8 @@ namespace Keebee.AAT.RESTClient
         public ResponseType ResponseType { get; set; }
     }
 
-    public class ConfigurationDetailList
+    public class ConfigDetailList
     {
-        public IEnumerable<ConfigurationDetail> ConfigurationDetails;
+        public IEnumerable<ConfigDetail> ConfigDetails;
     }
 }

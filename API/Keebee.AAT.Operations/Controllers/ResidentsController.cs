@@ -16,9 +16,9 @@ namespace Keebee.AAT.Operations.Controllers
     public class ResidentsController : ApiController
     {
         private readonly IResidentService _residentService;
-        private readonly IConfigurationService _configurationService;
+        private readonly IConfigService _configurationService;
 
-        public ResidentsController(IResidentService residentService, IConfigurationService configurationService)
+        public ResidentsController(IResidentService residentService, IConfigService configurationService)
         {
             _residentService = residentService;
             _configurationService = configurationService;
@@ -119,7 +119,7 @@ namespace Keebee.AAT.Operations.Controllers
                         ResidentId = resident.Id,
                         resident.Profile.GameDifficultyLevel,
                         Media = configuration
-                        .ConfigurationDetails.Select(detail => new
+                        .ConfigDetails.Select(detail => new
                         {
                             ResponseType = new
                             {
@@ -180,10 +180,10 @@ namespace Keebee.AAT.Operations.Controllers
                     Id = resident.ProfileId,
                     ResidentId = resident.Id,
                     resident.Profile.GameDifficultyLevel,
-                    ConfigurationDetails = configuration.ConfigurationDetails.Select(detail => new
+                    ConfigDetails = configuration.ConfigDetails.Select(detail => new
                     {
                         detail.Id,
-                        detail.ConfigurationId,
+                        detail.ConfigId,
                         ActivityType = new
                         {
                             detail.ActivityType.Id,
@@ -267,10 +267,10 @@ namespace Keebee.AAT.Operations.Controllers
             exObj.GameDifficultyLevel = profile.GameDifficultyLevel;
             exObj.DateCreated = profile.DateCreated;
             exObj.DateUpdated = profile.DateUpdated;
-            exObj.ConfigurationDetails = configuration.ConfigurationDetails.Select(c => new 
+            exObj.ConfigDetails = configuration.ConfigDetails.Select(c => new 
             {
                 c.Id,
-                c.ConfigurationId,
+                c.ConfigId,
                 ActivityType = new
                 {
                     c.ActivityType.Id,

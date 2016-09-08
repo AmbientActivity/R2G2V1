@@ -350,6 +350,10 @@
       <Project>{97ca2119-5977-4de5-9c91-a64d97cb9035}</Project>
       <Name>Keebee.AAT.Exporting</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Shared\Keebee.AAT.Shared\Keebee.AAT.Shared.csproj">
+      <Project>{3cb12af2-7655-46f6-9969-990730f73964}</Project>
+      <Name>Keebee.AAT.Shared</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Keebee.AAT.BusinessRules\Keebee.AAT.BusinessRules.csproj">
       <Project>{8b0e0633-3be9-470c-8c3c-ea2960650194}</Project>
       <Name>Keebee.AAT.BusinessRules</Name>

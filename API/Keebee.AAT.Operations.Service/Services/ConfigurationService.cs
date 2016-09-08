@@ -6,79 +6,79 @@ using System.Linq;
 
 namespace Keebee.AAT.Operations.Service.Services
 {
-    public interface IConfigurationService
+    public interface IConfigService
     {
-        IEnumerable<Configuration> Get();
-        Configuration Get(int id);
-        Configuration GetActiveDetails();
-        int Post(Configuration configuration);
-        void Patch(int id, Configuration configuration);
+        IEnumerable<Config> Get();
+        Config Get(int id);
+        Config GetActiveDetails();
+        int Post(Config config);
+        void Patch(int id, Config config);
         void Delete(int id);
-        Configuration GetDetails(int id);
-        Configuration GetMediaForProfile(int profileId);
-        Configuration GetMediaForProfileActivityResponseType(int profileId, int activityTypeId, int responseTypeId);
-        Configuration GetMedia();
+        Config GetDetails(int id);
+        Config GetMediaForProfile(int profileId);
+        Config GetMediaForProfileActivityResponseType(int profileId, int activityTypeId, int responseTypeId);
+        Config GetMedia();
     }
 
-    public class ConfigurationService : IConfigurationService
+    public class ConfigService : IConfigService
     {
-        public IEnumerable<Configuration> Get()
+        public IEnumerable<Config> Get()
         {
             var container = new Container(new Uri(ODataHost.Url));
 
-            var configurations = container.Configurations
+            var configs = container.Configs
                 .AsEnumerable();
 
-            return configurations;
+            return configs;
         }
 
-        public Configuration Get(int id)
+        public Config Get(int id)
         {
             var container = new Container(new Uri(ODataHost.Url));
 
-            var configuration = container.Configurations.ByKey(id)
-                .Expand("ConfigurationDetails")
+            var config = container.Configs.ByKey(id)
+                .Expand("ConfigDetails")
                 .GetValue();
 
-            return configuration;
+            return config;
         }
 
-        public Configuration GetActiveDetails()
+        public Config GetActiveDetails()
         {
             var container = new Container(new Uri(ODataHost.Url));
 
-            var configuration = container.Configurations
-                .Expand("ConfigurationDetails")
+            var config = container.Configs
+                .Expand("ConfigDetails")
                 .AddQueryOption("$filter", "IsActive")
-                .Expand("ConfigurationDetails($expand=ActivityType,ResponseType($expand=ResponseTypeCategory))")
+                .Expand("ConfigDetails($expand=ActivityType,ResponseType($expand=ResponseTypeCategory))")
                 .Single();
 
-            return configuration;
+            return config;
         }
 
-        public int Post(Configuration configuration)
+        public int Post(Config config)
         {
             var container = new Container(new Uri(ODataHost.Url));
 
-            container.AddToConfigurations(configuration);
+            container.AddToConfigs(config);
             container.SaveChanges();
 
-            var configurationId = configuration.Id;
+            var configId = config.Id;
 
             //var responseTypes
 
-            return configurationId;
+            return configId;
         }
 
-        public void Patch(int id, Configuration configuration)
+        public void Patch(int id, Config config)
         {
             var container = new Container(new Uri(ODataHost.Url));
 
-            var c = container.Configurations.Where(e => e.Id == id).SingleOrDefault();
+            var c = container.Configs.Where(e => e.Id == id).SingleOrDefault();
             if (c == null) return;
 
-            if (configuration.Description != null)
-                c.Description = configuration.Description;
+            if (config.Description != null)
+                c.Description = config.Description;
 
             container.UpdateObject(c);
             container.SaveChanges();
@@ -88,61 +88,61 @@ namespace Keebee.AAT.Operations.Service.Services
         {
             var container = new Container(new Uri(ODataHost.Url));
 
-            var configuration = container.Configurations.Where(e => e.Id == id).SingleOrDefault();
-            if (configuration == null) return;
+            var config = container.Configs.Where(e => e.Id == id).SingleOrDefault();
+            if (config == null) return;
 
-            container.DeleteObject(configuration);
+            container.DeleteObject(config);
             container.SaveChanges();
         }
         
-        public Configuration GetDetails(int id)
+        public Config GetDetails(int id)
         {
             var container = new Container(new Uri(ODataHost.Url));
 
-            var configuration = container.Configurations.ByKey(id)
-                 .Expand("ConfigurationDetails($expand=ActivityType,ResponseType($expand=ResponseTypeCategory))")
+            var config = container.Configs.ByKey(id)
+                 .Expand("ConfigDetails($expand=ActivityType,ResponseType($expand=ResponseTypeCategory))")
                 .GetValue();
 
-            return configuration;
+            return config;
         }
 
-        public Configuration GetMediaForProfile(int profileId)
+        public Config GetMediaForProfile(int profileId)
         {
             var container = new Container(new Uri(ODataHost.Url));
 
-            var configuration = container.Configurations
+            var config = container.Configs
                     .AddQueryOption("$filter", "IsActive")
-                    .Expand("ConfigurationDetails($filter=ResponseType/IsSystem eq false;" +
+                    .Expand("ConfigDetails($filter=ResponseType/IsSystem eq false;" +
                             "$expand=ActivityType,ResponseType($expand=ResponseTypeCategory," +
                             $"Responses($filter=ProfileId eq {profileId};$expand=MediaFile)))")
                     .Single();
 
-            return configuration;
+            return config;
         }
 
-        public Configuration GetMediaForProfileActivityResponseType(int profileId, int activityTypeId, int responseTypeId)
+        public Config GetMediaForProfileActivityResponseType(int profileId, int activityTypeId, int responseTypeId)
         {
             var container = new Container(new Uri(ODataHost.Url));
 
-            var configuration = container.Configurations
+            var config = container.Configs
                     .AddQueryOption("$filter", "IsActive")
-                    .Expand($"ConfigurationDetails($filter=ActivityTypeId eq {activityTypeId} and ResponseTypeId eq {responseTypeId};" +
+                    .Expand($"ConfigDetails($filter=ActivityTypeId eq {activityTypeId} and ResponseTypeId eq {responseTypeId};" +
                             $"$expand=ActivityType,ResponseType($expand=ResponseTypeCategory,Responses($filter=ProfileId eq {profileId};$expand=MediaFile)))")
                     .FirstOrDefault();
 
-            return configuration;
+            return config;
         }
 
-        public Configuration GetMedia()
+        public Config GetMedia()
         {
             var container = new Container(new Uri(ODataHost.Url));
 
-            var configuration = container.Configurations
+            var config = container.Configs
                     .AddQueryOption("$filter", "IsActive")
-                    .Expand("ConfigurationDetails($expand=ActivityType,ResponseType($expand=Responses($expand=MediaFile)))")
+                    .Expand("ConfigDetails($expand=ActivityType,ResponseType($expand=Responses($expand=MediaFile)))")
                     .FirstOrDefault();
 
-            return configuration;
+            return config;
         }
     }
 }

@@ -24,8 +24,8 @@ namespace Keebee.AAT.RESTClient
         bool ResidentProfileExists(int residentId);
         Profile GetGenericProfile();
         Profile GetResidentProfile(int residentId);
-        Configuration GetActiveConfigurationDetails();
-        Configuration GetConfigurationDetails(int id);
+        Config GetActiveConfigDetails();
+        Config GetConfigDetails(int id);
         Profile GetProfileMedia(int profileId);
         IEnumerable<Response> GetProfileMediaForActivityResponseType(int profileId, int activityTypeId, int responseTypeId);
 
@@ -59,8 +59,8 @@ namespace Keebee.AAT.RESTClient
         private const string UrlProfile = "profiles/{0}";
         private const string UrlProfileDetails = "profiles/{0}/details";
         private const string UrlProfileMedia = "profiles/{0}/media";
-        private const string UrlConfigurationDetails = "configurations/{0}/details";
-        private const string UrlActiveConfigurationDetails = "configurations/active/details";
+        private const string UrlConfigDetails = "configs/{0}/details";
+        private const string UrlActiveConfigDetails = "configs/active/details";
         private const string UrlProfileMediaForActivityResponseType = "profiles/{0}/media?activityTypeId={1}&responseTypeId={2}";
         private const string UrlAmbientResponses = "ambientresponses";
         private const string UrlActivityEventLogs = "activityeventlogs";
@@ -190,24 +190,24 @@ namespace Keebee.AAT.RESTClient
             return profile;
         }
 
-        public Configuration GetActiveConfigurationDetails()
+        public Config GetActiveConfigDetails()
         {
-            var data = Get(UrlActiveConfigurationDetails);
+            var data = Get(UrlActiveConfigDetails);
             if (data == null) return null;
 
             var serializer = new JavaScriptSerializer();
-            var config = serializer.Deserialize<Configuration>(data);
+            var config = serializer.Deserialize<Config>(data);
 
             return config;
         }
 
-        public Configuration GetConfigurationDetails(int id)
+        public Config GetConfigDetails(int id)
         {
-            var data = Get(string.Format(UrlConfigurationDetails, id));
+            var data = Get(string.Format(UrlConfigDetails, id));
             if (data == null) return null;
 
             var serializer = new JavaScriptSerializer();
-            var config = serializer.Deserialize<Configuration>(data);
+            var config = serializer.Deserialize<Config>(data);
 
             return config;
         }
@@ -229,8 +229,8 @@ namespace Keebee.AAT.RESTClient
             if (data == null) return null;
 
             var serializer = new JavaScriptSerializer();
-            var details = serializer.Deserialize<ConfigurationDetailList>(data)
-                .ConfigurationDetails.Single()
+            var details = serializer.Deserialize<ConfigDetailList>(data)
+                .ConfigDetails.Single()
                 .ResponseType.Responses;
 
             return details;

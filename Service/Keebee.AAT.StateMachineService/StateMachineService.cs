@@ -26,11 +26,11 @@ namespace Keebee.AAT.StateMachineService
         // event logger
         private readonly SystemEventLogger _systemEventLogger;
 
-        // active configuration
-        private Configuration _activeConfiguration;
+        // active config
+        private Config _activeConfig;
 
         // TODO: make this triggerable through Admin Interface via message queue
-        private bool _reloadConfiguration = true;
+        private bool _reloadConfig = true;
 
         // active profile
         private Profile _activeProfile;
@@ -115,18 +115,18 @@ namespace Keebee.AAT.StateMachineService
         {
             try
             {
-                if (_reloadConfiguration) // TODO: trigger this through the Admin Interface
+                if (_reloadConfig) // TODO: trigger this through the Admin Interface
                 {
-                    _activeConfiguration = _opsClient.GetActiveConfigurationDetails();
-                    _reloadConfiguration = false;
+                    _activeConfig = _opsClient.GetActiveConfigDetails();
+                    _reloadConfig = false;
                 }
 
-                // if the activity type is not defined in this configuration then exit
-                if (_activeConfiguration.ConfigurationDetails.All(x => x.ActivityType.Id != activityTypeId))
+                // if the activity type is not defined in this config then exit
+                if (_activeConfig.ConfigDetails.All(x => x.ActivityType.Id != activityTypeId))
                     return;
 
                 var responseType =
-                    _activeConfiguration.ConfigurationDetails
+                    _activeConfig.ConfigDetails
                     .Single(cd => cd.ActivityType.Id == activityTypeId)
                     .ResponseType;
 

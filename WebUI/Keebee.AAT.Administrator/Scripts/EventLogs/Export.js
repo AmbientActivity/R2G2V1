@@ -1,6 +1,6 @@
 ﻿/*!
  * 1.0 Keebee AAT Copyright © 2015
- * EventLog/Export.js
+ * EventLogs/Export.js
  * Author: John Charlton
  * Date: 2016-08
  */

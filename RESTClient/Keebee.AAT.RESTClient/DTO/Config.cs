@@ -9,4 +9,15 @@ namespace Keebee.AAT.RESTClient
         public bool IsActive { get; set; }
         public virtual IList<ConfigDetail> ConfigDetails { get; set; }
     }
+
+    public class ConfigEdit
+    {
+        public string Description { get; set; }
+        public bool IsActive { get; set; }
+    }
+
+    public class ConfigList
+    {
+        public virtual IList<Config> Configs { get; set; }
+    }
 }

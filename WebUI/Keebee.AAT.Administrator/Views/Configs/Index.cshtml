@@ -1,0 +1,29 @@
+﻿@model Keebee.AAT.Administrator.ViewModels.ConfigViewModel
+
+@{
+    ViewBag.Title = "Configurations";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h3>System Configurations</h3>
+
+<script type="text/javascript">
+    $(document)
+        .ready(function() {
+            configs.index.init();
+        });
+</script>
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <button id="activate" class="btn btn-primary btn-lg">Activate</button>
+    </div>
+    <div class="panel-body">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="label label-default">Configurations</div>
+                @Html.DropDownList("ddlConfigs", @Model.Configs, new { @class = "form-control" })
+            </div>
+        </div>
+    </div>
+</div>

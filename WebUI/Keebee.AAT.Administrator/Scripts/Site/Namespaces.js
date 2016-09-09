@@ -3,4 +3,5 @@
     window.residents = {};
     window.profiles = {};
     window.eventlogs = {};
+    window.configs = {};
 })();

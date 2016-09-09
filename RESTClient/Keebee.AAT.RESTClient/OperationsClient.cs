@@ -23,6 +23,7 @@ namespace Keebee.AAT.RESTClient
         bool ResidentProfileExists(int residentId);
         Profile GetGenericProfile();
         Profile GetResidentProfile(int residentId);
+        IEnumerable<Config> GetConfigs();
         Config GetActiveConfigDetails();
         Config GetConfigDetails(int id);
         Profile GetProfileMedia(int profileId);
@@ -37,6 +38,7 @@ namespace Keebee.AAT.RESTClient
         void PostActivityEventLog(ActivityEventLog activityEventLog);
         void PostGameEventLog(GameEventLog gameEventLog);
         void PostRfidEventLog(RfidEventLog rfidEventLog);
+        void PostActivateConfig(int configId);
 
         // PATCH
         void PatchResident(int residentId, ResidentEdit resident);
@@ -53,9 +55,11 @@ namespace Keebee.AAT.RESTClient
     {
         private const string UriBase = "http://localhost/Keebee.AAT.Operations/api/";
 
-        // configuration
+        // configurations
+        private const string UrlConfigs = "configs";
         private const string UrlConfigDetails = "configs/{0}/details";
         private const string UrlActiveConfigDetails = "configs/active/details";
+        private const string UrlActivateConfig = "configs/{0}/activate";
 
         // residents
         private const string UrlResidents = "residents";
@@ -207,6 +211,17 @@ namespace Keebee.AAT.RESTClient
             return config;
         }
 
+        public IEnumerable<Config> GetConfigs()
+        {
+            var data = Get(UrlConfigs);
+            if (data == null) return null;
+
+            var serializer = new JavaScriptSerializer();
+            var config = serializer.Deserialize<ConfigList>(data).Configs;
+
+            return config;
+        }
+
         public Config GetConfigDetails(int id)
         {
             var data = Get(string.Format(UrlConfigDetails, id));
@@ -306,6 +321,11 @@ namespace Keebee.AAT.RESTClient
             var el = serializer.Serialize(rfidEventLog);
 
             Post(UrlRfidEventLogs, el);
+        }
+
+        public void PostActivateConfig(int configId)
+        {
+            Post(string.Format(UrlActivateConfig, configId), string.Empty);
         }
 
         // PATCH

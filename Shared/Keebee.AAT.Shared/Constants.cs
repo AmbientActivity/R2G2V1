@@ -17,6 +17,7 @@
     //TODO: add an asociatian to this file in the database somehow
     public static class MediaPath
     {
+        public const string ProfileRoot = @"sqlexpress\KeebeeAATFilestream\Media\Profiles";
         public const string CatsVideo = @"sqlexpress\KeebeeAATFilestream\Media\Cats\Cats.mp4";
     }
 

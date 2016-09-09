@@ -1,6 +1,7 @@
 ﻿using System;
 using Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models;
 using Keebee.AAT.Operations.Service.Services;
+using Keebee.AAT.Operations.Service.FileManagement;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Dynamic;
@@ -223,7 +224,12 @@ namespace Keebee.AAT.Operations.Controllers
             var profile = serializer.Deserialize<Profile>(value);
             profile.DateCreated = DateTime.Now;
 
-            return _profileService.Post(profile);
+            var profileId = _profileService.Post(profile);
+
+            var profileManager = new ProfileManager();
+            profileManager.CreateFolders(profileId);
+
+            return profileId;
         }
 
         // PUT: api/Profiles/5
@@ -242,6 +248,9 @@ namespace Keebee.AAT.Operations.Controllers
         public void Delete(int id)
         {
             _profileService.Delete(id);
+
+            var profileManager = new ProfileManager();
+            profileManager.DeleteFolders(id);
         }
     }
 }

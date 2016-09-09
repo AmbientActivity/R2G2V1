@@ -13,7 +13,8 @@ namespace Keebee.AAT.SystemEventLogging
         RfidReaderService = 5,
         PhidgetService = 6,
         EventLog = 7,
-        AutomatedExport = 8
+        AutomatedExport = 8,
+        FileManager = 9
     }
 
     public class SystemEventLogger
@@ -26,6 +27,7 @@ namespace Keebee.AAT.SystemEventLogging
         private const string EventLogPhidgetService = "R2G2 Phidget Service";
         private const string EventLogEventLog = "R2G2 Event Log";
         private const string EventLogAutomatedExport = "R2G2 Automated Export";
+        private const string EventLogFileManager = "R2G2 File Manager";
 
         private EventLog _eventLog;
         public EventLog EventLog
@@ -75,6 +77,9 @@ namespace Keebee.AAT.SystemEventLogging
                     break;
                 case SystemEventLogType.AutomatedExport:
                     literal = EventLogAutomatedExport;
+                    break;
+                case SystemEventLogType.FileManager:
+                    literal = EventLogFileManager;
                     break;
             }
             return literal;

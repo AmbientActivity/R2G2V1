@@ -44,6 +44,9 @@ namespace Keebee.AAT.RESTClient
         // DELETE
         void DeleteResident(int residentId);
         void DeleteProfile(int profileId);
+        void DeleteActivityEventLogsForResident(int residentId);
+        void DeleteGameEventLogsForResident(int residentId);
+        void DeleteRfidEventLogsForResident(int residentId);
     }
 
     public class OperationsClient : IOperationsClient
@@ -72,14 +75,17 @@ namespace Keebee.AAT.RESTClient
 
         // activity event logs
         private const string UrlActivityEventLogs = "activityeventlogs";
+        private const string UrlActivityEventLogsForResident = "activityeventlogs?residentId={0}";
         private const string UrlActivityEventLogsForDate = "activityeventlogs?date={0}";
 
         // game event logs
         private const string UrlGameEventLogs = "gameeventlogs";
+        private const string UrlGameEventLogsForResident = "gameeventlogs?residentId={0}";
         private const string UrlGameEventLogsForDate = "gameeventlogs?date={0}";
 
         // rfid event logs
         private const string UrlRfidEventLogs = "rfideventlogs";
+        private const string UrlRfidEventLogsForResident = "rfideventlogs?residentId={0}";
         private const string UrlRfidEventLogsForDate = "rfideventlogs?date={0}";
 
         private SystemEventLogger _systemEventLogger;
@@ -322,6 +328,20 @@ namespace Keebee.AAT.RESTClient
             Delete(string.Format(UrlProfile, profileId));
         }
 
+        public void DeleteActivityEventLogsForResident(int residentId)
+        {
+            Delete(string.Format(UrlActivityEventLogsForResident, residentId));
+        }
+
+        public void DeleteGameEventLogsForResident(int residentId)
+        {
+            Delete(string.Format(UrlGameEventLogsForResident, residentId));
+        }
+
+        public void DeleteRfidEventLogsForResident(int residentId)
+        {
+            Delete(string.Format(UrlRfidEventLogsForResident, residentId));
+        }
         // private
         private string Get(string url)
         {

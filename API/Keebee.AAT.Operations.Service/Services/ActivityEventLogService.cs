@@ -14,6 +14,7 @@ namespace Keebee.AAT.Operations.Service.Services
         void Post(ActivityEventLog activityEventLog);
         void Patch(int id, ActivityEventLog activityEventLog);
         void Delete(int id);
+        void DeleteForResident(int residentId);
     }
 
     public class ActivityEventLogService : IActivityEventLogService
@@ -101,6 +102,17 @@ namespace Keebee.AAT.Operations.Service.Services
             if (activityEventLog == null) return;
 
             container.DeleteObject(activityEventLog);
+            container.SaveChanges();
+        }
+
+        public void DeleteForResident(int residentId)
+        {
+            var container = new Container(new Uri(ODataHost.Url));
+
+            var activityEventLogs = container.ActivityEventLogs.Where(e => e.ResidentId == residentId).SingleOrDefault();
+            if (activityEventLogs == null) return;
+
+            container.DeleteObject(activityEventLogs);
             container.SaveChanges();
         }
     }

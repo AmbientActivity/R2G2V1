@@ -140,5 +140,13 @@ namespace Keebee.AAT.Operations.Controllers
         {
             _activityEventLogService.Delete(id);
         }
+
+        // DELETE: api/ActivityEventLogs?residentId=5
+        [HttpDelete]
+        [Route("{id}")]
+        public void DeleteForResident(int residentId)
+        {
+            _activityEventLogService.Delete(residentId);
+        }
     }
 }

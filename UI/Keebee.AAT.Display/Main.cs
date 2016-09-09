@@ -68,7 +68,7 @@ namespace Keebee.AAT.Display
         private ActiveProfile _currentProfile;
 
         // flags
-        private bool _isNewActivityResponse;
+        private bool _isNewResponse;
         private bool _isMatchingGameTimeoutExpired;
 
         // caregiver interface
@@ -106,6 +106,7 @@ namespace Keebee.AAT.Display
             matchingGame1.MatchingGameTimeoutExpiredEvent += MatchingGameTimeoutExpired;
             matchingGame1.LogGameEventEvent += LogGameEvent;
             mediaPlayer1.LogActivityEventEvent += LogActivityEvent;
+
             InitializeStartupPosition();
 
             _currentResponseTypeId = ResponseTypeId.Ambient;
@@ -218,7 +219,7 @@ namespace Keebee.AAT.Display
         private bool ShouldExecute(int responseTypeId)
         {
             // if it is a new activity/response type then execute it
-            if (_isNewActivityResponse) return true;
+            if (_isNewResponse) return true;
 
             // if it is a media player response type then execute it
             return (responseTypeId == ResponseTypeId.Television) || (responseTypeId == ResponseTypeId.Radio); 
@@ -266,7 +267,7 @@ namespace Keebee.AAT.Display
             }
             else
             {
-                if (_isNewActivityResponse)
+                if (_isNewResponse)
                 {
                     var mediaFiles = GetResponseFiles(responseTypeId);
                     if (!mediaFiles.Any()) return;
@@ -386,6 +387,14 @@ namespace Keebee.AAT.Display
                     .Select(x => x.FilePath)
                     .ToArray();
 
+            // if no media found, load generic content
+            if (!files.Any())
+                files = _opsClient.GetProfileMediaForActivityResponseType(ProfileId.Generic, _currenActivityTypeId, responseTypeId)
+                        .Where(x => x.FileType == fileType || fileType == null)
+                        .OrderBy(x => x.FilePath)
+                        .Select(x => x.FilePath)
+                        .ToArray();
+
             return files;
         }
 
@@ -471,12 +480,13 @@ namespace Keebee.AAT.Display
             var serializer = new JavaScriptSerializer();
             var response = serializer.Deserialize<ResponseMessage>(e.MessageBody);
 
-            _currentProfile = response.ActiveProfile;
-
-            _isNewActivityResponse = 
+            _isNewResponse = 
                 (response.ResponseTypeId != _currentResponseTypeId) ||
-                (response.ActivityTypeId != _currenActivityTypeId);
+                (response.ActivityTypeId != _currenActivityTypeId) ||
+                (response.ActiveProfile.Id != _currentProfile.Id) ||
+                (response.ActiveProfile.ResidentId != _currentProfile.ResidentId);
 
+            _currentProfile = response.ActiveProfile;
             _currenActivityTypeId = response.ActivityTypeId;
 
             ExecuteResponse(response.ResponseTypeId, response.SensorValue, response.IsSystem);
@@ -501,7 +511,7 @@ namespace Keebee.AAT.Display
             {
                 mediaPlayer1.Hide();
                 ResumeAmbient();
-                _isNewActivityResponse = true;
+                _isNewResponse = true;
             }
             catch (Exception ex)
             {
@@ -529,7 +539,7 @@ namespace Keebee.AAT.Display
                 _isMatchingGameTimeoutExpired = true;
                 matchingGame1.Hide();
                 ResumeAmbient();
-                _isNewActivityResponse = true;
+                _isNewResponse = true;
             }
             catch (Exception ex)
             {
@@ -555,7 +565,7 @@ namespace Keebee.AAT.Display
             try
             {
                 ResumeAmbient();
-                _isNewActivityResponse = true;
+                _isNewResponse = true;
             }
             catch (Exception ex)
             {

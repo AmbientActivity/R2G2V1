@@ -10,7 +10,8 @@ namespace Keebee.AAT.Operations.Service.Services
     {
         IEnumerable<Response> Get();
         Response Get(int id);
-        void Post(Response response);
+        IEnumerable<Response> GetForProfile(int profileId);
+        int Post(Response response);
         void Patch(int id, Response response);
         void Delete(int id);
     }
@@ -39,12 +40,26 @@ namespace Keebee.AAT.Operations.Service.Services
             return response;
         }
 
-        public void Post(Response response)
+        public IEnumerable<Response> GetForProfile(int profileId)
+        {
+            var container = new Container(new Uri(ODataHost.Url));
+
+            var responses = container.Responses
+                .AddQueryOption("$filter", $"ProfileId eq {profileId}")
+                .Expand("MediaFile")
+                .AsEnumerable();
+
+            return responses;
+        }
+
+        public int Post(Response response)
         {
             var container = new Container(new Uri(ODataHost.Url));
 
             container.AddToResponses(response);
             container.SaveChanges();
+
+            return response.Id;
         }
 
         public void Patch(int id, Response response)

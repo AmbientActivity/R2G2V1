@@ -66,15 +66,38 @@ namespace Keebee.AAT.Operations.Controllers
             return new DynamicJsonObject(exObj);
         }
 
-        // POST: api/Responses/5   <== ProfileDetailId
-        [Route("{id}")]
+        // GET: api/Responses?profileId=5
+        [HttpGet]
+        public async Task<DynamicJsonObject> GetForProfile(int profileId)
+        {
+            IEnumerable<Response> responses = new Collection<Response>();
+
+            await Task.Run(() =>
+            {
+                responses = _responseService.GetForProfile(profileId);
+            });
+
+            if (responses == null) return new DynamicJsonObject(new ExpandoObject());
+
+            dynamic exObj = new ExpandoObject();
+            exObj.Responses = responses.Select(r => new
+            {
+                r.Id,
+                r.StreamId,
+                r.MediaFile.Filename
+            });
+
+            return new DynamicJsonObject(exObj);
+        }
+
+        // POST: api/Responses
         [HttpPost]
-        public void Post(int id, [FromBody]string value)
+        public int Post([FromBody]string value)
         {
             var serializer = new JavaScriptSerializer();
             var response = serializer.Deserialize<Response>(value);
             
-            _responseService.Post(response);
+            return _responseService.Post(response);
         }
 
         // PATCH: api/Responses/5
@@ -82,11 +105,15 @@ namespace Keebee.AAT.Operations.Controllers
         [HttpPatch]
         public void Patch(int id, [FromBody]string value)
         {
+            var serializer = new JavaScriptSerializer();
+            var response = serializer.Deserialize<Response>(value);
+            _responseService.Patch(id, response);
         }
 
         // DELETE: api/Responses/5
         public void Delete(int id)
         {
+            _responseService.Delete(id);
         }
     }
 }

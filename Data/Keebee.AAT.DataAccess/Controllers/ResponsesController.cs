@@ -14,12 +14,12 @@ namespace Keebee.AAT.DataAccess.Controllers
 
         // GET: odata/Response
         [EnableQuery]
-        public IQueryable<Response> GetResponse()
+        public IQueryable<Response> GetResponses()
         {
             return db.Responses;
         }
 
-        // GET: odata/Response(5)
+        // GET: odata/Responses(5)
         [EnableQuery]
         public SingleResult<Response> GetResponse([FromODataUri] int key)
         {

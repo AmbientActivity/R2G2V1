@@ -64,8 +64,8 @@ namespace Keebee.AAT.Display
         private int _currenActivityTypeId;
         private int _currentResponseTypeId;
 
-        // current profile
-        private ActiveProfile _currentProfile;
+        // active profile
+        private ActiveProfile _activeProfile;
 
         // flags
         private bool _isNewResponse;
@@ -105,7 +105,7 @@ namespace Keebee.AAT.Display
             mediaPlayer1.MediaPlayerCompleteEvent += MediaPlayerComplete;
             matchingGame1.MatchingGameTimeoutExpiredEvent += MatchingGameTimeoutExpired;
             matchingGame1.LogGameEventEvent += LogGameEvent;
-            mediaPlayer1.LogActivityEventEvent += LogActivityEvent;
+            mediaPlayer1.LogVideoActivityEventEvent += LogVideoActivityEvent;
 
             InitializeStartupPosition();
 
@@ -347,8 +347,8 @@ namespace Keebee.AAT.Display
 
                 slideViewerFlash1.Show();
                 slideViewerFlash1.Play(images);
-                
-                _activityEventLogger.Add(_currentProfile.ResidentId, _currenActivityTypeId, _currentResponseTypeId);
+
+                _activityEventLogger.Add(_activeProfile.ResidentId, _currenActivityTypeId, ResponseTypeId.SlidShow);
 
                 _currentResponseTypeId = ResponseTypeId.SlidShow;
             }
@@ -370,10 +370,10 @@ namespace Keebee.AAT.Display
 
                 matchingGame1.Show();
 
-                _activityEventLogger.Add(_currentProfile.ResidentId, _currenActivityTypeId, _currentResponseTypeId);
-                _gameEventLogger.Add(_currentProfile.ResidentId, GameTypeId.MatchThePictures, _currentProfile.GameDifficultyLevel, null, "New game has been initiated");
+                _activityEventLogger.Add(_activeProfile.ResidentId, _currenActivityTypeId, ResponseTypeId.MatchingGame);
+                _gameEventLogger.Add(_activeProfile.ResidentId, GameTypeId.MatchThePictures, _activeProfile.GameDifficultyLevel, null, "New game has been initiated");
 
-                matchingGame1.Play(shapes, _currentProfile.GameDifficultyLevel, true);
+                matchingGame1.Play(shapes, _activeProfile.GameDifficultyLevel, true);
 
                 _currentResponseTypeId = ResponseTypeId.MatchingGame;
             }
@@ -381,7 +381,7 @@ namespace Keebee.AAT.Display
 
         private string[] GetResponseFiles(int responseTypeId, string fileType = null)
         {
-            var files = _opsClient.GetProfileMediaForActivityResponseType(_currentProfile.Id, _currenActivityTypeId, responseTypeId)
+            var files = _opsClient.GetProfileMediaForActivityResponseType(_activeProfile.Id, _currenActivityTypeId, responseTypeId)
                     .Where(x => x.FileType == fileType || fileType == null)
                     .OrderBy(x => x.FilePath)
                     .Select(x => x.FilePath)
@@ -483,10 +483,10 @@ namespace Keebee.AAT.Display
             _isNewResponse = 
                 (response.ResponseTypeId != _currentResponseTypeId) ||
                 (response.ActivityTypeId != _currenActivityTypeId) ||
-                (response.ActiveProfile.Id != _currentProfile.Id) ||
-                (response.ActiveProfile.ResidentId != _currentProfile.ResidentId);
+                (response.ActiveProfile.Id != _activeProfile.Id) ||
+                (response.ActiveProfile.ResidentId != _activeProfile.ResidentId);
 
-            _currentProfile = response.ActiveProfile;
+            _activeProfile = response.ActiveProfile;
             _currenActivityTypeId = response.ActivityTypeId;
 
             ExecuteResponse(response.ResponseTypeId, response.SensorValue, response.IsSystem);
@@ -524,7 +524,7 @@ namespace Keebee.AAT.Display
             try
             {
                 var args = (MatchingGame.LogGameEventEventArgs)e;
-                _gameEventLogger.Add(_currentProfile.ResidentId, args.GameTypeId, args.DifficultyLevel, args.Success, args.Description);
+                _gameEventLogger.Add(_activeProfile.ResidentId, args.GameTypeId, args.DifficultyLevel, args.Success, args.Description);
             }
             catch (Exception ex)
             {
@@ -547,12 +547,12 @@ namespace Keebee.AAT.Display
             }
         }
 
-        private void LogActivityEvent(object sender, EventArgs e)
+        private void LogVideoActivityEvent(object sender, EventArgs e)
         {
             try
             {
-                var args = (MediaPlayer.LogActivityEventEventArgs)e;
-                _activityEventLogger.Add(_currentProfile.ResidentId, _currenActivityTypeId, _currentResponseTypeId, args.Description);
+                var args = (MediaPlayer.LogVideoActivityEventEventArgs)e;
+                _activityEventLogger.Add(_activeProfile.ResidentId, _currenActivityTypeId, _currentResponseTypeId, args.Description);
             }
             catch (Exception ex)
             {

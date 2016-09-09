@@ -14,7 +14,7 @@ namespace Keebee.AAT.RESTClient
         public string Date { get; set; }
         public string Time { get; set; }
         public string Resident { get; set; }
-        public string ActivityTypeDesc { get; set; }
+        public string ActivityType { get; set; }
         public string ResponseType { get; set; }
         public string ResponseTypeCategory { get; set; }
     }

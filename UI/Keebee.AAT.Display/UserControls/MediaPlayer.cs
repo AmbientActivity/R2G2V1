@@ -20,14 +20,14 @@ namespace Keebee.AAT.Display.UserControls
 
         // event handler
         public event EventHandler MediaPlayerCompleteEvent;
-        public event EventHandler LogActivityEventEvent;
+        public event EventHandler LogVideoActivityEventEvent;
 
-        public class LogActivityEventEventArgs : EventArgs
+        public class LogVideoActivityEventEventArgs : EventArgs
         {
             public string Description { get; set; }
         }
 
-        private delegate void RaiseLogActivityEventEventDelegate(string description);
+        private delegate void RaiseLogVideoActivityEventEventDelegate(string description);
 
         // delegate
         private delegate void PlayMediaDelegate(string[] files);
@@ -168,21 +168,21 @@ namespace Keebee.AAT.Display.UserControls
             }
         }
 
-        private void RaiseLogActivityEventEvent(string description)
+        private void RaiseLogVideoActivityEventEvent(string description)
         {
             if (IsDisposed) return;
 
             if (InvokeRequired)
             {
-                Invoke(new RaiseLogActivityEventEventDelegate(RaiseLogActivityEventEvent));
+                Invoke(new RaiseLogVideoActivityEventEventDelegate(RaiseLogVideoActivityEventEvent));
             }
             else
             {
-                var args = new MediaPlayer.LogActivityEventEventArgs
+                var args = new LogVideoActivityEventEventArgs
                 {
                     Description = description
                 };
-                LogActivityEventEvent?.Invoke(new object(), args);
+                LogVideoActivityEventEvent?.Invoke(new object(), args);
             }
         }
 
@@ -192,7 +192,7 @@ namespace Keebee.AAT.Display.UserControls
             {
                 case (int)WMPPlayState.wmppsPlaying:
                     _currentPlaylistItem = axWindowsMediaPlayer1.currentMedia.name;
-                    RaiseLogActivityEventEvent(axWindowsMediaPlayer1.currentMedia.name);
+                    RaiseLogVideoActivityEventEvent(axWindowsMediaPlayer1.currentMedia.name);
                     break;
                 case (int)WMPPlayState.wmppsMediaEnded:
                     

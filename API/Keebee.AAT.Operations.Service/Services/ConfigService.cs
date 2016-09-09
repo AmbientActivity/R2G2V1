@@ -166,6 +166,9 @@ namespace Keebee.AAT.Operations.Service.Services
             var container = new Container(new Uri(ODataHost.Url));
 
             var configs = container.Configs.ToList();
+
+            if (configs.All(c => c.Id != id)) return;
+
             foreach (var cg in configs)
             {
                 cg.IsActive = (cg.Id == id);

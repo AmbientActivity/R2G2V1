@@ -10,6 +10,8 @@ namespace Keebee.AAT.Operations.Service.Services
     {
         IEnumerable<MediaFile> Get();
         MediaFile Get(Guid streamId);
+        IEnumerable<MediaFile> GetForProfile(int profileId);
+        IEnumerable<MediaFile> GetForProfileFolder(int profileId, string folder);
     }
 
     public class MediaService : IMediaService
@@ -18,10 +20,10 @@ namespace Keebee.AAT.Operations.Service.Services
         {
             var container = new Container(new Uri(ODataHost.Url));
 
-            var medias = container.MediaFiles
+            var media = container.MediaFiles
                 .AsEnumerable();
 
-            return medias;
+            return media;
         }
 
         public MediaFile Get(Guid streamId)
@@ -30,6 +32,29 @@ namespace Keebee.AAT.Operations.Service.Services
 
             var media = container.MediaFiles.ByKey(streamId)
                 .GetValue();
+
+            return media;
+        }
+
+        public IEnumerable<MediaFile> GetForProfile(int profileId)
+        {
+            var container = new Container(new Uri(ODataHost.Url));
+
+            var media = container.MediaFiles
+                .AddQueryOption("$filter", $@"indexof(Path, 'Profiles\{profileId}') gt 0 and IsFolder eq false")
+                .AsEnumerable();
+
+            return media;
+        }
+
+        public IEnumerable<MediaFile> GetForProfileFolder(int profileId, string folder)
+        {
+            var container = new Container(new Uri(ODataHost.Url));
+
+            var media = container.MediaFiles
+                .AddQueryOption("$filter", $@"indexof(Path, 'Profiles\{profileId}\{folder}') gt 0 " +
+                    "and IsFolder eq false")
+                .AsEnumerable();
 
             return media;
         }

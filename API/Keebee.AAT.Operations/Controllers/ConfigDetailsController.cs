@@ -41,7 +41,7 @@ namespace Keebee.AAT.Operations.Controllers
                 ActivityType = new
                 {
                     cd.ActivityType.Id,
-                    cd.ActivityType.Description
+                    cd.ActivityTypeDesc
                 },
                 ResponseType = new
                 {
@@ -73,7 +73,7 @@ namespace Keebee.AAT.Operations.Controllers
             exObj.ActivityType = new
             {
                 configDetail.ActivityType.Id,
-                configDetail.ActivityType.Description
+                configDetail.ActivityTypeDesc
             };
             exObj.ResponseType = new
             {

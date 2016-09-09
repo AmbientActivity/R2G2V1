@@ -17,6 +17,8 @@ namespace Keebee.AAT.EventLogExporter
 
                 var exporter = new Exporting.EventLogExporter();
                 exporter.ExportAndSave(date);
+
+                sysEventLogger.WriteEntry($"Event Log successfully exported for date: {date}");
             }
             catch (Exception ex)
             {

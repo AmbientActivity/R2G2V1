@@ -82,8 +82,8 @@
     <Compile Include="Services\ActivityTypeService.cs" />
     <Compile Include="Services\AmbientResponseService.cs" />
     <Compile Include="Services\ActivityEventLogService.cs" />
-    <Compile Include="Services\ConfigurationDetailService.cs" />
-    <Compile Include="Services\ConfigurationService.cs" />
+    <Compile Include="Services\ConfigDetailService.cs" />
+    <Compile Include="Services\ConfigService.cs" />
     <Compile Include="Services\GameEventLogService.cs" />
     <Compile Include="Services\MediaService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

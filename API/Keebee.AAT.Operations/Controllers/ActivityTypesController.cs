@@ -39,7 +39,6 @@ namespace Keebee.AAT.Operations.Controllers
                 .Select(x => new
                 {
                     x.Id,
-                    x.Description,
                     x.PhidgetType
                 });
 
@@ -63,7 +62,6 @@ namespace Keebee.AAT.Operations.Controllers
             dynamic exObj = new ExpandoObject();
 
             exObj.Id = activityType.Id;
-            exObj.Description = activityType.Description;
             exObj.PhidgetType = activityType.PhidgetType;
 
             return new DynamicJsonObject(exObj);

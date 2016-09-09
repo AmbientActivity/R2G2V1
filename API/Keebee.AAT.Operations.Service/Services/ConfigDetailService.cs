@@ -64,13 +64,13 @@ namespace Keebee.AAT.Operations.Service.Services
         {
             var container = new Container(new Uri(ODataHost.Url));
 
-            var cd = container.ConfigDetails.Where(e => e.Id == id).SingleOrDefault();
-            if (cd == null) return;
+            var el = container.ConfigDetails.Where(e => e.Id == id).SingleOrDefault();
+            if (el == null) return;
 
-            if (configDetail.ResponseTypeId != null)
-                cd.ResponseTypeId = configDetail.ResponseTypeId;
+            if (configDetail.ActivityTypeDesc != null)
+                el.ActivityTypeDesc = configDetail.ActivityTypeDesc;
 
-            container.UpdateObject(cd);
+            container.UpdateObject(el);
             container.SaveChanges();
         }
 

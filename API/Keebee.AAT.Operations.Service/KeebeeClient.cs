@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-// Generation date: 9/8/2016 5:26:36 PM
+// Generation date: 9/8/2016 9:00:35 PM
 namespace Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models
 {
     /// <summary>
@@ -326,6 +326,29 @@ namespace Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models
         private int _Id;
         partial void OnIdChanging(int value);
         partial void OnIdChanged();
+        /// <summary>
+        /// There are no comments for Property ActivityTypeDesc in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        [global::Microsoft.OData.Client.OriginalNameAttribute("ActivityTypeDesc")]
+        public string ActivityTypeDesc
+        {
+            get
+            {
+                return this._ActivityTypeDesc;
+            }
+            set
+            {
+                this.OnActivityTypeDescChanging(value);
+                this._ActivityTypeDesc = value;
+                this.OnActivityTypeDescChanged();
+                this.OnPropertyChanged("ActivityTypeDesc");
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private string _ActivityTypeDesc;
+        partial void OnActivityTypeDescChanging(string value);
+        partial void OnActivityTypeDescChanged();
         /// <summary>
         /// There are no comments for Property ConfigId in the schema.
         /// </summary>
@@ -1093,29 +1116,6 @@ namespace Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models
         private string _PhidgetType;
         partial void OnPhidgetTypeChanging(string value);
         partial void OnPhidgetTypeChanged();
-        /// <summary>
-        /// There are no comments for Property Description in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        [global::Microsoft.OData.Client.OriginalNameAttribute("Description")]
-        public string Description
-        {
-            get
-            {
-                return this._Description;
-            }
-            set
-            {
-                this.OnDescriptionChanging(value);
-                this._Description = value;
-                this.OnDescriptionChanged();
-                this.OnPropertyChanged("Description");
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private string _Description;
-        partial void OnDescriptionChanging(string value);
-        partial void OnDescriptionChanged();
         /// <summary>
         /// This event is raised when the value of the property is changed
         /// </summary>
@@ -4720,6 +4720,7 @@ namespace Keebee.AAT.Operations.Service.KeebeeAAT
           <PropertyRef Name=""Id"" />
         </Key>
         <Property Name=""Id"" Type=""Edm.Int32"" Nullable=""false"" />
+        <Property Name=""ActivityTypeDesc"" Type=""Edm.String"" />
         <Property Name=""ConfigId"" Type=""Edm.Int32"" />
         <Property Name=""ActivityTypeId"" Type=""Edm.Int32"" />
         <Property Name=""ResponseTypeId"" Type=""Edm.Int32"" />
@@ -4765,7 +4766,6 @@ namespace Keebee.AAT.Operations.Service.KeebeeAAT
         </Key>
         <Property Name=""Id"" Type=""Edm.Int32"" Nullable=""false"" />
         <Property Name=""PhidgetType"" Type=""Edm.String"" Nullable=""false"" />
-        <Property Name=""Description"" Type=""Edm.String"" />
       </EntityType>
       <EntityType Name=""ResponseType"">
         <Key>

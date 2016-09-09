@@ -52,9 +52,6 @@ namespace Keebee.AAT.Operations.Service.Services
             var el = container.ActivityTypes.Where(e => e.Id == id).SingleOrDefault();
             if (el == null) return;
 
-            if (el.Description != null)
-                el.Description = activityType.Description;
-
             container.UpdateObject(el);
             container.SaveChanges();
         }

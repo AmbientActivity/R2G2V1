@@ -187,7 +187,7 @@ namespace Keebee.AAT.Operations.Controllers
                         ActivityType = new
                         {
                             detail.ActivityType.Id,
-                            detail.ActivityType.Description,
+                            detail.ActivityTypeDesc,
                             detail.ActivityType.PhidgetType
                         },
                         ResponseType = new
@@ -274,7 +274,6 @@ namespace Keebee.AAT.Operations.Controllers
                 ActivityType = new
                 {
                     c.ActivityType.Id,
-                    c.ActivityType.Description,
                     c.ActivityType.PhidgetType
                 },
                 ResponseType = new

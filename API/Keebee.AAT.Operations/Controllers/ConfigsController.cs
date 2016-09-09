@@ -92,7 +92,8 @@ namespace Keebee.AAT.Operations.Controllers
                 ActivityType = new
                 {
                     cd.ActivityType.Id,
-                    cd.ActivityType.Description
+                    cd.ActivityType.PhidgetType,
+                    cd.ActivityTypeDesc
                 },
                 ResponseType = new
                 {
@@ -135,7 +136,8 @@ namespace Keebee.AAT.Operations.Controllers
                 ActivityType = new
                 {
                     cd.ActivityType.Id,
-                    cd.ActivityType.Description
+                    cd.ActivityType.PhidgetType,
+                    cd.ActivityTypeDesc
                 },
                 ResponseType = new
                 {
@@ -177,7 +179,7 @@ namespace Keebee.AAT.Operations.Controllers
                 ActivityType = new
                 {
                     cd.ActivityType.Id,
-                    cd.ActivityType.Description
+                    cd.ActivityTypeDesc
                 },
                 ResponseType = new
                 {

@@ -49,7 +49,6 @@ namespace Keebee.AAT.Exporting
                 var gameEventLogs = _opsClient.GetGameEventLogs(date).ToArray();
                 var rfidEventLogs = _opsClient.GetRfidEventLogs(date).ToArray();
 
-
                 // -------------------- RFID Log------------------------
 
                 var worksheet1 = new Worksheet("RFID Log");
@@ -101,7 +100,7 @@ namespace Keebee.AAT.Exporting
                     worksheet2.Cells[rowIndex, 1] = new Cell(eventLog.Time);
                     worksheet2.Cells[rowIndex, 2] = new Cell(eventLog.ResidentId);
                     worksheet2.Cells[rowIndex, 3] = new Cell(eventLog.Resident);
-                    worksheet2.Cells[rowIndex, 4] = new Cell(eventLog.ActivityType);
+                    worksheet2.Cells[rowIndex, 4] = new Cell(eventLog.ActivityTypeDesc);
                     worksheet2.Cells[rowIndex, 5] = new Cell(eventLog.ResponseTypeCategory);
                     worksheet2.Cells[rowIndex, 6] = new Cell(eventLog.Description);
 

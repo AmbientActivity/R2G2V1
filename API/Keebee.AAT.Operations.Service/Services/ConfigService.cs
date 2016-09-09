@@ -15,6 +15,7 @@ namespace Keebee.AAT.Operations.Service.Services
         void Patch(int id, Config config);
         void Delete(int id);
         Config GetDetails(int id);
+        string GetActivityTypeDesc(int activityTypeId);
         Config GetMediaForProfile(int profileId);
         Config GetMediaForProfileActivityResponseType(int profileId, int activityTypeId, int responseTypeId);
         Config GetMedia();
@@ -48,10 +49,22 @@ namespace Keebee.AAT.Operations.Service.Services
             var container = new Container(new Uri(ODataHost.Url));
 
             var config = container.Configs
-                .Expand("ConfigDetails")
                 .AddQueryOption("$filter", "IsActive")
                 .Expand("ConfigDetails($expand=ActivityType,ResponseType($expand=ResponseTypeCategory))")
                 .Single();
+
+            return config;
+        }
+
+        public string GetActivityTypeDesc(int activityTypeId)
+        {
+            var container = new Container(new Uri(ODataHost.Url));
+
+            var config = container.Configs
+                .AddQueryOption("$filter", "IsActive")
+                .Expand($"ConfigDetails(ActivityTypeId eq {activityTypeId})")
+                .Single().ConfigDetails
+                .Single().ActivityTypeDesc;
 
             return config;
         }

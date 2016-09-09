@@ -20,12 +20,13 @@ namespace Keebee.AAT.Display.Helpers
             set { _systemEventLogger = value; }
         }
 
-        public void Add(int residentId, int activityTypeId, int responseTypeId, string description = null)
+        public void Add(int configId, int residentId, int activityTypeId, int responseTypeId, string description = null)
         {
             try
             { 
                 var activityEventLog = new ActivityEventLog
                 {
+                    ConfigId = configId,
                     ResidentId = (residentId) > 0 ? residentId : (int?)null,
                     ActivityTypeId = activityTypeId,
                     ResponseTypeId = responseTypeId,

@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-// Generation date: 9/9/2016 12:41:17 PM
+// Generation date: 9/9/2016 2:31:40 PM
 namespace Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models
 {
     /// <summary>
@@ -2543,6 +2543,28 @@ namespace Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
         private global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ResidentSingle _Resident;
         /// <summary>
+        /// There are no comments for Config in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        [global::Microsoft.OData.Client.OriginalNameAttribute("Config")]
+        public global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ConfigSingle Config
+        {
+            get
+            {
+                if (!this.IsComposable)
+                {
+                    throw new global::System.NotSupportedException("The previous function is not composable.");
+                }
+                if ((this._Config == null))
+                {
+                    this._Config = new global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ConfigSingle(this.Context, GetPath("Config"));
+                }
+                return this._Config;
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ConfigSingle _Config;
+        /// <summary>
         /// There are no comments for ActivityType in the schema.
         /// </summary>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
@@ -2656,6 +2678,29 @@ namespace Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models
         private global::System.Nullable<int> _ResidentId;
         partial void OnResidentIdChanging(global::System.Nullable<int> value);
         partial void OnResidentIdChanged();
+        /// <summary>
+        /// There are no comments for Property ConfigId in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        [global::Microsoft.OData.Client.OriginalNameAttribute("ConfigId")]
+        public global::System.Nullable<int> ConfigId
+        {
+            get
+            {
+                return this._ConfigId;
+            }
+            set
+            {
+                this.OnConfigIdChanging(value);
+                this._ConfigId = value;
+                this.OnConfigIdChanged();
+                this.OnPropertyChanged("ConfigId");
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private global::System.Nullable<int> _ConfigId;
+        partial void OnConfigIdChanging(global::System.Nullable<int> value);
+        partial void OnConfigIdChanged();
         /// <summary>
         /// There are no comments for Property ActivityTypeId in the schema.
         /// </summary>
@@ -2771,6 +2816,29 @@ namespace Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models
         private global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.Resident _Resident;
         partial void OnResidentChanging(global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.Resident value);
         partial void OnResidentChanged();
+        /// <summary>
+        /// There are no comments for Property Config in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        [global::Microsoft.OData.Client.OriginalNameAttribute("Config")]
+        public global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.Config Config
+        {
+            get
+            {
+                return this._Config;
+            }
+            set
+            {
+                this.OnConfigChanging(value);
+                this._Config = value;
+                this.OnConfigChanged();
+                this.OnPropertyChanged("Config");
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.Config _Config;
+        partial void OnConfigChanging(global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.Config value);
+        partial void OnConfigChanged();
         /// <summary>
         /// There are no comments for Property ActivityType in the schema.
         /// </summary>
@@ -4852,12 +4920,16 @@ namespace Keebee.AAT.Operations.Service.KeebeeAAT
         </Key>
         <Property Name=""Id"" Type=""Edm.Int32"" Nullable=""false"" />
         <Property Name=""ResidentId"" Type=""Edm.Int32"" />
+        <Property Name=""ConfigId"" Type=""Edm.Int32"" />
         <Property Name=""ActivityTypeId"" Type=""Edm.Int32"" />
         <Property Name=""ResponseTypeId"" Type=""Edm.Int32"" />
         <Property Name=""Description"" Type=""Edm.String"" />
         <Property Name=""DateEntry"" Type=""Edm.DateTimeOffset"" Nullable=""false"" />
         <NavigationProperty Name=""Resident"" Type=""Keebee.AAT.DataAccess.Models.Resident"">
           <ReferentialConstraint Property=""ResidentId"" ReferencedProperty=""Id"" />
+        </NavigationProperty>
+        <NavigationProperty Name=""Config"" Type=""Keebee.AAT.DataAccess.Models.Config"">
+          <ReferentialConstraint Property=""ConfigId"" ReferencedProperty=""Id"" />
         </NavigationProperty>
         <NavigationProperty Name=""ActivityType"" Type=""Keebee.AAT.DataAccess.Models.ActivityType"">
           <ReferentialConstraint Property=""ActivityTypeId"" ReferencedProperty=""Id"" />
@@ -4957,6 +5029,7 @@ namespace Keebee.AAT.Operations.Service.KeebeeAAT
         <EntitySet Name=""Users"" EntityType=""Keebee.AAT.DataAccess.Models.User"" />
         <EntitySet Name=""ActivityEventLogs"" EntityType=""Keebee.AAT.DataAccess.Models.ActivityEventLog"">
           <NavigationPropertyBinding Path=""Resident"" Target=""Residents"" />
+          <NavigationPropertyBinding Path=""Config"" Target=""Configs"" />
           <NavigationPropertyBinding Path=""ActivityType"" Target=""ActivityTypes"" />
           <NavigationPropertyBinding Path=""ResponseType"" Target=""ResponseTypes"" />
         </EntitySet>

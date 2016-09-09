@@ -39,7 +39,16 @@ namespace Keebee.AAT.Operations.Controllers
             exObj.Configs = configs.Select(c => new
             {
                 c.Id,
-                c.Description
+                c.Description,
+                c.IsActive,
+                ConfigDetails = c.ConfigDetails.Select(cd => new
+                    {
+                        cd.Id,
+                        cd.ConfigId,
+                        cd.ActivityTypeId,
+                        cd.ActivityTypeDesc,
+                        cd.ResponseTypeId
+                    })
             });
 
             return new DynamicJsonObject(exObj);
@@ -62,6 +71,15 @@ namespace Keebee.AAT.Operations.Controllers
             dynamic exObj = new ExpandoObject();
             exObj.Id = config.Id;
             exObj.Description = config.Description;
+            exObj.IsActive = config.IsActive;
+            exObj.ConfigDetails = config.ConfigDetails.Select(cd => new
+                {
+                    cd.Id,
+                    cd.ConfigId,
+                    cd.ActivityTypeId,
+                    cd.ActivityTypeDesc,
+                    cd.ResponseTypeId
+                });
 
             return new DynamicJsonObject(exObj);
         }
@@ -210,6 +228,14 @@ namespace Keebee.AAT.Operations.Controllers
             var config = serializer.Deserialize<Config>(value);
 
             return _configService.Post(config);
+        }
+
+        // POST: api/Configs/2/activate
+        [Route("{id}/activate")]
+        [HttpPost]
+        public void Activate(int id)
+        {
+            _configService.Activate(id);
         }
 
         // PUT: api/Configs/5

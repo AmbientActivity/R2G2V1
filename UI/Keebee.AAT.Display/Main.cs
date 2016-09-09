@@ -348,7 +348,7 @@ namespace Keebee.AAT.Display
                 slideViewerFlash1.Show();
                 slideViewerFlash1.Play(images);
 
-                _activityEventLogger.Add(_activeProfile.ResidentId, _currenActivityTypeId, ResponseTypeId.SlidShow);
+                _activityEventLogger.Add(_activeProfile.ConfigId, _activeProfile.ResidentId, _currenActivityTypeId, ResponseTypeId.SlidShow);
 
                 _currentResponseTypeId = ResponseTypeId.SlidShow;
             }
@@ -370,7 +370,7 @@ namespace Keebee.AAT.Display
 
                 matchingGame1.Show();
 
-                _activityEventLogger.Add(_activeProfile.ResidentId, _currenActivityTypeId, ResponseTypeId.MatchingGame);
+                _activityEventLogger.Add(_activeProfile.ConfigId, _activeProfile.ResidentId, _currenActivityTypeId, ResponseTypeId.MatchingGame);
                 _gameEventLogger.Add(_activeProfile.ResidentId, GameTypeId.MatchThePictures, _activeProfile.GameDifficultyLevel, null, "New game has been initiated");
 
                 matchingGame1.Play(shapes, _activeProfile.GameDifficultyLevel, true);
@@ -552,7 +552,7 @@ namespace Keebee.AAT.Display
             try
             {
                 var args = (MediaPlayer.LogVideoActivityEventEventArgs)e;
-                _activityEventLogger.Add(_activeProfile.ResidentId, _currenActivityTypeId, _currentResponseTypeId, args.Description);
+                _activityEventLogger.Add(_activeProfile.ConfigId, _activeProfile.ResidentId, _currenActivityTypeId, _currentResponseTypeId, args.Description);
             }
             catch (Exception ex)
             {

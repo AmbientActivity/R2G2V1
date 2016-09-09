@@ -30,6 +30,7 @@ namespace Keebee.AAT.Simulator
         // message queue sender
         private readonly CustomMessageQueue _messageQueuePhidget;
         private readonly CustomMessageQueue _messageQueueRfid;
+        private readonly CustomMessageQueue _messageQueueConfig;
 
         // timer
         private readonly int _autoSensorInterval;
@@ -74,6 +75,12 @@ namespace Keebee.AAT.Simulator
 
             });
 
+            _messageQueueConfig = new CustomMessageQueue(new CustomMessageQueueArgs
+            {
+                QueueName = MessageQueueType.Config
+
+            });
+
             LoadProfileDropDown();
             _totalProfiles = _residents.Count();
         }
@@ -88,14 +95,19 @@ namespace Keebee.AAT.Simulator
                 .Union(_residents.Select(r => new Resident
                                                 {
                                                     Id = r.Id,
-                                                    FirstName = r.FirstName
+                                                    FirstName = r.FirstName,
+                                                    LastName = r.LastName,
                                                 })).ToList();
 
             foreach (var p in profiles)
-                arrayList.Add(new {p.Id, p.FirstName});
+            {
+                arrayList.Add(new {p.Id, Name = p.LastName == null 
+                    ? $"{p.FirstName}" 
+                    : $"{p.FirstName} {p.LastName}" });
+            }
 
             cboProfile.ValueMember = "Id";
-            cboProfile.DisplayMember = "FirstName";
+            cboProfile.DisplayMember = "Name";
             cboProfile.DataSource = arrayList;
 
             // sending resident "0" will make Generic the active profile
@@ -139,6 +151,11 @@ namespace Keebee.AAT.Simulator
             {
                 lblValue.Text = text;
             }
+        }
+
+        private void ReloadConfigClick(object sender, EventArgs e)
+        {
+            _messageQueueConfig.Send("1");
         }
 
         private void SlideShowSensorClick(object sender, EventArgs e)

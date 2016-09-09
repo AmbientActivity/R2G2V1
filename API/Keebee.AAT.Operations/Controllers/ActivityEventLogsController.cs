@@ -31,22 +31,25 @@ namespace Keebee.AAT.Operations.Controllers
 
             await Task.Run(() =>
             {
-                activityEventLogs = _activityEventLogService.Get()
+                activityEventLogs = _activityEventLogService.Get() 
                     .OrderByDescending(o => o.DateEntry);
             });
 
             if (activityEventLogs == null) return new DynamicJsonObject(new ExpandoObject());
 
-            var config = _configService.GetActiveDetails();
+            var config = _configService.Get();
 
             dynamic exObj = new ExpandoObject();
             exObj.ActivityEventLogs = activityEventLogs
-                .Join(config.ConfigDetails, al => al.ActivityTypeId, cd => cd.ActivityTypeId,
+                .Join(config.SelectMany(x => x.ConfigDetails), 
+                al => new { al.ConfigId, al.ActivityTypeId },
+                cd => new { cd.ConfigId, cd.ActivityTypeId },
                 (al, cd) => new { al, cd })
                 .Select(x => new
                 {
                     Date = $"{x.al.DateEntry:D}",
                     Time = $"{x.al.DateEntry:T}",
+                    x.al.ConfigId,
                     Resident = (x.al.Resident != null) ? $"{x.al.Resident.FirstName} {x.al.Resident.LastName}" : "N/A",
                     x.al.ActivityType.PhidgetType,
                     ActivityType = x.cd.ActivityTypeDesc,

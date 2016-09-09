@@ -13,6 +13,10 @@ namespace Keebee.AAT.DataAccess.Models
         public int? ResidentId { get; set; }
         public virtual Resident Resident { get; set; }
 
+        [ForeignKey("Config")]
+        public int ConfigId { get; set; }
+        public virtual Config Config { get; set; }
+
         [ForeignKey("ActivityType")]
         public int ActivityTypeId { get; set; }
         public virtual ActivityType ActivityType { get; set; }

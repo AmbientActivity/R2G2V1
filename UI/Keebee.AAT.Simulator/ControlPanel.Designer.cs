@@ -63,6 +63,7 @@
             this.TelevisionSensorRight = new System.Windows.Forms.Button();
             this.TelevisionSensorLeft = new System.Windows.Forms.Button();
             this.RadioSensorLeft = new System.Windows.Forms.Button();
+            this.ReloadConfig = new System.Windows.Forms.Button();
             this.grpRFReader.SuspendLayout();
             this.grpAutoProfile.SuspendLayout();
             this.grpAutoSensor.SuspendLayout();
@@ -198,7 +199,7 @@
             this.lblValue.AutoSize = true;
             this.lblValue.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblValue.ForeColor = System.Drawing.Color.Red;
-            this.lblValue.Location = new System.Drawing.Point(379, 12);
+            this.lblValue.Location = new System.Drawing.Point(405, 12);
             this.lblValue.Name = "lblValue";
             this.lblValue.Size = new System.Drawing.Size(21, 24);
             this.lblValue.TabIndex = 25;
@@ -209,7 +210,7 @@
             this.label2.AutoSize = true;
             this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label2.ForeColor = System.Drawing.Color.Red;
-            this.label2.Location = new System.Drawing.Point(320, 11);
+            this.label2.Location = new System.Drawing.Point(346, 11);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(69, 24);
             this.label2.TabIndex = 24;
@@ -220,7 +221,7 @@
             this.lblSensor.AutoSize = true;
             this.lblSensor.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblSensor.ForeColor = System.Drawing.Color.Green;
-            this.lblSensor.Location = new System.Drawing.Point(263, 12);
+            this.lblSensor.Location = new System.Drawing.Point(311, 12);
             this.lblSensor.Name = "lblSensor";
             this.lblSensor.Size = new System.Drawing.Size(21, 24);
             this.lblSensor.TabIndex = 23;
@@ -242,7 +243,7 @@
             this.lblSensorLabel.AutoSize = true;
             this.lblSensorLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblSensorLabel.ForeColor = System.Drawing.Color.Green;
-            this.lblSensorLabel.Location = new System.Drawing.Point(192, 11);
+            this.lblSensorLabel.Location = new System.Drawing.Point(240, 11);
             this.lblSensorLabel.Name = "lblSensorLabel";
             this.lblSensorLabel.Size = new System.Drawing.Size(80, 24);
             this.lblSensorLabel.TabIndex = 21;
@@ -318,6 +319,7 @@
             // 
             // grpInterfaceKit
             // 
+            this.grpInterfaceKit.Controls.Add(this.ReloadConfig);
             this.grpInterfaceKit.Controls.Add(this.TelevisionInput);
             this.grpInterfaceKit.Controls.Add(this.RadioInput);
             this.grpInterfaceKit.Controls.Add(this.MatchingGameInput);
@@ -489,6 +491,18 @@
             this.RadioSensorLeft.UseVisualStyleBackColor = true;
             this.RadioSensorLeft.Click += new System.EventHandler(this.RadioSensorLeftClick);
             // 
+            // ReloadConfig
+            // 
+            this.ReloadConfig.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.ReloadConfig.Location = new System.Drawing.Point(339, 20);
+            this.ReloadConfig.Name = "ReloadConfig";
+            this.ReloadConfig.Size = new System.Drawing.Size(105, 36);
+            this.ReloadConfig.TabIndex = 37;
+            this.ReloadConfig.Text = "Reload Config";
+            this.ReloadConfig.UseMnemonic = false;
+            this.ReloadConfig.UseVisualStyleBackColor = true;
+            this.ReloadConfig.Click += new System.EventHandler(this.ReloadConfigClick);
+            // 
             // ControlPanel
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -556,6 +570,7 @@
         private System.Windows.Forms.Button SlideShowInput;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Button ReloadConfig;
     }
 }
 

@@ -10,9 +10,6 @@ namespace Keebee.AAT.Operations.Service.Services
     {
         IEnumerable<MediaFile> Get();
         MediaFile Get(Guid streamId);
-        void Post(MediaFile media);
-        void Patch(Guid id, MediaFile media);
-        void Delete(Guid id);
     }
 
     public class MediaService : IMediaService
@@ -35,35 +32,6 @@ namespace Keebee.AAT.Operations.Service.Services
                 .GetValue();
 
             return media;
-        }
-
-        public void Post(MediaFile media)
-        {
-            var container = new Container(new Uri(ODataHost.Url));
-
-            container.AddToMediaFiles(media);
-            container.SaveChanges();
-        }
-
-        public void Patch(Guid id, MediaFile media)
-        {
-            var container = new Container(new Uri(ODataHost.Url));
-
-            var p = container.MediaFiles.Where(e => e.StreamId == id).SingleOrDefault();
-            if (p == null) return;
-            container.UpdateObject(p);
-            container.SaveChanges();
-        }
-
-        public void Delete(Guid id)
-        {
-            var container = new Container(new Uri(ODataHost.Url));
-
-            var media = container.MediaFiles.Where(e => e.StreamId == id).SingleOrDefault();
-            if (media == null) return;
-
-            container.DeleteObject(media);
-            container.SaveChanges();
         }
     }
 }

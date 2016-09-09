@@ -55,6 +55,17 @@ $qObject = $msmq::Create($qname)
 $qObject.SetPermissions("Everyone", [System.Messaging.MessageQueueAccessRights]::FullControl, [System.Messaging.AccessControlEntryType]::Allow)
 $qObject.SetPermissions("ANONYMOUS LOGON", [System.Messaging.MessageQueueAccessRights]::FullControl, [System.Messaging.AccessControlEntryType]::Allow)
 
+# Config Message Queue (to alert the State Machine Service when to repload a newly activated configuration)
+$name = "Config"
+$qname = “.\private$\” + $name
+$qname = “.\private$\” + $name
+If (($msmq::Exists($qname))) {
+    $qObject = $msmq::Delete($qname)
+}
+
+$qObject = $msmq::Create($qname) 
+$qObject.SetPermissions("Everyone", [System.Messaging.MessageQueueAccessRights]::FullControl, [System.Messaging.AccessControlEntryType]::Allow)
+$qObject.SetPermissions("ANONYMOUS LOGON", [System.Messaging.MessageQueueAccessRights]::FullControl, [System.Messaging.AccessControlEntryType]::Allow)
 
 # Phidget Monitor Message Queue (for testing - to monitor the phidget sensor change events)
 $name = "Phidget-Monitor"

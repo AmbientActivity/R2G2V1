@@ -3,8 +3,10 @@ using Keebee.AAT.Operations.Service.Services;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Dynamic;
 using System.IO;
 using System.Threading.Tasks;
+using System.Web.Helpers;
 using System.Web.Http;
 
 namespace Keebee.AAT.Operations.Controllers
@@ -37,35 +39,28 @@ namespace Keebee.AAT.Operations.Controllers
            return filePaths;
         }
 
-        // GET: api/Media/5
-        public async Task<string> Get(Guid id)
+        // GET: api/Media/55a32e73-b176-e611-8a92-90e6bac7161a
+        public async Task<DynamicJsonObject> Get(Guid id)
         {
             var media = new MediaFile();
-            string filePath = string.Empty;
 
             await Task.Run(() =>
             {
                 media = _mediaService.Get(id);
             });
 
-            filePath = Path.Combine(media.Path, media.Filename);
+            if (media == null) return new DynamicJsonObject(new ExpandoObject());
 
-            return filePath;
-        }
+            dynamic exObj = new ExpandoObject();
 
-        // POST: api/Media
-        public void Post([FromBody]string value)
-        {
-        }
+            exObj.StreamId = media.StreamId;
+            exObj.Filename = media.Filename;
+            exObj.IsFolder = media.IsFolder;
+            exObj.FileSize = media.FileSize;
+            exObj.FileType = media.FileType;
+            exObj.Path = media.Path;
 
-        // PUT: api/Media/5
-        public void Put(int id, [FromBody]string value)
-        {
-        }
-
-        // DELETE: api/Media/5
-        public void Delete(int id)
-        {
+            return new DynamicJsonObject(exObj);
         }
     }
 }

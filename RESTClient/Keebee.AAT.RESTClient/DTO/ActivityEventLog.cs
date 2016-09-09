@@ -5,6 +5,7 @@ namespace Keebee.AAT.RESTClient
     public class ActivityEventLog
     {
         // for insert
+        public int ConfigId { get; set; }
         public int? ResidentId { get; set; }
         public int ResponseTypeId { get; set; }
         public int ActivityTypeId { get; set; }

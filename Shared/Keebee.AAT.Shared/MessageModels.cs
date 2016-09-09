@@ -12,6 +12,7 @@
     public class ActiveProfile
     {
         public int Id { get; set; }
+        public int ConfigId { get; set; }
         public int ResidentId { get; set; }
         public int GameDifficultyLevel { get; set; }
     }

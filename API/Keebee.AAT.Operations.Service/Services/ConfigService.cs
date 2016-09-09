@@ -19,6 +19,7 @@ namespace Keebee.AAT.Operations.Service.Services
         Config GetMediaForProfile(int profileId);
         Config GetMediaForProfileActivityResponseType(int profileId, int activityTypeId, int responseTypeId);
         Config GetMedia();
+        void Activate(int id);
     }
 
     public class ConfigService : IConfigService
@@ -28,6 +29,7 @@ namespace Keebee.AAT.Operations.Service.Services
             var container = new Container(new Uri(ODataHost.Url));
 
             var configs = container.Configs
+                .Expand("ConfigDetails")
                 .AsEnumerable();
 
             return configs;
@@ -37,7 +39,8 @@ namespace Keebee.AAT.Operations.Service.Services
         {
             var container = new Container(new Uri(ODataHost.Url));
 
-            var config = container.Configs.ByKey(id)
+            var config = container.Configs
+                .ByKey(id)
                 .Expand("ConfigDetails")
                 .GetValue();
 
@@ -78,8 +81,6 @@ namespace Keebee.AAT.Operations.Service.Services
 
             var configId = config.Id;
 
-            //var responseTypes
-
             return configId;
         }
 
@@ -92,6 +93,8 @@ namespace Keebee.AAT.Operations.Service.Services
 
             if (config.Description != null)
                 c.Description = config.Description;
+
+             c.IsActive = config.IsActive;
 
             container.UpdateObject(c);
             container.SaveChanges();
@@ -156,6 +159,19 @@ namespace Keebee.AAT.Operations.Service.Services
                     .FirstOrDefault();
 
             return config;
+        }
+
+        public void Activate(int id)
+        {
+            var container = new Container(new Uri(ODataHost.Url));
+
+            var configs = container.Configs.ToList();
+            foreach (var cg in configs)
+            {
+                cg.IsActive = (cg.Id == id);
+                container.UpdateObject(cg);
+                container.SaveChanges();
+            }
         }
     }
 }

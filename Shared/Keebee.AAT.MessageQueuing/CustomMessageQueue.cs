@@ -11,12 +11,13 @@ namespace Keebee.AAT.MessageQueuing
         Phidget = 2,
         Response = 3,
         Rfid = 4,
-        Video = 5
+        Video = 5,
+        Config = 6
 #if DEBUG
-        ,PhidgetMonitor = 6,
-        PhidgetMonitorState = 7,
-        RfidMonitor = 8,
-        RfidMonitorState = 9
+        ,PhidgetMonitor = 7,
+        PhidgetMonitorState = 8,
+        RfidMonitor = 9,
+        RfidMonitorState = 10
 #endif
     }
 
@@ -38,6 +39,7 @@ namespace Keebee.AAT.MessageQueuing
         private const string QueueNameResponse = "Response";
         private const string QueueNameRfid = "RFID";
         private const string QueueNameVideo = "Video";
+        private const string QueueNameConfig = "Config";
 #if DEBUG
         private const string QueueNamePhidgetMonitor = "Phidget-Monitor";
         private const string QueueNamePhidgetMonitorState = "Phidget-Monitor-State";
@@ -124,6 +126,9 @@ namespace Keebee.AAT.MessageQueuing
                     break;
                 case MessageQueueType.Video:
                     literal = QueueNameVideo;
+                    break;
+                case MessageQueueType.Config:
+                    literal = QueueNameConfig;
                     break;
 #if DEBUG
                 case MessageQueueType.PhidgetMonitor:

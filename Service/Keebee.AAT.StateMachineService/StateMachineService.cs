@@ -29,9 +29,6 @@ namespace Keebee.AAT.StateMachineService
         // active config
         private Config _activeConfig;
 
-        // TODO: make this triggerable through Admin Interface via message queue
-        private bool _reloadConfig = true;
-
         // active profile
         private Profile _activeProfile;
 
@@ -109,18 +106,19 @@ namespace Keebee.AAT.StateMachineService
                 QueueName = MessageQueueType.Display,
                 MessageReceivedCallback = MessageReceivedDisplay
             }) { SystemEventLogger = _systemEventLogger };
+
+            var q5 = new CustomMessageQueue(new CustomMessageQueueArgs
+            {
+                QueueName = MessageQueueType.Config,
+                MessageReceivedCallback = MessageReceiveConfig
+            })
+            { SystemEventLogger = _systemEventLogger };
         }
 
         private void ExecuteResponse(int activityTypeId, int sensorValue)
         {
             try
             {
-                if (_reloadConfig) // TODO: trigger this through the Admin Interface
-                {
-                    _activeConfig = _opsClient.GetActiveConfigDetails();
-                    _reloadConfig = false;
-                }
-
                 // if the activity type is not defined in this config then exit
                 if (_activeConfig.ConfigDetails.All(x => x.ActivityType.Id != activityTypeId))
                     return;
@@ -139,6 +137,7 @@ namespace Keebee.AAT.StateMachineService
                     ActiveProfile = new ActiveProfile
                         {
                             Id = _activeProfile.Id,
+                            ConfigId = _activeConfig.Id,
                             ResidentId = _activeProfile.ResidentId,
                             GameDifficultyLevel = _activeProfile.GameDifficultyLevel
                         }
@@ -246,6 +245,20 @@ namespace Keebee.AAT.StateMachineService
             }
         }
 
+        private void MessageReceiveConfig(object source, MessageEventArgs e)
+        {
+            try
+            {
+                if (e.MessageBody != "1") return;
+                _activeConfig = _opsClient.GetActiveConfigDetails();
+                _systemEventLogger.WriteEntry($"{_activeConfig.Description} has been activated");
+            }
+            catch (Exception ex)
+            {
+                _systemEventLogger.WriteEntry($"MessageReceivedDisplay{Environment.NewLine}{ex.Message}", EventLogEntryType.Error);
+            }
+        }
+
         private static DisplayMessage GetDisplayFromMessageBody(string messageBody)
         {
             var serializer = new JavaScriptSerializer();
@@ -258,6 +271,7 @@ namespace Keebee.AAT.StateMachineService
         protected override void OnStart(string[] args)
         {
             _systemEventLogger.WriteEntry("In OnStart");
+            _activeConfig = _opsClient.GetActiveConfigDetails();
         }
 
         protected override void OnStop()

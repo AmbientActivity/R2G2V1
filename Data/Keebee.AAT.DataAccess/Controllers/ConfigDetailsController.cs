@@ -13,6 +13,7 @@ namespace Keebee.AAT.DataAccess.Controllers
         private KeebeeAATContext db = new KeebeeAATContext();
 
         // GET: odata/ConfigurationDetails
+        [EnableQuery(MaxExpansionDepth = 3)]
         public IQueryable<ConfigDetail> Get()
         {
             return db.ConfigurationDetails.OrderBy(o => o.Id);

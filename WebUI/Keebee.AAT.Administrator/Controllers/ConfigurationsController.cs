@@ -47,7 +47,7 @@ namespace Keebee.AAT.Administrator.Controllers
                 {
                     Id = c.Id,
                     Description = c.Description,
-                    CanDelete = CanDeleteConfig(c.Id)
+                    CanDelete = !_opsClient.GetActivityEventLogsForConfig(c.Id).Any()
                 }),
                 ConfigDetailList = GetConfigDetailList()
             };
@@ -135,7 +135,7 @@ namespace Keebee.AAT.Administrator.Controllers
                     PhidgetType = cd.PhidgetType.Description,
                     Description = cd.Description,
                     ResponseType = cd.ResponseType.Description,
-                    CanDelete = CanDeleteConfigDetail(cd.Id)
+                    CanDelete = !_opsClient.GetActivityEventLogsForConfigDetail(cd.Id).Any()
                 }));
 
             return list;
@@ -144,9 +144,11 @@ namespace Keebee.AAT.Administrator.Controllers
         private ConfigDetailEditViewModel LoadConfigDetailEditViewModel(int id)
         {
             ConfigDetail configDetail = null;
+            //IEnumerable<ConfigDetail> configDetails = null;
 
             if (id > 0)
             {
+                //configDetails = _opsClient.Get();
                 configDetail = _opsClient.GetConfigDetail(id);
             }
 
@@ -188,17 +190,6 @@ namespace Keebee.AAT.Administrator.Controllers
             var id = _opsClient.PostConfigDetail(cd);
 
             return id;
-        }
-
-        private bool CanDeleteConfig(int configId)
-        {
-            var list = _opsClient.GetActivityEventLogsForConfig(configId);
-            return !list.Any();
-        }
-
-        private bool CanDeleteConfigDetail(int configDetailId)
-        {
-            return !_opsClient.GetActivityEventLogsForConfigDetail(configDetailId).Any();
         }
 
         private static IEnumerable<string> Validate(string description)

@@ -23,9 +23,20 @@ namespace Keebee.AAT.Operations.Service.Services
             var container = new Container(new Uri(ODataHost.Url));
 
             var configDetails = container.ConfigDetails
-                .Expand("PhidgetType,ResponseType").AsEnumerable();
+                .Expand("Config,PhidgetType,ResponseType").AsEnumerable();
 
             return configDetails;
+        }
+
+        public ConfigDetail Get(int id)
+        {
+            var container = new Container(new Uri(ODataHost.Url));
+
+            var configDetail = container.ConfigDetails.ByKey(id)
+                .Expand("Config,PhidgetType,ResponseType")
+                .GetValue();
+
+            return configDetail;
         }
 
         public ConfigDetail GetWithMedia(int id)
@@ -35,17 +46,6 @@ namespace Keebee.AAT.Operations.Service.Services
             return container.ConfigDetails.ByKey(id)
                 .Expand("PhidgetType,ResponseType")
                 .GetValue();
-        }
-
-        public ConfigDetail Get(int id)
-        {
-            var container = new Container(new Uri(ODataHost.Url));
-
-            var configDetail = container.ConfigDetails.ByKey(id)
-                .Expand("PhidgetType,ResponseType")
-                .GetValue();
-
-            return configDetail;
         }
 
         public int Post(ConfigDetail configDetail)

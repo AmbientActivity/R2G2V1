@@ -35,9 +35,10 @@ namespace Keebee.AAT.Operations.Controllers
             if (configDetails == null) return new DynamicJsonObject(new ExpandoObject());
 
             dynamic exObj = new ExpandoObject();
-            exObj.Configurations = configDetails.Select(cd => new
+            exObj.ConfigDetails = configDetails.Select(cd => new
             {
                 cd.Id,
+                cd.ConfigId,
                 PhidgetType = new
                 {
                     cd.PhidgetType.Id,
@@ -50,7 +51,7 @@ namespace Keebee.AAT.Operations.Controllers
                     cd.ResponseType.Description,
                     cd.ResponseType.IsInteractive
                 }
-            }).OrderBy(o => o.PhidgetType.Id);
+            });
 
             return new DynamicJsonObject(exObj);
         }

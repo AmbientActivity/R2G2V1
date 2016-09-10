@@ -13,17 +13,9 @@ namespace Keebee.AAT.DataAccess.Models
         public int? ResidentId { get; set; }
         public virtual Resident Resident { get; set; }
 
-        [ForeignKey("Config")]
-        public int ConfigId { get; set; }
-        public virtual Config Config { get; set; }
-
-        [ForeignKey("PhidgetType")]
-        public int PhidgetTypeId { get; set; }
-        public virtual PhidgetType PhidgetType { get; set; }
-
-        [ForeignKey("ResponseType")]
-        public int ResponseTypeId { get; set; }
-        public virtual ResponseType ResponseType { get; set; }
+        [ForeignKey("ConfigDetail")]
+        public int ConfigDetailId { get; set; }
+        public virtual ConfigDetail ConfigDetail { get; set; }
 
         public string Description { get; set; }
 

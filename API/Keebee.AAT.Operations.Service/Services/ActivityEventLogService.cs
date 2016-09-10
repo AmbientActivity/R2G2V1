@@ -11,6 +11,8 @@ namespace Keebee.AAT.Operations.Service.Services
         IEnumerable<ActivityEventLog> Get();
         ActivityEventLog Get(int id);
         IEnumerable<ActivityEventLog> GetForDate(string date);
+        IEnumerable<ActivityEventLog> GetForConfig(int configId);
+        IEnumerable<ActivityEventLog> GetForConfigDetail(int configDetailId);
         void Post(ActivityEventLog activityEventLog);
         void Patch(int id, ActivityEventLog activityEventLog);
         void Delete(int id);
@@ -24,7 +26,7 @@ namespace Keebee.AAT.Operations.Service.Services
             var container = new Container(new Uri(ODataHost.Url));
 
             var activityEventLogs = container.ActivityEventLogs
-                .Expand("Resident,PhidgetType,ResponseType($expand=ResponseTypeCategory)")
+                .Expand("Resident,ConfigDetail($expand=PhidgetType,ResponseType($expand=ResponseTypeCategory))")
                 .AsEnumerable();
 
             return activityEventLogs;
@@ -35,7 +37,7 @@ namespace Keebee.AAT.Operations.Service.Services
             var container = new Container(new Uri(ODataHost.Url));
 
             var activityEventLog = container.ActivityEventLogs.ByKey(id)
-                .Expand("Resident,PhidgetType,ResponseType($expand=ResponseTypeCategory)")
+                .Expand("Resident,ConfigDetail($expand=ResponseType($expand=ResponseTypeCategory))")
                 .GetValue();
 
             return activityEventLog;
@@ -61,8 +63,30 @@ namespace Keebee.AAT.Operations.Service.Services
 
             var activityEventLogs = container.ActivityEventLogs
                 .AddQueryOption("$filter", filter)
-                .Expand("Resident,PhidgetType,ResponseType($expand=ResponseTypeCategory)")
+                .Expand("Resident,ConfigDetail($expand=PhidgetType,ResponseType($expand=ResponseTypeCategory))")
                 .ToList();
+
+            return activityEventLogs;
+        }
+
+        public IEnumerable<ActivityEventLog> GetForConfig(int configId)
+        {
+            var container = new Container(new Uri(ODataHost.Url));
+
+            var activityEventLogs = container.ActivityEventLogs
+                .AddQueryOption("$filter", $"ConfigDetail/ConfigId eq {configId}")
+                .Expand("Resident,ConfigDetail");
+
+            return activityEventLogs;
+        }
+
+        public IEnumerable<ActivityEventLog> GetForConfigDetail(int configDetailId)
+        {
+            var container = new Container(new Uri(ODataHost.Url));
+
+            var activityEventLogs = container.ActivityEventLogs
+                .AddQueryOption("$filter", $"ConfigDetailId eq {configDetailId}")
+                .Expand("Resident,ConfigDetail");
 
             return activityEventLogs;
         }
@@ -85,11 +109,8 @@ namespace Keebee.AAT.Operations.Service.Services
             if (el.ResidentId != null)
                 el.ResidentId = activityEventLog.ResidentId;
 
-            if (el.PhidgetTypeId != null)
-                el.PhidgetTypeId = activityEventLog.PhidgetTypeId;
-
-            if (el.ResponseTypeId != null)
-                el.ResponseTypeId = activityEventLog.ResponseTypeId;
+            if (el.ConfigDetailId > 0)
+                el.ConfigDetailId = activityEventLog.ConfigDetailId;
 
             container.UpdateObject(el);
             container.SaveChanges();

@@ -7,8 +7,7 @@ namespace Keebee.AAT.RESTClient
         // for insert
         public int ConfigId { get; set; }
         public int? ResidentId { get; set; }
-        public int ResponseTypeId { get; set; }
-        public int PhidgetTypeId { get; set; }
+        public int ConfigDetailId { get; set; }
         public string Description { get; set; }
 
         // for export

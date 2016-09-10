@@ -11,4 +11,9 @@ namespace Keebee.AAT.RESTClient
         public ResponseTypeCategory ResponseTypeCategory { get; set; }
         public IEnumerable<Response> Responses { get; set; }
     }
+
+    public class ResponseTypeList
+    {
+        public IEnumerable<ResponseType> ResponseTypes;
+    }
 }

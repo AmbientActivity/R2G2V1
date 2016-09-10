@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-// Generation date: 9/10/2016 10:56:49 AM
+// Generation date: 9/10/2016 3:49:18 PM
 namespace Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models
 {
     /// <summary>
@@ -2543,11 +2543,11 @@ namespace Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
         private global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ResidentSingle _Resident;
         /// <summary>
-        /// There are no comments for Config in the schema.
+        /// There are no comments for ConfigDetail in the schema.
         /// </summary>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        [global::Microsoft.OData.Client.OriginalNameAttribute("Config")]
-        public global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ConfigSingle Config
+        [global::Microsoft.OData.Client.OriginalNameAttribute("ConfigDetail")]
+        public global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ConfigDetailSingle ConfigDetail
         {
             get
             {
@@ -2555,59 +2555,15 @@ namespace Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models
                 {
                     throw new global::System.NotSupportedException("The previous function is not composable.");
                 }
-                if ((this._Config == null))
+                if ((this._ConfigDetail == null))
                 {
-                    this._Config = new global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ConfigSingle(this.Context, GetPath("Config"));
+                    this._ConfigDetail = new global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ConfigDetailSingle(this.Context, GetPath("ConfigDetail"));
                 }
-                return this._Config;
+                return this._ConfigDetail;
             }
         }
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ConfigSingle _Config;
-        /// <summary>
-        /// There are no comments for PhidgetType in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        [global::Microsoft.OData.Client.OriginalNameAttribute("PhidgetType")]
-        public global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.PhidgetTypeSingle PhidgetType
-        {
-            get
-            {
-                if (!this.IsComposable)
-                {
-                    throw new global::System.NotSupportedException("The previous function is not composable.");
-                }
-                if ((this._PhidgetType == null))
-                {
-                    this._PhidgetType = new global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.PhidgetTypeSingle(this.Context, GetPath("PhidgetType"));
-                }
-                return this._PhidgetType;
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.PhidgetTypeSingle _PhidgetType;
-        /// <summary>
-        /// There are no comments for ResponseType in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        [global::Microsoft.OData.Client.OriginalNameAttribute("ResponseType")]
-        public global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ResponseTypeSingle ResponseType
-        {
-            get
-            {
-                if (!this.IsComposable)
-                {
-                    throw new global::System.NotSupportedException("The previous function is not composable.");
-                }
-                if ((this._ResponseType == null))
-                {
-                    this._ResponseType = new global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ResponseTypeSingle(this.Context, GetPath("ResponseType"));
-                }
-                return this._ResponseType;
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ResponseTypeSingle _ResponseType;
+        private global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ConfigDetailSingle _ConfigDetail;
     }
     /// <summary>
     /// There are no comments for ActivityEventLog in the schema.
@@ -2679,74 +2635,28 @@ namespace Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models
         partial void OnResidentIdChanging(global::System.Nullable<int> value);
         partial void OnResidentIdChanged();
         /// <summary>
-        /// There are no comments for Property ConfigId in the schema.
+        /// There are no comments for Property ConfigDetailId in the schema.
         /// </summary>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        [global::Microsoft.OData.Client.OriginalNameAttribute("ConfigId")]
-        public global::System.Nullable<int> ConfigId
+        [global::Microsoft.OData.Client.OriginalNameAttribute("ConfigDetailId")]
+        public global::System.Nullable<int> ConfigDetailId
         {
             get
             {
-                return this._ConfigId;
+                return this._ConfigDetailId;
             }
             set
             {
-                this.OnConfigIdChanging(value);
-                this._ConfigId = value;
-                this.OnConfigIdChanged();
-                this.OnPropertyChanged("ConfigId");
+                this.OnConfigDetailIdChanging(value);
+                this._ConfigDetailId = value;
+                this.OnConfigDetailIdChanged();
+                this.OnPropertyChanged("ConfigDetailId");
             }
         }
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private global::System.Nullable<int> _ConfigId;
-        partial void OnConfigIdChanging(global::System.Nullable<int> value);
-        partial void OnConfigIdChanged();
-        /// <summary>
-        /// There are no comments for Property PhidgetTypeId in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        [global::Microsoft.OData.Client.OriginalNameAttribute("PhidgetTypeId")]
-        public global::System.Nullable<int> PhidgetTypeId
-        {
-            get
-            {
-                return this._PhidgetTypeId;
-            }
-            set
-            {
-                this.OnPhidgetTypeIdChanging(value);
-                this._PhidgetTypeId = value;
-                this.OnPhidgetTypeIdChanged();
-                this.OnPropertyChanged("PhidgetTypeId");
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private global::System.Nullable<int> _PhidgetTypeId;
-        partial void OnPhidgetTypeIdChanging(global::System.Nullable<int> value);
-        partial void OnPhidgetTypeIdChanged();
-        /// <summary>
-        /// There are no comments for Property ResponseTypeId in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        [global::Microsoft.OData.Client.OriginalNameAttribute("ResponseTypeId")]
-        public global::System.Nullable<int> ResponseTypeId
-        {
-            get
-            {
-                return this._ResponseTypeId;
-            }
-            set
-            {
-                this.OnResponseTypeIdChanging(value);
-                this._ResponseTypeId = value;
-                this.OnResponseTypeIdChanged();
-                this.OnPropertyChanged("ResponseTypeId");
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private global::System.Nullable<int> _ResponseTypeId;
-        partial void OnResponseTypeIdChanging(global::System.Nullable<int> value);
-        partial void OnResponseTypeIdChanged();
+        private global::System.Nullable<int> _ConfigDetailId;
+        partial void OnConfigDetailIdChanging(global::System.Nullable<int> value);
+        partial void OnConfigDetailIdChanged();
         /// <summary>
         /// There are no comments for Property Description in the schema.
         /// </summary>
@@ -2817,74 +2727,28 @@ namespace Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models
         partial void OnResidentChanging(global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.Resident value);
         partial void OnResidentChanged();
         /// <summary>
-        /// There are no comments for Property Config in the schema.
+        /// There are no comments for Property ConfigDetail in the schema.
         /// </summary>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        [global::Microsoft.OData.Client.OriginalNameAttribute("Config")]
-        public global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.Config Config
+        [global::Microsoft.OData.Client.OriginalNameAttribute("ConfigDetail")]
+        public global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ConfigDetail ConfigDetail
         {
             get
             {
-                return this._Config;
+                return this._ConfigDetail;
             }
             set
             {
-                this.OnConfigChanging(value);
-                this._Config = value;
-                this.OnConfigChanged();
-                this.OnPropertyChanged("Config");
+                this.OnConfigDetailChanging(value);
+                this._ConfigDetail = value;
+                this.OnConfigDetailChanged();
+                this.OnPropertyChanged("ConfigDetail");
             }
         }
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.Config _Config;
-        partial void OnConfigChanging(global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.Config value);
-        partial void OnConfigChanged();
-        /// <summary>
-        /// There are no comments for Property PhidgetType in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        [global::Microsoft.OData.Client.OriginalNameAttribute("PhidgetType")]
-        public global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.PhidgetType PhidgetType
-        {
-            get
-            {
-                return this._PhidgetType;
-            }
-            set
-            {
-                this.OnPhidgetTypeChanging(value);
-                this._PhidgetType = value;
-                this.OnPhidgetTypeChanged();
-                this.OnPropertyChanged("PhidgetType");
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.PhidgetType _PhidgetType;
-        partial void OnPhidgetTypeChanging(global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.PhidgetType value);
-        partial void OnPhidgetTypeChanged();
-        /// <summary>
-        /// There are no comments for Property ResponseType in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        [global::Microsoft.OData.Client.OriginalNameAttribute("ResponseType")]
-        public global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ResponseType ResponseType
-        {
-            get
-            {
-                return this._ResponseType;
-            }
-            set
-            {
-                this.OnResponseTypeChanging(value);
-                this._ResponseType = value;
-                this.OnResponseTypeChanged();
-                this.OnPropertyChanged("ResponseType");
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ResponseType _ResponseType;
-        partial void OnResponseTypeChanging(global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ResponseType value);
-        partial void OnResponseTypeChanged();
+        private global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ConfigDetail _ConfigDetail;
+        partial void OnConfigDetailChanging(global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ConfigDetail value);
+        partial void OnConfigDetailChanged();
         /// <summary>
         /// This event is raised when the value of the property is changed
         /// </summary>
@@ -4920,22 +4784,14 @@ namespace Keebee.AAT.Operations.Service.KeebeeAAT
         </Key>
         <Property Name=""Id"" Type=""Edm.Int32"" Nullable=""false"" />
         <Property Name=""ResidentId"" Type=""Edm.Int32"" />
-        <Property Name=""ConfigId"" Type=""Edm.Int32"" />
-        <Property Name=""PhidgetTypeId"" Type=""Edm.Int32"" />
-        <Property Name=""ResponseTypeId"" Type=""Edm.Int32"" />
+        <Property Name=""ConfigDetailId"" Type=""Edm.Int32"" />
         <Property Name=""Description"" Type=""Edm.String"" />
         <Property Name=""DateEntry"" Type=""Edm.DateTimeOffset"" Nullable=""false"" />
         <NavigationProperty Name=""Resident"" Type=""Keebee.AAT.DataAccess.Models.Resident"">
           <ReferentialConstraint Property=""ResidentId"" ReferencedProperty=""Id"" />
         </NavigationProperty>
-        <NavigationProperty Name=""Config"" Type=""Keebee.AAT.DataAccess.Models.Config"">
-          <ReferentialConstraint Property=""ConfigId"" ReferencedProperty=""Id"" />
-        </NavigationProperty>
-        <NavigationProperty Name=""PhidgetType"" Type=""Keebee.AAT.DataAccess.Models.PhidgetType"">
-          <ReferentialConstraint Property=""PhidgetTypeId"" ReferencedProperty=""Id"" />
-        </NavigationProperty>
-        <NavigationProperty Name=""ResponseType"" Type=""Keebee.AAT.DataAccess.Models.ResponseType"">
-          <ReferentialConstraint Property=""ResponseTypeId"" ReferencedProperty=""Id"" />
+        <NavigationProperty Name=""ConfigDetail"" Type=""Keebee.AAT.DataAccess.Models.ConfigDetail"">
+          <ReferentialConstraint Property=""ConfigDetailId"" ReferencedProperty=""Id"" />
         </NavigationProperty>
       </EntityType>
       <EntityType Name=""GameEventLog"">
@@ -5029,9 +4885,7 @@ namespace Keebee.AAT.Operations.Service.KeebeeAAT
         <EntitySet Name=""Users"" EntityType=""Keebee.AAT.DataAccess.Models.User"" />
         <EntitySet Name=""ActivityEventLogs"" EntityType=""Keebee.AAT.DataAccess.Models.ActivityEventLog"">
           <NavigationPropertyBinding Path=""Resident"" Target=""Residents"" />
-          <NavigationPropertyBinding Path=""Config"" Target=""Configs"" />
-          <NavigationPropertyBinding Path=""PhidgetType"" Target=""PhidgetTypes"" />
-          <NavigationPropertyBinding Path=""ResponseType"" Target=""ResponseTypes"" />
+          <NavigationPropertyBinding Path=""ConfigDetail"" Target=""ConfigDetails"" />
         </EntitySet>
         <EntitySet Name=""GameEventLogs"" EntityType=""Keebee.AAT.DataAccess.Models.GameEventLog"">
           <NavigationPropertyBinding Path=""Resident"" Target=""Residents"" />

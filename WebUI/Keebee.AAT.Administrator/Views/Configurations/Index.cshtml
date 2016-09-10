@@ -20,7 +20,9 @@
 
 <div class="row">
     <div class="col-sm-12">
-        <button id="add"  style="margin-bottom: 5px" class="btn btn-success btn-md">Add Configuration</button>
+        <button id="add" style="margin-bottom: 5px" class="btn btn-success btn-md">Add</button>
+        <button id="edit" style="margin-bottom: 5px" class="btn btn-primary btn-md">Edit</button>
+        <button id="delete" style="margin-bottom: 5px" class="btn btn-danger btn-md">Delete</button>
     </div>
 </div>
 
@@ -32,7 +34,7 @@
             </div>
             <div class="pull-right" style="margin-right: 20px">
                 <button id="add-detail" class="btn btn-success btn-md">Add Detail</button>
-                <button id="activate" disabled="disabled" class="btn btn-primary btn-md">Activate</button>
+                <button id="activate" class="btn btn-primary btn-md">Activate</button>
             </div>
         </div>
     </div>
@@ -44,7 +46,6 @@
                     <tr>
                         <th class="col-glyphicon"></th>
                         <th class="col-glyphicon"></th>
-                        <th class="col-glyphicon"></th>
                         <!-- ko foreach: columns -->
                         <th data-bind="text: title"></th>
                         <!-- /ko -->
@@ -53,13 +54,16 @@
 
                     <tbody data-bind="foreach: configDetailsTable">
                     <tr data-bind="click: $parent.highlightRow, attr: {id: 'row_' +  id}">
-                        <td><a href="#" data-bind="click: $parent.showDeleteDialog, css: 'glyphicon glyphicon-remove'"></a></td>
-                        <td><a data-bind="attr: { href: '#' }, click: $parent.showEditDialog, css: 'glyphicon glyphicon-pencil'"></a></td>
-                        <td><a href="#" data-bind="click: $parent.editProfile">Profile</a></td>
+                        <!-- ko if: candelete -->
+                        <td><a href="#" data-bind="click: $parent.showDeleteDetailDialog, css: 'glyphicon glyphicon-remove'"></a></td>
+                        <!-- /ko -->
+                        <!-- ko if: !candelete -->
+                        <td><span data-bind="css: 'glyphicon glyphicon-flag'"></span></td>
+                        <!-- /ko -->
+                        <td><a data-bind="attr: { href: '#' }, click: $parent.showEditDetailDialog, css: 'glyphicon glyphicon-pencil'"></a></td>
                         <td data-bind="text: phidgettype"></td>
-                        <td data-bind="text: activitytype"></td>
+                        <td data-bind="text: description"></td>
                         <td data-bind="text: responsetype"></td>
-                        <td><input type="checkbox" data-bind="checked: isuserresponse"/></td>
                     </tr>
                     </tbody>
                 </table>

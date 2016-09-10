@@ -42,19 +42,19 @@ namespace Keebee.AAT.Operations.Controllers
             dynamic exObj = new ExpandoObject();
             exObj.ActivityEventLogs = activityEventLogs
                 .Join(config.SelectMany(x => x.ConfigDetails), 
-                al => new { al.ConfigId, al.PhidgetTypeId },
+                al => new { al.ConfigDetail.ConfigId, al.ConfigDetail.PhidgetTypeId },
                 cd => new { cd.ConfigId, cd.PhidgetTypeId },
                 (al, cd) => new { al, cd })
                 .Select(x => new
                 {
+                    x.al.ConfigDetail.ConfigId,
                     Date = $"{x.al.DateEntry:D}",
                     Time = $"{x.al.DateEntry:T}",
-                    x.al.ConfigId,
                     Resident = (x.al.Resident != null) ? $"{x.al.Resident.FirstName} {x.al.Resident.LastName}" : "N/A",
-                    PhidgetType = x.al.PhidgetType.Description,
+                    PhidgetType = x.al.ConfigDetail.PhidgetType.Description,
                     ActivityType = x.cd.Description,
-                    ResponseTypeCategory = x.al.ResponseType.ResponseTypeCategory.Description,
-                    ResponseType = x.al.ResponseType.Description,
+                    ResponseTypeCategory = x.al.ConfigDetail.ResponseType.ResponseTypeCategory.Description,
+                    ResponseType = x.al.ConfigDetail.ResponseType.Description,
                     x.al.Description,
                     ResidentId = x.al.Resident?.Id ?? -1
                 });
@@ -76,18 +76,19 @@ namespace Keebee.AAT.Operations.Controllers
 
             if (activityEventLog == null) return new DynamicJsonObject(new ExpandoObject());
 
-            var description = _configService.GetDescription((int)activityEventLog.PhidgetTypeId);
+            var description = _configService.GetDescription((int)activityEventLog.ConfigDetail.PhidgetTypeId);
 
             dynamic exObj = new ExpandoObject();
+            exObj.ConfigId = activityEventLog.ConfigDetail.ConfigId;
             exObj.Date = $"{activityEventLog.DateEntry:D}";
             exObj.Time = $"{activityEventLog.DateEntry:T}";
             exObj.Resident = (activityEventLog.Resident != null)
                 ? $"{activityEventLog.Resident.FirstName} {activityEventLog.Resident.LastName}"
                 : "N/A";
-            exObj.PhidgetType = activityEventLog.PhidgetType.Description;
+            exObj.PhidgetType = activityEventLog.ConfigDetail.PhidgetType.Description;
             exObj.ActivityType = description;
-            exObj.ResponseTypeCategory = activityEventLog.ResponseType.ResponseTypeCategory.Description;
-            exObj.ResponseType = activityEventLog.ResponseType.Description;
+            exObj.ResponseTypeCategory = activityEventLog.ConfigDetail.ResponseType.ResponseTypeCategory.Description;
+            exObj.ResponseType = activityEventLog.ConfigDetail.ResponseType.Description;
             exObj.Description = activityEventLog.Description;
 
             return new DynamicJsonObject(exObj);
@@ -111,19 +112,78 @@ namespace Keebee.AAT.Operations.Controllers
 
             dynamic exObj = new ExpandoObject();
             exObj.ActivityEventLogs = activityEventLogs
-                .Join(config.ConfigDetails, al => al.PhidgetTypeId, cd => cd.PhidgetTypeId,
+                .Join(config.ConfigDetails, al => al.ConfigDetail.PhidgetTypeId, cd => cd.PhidgetTypeId,
                 (al, cd) => new { al, cd })
                 .Select(x => new
                 {
+                    x.al.ConfigDetail.ConfigId,
                     Date = $"{x.al.DateEntry:D}",
                     Time = $"{x.al.DateEntry:T}",
                     Resident = (x.al.Resident != null) ? $"{x.al.Resident.FirstName} {x.al.Resident.LastName}" : "N/A",
-                    PhidgetType = x.al.PhidgetType.Description,
+                    PhidgetType = x.al.ConfigDetail.PhidgetType.Description,
                     ActivityType = x.cd.Description,
-                    ResponseTypeCategory = x.al.ResponseType.ResponseTypeCategory.Description,
-                    ResponseType = x.al.ResponseType.Description,
+                    ResponseTypeCategory = x.al.ConfigDetail.ResponseType.ResponseTypeCategory.Description,
+                    ResponseType = x.al.ConfigDetail.ResponseType.Description,
                     x.al.Description,
                     ResidentId = x.al.Resident?.Id ?? -1
+                });
+
+            return new DynamicJsonObject(exObj);
+        }
+
+        // GET: api/ActivityEventLogs?configId=1
+        [HttpGet]
+        public async Task<DynamicJsonObject> GetForConfig(int configId)
+        {
+            IEnumerable<ActivityEventLog> activityEventLogs = new Collection<ActivityEventLog>();
+
+            await Task.Run(() =>
+            {
+                activityEventLogs = _activityEventLogService.GetForConfig(configId);
+            });
+
+            if (activityEventLogs == null) return new DynamicJsonObject(new ExpandoObject());
+
+            dynamic exObj = new ExpandoObject();
+            exObj.ActivityEventLogs = activityEventLogs
+                .Select(x => new
+                {
+                    x.ConfigDetail.ConfigId,
+                    Date = $"{x.DateEntry:D}",
+                    Time = $"{x.DateEntry:T}",
+                    x.ConfigDetail.PhidgetTypeId,
+                    x.ConfigDetail.ResponseTypeId,
+                    x.Description,
+                    ResidentId = x.Resident?.Id ?? -1
+                });
+
+            return new DynamicJsonObject(exObj);
+        }
+
+        // GET: api/ActivityEventLogs?configDetailId
+        [HttpGet]
+        public async Task<DynamicJsonObject> GetForConfigPhidgetResponseType(int configDetailId)
+        {
+            IEnumerable<ActivityEventLog> activityEventLogs = new Collection<ActivityEventLog>();
+
+            await Task.Run(() =>
+            {
+                activityEventLogs = _activityEventLogService.GetForConfigDetail(configDetailId);
+            });
+
+            if (activityEventLogs == null) return new DynamicJsonObject(new ExpandoObject());
+
+            dynamic exObj = new ExpandoObject();
+            exObj.ActivityEventLogs = activityEventLogs
+                .Select(x => new
+                {
+                    x.ConfigDetail.ConfigId,
+                    Date = $"{x.DateEntry:D}",
+                    Time = $"{x.DateEntry:T}",
+                    x.ConfigDetail.PhidgetTypeId,
+                    x.ConfigDetail.ResponseTypeId,
+                    x.Description,
+                    ResidentId = x.Resident?.Id ?? -1
                 });
 
             return new DynamicJsonObject(exObj);

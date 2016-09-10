@@ -45,9 +45,9 @@ namespace Keebee.AAT.Exporting
 
             try
             {
-                var activityEventLogs = _opsClient.GetActivityEventLogs(date).ToArray();
-                var gameEventLogs = _opsClient.GetGameEventLogs(date).ToArray();
-                var rfidEventLogs = _opsClient.GetRfidEventLogs(date).ToArray();
+                var activityEventLogs = _opsClient.GetActivityEventLogsForDate(date).ToArray();
+                var gameEventLogs = _opsClient.GetGameEventLogsForDate(date).ToArray();
+                var rfidEventLogs = _opsClient.GetRfidEventLogsForDate(date).ToArray();
 
                 // -------------------- RFID Log------------------------
 

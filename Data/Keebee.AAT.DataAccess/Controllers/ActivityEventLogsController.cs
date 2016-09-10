@@ -14,14 +14,14 @@ namespace Keebee.AAT.DataAccess.Controllers
         private KeebeeAATContext db = new KeebeeAATContext();
 
         // GET: odata/ActivityEventLogs
-        [EnableQuery]
+        [EnableQuery(MaxExpansionDepth = 4)]
         public IQueryable<ActivityEventLog> Get()
         {
             return db.ActivityEventLogs;
         }
 
         // GET: odata/ActivityEventLogs(5)
-        [EnableQuery]
+        [EnableQuery(MaxExpansionDepth = 4)]
         public SingleResult<ActivityEventLog> Get([FromODataUri] int key)
         {
             return SingleResult.Create(db.ActivityEventLogs.Where(activityEventLog => activityEventLog.Id == key));

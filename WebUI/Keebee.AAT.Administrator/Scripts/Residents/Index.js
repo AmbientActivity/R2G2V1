@@ -296,8 +296,6 @@
                     };
                 };
 
-                //---------------------------------------------- CONTROLLER (BEGIN) -------------------------------------------------------
-
                 self.saveResident = function () {
                     var residentdetail = self.getResidentDetailFromDialog();
                     var jsonData = JSON.stringify(residentdetail);
@@ -353,8 +351,6 @@
 
                     return result;
                 };
-
-                //---------------------------------------------- CONTROLLER (END) -------------------------------------------------------
             };
 
             //---------------------------------------------- VIEW MODEL (END) -----------------------------------------------------

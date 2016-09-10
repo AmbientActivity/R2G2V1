@@ -22,7 +22,7 @@ namespace Keebee.AAT.Administrator.Controllers
         // GET: Resident
         public ActionResult Index()
         {
-            return View(LoadResidentViewModel(-1, null));
+            return View();
         }
 
         [HttpGet]
@@ -39,13 +39,13 @@ namespace Keebee.AAT.Administrator.Controllers
         [HttpGet]
         public PartialViewResult GetResidentEditView(int id)
         {
-            return PartialView("_ResidentEdit", LoadMemberEditViewModel(id));
+            return PartialView("_ResidentEdit", LoadResidentEditViewModel(id));
         }
 
         [HttpPost]
         public JsonResult Save(string resident)
         {
-            var r = JsonConvert.DeserializeObject<ResidentDetail>(resident);
+            var r = JsonConvert.DeserializeObject<ResidentEditViewModel>(resident);
             IEnumerable<string> msgs;
             var residentId = r.Id;
 
@@ -87,7 +87,7 @@ namespace Keebee.AAT.Administrator.Controllers
             }, JsonRequestBehavior.AllowGet);
         }
 
-        private ResidentEditViewModel LoadMemberEditViewModel(int id)
+        private ResidentEditViewModel LoadResidentEditViewModel(int id)
         {
             Resident resident = null;
 
@@ -109,12 +109,12 @@ namespace Keebee.AAT.Administrator.Controllers
             return vm;
         }
 
-        private IEnumerable<ResidentDetail> GetResidentList()
+        private IEnumerable<ResidentViewModel> GetResidentList()
         {
             var residents = _opsClient.GetResidents();
 
             var list = residents
-                .Select(resident => new ResidentDetail
+                .Select(resident => new ResidentViewModel
                 {
                     Id = resident.Id,
                     ProfileId = resident.Profile?.Id > 0 ? resident.Profile?.Id : 0,
@@ -128,19 +128,7 @@ namespace Keebee.AAT.Administrator.Controllers
             return list;
         }
 
-        private static ResidentViewModel LoadResidentViewModel(int selectedId, List<string> msgs)
-        {
-            var model = new ResidentViewModel
-            {
-                SelectedId = selectedId,
-                Success = (msgs == null),
-                ErrorMessages = msgs
-            };
-
-            return model;
-        }
-
-        private void UpdateResident(ResidentDetail residentDetail)
+        private void UpdateResident(ResidentEditViewModel residentDetail)
         {
             var r = new ResidentEdit
             {
@@ -152,7 +140,7 @@ namespace Keebee.AAT.Administrator.Controllers
             _opsClient.PatchResident(residentDetail.Id, r);
         }
 
-        private int AddResident(ResidentDetail residentDetail)
+        private int AddResident(ResidentEditViewModel residentDetail)
         {
             var r = new ResidentEdit
             {

@@ -123,17 +123,22 @@ namespace Keebee.AAT.StateMachineService
                 if (_activeConfig.ConfigDetails.All(x => x.PhidgetType.Id != phidgetTypeId))
                     return;
 
-                var responseType =
+                var configDetail =
                     _activeConfig.ConfigDetails
-                    .Single(cd => cd.PhidgetType.Id == phidgetTypeId)
-                    .ResponseType;
+                    .Single(cd => cd.PhidgetType.Id == phidgetTypeId);
 
                 var responseMessage = new ResponseMessage
                 {
-                    PhidgetTypeId = phidgetTypeId,
-                    ResponseTypeId = responseType.Id,
                     SensorValue = sensorValue,
-                    IsSystem = responseType.IsSystem,
+
+                    ActiveConfigDetail = new ActiveConfigDetail
+                        {
+                            Id = configDetail.Id,
+                            PhidgetTypeId = configDetail.PhidgetType.Id,
+                            ResponseTypeId = configDetail.ResponseType.Id,
+                            IsSystem = configDetail.ResponseType.IsSystem
+                        },
+                    
                     ActiveProfile = new ActiveProfile
                         {
                             Id = _activeProfile.Id,

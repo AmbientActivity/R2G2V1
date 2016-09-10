@@ -17,25 +17,34 @@ namespace Keebee.AAT.RESTClient
         SystemEventLogger SystemEventLogger { set; }
 
         // GET
-        IEnumerable<Response> GetAmbientResponses();
+        IEnumerable<Config> GetConfigs();
+        Config GetConfig(int id);
+        ConfigDetail GetConfigDetail(int id);
+        Config GetActiveConfigDetails();
+        Config GetConfigWithDetails(int id);
+        IEnumerable<PhidgetType> GetPhidgetTypes();
+        IEnumerable<ResponseType> GetResponseTypes();
+
         IEnumerable<Resident> GetResidents();
         Resident GetResident(int residentId);
         bool ResidentProfileExists(int residentId);
         Profile GetGenericProfile();
         Profile GetResidentProfile(int residentId);
-        IEnumerable<Config> GetConfigs();
-        Config GetConfig(int id);
-        Config GetActiveConfigDetails();
-        Config GetConfigDetails(int id);
-        Profile GetProfileMedia(int profileId);
-        IEnumerable<Response> GetProfileMediaForPhidgetResponseType(int profileId, int phidgetTypeId, int responseTypeId);
 
-        IEnumerable<ActivityEventLog> GetActivityEventLogs(string date);
-        IEnumerable<GameEventLog> GetGameEventLogs(string date);
-        IEnumerable<RfidEventLog> GetRfidEventLogs(string date);
+        IEnumerable<Response> GetAmbientResponses();
+        Profile GetProfileMedia(int profileId);
+        IEnumerable<Response> GetProfileMediaForConfigDetail(int profileId, int configDetailId);
+
+        IEnumerable<ActivityEventLog> GetActivityEventLogsForDate(string date);
+        IEnumerable<GameEventLog> GetGameEventLogsForDate(string date);
+        IEnumerable<RfidEventLog> GetRfidEventLogsForDate(string date);
+        IEnumerable<ActivityEventLog> GetActivityEventLogsForConfig(int configId);
+        IEnumerable<ActivityEventLog> GetActivityEventLogsForConfigDetail(int configDetailId);
 
         // POST
         int PostResident(ResidentEdit resident);
+        int PostConfigDetail(ConfigDetailEdit configDetail);
+        int PostConfig(ConfigEdit config);
         void PostActivityEventLog(ActivityEventLog activityEventLog);
         void PostGameEventLog(GameEventLog gameEventLog);
         void PostRfidEventLog(RfidEventLog rfidEventLog);
@@ -43,8 +52,13 @@ namespace Keebee.AAT.RESTClient
 
         // PATCH
         void PatchResident(int residentId, ResidentEdit resident);
+        void PatchConfig(int configId, ConfigEdit configDetail);
+        void PatchConfigDetail(int configDetailId, ConfigDetailEdit configDetail);
 
         // DELETE
+        void DeleteConfig(int configId);
+        void DeleteConfigDetail(int configDetailId);
+
         void DeleteResident(int residentId);
         void DeleteProfile(int profileId);
         void DeleteActivityEventLogsForResident(int residentId);
@@ -56,12 +70,22 @@ namespace Keebee.AAT.RESTClient
     {
         private const string UriBase = "http://localhost/Keebee.AAT.Operations/api/";
 
+        #region urls
+
         // configurations
         private const string UrlConfigs = "configs";
         private const string UrlConfig = "configs/{0}";
-        private const string UrlConfigDetails = "configs/{0}/details";
+        private const string UrlConfigWithDetails = "configs/{0}/details";
         private const string UrlActiveConfigDetails = "configs/active/details";
         private const string UrlActivateConfig = "configs/{0}/activate";
+        private const string UrlConfigDetail = "configdetails/{0}";
+        private const string UrlConfigDetails = "configdetails";
+
+        // phidget types
+        private const string UrlPhidgetTypes = "phidgettypes";
+
+        // response types
+        private const string UrlResponseTypes = "responsetypes";
 
         // residents
         private const string UrlResidents = "residents";
@@ -74,7 +98,7 @@ namespace Keebee.AAT.RESTClient
         private const string UrlProfile = "profiles/{0}";
         private const string UrlProfileDetails = "profiles/{0}/details";
         private const string UrlProfileMedia = "profiles/{0}/media";
-        private const string UrlProfileMediaForPhidgetResponseType = "profiles/{0}/media?phidgetTypeId={1}&responseTypeId={2}";
+        private const string UrlProfileMediaForConfigDetail = "profiles/{0}/media?configDetailId={1}";
 
         // ambient
         private const string UrlAmbientResponses = "ambientresponses";
@@ -83,6 +107,8 @@ namespace Keebee.AAT.RESTClient
         private const string UrlActivityEventLogs = "activityeventlogs";
         private const string UrlActivityEventLogsForResident = "activityeventlogs?residentId={0}";
         private const string UrlActivityEventLogsForDate = "activityeventlogs?date={0}";
+        private const string UrlActivityEventLogsForConfig = "activityeventlogs?configId={0}";
+        private const string UrlActivityEventLogsForConfigDetail = "activityeventlogs?configDetailId={0}";
 
         // game event logs
         private const string UrlGameEventLogs = "gameeventlogs";
@@ -93,6 +119,8 @@ namespace Keebee.AAT.RESTClient
         private const string UrlRfidEventLogs = "rfideventlogs";
         private const string UrlRfidEventLogsForResident = "rfideventlogs?residentId={0}";
         private const string UrlRfidEventLogsForDate = "rfideventlogs?date={0}";
+
+        #endregion
 
         private SystemEventLogger _systemEventLogger;
         public SystemEventLogger SystemEventLogger
@@ -108,16 +136,83 @@ namespace Keebee.AAT.RESTClient
         }
 
         // GET
-        public IEnumerable<Response> GetAmbientResponses()
+        public Config GetActiveConfigDetails()
         {
-            var data = Get(UrlAmbientResponses);
+            var data = Get(UrlActiveConfigDetails);
             if (data == null) return null;
 
             var serializer = new JavaScriptSerializer();
-            var ambientDetails = serializer.Deserialize<ResponseList>(data).AmbientResponses;
+            var config = serializer.Deserialize<Config>(data);
 
-            return ambientDetails;
-        } 
+            return config;
+        }
+
+        public IEnumerable<Config> GetConfigs()
+        {
+            var data = Get(UrlConfigs);
+            if (data == null) return null;
+
+            var serializer = new JavaScriptSerializer();
+            var configs = serializer.Deserialize<ConfigList>(data).Configs;
+
+            return configs;
+        }
+        
+        public Config GetConfig(int configId)
+        {
+            var data = Get(string.Format(UrlConfig, configId));
+            if (data == null) return null;
+
+            var serializer = new JavaScriptSerializer();
+            var config = serializer.Deserialize<Config>(data);
+
+            return config;
+        }
+
+        public ConfigDetail GetConfigDetail(int configDetailId)
+        {
+            var data = Get(string.Format(UrlConfigDetail, configDetailId));
+            if (data == null) return null;
+
+            var serializer = new JavaScriptSerializer();
+            var configDetail = serializer.Deserialize<ConfigDetail>(data);
+
+            return configDetail;
+        }
+
+        public Config GetConfigWithDetails(int id)
+        {
+            var data = Get(string.Format(UrlConfigWithDetails, id));
+            if (data == null) return null;
+
+            var serializer = new JavaScriptSerializer();
+            var config = serializer.Deserialize<Config>(data);
+
+            return config;
+        }
+
+        public IEnumerable<PhidgetType> GetPhidgetTypes()
+        {
+            var data = Get(UrlPhidgetTypes);
+            if (data == null) return null;
+
+            var serializer = new JavaScriptSerializer();
+            var phidgetTypes = serializer.Deserialize<PhidgetTypeList>(data).PhidgetTypes;
+
+            return phidgetTypes;
+        }
+
+        public IEnumerable<ResponseType> GetResponseTypes()
+        {
+            var data = Get(UrlResponseTypes);
+            if (data == null) return null;
+
+            var serializer = new JavaScriptSerializer();
+            var responseTypes = serializer.Deserialize<ResponseTypeList>(data).ResponseTypes;
+
+            return responseTypes;
+        }
+
 
         public IEnumerable<Resident> GetResidents()
         {
@@ -150,6 +245,17 @@ namespace Keebee.AAT.RESTClient
             var resident = serializer.Deserialize<Resident>(data);
 
             return resident;
+        }
+
+        public Profile GetResidentProfile(int residentId)
+        {
+            var data = Get(string.Format(UrlResidentProfile, residentId));
+            if (data == null) return null;
+
+            var serializer = new JavaScriptSerializer();
+            var profile = serializer.Deserialize<Profile>(data);
+
+            return profile;
         }
 
         public bool ResidentProfileExists(int residentId)
@@ -191,59 +297,16 @@ namespace Keebee.AAT.RESTClient
             return profile;
         }
 
-        public Profile GetResidentProfile(int residentId)
+
+        public IEnumerable<Response> GetAmbientResponses()
         {
-            var data = Get(string.Format(UrlResidentProfile, residentId));
+            var data = Get(UrlAmbientResponses);
             if (data == null) return null;
 
             var serializer = new JavaScriptSerializer();
-            var profile = serializer.Deserialize<Profile>(data);
+            var ambientDetails = serializer.Deserialize<ResponseList>(data).AmbientResponses;
 
-            return profile;
-        }
-
-        public Config GetActiveConfigDetails()
-        {
-            var data = Get(UrlActiveConfigDetails);
-            if (data == null) return null;
-
-            var serializer = new JavaScriptSerializer();
-            var config = serializer.Deserialize<Config>(data);
-
-            return config;
-        }
-
-        public IEnumerable<Config> GetConfigs()
-        {
-            var data = Get(UrlConfigs);
-            if (data == null) return null;
-
-            var serializer = new JavaScriptSerializer();
-            var configs = serializer.Deserialize<ConfigList>(data).Configs;
-
-            return configs;
-        }
-
-        public Config GetConfig(int configId)
-        {
-            var data = Get(string.Format(UrlConfig, configId));
-            if (data == null) return null;
-
-            var serializer = new JavaScriptSerializer();
-            var config = serializer.Deserialize<Config>(data);
-
-            return config;
-        }
-
-        public Config GetConfigDetails(int id)
-        {
-            var data = Get(string.Format(UrlConfigDetails, id));
-            if (data == null) return null;
-
-            var serializer = new JavaScriptSerializer();
-            var config = serializer.Deserialize<Config>(data);
-
-            return config;
+            return ambientDetails;
         }
 
         public Profile GetProfileMedia(int profileId)
@@ -257,9 +320,9 @@ namespace Keebee.AAT.RESTClient
             return profile;
         }
 
-        public IEnumerable<Response> GetProfileMediaForPhidgetResponseType(int profileId, int phidgetTypeId, int responseTypeId)
+        public IEnumerable<Response> GetProfileMediaForConfigDetail(int profileId, int configDetailId)
         {
-            var data = Get(string.Format(UrlProfileMediaForPhidgetResponseType, profileId, phidgetTypeId, responseTypeId));
+            var data = Get(string.Format(UrlProfileMediaForConfigDetail, profileId, configDetailId));
             if (data == null) return null;
 
             var serializer = new JavaScriptSerializer();
@@ -270,7 +333,7 @@ namespace Keebee.AAT.RESTClient
             return details;
         }
 
-        public IEnumerable<ActivityEventLog> GetActivityEventLogs(string date)
+        public IEnumerable<ActivityEventLog> GetActivityEventLogsForDate(string date)
         {
             var data = Get(string.Format(UrlActivityEventLogsForDate, date));
             if (data == null) return null;
@@ -281,7 +344,7 @@ namespace Keebee.AAT.RESTClient
             return activityEventLogs;
         }
 
-        public IEnumerable<GameEventLog> GetGameEventLogs(string date)
+        public IEnumerable<GameEventLog> GetGameEventLogsForDate(string date)
         {
             var data = Get(string.Format(UrlGameEventLogsForDate, date));
             if (data == null) return null;
@@ -292,7 +355,7 @@ namespace Keebee.AAT.RESTClient
             return gameEventLogs;
         }
 
-        public IEnumerable<RfidEventLog> GetRfidEventLogs(string date)
+        public IEnumerable<RfidEventLog> GetRfidEventLogsForDate(string date)
         {
             var data = Get(string.Format(UrlRfidEventLogsForDate, date));
             if (data == null) return null;
@@ -303,7 +366,46 @@ namespace Keebee.AAT.RESTClient
             return rfidEventLogs;
         }
 
+        public IEnumerable<ActivityEventLog> GetActivityEventLogsForConfig(int configId)
+        {
+            var data = Get(string.Format(UrlActivityEventLogsForConfig, configId));
+            if (data == null) return null;
+
+            var serializer = new JavaScriptSerializer();
+            var activityEventLogs = serializer.Deserialize<ActivityEventLogList>(data).ActivityEventLogs;
+
+            return activityEventLogs;
+        }
+
+        public IEnumerable<ActivityEventLog> GetActivityEventLogsForConfigDetail(int configDetailId)
+        {
+            var data = Get(string.Format(UrlActivityEventLogsForConfigDetail, configDetailId));
+            if (data == null) return null;
+
+            var serializer = new JavaScriptSerializer();
+            var activityEventLogs = serializer.Deserialize<ActivityEventLogList>(data).ActivityEventLogs;
+
+            return activityEventLogs;
+        }
+
         // POST
+
+        public int PostConfig(ConfigEdit config)
+        {
+            var serializer = new JavaScriptSerializer();
+            var el = serializer.Serialize(config);
+
+            return Post(UrlConfigs, el);
+        }
+
+        public int PostConfigDetail(ConfigDetailEdit configDetail)
+        {
+            var serializer = new JavaScriptSerializer();
+            var el = serializer.Serialize(configDetail);
+
+            return Post(UrlConfigDetails, el);
+        }
+
         public int PostResident(ResidentEdit resident)
         {
             var serializer = new JavaScriptSerializer();
@@ -350,7 +452,33 @@ namespace Keebee.AAT.RESTClient
             Patch(string.Format(UrlResident, residentId), el);
         }
 
+        public void PatchConfig(int configId, ConfigEdit config)
+        {
+            var serializer = new JavaScriptSerializer();
+            var el = serializer.Serialize(config);
+
+            Patch(string.Format(UrlConfigDetail, configId), el);
+        }
+
+        public void PatchConfigDetail(int configDetailId, ConfigDetailEdit configDetail)
+        {
+            var serializer = new JavaScriptSerializer();
+            var el = serializer.Serialize(configDetail);
+
+            Patch(string.Format(UrlConfigDetail, configDetailId), el);
+        }
+
         // DELETE
+        public void DeleteConfig(int configId)
+        {
+            Delete(string.Format(UrlConfig, configId));
+        }
+
+        public void DeleteConfigDetail(int configId)
+        {
+            Delete(string.Format(UrlConfigDetail, configId));
+        }
+
         public void DeleteResident(int residentId)
         {
             Delete(string.Format(UrlResident, residentId));
@@ -375,6 +503,7 @@ namespace Keebee.AAT.RESTClient
         {
             Delete(string.Format(UrlRfidEventLogsForResident, residentId));
         }
+
         // private
         private string Get(string url)
         {

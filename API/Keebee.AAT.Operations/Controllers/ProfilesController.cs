@@ -166,7 +166,7 @@ namespace Keebee.AAT.Operations.Controllers
 
         [Route("{id}/media")]
         [HttpGet]
-        public async Task<DynamicJsonObject> GetWithMediaByActivityResponseType(int id, int phidgetTypeId, int responseTypeId)
+        public async Task<DynamicJsonObject> GetWithMediaByCOnfigDetail(int id, int configDetailId)
         {
             Profile profile = new Profile();
 
@@ -177,7 +177,7 @@ namespace Keebee.AAT.Operations.Controllers
 
             if (profile == null) return new DynamicJsonObject(new ExpandoObject());
 
-            var config = _configService.GetMediaForProfileActivityResponseType(profile.Id, phidgetTypeId, responseTypeId);
+            var config = _configService.GetMediaForProfileConfigDetail(profile.Id, configDetailId);
 
             dynamic exObj = new ExpandoObject();
             exObj.Id = profile.Id;

@@ -50,7 +50,7 @@ namespace Keebee.AAT.Operations.Controllers
                     cd.ResponseType.Description,
                     cd.ResponseType.IsInteractive
                 }
-            });
+            }).OrderBy(o => o.PhidgetType.Id);
 
             return new DynamicJsonObject(exObj);
         }
@@ -71,12 +71,12 @@ namespace Keebee.AAT.Operations.Controllers
 
             dynamic exObj = new ExpandoObject();
             exObj.Id = configDetail.Id;
-            exObj.Description = configDetail.Description;
             exObj.PhidgetType = new
             {
                 configDetail.PhidgetType.Id,
                 configDetail.PhidgetType.Description
             };
+            exObj.Description = configDetail.Description;
             exObj.ResponseType = new
             {
                 configDetail.ResponseType.Id,

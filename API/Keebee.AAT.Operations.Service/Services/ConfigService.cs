@@ -17,7 +17,7 @@ namespace Keebee.AAT.Operations.Service.Services
         Config GetDetails(int id);
         string GetDescription(int phidgetTypeId);
         Config GetMediaForProfile(int profileId);
-        Config GetMediaForProfileActivityResponseType(int profileId, int phidgetTypeId, int responseTypeId);
+        Config GetMediaForProfileConfigDetail(int profileId, int configDetailId);
         Config GetMedia();
         void Activate(int id);
     }
@@ -136,14 +136,14 @@ namespace Keebee.AAT.Operations.Service.Services
             return config;
         }
 
-        public Config GetMediaForProfileActivityResponseType(int profileId, int phidgetTypeId, int responseTypeId)
+        public Config GetMediaForProfileConfigDetail(int profileId, int configDetailId)
         {
             var container = new Container(new Uri(ODataHost.Url));
 
             var config = container.Configs
                     .AddQueryOption("$filter", "IsActive")
-                    .Expand($"ConfigDetails($filter=PhidgetTypeId eq {phidgetTypeId} and ResponseTypeId eq {responseTypeId};" +
-                            $"$expand=PhidgetType,ResponseType($expand=ResponseTypeCategory,Responses($filter=ProfileId eq {profileId};$expand=MediaFile)))")
+                    .Expand($"ConfigDetails($filter=Id eq {configDetailId};" +
+                            $"$expand=PhidgetType,ResponseType($filter=IsSystem;$expand=ResponseTypeCategory,Responses($filter=ProfileId eq {profileId};$expand=MediaFile)))")
                     .FirstOrDefault();
 
             return config;

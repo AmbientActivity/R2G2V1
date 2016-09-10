@@ -39,13 +39,12 @@ namespace Keebee.AAT.Operations.Controllers
                 .Select(x => new
                 {
                     x.Id,
-                    ResponseTypeCategory = x.ResponseTypeCategory.Description,
+                    ResponseTypeCategory = new
+                    {
+                        x.ResponseTypeCategory.Id,
+                        x.ResponseTypeCategory.Description
+                    },
                     x.Description,
-                    ResponseTYpeCategory = new
-                        {
-                            x.ResponseTypeCategory.Id,
-                            x.ResponseTypeCategory.Description                
-                        },
                     x.IsInteractive,
                     x.IsSystem
                 });

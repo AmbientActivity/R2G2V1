@@ -70,6 +70,12 @@ namespace Keebee.AAT.Operations.Service.Services
             if (configDetail.Description != null)
                 el.Description = configDetail.Description;
 
+            if (configDetail.PhidgetTypeId > 0)
+                el.PhidgetTypeId = configDetail.PhidgetTypeId;
+
+            if (configDetail.ResponseTypeId > 0)
+                el.ResponseTypeId = configDetail.ResponseTypeId;
+
             container.UpdateObject(el);
             container.SaveChanges();
         }

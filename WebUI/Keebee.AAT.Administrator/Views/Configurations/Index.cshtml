@@ -41,19 +41,25 @@
             <div class="col-sm-12">
                 <table class="table table-striped table-bordered table-hover" id="tblConfigDetail">
                     <thead>
-                        <tr>
-                            <!-- ko foreach: columns -->
-                            <th data-bind="text: title"></th>
-                            <!-- /ko -->
-                        </tr>
+                    <tr>
+                        <th class="col-glyphicon"></th>
+                        <th class="col-glyphicon"></th>
+                        <th class="col-glyphicon"></th>
+                        <!-- ko foreach: columns -->
+                        <th data-bind="text: title"></th>
+                        <!-- /ko -->
+                    </tr>
                     </thead>
 
                     <tbody data-bind="foreach: configDetailsTable">
                     <tr data-bind="click: $parent.highlightRow, attr: {id: 'row_' +  id}">
-                        <td data-bind="text: phidget"></td>
+                        <td><a href="#" data-bind="click: $parent.showDeleteDialog, css: 'glyphicon glyphicon-remove'"></a></td>
+                        <td><a data-bind="attr: { href: '#' }, click: $parent.showEditDialog, css: 'glyphicon glyphicon-pencil'"></a></td>
+                        <td><a href="#" data-bind="click: $parent.editProfile">Profile</a></td>
+                        <td data-bind="text: phidgettype"></td>
                         <td data-bind="text: activitytype"></td>
                         <td data-bind="text: responsetype"></td>
-                        <td data-bind="text: isuserresponse"></td>
+                        <td><input type="checkbox" data-bind="checked: isuserresponse"/></td>
                     </tr>
                     </tbody>
                 </table>

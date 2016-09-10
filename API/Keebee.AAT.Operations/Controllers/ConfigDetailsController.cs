@@ -38,11 +38,12 @@ namespace Keebee.AAT.Operations.Controllers
             exObj.Configurations = configDetails.Select(cd => new
             {
                 cd.Id,
-                ActivityType = new
+                PhidgetType = new
                 {
-                    cd.ActivityType.Id,
-                    cd.ActivityTypeDesc
+                    cd.PhidgetType.Id,
+                    cd.PhidgetType.Description
                 },
+                cd.Description,
                 ResponseType = new
                 {
                     cd.ResponseType.Id,
@@ -70,10 +71,11 @@ namespace Keebee.AAT.Operations.Controllers
 
             dynamic exObj = new ExpandoObject();
             exObj.Id = configDetail.Id;
-            exObj.ActivityType = new
+            exObj.Description = configDetail.Description;
+            exObj.PhidgetType = new
             {
-                configDetail.ActivityType.Id,
-                configDetail.ActivityTypeDesc
+                configDetail.PhidgetType.Id,
+                configDetail.PhidgetType.Description
             };
             exObj.ResponseType = new
             {

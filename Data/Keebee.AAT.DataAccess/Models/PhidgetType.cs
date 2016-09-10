@@ -2,11 +2,11 @@
 
 namespace Keebee.AAT.DataAccess.Models
 {
-    public class ActivityType
+    public class PhidgetType
     {
         [Key]
         public int Id { get; set; }
         [Required]
-        public string PhidgetType { get; set; }
+        public string Description { get; set; }
     }
 }

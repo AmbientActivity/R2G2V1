@@ -20,7 +20,7 @@ namespace Keebee.AAT.Display.Helpers
             set { _systemEventLogger = value; }
         }
 
-        public void Add(int configId, int residentId, int activityTypeId, int responseTypeId, string description = null)
+        public void Add(int configId, int residentId, int phidgetTypeId, int responseTypeId, string description = null)
         {
             try
             { 
@@ -28,7 +28,7 @@ namespace Keebee.AAT.Display.Helpers
                 {
                     ConfigId = configId,
                     ResidentId = (residentId) > 0 ? residentId : (int?)null,
-                    ActivityTypeId = activityTypeId,
+                    PhidgetTypeId = phidgetTypeId,
                     ResponseTypeId = responseTypeId,
                     Description = description
                 };

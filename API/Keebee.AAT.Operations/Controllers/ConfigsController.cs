@@ -45,11 +45,11 @@ namespace Keebee.AAT.Operations.Controllers
                     {
                         cd.Id,
                         cd.ConfigId,
-                        ActivityType = new
+                        cd.Description,
+                        PhidgetType = new
                         {
-                            cd.ActivityType.Id,
-                            Description = cd.ActivityTypeDesc,
-                            cd.ActivityType.PhidgetType
+                            cd.PhidgetType.Id,
+                            cd.PhidgetType.Description,
                         },
                         ResponseType = new
                         {
@@ -109,13 +109,12 @@ namespace Keebee.AAT.Operations.Controllers
             {
                 cd.Id,
                 ConfigId = config.Id,
-                
-                ActivityType = new
+                PhidgetType = new
                 {
-                    cd.ActivityType.Id,
-                    cd.ActivityType.PhidgetType,
-                    Description = cd.ActivityTypeDesc
+                    cd.PhidgetType.Id,
+                    cd.PhidgetType.Description
                 },
+                cd.Description,
                 ResponseType = new
                 {
                     ResponseTypeCategory = new
@@ -154,12 +153,12 @@ namespace Keebee.AAT.Operations.Controllers
             {
                 cd.Id,
                 ConfigId = config.Id,
-                ActivityType = new
+                PhidgetType = new
                 {
-                    cd.ActivityType.Id,
-                    cd.ActivityType.PhidgetType,
-                    Description = cd.ActivityTypeDesc
+                    cd.PhidgetType.Id,
+                    cd.PhidgetType.Description,
                 },
+                cd.Description,
                 ResponseType = new
                 {
                     ResponseTypeCategory = new
@@ -197,12 +196,12 @@ namespace Keebee.AAT.Operations.Controllers
             exObj.ConfigDetails = config.ConfigDetails.Select(cd => new
             {
                 cd.Id,
-                ActivityType = new
+                PhidgetType = new
                 {
-                    cd.ActivityType.Id,
-                    cd.ActivityType.PhidgetType,
-                    Description = cd.ActivityTypeDesc
+                    cd.PhidgetType.Id,
+                    cd.PhidgetType.Description
                 },
+                cd.Description,
                 ResponseType = new
                 {
                     cd.ResponseType.Id,

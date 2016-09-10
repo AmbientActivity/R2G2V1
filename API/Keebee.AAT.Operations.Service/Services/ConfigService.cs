@@ -15,9 +15,9 @@ namespace Keebee.AAT.Operations.Service.Services
         void Patch(int id, Config config);
         void Delete(int id);
         Config GetDetails(int id);
-        string GetActivityTypeDesc(int activityTypeId);
+        string GetDescription(int phidgetTypeId);
         Config GetMediaForProfile(int profileId);
-        Config GetMediaForProfileActivityResponseType(int profileId, int activityTypeId, int responseTypeId);
+        Config GetMediaForProfileActivityResponseType(int profileId, int phidgetTypeId, int responseTypeId);
         Config GetMedia();
         void Activate(int id);
     }
@@ -29,7 +29,7 @@ namespace Keebee.AAT.Operations.Service.Services
             var container = new Container(new Uri(ODataHost.Url));
 
             var configs = container.Configs
-                .Expand("ConfigDetails($expand=ActivityType,ResponseType)")
+                .Expand("ConfigDetails($expand=PhidgetType,ResponseType)")
                 .AsEnumerable();
 
             return configs;
@@ -41,7 +41,7 @@ namespace Keebee.AAT.Operations.Service.Services
 
             var config = container.Configs
                 .ByKey(id)
-                .Expand("ConfigDetails($expand=ActivityType,ResponseType)")
+                .Expand("ConfigDetails($expand=PhidgetType,ResponseType)")
                 .GetValue();
 
             return config;
@@ -53,21 +53,21 @@ namespace Keebee.AAT.Operations.Service.Services
 
             var config = container.Configs
                 .AddQueryOption("$filter", "IsActive")
-                .Expand("ConfigDetails($expand=ActivityType,ResponseType($expand=ResponseTypeCategory))")
+                .Expand("ConfigDetails($expand=PhidgetType,ResponseType($expand=ResponseTypeCategory))")
                 .Single();
 
             return config;
         }
 
-        public string GetActivityTypeDesc(int activityTypeId)
+        public string GetDescription(int phidgetTypeId)
         {
             var container = new Container(new Uri(ODataHost.Url));
 
             var config = container.Configs
                 .AddQueryOption("$filter", "IsActive")
-                .Expand($"ConfigDetails(ActivityTypeId eq {activityTypeId})")
+                .Expand($"ConfigDetails(PhidgetTypeId eq {phidgetTypeId})")
                 .Single().ConfigDetails
-                .Single().ActivityTypeDesc;
+                .Single().Description;
 
             return config;
         }
@@ -116,7 +116,7 @@ namespace Keebee.AAT.Operations.Service.Services
             var container = new Container(new Uri(ODataHost.Url));
 
             var config = container.Configs.ByKey(id)
-                 .Expand("ConfigDetails($expand=ActivityType,ResponseType($expand=ResponseTypeCategory))")
+                 .Expand("ConfigDetails($expand=PhidgetType,ResponseType($expand=ResponseTypeCategory))")
                 .GetValue();
 
             return config;
@@ -129,21 +129,21 @@ namespace Keebee.AAT.Operations.Service.Services
             var config = container.Configs
                     .AddQueryOption("$filter", "IsActive")
                     .Expand("ConfigDetails($filter=ResponseType/IsSystem eq false;" +
-                            "$expand=ActivityType,ResponseType($expand=ResponseTypeCategory," +
+                            "$expand=PhidgetType,ResponseType($expand=ResponseTypeCategory," +
                             $"Responses($filter=ProfileId eq {profileId};$expand=MediaFile)))")
                     .Single();
 
             return config;
         }
 
-        public Config GetMediaForProfileActivityResponseType(int profileId, int activityTypeId, int responseTypeId)
+        public Config GetMediaForProfileActivityResponseType(int profileId, int phidgetTypeId, int responseTypeId)
         {
             var container = new Container(new Uri(ODataHost.Url));
 
             var config = container.Configs
                     .AddQueryOption("$filter", "IsActive")
-                    .Expand($"ConfigDetails($filter=ActivityTypeId eq {activityTypeId} and ResponseTypeId eq {responseTypeId};" +
-                            $"$expand=ActivityType,ResponseType($expand=ResponseTypeCategory,Responses($filter=ProfileId eq {profileId};$expand=MediaFile)))")
+                    .Expand($"ConfigDetails($filter=PhidgetTypeId eq {phidgetTypeId} and ResponseTypeId eq {responseTypeId};" +
+                            $"$expand=PhidgetType,ResponseType($expand=ResponseTypeCategory,Responses($filter=ProfileId eq {profileId};$expand=MediaFile)))")
                     .FirstOrDefault();
 
             return config;
@@ -155,7 +155,7 @@ namespace Keebee.AAT.Operations.Service.Services
 
             var config = container.Configs
                     .AddQueryOption("$filter", "IsActive")
-                    .Expand("ConfigDetails($expand=ActivityType,ResponseType($expand=Responses($expand=MediaFile)))")
+                    .Expand("ConfigDetails($expand=PhidgetType,ResponseType($expand=Responses($expand=MediaFile)))")
                     .FirstOrDefault();
 
             return config;

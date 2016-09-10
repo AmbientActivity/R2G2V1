@@ -1,9 +1,8 @@
 ﻿namespace Keebee.AAT.RESTClient
 {
-    public class ActivityType
+    public class PhidgetType
     {
         public int Id { get; set; }
         public string Description { get; set; }
-        public string PhidgetType { get; set; }
     }
 }

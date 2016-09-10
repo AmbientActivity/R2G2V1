@@ -8,15 +8,15 @@ namespace Keebee.AAT.DataAccess.Models
         [Key]
         public int Id { get; set; }
 
-        public string ActivityTypeDesc { get; set; }
+        public string Description { get; set; }
 
         [ForeignKey("Config")]
         public int ConfigId { get; set; }
         public virtual Config Config { get; set; }
 
-        [ForeignKey("ActivityType")]
-        public int ActivityTypeId { get; set; }
-        public virtual ActivityType ActivityType { get; set; }
+        [ForeignKey("PhidgetType")]
+        public int PhidgetTypeId { get; set; }
+        public virtual PhidgetType PhidgetType { get; set; }
 
         [ForeignKey("ResponseType")]
         public int ResponseTypeId { get; set; }

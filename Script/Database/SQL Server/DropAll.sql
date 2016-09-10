@@ -14,7 +14,7 @@ IF OBJECT_ID('ConfigDetails', 'U') IS NOT NULL DROP TABLE ConfigDetails
 IF OBJECT_ID('Configs', 'U') IS NOT NULL DROP TABLE [Configs]
 IF OBJECT_ID('ResponseTypes', 'U') IS NOT NULL DROP TABLE ResponseTypes
 IF OBJECT_ID('ResponseTypeCategories', 'U') IS NOT NULL DROP TABLE ResponseTypeCategories
-IF OBJECT_ID('ActivityTypes', 'U') IS NOT NULL DROP TABLE ActivityTypes
+IF OBJECT_ID('PhidgetTypes', 'U') IS NOT NULL DROP TABLE PhidgetTypes
 IF OBJECT_ID('Residents', 'U') IS NOT NULL DROP TABLE Residents
 IF OBJECT_ID('Profiles', 'U') IS NOT NULL DROP TABLE Profiles
 

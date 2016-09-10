@@ -11,87 +11,87 @@ using System.Web.Script.Serialization;
 
 namespace Keebee.AAT.Operations.Controllers
 {
-    [RoutePrefix("api/ActivityTypes")]
-    public class ActivityTypesController : ApiController
+    [RoutePrefix("api/PhidgetTypes")]
+    public class PhidgetTypesController : ApiController
     {
-        private readonly IActivityTypeService _activityTypeService;
+        private readonly IPhidgetTypeService _phidgetTypeService;
 
-        public ActivityTypesController(IActivityTypeService activityTypeService)
+        public PhidgetTypesController(IPhidgetTypeService phidgetTypeService)
         {
-            _activityTypeService = activityTypeService;
+            _phidgetTypeService = phidgetTypeService;
         }
 
-        // GET: api/ActivityTypes
+        // GET: api/PhidgetTypes
         [HttpGet]
         public async Task<DynamicJsonObject> Get()
         {
-            IEnumerable<ActivityType> activityTypes = new Collection<ActivityType>();
+            IEnumerable<PhidgetType> phidgetTypes = new Collection<PhidgetType>();
 
             await Task.Run(() =>
             {
-                activityTypes = _activityTypeService.Get();
+                phidgetTypes = _phidgetTypeService.Get();
             });
 
-            if (activityTypes == null) return new DynamicJsonObject(new ExpandoObject());
+            if (phidgetTypes == null) return new DynamicJsonObject(new ExpandoObject());
 
             dynamic exObj = new ExpandoObject();
-            exObj.ActivityTypes = activityTypes
+            exObj.PhidgetTypes = phidgetTypes
                 .Select(x => new
                 {
                     x.Id,
-                    x.PhidgetType
+                    x.Description
                 });
 
             return new DynamicJsonObject(exObj);
         }
 
-        // GET: api/ActivityTypes/5
+        // GET: api/PhidgetTypes/5
         [HttpGet]
         [Route("{id}")]
         public async Task<DynamicJsonObject> Get(int id)
         {
-            var activityType = new ActivityType();
+            var phidgetType = new PhidgetType();
 
             await Task.Run(() =>
             {
-                activityType = _activityTypeService.Get(id);
+                phidgetType = _phidgetTypeService.Get(id);
             });
 
-            if (activityType == null) return new DynamicJsonObject(new ExpandoObject());
+            if (phidgetType == null) return new DynamicJsonObject(new ExpandoObject());
 
             dynamic exObj = new ExpandoObject();
 
-            exObj.Id = activityType.Id;
-            exObj.PhidgetType = activityType.PhidgetType;
+            exObj.Id = phidgetType.Id;
+            exObj.Description = phidgetType.Description;
 
             return new DynamicJsonObject(exObj);
         }
 
-        // POST: api/ActivityTypes
+        // POST: api/PhidgetTypes
         [HttpPost]
         public void Post([FromBody]string value)
         {
             var serializer = new JavaScriptSerializer();
-            var activityType = serializer.Deserialize<ActivityType>(value);
-            _activityTypeService.Post(activityType);
+            var phidgetType = serializer.Deserialize<PhidgetType>(value);
+            _phidgetTypeService.Post(phidgetType);
         }
 
-        // PATCH: api/ActivityTypes/5
+        // PATCH: api/PhidgetTypes/5
         [HttpPatch]
         [Route("{id}")]
         public void Patch(int id, [FromBody]string value)
         {
             var serializer = new JavaScriptSerializer();
-            var activityType = serializer.Deserialize<ActivityType>(value);
-            _activityTypeService.Patch(id, activityType);
+            var phidgetType = serializer.Deserialize<PhidgetType>(value);
+            _phidgetTypeService.Patch(id, phidgetType);
         }
 
-        // DELETE: api/ActivityTypes/5
+        // DELETE: api/PhidgetTypes/5
         [HttpDelete]
         [Route("{id}")]
         public void Delete(int id)
         {
-            _activityTypeService.Delete(id);
+            _phidgetTypeService.Delete(id);
         }
     }
 }

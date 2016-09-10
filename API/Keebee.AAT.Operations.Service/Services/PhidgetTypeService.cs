@@ -6,50 +6,50 @@ using System;
 
 namespace Keebee.AAT.Operations.Service.Services
 {
-    public interface IActivityTypeService
+    public interface IPhidgetTypeService
     {
-        IEnumerable<ActivityType> Get();
-        ActivityType Get(int id);
-        void Post(ActivityType activityType);
-        void Patch(int id, ActivityType activityType);
+        IEnumerable<PhidgetType> Get();
+        PhidgetType Get(int id);
+        void Post(PhidgetType phidgetType);
+        void Patch(int id, PhidgetType phidgetType);
         void Delete(int id);
     }
 
-    public class ActivityTypeService : IActivityTypeService
+    public class PhidgetTypeService : IPhidgetTypeService
     {
-        public IEnumerable<ActivityType> Get()
+        public IEnumerable<PhidgetType> Get()
         {
             var container = new Container(new Uri(ODataHost.Url));
 
-            var activityTypes = container.ActivityTypes
+            var phidgetTypes = container.PhidgetTypes
                 .AsEnumerable();
 
-            return activityTypes;
+            return phidgetTypes;
         }
 
-        public ActivityType Get(int id)
+        public PhidgetType Get(int id)
         {
             var container = new Container(new Uri(ODataHost.Url));
 
-            var activityType = container.ActivityTypes.ByKey(id)
+            var phidgetType = container.PhidgetTypes.ByKey(id)
                 .GetValue();
 
-            return activityType;
+            return phidgetType;
         }
 
-        public void Post(ActivityType activityType)
+        public void Post(PhidgetType phidgetType)
         {
             var container = new Container(new Uri(ODataHost.Url));
 
-            container.AddToActivityTypes(activityType);
+            container.AddToPhidgetTypes(phidgetType);
             container.SaveChanges();
         }
 
-        public void Patch(int id, ActivityType activityType)
+        public void Patch(int id, PhidgetType phidgetType)
         {
             var container = new Container(new Uri(ODataHost.Url));
 
-            var el = container.ActivityTypes.Where(e => e.Id == id).SingleOrDefault();
+            var el = container.PhidgetTypes.Where(e => e.Id == id).SingleOrDefault();
             if (el == null) return;
 
             container.UpdateObject(el);
@@ -60,10 +60,10 @@ namespace Keebee.AAT.Operations.Service.Services
         {
             var container = new Container(new Uri(ODataHost.Url));
 
-            var activityType = container.ActivityTypes.Where(e => e.Id == id).SingleOrDefault();
-            if (activityType == null) return;
+            var phidgetType = container.PhidgetTypes.Where(e => e.Id == id).SingleOrDefault();
+            if (phidgetType == null) return;
 
-            container.DeleteObject(activityType);
+            container.DeleteObject(phidgetType);
             container.SaveChanges();
         }
     }

@@ -24,7 +24,7 @@ namespace Keebee.AAT.Operations.Service.Services
             var container = new Container(new Uri(ODataHost.Url));
 
             var activityEventLogs = container.ActivityEventLogs
-                .Expand("Resident,ActivityType,ResponseType($expand=ResponseTypeCategory)")
+                .Expand("Resident,PhidgetType,ResponseType($expand=ResponseTypeCategory)")
                 .AsEnumerable();
 
             return activityEventLogs;
@@ -35,7 +35,7 @@ namespace Keebee.AAT.Operations.Service.Services
             var container = new Container(new Uri(ODataHost.Url));
 
             var activityEventLog = container.ActivityEventLogs.ByKey(id)
-                .Expand("Resident,ActivityType,ResponseType($expand=ResponseTypeCategory)")
+                .Expand("Resident,PhidgetType,ResponseType($expand=ResponseTypeCategory)")
                 .GetValue();
 
             return activityEventLog;
@@ -61,7 +61,7 @@ namespace Keebee.AAT.Operations.Service.Services
 
             var activityEventLogs = container.ActivityEventLogs
                 .AddQueryOption("$filter", filter)
-                .Expand("Resident,ActivityType,ResponseType($expand=ResponseTypeCategory)")
+                .Expand("Resident,PhidgetType,ResponseType($expand=ResponseTypeCategory)")
                 .ToList();
 
             return activityEventLogs;
@@ -85,8 +85,8 @@ namespace Keebee.AAT.Operations.Service.Services
             if (el.ResidentId != null)
                 el.ResidentId = activityEventLog.ResidentId;
 
-            if (el.ActivityTypeId != null)
-                el.ActivityTypeId = activityEventLog.ActivityTypeId;
+            if (el.PhidgetTypeId != null)
+                el.PhidgetTypeId = activityEventLog.PhidgetTypeId;
 
             if (el.ResponseTypeId != null)
                 el.ResponseTypeId = activityEventLog.ResponseTypeId;

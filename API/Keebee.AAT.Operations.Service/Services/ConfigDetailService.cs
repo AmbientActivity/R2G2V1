@@ -23,7 +23,7 @@ namespace Keebee.AAT.Operations.Service.Services
             var container = new Container(new Uri(ODataHost.Url));
 
             var configDetails = container.ConfigDetails
-                .Expand("ActivityType,ResponseType").AsEnumerable();
+                .Expand("PhidgetType,ResponseType").AsEnumerable();
 
             return configDetails;
         }
@@ -33,7 +33,7 @@ namespace Keebee.AAT.Operations.Service.Services
             var container = new Container(new Uri(ODataHost.Url));
 
             return container.ConfigDetails.ByKey(id)
-                .Expand("ActivityType,ResponseType")
+                .Expand("PhidgetType,ResponseType")
                 .GetValue();
         }
 
@@ -42,7 +42,7 @@ namespace Keebee.AAT.Operations.Service.Services
             var container = new Container(new Uri(ODataHost.Url));
 
             var configDetail = container.ConfigDetails.ByKey(id)
-                .Expand("ActivityType,ResponseType")
+                .Expand("PhidgetType,ResponseType")
                 .GetValue();
 
             return configDetail;
@@ -67,8 +67,8 @@ namespace Keebee.AAT.Operations.Service.Services
             var el = container.ConfigDetails.Where(e => e.Id == id).SingleOrDefault();
             if (el == null) return;
 
-            if (configDetail.ActivityTypeDesc != null)
-                el.ActivityTypeDesc = configDetail.ActivityTypeDesc;
+            if (configDetail.Description != null)
+                el.Description = configDetail.Description;
 
             container.UpdateObject(el);
             container.SaveChanges();

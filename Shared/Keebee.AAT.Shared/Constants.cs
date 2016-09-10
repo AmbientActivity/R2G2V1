@@ -32,7 +32,7 @@
         public const int MatchThePairs = 2;
     }
 
-    public static class ActivityTypeId
+    public static class PhidgetTypeId
     {
         public const int Sensor0 = 1;
         public const int Sensor1 = 2;

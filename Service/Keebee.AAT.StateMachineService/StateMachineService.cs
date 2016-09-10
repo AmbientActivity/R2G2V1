@@ -115,22 +115,22 @@ namespace Keebee.AAT.StateMachineService
             { SystemEventLogger = _systemEventLogger };
         }
 
-        private void ExecuteResponse(int activityTypeId, int sensorValue)
+        private void ExecuteResponse(int phidgetTypeId, int sensorValue)
         {
             try
             {
                 // if the activity type is not defined in this config then exit
-                if (_activeConfig.ConfigDetails.All(x => x.ActivityType.Id != activityTypeId))
+                if (_activeConfig.ConfigDetails.All(x => x.PhidgetType.Id != phidgetTypeId))
                     return;
 
                 var responseType =
                     _activeConfig.ConfigDetails
-                    .Single(cd => cd.ActivityType.Id == activityTypeId)
+                    .Single(cd => cd.PhidgetType.Id == phidgetTypeId)
                     .ResponseType;
 
                 var responseMessage = new ResponseMessage
                 {
-                    ActivityTypeId = activityTypeId,
+                    PhidgetTypeId = phidgetTypeId,
                     ResponseTypeId = responseType.Id,
                     SensorValue = sensorValue,
                     IsSystem = responseType.IsSystem,
@@ -167,10 +167,10 @@ namespace Keebee.AAT.StateMachineService
 
                 var sensorValue = phidget.SensorValue;
 
-                // sensorId's are base 0 - convert to base 1 for ActivityTypeId
-                var activityTypeId = phidget.SensorId + 1;
+                // sensorId's are base 0 - convert to base 1 for PhidgetTypeId
+                var phidgetTypeId = phidget.SensorId + 1;
 
-                ExecuteResponse(activityTypeId, sensorValue);
+                ExecuteResponse(phidgetTypeId, sensorValue);
             }
             catch (Exception ex)
             {

@@ -80,7 +80,7 @@
       <DependentUpon>KeebeeClient.tt</DependentUpon>
     </Compile>
     <Compile Include="ODataHost.cs" />
-    <Compile Include="Services\ActivityTypeService.cs" />
+    <Compile Include="Services\PhidgetTypeService.cs" />
     <Compile Include="Services\AmbientResponseService.cs" />
     <Compile Include="Services\ActivityEventLogService.cs" />
     <Compile Include="Services\ConfigDetailService.cs" />

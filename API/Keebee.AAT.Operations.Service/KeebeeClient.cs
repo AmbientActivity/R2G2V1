@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-// Generation date: 9/9/2016 2:31:40 PM
+// Generation date: 9/10/2016 10:56:49 AM
 namespace Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models
 {
     /// <summary>
@@ -238,11 +238,11 @@ namespace Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
         private global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ConfigSingle _Config;
         /// <summary>
-        /// There are no comments for ActivityType in the schema.
+        /// There are no comments for PhidgetType in the schema.
         /// </summary>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        [global::Microsoft.OData.Client.OriginalNameAttribute("ActivityType")]
-        public global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ActivityTypeSingle ActivityType
+        [global::Microsoft.OData.Client.OriginalNameAttribute("PhidgetType")]
+        public global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.PhidgetTypeSingle PhidgetType
         {
             get
             {
@@ -250,15 +250,15 @@ namespace Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models
                 {
                     throw new global::System.NotSupportedException("The previous function is not composable.");
                 }
-                if ((this._ActivityType == null))
+                if ((this._PhidgetType == null))
                 {
-                    this._ActivityType = new global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ActivityTypeSingle(this.Context, GetPath("ActivityType"));
+                    this._PhidgetType = new global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.PhidgetTypeSingle(this.Context, GetPath("PhidgetType"));
                 }
-                return this._ActivityType;
+                return this._PhidgetType;
             }
         }
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ActivityTypeSingle _ActivityType;
+        private global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.PhidgetTypeSingle _PhidgetType;
         /// <summary>
         /// There are no comments for ResponseType in the schema.
         /// </summary>
@@ -327,28 +327,28 @@ namespace Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models
         partial void OnIdChanging(int value);
         partial void OnIdChanged();
         /// <summary>
-        /// There are no comments for Property ActivityTypeDesc in the schema.
+        /// There are no comments for Property Description in the schema.
         /// </summary>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        [global::Microsoft.OData.Client.OriginalNameAttribute("ActivityTypeDesc")]
-        public string ActivityTypeDesc
+        [global::Microsoft.OData.Client.OriginalNameAttribute("Description")]
+        public string Description
         {
             get
             {
-                return this._ActivityTypeDesc;
+                return this._Description;
             }
             set
             {
-                this.OnActivityTypeDescChanging(value);
-                this._ActivityTypeDesc = value;
-                this.OnActivityTypeDescChanged();
-                this.OnPropertyChanged("ActivityTypeDesc");
+                this.OnDescriptionChanging(value);
+                this._Description = value;
+                this.OnDescriptionChanged();
+                this.OnPropertyChanged("Description");
             }
         }
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private string _ActivityTypeDesc;
-        partial void OnActivityTypeDescChanging(string value);
-        partial void OnActivityTypeDescChanged();
+        private string _Description;
+        partial void OnDescriptionChanging(string value);
+        partial void OnDescriptionChanged();
         /// <summary>
         /// There are no comments for Property ConfigId in the schema.
         /// </summary>
@@ -373,28 +373,28 @@ namespace Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models
         partial void OnConfigIdChanging(global::System.Nullable<int> value);
         partial void OnConfigIdChanged();
         /// <summary>
-        /// There are no comments for Property ActivityTypeId in the schema.
+        /// There are no comments for Property PhidgetTypeId in the schema.
         /// </summary>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        [global::Microsoft.OData.Client.OriginalNameAttribute("ActivityTypeId")]
-        public global::System.Nullable<int> ActivityTypeId
+        [global::Microsoft.OData.Client.OriginalNameAttribute("PhidgetTypeId")]
+        public global::System.Nullable<int> PhidgetTypeId
         {
             get
             {
-                return this._ActivityTypeId;
+                return this._PhidgetTypeId;
             }
             set
             {
-                this.OnActivityTypeIdChanging(value);
-                this._ActivityTypeId = value;
-                this.OnActivityTypeIdChanged();
-                this.OnPropertyChanged("ActivityTypeId");
+                this.OnPhidgetTypeIdChanging(value);
+                this._PhidgetTypeId = value;
+                this.OnPhidgetTypeIdChanged();
+                this.OnPropertyChanged("PhidgetTypeId");
             }
         }
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private global::System.Nullable<int> _ActivityTypeId;
-        partial void OnActivityTypeIdChanging(global::System.Nullable<int> value);
-        partial void OnActivityTypeIdChanged();
+        private global::System.Nullable<int> _PhidgetTypeId;
+        partial void OnPhidgetTypeIdChanging(global::System.Nullable<int> value);
+        partial void OnPhidgetTypeIdChanged();
         /// <summary>
         /// There are no comments for Property ResponseTypeId in the schema.
         /// </summary>
@@ -442,28 +442,28 @@ namespace Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models
         partial void OnConfigChanging(global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.Config value);
         partial void OnConfigChanged();
         /// <summary>
-        /// There are no comments for Property ActivityType in the schema.
+        /// There are no comments for Property PhidgetType in the schema.
         /// </summary>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        [global::Microsoft.OData.Client.OriginalNameAttribute("ActivityType")]
-        public global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ActivityType ActivityType
+        [global::Microsoft.OData.Client.OriginalNameAttribute("PhidgetType")]
+        public global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.PhidgetType PhidgetType
         {
             get
             {
-                return this._ActivityType;
+                return this._PhidgetType;
             }
             set
             {
-                this.OnActivityTypeChanging(value);
-                this._ActivityType = value;
-                this.OnActivityTypeChanged();
-                this.OnPropertyChanged("ActivityType");
+                this.OnPhidgetTypeChanging(value);
+                this._PhidgetType = value;
+                this.OnPhidgetTypeChanged();
+                this.OnPropertyChanged("PhidgetType");
             }
         }
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ActivityType _ActivityType;
-        partial void OnActivityTypeChanging(global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ActivityType value);
-        partial void OnActivityTypeChanged();
+        private global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.PhidgetType _PhidgetType;
+        partial void OnPhidgetTypeChanging(global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.PhidgetType value);
+        partial void OnPhidgetTypeChanged();
         /// <summary>
         /// There are no comments for Property ResponseType in the schema.
         /// </summary>
@@ -1023,52 +1023,52 @@ namespace Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models
         }
     }
     /// <summary>
-    /// There are no comments for ActivityTypeSingle in the schema.
+    /// There are no comments for PhidgetTypeSingle in the schema.
     /// </summary>
-    [global::Microsoft.OData.Client.OriginalNameAttribute("ActivityTypeSingle")]
-    public partial class ActivityTypeSingle : global::Microsoft.OData.Client.DataServiceQuerySingle<ActivityType>
+    [global::Microsoft.OData.Client.OriginalNameAttribute("PhidgetTypeSingle")]
+    public partial class PhidgetTypeSingle : global::Microsoft.OData.Client.DataServiceQuerySingle<PhidgetType>
     {
         /// <summary>
-        /// Initialize a new ActivityTypeSingle object.
+        /// Initialize a new PhidgetTypeSingle object.
         /// </summary>
-        public ActivityTypeSingle(global::Microsoft.OData.Client.DataServiceContext context, string path)
+        public PhidgetTypeSingle(global::Microsoft.OData.Client.DataServiceContext context, string path)
             : base(context, path) {}
 
         /// <summary>
-        /// Initialize a new ActivityTypeSingle object.
+        /// Initialize a new PhidgetTypeSingle object.
         /// </summary>
-        public ActivityTypeSingle(global::Microsoft.OData.Client.DataServiceContext context, string path, bool isComposable)
+        public PhidgetTypeSingle(global::Microsoft.OData.Client.DataServiceContext context, string path, bool isComposable)
             : base(context, path, isComposable) {}
 
         /// <summary>
-        /// Initialize a new ActivityTypeSingle object.
+        /// Initialize a new PhidgetTypeSingle object.
         /// </summary>
-        public ActivityTypeSingle(global::Microsoft.OData.Client.DataServiceQuerySingle<ActivityType> query)
+        public PhidgetTypeSingle(global::Microsoft.OData.Client.DataServiceQuerySingle<PhidgetType> query)
             : base(query) {}
 
     }
     /// <summary>
-    /// There are no comments for ActivityType in the schema.
+    /// There are no comments for PhidgetType in the schema.
     /// </summary>
     /// <KeyProperties>
     /// Id
     /// </KeyProperties>
     [global::Microsoft.OData.Client.Key("Id")]
-    [global::Microsoft.OData.Client.OriginalNameAttribute("ActivityType")]
-    public partial class ActivityType : global::Microsoft.OData.Client.BaseEntityType, global::System.ComponentModel.INotifyPropertyChanged
+    [global::Microsoft.OData.Client.OriginalNameAttribute("PhidgetType")]
+    public partial class PhidgetType : global::Microsoft.OData.Client.BaseEntityType, global::System.ComponentModel.INotifyPropertyChanged
     {
         /// <summary>
-        /// Create a new ActivityType object.
+        /// Create a new PhidgetType object.
         /// </summary>
         /// <param name="ID">Initial value of Id.</param>
-        /// <param name="phidgetType">Initial value of PhidgetType.</param>
+        /// <param name="description">Initial value of Description.</param>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        public static ActivityType CreateActivityType(int ID, string phidgetType)
+        public static PhidgetType CreatePhidgetType(int ID, string description)
         {
-            ActivityType activityType = new ActivityType();
-            activityType.Id = ID;
-            activityType.PhidgetType = phidgetType;
-            return activityType;
+            PhidgetType phidgetType = new PhidgetType();
+            phidgetType.Id = ID;
+            phidgetType.Description = description;
+            return phidgetType;
         }
         /// <summary>
         /// There are no comments for Property Id in the schema.
@@ -1094,28 +1094,28 @@ namespace Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models
         partial void OnIdChanging(int value);
         partial void OnIdChanged();
         /// <summary>
-        /// There are no comments for Property PhidgetType in the schema.
+        /// There are no comments for Property Description in the schema.
         /// </summary>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        [global::Microsoft.OData.Client.OriginalNameAttribute("PhidgetType")]
-        public string PhidgetType
+        [global::Microsoft.OData.Client.OriginalNameAttribute("Description")]
+        public string Description
         {
             get
             {
-                return this._PhidgetType;
+                return this._Description;
             }
             set
             {
-                this.OnPhidgetTypeChanging(value);
-                this._PhidgetType = value;
-                this.OnPhidgetTypeChanged();
-                this.OnPropertyChanged("PhidgetType");
+                this.OnDescriptionChanging(value);
+                this._Description = value;
+                this.OnDescriptionChanged();
+                this.OnPropertyChanged("Description");
             }
         }
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private string _PhidgetType;
-        partial void OnPhidgetTypeChanging(string value);
-        partial void OnPhidgetTypeChanged();
+        private string _Description;
+        partial void OnDescriptionChanging(string value);
+        partial void OnDescriptionChanged();
         /// <summary>
         /// This event is raised when the value of the property is changed
         /// </summary>
@@ -2565,11 +2565,11 @@ namespace Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
         private global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ConfigSingle _Config;
         /// <summary>
-        /// There are no comments for ActivityType in the schema.
+        /// There are no comments for PhidgetType in the schema.
         /// </summary>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        [global::Microsoft.OData.Client.OriginalNameAttribute("ActivityType")]
-        public global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ActivityTypeSingle ActivityType
+        [global::Microsoft.OData.Client.OriginalNameAttribute("PhidgetType")]
+        public global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.PhidgetTypeSingle PhidgetType
         {
             get
             {
@@ -2577,15 +2577,15 @@ namespace Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models
                 {
                     throw new global::System.NotSupportedException("The previous function is not composable.");
                 }
-                if ((this._ActivityType == null))
+                if ((this._PhidgetType == null))
                 {
-                    this._ActivityType = new global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ActivityTypeSingle(this.Context, GetPath("ActivityType"));
+                    this._PhidgetType = new global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.PhidgetTypeSingle(this.Context, GetPath("PhidgetType"));
                 }
-                return this._ActivityType;
+                return this._PhidgetType;
             }
         }
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ActivityTypeSingle _ActivityType;
+        private global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.PhidgetTypeSingle _PhidgetType;
         /// <summary>
         /// There are no comments for ResponseType in the schema.
         /// </summary>
@@ -2702,28 +2702,28 @@ namespace Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models
         partial void OnConfigIdChanging(global::System.Nullable<int> value);
         partial void OnConfigIdChanged();
         /// <summary>
-        /// There are no comments for Property ActivityTypeId in the schema.
+        /// There are no comments for Property PhidgetTypeId in the schema.
         /// </summary>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        [global::Microsoft.OData.Client.OriginalNameAttribute("ActivityTypeId")]
-        public global::System.Nullable<int> ActivityTypeId
+        [global::Microsoft.OData.Client.OriginalNameAttribute("PhidgetTypeId")]
+        public global::System.Nullable<int> PhidgetTypeId
         {
             get
             {
-                return this._ActivityTypeId;
+                return this._PhidgetTypeId;
             }
             set
             {
-                this.OnActivityTypeIdChanging(value);
-                this._ActivityTypeId = value;
-                this.OnActivityTypeIdChanged();
-                this.OnPropertyChanged("ActivityTypeId");
+                this.OnPhidgetTypeIdChanging(value);
+                this._PhidgetTypeId = value;
+                this.OnPhidgetTypeIdChanged();
+                this.OnPropertyChanged("PhidgetTypeId");
             }
         }
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private global::System.Nullable<int> _ActivityTypeId;
-        partial void OnActivityTypeIdChanging(global::System.Nullable<int> value);
-        partial void OnActivityTypeIdChanged();
+        private global::System.Nullable<int> _PhidgetTypeId;
+        partial void OnPhidgetTypeIdChanging(global::System.Nullable<int> value);
+        partial void OnPhidgetTypeIdChanged();
         /// <summary>
         /// There are no comments for Property ResponseTypeId in the schema.
         /// </summary>
@@ -2840,28 +2840,28 @@ namespace Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models
         partial void OnConfigChanging(global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.Config value);
         partial void OnConfigChanged();
         /// <summary>
-        /// There are no comments for Property ActivityType in the schema.
+        /// There are no comments for Property PhidgetType in the schema.
         /// </summary>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        [global::Microsoft.OData.Client.OriginalNameAttribute("ActivityType")]
-        public global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ActivityType ActivityType
+        [global::Microsoft.OData.Client.OriginalNameAttribute("PhidgetType")]
+        public global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.PhidgetType PhidgetType
         {
             get
             {
-                return this._ActivityType;
+                return this._PhidgetType;
             }
             set
             {
-                this.OnActivityTypeChanging(value);
-                this._ActivityType = value;
-                this.OnActivityTypeChanged();
-                this.OnPropertyChanged("ActivityType");
+                this.OnPhidgetTypeChanging(value);
+                this._PhidgetType = value;
+                this.OnPhidgetTypeChanged();
+                this.OnPropertyChanged("PhidgetType");
             }
         }
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ActivityType _ActivityType;
-        partial void OnActivityTypeChanging(global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ActivityType value);
-        partial void OnActivityTypeChanged();
+        private global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.PhidgetType _PhidgetType;
+        partial void OnPhidgetTypeChanging(global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.PhidgetType value);
+        partial void OnPhidgetTypeChanged();
         /// <summary>
         /// There are no comments for Property ResponseType in the schema.
         /// </summary>
@@ -3954,27 +3954,27 @@ namespace Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models
             return new global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ProfileSingle(source.Context, source.GetKeyPath(global::Microsoft.OData.Client.Serializer.GetKeyString(source.Context, keys)));
         }
         /// <summary>
-        /// Get an entity of type global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ActivityType as global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ActivityTypeSingle specified by key from an entity set
+        /// Get an entity of type global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.PhidgetType as global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.PhidgetTypeSingle specified by key from an entity set
         /// </summary>
         /// <param name="source">source entity set</param>
         /// <param name="keys">dictionary with the names and values of keys</param>
-        public static global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ActivityTypeSingle ByKey(this global::Microsoft.OData.Client.DataServiceQuery<global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ActivityType> source, global::System.Collections.Generic.Dictionary<string, object> keys)
+        public static global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.PhidgetTypeSingle ByKey(this global::Microsoft.OData.Client.DataServiceQuery<global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.PhidgetType> source, global::System.Collections.Generic.Dictionary<string, object> keys)
         {
-            return new global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ActivityTypeSingle(source.Context, source.GetKeyPath(global::Microsoft.OData.Client.Serializer.GetKeyString(source.Context, keys)));
+            return new global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.PhidgetTypeSingle(source.Context, source.GetKeyPath(global::Microsoft.OData.Client.Serializer.GetKeyString(source.Context, keys)));
         }
         /// <summary>
-        /// Get an entity of type global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ActivityType as global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ActivityTypeSingle specified by key from an entity set
+        /// Get an entity of type global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.PhidgetType as global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.PhidgetTypeSingle specified by key from an entity set
         /// </summary>
         /// <param name="source">source entity set</param>
         /// <param name="id">The value of id</param>
-        public static global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ActivityTypeSingle ByKey(this global::Microsoft.OData.Client.DataServiceQuery<global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ActivityType> source,
+        public static global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.PhidgetTypeSingle ByKey(this global::Microsoft.OData.Client.DataServiceQuery<global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.PhidgetType> source,
             int id)
         {
             global::System.Collections.Generic.Dictionary<string, object> keys = new global::System.Collections.Generic.Dictionary<string, object>
             {
                 { "Id", id }
             };
-            return new global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ActivityTypeSingle(source.Context, source.GetKeyPath(global::Microsoft.OData.Client.Serializer.GetKeyString(source.Context, keys)));
+            return new global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.PhidgetTypeSingle(source.Context, source.GetKeyPath(global::Microsoft.OData.Client.Serializer.GetKeyString(source.Context, keys)));
         }
         /// <summary>
         /// Get an entity of type global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ResponseType as global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ResponseTypeSingle specified by key from an entity set
@@ -4396,23 +4396,23 @@ namespace Keebee.AAT.Operations.Service.KeebeeAAT
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
         private global::Microsoft.OData.Client.DataServiceQuery<global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.Profile> _Profiles;
         /// <summary>
-        /// There are no comments for ActivityTypes in the schema.
+        /// There are no comments for PhidgetTypes in the schema.
         /// </summary>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        [global::Microsoft.OData.Client.OriginalNameAttribute("ActivityTypes")]
-        public global::Microsoft.OData.Client.DataServiceQuery<global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ActivityType> ActivityTypes
+        [global::Microsoft.OData.Client.OriginalNameAttribute("PhidgetTypes")]
+        public global::Microsoft.OData.Client.DataServiceQuery<global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.PhidgetType> PhidgetTypes
         {
             get
             {
-                if ((this._ActivityTypes == null))
+                if ((this._PhidgetTypes == null))
                 {
-                    this._ActivityTypes = base.CreateQuery<global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ActivityType>("ActivityTypes");
+                    this._PhidgetTypes = base.CreateQuery<global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.PhidgetType>("PhidgetTypes");
                 }
-                return this._ActivityTypes;
+                return this._PhidgetTypes;
             }
         }
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private global::Microsoft.OData.Client.DataServiceQuery<global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ActivityType> _ActivityTypes;
+        private global::Microsoft.OData.Client.DataServiceQuery<global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.PhidgetType> _PhidgetTypes;
         /// <summary>
         /// There are no comments for ResponseTypes in the schema.
         /// </summary>
@@ -4662,12 +4662,12 @@ namespace Keebee.AAT.Operations.Service.KeebeeAAT
             base.AddObject("Profiles", profile);
         }
         /// <summary>
-        /// There are no comments for ActivityTypes in the schema.
+        /// There are no comments for PhidgetTypes in the schema.
         /// </summary>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        public void AddToActivityTypes(global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ActivityType activityType)
+        public void AddToPhidgetTypes(global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.PhidgetType phidgetType)
         {
-            base.AddObject("ActivityTypes", activityType);
+            base.AddObject("PhidgetTypes", phidgetType);
         }
         /// <summary>
         /// There are no comments for ResponseTypes in the schema.
@@ -4788,15 +4788,15 @@ namespace Keebee.AAT.Operations.Service.KeebeeAAT
           <PropertyRef Name=""Id"" />
         </Key>
         <Property Name=""Id"" Type=""Edm.Int32"" Nullable=""false"" />
-        <Property Name=""ActivityTypeDesc"" Type=""Edm.String"" />
+        <Property Name=""Description"" Type=""Edm.String"" />
         <Property Name=""ConfigId"" Type=""Edm.Int32"" />
-        <Property Name=""ActivityTypeId"" Type=""Edm.Int32"" />
+        <Property Name=""PhidgetTypeId"" Type=""Edm.Int32"" />
         <Property Name=""ResponseTypeId"" Type=""Edm.Int32"" />
         <NavigationProperty Name=""Config"" Type=""Keebee.AAT.DataAccess.Models.Config"">
           <ReferentialConstraint Property=""ConfigId"" ReferencedProperty=""Id"" />
         </NavigationProperty>
-        <NavigationProperty Name=""ActivityType"" Type=""Keebee.AAT.DataAccess.Models.ActivityType"">
-          <ReferentialConstraint Property=""ActivityTypeId"" ReferencedProperty=""Id"" />
+        <NavigationProperty Name=""PhidgetType"" Type=""Keebee.AAT.DataAccess.Models.PhidgetType"">
+          <ReferentialConstraint Property=""PhidgetTypeId"" ReferencedProperty=""Id"" />
         </NavigationProperty>
         <NavigationProperty Name=""ResponseType"" Type=""Keebee.AAT.DataAccess.Models.ResponseType"">
           <ReferentialConstraint Property=""ResponseTypeId"" ReferencedProperty=""Id"" />
@@ -4828,12 +4828,12 @@ namespace Keebee.AAT.Operations.Service.KeebeeAAT
         <Property Name=""DateCreated"" Type=""Edm.DateTimeOffset"" Nullable=""false"" />
         <Property Name=""DateUpdated"" Type=""Edm.DateTimeOffset"" Nullable=""false"" />
       </EntityType>
-      <EntityType Name=""ActivityType"">
+      <EntityType Name=""PhidgetType"">
         <Key>
           <PropertyRef Name=""Id"" />
         </Key>
         <Property Name=""Id"" Type=""Edm.Int32"" Nullable=""false"" />
-        <Property Name=""PhidgetType"" Type=""Edm.String"" Nullable=""false"" />
+        <Property Name=""Description"" Type=""Edm.String"" Nullable=""false"" />
       </EntityType>
       <EntityType Name=""ResponseType"">
         <Key>
@@ -4921,7 +4921,7 @@ namespace Keebee.AAT.Operations.Service.KeebeeAAT
         <Property Name=""Id"" Type=""Edm.Int32"" Nullable=""false"" />
         <Property Name=""ResidentId"" Type=""Edm.Int32"" />
         <Property Name=""ConfigId"" Type=""Edm.Int32"" />
-        <Property Name=""ActivityTypeId"" Type=""Edm.Int32"" />
+        <Property Name=""PhidgetTypeId"" Type=""Edm.Int32"" />
         <Property Name=""ResponseTypeId"" Type=""Edm.Int32"" />
         <Property Name=""Description"" Type=""Edm.String"" />
         <Property Name=""DateEntry"" Type=""Edm.DateTimeOffset"" Nullable=""false"" />
@@ -4931,8 +4931,8 @@ namespace Keebee.AAT.Operations.Service.KeebeeAAT
         <NavigationProperty Name=""Config"" Type=""Keebee.AAT.DataAccess.Models.Config"">
           <ReferentialConstraint Property=""ConfigId"" ReferencedProperty=""Id"" />
         </NavigationProperty>
-        <NavigationProperty Name=""ActivityType"" Type=""Keebee.AAT.DataAccess.Models.ActivityType"">
-          <ReferentialConstraint Property=""ActivityTypeId"" ReferencedProperty=""Id"" />
+        <NavigationProperty Name=""PhidgetType"" Type=""Keebee.AAT.DataAccess.Models.PhidgetType"">
+          <ReferentialConstraint Property=""PhidgetTypeId"" ReferencedProperty=""Id"" />
         </NavigationProperty>
         <NavigationProperty Name=""ResponseType"" Type=""Keebee.AAT.DataAccess.Models.ResponseType"">
           <ReferentialConstraint Property=""ResponseTypeId"" ReferencedProperty=""Id"" />
@@ -5001,7 +5001,7 @@ namespace Keebee.AAT.Operations.Service.KeebeeAAT
         </EntitySet>
         <EntitySet Name=""ConfigDetails"" EntityType=""Keebee.AAT.DataAccess.Models.ConfigDetail"">
           <NavigationPropertyBinding Path=""Config"" Target=""Configs"" />
-          <NavigationPropertyBinding Path=""ActivityType"" Target=""ActivityTypes"" />
+          <NavigationPropertyBinding Path=""PhidgetType"" Target=""PhidgetTypes"" />
           <NavigationPropertyBinding Path=""ResponseType"" Target=""ResponseTypes"" />
         </EntitySet>
         <EntitySet Name=""Residents"" EntityType=""Keebee.AAT.DataAccess.Models.Resident"">
@@ -5009,7 +5009,7 @@ namespace Keebee.AAT.Operations.Service.KeebeeAAT
           <NavigationPropertyBinding Path=""PersonalPictures"" Target=""PersonalPictures"" />
         </EntitySet>
         <EntitySet Name=""Profiles"" EntityType=""Keebee.AAT.DataAccess.Models.Profile"" />
-        <EntitySet Name=""ActivityTypes"" EntityType=""Keebee.AAT.DataAccess.Models.ActivityType"" />
+        <EntitySet Name=""PhidgetTypes"" EntityType=""Keebee.AAT.DataAccess.Models.PhidgetType"" />
         <EntitySet Name=""ResponseTypes"" EntityType=""Keebee.AAT.DataAccess.Models.ResponseType"">
           <NavigationPropertyBinding Path=""ResponseTypeCategory"" Target=""ResponseTypeCategories"" />
           <NavigationPropertyBinding Path=""Responses"" Target=""Responses"" />
@@ -5030,7 +5030,7 @@ namespace Keebee.AAT.Operations.Service.KeebeeAAT
         <EntitySet Name=""ActivityEventLogs"" EntityType=""Keebee.AAT.DataAccess.Models.ActivityEventLog"">
           <NavigationPropertyBinding Path=""Resident"" Target=""Residents"" />
           <NavigationPropertyBinding Path=""Config"" Target=""Configs"" />
-          <NavigationPropertyBinding Path=""ActivityType"" Target=""ActivityTypes"" />
+          <NavigationPropertyBinding Path=""PhidgetType"" Target=""PhidgetTypes"" />
           <NavigationPropertyBinding Path=""ResponseType"" Target=""ResponseTypes"" />
         </EntitySet>
         <EntitySet Name=""GameEventLogs"" EntityType=""Keebee.AAT.DataAccess.Models.GameEventLog"">

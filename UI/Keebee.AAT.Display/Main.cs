@@ -61,7 +61,7 @@ namespace Keebee.AAT.Display
         private int _currentRadioSensorValue;
 
         // current activity/response
-        private int _currenActivityTypeId;
+        private int _currenPhidgetTypeId;
         private int _currentResponseTypeId;
 
         // active profile
@@ -348,7 +348,7 @@ namespace Keebee.AAT.Display
                 slideViewerFlash1.Show();
                 slideViewerFlash1.Play(images);
 
-                _activityEventLogger.Add(_activeProfile.ConfigId, _activeProfile.ResidentId, _currenActivityTypeId, ResponseTypeId.SlidShow);
+                _activityEventLogger.Add(_activeProfile.ConfigId, _activeProfile.ResidentId, _currenPhidgetTypeId, ResponseTypeId.SlidShow);
 
                 _currentResponseTypeId = ResponseTypeId.SlidShow;
             }
@@ -370,7 +370,7 @@ namespace Keebee.AAT.Display
 
                 matchingGame1.Show();
 
-                _activityEventLogger.Add(_activeProfile.ConfigId, _activeProfile.ResidentId, _currenActivityTypeId, ResponseTypeId.MatchingGame);
+                _activityEventLogger.Add(_activeProfile.ConfigId, _activeProfile.ResidentId, _currenPhidgetTypeId, ResponseTypeId.MatchingGame);
                 _gameEventLogger.Add(_activeProfile.ResidentId, GameTypeId.MatchThePictures, _activeProfile.GameDifficultyLevel, null, "New game has been initiated");
 
                 matchingGame1.Play(shapes, _activeProfile.GameDifficultyLevel, true);
@@ -381,7 +381,7 @@ namespace Keebee.AAT.Display
 
         private string[] GetResponseFiles(int responseTypeId, string fileType = null)
         {
-            var files = _opsClient.GetProfileMediaForActivityResponseType(_activeProfile.Id, _currenActivityTypeId, responseTypeId)
+            var files = _opsClient.GetProfileMediaForPhidgetResponseType(_activeProfile.Id, _currenPhidgetTypeId, responseTypeId)
                     .Where(x => x.FileType == fileType || fileType == null)
                     .OrderBy(x => x.FilePath)
                     .Select(x => x.FilePath)
@@ -389,7 +389,7 @@ namespace Keebee.AAT.Display
 
             // if no media found, load generic content
             if (!files.Any())
-                files = _opsClient.GetProfileMediaForActivityResponseType(ProfileId.Generic, _currenActivityTypeId, responseTypeId)
+                files = _opsClient.GetProfileMediaForPhidgetResponseType(ProfileId.Generic, _currenPhidgetTypeId, responseTypeId)
                         .Where(x => x.FileType == fileType || fileType == null)
                         .OrderBy(x => x.FilePath)
                         .Select(x => x.FilePath)
@@ -482,12 +482,12 @@ namespace Keebee.AAT.Display
 
             _isNewResponse = 
                 (response.ResponseTypeId != _currentResponseTypeId) ||
-                (response.ActivityTypeId != _currenActivityTypeId) ||
+                (response.PhidgetTypeId != _currenPhidgetTypeId) ||
                 (response.ActiveProfile.Id != _activeProfile.Id) ||
                 (response.ActiveProfile.ResidentId != _activeProfile.ResidentId);
 
             _activeProfile = response.ActiveProfile;
-            _currenActivityTypeId = response.ActivityTypeId;
+            _currenPhidgetTypeId = response.PhidgetTypeId;
 
             ExecuteResponse(response.ResponseTypeId, response.SensorValue, response.IsSystem);
         }
@@ -552,7 +552,7 @@ namespace Keebee.AAT.Display
             try
             {
                 var args = (MediaPlayer.LogVideoActivityEventEventArgs)e;
-                _activityEventLogger.Add(_activeProfile.ConfigId, _activeProfile.ResidentId, _currenActivityTypeId, _currentResponseTypeId, args.Description);
+                _activityEventLogger.Add(_activeProfile.ConfigId, _activeProfile.ResidentId, _currenPhidgetTypeId, _currentResponseTypeId, args.Description);
             }
             catch (Exception ex)
             {

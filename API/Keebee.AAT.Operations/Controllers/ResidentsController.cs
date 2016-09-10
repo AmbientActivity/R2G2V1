@@ -184,12 +184,12 @@ namespace Keebee.AAT.Operations.Controllers
                     {
                         detail.Id,
                         detail.ConfigId,
-                        ActivityType = new
+                        PhidgetType = new
                         {
-                            detail.ActivityType.Id,
-                            detail.ActivityTypeDesc,
-                            detail.ActivityType.PhidgetType
+                            detail.PhidgetType.Id,
+                            detail.PhidgetType.Description
                         },
+                        detail.Description,
                         ResponseType = new
                         {
                             detail.ResponseType.Id,
@@ -271,10 +271,10 @@ namespace Keebee.AAT.Operations.Controllers
             {
                 c.Id,
                 c.ConfigId,
-                ActivityType = new
+                PhidgetType = new
                 {
-                    c.ActivityType.Id,
-                    c.ActivityType.PhidgetType
+                    c.PhidgetType.Id,
+                    c.PhidgetType.Description
                 },
                 ResponseType = new
                 {

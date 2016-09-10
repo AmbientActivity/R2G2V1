@@ -30,7 +30,7 @@ namespace Keebee.AAT.DataAccess.Tests.Controllers
             // Act
             var profile = _container.Residents.ByKey(residentId)
                 .Profile
-                .Expand("ProfileDetails($expand=Activity($expand=ActivityType),Response($expand=ResponseType,Responses))")
+                //.Expand("ProfileDetails($expand=Activity($expand=PhidgetType),Response($expand=ResponseType,Responses))")
                 .GetValue();
 
             // Assert
@@ -83,13 +83,13 @@ namespace Keebee.AAT.DataAccess.Tests.Controllers
         {
             // Arrange
             const int key = 1;   // Active Resident Id
-            const int activityTypeId = 1;
+            const int phidgetTypeId = 1;
 
             // Act
             var result = await _client.For<Resident>()
                 .Key(key)
                 .Function("Keebee.GetResponse")
-                .Set(new { activityTypeId })
+                .Set(new { phidgetTypeId })
                 .Expand("ResponseType")
                 .ExecuteAsSingleAsync();
 

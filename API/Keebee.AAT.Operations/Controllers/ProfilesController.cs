@@ -99,7 +99,7 @@ namespace Keebee.AAT.Operations.Controllers
             exObj.ConfigDetails = config.ConfigDetails.Select(cd => new
             {
                 cd.Id,
-                cd.ActivityTypeId,
+                cd.PhidgetTypeId,
                 ResponseType = new
                 {
                     cd.ResponseType.Id,
@@ -135,12 +135,12 @@ namespace Keebee.AAT.Operations.Controllers
                 {
                     detail.Id,
                     detail.ConfigId,
-                    ActivityType = new
+                    PhidgetType = new
                     {
-                        detail.ActivityType.Id,
-                        detail.ActivityTypeDesc,
-                        detail.ActivityType.PhidgetType
+                        detail.PhidgetType.Id,
+                        detail.PhidgetType.Description
                     },
+                    detail.Description,
                     ResponseType = new
                     {
                         detail.ResponseType.Id,
@@ -166,7 +166,7 @@ namespace Keebee.AAT.Operations.Controllers
 
         [Route("{id}/media")]
         [HttpGet]
-        public async Task<DynamicJsonObject> GetWithMediaByActivityResponseType(int id, int activityTypeId, int responseTypeId)
+        public async Task<DynamicJsonObject> GetWithMediaByActivityResponseType(int id, int phidgetTypeId, int responseTypeId)
         {
             Profile profile = new Profile();
 
@@ -177,7 +177,7 @@ namespace Keebee.AAT.Operations.Controllers
 
             if (profile == null) return new DynamicJsonObject(new ExpandoObject());
 
-            var config = _configService.GetMediaForProfileActivityResponseType(profile.Id, activityTypeId, responseTypeId);
+            var config = _configService.GetMediaForProfileActivityResponseType(profile.Id, phidgetTypeId, responseTypeId);
 
             dynamic exObj = new ExpandoObject();
             exObj.Id = profile.Id;
@@ -188,10 +188,10 @@ namespace Keebee.AAT.Operations.Controllers
                 {
                     detail.Id,
                     detail.ConfigId,
-                    ActivityType = new
+                    PhidgetType = new
                     {
-                        detail.ActivityType.Id,
-                        detail.ActivityType.PhidgetType
+                        detail.PhidgetType.Id,
+                        detail.PhidgetType.Description
                     },
                     ResponseType = new
                     {

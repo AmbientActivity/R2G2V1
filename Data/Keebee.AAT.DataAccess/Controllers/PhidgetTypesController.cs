@@ -8,26 +8,26 @@ using System.Web.OData;
 
 namespace Keebee.AAT.DataAccess.Controllers
 {
-    public class ActivityTypesController : ODataController
+    public class PhidgetTypesController : ODataController
     {
         private KeebeeAATContext db = new KeebeeAATContext();
 
-        // GET: odata/ActivityTypes
+        // GET: odata/PhidgetTypes
         [EnableQuery]
-        public IQueryable<ActivityType> GetActivityTypes()
+        public IQueryable<PhidgetType> GetPhidgetTypes()
         {
-            return db.ActivityTypes;
+            return db.PhidgetTypes;
         }
 
-        // GET: odata/ActivityTypes(5)
+        // GET: odata/PhidgetTypes(5)
         [EnableQuery]
-        public SingleResult<ActivityType> GetActivityType([FromODataUri] int key)
+        public SingleResult<PhidgetType> GetPhidgetType([FromODataUri] int key)
         {
-            return SingleResult.Create(db.ActivityTypes.Where(activityType => activityType.Id == key));
+            return SingleResult.Create(db.PhidgetTypes.Where(phidgetType => phidgetType.Id == key));
         }
 
-        // PUT: odata/ActivityTypes(5)
-        public async Task<IHttpActionResult> Put([FromODataUri] int key, Delta<ActivityType> patch)
+        // PUT: odata/PhidgetTypes(5)
+        public async Task<IHttpActionResult> Put([FromODataUri] int key, Delta<PhidgetType> patch)
         {
             Validate(patch.GetEntity());
 
@@ -36,13 +36,13 @@ namespace Keebee.AAT.DataAccess.Controllers
                 return BadRequest(ModelState);
             }
 
-            ActivityType activityType = await db.ActivityTypes.FindAsync(key);
-            if (activityType == null)
+            PhidgetType phidgetType = await db.PhidgetTypes.FindAsync(key);
+            if (phidgetType == null)
             {
                 return NotFound();
             }
 
-            patch.Put(activityType);
+            patch.Put(phidgetType);
 
             try
             {
@@ -50,7 +50,7 @@ namespace Keebee.AAT.DataAccess.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!ActivityTypeExists(key))
+                if (!PhidgetTypeExists(key))
                 {
                     return NotFound();
                 }
@@ -60,26 +60,26 @@ namespace Keebee.AAT.DataAccess.Controllers
                 }
             }
 
-            return Updated(activityType);
+            return Updated(phidgetType);
         }
 
-        // POST: odata/ActivityTypes
-        public async Task<IHttpActionResult> Post(ActivityType activityType)
+        // POST: odata/PhidgetTypes
+        public async Task<IHttpActionResult> Post(PhidgetType phidgetType)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            db.ActivityTypes.Add(activityType);
+            db.PhidgetTypes.Add(phidgetType);
             await db.SaveChangesAsync();
 
-            return Created(activityType);
+            return Created(phidgetType);
         }
 
-        // PATCH: odata/ActivityTypes(5)
+        // PATCH: odata/PhidgetTypes(5)
         [AcceptVerbs("PATCH", "MERGE")]
-        public async Task<IHttpActionResult> Patch([FromODataUri] int key, Delta<ActivityType> patch)
+        public async Task<IHttpActionResult> Patch([FromODataUri] int key, Delta<PhidgetType> patch)
         {
             Validate(patch.GetEntity());
 
@@ -88,13 +88,13 @@ namespace Keebee.AAT.DataAccess.Controllers
                 return BadRequest(ModelState);
             }
 
-            ActivityType activityType = await db.ActivityTypes.FindAsync(key);
-            if (activityType == null)
+            PhidgetType phidgetType = await db.PhidgetTypes.FindAsync(key);
+            if (phidgetType == null)
             {
                 return NotFound();
             }
 
-            patch.Patch(activityType);
+            patch.Patch(phidgetType);
 
             try
             {
@@ -102,7 +102,7 @@ namespace Keebee.AAT.DataAccess.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!ActivityTypeExists(key))
+                if (!PhidgetTypeExists(key))
                 {
                     return NotFound();
                 }
@@ -112,19 +112,19 @@ namespace Keebee.AAT.DataAccess.Controllers
                 }
             }
 
-            return Updated(activityType);
+            return Updated(phidgetType);
         }
 
-        // DELETE: odata/ActivityTypes(5)
+        // DELETE: odata/PhidgetTypes(5)
         public async Task<IHttpActionResult> Delete([FromODataUri] int key)
         {
-            ActivityType activityType = await db.ActivityTypes.FindAsync(key);
-            if (activityType == null)
+            PhidgetType phidgetType = await db.PhidgetTypes.FindAsync(key);
+            if (phidgetType == null)
             {
                 return NotFound();
             }
 
-            db.ActivityTypes.Remove(activityType);
+            db.PhidgetTypes.Remove(phidgetType);
             await db.SaveChangesAsync();
 
             return StatusCode(HttpStatusCode.NoContent);
@@ -139,9 +139,9 @@ namespace Keebee.AAT.DataAccess.Controllers
             base.Dispose(disposing);
         }
 
-        private bool ActivityTypeExists(int key)
+        private bool PhidgetTypeExists(int key)
         {
-            return db.ActivityTypes.Count(e => e.Id == key) > 0;
+            return db.PhidgetTypes.Count(e => e.Id == key) > 0;
         }
     }
 }

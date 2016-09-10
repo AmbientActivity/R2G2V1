@@ -23,7 +23,7 @@ namespace Keebee.AAT.DataAccess.Models
 
         public DbSet<Resident> Residents { get; set; }
 
-        public DbSet<ActivityType> ActivityTypes { get; set; }
+        public DbSet<PhidgetType> PhidgetTypes { get; set; }
 
         public DbSet<ResponseType> ResponseTypes { get; set; }
 

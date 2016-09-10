@@ -15,7 +15,7 @@ namespace Keebee.AAT.DataAccess
             builder.EntitySet<ConfigDetail>("ConfigDetails");
             builder.EntitySet<Resident>("Residents");
             builder.EntitySet<Profile>("Profiles");
-            builder.EntitySet<ActivityType>("ActivityTypes");
+            builder.EntitySet<PhidgetType>("PhidgetTypes");
             builder.EntitySet<ResponseType>("ResponseTypes");
             builder.EntitySet<ResponseTypeCategory>("ResponseTypeCategories");
             builder.EntitySet<GameType>("GameTypes");

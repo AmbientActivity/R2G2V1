@@ -61,9 +61,9 @@ namespace Keebee.AAT.Administrator.Controllers
                 {
                     Id = cd.Id,
                     ConfigId = config.Id,
-                    ActivityType = cd.ActivityType.Description,
+                    PhidgetType = cd.PhidgetType.Description,
+                    ActivityType = cd.Description,
                     ResponseType = cd.ResponseType.Description,
-                    Phidget = cd.ActivityType.PhidgetType,
                     IsUserResponse = !cd.ResponseType.IsSystem
                 }));
 

@@ -42,8 +42,8 @@ namespace Keebee.AAT.Operations.Controllers
             dynamic exObj = new ExpandoObject();
             exObj.ActivityEventLogs = activityEventLogs
                 .Join(config.SelectMany(x => x.ConfigDetails), 
-                al => new { al.ConfigId, al.ActivityTypeId },
-                cd => new { cd.ConfigId, cd.ActivityTypeId },
+                al => new { al.ConfigId, al.PhidgetTypeId },
+                cd => new { cd.ConfigId, cd.PhidgetTypeId },
                 (al, cd) => new { al, cd })
                 .Select(x => new
                 {
@@ -51,8 +51,8 @@ namespace Keebee.AAT.Operations.Controllers
                     Time = $"{x.al.DateEntry:T}",
                     x.al.ConfigId,
                     Resident = (x.al.Resident != null) ? $"{x.al.Resident.FirstName} {x.al.Resident.LastName}" : "N/A",
-                    x.al.ActivityType.PhidgetType,
-                    ActivityType = x.cd.ActivityTypeDesc,
+                    PhidgetType = x.al.PhidgetType.Description,
+                    ActivityType = x.cd.Description,
                     ResponseTypeCategory = x.al.ResponseType.ResponseTypeCategory.Description,
                     ResponseType = x.al.ResponseType.Description,
                     x.al.Description,
@@ -76,7 +76,7 @@ namespace Keebee.AAT.Operations.Controllers
 
             if (activityEventLog == null) return new DynamicJsonObject(new ExpandoObject());
 
-            var activityTypeDesc = _configService.GetActivityTypeDesc((int)activityEventLog.ActivityTypeId);
+            var description = _configService.GetDescription((int)activityEventLog.PhidgetTypeId);
 
             dynamic exObj = new ExpandoObject();
             exObj.Date = $"{activityEventLog.DateEntry:D}";
@@ -84,8 +84,8 @@ namespace Keebee.AAT.Operations.Controllers
             exObj.Resident = (activityEventLog.Resident != null)
                 ? $"{activityEventLog.Resident.FirstName} {activityEventLog.Resident.LastName}"
                 : "N/A";
-            exObj.PhidgetType = activityEventLog.ActivityType.PhidgetType;
-            exObj.ActivityType = activityTypeDesc;
+            exObj.PhidgetType = activityEventLog.PhidgetType.Description;
+            exObj.ActivityType = description;
             exObj.ResponseTypeCategory = activityEventLog.ResponseType.ResponseTypeCategory.Description;
             exObj.ResponseType = activityEventLog.ResponseType.Description;
             exObj.Description = activityEventLog.Description;
@@ -111,15 +111,15 @@ namespace Keebee.AAT.Operations.Controllers
 
             dynamic exObj = new ExpandoObject();
             exObj.ActivityEventLogs = activityEventLogs
-                .Join(config.ConfigDetails, al => al.ActivityTypeId, cd => cd.ActivityTypeId,
+                .Join(config.ConfigDetails, al => al.PhidgetTypeId, cd => cd.PhidgetTypeId,
                 (al, cd) => new { al, cd })
                 .Select(x => new
                 {
                     Date = $"{x.al.DateEntry:D}",
                     Time = $"{x.al.DateEntry:T}",
                     Resident = (x.al.Resident != null) ? $"{x.al.Resident.FirstName} {x.al.Resident.LastName}" : "N/A",
-                    x.al.ActivityType.PhidgetType,
-                    ActivityType = x.cd.ActivityTypeDesc,
+                    PhidgetType = x.al.PhidgetType.Description,
+                    ActivityType = x.cd.Description,
                     ResponseTypeCategory = x.al.ResponseType.ResponseTypeCategory.Description,
                     ResponseType = x.al.ResponseType.Description,
                     x.al.Description,

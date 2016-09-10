@@ -40,14 +40,14 @@
                 });
             }
 
-            function ConfigDetail(id, configid, activitytype, responsetype, phidget, isuserresponse) {
+            function ConfigDetail(id, configid, phidgettype, activitytype, responsetype, isuserresponse) {
                 var self = this;
 
                 self.id = id;
                 self.configid = configid;
                 self.activitytype = activitytype;
                 self.responsetype = responsetype;
-                self.phidget = phidget;
+                self.phidgettype = phidgettype;
                 self.isuserresponse = isuserresponse;
             }
 
@@ -103,9 +103,9 @@
                 function pushConfigDetail(value) {
                     self.configDetails.push(new ConfigDetail(value.Id,
                         value.ConfigId,
+                        value.PhidgetType,
                         value.ActivityType,
                         value.ResponseType,
-                        value.Phidget,
                         value.IsUserResponse));
                 };
 
@@ -132,7 +132,105 @@
                     r.css("background-color", HIGHLIGHT_ROW_COLOUR);
                     tblConfigDetail.attr("tr:hover", HIGHLIGHT_ROW_COLOUR);
                 };
+
+                self.showEditDialog = function (row) {
+                    var id = row.id;
+
+                    if (id > 0) {
+                        self.highlightRow(row);
+                    }
+
+                    self.showConfigEditDialog(row);
+                };
+
+                self.showConfigEditDialog = function (row) {
+                    var id = (typeof row.id !== "undefined" ? row.id : 0);
+                    var title = "<span class='glyphicon glyphicon-pencil'></span>";
+                    var message;
+
+                    if (id > 0) {
+                        title = title + " Edit Config";
+                        var resident = self.getResident(id);
+                        self.selectedResident(resident);
+                    } else {
+                        title = title + " Add Resident";
+                        self.selectedResident([]);
+                    }
+
+                    $.ajax({
+                        type: "GET",
+                        async: false,
+                        url: site.url + "Configurations/GetConfigEditView/" + id,
+                        success: function (data) {
+                            message = data;
+                        }
+                    });
+
+                    BootstrapDialog.show({
+                        title: title,
+                        message: message,
+                        closable: false,
+                        buttons: [
+                            {
+                                label: "Cancel",
+                                action: function (dialog) {
+                                    dialog.close();
+                                }
+                            }, {
+                                label: "OK",
+                                cssClass: "btn-primary",
+                                action: function (dialog) {
+                                    var result = self.saveConfig();
+
+                                    if (result.ErrorMessages === null) {
+                                        lists.ConfigDetailList = result.ConfigDetalList;
+                                        createConfigDetailArray(lists.ConfigDetailList);
+                                        self.selectedConfig(self.getResident(result.SelectedId));
+                                        self.sort({ afterSave: true });
+                                        self.highlightRow(self.selectedConfig());
+                                        dialog.close();
+                                        $("body").css("cursor", "default");
+                                    } else {
+                                        $("#validation-container").show();
+                                        $("#validation-container").html("");
+                                        $("body").css("cursor", "default");
+                                        var html = "<ul>";
+                                        for (var i = 0; i < result.ErrorMessages.length; i++) {
+                                            var message = result.ErrorMessages[i];
+                                            html = html + "<li>" + message + "</li>";
+                                        }
+                                        html = html + "</ul>";
+                                        $("#validation-container").append(html);
+                                        $("body").css("cursor", "default");
+                                    }
+                                }
+                            }
+                        ]
+                    });
+                };
             }
+
+            self.getConfig = function (configid) {
+                var config = null;
+
+                ko.utils.arrayForEach(self.configs(), function (item) {
+                    if (item.id === configid) {
+                        config = item;
+                    }
+                });
+
+                return config;
+            };
+
+            self.getConfigDetailFromDialog = function () {
+                var description = $.trim($("#txtDescription").val());
+                var phidgettypeid = $.trim($("#ddlPhidgetTypes").val());
+                var responsetypeid = $.trim($("#ddlResponseTypes").val());
+
+                return {
+                    Id: self.selectedResident().id, Description: description, phidgetTypeId: phidgettypeid, responseTypeId: responsetypeid
+                };
+            };
 
             function enableDetail() {
                 var configId = parseInt($("#ddlConfigs").val());

@@ -4,9 +4,9 @@
     {
         public int Id { get; set; }
         public int ConfigId { get; set; }
+        public string PhidgetType { get; set; }
         public string ActivityType { get; set; }
         public string ResponseType { get; set; }
-        public string Phidget { get; set; }
         public bool IsUserResponse { get; set; }
     }
 

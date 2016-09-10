@@ -2,7 +2,7 @@
 {
     public class ResponseMessage
     {
-        public int ActivityTypeId { get; set; }
+        public int PhidgetTypeId { get; set; }
         public int ResponseTypeId { get; set; }
         public int SensorValue { get; set; }
         public bool IsSystem { get; set; }

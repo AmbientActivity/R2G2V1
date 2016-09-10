@@ -28,7 +28,7 @@ namespace Keebee.AAT.RESTClient
         Config GetActiveConfigDetails();
         Config GetConfigDetails(int id);
         Profile GetProfileMedia(int profileId);
-        IEnumerable<Response> GetProfileMediaForActivityResponseType(int profileId, int activityTypeId, int responseTypeId);
+        IEnumerable<Response> GetProfileMediaForPhidgetResponseType(int profileId, int phidgetTypeId, int responseTypeId);
 
         IEnumerable<ActivityEventLog> GetActivityEventLogs(string date);
         IEnumerable<GameEventLog> GetGameEventLogs(string date);
@@ -74,7 +74,7 @@ namespace Keebee.AAT.RESTClient
         private const string UrlProfile = "profiles/{0}";
         private const string UrlProfileDetails = "profiles/{0}/details";
         private const string UrlProfileMedia = "profiles/{0}/media";
-        private const string UrlProfileMediaForActivityResponseType = "profiles/{0}/media?activityTypeId={1}&responseTypeId={2}";
+        private const string UrlProfileMediaForPhidgetResponseType = "profiles/{0}/media?phidgetTypeId={1}&responseTypeId={2}";
 
         // ambient
         private const string UrlAmbientResponses = "ambientresponses";
@@ -257,9 +257,9 @@ namespace Keebee.AAT.RESTClient
             return profile;
         }
 
-        public IEnumerable<Response> GetProfileMediaForActivityResponseType(int profileId, int activityTypeId, int responseTypeId)
+        public IEnumerable<Response> GetProfileMediaForPhidgetResponseType(int profileId, int phidgetTypeId, int responseTypeId)
         {
-            var data = Get(string.Format(UrlProfileMediaForActivityResponseType, profileId, activityTypeId, responseTypeId));
+            var data = Get(string.Format(UrlProfileMediaForPhidgetResponseType, profileId, phidgetTypeId, responseTypeId));
             if (data == null) return null;
 
             var serializer = new JavaScriptSerializer();

@@ -29,7 +29,7 @@ namespace Keebee.AAT.Operations.Service.Services
             var container = new Container(new Uri(ODataHost.Url));
 
             var configs = container.Configs
-                .Expand("ConfigDetails")
+                .Expand("ConfigDetails($expand=ActivityType,ResponseType)")
                 .AsEnumerable();
 
             return configs;
@@ -41,7 +41,7 @@ namespace Keebee.AAT.Operations.Service.Services
 
             var config = container.Configs
                 .ByKey(id)
-                .Expand("ConfigDetails")
+                .Expand("ConfigDetails($expand=ActivityType,ResponseType)")
                 .GetValue();
 
             return config;

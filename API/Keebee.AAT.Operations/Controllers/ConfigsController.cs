@@ -45,9 +45,19 @@ namespace Keebee.AAT.Operations.Controllers
                     {
                         cd.Id,
                         cd.ConfigId,
-                        cd.ActivityTypeId,
-                        cd.ActivityTypeDesc,
-                        cd.ResponseTypeId
+                        ActivityType = new
+                        {
+                            cd.ActivityType.Id,
+                            Description = cd.ActivityTypeDesc,
+                            cd.ActivityType.PhidgetType
+                        },
+                        ResponseType = new
+                        {
+                            cd.ResponseType.Id,
+                            cd.ResponseType.Description,
+                            cd.ResponseType.IsInteractive,
+                            cd.ResponseType.IsSystem
+                        }
                     })
             });
 
@@ -72,14 +82,6 @@ namespace Keebee.AAT.Operations.Controllers
             exObj.Id = config.Id;
             exObj.Description = config.Description;
             exObj.IsActive = config.IsActive;
-            exObj.ConfigDetails = config.ConfigDetails.Select(cd => new
-                {
-                    cd.Id,
-                    cd.ConfigId,
-                    cd.ActivityTypeId,
-                    cd.ActivityTypeDesc,
-                    cd.ResponseTypeId
-                });
 
             return new DynamicJsonObject(exObj);
         }
@@ -107,11 +109,12 @@ namespace Keebee.AAT.Operations.Controllers
             {
                 cd.Id,
                 ConfigId = config.Id,
+                
                 ActivityType = new
                 {
                     cd.ActivityType.Id,
                     cd.ActivityType.PhidgetType,
-                    cd.ActivityTypeDesc
+                    Description = cd.ActivityTypeDesc
                 },
                 ResponseType = new
                 {
@@ -155,7 +158,7 @@ namespace Keebee.AAT.Operations.Controllers
                 {
                     cd.ActivityType.Id,
                     cd.ActivityType.PhidgetType,
-                    cd.ActivityTypeDesc
+                    Description = cd.ActivityTypeDesc
                 },
                 ResponseType = new
                 {
@@ -197,7 +200,8 @@ namespace Keebee.AAT.Operations.Controllers
                 ActivityType = new
                 {
                     cd.ActivityType.Id,
-                    cd.ActivityTypeDesc
+                    cd.ActivityType.PhidgetType,
+                    Description = cd.ActivityTypeDesc
                 },
                 ResponseType = new
                 {

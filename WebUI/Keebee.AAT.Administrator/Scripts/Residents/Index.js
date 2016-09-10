@@ -17,11 +17,11 @@
                 ResidentList: []
             };
 
-            loadConfig();
+            loadData();
 
             ko.applyBindings(new ResidentViewModel());
 
-            function loadConfig() {
+            function loadData() {
                 $.ajax({
                     type: "GET",
                     url: site.url + "Residents/GetData/",
@@ -283,7 +283,7 @@
 
                     var r = tblResident.find("#row_" + row.id);
                     r.css("background-color", HIGHLIGHT_ROW_COLOUR);
-                    $("#tblResident").attr("tr:hover", HIGHLIGHT_ROW_COLOUR);
+                    tblResident.attr("tr:hover", HIGHLIGHT_ROW_COLOUR);
                 };
 
                 self.getResidentDetailFromDialog = function () {

@@ -38,6 +38,8 @@ namespace Keebee.AAT.Operations.Controllers
             exObj.Responses = responses.Select(r => new
             {
                 r.Id,
+                r.ProfileId,
+                r.ResponseTypeId,
                 r.StreamId,
                 r.MediaFile.Filename
             });
@@ -60,6 +62,8 @@ namespace Keebee.AAT.Operations.Controllers
 
             dynamic exObj = new ExpandoObject();
             exObj.Id = response.Id;
+            exObj.ProfileId = response.ProfileId;
+            exObj.ResponseTypeId = response.ResponseTypeId;
             exObj.StreamId = response.StreamId;
             exObj.Filename = response.MediaFile.Filename;
 
@@ -83,6 +87,8 @@ namespace Keebee.AAT.Operations.Controllers
             exObj.Responses = responses.Select(r => new
             {
                 r.Id,
+                r.ProfileId,
+                r.ResponseTypeId,
                 r.StreamId,
                 r.MediaFile.Filename
             });

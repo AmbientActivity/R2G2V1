@@ -6,7 +6,7 @@
         public string ActivityType { get; set; }
         public string ResponseType { get; set; }
         public string Phidget { get; set; }
-        public bool IsSystem { get; set; }
+        public bool IsUserResponse { get; set; }
     }
 
     public class ConfigViewModel

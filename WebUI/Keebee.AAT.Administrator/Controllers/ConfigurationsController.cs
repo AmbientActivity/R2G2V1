@@ -63,7 +63,7 @@ namespace Keebee.AAT.Administrator.Controllers
                     ActivityType = cd.ActivityType.Description,
                     ResponseType = cd.ResponseType.Description,
                     Phidget = cd.ActivityType.PhidgetType,
-                    IsSystem = cd.ResponseType.IsSystem
+                    IsUserResponse = !cd.ResponseType.IsSystem
                 }));
 
             return list;

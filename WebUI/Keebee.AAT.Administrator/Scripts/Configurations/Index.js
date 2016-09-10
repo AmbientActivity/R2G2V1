@@ -40,14 +40,14 @@
                 });
             }
 
-            function ConfigDetail(id, activitytype, responsetype, phidget, issystem) {
+            function ConfigDetail(id, activitytype, responsetype, phidget, isuserresponse) {
                 var self = this;
 
                 self.id = id;
                 self.activitytype = activitytype;
                 self.responsetype = responsetype;
                 self.phidget = phidget;
-                self.issystem = issystem;
+                self.isuserresponse = isuserresponse;
             }
 
             function Config(id, description) {
@@ -88,10 +88,10 @@
 
                 self.columns = ko.computed(function() {
                     var arr = [];
+                    arr.push({ title: "Phidget", sortKey: "phidgettype" });
                     arr.push({ title: "Activity", sortKey: "activitytype" });
                     arr.push({ title: "Response", sortKey: "responsetype" });
-                    arr.push({ title: "Phidget", sortKey: "phidgettype" });
-                    arr.push({ title: "System", sortKey: "issystem" });
+                    arr.push({ title: "User Response", sortKey: "isuserresponse" });
                     return arr;
                 });
 
@@ -104,12 +104,11 @@
                         value.ActivityType,
                         value.ResponseType,
                         value.Phidget,
-                        value.IsSystem));
+                        value.IsUserResponse));
                 };
 
                 self.filteredConfigDetails = ko.computed(function () {
                     return ko.utils.arrayFilter(self.configDetails(), function (c) {
-                        //if (self.selectedConfig() === undefined) return true;
                         return (c.id === self.selectedConfig());
                     });
                 });

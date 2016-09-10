@@ -63,7 +63,6 @@
             this.TelevisionSensorRight = new System.Windows.Forms.Button();
             this.TelevisionSensorLeft = new System.Windows.Forms.Button();
             this.RadioSensorLeft = new System.Windows.Forms.Button();
-            this.ReloadConfig = new System.Windows.Forms.Button();
             this.grpRFReader.SuspendLayout();
             this.grpAutoProfile.SuspendLayout();
             this.grpAutoSensor.SuspendLayout();
@@ -319,7 +318,6 @@
             // 
             // grpInterfaceKit
             // 
-            this.grpInterfaceKit.Controls.Add(this.ReloadConfig);
             this.grpInterfaceKit.Controls.Add(this.TelevisionInput);
             this.grpInterfaceKit.Controls.Add(this.RadioInput);
             this.grpInterfaceKit.Controls.Add(this.MatchingGameInput);
@@ -491,18 +489,6 @@
             this.RadioSensorLeft.UseVisualStyleBackColor = true;
             this.RadioSensorLeft.Click += new System.EventHandler(this.RadioSensorLeftClick);
             // 
-            // ReloadConfig
-            // 
-            this.ReloadConfig.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.ReloadConfig.Location = new System.Drawing.Point(339, 20);
-            this.ReloadConfig.Name = "ReloadConfig";
-            this.ReloadConfig.Size = new System.Drawing.Size(105, 36);
-            this.ReloadConfig.TabIndex = 37;
-            this.ReloadConfig.Text = "Reload Config";
-            this.ReloadConfig.UseMnemonic = false;
-            this.ReloadConfig.UseVisualStyleBackColor = true;
-            this.ReloadConfig.Click += new System.EventHandler(this.ReloadConfigClick);
-            // 
             // ControlPanel
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -570,7 +556,6 @@
         private System.Windows.Forms.Button SlideShowInput;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Button ReloadConfig;
     }
 }
 

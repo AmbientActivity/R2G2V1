@@ -30,7 +30,6 @@ namespace Keebee.AAT.Simulator
         // message queue sender
         private readonly CustomMessageQueue _messageQueuePhidget;
         private readonly CustomMessageQueue _messageQueueRfid;
-        private readonly CustomMessageQueue _messageQueueConfig;
 
         // timer
         private readonly int _autoSensorInterval;
@@ -72,12 +71,6 @@ namespace Keebee.AAT.Simulator
             _messageQueueRfid = new CustomMessageQueue(new CustomMessageQueueArgs
             {
                 QueueName = MessageQueueType.Rfid
-
-            });
-
-            _messageQueueConfig = new CustomMessageQueue(new CustomMessageQueueArgs
-            {
-                QueueName = MessageQueueType.Config
 
             });
 
@@ -151,11 +144,6 @@ namespace Keebee.AAT.Simulator
             {
                 lblValue.Text = text;
             }
-        }
-
-        private void ReloadConfigClick(object sender, EventArgs e)
-        {
-            _messageQueueConfig.Send("1");
         }
 
         private void SlideShowSensorClick(object sender, EventArgs e)

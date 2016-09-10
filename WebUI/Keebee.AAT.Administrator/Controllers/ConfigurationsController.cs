@@ -59,7 +59,8 @@ namespace Keebee.AAT.Administrator.Controllers
                 .SelectMany(config => config.ConfigDetails
                 .Select(cd => new ConfigDetailViewModel
                 {
-                    Id = config.Id,
+                    Id = cd.Id,
+                    ConfigId = config.Id,
                     ActivityType = cd.ActivityType.Description,
                     ResponseType = cd.ResponseType.Description,
                     Phidget = cd.ActivityType.PhidgetType,

@@ -14,9 +14,9 @@
             // buttons
             var cmdActivate = $("#activate");
 
-            // inputs
+            // active config
             var activeConfig = {};
-
+            
             var lists = {  
                 ConfigList: [],
                 ConfigDetailList: []
@@ -40,10 +40,11 @@
                 });
             }
 
-            function ConfigDetail(id, activitytype, responsetype, phidget, isuserresponse) {
+            function ConfigDetail(id, configid, activitytype, responsetype, phidget, isuserresponse) {
                 var self = this;
 
                 self.id = id;
+                self.configid = configid;
                 self.activitytype = activitytype;
                 self.responsetype = responsetype;
                 self.phidget = phidget;
@@ -101,6 +102,7 @@
 
                 function pushConfigDetail(value) {
                     self.configDetails.push(new ConfigDetail(value.Id,
+                        value.ConfigId,
                         value.ActivityType,
                         value.ResponseType,
                         value.Phidget,
@@ -109,7 +111,7 @@
 
                 self.filteredConfigDetails = ko.computed(function () {
                     return ko.utils.arrayFilter(self.configDetails(), function (c) {
-                        return (c.id === self.selectedConfig());
+                        return (c.configid === self.selectedConfig());
                     });
                 });
 
@@ -132,10 +134,22 @@
                 };
             }
 
+            function enableDetail() {
+                var configId = parseInt($("#ddlConfigs").val());
+                var disable = activeConfig.Id === configId;
+                if (disable)
+                    cmdActivate.attr("disabled", "disabled");
+                else 
+                    cmdActivate.removeAttr("disabled");
+            }
+
+            $("#ddlConfigs").change(function () {
+                enableDetail();
+            });
+
             // activate the selected configuration
             cmdActivate.click(function() {
-                var configId = $("select[id=ddlConfigs]").val();
-
+                var configId = parseInt($("#ddlConfigs").val());
                 $("body").css("cursor", "wait");
 
                 $.ajax({
@@ -151,8 +165,8 @@
                     },
                     success: function (data) {
                         activeConfig = data.ActiveConfig;
-                        var lblActiveConfigDesc = $("label[id=lblActiveConfigDesc]");
-                        lblActiveConfigDesc.text(activeConfig.Description);
+                        $("#lblActiveConfigDesc").text(activeConfig.Description);
+                        enableDetail();
                         $("body").css("cursor", "default");
                     },
                     error: function (data) {

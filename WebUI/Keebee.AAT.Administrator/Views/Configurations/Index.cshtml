@@ -2,15 +2,6 @@
     ViewBag.Title = "Configurations";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-
-<div class="row">
-    <div class="col-sm-7">
-        <h3>System Configuration</h3>
-    </div>
-    <div class="pull-right" style="margin: 15px 20px 0 0">
-        <h5>Currently Active: <label id="lblActiveConfigDesc" data-bind="text: selectedConfigDesc" style="color: green"></label></h5>
-    </div>
-</div>
 <script type="text/javascript">
     $(document)
         .ready(function() {
@@ -18,14 +9,30 @@
         });
 </script>
 
+<div class="row">
+    <div class="col-sm-7">
+        <h3>System Configuration</h3>
+    </div>
+    <div class="pull-right" style="margin: 15px 20px 0 0">
+        <h4>Currently Active: <i><label id="lblActiveConfigDesc" data-bind="text: selectedConfigDesc" style="color: #265a88"></label></i></h4>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-sm-12">
+        <button id="add"  style="margin-bottom: 5px" class="btn btn-success btn-md">Add Configuration</button>
+    </div>
+</div>
+
 <div class="panel panel-default">
     <div class="panel-heading">
         <div class="row">
-            <div class="col-sm-10">
-                <select class="form-control" data-bind="attr: { id: 'ddlConfigs'}, options: configs, optionsValue: 'id', optionsText: 'description', value: selectedConfig"></select>
+            <div class="col-sm-8">
+                <select class="form-control" data-bind="attr: { id: 'ddlConfigs' }, options: configs, optionsValue: 'id', optionsText: 'description', value: selectedConfig"></select>
             </div>
             <div class="pull-right" style="margin-right: 20px">
-                <button id="activate" class="btn btn-primary btn-md">Activate</button>
+                <button id="add-detail" class="btn btn-success btn-md">Add Detail</button>
+                <button id="activate" disabled="disabled" class="btn btn-primary btn-md">Activate</button>
             </div>
         </div>
     </div>

@@ -171,7 +171,7 @@
                     BootstrapDialog.show({
                         title: "Delete Resident?",
                         message: "Are you sure?" +
-                            "This will permanently delete the resident <i><b>" + r.firstname + " " + r.lastname + "</b></i>\n",
+                            "This will permanently delete the resident <i><b>" + r.firstname + " " + r.lastname + "</b></i>\n and all their associated media!",
                         closable: false,
                         buttons: [
                             {

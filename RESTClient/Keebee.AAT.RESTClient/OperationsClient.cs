@@ -20,6 +20,7 @@ namespace Keebee.AAT.RESTClient
         IEnumerable<Config> GetConfigs();
         Config GetConfig(int id);
         ConfigDetail GetConfigDetail(int id);
+        IEnumerable<ConfigDetail> GetConfigDetails();
         Config GetActiveConfigDetails();
         Config GetConfigWithDetails(int id);
         IEnumerable<PhidgetType> GetPhidgetTypes();
@@ -167,6 +168,17 @@ namespace Keebee.AAT.RESTClient
             var config = serializer.Deserialize<Config>(data);
 
             return config;
+        }
+
+        public IEnumerable<ConfigDetail> GetConfigDetails()
+        {
+            var data = Get(UrlConfigDetails);
+            if (data == null) return null;
+
+            var serializer = new JavaScriptSerializer();
+            var configDetails = serializer.Deserialize<ConfigDetailList>(data).ConfigDetails;
+
+            return configDetails;
         }
 
         public ConfigDetail GetConfigDetail(int configDetailId)

@@ -31,8 +31,6 @@
 
             ko.applyBindings(new ConfigViewModel());
 
-            enableDetail();
-
             function loadData() {
                 $.ajax({
                     type: "GET",
@@ -42,7 +40,7 @@
                     async: false,
                     success: function (data) {
                         $.extend(lists, data);
-                        activeConfig = data.ActiveConfig;
+                        activeConfig = lists.ConfigList.filter(function (value) { return value.IsActive; })[0];
                     }
                 });
             }
@@ -58,11 +56,12 @@
                 self.candelete = candelete;
             }
 
-            function Config(id, description, candelete) {
+            function Config(id, description, isactive, candelete) {
                 var self = this;
 
                 self.id = id;
                 self.description = description;
+                self.isactive = isactive;
                 self.candelete = candelete;
             }
 
@@ -73,12 +72,14 @@
 
                 self.configs = ko.observableArray([]);
                 self.configDetails = ko.observableArray([]);
+                self.activeConfig = ko.observable(activeConfig);
                 self.selectedConfig = ko.observable(activeConfig.Id);
                 self.selectedConfigDesc = ko.observable(activeConfig.Description);
                 self.selectedConfigDetail = ko.observable([]);
 
                 createConfigDetailArray(lists.ConfigDetailList);
                 createConfigArray(lists.ConfigList);
+                initializeScreen();
 
                 function createConfigDetailArray(list) {
                     self.configDetails.removeAll();
@@ -96,6 +97,11 @@
                         });
                 };
 
+                function initializeScreen() {
+                    cmdActivate.attr("disabled", "disabled");
+                    cmdDelete.attr("disabled", "disabled");
+                }
+
                 self.columns = ko.computed(function() {
                     var arr = [];
                     arr.push({ title: "Phidget", sortKey: "phidgettype" });
@@ -105,7 +111,7 @@
                 });
 
                 function pushConfig(value) {
-                    self.configs.push(new Config(value.Id, value.Description, value.CanDelete));
+                    self.configs.push(new Config(value.Id, value.Description, value.IsActive, value.CanDelete));
                 };
 
                 function pushConfigDetail(value) {
@@ -151,8 +157,22 @@
                     self.showConfigDetailEditDialog(row);
                 };
 
+                self.showDeleteDetailDialog = function (row) {
+                    var id = row.id;
+
+                    if (id > 0) {
+                        self.highlightRow(row);
+                    }
+
+                    self.showConfigDetailDeleteDialog(row);
+                };
+
+                self.deleteSelectedDetail = function (row) {
+                    deleteConfigDetail(row.id);
+                };
+
                 self.showConfigDetailEditDialog = function (row) {
-                    var id = (typeof row.id !== "undefined" ? row.id : 0);
+                    var id = (row.id !== undefined ? row.id : 0);
                     var title = "<span class='glyphicon glyphicon-pencil'></span>";
                     var message;
 
@@ -169,6 +189,7 @@
                         type: "GET",
                         async: false,
                         url: site.url + "Configurations/GetConfigDetailEditView/" + id,
+                        data: { id: id, configId: self.selectedConfig() },
                         success: function (data) {
                             message = data;
                         }
@@ -216,6 +237,36 @@
                     });
                 };
 
+                self.showConfigDetailDeleteDialog = function (row) {
+                    var id = (row.id !== undefined ? row.id : 0);
+                    if (id <= 0) return;
+                    var r = self.getConfigDetail(id);
+
+                    BootstrapDialog.show({
+                        title: "Delete Config Detail?",
+                        message: "Are you sure?",
+                        closable: false,
+                        buttons: [
+                            {
+                                label: "No",
+                                action: function (dialog) {
+                                    dialog.close();
+                                }
+                            }, {
+                                label: "Yes",
+                                cssClass: "btn-primary",
+                                action: function (dialog) {
+                                    var result = self.deleteConfigDetail(row.id);
+                                    lists.ConfigDetailList = result.ConfigDetailList;
+                                    createConfigDetailArray(lists.ConfigDetailList);
+                                    dialog.close();
+                                    $("body").css("cursor", "default");
+                                }
+                            }
+                        ]
+                    });
+                };
+
                 self.getConfigDetail = function (configDetailid) {
                     var configDetail = null;
 
@@ -240,7 +291,7 @@
 
                 self.saveConfigDetail = function () {
                     var configdetail = self.getConfigDetailFromDialog();
-                    configdetail.configid = self.selectedConfig();
+                    configdetail.ConfigId = self.selectedConfig();
                     var jsonData = JSON.stringify(configdetail);
                     var result;
 
@@ -294,67 +345,63 @@
 
                     return result;
                 };
-            }
 
-            function enableDetail() {
-                var configId = parseInt($("#ddlConfigs").val());
+                self.activateSelectedConfig = function() {
+                    var configId = self.selectedConfig();
+                    $("body").css("cursor", "wait");
 
-                var candelete = canDeleteConfig(configId);
-                if (!candelete)
-                    cmdDelete.attr("disabled", "disabled");
-                else
-                    cmdDelete.removeAttr("disabled");
+                    $.ajax({
+                        type: "POST",
+                        async: false,
+                        url: site.url + "Configurations/Activate/",
+                        data: { configId: configId },
+                        dataType: "json",
+                        traditional: true,
+                        failure: function() {
+                            $("body").css("cursor", "default");
+                            $("#validation-container").html("");
+                        },
+                        success: function(data) {
+                            createConfigArray(data.ConfigList);
+                            self.activeConfig = data.ConfigList.filter(function(value) { return value.IsActive; })[0];
+                            self.selectedConfig(self.activeConfig.Id);
+                            self.selectedConfigDesc(self.activeConfig.Description);
+                            $("body").css("cursor", "default");
+                        },
+                        error: function(data) {
+                            $("body").css("cursor", "default");
+                        }
+                    });
+                };
 
-                var disable = activeConfig.Id === configId;
-                if (disable)
-                    cmdActivate.attr("disabled", "disabled");
-                else 
-                    cmdActivate.removeAttr("disabled");
-            }
+                self.enableDetail = function() {
+                    var configId = self.selectedConfig();
 
-            function canDeleteConfig (configid) {
-                var config = null;
-
-                ko.utils.arrayForEach(lists.ConfigList, function (item) {
-                    if (item.Id === configid) {
-                        config = item;
+                    // Activate  Button
+                    var disableActivate = self.activeConfig().Id === configId;
+                    if (disableActivate) {
+                        cmdActivate.attr("disabled", "disabled");
+                    } else {
+                        cmdActivate.removeAttr("disabled");
                     }
-                });
 
-                return config.CanDelete;
-            };
+                    // Delete Button
+                    var candeleteConfig = self.canDeleteConfig(configId);
+                    if (!candeleteConfig)
+                        cmdDelete.attr("disabled", "disabled");
+                    else
+                        cmdDelete.removeAttr("disabled");
+                };
 
-            $("#ddlConfigs").change(function () {
-                enableDetail();
-            });
-
-            // activate the selected configuration
-            cmdActivate.click(function() {
-                var configId = parseInt($("#ddlConfigs").val());
-                $("body").css("cursor", "wait");
-
-                $.ajax({
-                    type: "POST",
-                    async: false,
-                    url: site.url + "Configurations/Activate/",
-                    data: { configId: configId },
-                    dataType: "json",
-                    traditional: true,
-                    failure: function() {
-                        $("body").css("cursor", "default");
-                        $("#validation-container").html("");
-                    },
-                    success: function (data) {
-                        activeConfig = data.ActiveConfig;
-                        $("#lblActiveConfigDesc").text(activeConfig.Description);
-                        enableDetail();
-                        $("body").css("cursor", "default");
-                    },
-                    error: function (data) {
-                        $("body").css("cursor", "default");
-                    }
-                });
-            });
+                self.canDeleteConfig = function (id) {
+                    if (id === undefined) return false;
+                    if (isNaN(id)) return false;
+                    return self.configs()
+                        .filter(function(value) {
+                            return value.id === id;
+                        })[0].candelete;
+                };
+            }
         }
     }
 })(jQuery);

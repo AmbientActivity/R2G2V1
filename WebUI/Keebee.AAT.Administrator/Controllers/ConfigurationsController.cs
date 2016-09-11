@@ -34,21 +34,9 @@ namespace Keebee.AAT.Administrator.Controllers
         [HttpGet]
         public JsonResult GetData()
         {
-            var configs = _opsClient.GetConfigs().ToArray();
-
             var vm = new
             {
-                ActiveConfig = configs.Where(c => c.IsActive).Select(c => new ConfigViewModel
-                {
-                    Id = c.Id,
-                    Description = c.Description
-                }).Single(),
-                ConfigList = configs.Select(c => new ConfigViewModel
-                {
-                    Id = c.Id,
-                    Description = c.Description,
-                    CanDelete = !_opsClient.GetActivityEventLogsForConfig(c.Id).Any()
-                }),
+                ConfigList = GetConfigList(),
                 ConfigDetailList = GetConfigDetailList()
             };
 
@@ -56,9 +44,9 @@ namespace Keebee.AAT.Administrator.Controllers
         }
 
         [HttpGet]
-        public PartialViewResult GetConfigDetailEditView(int id)
+        public PartialViewResult GetConfigDetailEditView(int id, int configId)
         {
-            return PartialView("_ConfigDetailEdit", LoadConfigDetailEditViewModel(id));
+            return PartialView("_ConfigDetailEdit", LoadConfigDetailEditViewModel(id, configId));
         }
 
         [HttpPost]
@@ -116,10 +104,27 @@ namespace Keebee.AAT.Administrator.Controllers
                 {
                     Id = config.Id,
                     Description = config.Description
-                }
+                },
+                ConfigList = GetConfigList()
             };
 
             return Json(vm, JsonRequestBehavior.AllowGet);
+        }
+
+        private IEnumerable<ConfigViewModel> GetConfigList()
+        {
+            var configs = _opsClient.GetConfigs();
+
+            var list = configs
+                .Select(c => new ConfigViewModel
+                {
+                    Id = c.Id,
+                    Description = c.Description,
+                    IsActive = c.IsActive,
+                    CanDelete = !_opsClient.GetActivityEventLogsForConfig(c.Id).Any() && !c.IsActive
+                });
+
+            return list;
         }
 
         private IEnumerable<ConfigDetailViewModel> GetConfigDetailList()
@@ -141,25 +146,36 @@ namespace Keebee.AAT.Administrator.Controllers
             return list;
         }
 
-        private ConfigDetailEditViewModel LoadConfigDetailEditViewModel(int id)
+        private ConfigDetailEditViewModel LoadConfigDetailEditViewModel(int id, int configId)
         {
             ConfigDetail configDetail = null;
-            //IEnumerable<ConfigDetail> configDetails = null;
+            IEnumerable<int> usedPhidgetIds;
 
             if (id > 0)
             {
-                //configDetails = _opsClient.Get();
                 configDetail = _opsClient.GetConfigDetail(id);
+                usedPhidgetIds = _opsClient.GetConfigWithDetails(configDetail.ConfigId)
+                    .ConfigDetails
+                    .Where(cd => cd.PhidgetType.Id != configDetail.PhidgetType.Id)
+                    .Select(cd => cd.PhidgetType.Id);
+            }
+            else
+            {
+                usedPhidgetIds = _opsClient.GetConfigWithDetails(configId)
+                    .ConfigDetails
+                    .Select(cd => cd.PhidgetType.Id);
             }
 
-            var phidgetTypes = _opsClient.GetPhidgetTypes();
+            var allPhidgetTypes = _opsClient.GetPhidgetTypes().ToArray();
+            var availablePhidgetTypes = allPhidgetTypes.Where(pt => !usedPhidgetIds.Contains(pt.Id)).ToArray();
+
             var responseTypes = _opsClient.GetResponseTypes();
 
             var vm = new ConfigDetailEditViewModel
             {
                 Id = configDetail?.Id ?? 0,
                 Description = (configDetail != null) ? configDetail.Description : string.Empty,
-                PhidgetTypes = new SelectList(phidgetTypes, "Id", "Description", configDetail?.PhidgetType.Id),
+                PhidgetTypes = new SelectList(availablePhidgetTypes, "Id", "Description", configDetail?.PhidgetType.Id),
                 ResponseTypes = new SelectList(responseTypes, "Id", "Description", configDetail?.ResponseType.Id)
             };
 
@@ -182,6 +198,7 @@ namespace Keebee.AAT.Administrator.Controllers
         {
             var cd = new ConfigDetailEdit
             {
+                ConfigId = configDetail.ConfigId,
                 Description = configDetail.Description,
                 PhidgetTypeId = configDetail.PhidgetTypeId,
                 ResponseTypeId = configDetail.ResponseTypeId

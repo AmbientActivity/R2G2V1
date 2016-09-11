@@ -72,6 +72,7 @@ namespace Keebee.AAT.Operations.Controllers
 
             dynamic exObj = new ExpandoObject();
             exObj.Id = configDetail.Id;
+            exObj.ConfigId = configDetail.ConfigId;
             exObj.PhidgetType = new
             {
                 configDetail.PhidgetType.Id,

@@ -30,11 +30,11 @@
     <div class="panel-heading">
         <div class="row">
             <div class="col-sm-8">
-                <select class="form-control" data-bind="attr: { id: 'ddlConfigs' }, options: configs, optionsValue: 'id', optionsText: 'description', value: selectedConfig"></select>
+                <select class="form-control" data-bind="options: configs, optionsValue: 'id', optionsText: 'description', value: selectedConfig, event: { change: enableDetail }"></select>
             </div>
             <div class="pull-right" style="margin-right: 20px">
-                <button id="add-detail" class="btn btn-success btn-md">Add Detail</button>
-                <button id="activate" class="btn btn-primary btn-md">Activate</button>
+                <button id="add-detail" class="btn btn-success btn-md" data-bind="click: showEditDetailDialog">Add Detail</button>
+                <button id="activate" class="btn btn-primary btn-md" data-bind="click: activateSelectedConfig">Activate</button>
             </div>
         </div>
     </div>

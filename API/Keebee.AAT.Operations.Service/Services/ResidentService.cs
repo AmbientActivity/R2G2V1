@@ -11,6 +11,7 @@ namespace Keebee.AAT.Operations.Service.Services
     {
         IEnumerable<Resident> Get();
         Resident Get(int id);
+        Resident GetByNameGender(string firstName, string lastName, string gender);
         Resident GetWithPersonalPictures(int id);
         int Post(Resident resident);
         void Patch(int id, Resident resident);
@@ -36,6 +37,15 @@ namespace Keebee.AAT.Operations.Service.Services
             return container.Residents.ByKey(id)
                 .Expand("Profile")
                 .GetValue();
+        }
+
+        public Resident GetByNameGender(string firstName, string lastName, string gender)
+        {
+            var container = new Container(new Uri(ODataHost.Url));
+
+            return container.Residents
+                .AddQueryOption("$filter", $"FirstName eq '{firstName}' and LastName eq '{lastName}' and Gender eq '{gender}'")
+                .Single();
         }
 
         public Resident GetWithPersonalPictures(int id)

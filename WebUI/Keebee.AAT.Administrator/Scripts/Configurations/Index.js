@@ -300,6 +300,41 @@
                     });
                 };
 
+                self.showConfigActivateDialog = function (id) {
+                    var title = "<span class='glyphicon glyphicon-ok'></span>";
+                    if (id <= 0) return;
+
+                    BootstrapDialog.show({
+                        title: title + " Activate Configuration",
+                        message: "Activate the configuration <b>" + self.selectedConfigDesc() + "</b>?",
+                        closable: false,
+                        buttons: [
+                            {
+                                label: "No",
+                                action: function (dialog) {
+                                    dialog.close();
+                                }
+                            }, {
+                                label: "Yes",
+                                cssClass: "btn-primary",
+                                action: function (dialog) {
+                                    var result = self.activateSelectedConfig();
+                                    $.extend(lists, result);
+                                    createConfigArray(lists.ConfigList);
+                                    createConfigDetailArray(lists.ConfigDetailList);
+                                    activeConfig = result.ConfigList.filter(function (value) { return value.IsActive; })[0];
+                                    self.activeConfig(activeConfig.Id);
+                                    self.selectedConfig(activeConfig.Id);
+                                    self.activeConfigDesc(activeConfig.Description);
+                                    self.enableDetail();
+                                    dialog.close();
+                                    $("body").css("cursor", "default");
+                                }
+                            }
+                        ]
+                    });
+                };
+
                 self.showConfigDetailEditDialog = function (row) {
                     var id = (row.id !== undefined ? row.id : 0);
                     var title = "<span class='glyphicon glyphicon-pencil'></span>";
@@ -548,6 +583,7 @@
                 self.activateSelectedConfig = function() {
                     var configId = self.selectedConfig();
                     $("body").css("cursor", "wait");
+                    var result;
 
                     $.ajax({
                         type: "POST",
@@ -556,25 +592,20 @@
                         data: { configId: configId },
                         dataType: "json",
                         traditional: true,
-                        failure: function() {
+                        failure: function (data) {
+                            result = data;
                             $("body").css("cursor", "default");
                             $("#validation-container").html("");
                         },
                         success: function (data) {
-                            $.extend(lists, data);
-                            createConfigArray(lists.ConfigList);
-                            createConfigDetailArray(lists.ConfigDetailList);
-                            activeConfig = data.ConfigList.filter(function(value) { return value.IsActive; })[0];
-                            self.activeConfig(activeConfig.Id);
-                            self.selectedConfig(activeConfig.Id);
-                            self.activeConfigDesc(activeConfig.Description);
-                            self.enableDetail();
-                            $("body").css("cursor", "default");
+                            result = data;
                         },
                         error: function(data) {
-                            $("body").css("cursor", "default");
+                            result = data;
                         }
                     });
+
+                    return result;
                 };
 
                 self.enableDetail = function () {

@@ -10,6 +10,7 @@ namespace Keebee.AAT.Operations.Service.Services
     {
         IEnumerable<Config> Get();
         Config Get(int id);
+        Config GetByDescription(string description);
         Config GetActiveDetails();
         int Post(Config config);
         void Patch(int id, Config config);
@@ -47,6 +48,17 @@ namespace Keebee.AAT.Operations.Service.Services
             return config;
         }
 
+        public Config GetByDescription(string description)
+        {
+            var container = new Container(new Uri(ODataHost.Url));
+
+            var config = container.Configs
+                .AddQueryOption("$filter", $"Description eq '{description}'")
+                .Single();
+
+            return config;
+        }
+
         public Config GetActiveDetails()
         {
             var container = new Container(new Uri(ODataHost.Url));
@@ -65,7 +77,7 @@ namespace Keebee.AAT.Operations.Service.Services
 
             var config = container.Configs
                 .AddQueryOption("$filter", "IsActive")
-                .Expand($"ConfigDetails(PhidgetTypeId eq {phidgetTypeId})")
+                .Expand($"ConfigDetails($filter=PhidgetTypeId eq {phidgetTypeId})")
                 .Single().ConfigDetails
                 .Single().Description;
 

@@ -4,6 +4,7 @@ using Keebee.AAT.MessageQueuing;
 using Keebee.AAT.BusinessRules;
 using Keebee.AAT.Shared;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Web.Mvc;
 using Newtonsoft.Json;
@@ -70,7 +71,7 @@ namespace Keebee.AAT.Administrator.Controllers
             }
             else
             {
-                msgs = Validate(c.Description);
+                msgs = Validate(c.Description, true);
                 if (msgs == null)
                     configid = AddConfig(c, selectedConfigId);
             }
@@ -219,35 +220,16 @@ namespace Keebee.AAT.Administrator.Controllers
 
         private ConfigDetailEditViewModel LoadConfigDetailEditViewModel(int id, int configId)
         {
-            ConfigDetail configDetail = null;
-            IEnumerable<int> usedPhidgetIds;
-
-            if (id > 0)
-            {
-                configDetail = _opsClient.GetConfigDetail(id);
-                usedPhidgetIds = _opsClient.GetConfigWithDetails(configDetail.ConfigId)
-                    .ConfigDetails
-                    .Where(cd => cd.PhidgetType.Id != configDetail.PhidgetType.Id)
-                    .Select(cd => cd.PhidgetType.Id);
-            }
-            else
-            {
-                usedPhidgetIds = _opsClient.GetConfigWithDetails(configId)
-                    .ConfigDetails
-                    .Select(cd => cd.PhidgetType.Id);
-            }
-
-            var allPhidgetTypes = _opsClient.GetPhidgetTypes().ToArray();
-            var availablePhidgetTypes = allPhidgetTypes.Where(pt => !usedPhidgetIds.Contains(pt.Id)).ToArray();
-
-            var responseTypes = _opsClient.GetResponseTypes();
+            var configurationRules = new ConfigurationRules {OperationsClient = _opsClient};
+            var configEdit = configurationRules.GetConfigEditViewModel(id, configId);
+            var configDetail = configEdit.ConfigDetail;
 
             var vm = new ConfigDetailEditViewModel
             {
                 Id = configDetail?.Id ?? 0,
                 Description = (configDetail != null) ? configDetail.Description : string.Empty,
-                PhidgetTypes = new SelectList(availablePhidgetTypes, "Id", "Description", configDetail?.PhidgetType.Id),
-                ResponseTypes = new SelectList(responseTypes, "Id", "Description", configDetail?.ResponseType.Id)
+                PhidgetTypes = new SelectList(configEdit.PhidgetTypes, "Id", "Description", configDetail?.PhidgetType.Id),
+                ResponseTypes = new SelectList(configEdit.ResponseTypes, "Id", "Description", configDetail?.ResponseType.Id)
             };
 
             return vm;
@@ -314,14 +296,18 @@ namespace Keebee.AAT.Administrator.Controllers
             return id;
         }
 
-        private static IEnumerable<string> Validate(string description)
+        private IEnumerable<string> Validate(string description, bool addnew = false)
         {
-            return ValidationRules.ValidateConfig(description);
+            var validationRules = new ValidationRules { OperationsClient = _opsClient };
+
+            return validationRules.ValidateConfig(description, addnew);
         }
 
-        private static IEnumerable<string> ValidateDetail(string description)
+        private IEnumerable<string> ValidateDetail(string description)
         {
-            return ValidationRules.ValidateConfigDetail(description);
+            var validationRules = new ValidationRules { OperationsClient = _opsClient };
+
+            return validationRules.ValidateConfigDetail(description);
         }
     }
 }

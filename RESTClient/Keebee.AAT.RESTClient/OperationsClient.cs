@@ -19,6 +19,7 @@ namespace Keebee.AAT.RESTClient
         // GET
         IEnumerable<Config> GetConfigs();
         Config GetConfig(int id);
+        Config GetConfigByDescription(string desciption);
         ConfigDetail GetConfigDetail(int id);
         IEnumerable<ConfigDetail> GetConfigDetails();
         Config GetActiveConfigDetails();
@@ -28,6 +29,7 @@ namespace Keebee.AAT.RESTClient
 
         IEnumerable<Resident> GetResidents();
         Resident GetResident(int residentId);
+        Resident GetResidentByNameGender(string firstName, string lastName, string gender);
         bool ResidentProfileExists(int residentId);
         Profile GetGenericProfile();
         Profile GetResidentProfile(int residentId);
@@ -76,6 +78,7 @@ namespace Keebee.AAT.RESTClient
         // configurations
         private const string UrlConfigs = "configs";
         private const string UrlConfig = "configs/{0}";
+        private const string UrlConfigByDescription = "configs?description={0}";
         private const string UrlConfigWithDetails = "configs/{0}/details";
         private const string UrlActiveConfigDetails = "configs/active/details";
         private const string UrlActivateConfig = "configs/{0}/activate";
@@ -91,6 +94,7 @@ namespace Keebee.AAT.RESTClient
         // residents
         private const string UrlResidents = "residents";
         private const string UrlResident = "residents/{0}";
+        private const string UrlResidentByNameGender = "residents?firstName={0}&lastName={1}&gender={2}";
         private const string UrlResidentProfile = "residents/{0}/profile";
         private const string UrlResidentMedia = "residents/{0}/media";
 
@@ -137,6 +141,8 @@ namespace Keebee.AAT.RESTClient
         }
 
         // GET
+
+        // config
         public Config GetActiveConfigDetails()
         {
             var data = Get(UrlActiveConfigDetails);
@@ -162,6 +168,17 @@ namespace Keebee.AAT.RESTClient
         public Config GetConfig(int configId)
         {
             var data = Get(string.Format(UrlConfig, configId));
+            if (data == null) return null;
+
+            var serializer = new JavaScriptSerializer();
+            var config = serializer.Deserialize<Config>(data);
+
+            return config;
+        }
+
+        public Config GetConfigByDescription(string description)
+        {
+            var data = Get(string.Format(UrlConfigByDescription, description));
             if (data == null) return null;
 
             var serializer = new JavaScriptSerializer();
@@ -226,6 +243,7 @@ namespace Keebee.AAT.RESTClient
         }
 
 
+        // resident
         public IEnumerable<Resident> GetResidents()
         {
             var data = Get(UrlResidents);
@@ -240,6 +258,17 @@ namespace Keebee.AAT.RESTClient
         public Resident GetResident(int residentId)
         {
             var data = Get(string.Format(UrlResident, residentId));
+            if (data == null) return null;
+
+            var serializer = new JavaScriptSerializer();
+            var resident = serializer.Deserialize<Resident>(data);
+
+            return resident;
+        }
+
+        public Resident GetResidentByNameGender(string firstName, string lastName, string gender)
+        {
+            var data = Get(string.Format(UrlResidentByNameGender, firstName, lastName, gender));
             if (data == null) return null;
 
             var serializer = new JavaScriptSerializer();
@@ -310,6 +339,7 @@ namespace Keebee.AAT.RESTClient
         }
 
 
+        // media
         public IEnumerable<Response> GetAmbientResponses()
         {
             var data = Get(UrlAmbientResponses);

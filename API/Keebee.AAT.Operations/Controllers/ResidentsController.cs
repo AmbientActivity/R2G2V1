@@ -91,6 +91,29 @@ namespace Keebee.AAT.Operations.Controllers
             return new DynamicJsonObject(exObj);
         }
 
+        [HttpGet]
+        public async Task<DynamicJsonObject> GetNyNameGender(string firstName, string lastName, string gender)
+        {
+            var resident = new Resident();
+
+            await Task.Run(() =>
+            {
+                resident = _residentService.GetByNameGender(firstName, lastName, gender);
+            });
+
+            if (resident == null) return new DynamicJsonObject(new ExpandoObject());
+
+            dynamic exObj = new ExpandoObject();
+            exObj.Id = resident.Id;
+            exObj.ProfileId = resident.ProfileId;
+            exObj.FirstName = resident.FirstName;
+            exObj.LastName = resident.LastName;
+            exObj.Gender = resident.Gender;
+            exObj.DateCreated = resident.DateCreated;
+            exObj.DateUpdated = resident.DateUpdated;
+            return new DynamicJsonObject(exObj);
+        }
+
         [Route("media")]
         [HttpGet]
         public async Task<DynamicJsonObject> GetWithMedia()

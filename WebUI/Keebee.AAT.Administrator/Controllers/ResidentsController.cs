@@ -51,13 +51,13 @@ namespace Keebee.AAT.Administrator.Controllers
 
             if (residentId > 0)
             {
-                msgs = Validate(r.FirstName, r.LastName);
+                msgs = Validate(r.FirstName, r.LastName, r.Gender);
                 if (msgs == null)
                     UpdateResident(r);
             }
             else
             {
-                msgs = Validate(r.FirstName, r.LastName);
+                msgs = Validate(r.FirstName, r.LastName, r.Gender, true);
                 if (msgs == null)
                     residentId = AddResident(r);
             }
@@ -154,9 +154,11 @@ namespace Keebee.AAT.Administrator.Controllers
             return id;
         }
 
-        private static IEnumerable<string> Validate(string firstname, string lastname)
+        private IEnumerable<string> Validate(string firstname, string lastname, string gender, bool addnew = false)
         {
-            return ValidationRules.ValidateResident(firstname, lastname);
+            var validationRules = new ValidationRules { OperationsClient = _opsClient };
+
+            return validationRules.ValidateResident(firstname, lastname, gender, addnew);
         }
     }
 }

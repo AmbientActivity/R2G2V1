@@ -177,11 +177,11 @@
                     var message;
 
                     if (id > 0) {
-                        title = title + " Edit Configuration Detail";
+                        title = title + " Edit Configuration Item";
                         var configDetail = self.getConfigDetail(id);
                         self.selectedConfigDetail(configDetail);
                     } else {
-                        title = title + " Add Configuration Detail";
+                        title = title + " Add Configuration Item";
                         self.selectedConfigDetail([]);
                     }
 
@@ -238,13 +238,14 @@
                 };
 
                 self.showConfigDetailDeleteDialog = function (row) {
+                    var title = "<span class='glyphicon glyphicon-trash'></span>";
                     var id = (row.id !== undefined ? row.id : 0);
                     if (id <= 0) return;
                     var r = self.getConfigDetail(id);
 
                     BootstrapDialog.show({
-                        title: "Delete Config Detail?",
-                        message: "Are you sure?",
+                        title: title + " Delete Configuration Item",
+                        message: "Delete the selected configuration item?",
                         closable: false,
                         buttons: [
                             {
@@ -361,11 +362,13 @@
                             $("body").css("cursor", "default");
                             $("#validation-container").html("");
                         },
-                        success: function(data) {
-                            createConfigArray(data.ConfigList);
-                            self.activeConfig = data.ConfigList.filter(function(value) { return value.IsActive; })[0];
-                            self.selectedConfig(self.activeConfig.Id);
-                            self.selectedConfigDesc(self.activeConfig.Description);
+                        success: function (data) {
+                            lists.ConfigList = data.ConfigList;
+                            activeConfig = data.ConfigList.filter(function(value) { return value.IsActive; })[0];
+                            self.activeConfig(activeConfig);
+                            self.selectedConfig(activeConfig.Id);
+                            self.selectedConfigDesc(activeConfig.Description);
+                            self.enableDetail();
                             $("body").css("cursor", "default");
                         },
                         error: function(data) {
@@ -378,7 +381,8 @@
                     var configId = self.selectedConfig();
 
                     // Activate  Button
-                    var disableActivate = self.activeConfig().Id === configId;
+                    var activeConfigId = self.activeConfig().Id;
+                    var disableActivate = (activeConfigId === configId || configId === undefined);
                     if (disableActivate) {
                         cmdActivate.attr("disabled", "disabled");
                     } else {
@@ -386,7 +390,7 @@
                     }
 
                     // Delete Button
-                    var candeleteConfig = self.canDeleteConfig(configId);
+                    var candeleteConfig = (self.canDeleteConfig(configId) && configId !== undefined);
                     if (!candeleteConfig)
                         cmdDelete.attr("disabled", "disabled");
                     else
@@ -396,10 +400,10 @@
                 self.canDeleteConfig = function (id) {
                     if (id === undefined) return false;
                     if (isNaN(id)) return false;
-                    return self.configs()
+                    return lists.ConfigList
                         .filter(function(value) {
-                            return value.id === id;
-                        })[0].candelete;
+                            return value.Id === id;
+                        })[0].CanDelete;
                 };
             }
         }

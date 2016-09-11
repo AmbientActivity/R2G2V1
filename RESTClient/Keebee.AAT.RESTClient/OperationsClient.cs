@@ -469,7 +469,7 @@ namespace Keebee.AAT.RESTClient
             var serializer = new JavaScriptSerializer();
             var el = serializer.Serialize(config);
 
-            Patch(string.Format(UrlConfigDetail, configId), el);
+            Patch(string.Format(UrlConfig, configId), el);
         }
 
         public void PatchConfigDetail(int configDetailId, ConfigDetailEdit configDetail)

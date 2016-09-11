@@ -14,27 +14,30 @@
         <h3>System Configuration</h3>
     </div>
     <div class="pull-right" style="margin: 15px 20px 0 0">
-        <h4>Currently Active: <i><label id="lblActiveConfigDesc" data-bind="text: selectedConfigDesc" style="color: #265a88"></label></i></h4>
+        <h4>Current Active: <i><label id="lblActiveConfigDesc" data-bind="text: activeConfigDesc, css: 'label-active-config'"></label></i></h4>
     </div>
 </div>
 
-<div class="row">
-    <div class="col-sm-12">
-        <button id="add" style="margin-bottom: 5px" class="btn btn-success btn-md">Add</button>
-        <button id="edit" style="margin-bottom: 5px" class="btn btn-primary btn-md">Edit</button>
-        <button id="delete" style="margin-bottom: 5px" class="btn btn-danger btn-md">Delete</button>
+<div class="config-container">
+    <div class="row">
+        <div class="col-sm-6">
+            <select class="form-control" data-bind="options: configs, optionsValue: 'id', optionsText: 'description', value: selectedConfig, event: { change: enableDetail }, css: 'select-config'"></select>
+        </div>
+        <div class="col-sm-5">
+            <a id="add" href="#" class="btn btn-success btn-md" data-bind="click: showAddDialog, css: 'glyphicon glyphicon-duplicate button-text'"></a>
+            <a id="edit" href="#" class="btn btn-primary btn-md" data-bind="click: showEditDialog, css: 'glyphicon glyphicon-pencil button-text'"></a>
+            <a id="delete" href="#" class="btn btn-danger btn-md" data-bind="click: showDeleteDialog, css: 'glyphicon glyphicon-trash button-text'"></a>
+        </div>
+        <div class="col-sm-1">
+            <button id="activate" class="btn btn-primary btn-md" data-bind="click: activateSelectedConfig">Activate</button>
+        </div>
     </div>
 </div>
-
 <div class="panel panel-default">
     <div class="panel-heading">
         <div class="row">
-            <div class="col-sm-8">
-                <select class="form-control" data-bind="options: configs, optionsValue: 'id', optionsText: 'description', value: selectedConfig, event: { change: enableDetail }"></select>
-            </div>
-            <div class="pull-right" style="margin-right: 20px">
+            <div class="col-sm-12">
                 <button id="add-detail" class="btn btn-success btn-md" data-bind="click: showEditDetailDialog">Add Detail</button>
-                <button id="activate" class="btn btn-primary btn-md" data-bind="click: activateSelectedConfig">Activate</button>
             </div>
         </div>
     </div>

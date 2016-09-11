@@ -1,9 +1,17 @@
 ﻿@model Keebee.AAT.Administrator.ViewModels.ConfigEditViewModel
 
-<div class="container">
+<div class="container edit-dialog-container">
+    @if (Model.SourceConfigName != null)
+    {
+        <div class="row">
+            <div class="col-sm-12">
+                <h5>Create a duplicate of the configuration: </h5><h4><b>@Model.SourceConfigName</b></h4>
+            </div>
+        </div>
+    }
     <div class="row">
         <div class="col-sm-12">
-            <div class="label label-default">Description</div>
+            <div class="label label-default">Name</div>
             <input type="text" id="txtDescription" class="form-control" value="@Model.Description" maxlength="50"/>
         </div>
     </div>

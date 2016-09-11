@@ -1,11 +1,11 @@
 ﻿using Keebee.AAT.Administrator.ViewModels;
 using Keebee.AAT.RESTClient;
 using Keebee.AAT.MessageQueuing;
+using Keebee.AAT.BusinessRules;
+using Keebee.AAT.Shared;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Web.Mvc;
-using Keebee.AAT.BusinessRules;
 using Newtonsoft.Json;
 
 namespace Keebee.AAT.Administrator.Controllers
@@ -44,9 +44,57 @@ namespace Keebee.AAT.Administrator.Controllers
         }
 
         [HttpGet]
+        public PartialViewResult GetConfigEditView(int id, int selectedConfigId)
+        {
+            return PartialView("_ConfigEdit", LoadConfigEditViewModel(id, selectedConfigId));
+        }
+
+        [HttpGet]
         public PartialViewResult GetConfigDetailEditView(int id, int configId)
         {
             return PartialView("_ConfigDetailEdit", LoadConfigDetailEditViewModel(id, configId));
+        }
+
+        [HttpPost]
+        public JsonResult Save(string config, int selectedConfigId)
+        {
+            var c = JsonConvert.DeserializeObject<ConfigEditViewModel>(config);
+            IEnumerable<string> msgs;
+            var configid = c.Id;
+
+            if (configid > 0)
+            {
+                msgs = Validate(c.Description);
+                if (msgs == null)
+                    UpdateConfig(c);
+            }
+            else
+            {
+                msgs = Validate(c.Description);
+                if (msgs == null)
+                    configid = AddConfig(c, selectedConfigId);
+            }
+
+            return Json(new
+            {
+                SelectedId = configid,
+                ConfigList = GetConfigList(),
+                ConfigDetailList = GetConfigDetailList(),
+                Success = (null == msgs),
+                ErrorMessages = msgs
+            }, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        public JsonResult Delete(int id)
+        {
+            _opsClient.DeleteConfig(id);
+
+            return Json(new
+            {
+                ConfigList = GetConfigList(),
+                Success = true,
+            }, JsonRequestBehavior.AllowGet);
         }
 
         [HttpPost]
@@ -96,16 +144,11 @@ namespace Keebee.AAT.Administrator.Controllers
             _opsClient.PostActivateConfig(configId);
             _messageQueueConfig.Send("1");
 
-            var config = _opsClient.GetConfig(configId);
-
             var vm = new
             {
-                ActiveConfig = new ConfigViewModel
-                {
-                    Id = config.Id,
-                    Description = config.Description
-                },
-                ConfigList = GetConfigList()
+                SelectedId = configId,
+                ConfigList = GetConfigList(),
+                ConfigDetailList = GetConfigDetailList()
             };
 
             return Json(vm, JsonRequestBehavior.AllowGet);
@@ -113,15 +156,18 @@ namespace Keebee.AAT.Administrator.Controllers
 
         private IEnumerable<ConfigViewModel> GetConfigList()
         {
-            var configs = _opsClient.GetConfigs();
+            var configs = _opsClient.GetConfigs().ToArray();
 
             var list = configs
-                .Select(c => new ConfigViewModel
+                .Select(config => new ConfigViewModel
                 {
-                    Id = c.Id,
-                    Description = c.Description,
-                    IsActive = c.IsActive,
-                    CanDelete = !_opsClient.GetActivityEventLogsForConfig(c.Id).Any() && !c.IsActive
+                    Id = config.Id,
+                    Description = config.Description,
+                    IsActive = config.IsActive,
+                    CanEdit = config.Id != ConfigId.Default,
+                    CanDelete = !_opsClient.GetActivityEventLogsForConfig(config.Id).Any() 
+                        && !config.IsActive 
+                        && ConfigId.Default != config.Id
                 });
 
             return list;
@@ -137,13 +183,38 @@ namespace Keebee.AAT.Administrator.Controllers
                 {
                     Id = cd.Id,
                     ConfigId = config.Id,
+                    SortOrder = cd.PhidgetType.Id,
                     PhidgetType = cd.PhidgetType.Description,
                     Description = cd.Description,
                     ResponseType = cd.ResponseType.Description,
-                    CanDelete = !_opsClient.GetActivityEventLogsForConfigDetail(cd.Id).Any()
-                }));
+                    CanDelete = !_opsClient.GetActivityEventLogsForConfigDetail(cd.Id).Any() && !config.IsActive
+                })).ToArray();
 
             return list;
+        }
+
+        private ConfigEditViewModel LoadConfigEditViewModel(int id, int selectedConfigId)
+        {
+            Config config = null;
+            Config selectedConfig = null;
+
+            if (id > 0)
+            {
+                config = _opsClient.GetConfig(id);
+            }
+            else
+            {
+                selectedConfig = _opsClient.GetConfig(selectedConfigId);
+            }
+
+            var vm = new ConfigEditViewModel
+            {
+                Id = config?.Id ?? 0,
+                SourceConfigName = selectedConfig?.Description,
+                Description = (config != null) ? config.Description : string.Empty
+            };
+
+            return vm;
         }
 
         private ConfigDetailEditViewModel LoadConfigDetailEditViewModel(int id, int configId)
@@ -180,6 +251,40 @@ namespace Keebee.AAT.Administrator.Controllers
             };
 
             return vm;
+        }
+
+        private void UpdateConfig(ConfigEditViewModel config)
+        {
+            var c = new ConfigEdit
+            {
+                Description = config.Description
+            };
+
+            _opsClient.PatchConfig(config.Id, c);
+        }
+
+        private int AddConfig(ConfigEditViewModel config, int selectedConfigId)
+        {
+            var newConfig = new ConfigEdit
+            {
+                Description = config.Description
+            };
+
+            var newId = _opsClient.PostConfig(newConfig);
+            var selectedConfig = _opsClient.GetConfigWithDetails(selectedConfigId);
+
+            foreach (var detail in selectedConfig.ConfigDetails)
+            {
+                _opsClient.PostConfigDetail(new ConfigDetailEdit
+                        {
+                            ConfigId = newId,
+                            Description = detail.Description,
+                            PhidgetTypeId = detail.PhidgetType.Id,
+                            ResponseTypeId = detail.ResponseType.Id
+                        });
+            }
+            
+            return newId;
         }
 
         private void UpdateConfigDetail(ConfigDetailEditViewModel configDetail)

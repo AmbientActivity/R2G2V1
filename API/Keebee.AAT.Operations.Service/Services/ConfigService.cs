@@ -94,8 +94,6 @@ namespace Keebee.AAT.Operations.Service.Services
             if (config.Description != null)
                 c.Description = config.Description;
 
-             c.IsActive = config.IsActive;
-
             container.UpdateObject(c);
             container.SaveChanges();
         }

@@ -51,7 +51,7 @@ namespace Keebee.AAT.Operations.Controllers
                     cd.ResponseType.Description,
                     cd.ResponseType.IsInteractive
                 }
-            });
+            }).OrderBy(o => o.PhidgetType.Id);
 
             return new DynamicJsonObject(exObj);
         }

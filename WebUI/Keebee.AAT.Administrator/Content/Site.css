@@ -77,14 +77,36 @@ textarea {
 }
 
 /* custom */
+.modal-content {
+    width: 470px;
+}
+.modal-content.row {
+    padding: 0;
+    margin: 0;  
+}
 .resident-edit {
     width: 400px;
 }
-
+.config-container {
+    width: 780px;
+    margin-bottom: 10px;
+}
+.col-glyphicon {
+    width: 20px;
+}
+.col-glyphicon {
+    width: 20px;
+}
 .glyphicon-remove {
     color: #c12e2a;
 }
 .glyphicon-pencil {
+    color: #265a88;
+}
+.button-text {
+    color: #fff;
+}
+.label-active-config {
     color: #265a88;
 }
 

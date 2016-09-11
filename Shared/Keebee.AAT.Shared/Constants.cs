@@ -21,6 +21,11 @@
         public const string CatsVideo = @"sqlexpress\KeebeeAATFilestream\Media\Cats\Cats.mp4";
     }
 
+    public static class ConfigId
+    {
+        public const int Default = 1;
+    }
+
     public static class ProfileId
     {
         public const int Generic = 1;

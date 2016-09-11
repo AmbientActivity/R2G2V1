@@ -58,7 +58,7 @@ namespace Keebee.AAT.Operations.Controllers
                             cd.ResponseType.IsInteractive,
                             cd.ResponseType.IsSystem
                         }
-                    })
+                    }).OrderBy(o => o.PhidgetType.Id)
             });
 
             return new DynamicJsonObject(exObj);
@@ -127,7 +127,8 @@ namespace Keebee.AAT.Operations.Controllers
                     cd.ResponseType.IsInteractive,
                     cd.ResponseType.IsSystem
                 }
-            });
+            }).OrderBy(o => o.PhidgetType.Id);
+
             return new DynamicJsonObject(exObj);
         }
 
@@ -171,7 +172,7 @@ namespace Keebee.AAT.Operations.Controllers
                     cd.ResponseType.IsInteractive,
                     cd.ResponseType.IsSystem
                 }
-            });
+            }).OrderBy(o => o.PhidgetType.Id);
 
             return new DynamicJsonObject(exObj);
         }

@@ -15,6 +15,7 @@ namespace Keebee.AAT.Administrator.ViewModels
         public int Id { get; set; }
         public string Description { get; set; }
         public bool IsActive { get; set; }
+        public bool CanEdit { get; set; }
         public bool CanDelete { get; set; }
     }
 
@@ -22,6 +23,7 @@ namespace Keebee.AAT.Administrator.ViewModels
     {
         public int Id { get; set; }
         public int ConfigId { get; set; }
+        public int SortOrder { get; set; }
         public string PhidgetType { get; set; }
         public string Description { get; set; }
         public string ResponseType { get; set; }
@@ -31,6 +33,7 @@ namespace Keebee.AAT.Administrator.ViewModels
     public class ConfigEditViewModel
     {
         public int Id { get; set; }
+        public string SourceConfigName { get; set; }
         public string Description { get; set; }
     }
 

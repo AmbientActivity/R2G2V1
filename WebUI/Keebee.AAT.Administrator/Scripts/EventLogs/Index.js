@@ -44,7 +44,9 @@
                 self.filesize = filesize;
                 self.path = path;
 
-                self.downloadUrl = "EventLogs/Download?streamId=" + streamid;
+                self.download = function (row) {
+                    window.location = "EventLogs/Download?streamId=" + row.streamid;
+                };
             }
 
             function EventLogViewModel() {
@@ -147,19 +149,6 @@
                     var r = tblEventLog.find("#row_" + row.streamid);
                     r.css("background-color", HIGHLIGHT_ROW_COLOUR);
                     $("#tblEventLog").attr("tr:hover", HIGHLIGHT_ROW_COLOUR);
-                };
-
-                self.download = function(row) {
-                        $.ajax({
-                            type: "GET",
-                            url: site.url + "EventLogs/Download?streamId=" + row.streamid,
-                            dataType: "json",
-                            traditional: true,
-                            async: false,
-                            success: function (data) {
-                                var d = data;
-                            }
-                        });
                 };
             };
 

@@ -48,16 +48,17 @@ namespace Keebee.AAT.Administrator.Controllers
             var r = JsonConvert.DeserializeObject<ResidentEditViewModel>(resident);
             IEnumerable<string> msgs;
             var residentId = r.Id;
+            var residentRules = new ResidentRules { OperationsClient = _opsClient };
 
             if (residentId > 0)
             {
-                msgs = Validate(r.FirstName, r.LastName, r.Gender);
+                msgs = residentRules.Validate(r.FirstName, r.LastName, r.Gender, false);
                 if (msgs == null)
                     UpdateResident(r);
             }
             else
             {
-                msgs = Validate(r.FirstName, r.LastName, r.Gender, true);
+                msgs = residentRules.Validate(r.FirstName, r.LastName, r.Gender, true);
                 if (msgs == null)
                     residentId = AddResident(r);
             }
@@ -152,13 +153,6 @@ namespace Keebee.AAT.Administrator.Controllers
             var id = _opsClient.PostResident(r);
 
             return id;
-        }
-
-        private IEnumerable<string> Validate(string firstname, string lastname, string gender, bool addnew = false)
-        {
-            var validationRules = new ValidationRules { OperationsClient = _opsClient };
-
-            return validationRules.ValidateResident(firstname, lastname, gender, addnew);
         }
     }
 }

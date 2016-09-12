@@ -3,7 +3,7 @@ using Keebee.AAT.RESTClient;
 
 namespace Keebee.AAT.BusinessRules
 {
-    public class ValidationRules
+    public class ResidentRules
     {
         private OperationsClient _opsClient;
         public OperationsClient OperationsClient
@@ -11,38 +11,8 @@ namespace Keebee.AAT.BusinessRules
             set { _opsClient = value; }
         }
 
-        // config
-        public List<string> ValidateConfig(string description, bool addnew)
-        {
-            var msgs = new List<string>();
-
-            if (string.IsNullOrEmpty(description))
-                msgs.Add("Configuration name is required");
-
-            if (!addnew) return msgs.Count > 0 ? msgs : null;
-            if (description?.Length == 0) return msgs;
-
-            var config = _opsClient.GetConfigByDescription(description);
-
-            if (config.Id != 0)
-                msgs.Add($"A configuration with the name '{description}' already exists");
-
-            return msgs.Count > 0 ? msgs : null;
-        }
-
-        // config detail
-        public List<string> ValidateConfigDetail(string description)
-        {
-            var msgs = new List<string>();
-
-            if (string.IsNullOrEmpty(description))
-                msgs.Add("Description is required");
-
-            return msgs.Count > 0 ? msgs : null;
-        }
-
-        // resident
-        public List<string> ValidateResident(string firstName, string lastName, string gender, bool addnew)
+        // validation
+        public List<string> Validate(string firstName, string lastName, string gender, bool addnew)
         {
             var msgs = new List<string>();
 

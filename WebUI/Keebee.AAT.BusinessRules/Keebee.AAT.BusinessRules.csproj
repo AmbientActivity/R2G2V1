@@ -43,7 +43,7 @@
   <ItemGroup>
     <Compile Include="ConfigurationRules.cs" />
     <Compile Include="DTO\ConfigEditModel.cs" />
-    <Compile Include="ValidationRules.cs" />
+    <Compile Include="ResidentRules.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

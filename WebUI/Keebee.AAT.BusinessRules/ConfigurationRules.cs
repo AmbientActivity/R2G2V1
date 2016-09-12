@@ -14,6 +14,36 @@ namespace Keebee.AAT.BusinessRules
             set { _opsClient = value; }
         }
 
+        // validation
+        public List<string> Validate(string description, bool addnew)
+        {
+            var msgs = new List<string>();
+
+            if (string.IsNullOrEmpty(description))
+                msgs.Add("Configuration name is required");
+
+            if (!addnew) return msgs.Count > 0 ? msgs : null;
+            if (description?.Length == 0) return msgs;
+
+            var config = _opsClient.GetConfigByDescription(description);
+
+            if (config.Id != 0)
+                msgs.Add($"A configuration with the name '{description}' already exists");
+
+            return msgs.Count > 0 ? msgs : null;
+        }
+
+        public List<string> ValidateDetail(string description)
+        {
+            var msgs = new List<string>();
+
+            if (string.IsNullOrEmpty(description))
+                msgs.Add("Description is required");
+
+            return msgs.Count > 0 ? msgs : null;
+        }
+
+        // view model
         public ConfigEditModel GetConfigEditViewModel(int id, int configId)
         {
             ConfigDetail configDetail = null;

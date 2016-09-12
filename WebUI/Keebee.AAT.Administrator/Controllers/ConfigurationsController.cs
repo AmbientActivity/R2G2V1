@@ -60,19 +60,16 @@ namespace Keebee.AAT.Administrator.Controllers
         public JsonResult Save(string config, int selectedConfigId)
         {
             var c = JsonConvert.DeserializeObject<ConfigEditViewModel>(config);
-            IEnumerable<string> msgs;
             var configid = c.Id;
+            var configurationRules = new ConfigurationRules {OperationsClient = _opsClient};
 
-            if (configid > 0)
+            var msgs = configurationRules.Validate(c.Description, configid > 0);
+
+            if (msgs == null)
             {
-                msgs = Validate(c.Description);
-                if (msgs == null)
+                if (configid > 0)
                     UpdateConfig(c);
-            }
-            else
-            {
-                msgs = Validate(c.Description, true);
-                if (msgs == null)
+                else
                     configid = AddConfig(c, selectedConfigId);
             }
 
@@ -102,19 +99,16 @@ namespace Keebee.AAT.Administrator.Controllers
         public JsonResult SaveDetail(string configDetail)
         {
             var cd = JsonConvert.DeserializeObject<ConfigDetailEditViewModel>(configDetail);
-            IEnumerable<string> msgs;
             var configDetailid = cd.Id;
+            var configurationRules = new ConfigurationRules();
 
-            if (configDetailid > 0)
+            var msgs = configurationRules.ValidateDetail(cd.Description);
+
+            if (msgs == null)
             {
-                msgs = ValidateDetail(cd.Description);
-                if (msgs == null)
+                if (configDetailid > 0)
                     UpdateConfigDetail(cd);
-            }
-            else
-            {
-                msgs = ValidateDetail(cd.Description);
-                if (msgs == null)
+                else
                     configDetailid = AddConfigDetail(cd);
             }
 
@@ -294,20 +288,6 @@ namespace Keebee.AAT.Administrator.Controllers
             var id = _opsClient.PostConfigDetail(cd);
 
             return id;
-        }
-
-        private IEnumerable<string> Validate(string description, bool addnew = false)
-        {
-            var validationRules = new ValidationRules { OperationsClient = _opsClient };
-
-            return validationRules.ValidateConfig(description, addnew);
-        }
-
-        private IEnumerable<string> ValidateDetail(string description)
-        {
-            var validationRules = new ValidationRules { OperationsClient = _opsClient };
-
-            return validationRules.ValidateConfigDetail(description);
         }
     }
 }

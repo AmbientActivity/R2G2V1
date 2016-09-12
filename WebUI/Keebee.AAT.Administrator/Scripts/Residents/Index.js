@@ -150,8 +150,6 @@
                     if (id > 0) {
                         self.highlightRow(row);
                     }
-
-                    //self.showResidentEditDialog(row);
                 };
 
                 self.deleteSelectedResident = function (row) {
@@ -167,21 +165,26 @@
                     var id = (typeof row.id !== "undefined" ? row.id : 0);
                     if (id <= 0) return;
                     var r = self.getResident(id);
+                    var messageGender;
+
+                    if (r.gender === "M") messageGender = "his";
+                    else messageGender = "her";
 
                     BootstrapDialog.show({
+                        type: BootstrapDialog.TYPE_DANGER,
                         title: "Delete Resident?",
-                        message: "Are you sure?" +
-                            "This will permanently delete the resident <i><b>" + r.firstname + " " + r.lastname + "</b></i>\n and all their associated media!",
+                        message: "Permanently delete the resident <i><b>" + r.firstname + " " + r.lastname + "</b></i>?\n\n" +
+                            "<b>Warning:</b> All " + messageGender + " personal media files will be removed!",
                         closable: false,
                         buttons: [
                             {
-                                label: "No",
+                                label: "Cancel",
                                 action: function (dialog) {
                                     dialog.close();
                                 }
                             }, {
-                                label: "Yes",
-                                cssClass: "btn-primary",
+                                label: "Yes, Delete",
+                                cssClass: "btn-danger",
                                 action: function (dialog) {
                                     var result = self.deleteResident(row.id);
                                     lists.ResidentList = result.ResidentList;
@@ -221,6 +224,9 @@
                     BootstrapDialog.show({
                         title: title,
                         message: message,
+                        onshown: function() {
+                            $("#txtFirstName").focus();
+                        },
                         closable: false,
                         buttons: [
                             {

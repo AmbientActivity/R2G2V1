@@ -12,11 +12,8 @@
             var HIGHLIGHT_ROW_COLOUR = "#e3e8ff";
 
             // buttons
-            var cmdAdd = $("#add");
             var cmdEdit = $("#edit");
             var cmdDelete = $("#delete");
-
-            var cmdAddDetail = $("#add-detail");
             var cmdActivate = $("#activate");
 
             // active config
@@ -79,6 +76,7 @@
                 self.activeConfigDesc = ko.observable(activeConfig.Description);
                 self.selectedConfigDetail = ko.observable([]);
                 self.isLoadingConfigs = ko.observable(false);
+                self.totalConfigDetails = ko.observable(0);
 
                 createConfigDetailArray(lists.ConfigDetailList);
                 createConfigArray(lists.ConfigList);
@@ -117,7 +115,7 @@
                 self.columns = ko.computed(function() {
                     var arr = [];
                     arr.push({ title: "Phidget", sortKey: "phidgettype" });
-                    arr.push({ title: "Description", sortKey: "description" });
+                    arr.push({ title: "Activity", sortKey: "description" });
                     arr.push({ title: "Response", sortKey: "responsetype" });
                     return arr;
                 });
@@ -150,6 +148,7 @@
 
                 self.configDetailsTable = ko.computed(function () {
                     var filteredConfigDetails = self.filteredConfigDetails();
+                    self.totalConfigDetails(filteredConfigDetails.length);
                     return filteredConfigDetails;
                 });
 
@@ -228,6 +227,9 @@
                     BootstrapDialog.show({
                         title: title,
                         message: message,
+                        onshown: function () {
+                            $("#txtDescription").focus();
+                        },
                         closable: false,
                         buttons: [
                             {
@@ -276,8 +278,10 @@
                     if (id <= 0) return;
 
                     BootstrapDialog.show({
+                        type: BootstrapDialog.TYPE_DANGER,
                         title: title + " Delete Configuration",
-                        message: "Delete the configuration <b>" + self.selectedConfigDesc() + "</b>?",
+                        message: "Permanently delete the configuration <i><b>" + self.selectedConfigDesc() + "</b></i>?\n\n" +
+                            "<b>Warning:</b> All configuration detail will be removed!",
                         closable: false,
                         buttons: [
                             {
@@ -286,8 +290,8 @@
                                     dialog.close();
                                 }
                             }, {
-                                label: "Yes",
-                                cssClass: "btn-primary",
+                                label: "Yes, Delete",
+                                cssClass: "btn-danger",
                                 action: function (dialog) {
                                     var result = self.deleteConfig(id);
                                     lists.ConfigList = result.ConfigList;
@@ -362,6 +366,9 @@
                     BootstrapDialog.show({
                         title: title,
                         message: message,
+                        onshown: function () {
+                            $("#txtDescription").focus();
+                        },
                         closable: false,
                         buttons: [
                             {
@@ -407,11 +414,12 @@
                     var title = "<span class='glyphicon glyphicon-trash'></span>";
                     var id = (row.id !== undefined ? row.id : 0);
                     if (id <= 0) return;
-                    var r = self.getConfigDetail(id);
+                    var cd = self.getConfigDetail(id);
 
                     BootstrapDialog.show({
-                        title: title + " Delete Configuration Item",
-                        message: "Delete the selected configuration item?",
+                        type: BootstrapDialog.TYPE_DANGER,
+                        title: title + " Delete Configuration Detail",
+                        message: "Delete <b>" + cd.phidgettype + "</b> detail item for actvity <i><b>" + cd.description + "</b></i>?",
                         closable: false,
                         buttons: [
                             {
@@ -420,8 +428,8 @@
                                     dialog.close();
                                 }
                             }, {
-                                label: "Yes",
-                                cssClass: "btn-primary",
+                                label: "Yes, Delete",
+                                cssClass: "btn-danger",
                                 action: function (dialog) {
                                     var result = self.deleteConfigDetail(row.id);
                                     lists.ConfigDetailList = result.ConfigDetailList;

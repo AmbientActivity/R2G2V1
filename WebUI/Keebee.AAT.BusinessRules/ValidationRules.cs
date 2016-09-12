@@ -17,13 +17,15 @@ namespace Keebee.AAT.BusinessRules
             var msgs = new List<string>();
 
             if (string.IsNullOrEmpty(description))
-                msgs.Add("Name is required");
+                msgs.Add("Configuration name is required");
 
             if (!addnew) return msgs.Count > 0 ? msgs : null;
+            if (description?.Length == 0) return msgs;
 
             var config = _opsClient.GetConfigByDescription(description);
+
             if (config.Id != 0)
-                msgs.Add($"The name '{description}' already exists");
+                msgs.Add($"A configuration with the name '{description}' already exists");
 
             return msgs.Count > 0 ? msgs : null;
         }
@@ -47,14 +49,19 @@ namespace Keebee.AAT.BusinessRules
             if (string.IsNullOrEmpty(firstName))
                 msgs.Add("First Name is required");
 
+            if (string.IsNullOrEmpty(gender))
+                msgs.Add("Gender is required");
+
             if (!addnew) return msgs.Count > 0 ? msgs : null;
 
-            var config = _opsClient.GetResidentByNameGender(firstName, lastName, gender);
-            if (config.Id != 0)
-            {
-                var g = (gender == "M") ? "male" : "female";
-                msgs.Add($"A {g} resident with the name '{firstName} {lastName}' already exists");
-            }
+            var resident = _opsClient.GetResidentByNameGender(firstName, lastName, gender);
+            if (resident == null) return msgs.Count > 0 ? msgs : null;
+            if (resident.Id == 0) return msgs.Count > 0 ? msgs : null;
+
+            var g = (gender == "M") ? "male" : "female";
+            var residentName = (lastName.Length > 0) ? $"{firstName} {lastName}" : firstName;
+
+            msgs.Add($"A {g} resident with the name '{residentName}' already exists");
 
             return msgs.Count > 0 ? msgs : null;
         }

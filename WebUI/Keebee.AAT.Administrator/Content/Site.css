@@ -77,12 +77,17 @@ textarea {
 }
 
 /* custom */
+#validation-container {
+    color: #c12e2a;
+}
+.edit-dialog-container {
+    width: 450px;
+}
 .modal-content {
     width: 470px;
 }
-.modal-content.row {
-    padding: 0;
-    margin: 0;  
+.record-total {
+    margin-right: 10px;
 }
 .resident-edit {
     width: 400px;
@@ -106,7 +111,11 @@ textarea {
 .button-text {
     color: #fff;
 }
+.active-config-container {
+    float: right;
+    margin: 5px 20px 0 0;
+}
 .label-active-config {
-    color: #265a88;
+    color: #419641;
 }
 

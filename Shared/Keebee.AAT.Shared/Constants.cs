@@ -9,6 +9,11 @@
         Value5 = 999
     }
 
+    public static class Exports
+    {
+        public const string EventLogPath = @"Exports\EventLog";
+    }
+
     public static class CustomEventLog
     {
         public const string Path = @"sqlexpress\KeebeeAATFilestream\Media\Exports\EventLog";

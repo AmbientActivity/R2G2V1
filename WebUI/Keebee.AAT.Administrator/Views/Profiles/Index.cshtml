@@ -1,6 +1,6 @@
 ﻿
 @{
-    ViewBag.Title = "Profile Manage";
+    ViewBag.Title = "Profile Manager";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -37,8 +37,6 @@
 
             <tbody data-bind="foreach: profilesTable">
                 <tr data-bind="click: $parent.highlightRow, attr: {id: 'row_' +  id}">
-                    @*<td><a href="#" data-bind="click: $parent.showDeleteDialog, css: 'glyphicon glyphicon-remove'"></a></td>
-                    <td><a data-bind="attr: { href: '#' }, click: $parent.showEditDialog, css: 'glyphicon glyphicon-pencil'"></a></td>*@
                     <td data-bind="text: Description"></td>
                 </tr>
             </tbody>

@@ -16,7 +16,6 @@ namespace Keebee.AAT.Operations.Service.Services
         void Patch(int id, Config config);
         void Delete(int id);
         Config GetDetails(int id);
-        string GetDescription(int phidgetTypeId);
         Config GetMediaForProfile(int profileId);
         Config GetMediaForProfileConfigDetail(int profileId, int configDetailId);
         Config GetMedia();
@@ -67,19 +66,6 @@ namespace Keebee.AAT.Operations.Service.Services
                 .AddQueryOption("$filter", "IsActive")
                 .Expand("ConfigDetails($expand=PhidgetType,ResponseType($expand=ResponseTypeCategory))")
                 .Single();
-
-            return config;
-        }
-
-        public string GetDescription(int phidgetTypeId)
-        {
-            var container = new Container(new Uri(ODataHost.Url));
-
-            var config = container.Configs
-                .AddQueryOption("$filter", "IsActive")
-                .Expand($"ConfigDetails($filter=PhidgetTypeId eq {phidgetTypeId})")
-                .Single().ConfigDetails
-                .Single().Description;
 
             return config;
         }

@@ -28,6 +28,7 @@ namespace Keebee.AAT.DataAccess
             builder.EntitySet<RfidEventLog>("RfidEventLogs");
             builder.EntitySet<PersonalPicture>("PersonalPictures");
             builder.EntitySet<MediaFile>("MediaFiles");
+            builder.EntitySet<MediaFileStream>("MediaFileStreams");
 
             config.MapODataServiceRoute("odata", "odata", builder.GetEdmModel());
         }

@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-// Generation date: 9/10/2016 3:49:18 PM
+// Generation date: 9/12/2016 2:17:54 PM
 namespace Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models
 {
     /// <summary>
@@ -589,22 +589,15 @@ namespace Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models
         /// </summary>
         /// <param name="ID">Initial value of Id.</param>
         /// <param name="firstName">Initial value of FirstName.</param>
-        /// <param name="lastName">Initial value of LastName.</param>
         /// <param name="gender">Initial value of Gender.</param>
         /// <param name="dateCreated">Initial value of DateCreated.</param>
         /// <param name="dateUpdated">Initial value of DateUpdated.</param>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        public static Resident CreateResident(int ID, 
-                    string firstName, 
-                    string lastName, 
-                    string gender, 
-                    global::System.DateTimeOffset dateCreated, 
-                    global::System.DateTimeOffset dateUpdated)
+        public static Resident CreateResident(int ID, string firstName, string gender, global::System.DateTimeOffset dateCreated, global::System.DateTimeOffset dateUpdated)
         {
             Resident resident = new Resident();
             resident.Id = ID;
             resident.FirstName = firstName;
-            resident.LastName = lastName;
             resident.Gender = gender;
             resident.DateCreated = dateCreated;
             resident.DateUpdated = dateUpdated;
@@ -3721,6 +3714,233 @@ namespace Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models
         }
     }
     /// <summary>
+    /// There are no comments for MediaFileStreamSingle in the schema.
+    /// </summary>
+    [global::Microsoft.OData.Client.OriginalNameAttribute("MediaFileStreamSingle")]
+    public partial class MediaFileStreamSingle : global::Microsoft.OData.Client.DataServiceQuerySingle<MediaFileStream>
+    {
+        /// <summary>
+        /// Initialize a new MediaFileStreamSingle object.
+        /// </summary>
+        public MediaFileStreamSingle(global::Microsoft.OData.Client.DataServiceContext context, string path)
+            : base(context, path) {}
+
+        /// <summary>
+        /// Initialize a new MediaFileStreamSingle object.
+        /// </summary>
+        public MediaFileStreamSingle(global::Microsoft.OData.Client.DataServiceContext context, string path, bool isComposable)
+            : base(context, path, isComposable) {}
+
+        /// <summary>
+        /// Initialize a new MediaFileStreamSingle object.
+        /// </summary>
+        public MediaFileStreamSingle(global::Microsoft.OData.Client.DataServiceQuerySingle<MediaFileStream> query)
+            : base(query) {}
+
+    }
+    /// <summary>
+    /// There are no comments for MediaFileStream in the schema.
+    /// </summary>
+    /// <KeyProperties>
+    /// StreamId
+    /// </KeyProperties>
+    [global::Microsoft.OData.Client.Key("StreamId")]
+    [global::Microsoft.OData.Client.OriginalNameAttribute("MediaFileStream")]
+    public partial class MediaFileStream : global::Microsoft.OData.Client.BaseEntityType, global::System.ComponentModel.INotifyPropertyChanged
+    {
+        /// <summary>
+        /// Create a new MediaFileStream object.
+        /// </summary>
+        /// <param name="streamId">Initial value of StreamId.</param>
+        /// <param name="isFolder">Initial value of IsFolder.</param>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        public static MediaFileStream CreateMediaFileStream(global::System.Guid streamId, bool isFolder)
+        {
+            MediaFileStream mediaFileStream = new MediaFileStream();
+            mediaFileStream.StreamId = streamId;
+            mediaFileStream.IsFolder = isFolder;
+            return mediaFileStream;
+        }
+        /// <summary>
+        /// There are no comments for Property StreamId in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        [global::Microsoft.OData.Client.OriginalNameAttribute("StreamId")]
+        public global::System.Guid StreamId
+        {
+            get
+            {
+                return this._StreamId;
+            }
+            set
+            {
+                this.OnStreamIdChanging(value);
+                this._StreamId = value;
+                this.OnStreamIdChanged();
+                this.OnPropertyChanged("StreamId");
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private global::System.Guid _StreamId;
+        partial void OnStreamIdChanging(global::System.Guid value);
+        partial void OnStreamIdChanged();
+        /// <summary>
+        /// There are no comments for Property IsFolder in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        [global::Microsoft.OData.Client.OriginalNameAttribute("IsFolder")]
+        public bool IsFolder
+        {
+            get
+            {
+                return this._IsFolder;
+            }
+            set
+            {
+                this.OnIsFolderChanging(value);
+                this._IsFolder = value;
+                this.OnIsFolderChanged();
+                this.OnPropertyChanged("IsFolder");
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private bool _IsFolder;
+        partial void OnIsFolderChanging(bool value);
+        partial void OnIsFolderChanged();
+        /// <summary>
+        /// There are no comments for Property Filename in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        [global::Microsoft.OData.Client.OriginalNameAttribute("Filename")]
+        public string Filename
+        {
+            get
+            {
+                return this._Filename;
+            }
+            set
+            {
+                this.OnFilenameChanging(value);
+                this._Filename = value;
+                this.OnFilenameChanged();
+                this.OnPropertyChanged("Filename");
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private string _Filename;
+        partial void OnFilenameChanging(string value);
+        partial void OnFilenameChanged();
+        /// <summary>
+        /// There are no comments for Property FileType in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        [global::Microsoft.OData.Client.OriginalNameAttribute("FileType")]
+        public string FileType
+        {
+            get
+            {
+                return this._FileType;
+            }
+            set
+            {
+                this.OnFileTypeChanging(value);
+                this._FileType = value;
+                this.OnFileTypeChanged();
+                this.OnPropertyChanged("FileType");
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private string _FileType;
+        partial void OnFileTypeChanging(string value);
+        partial void OnFileTypeChanged();
+        /// <summary>
+        /// There are no comments for Property FileSize in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        [global::Microsoft.OData.Client.OriginalNameAttribute("FileSize")]
+        public global::System.Nullable<long> FileSize
+        {
+            get
+            {
+                return this._FileSize;
+            }
+            set
+            {
+                this.OnFileSizeChanging(value);
+                this._FileSize = value;
+                this.OnFileSizeChanged();
+                this.OnPropertyChanged("FileSize");
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private global::System.Nullable<long> _FileSize;
+        partial void OnFileSizeChanging(global::System.Nullable<long> value);
+        partial void OnFileSizeChanged();
+        /// <summary>
+        /// There are no comments for Property Path in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        [global::Microsoft.OData.Client.OriginalNameAttribute("Path")]
+        public string Path
+        {
+            get
+            {
+                return this._Path;
+            }
+            set
+            {
+                this.OnPathChanging(value);
+                this._Path = value;
+                this.OnPathChanged();
+                this.OnPropertyChanged("Path");
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private string _Path;
+        partial void OnPathChanging(string value);
+        partial void OnPathChanged();
+        /// <summary>
+        /// There are no comments for Property Stream in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        [global::Microsoft.OData.Client.OriginalNameAttribute("Stream")]
+        public byte[] Stream
+        {
+            get
+            {
+                return this._Stream;
+            }
+            set
+            {
+                this.OnStreamChanging(value);
+                this._Stream = value;
+                this.OnStreamChanged();
+                this.OnPropertyChanged("Stream");
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private byte[] _Stream;
+        partial void OnStreamChanging(byte[] value);
+        partial void OnStreamChanged();
+        /// <summary>
+        /// This event is raised when the value of the property is changed
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        public event global::System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        /// <summary>
+        /// The value of the property is changed
+        /// </summary>
+        /// <param name="property">property name</param>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        protected virtual void OnPropertyChanged(string property)
+        {
+            if ((this.PropertyChanged != null))
+            {
+                this.PropertyChanged(this, new global::System.ComponentModel.PropertyChangedEventArgs(property));
+            }
+        }
+    }
+    /// <summary>
     /// Class containing all extension methods
     /// </summary>
     public static class ExtensionMethods
@@ -4116,6 +4336,29 @@ namespace Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models
             };
             return new global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.MediaFileSingle(source.Context, source.GetKeyPath(global::Microsoft.OData.Client.Serializer.GetKeyString(source.Context, keys)));
         }
+        /// <summary>
+        /// Get an entity of type global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.MediaFileStream as global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.MediaFileStreamSingle specified by key from an entity set
+        /// </summary>
+        /// <param name="source">source entity set</param>
+        /// <param name="keys">dictionary with the names and values of keys</param>
+        public static global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.MediaFileStreamSingle ByKey(this global::Microsoft.OData.Client.DataServiceQuery<global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.MediaFileStream> source, global::System.Collections.Generic.Dictionary<string, object> keys)
+        {
+            return new global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.MediaFileStreamSingle(source.Context, source.GetKeyPath(global::Microsoft.OData.Client.Serializer.GetKeyString(source.Context, keys)));
+        }
+        /// <summary>
+        /// Get an entity of type global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.MediaFileStream as global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.MediaFileStreamSingle specified by key from an entity set
+        /// </summary>
+        /// <param name="source">source entity set</param>
+        /// <param name="streamId">The value of streamId</param>
+        public static global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.MediaFileStreamSingle ByKey(this global::Microsoft.OData.Client.DataServiceQuery<global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.MediaFileStream> source,
+            global::System.Guid streamId)
+        {
+            global::System.Collections.Generic.Dictionary<string, object> keys = new global::System.Collections.Generic.Dictionary<string, object>
+            {
+                { "StreamId", streamId }
+            };
+            return new global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.MediaFileStreamSingle(source.Context, source.GetKeyPath(global::Microsoft.OData.Client.Serializer.GetKeyString(source.Context, keys)));
+        }
     }
 }
 namespace Keebee.AAT.Operations.Service.KeebeeAAT
@@ -4494,6 +4737,24 @@ namespace Keebee.AAT.Operations.Service.KeebeeAAT
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
         private global::Microsoft.OData.Client.DataServiceQuery<global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.MediaFile> _MediaFiles;
         /// <summary>
+        /// There are no comments for MediaFileStreams in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        [global::Microsoft.OData.Client.OriginalNameAttribute("MediaFileStreams")]
+        public global::Microsoft.OData.Client.DataServiceQuery<global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.MediaFileStream> MediaFileStreams
+        {
+            get
+            {
+                if ((this._MediaFileStreams == null))
+                {
+                    this._MediaFileStreams = base.CreateQuery<global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.MediaFileStream>("MediaFileStreams");
+                }
+                return this._MediaFileStreams;
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private global::Microsoft.OData.Client.DataServiceQuery<global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.MediaFileStream> _MediaFileStreams;
+        /// <summary>
         /// There are no comments for Configs in the schema.
         /// </summary>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
@@ -4629,6 +4890,14 @@ namespace Keebee.AAT.Operations.Service.KeebeeAAT
         {
             base.AddObject("MediaFiles", mediaFile);
         }
+        /// <summary>
+        /// There are no comments for MediaFileStreams in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        public void AddToMediaFileStreams(global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.MediaFileStream mediaFileStream)
+        {
+            base.AddObject("MediaFileStreams", mediaFileStream);
+        }
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
         private abstract class GeneratedEdmModel
         {
@@ -4672,7 +4941,7 @@ namespace Keebee.AAT.Operations.Service.KeebeeAAT
         </Key>
         <Property Name=""Id"" Type=""Edm.Int32"" Nullable=""false"" />
         <Property Name=""FirstName"" Type=""Edm.String"" Nullable=""false"" />
-        <Property Name=""LastName"" Type=""Edm.String"" Nullable=""false"" />
+        <Property Name=""LastName"" Type=""Edm.String"" />
         <Property Name=""Gender"" Type=""Edm.String"" Nullable=""false"" />
         <Property Name=""DateCreated"" Type=""Edm.DateTimeOffset"" Nullable=""false"" />
         <Property Name=""DateUpdated"" Type=""Edm.DateTimeOffset"" Nullable=""false"" />
@@ -4849,6 +5118,18 @@ namespace Keebee.AAT.Operations.Service.KeebeeAAT
         <Property Name=""FileSize"" Type=""Edm.Int64"" />
         <Property Name=""Path"" Type=""Edm.String"" />
       </EntityType>
+      <EntityType Name=""MediaFileStream"">
+        <Key>
+          <PropertyRef Name=""StreamId"" />
+        </Key>
+        <Property Name=""StreamId"" Type=""Edm.Guid"" Nullable=""false"" />
+        <Property Name=""IsFolder"" Type=""Edm.Boolean"" Nullable=""false"" />
+        <Property Name=""Filename"" Type=""Edm.String"" />
+        <Property Name=""FileType"" Type=""Edm.String"" />
+        <Property Name=""FileSize"" Type=""Edm.Int64"" />
+        <Property Name=""Path"" Type=""Edm.String"" />
+        <Property Name=""Stream"" Type=""Edm.Binary"" />
+      </EntityType>
     </Schema>
     <Schema Namespace=""KeebeeAAT"" xmlns=""http://docs.oasis-open.org/odata/ns/edm"">
       <EntityContainer Name=""Container"">
@@ -4899,6 +5180,7 @@ namespace Keebee.AAT.Operations.Service.KeebeeAAT
           <NavigationPropertyBinding Path=""MediaFile"" Target=""MediaFiles"" />
         </EntitySet>
         <EntitySet Name=""MediaFiles"" EntityType=""Keebee.AAT.DataAccess.Models.MediaFile"" />
+        <EntitySet Name=""MediaFileStreams"" EntityType=""Keebee.AAT.DataAccess.Models.MediaFileStream"" />
       </EntityContainer>
     </Schema>
   </edmx:DataServices>

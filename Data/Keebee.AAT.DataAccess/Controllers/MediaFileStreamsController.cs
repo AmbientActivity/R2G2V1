@@ -6,22 +6,22 @@ using System.Web.OData;
 
 namespace Keebee.AAT.DataAccess.Controllers
 {
-    public class MediaFilesController : ODataController
+    public class MediaFileStreamsController : ODataController
     {
         private KeebeeAATContext db = new KeebeeAATContext();
 
-        // GET: odata/MediaFiles
+        // GET: odata/MediaFileStreams
         [EnableQuery]
-        public IQueryable<MediaFile> GetMediaFiles()
+        public IQueryable<MediaFileStream> GetMediaFileStreams()
         {
-            return db.MediaFiles;
+            return db.MediaFileStreams;
         }
 
-        // GET: odata/MediaFiles(4b8bde1f-8175-e611-8a92-90e6bac7161a)
+        // GET: odata/MediaFileStreams(4b8bde1f-8175-e611-8a92-90e6bac7161a)
         [EnableQuery]
-        public SingleResult<MediaFile> GetMediaFile([FromODataUri] Guid key)
+        public SingleResult<MediaFileStream> GetMediaFileStream([FromODataUri] Guid key)
         {
-            return SingleResult.Create(db.MediaFiles.Where(mediaFile => mediaFile.StreamId == key));
+            return SingleResult.Create(db.MediaFileStreams.Where(mediaFileStream => mediaFileStream.StreamId == key));
         }
 
         protected override void Dispose(bool disposing)

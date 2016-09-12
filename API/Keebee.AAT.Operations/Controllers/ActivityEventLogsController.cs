@@ -15,12 +15,12 @@ namespace Keebee.AAT.Operations.Controllers
     public class ActivityEventLogsController : ApiController
     {
         private readonly IActivityEventLogService _activityEventLogService;
-        private readonly IConfigService _configService;
+        private readonly IConfigDetailService _configDetailService;
 
-        public ActivityEventLogsController(IActivityEventLogService activityEventLogService, IConfigService configService)
+        public ActivityEventLogsController(IActivityEventLogService activityEventLogService, IConfigDetailService configDetailService)
         {
             _activityEventLogService = activityEventLogService;
-            _configService = configService;
+            _configDetailService = configDetailService;
         }
 
         // GET: api/ActivityEventLogs
@@ -37,13 +37,11 @@ namespace Keebee.AAT.Operations.Controllers
 
             if (activityEventLogs == null) return new DynamicJsonObject(new ExpandoObject());
 
-            var config = _configService.Get();
+            var configDetails = _configDetailService.GetDescriptions();
 
             dynamic exObj = new ExpandoObject();
             exObj.ActivityEventLogs = activityEventLogs
-                .Join(config.SelectMany(x => x.ConfigDetails), 
-                al => new { al.ConfigDetail.ConfigId, al.ConfigDetail.PhidgetTypeId },
-                cd => new { cd.ConfigId, cd.PhidgetTypeId },
+                .Join(configDetails, al => al.ConfigDetail.Id, cd => cd.Id,
                 (al, cd) => new { al, cd })
                 .Select(x => new
                 {
@@ -76,7 +74,7 @@ namespace Keebee.AAT.Operations.Controllers
 
             if (activityEventLog == null) return new DynamicJsonObject(new ExpandoObject());
 
-            var description = _configService.GetDescription((int)activityEventLog.ConfigDetail.PhidgetTypeId);
+            var description = _configDetailService.GetDescription(activityEventLog.ConfigDetail.Id);
 
             dynamic exObj = new ExpandoObject();
             exObj.ConfigId = activityEventLog.ConfigDetail.ConfigId;
@@ -108,11 +106,11 @@ namespace Keebee.AAT.Operations.Controllers
 
             if (activityEventLogs == null) return new DynamicJsonObject(new ExpandoObject());
 
-            var config = _configService.GetActiveDetails();
+            var configDetails = _configDetailService.GetDescriptions();
 
             dynamic exObj = new ExpandoObject();
             exObj.ActivityEventLogs = activityEventLogs
-                .Join(config.ConfigDetails, al => al.ConfigDetail.PhidgetTypeId, cd => cd.PhidgetTypeId,
+                .Join(configDetails, al => al.ConfigDetail.Id, cd => cd.Id,
                 (al, cd) => new { al, cd })
                 .Select(x => new
                 {

@@ -11,6 +11,8 @@ namespace Keebee.AAT.Operations.Service.Services
         IEnumerable<ConfigDetail> Get();
         ConfigDetail Get(int id);
         ConfigDetail GetWithMedia(int id);
+        IEnumerable<ConfigDetail> GetDescriptions();
+        string GetDescription(int id);
         int Post(ConfigDetail configDetail);
         void Patch(int id, ConfigDetail configDetail);
         void Delete(int id);
@@ -46,6 +48,28 @@ namespace Keebee.AAT.Operations.Service.Services
             return container.ConfigDetails.ByKey(id)
                 .Expand("PhidgetType,ResponseType")
                 .GetValue();
+        }
+
+        public string GetDescription(int id)
+        {
+            var container = new Container(new Uri(ODataHost.Url));
+
+            var description = container.ConfigDetails.ByKey(id)
+                .Select(cd => cd.Description)
+                .GetValue();
+
+            return description;
+        }
+
+        public IEnumerable<ConfigDetail> GetDescriptions()
+        {
+            var container = new Container(new Uri(ODataHost.Url));
+
+            var configDetails = container.ConfigDetails
+                .AddQueryOption("$select", "Id, Description")
+                .AsEnumerable();
+
+            return configDetails;
         }
 
         public int Post(ConfigDetail configDetail)

@@ -18,6 +18,9 @@ select,
 textarea {
   max-width: 400px;
 }
+a:hover, a:visited, a:link, a:active {
+    text-decoration: none;
+}
 @media (min-width: 800px) {
   .container {
     width: 850px;
@@ -96,8 +99,8 @@ textarea {
     width: 780px;
     margin-bottom: 10px;
 }
-.col-glyphicon {
-    width: 20px;
+.col-profile {
+    width: 30px;
 }
 .col-glyphicon {
     width: 20px;

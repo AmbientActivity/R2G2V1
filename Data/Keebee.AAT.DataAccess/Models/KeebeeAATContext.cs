@@ -43,6 +43,8 @@ namespace Keebee.AAT.DataAccess.Models
 
         public DbSet<MediaFile> MediaFiles { get; set; }
 
+        public DbSet<MediaFileStream> MediaFileStreams { get; set; }
+
         public DbSet<AmbientResponse> AmbientResponses { get; set; }
 
         public DbSet<Caregiver> Caregivers { get; set; }

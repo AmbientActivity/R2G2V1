@@ -29,14 +29,18 @@ namespace Keebee.AAT.RESTClient
 
         IEnumerable<Resident> GetResidents();
         Resident GetResident(int residentId);
+        Resident GetResidentMedia(int residentId);
+        Profile GetResidentProfile(int residentId);
         Resident GetResidentByNameGender(string firstName, string lastName, string gender);
         bool ResidentProfileExists(int residentId);
         Profile GetGenericProfile();
-        Profile GetResidentProfile(int residentId);
+        
 
         IEnumerable<Response> GetAmbientResponses();
         Profile GetProfileMedia(int profileId);
         IEnumerable<Response> GetProfileMediaForConfigDetail(int profileId, int configDetailId);
+        IEnumerable<MediaFile> GetMediaFilesForPath(string path);
+        MediaFileStream GetMediaFileStream(Guid streamId);
 
         IEnumerable<ActivityEventLog> GetActivityEventLogsForDate(string date);
         IEnumerable<GameEventLog> GetGameEventLogsForDate(string date);
@@ -107,6 +111,10 @@ namespace Keebee.AAT.RESTClient
 
         // ambient
         private const string UrlAmbientResponses = "ambientresponses";
+
+        // media files
+        private const string UrlMediaFilesForPath = "mediafiles?path={0}";
+        private const string UrlMediaFileStream = "mediafilestreams/{0}";
 
         // activity event logs
         private const string UrlActivityEventLogs = "activityeventlogs";
@@ -428,6 +436,28 @@ namespace Keebee.AAT.RESTClient
             var activityEventLogs = serializer.Deserialize<ActivityEventLogList>(data).ActivityEventLogs;
 
             return activityEventLogs;
+        }
+
+        public IEnumerable<MediaFile> GetMediaFilesForPath(string path)
+        {
+            var data = Get(string.Format(UrlMediaFilesForPath, path));
+            if (data == null) return null;
+
+            var serializer = new JavaScriptSerializer();
+            var mediaFiles = serializer.Deserialize<MediaFileList>(data).Media;
+
+            return mediaFiles;
+        }
+
+        public MediaFileStream GetMediaFileStream(Guid streamId)
+        {
+            var data = Get(string.Format(UrlMediaFileStream, streamId));
+            if (data == null) return null;
+
+            var serializer = new JavaScriptSerializer();
+            var mediaFileStream = serializer.Deserialize<MediaFileStream>(data);
+
+            return mediaFileStream;
         }
 
         // POST

@@ -28,7 +28,8 @@ namespace Keebee.AAT.Operations
             container.RegisterType<IActivityEventLogService, ActivityEventLogService>();
             container.RegisterType<IGameEventLogService, GameEventLogService>();
             container.RegisterType<IRfidEventLogService, RfidEventLogService>();
-            container.RegisterType<IMediaService, MediaService>();
+            container.RegisterType<IMediaFileService, MediaFileService>();
+            container.RegisterType<IMediaFileStreamService, MediaFileStreamService>();
             container.RegisterType<IStatusService, StatusService>();
 
             GlobalConfiguration.Configuration.DependencyResolver = new UnityDependencyResolver(container);

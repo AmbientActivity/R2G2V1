@@ -118,10 +118,11 @@ namespace Keebee.AAT.Administrator.Controllers
                 .Select(resident => new ResidentViewModel
                 {
                     Id = resident.Id,
-                    ProfileId = resident.Profile?.Id > 0 ? resident.Profile?.Id : 0,
+                    ProfileId = resident.Profile.Id > 0 ? resident.Profile.Id : 0,
                     FirstName = resident.FirstName,
                     LastName = resident.LastName,
                     Gender = resident.Gender,
+                    HasProfile = resident.Profile.Id != ProfileId.Generic,
                     DateCreated = resident.DateCreated,
                     DateUpdated = resident.DateUpdated,
                 }).OrderBy(x => x.Id);

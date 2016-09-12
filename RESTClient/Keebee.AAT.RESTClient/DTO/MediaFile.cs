@@ -1,16 +1,20 @@
 ﻿using System;
-using System.ComponentModel.DataAnnotations;
+using System.Collections.Generic;
 
-namespace Keebee.AAT.DataAccess.Models
+namespace Keebee.AAT.RESTClient
 {
     public class MediaFile
     {
-        [Key]
         public Guid StreamId { get; set; }
         public bool IsFolder { get; set; }
         public string Filename { get; set; }
         public string FileType { get; set; }
-        public long? FileSize { get; set; }
+        public int FileSize { get; set; }
         public string Path { get; set; }
+    }
+
+    public class MediaFileList
+    {
+        public IEnumerable<MediaFile> Media;
     }
 }

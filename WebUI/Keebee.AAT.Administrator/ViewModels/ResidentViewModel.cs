@@ -18,6 +18,7 @@ namespace Keebee.AAT.Administrator.ViewModels
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string Gender { get; set; }
+        public bool HasProfile { get; set; }
         public DateTime DateCreated { get; set; }
         public DateTime DateUpdated { get; set; }
     }

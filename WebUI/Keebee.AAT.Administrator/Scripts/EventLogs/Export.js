@@ -7,7 +7,7 @@
 
 ; (function ($) {
 
-    eventlogs.exporter = {
+    eventlogs.export = {
         init: function () {
 
             // inputs

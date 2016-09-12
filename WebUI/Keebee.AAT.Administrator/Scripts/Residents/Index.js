@@ -34,7 +34,7 @@
                 });
             }
 
-            function Resident(id, profileid, firstname, lastname, gender, datecreated, dateupdated) {
+            function Resident(id, profileid, firstname, lastname, gender, hasprofile, datecreated, dateupdated) {
                 var self = this;
 
                 self.id = id;
@@ -42,6 +42,7 @@
                 self.firstname = firstname;
                 self.lastname = lastname;
                 self.gender = gender;
+                self.hasprofile = hasprofile;
                 self.datecreated = datecreated;
                 self.dateupdated = dateupdated;
             }
@@ -55,6 +56,7 @@
                 self.selectedResident = ko.observable();
                 self.firstNameSearch = ko.observable("");
                 self.lastNameSearch = ko.observable("");
+                self.rfidSearch = ko.observable("");
                 self.totalResidents = ko.observable(0);
 
                 createResidentArray(lists.ResidentList);
@@ -68,17 +70,18 @@
                 
                 self.columns = ko.computed(function () {
                     var arr = [];
-                    arr.push({ title: "RFID", sortKey: "id" });
-                    arr.push({ title: "First Name", sortKey: "firstname" });
-                    arr.push({ title: "Last Name", sortKey: "lastname" });
-                    arr.push({ title: "Gender", sortKey: "gender" });
-                    arr.push({ title: "Created", sortKey: "datecreated" });
-                    arr.push({ title: "Updated", sortKey: "dateupdated" });
+                    arr.push({ title: "Profile", sortable: false  });
+                    arr.push({ title: "RFID", sortable: true, sortKey: "id" });
+                    arr.push({ title: "First Name", sortable: true, sortKey: "firstname" });
+                    arr.push({ title: "Last Name", sortable: true, sortKey: "lastname" });
+                    arr.push({ title: "Gender", sortable: true, sortKey: "gender" });
+                    arr.push({ title: "Created", sortable: true, sortKey: "datecreated" });
+                    arr.push({ title: "Updated", sortable: true, sortKey: "dateupdated" });
                     return arr;
                 });
 
                 function pushResident(value) {
-                    self.residents.push(new Resident(value.Id, value.ProfileId, value.FirstName, value.LastName, value.Gender, value.DateCreated, value.DateUpdated));
+                    self.residents.push(new Resident(value.Id, value.ProfileId, value.FirstName, value.LastName, value.Gender, value.HasProfile, value.DateCreated, value.DateUpdated));
                 };
 
                 self.selectedResident(self.residents()[0]);
@@ -123,6 +126,8 @@
                             (self.firstNameSearch().length === 0 || r.firstname.toLowerCase().indexOf(self.firstNameSearch().toLowerCase()) !== -1)
                             &&
                             (self.lastNameSearch().length === 0 || r.lastname.toLowerCase().indexOf(self.lastNameSearch().toLowerCase()) !== -1)
+                            &&
+                            (self.rfidSearch().length === 0 || r.id.toString().indexOf(self.rfidSearch().toString()) !== -1)
                         );
                     });
                 });

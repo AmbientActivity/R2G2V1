@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Dynamic;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Helpers;
@@ -12,23 +11,23 @@ using System.Web.Http;
 
 namespace Keebee.AAT.Operations.Controllers
 {
-    public class MediaController : ApiController
+    public class MediaFilesController : ApiController
     {
-       private readonly IMediaService _mediaService;
+       private readonly IMediaFileService _mediaFileService;
 
-       public MediaController(IMediaService mediaService)
+       public MediaFilesController(IMediaFileService mediaService)
         {
-            _mediaService = mediaService;
+            _mediaFileService = mediaService;
         }
 
-       // GET: api/Media
-       public async Task<DynamicJsonObject> Get()
+        // GET: api/MediaFiles
+        public async Task<DynamicJsonObject> Get()
         {
             IEnumerable<MediaFile> media = new Collection<MediaFile>();
 
             await Task.Run(() =>
             {
-                media = _mediaService.Get();
+                media = _mediaFileService.Get();
             });
 
             if (media == null) return new DynamicJsonObject(new ExpandoObject());
@@ -48,14 +47,14 @@ namespace Keebee.AAT.Operations.Controllers
             return new DynamicJsonObject(exObj);
         }
 
-        // GET: api/Media/55a32e73-b176-e611-8a92-90e6bac7161a
+        // GET: api/MediaFiles/55a32e73-b176-e611-8a92-90e6bac7161a
         public async Task<DynamicJsonObject> Get(Guid id)
         {
             var media = new MediaFile();
 
             await Task.Run(() =>
             {
-                media = _mediaService.Get(id);
+                media = _mediaFileService.Get(id);
             });
 
             if (media == null) return new DynamicJsonObject(new ExpandoObject());
@@ -72,14 +71,14 @@ namespace Keebee.AAT.Operations.Controllers
             return new DynamicJsonObject(exObj);
         }
 
-        // GET: api/Media?profileId=5
+        // GET: api/MediaFiles?profileId=5
         public async Task<DynamicJsonObject> GetForProfile(int profileId)
         {
             IEnumerable<MediaFile> media = new Collection<MediaFile>();
 
             await Task.Run(() =>
             {
-                media = _mediaService.GetForProfile(profileId);
+                media = _mediaFileService.GetForProfile(profileId);
             });
 
             if (media == null) return new DynamicJsonObject(new ExpandoObject());
@@ -99,14 +98,41 @@ namespace Keebee.AAT.Operations.Controllers
             return new DynamicJsonObject(exObj);
         }
 
-        // GET: api/Media/Videos?profileId=5&folder=music
-        public async Task<DynamicJsonObject> GetForProfileFolder(int profileId, string folder)
+        // GET: api/MediaFiles?path=Exports\EventLog
+        public async Task<DynamicJsonObject> GetForPath(string path)
         {
             IEnumerable<MediaFile> media = new Collection<MediaFile>();
 
             await Task.Run(() =>
             {
-                media = _mediaService.GetForProfileFolder(profileId, folder);
+                media = _mediaFileService.GetForPath(path);
+            });
+
+            if (media == null) return new DynamicJsonObject(new ExpandoObject());
+
+            dynamic exObj = new ExpandoObject();
+
+            exObj.Media = media.Select(m => new
+            {
+                m.StreamId,
+                m.IsFolder,
+                m.Filename,
+                m.FileType,
+                m.FileSize,
+                m.Path
+            });
+
+            return new DynamicJsonObject(exObj);
+        }
+
+        // GET: api/MediaFiles/Videos?profileId=5&path=music
+        public async Task<DynamicJsonObject> GetForProfilePath(int profileId, string path)
+        {
+            IEnumerable<MediaFile> media = new Collection<MediaFile>();
+
+            await Task.Run(() =>
+            {
+                media = _mediaFileService.GetForProfilePath(profileId, path);
             });
 
             if (media == null) return new DynamicJsonObject(new ExpandoObject());

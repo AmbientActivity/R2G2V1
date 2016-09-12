@@ -6,15 +6,16 @@ using System.Linq;
 
 namespace Keebee.AAT.Operations.Service.Services
 {
-    public interface IMediaService
+    public interface IMediaFileService
     {
         IEnumerable<MediaFile> Get();
         MediaFile Get(Guid streamId);
         IEnumerable<MediaFile> GetForProfile(int profileId);
-        IEnumerable<MediaFile> GetForProfileFolder(int profileId, string folder);
+        IEnumerable<MediaFile> GetForPath(string path);
+        IEnumerable<MediaFile> GetForProfilePath(int profileId, string path);
     }
 
-    public class MediaService : IMediaService
+    public class MediaFileService : IMediaFileService
     {
         public IEnumerable<MediaFile> Get()
         {
@@ -47,12 +48,24 @@ namespace Keebee.AAT.Operations.Service.Services
             return media;
         }
 
-        public IEnumerable<MediaFile> GetForProfileFolder(int profileId, string folder)
+        public IEnumerable<MediaFile> GetForPath(string path)
         {
             var container = new Container(new Uri(ODataHost.Url));
 
             var media = container.MediaFiles
-                .AddQueryOption("$filter", $@"indexof(Path, 'Profiles\{profileId}\{folder}') gt 0 " +
+                .AddQueryOption("$filter", $@"indexof(Path, '{path}') gt 0 " +
+                    "and IsFolder eq false")
+                .AsEnumerable();
+
+            return media;
+        }
+
+        public IEnumerable<MediaFile> GetForProfilePath(int profileId, string path)
+        {
+            var container = new Container(new Uri(ODataHost.Url));
+
+            var media = container.MediaFiles
+                .AddQueryOption("$filter", $@"indexof(Path, 'Profiles\{profileId}\{path}') gt 0 " +
                     "and IsFolder eq false")
                 .AsEnumerable();
 

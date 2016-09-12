@@ -3,6 +3,7 @@ using Keebee.AAT.Administrator.ViewModels;
 using Keebee.AAT.RESTClient;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using Keebee.AAT.Exporting;
 using System.Web.Mvc;
 using Keebee.AAT.Shared;
@@ -45,7 +46,7 @@ namespace Keebee.AAT.Administrator.Controllers
         {
             var mediaFileStream = _opsClient.GetMediaFileStream(new Guid(streamId));
             var filename = mediaFileStream.Filename;
-            var file = mediaFileStream.Stream;
+            var file = Encoding.ASCII.GetBytes(mediaFileStream.Stream);
 
             return File(file, "application/vnd.ms-excel", filename);
         }

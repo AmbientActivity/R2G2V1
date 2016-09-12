@@ -43,6 +43,8 @@
                 self.filetype = filetype;
                 self.filesize = filesize;
                 self.path = path;
+
+                self.downloadUrl = "EventLogs/Download?streamId=" + streamid;
             }
 
             function EventLogViewModel() {
@@ -148,7 +150,16 @@
                 };
 
                 self.download = function(row) {
-
+                        $.ajax({
+                            type: "GET",
+                            url: site.url + "EventLogs/Download?streamId=" + row.streamid,
+                            dataType: "json",
+                            traditional: true,
+                            async: false,
+                            success: function (data) {
+                                var d = data;
+                            }
+                        });
                 };
             };
 

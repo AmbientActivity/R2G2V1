@@ -11,7 +11,7 @@ namespace Keebee.AAT.RESTClient
         public string FileType { get; set; }
         public int FileSize { get; set; }
         public string Path { get; set; }
-        public byte[] Stream{ get; set; }
+        public string Stream { get; set; }
     }
 
     public class MediaFileStreamList

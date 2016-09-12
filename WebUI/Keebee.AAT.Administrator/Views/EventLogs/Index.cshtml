@@ -37,7 +37,7 @@
 
             <tbody data-bind="foreach: eventLogsTable">
                 <tr data-bind="click: $parent.highlightRow, attr: {id: 'row_' +  streamid}">
-                    <td><a data-bind="attr: {href: 'Download?streamId='' + streamid + ''''}, text: filename"></a></td>
+                    <td><a data-bind="attr: {href: downloadUrl, id: 'download_' +  streamid}, text: filename"></a></td>
                     <td data-bind="text: path"></td>
                     <td data-bind="text: filetype"></td>
                     <td data-bind="text: filesize"></td>

@@ -13,6 +13,10 @@ namespace Keebee.AAT.DataAccess.Models
         public int ResponseTypeCategoryId { get; set; }
         public virtual ResponseTypeCategory ResponseTypeCategory { get; set; }
 
+        [ForeignKey("PhidgetStyleType")]
+        public int PhidgetStyleTypeId { get; set; }
+        public virtual PhidgetStyleType PhidgetStyleType { get; set; }
+
         [Required]
         public string Description { get; set; }
         public bool IsInteractive { get; set; }

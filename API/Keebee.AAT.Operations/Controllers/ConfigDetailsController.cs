@@ -49,7 +49,12 @@ namespace Keebee.AAT.Operations.Controllers
                 {
                     cd.ResponseType.Id,
                     cd.ResponseType.Description,
-                    cd.ResponseType.IsInteractive
+                    cd.ResponseType.IsInteractive,
+                    PhidgetStyleType = new
+                    {
+                        cd.ResponseType.PhidgetStyleType.Id,
+                        cd.ResponseType.PhidgetStyleType.Description,
+                    }
                 }
             }).OrderBy(o => o.PhidgetType.Id);
 
@@ -83,7 +88,12 @@ namespace Keebee.AAT.Operations.Controllers
             {
                 configDetail.ResponseType.Id,
                 configDetail.ResponseType.Description,
-                configDetail.ResponseType.IsInteractive
+                configDetail.ResponseType.IsInteractive,
+                PhidgetStyleType = new
+                {
+                    configDetail.ResponseType.PhidgetStyleType.Id,
+                    configDetail.ResponseType.PhidgetStyleType.Description
+                }
             };
 
             return new DynamicJsonObject(exObj);

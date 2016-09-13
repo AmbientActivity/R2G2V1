@@ -25,6 +25,8 @@ namespace Keebee.AAT.DataAccess.Models
 
         public DbSet<PhidgetType> PhidgetTypes { get; set; }
 
+        public DbSet<PhidgetStyleType> PhidgetStyleTypes { get; set; }
+
         public DbSet<ResponseType> ResponseTypes { get; set; }
 
         public DbSet<ResponseTypeCategory> ResponseTypeCategories { get; set; }

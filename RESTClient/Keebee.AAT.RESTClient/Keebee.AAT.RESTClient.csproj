@@ -44,6 +44,7 @@
   <ItemGroup>
     <Compile Include="DTO\MediaFile.cs" />
     <Compile Include="DTO\MediaFileStream.cs" />
+    <Compile Include="DTO\PhidgetStyleType.cs" />
     <Compile Include="DTO\PhidgetType.cs" />
     <Compile Include="DTO\Config.cs" />
     <Compile Include="DTO\PersonalPicture.cs" />

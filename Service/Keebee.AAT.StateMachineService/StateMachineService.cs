@@ -120,7 +120,7 @@ namespace Keebee.AAT.StateMachineService
         {
             try
             {
-                if (_reloadActiveConfig)
+                if (_reloadActiveConfig || _activeConfig == null)
                 {
                     _activeConfig = _opsClient.GetActiveConfigDetails();
                     _reloadActiveConfig = false;

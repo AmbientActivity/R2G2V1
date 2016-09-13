@@ -9,6 +9,7 @@ namespace Keebee.AAT.RESTClient
         public bool IsInteractive{ get; set; }
         public bool IsSystem { get; set; }
         public ResponseTypeCategory ResponseTypeCategory { get; set; }
+        public PhidgetStyleType PhidgetStyleType { get; set; }
         public IEnumerable<Response> Responses { get; set; }
     }
 

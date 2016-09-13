@@ -143,6 +143,11 @@ namespace Keebee.AAT.Operations.Controllers
                         cd.ResponseType.ResponseTypeCategory.Id,
                         cd.ResponseType.ResponseTypeCategory.Description
                     },
+                    PhidgetStyleType = new
+                    {
+                        cd.ResponseType.PhidgetStyleType.Id,
+                        cd.ResponseType.PhidgetStyleType.Description
+                    },
                     cd.ResponseType.Id,
                     cd.ResponseType.Description,
                     cd.ResponseType.IsInteractive,
@@ -187,6 +192,11 @@ namespace Keebee.AAT.Operations.Controllers
                     {
                         cd.ResponseType.ResponseTypeCategory.Id,
                         cd.ResponseType.ResponseTypeCategory.Description                      
+                    },
+                    PhidgetStyleType = new
+                    {
+                        cd.ResponseType.PhidgetStyleType.Id,
+                        cd.ResponseType.PhidgetStyleType.Description
                     },
                     cd.ResponseType.Id,
                     cd.ResponseType.Description,

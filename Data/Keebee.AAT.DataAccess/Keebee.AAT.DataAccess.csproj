@@ -146,6 +146,7 @@
     <Compile Include="Models\ConfigDetail.cs" />
     <Compile Include="Models\Config.cs" />
     <Compile Include="Models\MediaFileStream.cs" />
+    <Compile Include="Models\PhidgetStyleType.cs" />
     <Compile Include="Models\PhidgetType.cs" />
     <Compile Include="Models\AmbientResponse.cs" />
     <Compile Include="Models\Caregiver.cs" />

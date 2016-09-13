@@ -151,7 +151,7 @@ namespace Keebee.AAT.PhidgetService
                 var isValid = int.TryParse(Convert.ToString(e.Index), out sensorId);
                 if (!isValid) return;
 
-                if (_reloadActiveConfig)
+                if (_reloadActiveConfig || _activeConfig == null)
                 {
                     _activeConfig = _opsClient.GetActiveConfigDetails();
                     _reloadActiveConfig = false;
@@ -162,40 +162,18 @@ namespace Keebee.AAT.PhidgetService
 
                 var configDetail = _activeConfig.ConfigDetails.Single(cd => cd.PhidgetType.Id == sensorId + 1);
 
-                switch (configDetail.ResponseType.Id)
+                switch (configDetail.ResponseType.PhidgetStyleType.Id)
                 {
-                    // anything with a touch sensor event
-                    case ResponseTypeId.SlidShow:
-                    case ResponseTypeId.MatchingGame:
-                    case ResponseTypeId.Cats:
+                    case PhidgetStyleTypeIdId.Touch:
                         if (sensorValue >= _sensorThreshold)
                             _messageQueuePhidget.Send(CreateMessageBodyFromSensor(sensorId, sensorValue));
                         break;
-
-                    // kill the display
-                    case ResponseTypeId.KillDisplay:
-                        if (sensorValue >= _sensorThreshold)
-                            _messageQueuePhidget.Send(CreateMessageBodyFromSensor(sensorId, ResponseTypeId.KillDisplay));
-                        break;
-
-                    // radio, television
-                    case ResponseTypeId.Radio:
-                    case ResponseTypeId.Television:
+                    case PhidgetStyleTypeIdId.MultiTurn:
+                    case PhidgetStyleTypeIdId.StopTurn:
+                    case PhidgetStyleTypeIdId.Slider:
                         var stepValue = GetStepValue(sensorValue);
                         if (stepValue > 0) 
                             _messageQueuePhidget.Send(CreateMessageBodyFromSensor(sensorId, stepValue));
-                        break;
-
-                    // caregiver
-                    case ResponseTypeId.Caregiver:
-                        if (sensorValue >= _sensorThreshold)
-                            _messageQueuePhidget.Send(CreateMessageBodyFromSensor(sensorId, ResponseTypeId.Caregiver));
-                        break;
-
-                    // ambient video
-                    case ResponseTypeId.Ambient:
-                        if (sensorValue >= _sensorThreshold)
-                            _messageQueuePhidget.Send(CreateMessageBodyFromSensor(sensorId, ResponseTypeId.Ambient));
                         break;
                 }
             }

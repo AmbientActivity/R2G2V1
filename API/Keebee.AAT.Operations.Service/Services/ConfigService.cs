@@ -41,7 +41,7 @@ namespace Keebee.AAT.Operations.Service.Services
 
             var config = container.Configs
                 .ByKey(id)
-                .Expand("ConfigDetails($expand=PhidgetType,ResponseType)")
+                .Expand("ConfigDetails($expand=PhidgetType,ResponseType($expand=PhidgetStyleType))")
                 .GetValue();
 
             return config;
@@ -64,7 +64,7 @@ namespace Keebee.AAT.Operations.Service.Services
 
             var config = container.Configs
                 .AddQueryOption("$filter", "IsActive")
-                .Expand("ConfigDetails($expand=PhidgetType,ResponseType($expand=ResponseTypeCategory))")
+                .Expand("ConfigDetails($expand=PhidgetType,ResponseType($expand=ResponseTypeCategory,PhidgetStyleType))")
                 .Single();
 
             return config;

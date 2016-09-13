@@ -42,6 +42,14 @@
         public const int MatchThePairs = 2;
     }
 
+    public static class PhidgetStyleTypeIdId
+    {
+        public const int Touch = 1;
+        public const int MultiTurn = 2;
+        public const int StopTurn = 3;
+        public const int Slider = 4;
+    }
+
     public static class PhidgetTypeId
     {
         public const int Sensor0 = 1;

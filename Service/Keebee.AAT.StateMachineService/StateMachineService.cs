@@ -28,7 +28,7 @@ namespace Keebee.AAT.StateMachineService
 
         // active config
         private Config _activeConfig;
-        private bool _reloadActiveConfig;
+        private bool _reloadActiveConfig = true;
 
         // active profile
         private Profile _activeProfile;

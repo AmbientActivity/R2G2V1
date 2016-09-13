@@ -112,7 +112,7 @@ namespace Keebee.AAT.Operations.Service.Services
             var container = new Container(new Uri(ODataHost.Url));
 
             var config = container.Configs.ByKey(id)
-                 .Expand("ConfigDetails($expand=PhidgetType,ResponseType($expand=ResponseTypeCategory))")
+                 .Expand("ConfigDetails($expand=PhidgetType,ResponseType($expand=ResponseTypeCategory,PhidgetStyleType))")
                 .GetValue();
 
             return config;

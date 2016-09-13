@@ -50,7 +50,8 @@ namespace Keebee.AAT.PhidgetService
 
         // message queue sender
         private readonly CustomMessageQueue _messageQueuePhidget;
-        
+        private readonly CustomMessageQueue _messageQueueConfigSms;
+
         // event logger
         private readonly SystemEventLogger _systemEventLogger;
 
@@ -75,11 +76,26 @@ namespace Keebee.AAT.PhidgetService
             interfaceKit.SensorChange += SensorChange;
             interfaceKit.InputChange += InputChange;
 
-            // message queue sender
+            // message queue senders
             _messageQueuePhidget = new CustomMessageQueue(new CustomMessageQueueArgs
                                                           {
                                                               QueueName = MessageQueueType.Phidget
                                                           }) { SystemEventLogger = _systemEventLogger };
+
+            _messageQueueConfigSms = new CustomMessageQueue(new CustomMessageQueueArgs
+            {
+                QueueName = MessageQueueType.ConfigSms
+            })
+            { SystemEventLogger = _systemEventLogger };
+
+            // message queue listeners
+            var q1 = new CustomMessageQueue(new CustomMessageQueueArgs
+            {
+                QueueName = MessageQueueType.ConfigPhidget,
+                MessageReceivedCallback = MessageReceiveConfigPhidget
+            })
+
+            { SystemEventLogger = _systemEventLogger };
 #if DEBUG
             _messageQueuePhidgetMonitor = new CustomMessageQueue(new CustomMessageQueueArgs
             {
@@ -241,6 +257,20 @@ namespace Keebee.AAT.PhidgetService
             var serializer = new JavaScriptSerializer();
             var messageBody = serializer.Serialize(phidgetMessage);
             return messageBody;
+        }
+
+        private void MessageReceiveConfigPhidget(object source, MessageEventArgs e)
+        {
+            try
+            {
+                if (e.MessageBody != "1") return;
+                _reloadActiveConfig = true;
+                _messageQueueConfigSms.Send("1");
+            }
+            catch (Exception ex)
+            {
+                _systemEventLogger.WriteEntry($"MessageReceiveConfigPhidget{Environment.NewLine}{ex.Message}", EventLogEntryType.Error);
+            }
         }
 
 #if DEBUG

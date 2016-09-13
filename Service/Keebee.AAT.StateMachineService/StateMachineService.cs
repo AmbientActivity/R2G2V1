@@ -110,8 +110,8 @@ namespace Keebee.AAT.StateMachineService
 
             var q5 = new CustomMessageQueue(new CustomMessageQueueArgs
             {
-                QueueName = MessageQueueType.Config,
-                MessageReceivedCallback = MessageReceiveConfig
+                QueueName = MessageQueueType.ConfigSms,
+                MessageReceivedCallback = MessageReceiveConfigSms
             })
             { SystemEventLogger = _systemEventLogger };
         }
@@ -257,7 +257,7 @@ namespace Keebee.AAT.StateMachineService
             }
         }
 
-        private void MessageReceiveConfig(object source, MessageEventArgs e)
+        private void MessageReceiveConfigSms(object source, MessageEventArgs e)
         {
             try
             {
@@ -267,7 +267,7 @@ namespace Keebee.AAT.StateMachineService
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"MessageReceivedDisplay{Environment.NewLine}{ex.Message}", EventLogEntryType.Error);
+                _systemEventLogger.WriteEntry($"MessageReceiveConfigSms{Environment.NewLine}{ex.Message}", EventLogEntryType.Error);
             }
         }
 

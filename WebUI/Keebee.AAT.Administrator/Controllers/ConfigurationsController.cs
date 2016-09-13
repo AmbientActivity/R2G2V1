@@ -14,15 +14,15 @@ namespace Keebee.AAT.Administrator.Controllers
     public class ConfigurationsController : Controller
     {
         private readonly OperationsClient _opsClient;
-        private readonly CustomMessageQueue _messageQueueConfig;
+        private readonly CustomMessageQueue _messageQueueConfigPhidget;
 
         public ConfigurationsController()
         {
             _opsClient = new OperationsClient();
 
-            _messageQueueConfig = new CustomMessageQueue(new CustomMessageQueueArgs
+            _messageQueueConfigPhidget = new CustomMessageQueue(new CustomMessageQueueArgs
             {
-                QueueName = MessageQueueType.Config
+                QueueName = MessageQueueType.ConfigPhidget
             });
         }
 
@@ -137,7 +137,7 @@ namespace Keebee.AAT.Administrator.Controllers
         public JsonResult Activate(int configId)
         {
             _opsClient.PostActivateConfig(configId);
-            _messageQueueConfig.Send("1");
+            _messageQueueConfigPhidget.Send("1");
 
             var vm = new
             {

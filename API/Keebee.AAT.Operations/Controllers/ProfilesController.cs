@@ -41,14 +41,14 @@ namespace Keebee.AAT.Operations.Controllers
 
             dynamic exObj = new ExpandoObject();
             exObj.Profiles = profiles.Select(p => new
-                                                  {
-                                                      p.Id,
-                                                      p.ResidentId,
-                                                      p.Description,
-                                                      p.GameDifficultyLevel,
-                                                      p.DateCreated,
-                                                      p.DateUpdated
-                                                  });
+            {
+                p.Id,
+                ResidentId = p.ResidentId ?? 0,
+                p.Description,
+                p.GameDifficultyLevel,
+                p.DateCreated,
+                p.DateUpdated
+            });
 
             return new DynamicJsonObject(exObj);
         }
@@ -69,7 +69,7 @@ namespace Keebee.AAT.Operations.Controllers
 
             dynamic exObj = new ExpandoObject();
             exObj.Id = profile.Id;
-            exObj.ResidentId = profile.ResidentId;
+            exObj.ResidentId = profile.ResidentId ?? 0;
             exObj.Description = profile.Description;
             exObj.GameDifficultyLevel = profile.GameDifficultyLevel;
             exObj.DateCreated = profile.DateCreated;
@@ -131,7 +131,7 @@ namespace Keebee.AAT.Operations.Controllers
 
             dynamic exObj = new ExpandoObject();
             exObj.Id = profile.Id;
-            exObj.ResidentId = profile.ResidentId;
+            exObj.ResidentId = profile.ResidentId ?? 0;
             exObj.Description = profile.Description;
             exObj.GameDifficultyLevel = profile.GameDifficultyLevel;
             exObj.ConfigDetails = config.ConfigDetails
@@ -185,7 +185,7 @@ namespace Keebee.AAT.Operations.Controllers
 
             dynamic exObj = new ExpandoObject();
             exObj.Id = profile.Id;
-            exObj.ResidentId = profile.ResidentId;
+            exObj.ResidentId = profile.ResidentId ?? 0;
             exObj.Description = profile.Description;
             exObj.GameDifficultyLevel = profile.GameDifficultyLevel;
             exObj.ConfigDetails = config.ConfigDetails

@@ -2,11 +2,13 @@
 using Keebee.AAT.Shared;
 using Keebee.AAT.SystemEventLogging;
 using Keebee.AAT.ServiceModels;
+using Keebee.AAT.RESTClient;
 using Phidgets;
 using Phidgets.Events;
 using System.Configuration;
 using System;
 using System.Diagnostics;
+using System.Linq;
 using System.ServiceProcess;
 using System.Web.Script.Serialization;
 
@@ -43,6 +45,9 @@ namespace Keebee.AAT.PhidgetService
         private readonly CustomMessageQueue _messageQueuePhidgetMonitor;
         private bool _phidgetMonitorIsActive;
 #endif
+        // operations REST client
+        private readonly IOperationsClient _opsClient;
+
         // message queue sender
         private readonly CustomMessageQueue _messageQueuePhidget;
         
@@ -54,10 +59,16 @@ namespace Keebee.AAT.PhidgetService
         private const int DefaultTouchSensorThreshold = 990;
         private readonly int _sensorThreshold;
 
+        // active config
+        private Config _activeConfig;
+        private bool _reloadActiveConfig = true;
+
         public PhidgetService()
         {
             InitializeComponent();
+
             _systemEventLogger = new SystemEventLogger(SystemEventLogType.PhidgetService);
+            _opsClient = new OperationsClient { SystemEventLogger = _systemEventLogger };
             _sensorThreshold = ValidateSensorThreshold(ConfigurationManager.AppSettings["TouchSensorThreshold"]);
 
             var interfaceKit = new InterfaceKit();
@@ -124,38 +135,49 @@ namespace Keebee.AAT.PhidgetService
                 var isValid = int.TryParse(Convert.ToString(e.Index), out sensorId);
                 if (!isValid) return;
 
-                switch ((SensorType)sensorId)
+                if (_reloadActiveConfig)
                 {
-                    // slide show, matching game, undefined
-                    case SensorType.Sensor0:
-                    case SensorType.Sensor1:
-                    case SensorType.Sensor2:
+                    _activeConfig = _opsClient.GetActiveConfigDetails();
+                    _reloadActiveConfig = false;
+                }
+
+                if (_activeConfig.ConfigDetails.All(cd => cd.PhidgetType.Id != sensorId + 1))
+                    return;
+
+                var configDetail = _activeConfig.ConfigDetails.Single(cd => cd.PhidgetType.Id == sensorId + 1);
+
+                switch (configDetail.ResponseType.Id)
+                {
+                    // anything with a touch sensor event
+                    case ResponseTypeId.SlidShow:
+                    case ResponseTypeId.MatchingGame:
+                    case ResponseTypeId.Cats:
                         if (sensorValue >= _sensorThreshold)
                             _messageQueuePhidget.Send(CreateMessageBodyFromSensor(sensorId, sensorValue));
                         break;
 
                     // kill the display
-                    case SensorType.Sensor3:
+                    case ResponseTypeId.KillDisplay:
                         if (sensorValue >= _sensorThreshold)
                             _messageQueuePhidget.Send(CreateMessageBodyFromSensor(sensorId, ResponseTypeId.KillDisplay));
                         break;
 
                     // radio, television
-                    case SensorType.Sensor4:
-                    case SensorType.Sensor5:
+                    case ResponseTypeId.Radio:
+                    case ResponseTypeId.Television:
                         var stepValue = GetStepValue(sensorValue);
                         if (stepValue > 0) 
                             _messageQueuePhidget.Send(CreateMessageBodyFromSensor(sensorId, stepValue));
                         break;
 
                     // caregiver
-                    case SensorType.Sensor6:
+                    case ResponseTypeId.Caregiver:
                         if (sensorValue >= _sensorThreshold)
                             _messageQueuePhidget.Send(CreateMessageBodyFromSensor(sensorId, ResponseTypeId.Caregiver));
                         break;
 
                     // ambient video
-                    case SensorType.Sensor7:
+                    case ResponseTypeId.Ambient:
                         if (sensorValue >= _sensorThreshold)
                             _messageQueuePhidget.Send(CreateMessageBodyFromSensor(sensorId, ResponseTypeId.Ambient));
                         break;

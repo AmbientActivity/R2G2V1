@@ -95,7 +95,7 @@ namespace Keebee.AAT.Operations.Controllers
 
             dynamic exObj = new ExpandoObject();
             exObj.Id = profile.Id;
-            exObj.ResidentId = profile.ResidentId;
+            exObj.ResidentId = profile.ResidentId ?? 0;
             exObj.Description = profile.Description;
             exObj.GameDifficultyLevel = profile.GameDifficultyLevel;
             exObj.DateCreated = profile.DateCreated;

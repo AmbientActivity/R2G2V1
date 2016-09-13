@@ -28,6 +28,7 @@ namespace Keebee.AAT.StateMachineService
 
         // active config
         private Config _activeConfig;
+        private bool _reloadActiveConfig;
 
         // active profile
         private Profile _activeProfile;
@@ -119,6 +120,12 @@ namespace Keebee.AAT.StateMachineService
         {
             try
             {
+                if (_reloadActiveConfig)
+                {
+                    _activeConfig = _opsClient.GetActiveConfigDetails();
+                    _reloadActiveConfig = false;
+                }
+
                 // if the activity type is not defined in this config then exit
                 if (_activeConfig.ConfigDetails.All(x => x.PhidgetType.Id != phidgetTypeId))
                     return;
@@ -255,7 +262,7 @@ namespace Keebee.AAT.StateMachineService
             try
             {
                 if (e.MessageBody != "1") return;
-                _activeConfig = _opsClient.GetActiveConfigDetails();
+                _reloadActiveConfig = true;
                 _systemEventLogger.WriteEntry($"{_activeConfig.Description} has been activated");
             }
             catch (Exception ex)

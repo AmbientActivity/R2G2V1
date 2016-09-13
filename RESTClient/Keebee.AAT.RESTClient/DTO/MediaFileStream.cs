@@ -1,21 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Keebee.AAT.RESTClient
+﻿namespace Keebee.AAT.RESTClient
 {
     public class MediaFileStream
     {
-        public Guid StreamId { get; set; }
-        public bool IsFolder { get; set; }
-        public string Filename { get; set; }
-        public string FileType { get; set; }
-        public int FileSize { get; set; }
-        public string Path { get; set; }
-        public string Stream { get; set; }
-    }
-
-    public class MediaFileStreamList
-    {
-        public IEnumerable<MediaFileStream> Media;
+        public byte[] Stream { get; set; }
     }
 }

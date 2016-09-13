@@ -1,12 +1,12 @@
 ﻿using System;
 using Keebee.AAT.Administrator.ViewModels;
 using Keebee.AAT.RESTClient;
+using Keebee.AAT.Shared;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Keebee.AAT.Exporting;
 using System.Web.Mvc;
-using Keebee.AAT.Shared;
 
 namespace Keebee.AAT.Administrator.Controllers
 {
@@ -44,11 +44,13 @@ namespace Keebee.AAT.Administrator.Controllers
         [HttpGet]
         public FileResult Download(string streamId)
         {
-            var mediaFileStream = _opsClient.GetMediaFileStream(new Guid(streamId));
-            var filename = mediaFileStream.Filename;
-            var file = Encoding.ASCII.GetBytes(mediaFileStream.Stream);
+            var mediaFile = _opsClient.GetMediaFile(new Guid(streamId));
+            var file = System.IO.File.ReadAllBytes($@"{mediaFile.Path}/{mediaFile.Filename}");
 
-            return File(file, "application/vnd.ms-excel", filename);
+            //TODO: figure out why this doesn't return the same thing as above
+            //var file = _opsClient.GetMediaFileStream(new Guid(streamId));
+
+            return File(file, "application/vnd.ms-excel", mediaFile.Filename);
         }
 
         [HttpGet]

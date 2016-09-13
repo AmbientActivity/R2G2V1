@@ -39,8 +39,10 @@ namespace Keebee.AAT.RESTClient
         IEnumerable<Response> GetAmbientResponses();
         Profile GetProfileMedia(int profileId);
         IEnumerable<Response> GetProfileMediaForConfigDetail(int profileId, int configDetailId);
+
+        MediaFile GetMediaFile(Guid streamId);
         IEnumerable<MediaFile> GetMediaFilesForPath(string path);
-        MediaFileStream GetMediaFileStream(Guid streamId);
+        byte[] GetMediaFileStream(Guid streamId);
 
         IEnumerable<ActivityEventLog> GetActivityEventLogsForDate(string date);
         IEnumerable<GameEventLog> GetGameEventLogsForDate(string date);
@@ -113,6 +115,7 @@ namespace Keebee.AAT.RESTClient
         private const string UrlAmbientResponses = "ambientresponses";
 
         // media files
+        private const string UrlMediaFile = "mediafiles/{0}";
         private const string UrlMediaFilesForPath = "mediafiles?path={0}";
         private const string UrlMediaFileStream = "mediafilestreams/{0}";
 
@@ -438,6 +441,17 @@ namespace Keebee.AAT.RESTClient
             return activityEventLogs;
         }
 
+        public MediaFile GetMediaFile(Guid streamId)
+        {
+            var data = Get(string.Format(UrlMediaFile, streamId));
+            if (data == null) return null;
+
+            var serializer = new JavaScriptSerializer();
+            var mediaFile = serializer.Deserialize<MediaFile>(data);
+
+            return mediaFile;
+        }
+
         public IEnumerable<MediaFile> GetMediaFilesForPath(string path)
         {
             var data = Get(string.Format(UrlMediaFilesForPath, path));
@@ -449,15 +463,11 @@ namespace Keebee.AAT.RESTClient
             return mediaFiles;
         }
 
-        public MediaFileStream GetMediaFileStream(Guid streamId)
+        public byte[] GetMediaFileStream(Guid streamId)
         {
-            var data = Get(string.Format(UrlMediaFileStream, streamId));
-            if (data == null) return null;
+            var data = GetBytes(string.Format(UrlMediaFileStream, streamId));
 
-            var serializer = new JavaScriptSerializer();
-            var mediaFileStream = serializer.Deserialize<MediaFileStream>(data);
-
-            return mediaFileStream;
+            return data;
         }
 
         // POST
@@ -593,6 +603,39 @@ namespace Keebee.AAT.RESTClient
                     if (response.IsSuccessStatusCode)
                     {
                         result = response.Content.ReadAsStringAsync().Result;
+                    }
+                    else
+                    {
+                        throw new Exception(
+                            $"StatusCode: {response.StatusCode}{Environment.NewLine}Message: {response.Content}");
+                    }
+                }
+            }
+
+            catch (Exception ex)
+            {
+                _systemEventLogger?.WriteEntry($"RESTClient.Get: {ex.Message}{Environment.NewLine}url:{url}", EventLogEntryType.Error);
+            }
+
+            return result;
+        }
+
+        private byte[] GetBytes(string url)
+        {
+            byte[] result = null;
+
+            try
+            {
+                using (var client = new HttpClient())
+                {
+                    client.BaseAddress = _uriBase;
+                    client.DefaultRequestHeaders.Accept.Clear();
+                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                    HttpResponseMessage response = client.GetAsync(url).Result;
+                    if (response.IsSuccessStatusCode)
+                    {
+                        result = response.Content.ReadAsByteArrayAsync().Result;
                     }
                     else
                     {

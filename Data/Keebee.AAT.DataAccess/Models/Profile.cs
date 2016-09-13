@@ -8,6 +8,8 @@ namespace Keebee.AAT.DataAccess.Models
         [Key]
         public int Id { get; set; }
 
+        public int? ResidentId { get; set; }
+
         [Required]
         public string Description { get; set; }
         public int GameDifficultyLevel { get; set; }

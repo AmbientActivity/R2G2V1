@@ -24,8 +24,7 @@ namespace Keebee.AAT.Administrator.ViewModels
     public class ProfileEditViewModel
     {
         public int Id { get; set; }
-        public string Description { get; set; }
-        public int GameDifficultyLevel { get; set; }
-        public SelectList ResidentList { get; set; }
+        public int ResidentId { get; set; }
+        public string Title { get; set; }
     }
 }

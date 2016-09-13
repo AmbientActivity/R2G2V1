@@ -1,10 +1,10 @@
 ﻿using System.Collections;
 using Keebee.AAT.Administrator.ViewModels;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Web.Mvc;
 using Keebee.AAT.RESTClient;
-using ProfileDetail = Keebee.AAT.Administrator.ViewModels.ProfileDetail;
 
 namespace Keebee.AAT.Administrator.Controllers
 {
@@ -23,6 +23,12 @@ namespace Keebee.AAT.Administrator.Controllers
             return View(LoadProfileViewModel(-1, null));
         }
 
+        // GET: Profile
+        public ActionResult Edit(int id)
+        {
+            return View(LoadProfileEditViewModel(id));
+        }
+
         [HttpGet]
         public JsonResult GetData()
         {
@@ -30,6 +36,18 @@ namespace Keebee.AAT.Administrator.Controllers
             {
                 ProfileList = GetProfileList(),
                 ResidentArrayList = GetResidentArrayList()
+            };
+
+            return Json(vm, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpGet]
+        public JsonResult GetDataEdit(int id)
+        {
+            var vm = new
+            {
+                FileList = GetFileList(id),
+                MediaTypeList = new Collection<string> { "images", "videos", "music", "pictures", "shapes", "sounds"}
             };
 
             return Json(vm, JsonRequestBehavior.AllowGet);
@@ -74,6 +92,38 @@ namespace Keebee.AAT.Administrator.Controllers
             };
 
             return model;
+        }
+
+        private ProfileEditViewModel LoadProfileEditViewModel(int id)
+        {
+            var profile = _opsClient.GetProfile(id);
+
+            var model = new ProfileEditViewModel
+            {
+                Id = id,
+                ResidentId = profile.ResidentId,
+                Title = profile.Description
+            };
+
+            return model;
+        }
+
+        private IEnumerable<MediaFileViewModel> GetFileList(int id)
+        {
+            var mediaFiles = _opsClient.GetMediaFilesForPath($"{id}");
+
+            var list = mediaFiles
+                .Select(mediaFile => new MediaFileViewModel
+                {
+                    StreamId = mediaFile.StreamId,
+                    IsFolder = mediaFile.IsFolder,
+                    Filename = mediaFile.Filename.Replace($".{mediaFile.FileType}", string.Empty),
+                    FileType = mediaFile.FileType,
+                    FileSize = mediaFile.FileSize,
+                    Path = mediaFile.Path
+                }).OrderBy(x => x.Filename);
+
+            return list;
         }
     }
 }

@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-// Generation date: 9/12/2016 2:17:54 PM
+// Generation date: 9/12/2016 11:20:46 PM
 namespace Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models
 {
     /// <summary>
@@ -905,6 +905,29 @@ namespace Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models
         private int _Id;
         partial void OnIdChanging(int value);
         partial void OnIdChanged();
+        /// <summary>
+        /// There are no comments for Property ResidentId in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        [global::Microsoft.OData.Client.OriginalNameAttribute("ResidentId")]
+        public global::System.Nullable<int> ResidentId
+        {
+            get
+            {
+                return this._ResidentId;
+            }
+            set
+            {
+                this.OnResidentIdChanging(value);
+                this._ResidentId = value;
+                this.OnResidentIdChanged();
+                this.OnPropertyChanged("ResidentId");
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private global::System.Nullable<int> _ResidentId;
+        partial void OnResidentIdChanging(global::System.Nullable<int> value);
+        partial void OnResidentIdChanged();
         /// <summary>
         /// There are no comments for Property Description in the schema.
         /// </summary>
@@ -4956,6 +4979,7 @@ namespace Keebee.AAT.Operations.Service.KeebeeAAT
           <PropertyRef Name=""Id"" />
         </Key>
         <Property Name=""Id"" Type=""Edm.Int32"" Nullable=""false"" />
+        <Property Name=""ResidentId"" Type=""Edm.Int32"" />
         <Property Name=""Description"" Type=""Edm.String"" Nullable=""false"" />
         <Property Name=""GameDifficultyLevel"" Type=""Edm.Int32"" Nullable=""false"" />
         <Property Name=""DateCreated"" Type=""Edm.DateTimeOffset"" Nullable=""false"" />

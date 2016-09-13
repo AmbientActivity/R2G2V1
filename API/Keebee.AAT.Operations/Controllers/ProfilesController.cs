@@ -43,6 +43,7 @@ namespace Keebee.AAT.Operations.Controllers
             exObj.Profiles = profiles.Select(p => new
                                                   {
                                                       p.Id,
+                                                      p.ResidentId,
                                                       p.Description,
                                                       p.GameDifficultyLevel,
                                                       p.DateCreated,
@@ -68,6 +69,7 @@ namespace Keebee.AAT.Operations.Controllers
 
             dynamic exObj = new ExpandoObject();
             exObj.Id = profile.Id;
+            exObj.ResidentId = profile.ResidentId;
             exObj.Description = profile.Description;
             exObj.GameDifficultyLevel = profile.GameDifficultyLevel;
             exObj.DateCreated = profile.DateCreated;
@@ -93,6 +95,7 @@ namespace Keebee.AAT.Operations.Controllers
 
             dynamic exObj = new ExpandoObject();
             exObj.Id = profile.Id;
+            exObj.ResidentId = profile.ResidentId;
             exObj.Description = profile.Description;
             exObj.GameDifficultyLevel = profile.GameDifficultyLevel;
             exObj.DateCreated = profile.DateCreated;
@@ -128,6 +131,7 @@ namespace Keebee.AAT.Operations.Controllers
 
             dynamic exObj = new ExpandoObject();
             exObj.Id = profile.Id;
+            exObj.ResidentId = profile.ResidentId;
             exObj.Description = profile.Description;
             exObj.GameDifficultyLevel = profile.GameDifficultyLevel;
             exObj.ConfigDetails = config.ConfigDetails
@@ -181,6 +185,7 @@ namespace Keebee.AAT.Operations.Controllers
 
             dynamic exObj = new ExpandoObject();
             exObj.Id = profile.Id;
+            exObj.ResidentId = profile.ResidentId;
             exObj.Description = profile.Description;
             exObj.GameDifficultyLevel = profile.GameDifficultyLevel;
             exObj.ConfigDetails = config.ConfigDetails

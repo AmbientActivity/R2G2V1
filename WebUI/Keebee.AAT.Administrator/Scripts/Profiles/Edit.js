@@ -1,5 +1,5 @@
 ﻿/*!
- * Residents/Index.js
+ * Profiles/Edit.js
  * Author: John Charlton
  * Date: 2015-05
  */
@@ -8,23 +8,25 @@
 
     var HIGHLIGHT_ROW_COLOUR = "#e3e8ff";
 
-    residents.index = {
-        init: function () {
+    profiles.edit = {
+        init: function (config) {
+            var profileid = config.id;
             var _sortDescending = false;
-            var _currentSortKey = "id";
+            var _currentSortKey = "filename";
 
             var lists = {
-                ResidentList: []
+                FileList: [],
+                MediaTypeList: []
             };
 
             loadData();
 
-            ko.applyBindings(new ResidentViewModel());
+            ko.applyBindings(new FileViewModel());
 
             function loadData() {
                 $.ajax({
                     type: "GET",
-                    url: site.url + "Residents/GetData/",
+                    url: site.url + "Profiles/GetDataEdit/" + profileid,
                     dataType: "json",
                     traditional: true,
                     async: false,
@@ -34,57 +36,68 @@
                 });
             }
 
-            function Resident(id, profileid, firstname, lastname, gender, hasprofile, datecreated, dateupdated) {
+            function File(streamid, isfolder, filename, filetype, filesize, path) {
                 var self = this;
 
-                self.id = id;
-                self.profileid = profileid;
-                self.firstname = firstname;
-                self.lastname = lastname;
-                self.gender = gender;
-                self.hasprofile = hasprofile;
-                self.datecreated = datecreated;
-                self.dateupdated = dateupdated;
+                self.streamid = streamid;
+                self.isfolder = isfolder;
+                self.filename = filename;
+                self.filetype = filetype;
+                self.filesize = filesize;
+                self.path = path;
             }
 
-            function ResidentViewModel() {
-                var tblResident = $("#tblResident");
+            function MediaType(description) {
+                var self = this;
+                self.description = description;
+            }
+
+            function FileViewModel() {
+                var tblFile = $("#tblFile");
 
                 var self = this;
 
-                self.residents = ko.observableArray([]);
-                self.selectedResident = ko.observable();
-                self.firstNameSearch = ko.observable("");
-                self.lastNameSearch = ko.observable("");
-                self.rfidSearch = ko.observable("");
-                self.totalResidents = ko.observable(0);
+                self.files = ko.observableArray([]);
+                self.mediaTypes = ko.observableArray([]);
+                self.selectedFile = ko.observable();
+                self.selectedMediaType = ko.observable("");
+                self.filenameSearch = ko.observable("");
+                self.totalFiles = ko.observable(0);
 
-                createResidentArray(lists.ResidentList);
+                createFileArray(lists.FileList);
+                createMediaTypeArray(lists.MediaTypeList);
 
-                function createResidentArray(list) {
-                    self.residents.removeAll();
+                function createFileArray(list) {
+                    self.files.removeAll();
                     $(list).each(function (index, value) {
-                        pushResident(value);
+                        pushFile(value);
                     });
                 };
-                
+
+                function createMediaTypeArray(list) {
+                    self.mediaTypes.removeAll();
+                    $(list).each(function (index, value) {
+                        pushMediaType(value);
+                    });
+                };
+
                 self.columns = ko.computed(function () {
                     var arr = [];
-                    arr.push({ title: "Profile", sortable: false  });
-                    arr.push({ title: "RFID", sortable: true, sortKey: "id" });
-                    arr.push({ title: "First Name", sortable: true, sortKey: "firstname" });
-                    arr.push({ title: "Last Name", sortable: true, sortKey: "lastname" });
-                    arr.push({ title: "Gender", sortable: true, sortKey: "gender" });
-                    arr.push({ title: "Created", sortable: true, sortKey: "datecreated" });
-                    arr.push({ title: "Updated", sortable: true, sortKey: "dateupdated" });
+                    arr.push({ title: "Name", sortable: true, sortKey: "filename" });
+                    arr.push({ title: "Type", sortable: true, sortKey: "filetype" });
+                    arr.push({ title: "Size", sortable: true, sortKey: "filesize" });
                     return arr;
                 });
 
-                function pushResident(value) {
-                    self.residents.push(new Resident(value.Id, value.ProfileId, value.FirstName, value.LastName, value.Gender, value.HasProfile, value.DateCreated, value.DateUpdated));
+                function pushFile(value) {
+                    self.files.push(new File(value.StreamId, value.IsFolder, value.Filename, value.FileType, value.FileSize, value.Path));
                 };
 
-                self.selectedResident(self.residents()[0]);
+                function pushMediaType(value) {
+                    self.mediaTypes.push(new MediaType(value));
+                };
+
+                self.selectedFile(self.files()[0]);
 
                 self.sort = function (header) {
                     var afterSave = typeof header.afterSave != "undefined" ? header.afterSave : false;
@@ -105,38 +118,35 @@
 
                     $(self.columns()).each(function (index, value) {
                         if (value.sortKey === sortKey) {
-                            self.residents.sort(function (a, b) {
+                            self.files.sort(function (a, b) {
                                 if (_sortDescending) {
                                     return a[sortKey].toString().toLowerCase() > b[sortKey].toString().toLowerCase()
                                         ? -1 : a[sortKey].toString().toLowerCase() < b[sortKey].toString().toLowerCase()
-                                        || a.lastname.toLowerCase() > b.lastname.toLowerCase() ? 1 : 0;
+                                        || a.filename.toLowerCase() > b.filename.toLowerCase() ? 1 : 0;
                                 } else {
                                     return a[sortKey].toString().toLowerCase() < b[sortKey].toString().toLowerCase()
                                         ? -1 : a[sortKey].toString().toLowerCase() > b[sortKey].toString().toLowerCase()
-                                        || a.lastname.toLowerCase() > b.lastname.toLowerCase() ? 1 : 0;
+                                        || a.filename.toLowerCase() > b.filename.toLowerCase() ? 1 : 0;
                                 }
                             });
                         }
                     });
                 };
 
-                self.filteredResidents = ko.computed(function () {
-                    return ko.utils.arrayFilter(self.residents(), function (r) {
-                        return (
-                            (self.firstNameSearch().length === 0 || r.firstname.toLowerCase().indexOf(self.firstNameSearch().toLowerCase()) !== -1)
-                            &&
-                            (self.lastNameSearch().length === 0 || r.lastname.toLowerCase().indexOf(self.lastNameSearch().toLowerCase()) !== -1)
-                            &&
-                            (self.rfidSearch().length === 0 || r.id.toString().indexOf(self.rfidSearch().toString()) !== -1)
-                        );
+                self.filteredFiles = ko.computed(function () {
+                    return ko.utils.arrayFilter(self.files(), function (f) {
+                        return (self.filenameSearch().length === 0 ||
+                            f.filename.toLowerCase().indexOf(self.filenameSearch().toLowerCase()) !== -1) &&
+                        (self.selectedMediaType().length === 0 ||
+                            f.path.toLowerCase().indexOf(self.selectedMediaType().toLowerCase()) !== -1);
                     });
                 });
 
-                self.residentsTable = ko.computed(function () {
-                    var filteredResidents = self.filteredResidents();
-                    self.totalResidents(filteredResidents.length);
+                self.filesTable = ko.computed(function () {
+                    var filteredFiles = self.filteredFiles();
+                    self.totalFiles(filteredFiles.length);
 
-                    return filteredResidents;
+                    return filteredFiles;
                 });
 
                 self.showEditDialog = function (row) {
@@ -146,30 +156,30 @@
                         self.highlightRow(row);
                     }
 
-                    self.showResidentEditDialog(row);
+                    self.showFileEditDialog(row);
                 };
 
                 self.editProfile = function (row) {
                     var id = row.profileid;
 
                     if (id > 0) {
-                        window.location = site.url + "Profiles/Edit/" + id;
+                        self.highlightRow(row);
                     }
                 };
 
-                self.deleteSelectedResident = function (row) {
-                    deleteResident(row.id);
+                self.deleteSelectedFile = function (row) {
+                    deleteFile(row.id);
                 };
 
                 self.showDeleteDialog = function (row) {
                     self.highlightRow(row);
-                    self.showResidentDeleteDialog(row);
+                    self.showFileDeleteDialog(row);
                 };
 
-                self.showResidentDeleteDialog = function (row) {
+                self.showFileDeleteDialog = function (row) {
                     var id = (typeof row.id !== "undefined" ? row.id : 0);
                     if (id <= 0) return;
-                    var r = self.getResident(id);
+                    var r = self.getFile(id);
                     var messageGender;
 
                     if (r.gender === "M") messageGender = "his";
@@ -177,8 +187,8 @@
 
                     BootstrapDialog.show({
                         type: BootstrapDialog.TYPE_DANGER,
-                        title: "Delete Resident?",
-                        message: "Permanently delete the resident <i><b>" + r.firstname + " " + r.lastname + "</b></i>?\n\n" +
+                        title: "Delete File?",
+                        message: "Permanently delete the file <i><b>" + r.firstname + " " + r.lastname + "</b></i>?\n\n" +
                             "<b>Warning:</b> All " + messageGender + " personal media files will be removed!",
                         closable: false,
                         buttons: [
@@ -191,9 +201,9 @@
                                 label: "Yes, Delete",
                                 cssClass: "btn-danger",
                                 action: function (dialog) {
-                                    var result = self.deleteResident(row.id);
-                                    lists.ResidentList = result.ResidentList;
-                                    createResidentArray(lists.ResidentList);
+                                    var result = self.deleteFile(row.id);
+                                    lists.FileList = result.FileList;
+                                    createFileArray(lists.FileList);
                                     self.sort({ afterSave: true });
                                     dialog.close();
                                     $("body").css("cursor", "default");
@@ -203,24 +213,24 @@
                     });
                 };
 
-                self.showResidentEditDialog = function (row) {
+                self.showFileEditDialog = function (row) {
                     var id = (typeof row.id !== "undefined" ? row.id : 0);
                     var title = "<span class='glyphicon glyphicon-pencil'></span>";
                     var message;
 
                     if (id > 0) {
-                        title = title + " Edit Resident";
-                        var resident = self.getResident(id);
-                        self.selectedResident(resident);
+                        title = title + " Edit File";
+                        var file = self.getFile(id);
+                        self.selectedFile(file);
                     } else {
-                        title = title + " Add Resident";
-                        self.selectedResident([]);
+                        title = title + " Add File";
+                        self.selectedFile([]);
                     }
 
                     $.ajax({
                         type: "GET",
                         async: false,
-                        url: site.url + "Residents/GetResidentEditView/" + id,
+                        url: site.url + "Files/GetFileEditView/" + id,
                         success: function (data) {
                             message = data;
                         }
@@ -229,7 +239,7 @@
                     BootstrapDialog.show({
                         title: title,
                         message: message,
-                        onshown: function() {
+                        onshown: function () {
                             $("#txtFirstName").focus();
                         },
                         closable: false,
@@ -243,14 +253,14 @@
                                 label: "OK",
                                 cssClass: "btn-primary",
                                 action: function (dialog) {
-                                    var result = self.saveResident();
-                                    
+                                    var result = self.saveFile();
+
                                     if (result.ErrorMessages === null) {
-                                        lists.ResidentList = result.ResidentList;
-                                        createResidentArray(lists.ResidentList);
-                                        self.selectedResident(self.getResident(result.SelectedId));
+                                        lists.FileList = result.FileList;
+                                        createFileArray(lists.FileList);
+                                        self.selectedFile(self.getFile(result.SelectedId));
                                         self.sort({ afterSave: true });
-                                        self.highlightRow(self.selectedResident());
+                                        self.highlightRow(self.selectedFile());
                                         dialog.close();
                                         $("body").css("cursor", "default");
                                     } else {
@@ -272,44 +282,44 @@
                     });
                 };
 
-                self.getResident = function (residentid) {
-                    var resident = null;
+                self.getFile = function (fileid) {
+                    var file = null;
 
-                    ko.utils.arrayForEach(self.residents(), function (item) {
-                        if (item.id === residentid) {
-                            resident = item;
+                    ko.utils.arrayForEach(self.files(), function (item) {
+                        if (item.id === fileid) {
+                            file = item;
                         }
                     });
 
-                    return resident;
+                    return file;
                 };
 
                 self.highlightRow = function (row) {
                     if (row == null) return;
 
-                    var rows = tblResident.find("tr:gt(0)");
+                    var rows = tblFile.find("tr:gt(0)");
                     rows.each(function () {
                         $(this).css("background-color", "#ffffff");
                     });
 
-                    var r = tblResident.find("#row_" + row.id);
+                    var r = tblFile.find("#row_" + row.streamid);
                     r.css("background-color", HIGHLIGHT_ROW_COLOUR);
-                    tblResident.attr("tr:hover", HIGHLIGHT_ROW_COLOUR);
+                    tblFile.attr("tr:hover", HIGHLIGHT_ROW_COLOUR);
                 };
 
-                self.getResidentDetailFromDialog = function () {
+                self.getFileDetailFromDialog = function () {
                     var firstname = $.trim($("#txtFirstName").val());
                     var lastname = $.trim($("#txtLastName").val());
                     var gender = $.trim($("#ddlGenders").val());
 
                     return {
-                        Id: self.selectedResident().id, FirstName: firstname, LastName: lastname, Gender: gender
+                        Id: self.selectedFile().id, FirstName: firstname, LastName: lastname, Gender: gender
                     };
                 };
 
-                self.saveResident = function () {
-                    var residentdetail = self.getResidentDetailFromDialog();
-                    var jsonData = JSON.stringify(residentdetail);
+                self.saveFile = function () {
+                    var filedetail = self.getFileDetailFromDialog();
+                    var jsonData = JSON.stringify(filedetail);
                     var result;
 
                     $("body").css("cursor", "wait");
@@ -317,8 +327,8 @@
                     $.ajax({
                         type: "POST",
                         async: false,
-                        url: site.url + "Residents/Save/",
-                        data: { resident: jsonData },
+                        url: site.url + "Files/Save/",
+                        data: { file: jsonData },
                         dataType: "json",
                         traditional: true,
                         failure: function () {
@@ -336,7 +346,7 @@
                     return result;
                 };
 
-                self.deleteResident = function (id) {
+                self.deleteFile = function (id) {
                     $("body").css("cursor", "wait");
 
                     var result;
@@ -344,7 +354,7 @@
                     $.ajax({
                         type: "POST",
                         async: false,
-                        url: site.url + "Residents/Delete/",
+                        url: site.url + "Files/Delete/",
                         data: { id: id },
                         dataType: "json",
                         traditional: true,

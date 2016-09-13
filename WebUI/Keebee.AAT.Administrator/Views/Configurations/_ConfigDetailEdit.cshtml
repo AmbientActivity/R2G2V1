@@ -1,15 +1,10 @@
 ﻿@model Keebee.AAT.Administrator.ViewModels.ConfigDetailEditViewModel
 
-<div class="container">
-    <div class="row">
-        <div class="col-sm-12">
-            <div class="label label-default">Description</div>
-            <input type="text" id="txtDescription" class="form-control" value="@Model.Description" maxlength="50" />
-            <div class="label label-default">Phidget</div>
-            @Html.DropDownList("ddlPhidgetTypes", @Model.PhidgetTypes, new {@class = "form-control"})
-            <div class="label label-default">Response</div>
-            @Html.DropDownList("ddlResponseTypes", @Model.ResponseTypes, new {@class = "form-control"})
-        </div>
-    </div>
-    <div class="validation-container" id="validation-container"></div>
-</div>
+<div class="label label-default">Description</div>
+<input type="text" id="txtDescription" class="form-control" value="@Model.Description" maxlength="50" />
+<div class="label label-default">Phidget</div>
+@Html.DropDownList("ddlPhidgetTypes", @Model.PhidgetTypes, new {@class = "form-control"})
+<div class="label label-default">Response</div>
+@Html.DropDownList("ddlResponseTypes", @Model.ResponseTypes, new {@class = "form-control"})
+
+<div class="validation-container" id="validation-container"></div>

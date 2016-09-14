@@ -25,6 +25,7 @@ namespace Keebee.AAT.Administrator.ViewModels
         public int ConfigId { get; set; }
         public int SortOrder { get; set; }
         public string PhidgetType { get; set; }
+        public string PhidgetStyleType { get; set; }
         public string Description { get; set; }
         public string ResponseType { get; set; }
         public bool CanDelete { get; set; }
@@ -44,6 +45,8 @@ namespace Keebee.AAT.Administrator.ViewModels
         public string Description { get; set; }
         public int PhidgetTypeId { get; set; }
         public SelectList PhidgetTypes { get; set; }
+        public int PhidgetStyleTypeId { get; set; }
+        public SelectList PhidgetStyleTypes { get; set; }
         public int ResponseTypeId { get; set; }
         public SelectList ResponseTypes { get; set; }
     }

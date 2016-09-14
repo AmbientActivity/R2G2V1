@@ -81,6 +81,7 @@
     </Compile>
     <Compile Include="ODataHost.cs" />
     <Compile Include="Services\MediaFileStreamService.cs" />
+    <Compile Include="Services\PhidgetStyleTypeService.cs" />
     <Compile Include="Services\PhidgetTypeService.cs" />
     <Compile Include="Services\AmbientResponseService.cs" />
     <Compile Include="Services\ActivityEventLogService.cs" />

@@ -8,6 +8,7 @@ namespace Keebee.AAT.RESTClient
         public int ConfigId { get; set; }
         public string Description { get; set; }
         public PhidgetType PhidgetType { get; set; }
+        public PhidgetStyleType PhidgetStyleType { get; set; }
         public ResponseType ResponseType { get; set; }
     }
 
@@ -17,6 +18,7 @@ namespace Keebee.AAT.RESTClient
         public int ConfigId { get; set; }
         public string Description { get; set; }
         public int PhidgetTypeId { get; set; }
+        public int PhidgetStyleTypeId { get; set; }
         public int ResponseTypeId { get; set; }
     }
 

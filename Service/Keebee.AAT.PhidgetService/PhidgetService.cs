@@ -162,7 +162,7 @@ namespace Keebee.AAT.PhidgetService
 
                 var configDetail = _activeConfig.ConfigDetails.Single(cd => cd.PhidgetType.Id == sensorId + 1);
 
-                switch (configDetail.ResponseType.PhidgetStyleType.Id)
+                switch (configDetail.PhidgetStyleType.Id)
                 {
                     case PhidgetStyleTypeIdId.Touch:
                         if (sensorValue >= _sensorThreshold)

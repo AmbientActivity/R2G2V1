@@ -29,7 +29,7 @@ namespace Keebee.AAT.Operations.Service.Services
             var container = new Container(new Uri(ODataHost.Url));
 
             var configs = container.Configs
-                .Expand("ConfigDetails($expand=PhidgetType,ResponseType)")
+                .Expand("ConfigDetails($expand=PhidgetType,PhidgetStyleType,ResponseType)")
                 .AsEnumerable();
 
             return configs;
@@ -41,7 +41,7 @@ namespace Keebee.AAT.Operations.Service.Services
 
             var config = container.Configs
                 .ByKey(id)
-                .Expand("ConfigDetails($expand=PhidgetType,ResponseType($expand=PhidgetStyleType))")
+                .Expand("ConfigDetails($expand=PhidgetType,PhidgetStyleType,ResponseType)")
                 .GetValue();
 
             return config;
@@ -64,7 +64,7 @@ namespace Keebee.AAT.Operations.Service.Services
 
             var config = container.Configs
                 .AddQueryOption("$filter", "IsActive")
-                .Expand("ConfigDetails($expand=PhidgetType,ResponseType($expand=ResponseTypeCategory,PhidgetStyleType))")
+                .Expand("ConfigDetails($expand=PhidgetType,PhidgetStyleType,ResponseType($expand=ResponseTypeCategory))")
                 .Single();
 
             return config;
@@ -112,7 +112,7 @@ namespace Keebee.AAT.Operations.Service.Services
             var container = new Container(new Uri(ODataHost.Url));
 
             var config = container.Configs.ByKey(id)
-                 .Expand("ConfigDetails($expand=PhidgetType,ResponseType($expand=ResponseTypeCategory,PhidgetStyleType))")
+                 .Expand("ConfigDetails($expand=PhidgetType,PhidgetStyleType,ResponseType($expand=ResponseTypeCategory))")
                 .GetValue();
 
             return config;

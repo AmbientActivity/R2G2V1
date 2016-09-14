@@ -124,6 +124,7 @@
   <ItemGroup>
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\MediaFileStreamsController.cs" />
+    <Compile Include="Controllers\PhidgetStyleTypesController.cs" />
     <Compile Include="Controllers\PhidgetTypesController.cs" />
     <Compile Include="Controllers\AmbientResponsesController.cs" />
     <Compile Include="Controllers\CaregiversController.cs" />

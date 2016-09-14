@@ -25,7 +25,7 @@ namespace Keebee.AAT.Operations.Service.Services
             var container = new Container(new Uri(ODataHost.Url));
 
             var configDetails = container.ConfigDetails
-                .Expand("Config,PhidgetType,ResponseType($expand=PhidgetStyleType)").AsEnumerable();
+                .Expand("Config,PhidgetType,PhidgetStyleType,ResponseType").AsEnumerable();
 
             return configDetails;
         }
@@ -35,7 +35,7 @@ namespace Keebee.AAT.Operations.Service.Services
             var container = new Container(new Uri(ODataHost.Url));
 
             var configDetail = container.ConfigDetails.ByKey(id)
-                .Expand("Config,PhidgetType,ResponseType($expand=PhidgetStyleType)")
+                .Expand("Config,PhidgetType,PhidgetStyleType,ResponseType")
                 .GetValue();
 
             return configDetail;

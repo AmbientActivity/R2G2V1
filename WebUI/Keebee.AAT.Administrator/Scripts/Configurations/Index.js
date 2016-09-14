@@ -42,13 +42,14 @@
                 });
             }
 
-            function ConfigDetail(id, configid, sortorder, phidgettype, description, responsetype, candelete) {
+            function ConfigDetail(id, configid, sortorder, phidgettype, phidgetstyletype, description, responsetype, candelete) {
                 var self = this;
 
                 self.id = id;
                 self.configid = configid;
                 self.sortorder = sortorder;
                 self.phidgettype = phidgettype;
+                self.phidgetstyletype = phidgetstyletype;
                 self.description = description;
                 self.responsetype = responsetype;
                 self.candelete = candelete;
@@ -115,7 +116,8 @@
                 self.columns = ko.computed(function() {
                     var arr = [];
                     arr.push({ title: "Phidget", sortKey: "phidgettype" });
-                    arr.push({ title: "Activity", sortKey: "description" });
+                    arr.push({ title: "Style", sortKey: "phidgetstyletype" });
+                    arr.push({ title: "Description", sortKey: "description" });
                     arr.push({ title: "Response", sortKey: "responsetype" });
                     return arr;
                 });
@@ -129,6 +131,7 @@
                         value.ConfigId,
                         value.SortOrder,
                         value.PhidgetType,
+                        value.PhidgetStyleType,
                         value.Description,
                         value.ResponseType,
                         value.CanDelete));
@@ -524,10 +527,11 @@
                 self.getConfigDetailFromDialog = function () {
                     var description = $.trim($("#txtDescription").val());
                     var phidgettypeid = $("#ddlPhidgetTypes").val();
+                    var phidgetstyletypeid = $("#ddlPhidgetStyleTypes").val();
                     var responsetypeid = $("#ddlResponseTypes").val();
 
                     return {
-                        Id: self.selectedConfigDetail().id, Description: description, phidgetTypeId: phidgettypeid, responseTypeId: responsetypeid
+                        Id: self.selectedConfigDetail().id, Description: description, PhidgetTypeId: phidgettypeid, PhidgetStyleTypeId: phidgetstyletypeid, ResponseTypeId: responsetypeid
                     };
                 };
 

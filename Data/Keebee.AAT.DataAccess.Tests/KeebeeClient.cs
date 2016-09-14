@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-// Generation date: 9/13/2016 5:56:53 PM
+// Generation date: 9/13/2016 6:46:02 PM
 namespace Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models
 {
     /// <summary>
@@ -260,6 +260,28 @@ namespace Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
         private global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.PhidgetTypeSingle _PhidgetType;
         /// <summary>
+        /// There are no comments for PhidgetStyleType in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        [global::Microsoft.OData.Client.OriginalNameAttribute("PhidgetStyleType")]
+        public global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.PhidgetStyleTypeSingle PhidgetStyleType
+        {
+            get
+            {
+                if (!this.IsComposable)
+                {
+                    throw new global::System.NotSupportedException("The previous function is not composable.");
+                }
+                if ((this._PhidgetStyleType == null))
+                {
+                    this._PhidgetStyleType = new global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.PhidgetStyleTypeSingle(this.Context, GetPath("PhidgetStyleType"));
+                }
+                return this._PhidgetStyleType;
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.PhidgetStyleTypeSingle _PhidgetStyleType;
+        /// <summary>
         /// There are no comments for ResponseType in the schema.
         /// </summary>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
@@ -396,6 +418,29 @@ namespace Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models
         partial void OnPhidgetTypeIdChanging(global::System.Nullable<int> value);
         partial void OnPhidgetTypeIdChanged();
         /// <summary>
+        /// There are no comments for Property PhidgetStyleTypeId in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        [global::Microsoft.OData.Client.OriginalNameAttribute("PhidgetStyleTypeId")]
+        public global::System.Nullable<int> PhidgetStyleTypeId
+        {
+            get
+            {
+                return this._PhidgetStyleTypeId;
+            }
+            set
+            {
+                this.OnPhidgetStyleTypeIdChanging(value);
+                this._PhidgetStyleTypeId = value;
+                this.OnPhidgetStyleTypeIdChanged();
+                this.OnPropertyChanged("PhidgetStyleTypeId");
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private global::System.Nullable<int> _PhidgetStyleTypeId;
+        partial void OnPhidgetStyleTypeIdChanging(global::System.Nullable<int> value);
+        partial void OnPhidgetStyleTypeIdChanged();
+        /// <summary>
         /// There are no comments for Property ResponseTypeId in the schema.
         /// </summary>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
@@ -464,6 +509,29 @@ namespace Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models
         private global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.PhidgetType _PhidgetType;
         partial void OnPhidgetTypeChanging(global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.PhidgetType value);
         partial void OnPhidgetTypeChanged();
+        /// <summary>
+        /// There are no comments for Property PhidgetStyleType in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        [global::Microsoft.OData.Client.OriginalNameAttribute("PhidgetStyleType")]
+        public global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.PhidgetStyleType PhidgetStyleType
+        {
+            get
+            {
+                return this._PhidgetStyleType;
+            }
+            set
+            {
+                this.OnPhidgetStyleTypeChanging(value);
+                this._PhidgetStyleType = value;
+                this.OnPhidgetStyleTypeChanged();
+                this.OnPropertyChanged("PhidgetStyleType");
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.PhidgetStyleType _PhidgetStyleType;
+        partial void OnPhidgetStyleTypeChanging(global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.PhidgetStyleType value);
+        partial void OnPhidgetStyleTypeChanged();
         /// <summary>
         /// There are no comments for Property ResponseType in the schema.
         /// </summary>
@@ -1174,28 +1242,6 @@ namespace Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models
         public PhidgetTypeSingle(global::Microsoft.OData.Client.DataServiceQuerySingle<PhidgetType> query)
             : base(query) {}
 
-        /// <summary>
-        /// There are no comments for PhidgetStyleType in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        [global::Microsoft.OData.Client.OriginalNameAttribute("PhidgetStyleType")]
-        public global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.PhidgetStyleTypeSingle PhidgetStyleType
-        {
-            get
-            {
-                if (!this.IsComposable)
-                {
-                    throw new global::System.NotSupportedException("The previous function is not composable.");
-                }
-                if ((this._PhidgetStyleType == null))
-                {
-                    this._PhidgetStyleType = new global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.PhidgetStyleTypeSingle(this.Context, GetPath("PhidgetStyleType"));
-                }
-                return this._PhidgetStyleType;
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.PhidgetStyleTypeSingle _PhidgetStyleType;
     }
     /// <summary>
     /// There are no comments for PhidgetType in the schema.
@@ -1266,52 +1312,6 @@ namespace Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models
         private string _Description;
         partial void OnDescriptionChanging(string value);
         partial void OnDescriptionChanged();
-        /// <summary>
-        /// There are no comments for Property PhidgetStyleTypeId in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        [global::Microsoft.OData.Client.OriginalNameAttribute("PhidgetStyleTypeId")]
-        public global::System.Nullable<int> PhidgetStyleTypeId
-        {
-            get
-            {
-                return this._PhidgetStyleTypeId;
-            }
-            set
-            {
-                this.OnPhidgetStyleTypeIdChanging(value);
-                this._PhidgetStyleTypeId = value;
-                this.OnPhidgetStyleTypeIdChanged();
-                this.OnPropertyChanged("PhidgetStyleTypeId");
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private global::System.Nullable<int> _PhidgetStyleTypeId;
-        partial void OnPhidgetStyleTypeIdChanging(global::System.Nullable<int> value);
-        partial void OnPhidgetStyleTypeIdChanged();
-        /// <summary>
-        /// There are no comments for Property PhidgetStyleType in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        [global::Microsoft.OData.Client.OriginalNameAttribute("PhidgetStyleType")]
-        public global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.PhidgetStyleType PhidgetStyleType
-        {
-            get
-            {
-                return this._PhidgetStyleType;
-            }
-            set
-            {
-                this.OnPhidgetStyleTypeChanging(value);
-                this._PhidgetStyleType = value;
-                this.OnPhidgetStyleTypeChanged();
-                this.OnPropertyChanged("PhidgetStyleType");
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.PhidgetStyleType _PhidgetStyleType;
-        partial void OnPhidgetStyleTypeChanging(global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.PhidgetStyleType value);
-        partial void OnPhidgetStyleTypeChanged();
         /// <summary>
         /// This event is raised when the value of the property is changed
         /// </summary>
@@ -5176,12 +5176,16 @@ namespace Keebee.AAT.DataAccess.Tests.KeebeeAAT
         <Property Name=""Description"" Type=""Edm.String"" />
         <Property Name=""ConfigId"" Type=""Edm.Int32"" />
         <Property Name=""PhidgetTypeId"" Type=""Edm.Int32"" />
+        <Property Name=""PhidgetStyleTypeId"" Type=""Edm.Int32"" />
         <Property Name=""ResponseTypeId"" Type=""Edm.Int32"" />
         <NavigationProperty Name=""Config"" Type=""Keebee.AAT.DataAccess.Models.Config"">
           <ReferentialConstraint Property=""ConfigId"" ReferencedProperty=""Id"" />
         </NavigationProperty>
         <NavigationProperty Name=""PhidgetType"" Type=""Keebee.AAT.DataAccess.Models.PhidgetType"">
           <ReferentialConstraint Property=""PhidgetTypeId"" ReferencedProperty=""Id"" />
+        </NavigationProperty>
+        <NavigationProperty Name=""PhidgetStyleType"" Type=""Keebee.AAT.DataAccess.Models.PhidgetStyleType"">
+          <ReferentialConstraint Property=""PhidgetStyleTypeId"" ReferencedProperty=""Id"" />
         </NavigationProperty>
         <NavigationProperty Name=""ResponseType"" Type=""Keebee.AAT.DataAccess.Models.ResponseType"">
           <ReferentialConstraint Property=""ResponseTypeId"" ReferencedProperty=""Id"" />
@@ -5227,10 +5231,6 @@ namespace Keebee.AAT.DataAccess.Tests.KeebeeAAT
         </Key>
         <Property Name=""Id"" Type=""Edm.Int32"" Nullable=""false"" />
         <Property Name=""Description"" Type=""Edm.String"" Nullable=""false"" />
-        <Property Name=""PhidgetStyleTypeId"" Type=""Edm.Int32"" />
-        <NavigationProperty Name=""PhidgetStyleType"" Type=""Keebee.AAT.DataAccess.Models.PhidgetStyleType"">
-          <ReferentialConstraint Property=""PhidgetStyleTypeId"" ReferencedProperty=""Id"" />
-        </NavigationProperty>
       </EntityType>
       <EntityType Name=""ResponseType"">
         <Key>
@@ -5403,6 +5403,7 @@ namespace Keebee.AAT.DataAccess.Tests.KeebeeAAT
         <EntitySet Name=""ConfigDetails"" EntityType=""Keebee.AAT.DataAccess.Models.ConfigDetail"">
           <NavigationPropertyBinding Path=""Config"" Target=""Configs"" />
           <NavigationPropertyBinding Path=""PhidgetType"" Target=""PhidgetTypes"" />
+          <NavigationPropertyBinding Path=""PhidgetStyleType"" Target=""PhidgetStyleTypes"" />
           <NavigationPropertyBinding Path=""ResponseType"" Target=""ResponseTypes"" />
         </EntitySet>
         <EntitySet Name=""Residents"" EntityType=""Keebee.AAT.DataAccess.Models.Resident"">
@@ -5411,9 +5412,7 @@ namespace Keebee.AAT.DataAccess.Tests.KeebeeAAT
         </EntitySet>
         <EntitySet Name=""Profiles"" EntityType=""Keebee.AAT.DataAccess.Models.Profile"" />
         <EntitySet Name=""PhidgetStyleTypes"" EntityType=""Keebee.AAT.DataAccess.Models.PhidgetStyleType"" />
-        <EntitySet Name=""PhidgetTypes"" EntityType=""Keebee.AAT.DataAccess.Models.PhidgetType"">
-          <NavigationPropertyBinding Path=""PhidgetStyleType"" Target=""PhidgetStyleTypes"" />
-        </EntitySet>
+        <EntitySet Name=""PhidgetTypes"" EntityType=""Keebee.AAT.DataAccess.Models.PhidgetType"" />
         <EntitySet Name=""ResponseTypes"" EntityType=""Keebee.AAT.DataAccess.Models.ResponseType"">
           <NavigationPropertyBinding Path=""ResponseTypeCategory"" Target=""ResponseTypeCategories"" />
           <NavigationPropertyBinding Path=""Responses"" Target=""Responses"" />

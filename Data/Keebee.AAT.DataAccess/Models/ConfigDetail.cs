@@ -18,6 +18,10 @@ namespace Keebee.AAT.DataAccess.Models
         public int PhidgetTypeId { get; set; }
         public virtual PhidgetType PhidgetType { get; set; }
 
+        [ForeignKey("PhidgetStyleType")]
+        public int PhidgetStyleTypeId { get; set; }
+        public virtual PhidgetStyleType PhidgetStyleType { get; set; }
+
         [ForeignKey("ResponseType")]
         public int ResponseTypeId { get; set; }
         public virtual ResponseType ResponseType { get; set; }

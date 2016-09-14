@@ -44,17 +44,17 @@ namespace Keebee.AAT.Operations.Controllers
                     cd.PhidgetType.Id,
                     cd.PhidgetType.Description
                 },
+                PhidgetStyleType = new
+                {
+                    cd.PhidgetStyleType.Id,
+                    cd.PhidgetStyleType.Description,
+                },
                 cd.Description,
                 ResponseType = new
                 {
                     cd.ResponseType.Id,
                     cd.ResponseType.Description,
-                    cd.ResponseType.IsInteractive,
-                    PhidgetStyleType = new
-                    {
-                        cd.ResponseType.PhidgetStyleType.Id,
-                        cd.ResponseType.PhidgetStyleType.Description,
-                    }
+                    cd.ResponseType.IsInteractive
                 }
             }).OrderBy(o => o.PhidgetType.Id);
 
@@ -83,17 +83,17 @@ namespace Keebee.AAT.Operations.Controllers
                 configDetail.PhidgetType.Id,
                 configDetail.PhidgetType.Description
             };
+            exObj.PhidgetStyleType = new
+            {
+                configDetail.PhidgetStyleType.Id,
+                configDetail.PhidgetStyleType.Description
+            };
             exObj.Description = configDetail.Description;
             exObj.ResponseType = new
             {
                 configDetail.ResponseType.Id,
                 configDetail.ResponseType.Description,
-                configDetail.ResponseType.IsInteractive,
-                PhidgetStyleType = new
-                {
-                    configDetail.ResponseType.PhidgetStyleType.Id,
-                    configDetail.ResponseType.PhidgetStyleType.Description
-                }
+                configDetail.ResponseType.IsInteractive
             };
 
             return new DynamicJsonObject(exObj);

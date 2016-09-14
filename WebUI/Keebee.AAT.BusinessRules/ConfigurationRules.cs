@@ -51,6 +51,7 @@ namespace Keebee.AAT.BusinessRules
             IEnumerable<ResponseType> availableResponseTypes;
             IEnumerable<PhidgetType> availablePhidgetTypes;
             var allPhidgetTypes = _opsClient.GetPhidgetTypes().ToArray();
+            var availablePhidgetStyleTypes = _opsClient.GetPhidgetStyleTypes().ToArray();
 
             // edit mode
             if (id > 0)
@@ -109,6 +110,7 @@ namespace Keebee.AAT.BusinessRules
                 ConfigDetail = configDetail,
                 Description = (configDetail != null) ? configDetail.Description : string.Empty,
                 PhidgetTypes = availablePhidgetTypes,
+                PhidgetStyleTypes = availablePhidgetStyleTypes,
                 ResponseTypes = availableResponseTypes
             };
         }

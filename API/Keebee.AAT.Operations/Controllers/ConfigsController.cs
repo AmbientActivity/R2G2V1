@@ -51,6 +51,11 @@ namespace Keebee.AAT.Operations.Controllers
                             cd.PhidgetType.Id,
                             cd.PhidgetType.Description,
                         },
+                        PhidgetStyleType = new
+                        {
+                            cd.PhidgetStyleType.Id,
+                            cd.PhidgetStyleType.Description,
+                        },
                         ResponseType = new
                         {
                             cd.ResponseType.Id,
@@ -135,6 +140,11 @@ namespace Keebee.AAT.Operations.Controllers
                     cd.PhidgetType.Id,
                     cd.PhidgetType.Description
                 },
+                PhidgetStyleType = new
+                {
+                    cd.PhidgetStyleType.Id,
+                    cd.PhidgetStyleType.Description
+                },
                 cd.Description,
                 ResponseType = new
                 {
@@ -142,11 +152,6 @@ namespace Keebee.AAT.Operations.Controllers
                     {
                         cd.ResponseType.ResponseTypeCategory.Id,
                         cd.ResponseType.ResponseTypeCategory.Description
-                    },
-                    PhidgetStyleType = new
-                    {
-                        cd.ResponseType.PhidgetStyleType.Id,
-                        cd.ResponseType.PhidgetStyleType.Description
                     },
                     cd.ResponseType.Id,
                     cd.ResponseType.Description,
@@ -185,6 +190,11 @@ namespace Keebee.AAT.Operations.Controllers
                     cd.PhidgetType.Id,
                     cd.PhidgetType.Description,
                 },
+                PhidgetStyleType = new
+                {
+                    cd.PhidgetStyleType.Id,
+                    cd.PhidgetStyleType.Description
+                },
                 cd.Description,
                 ResponseType = new
                 {
@@ -192,11 +202,6 @@ namespace Keebee.AAT.Operations.Controllers
                     {
                         cd.ResponseType.ResponseTypeCategory.Id,
                         cd.ResponseType.ResponseTypeCategory.Description                      
-                    },
-                    PhidgetStyleType = new
-                    {
-                        cd.ResponseType.PhidgetStyleType.Id,
-                        cd.ResponseType.PhidgetStyleType.Description
                     },
                     cd.ResponseType.Id,
                     cd.ResponseType.Description,

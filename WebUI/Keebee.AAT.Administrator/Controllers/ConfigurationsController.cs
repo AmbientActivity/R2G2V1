@@ -180,6 +180,7 @@ namespace Keebee.AAT.Administrator.Controllers
                     ConfigId = config.Id,
                     SortOrder = cd.PhidgetType.Id,
                     PhidgetType = cd.PhidgetType.Description,
+                    PhidgetStyleType = cd.PhidgetStyleType.Description,
                     Description = cd.Description,
                     ResponseType = cd.ResponseType.Description,
                     CanDelete = !_opsClient.GetActivityEventLogsForConfigDetail(cd.Id).Any() && !config.IsActive
@@ -223,6 +224,7 @@ namespace Keebee.AAT.Administrator.Controllers
                 Id = configDetail?.Id ?? 0,
                 Description = (configDetail != null) ? configDetail.Description : string.Empty,
                 PhidgetTypes = new SelectList(configEdit.PhidgetTypes, "Id", "Description", configDetail?.PhidgetType.Id),
+                PhidgetStyleTypes = new SelectList(configEdit.PhidgetStyleTypes, "Id", "Description", configDetail?.PhidgetStyleType.Id),
                 ResponseTypes = new SelectList(configEdit.ResponseTypes, "Id", "Description", configDetail?.ResponseType.Id)
             };
 
@@ -256,6 +258,7 @@ namespace Keebee.AAT.Administrator.Controllers
                             ConfigId = newId,
                             Description = detail.Description,
                             PhidgetTypeId = detail.PhidgetType.Id,
+                            PhidgetStyleTypeId = detail.PhidgetStyleType.Id,
                             ResponseTypeId = detail.ResponseType.Id
                         });
             }
@@ -269,6 +272,7 @@ namespace Keebee.AAT.Administrator.Controllers
             {
                 Description = configDetail.Description,
                 PhidgetTypeId = configDetail.PhidgetTypeId,
+                PhidgetStyleTypeId = configDetail.PhidgetStyleTypeId,
                 ResponseTypeId = configDetail.ResponseTypeId
             };
 
@@ -282,6 +286,7 @@ namespace Keebee.AAT.Administrator.Controllers
                 ConfigId = configDetail.ConfigId,
                 Description = configDetail.Description,
                 PhidgetTypeId = configDetail.PhidgetTypeId,
+                PhidgetStyleTypeId = configDetail.PhidgetStyleTypeId,
                 ResponseTypeId = configDetail.ResponseTypeId
             };
 

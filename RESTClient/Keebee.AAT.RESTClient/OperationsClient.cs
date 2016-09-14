@@ -25,6 +25,7 @@ namespace Keebee.AAT.RESTClient
         Config GetActiveConfigDetails();
         Config GetConfigWithDetails(int id);
         IEnumerable<PhidgetType> GetPhidgetTypes();
+        IEnumerable<PhidgetStyleType> GetPhidgetStyleTypes();
         IEnumerable<ResponseType> GetResponseTypes();
 
         IEnumerable<Resident> GetResidents();
@@ -93,6 +94,7 @@ namespace Keebee.AAT.RESTClient
 
         // phidget types
         private const string UrlPhidgetTypes = "phidgettypes";
+        private const string UrlPhidgetStyleTypes = "phidgetstyletypes";
 
         // response types
         private const string UrlResponseTypes = "responsetypes";
@@ -231,6 +233,7 @@ namespace Keebee.AAT.RESTClient
             return config;
         }
 
+
         public IEnumerable<PhidgetType> GetPhidgetTypes()
         {
             var data = Get(UrlPhidgetTypes);
@@ -238,6 +241,17 @@ namespace Keebee.AAT.RESTClient
 
             var serializer = new JavaScriptSerializer();
             var phidgetTypes = serializer.Deserialize<PhidgetTypeList>(data).PhidgetTypes;
+
+            return phidgetTypes;
+        }
+
+        public IEnumerable<PhidgetStyleType> GetPhidgetStyleTypes()
+        {
+            var data = Get(UrlPhidgetStyleTypes);
+            if (data == null) return null;
+
+            var serializer = new JavaScriptSerializer();
+            var phidgetTypes = serializer.Deserialize<PhidgetStyleTypeList>(data).PhidgetStyleTypes;
 
             return phidgetTypes;
         }

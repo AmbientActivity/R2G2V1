@@ -9,6 +9,7 @@ namespace Keebee.AAT.BusinessRules.DTO
         public string Description { get; set; }
         public ConfigDetail ConfigDetail { get; set; }
         public IEnumerable<PhidgetType> PhidgetTypes { get; set; }
+        public IEnumerable<PhidgetStyleType> PhidgetStyleTypes { get; set; }
         public IEnumerable<ResponseType> ResponseTypes { get; set; }
     }
 }

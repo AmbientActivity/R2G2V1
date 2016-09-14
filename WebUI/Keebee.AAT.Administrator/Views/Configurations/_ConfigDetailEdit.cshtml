@@ -4,6 +4,8 @@
 <input type="text" id="txtDescription" class="form-control" value="@Model.Description" maxlength="50" />
 <div class="label label-default">Phidget</div>
 @Html.DropDownList("ddlPhidgetTypes", @Model.PhidgetTypes, new {@class = "form-control"})
+<div class="label label-default">Phidget Style</div>
+@Html.DropDownList("ddlPhidgetStyleTypes", @Model.PhidgetStyleTypes, new { @class = "form-control" })
 <div class="label label-default">Response</div>
 @Html.DropDownList("ddlResponseTypes", @Model.ResponseTypes, new {@class = "form-control"})
 

@@ -20,6 +20,7 @@ namespace Keebee.AAT.Operations
             container.RegisterType<IProfileService, ProfileService>();
             container.RegisterType<IConfigService, ConfigService>();
             container.RegisterType<IConfigDetailService, ConfigDetailService>();
+            container.RegisterType<IPhidgetStyleTypeService, PhidgetStyleTypeService>();
             container.RegisterType<IPhidgetTypeService, PhidgetTypeService>();
             container.RegisterType<IResponseTypeService, ResponseTypeService>();
             container.RegisterType<IAmbientResponseService, AmbientResponseService>();

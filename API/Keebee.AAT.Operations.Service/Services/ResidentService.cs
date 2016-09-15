@@ -1,6 +1,5 @@
 ﻿using Keebee.AAT.Operations.Service.KeebeeAAT;
 using Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models;
-using Keebee.AAT.Shared;
 using System.Collections.Generic;
 using System;
 using System.Linq;
@@ -15,7 +14,7 @@ namespace Keebee.AAT.Operations.Service.Services
         int Post(Resident resident);
         void Patch(int id, Resident resident);
         void Delete(int id);
-        bool ProfileExists(int id);
+        bool ResidentExists(int id);
     }
 
     public class ResidentService : IResidentService
@@ -25,7 +24,6 @@ namespace Keebee.AAT.Operations.Service.Services
             var container = new Container(new Uri(ODataHost.Url));
 
             return container.Residents
-                .Expand("Profile")
                 .ToList();
         }
 
@@ -33,9 +31,7 @@ namespace Keebee.AAT.Operations.Service.Services
         {
             var container = new Container(new Uri(ODataHost.Url));
 
-            return container.Residents.ByKey(id)
-                .Expand("Profile")
-                .GetValue();
+            return container.Residents.ByKey(id).GetValue();
         }
 
         public Resident GetByNameGender(string firstName, string lastName, string gender)
@@ -53,7 +49,6 @@ namespace Keebee.AAT.Operations.Service.Services
 
             resident.DateCreated = DateTime.Now;
             resident.DateUpdated = DateTime.Now;
-            resident.ProfileId = (resident.ProfileId > 0 ? resident.ProfileId : ProfileId.Generic);
 
             container.AddToResidents(resident);
             container.SaveChanges();
@@ -77,9 +72,6 @@ namespace Keebee.AAT.Operations.Service.Services
             if (resident.Gender != null)
                 r.Gender = resident.Gender;
 
-            if (resident.ProfileId != null)
-                r.ProfileId = resident.ProfileId;
-
             resident.DateUpdated = DateTime.Now;
 
             container.UpdateObject(r);
@@ -97,7 +89,7 @@ namespace Keebee.AAT.Operations.Service.Services
             container.SaveChanges();
         }
 
-        public bool ProfileExists(int id)
+        public bool ResidentExists(int id)
         {
             try
             {
@@ -105,9 +97,9 @@ namespace Keebee.AAT.Operations.Service.Services
 
                 var container = new Container(new Uri(ODataHost.Url));
 
-                var profile = container.Residents.ByKey(id).Profile.GetValue();
+                var resident = container.Residents.ByKey(id).GetValue();
 
-                return profile != null;
+                return resident != null;
             }
             catch
             {

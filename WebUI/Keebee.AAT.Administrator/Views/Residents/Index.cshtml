@@ -41,7 +41,7 @@
                     <th class="col-glyphicon"></th>
                     <!-- ko foreach: columns -->
                     <!-- ko if: !sortable -->
-                    <th class="col-profile" data-bind="text: title"></th>
+                    @*<th class="col-profile" data-bind="text: title"></th>*@
                     <!-- /ko -->
                     <!-- ko if: sortable -->
                     <th data-bind="click: $parent.sort, attr: { id: 'resident-col-' + sortKey } "><a href="#" data-bind="text: title"></a></th>
@@ -54,12 +54,7 @@
                 <tr data-bind="click: $parent.highlightRow, attr: {id: 'row_' +  id}">
                     <td><a href="#" data-bind="click: $parent.showDeleteDialog, css: 'glyphicon glyphicon-remove'"></a></td>
                     <td><a data-bind="attr: { href: '#' }, click: $parent.showEditDialog, css: 'glyphicon glyphicon-pencil'"></a></td>
-                    <!-- ko if: !hasprofile -->
-                    <td><a href="#" data-bind="click: $parent.editProfile">Create</a></td>
-                    <!-- /ko -->
-                    <!-- ko if: hasprofile -->
-                    <td><a href="#" data-bind="click: $parent.editProfile">Edit</a></td>
-                    <!-- /ko -->
+                    @*<td><a href="#" data-bind="click: $parent.editMedia">Media</a></td>*@
                     <td data-bind="text: id"></td>
                     <td data-bind="text: firstname"></td>
                     <td data-bind="text: lastname"></td>

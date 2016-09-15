@@ -4,15 +4,14 @@
     {
         public int SensorValue { get; set; }
         public bool IsSystem { get; set; }
-        public ActiveProfile ActiveProfile { get; set; }
+        public ActiveResident ActiveResident { get; set; }
         public ActiveConfigDetail ActiveConfigDetail { get; set; }
     }
 
-    public class ActiveProfile
+    public class ActiveResident
     {
         public int Id { get; set; }
         public int ConfigId { get; set; }
-        public int ResidentId { get; set; }
         public int GameDifficultyLevel { get; set; }
     }
 

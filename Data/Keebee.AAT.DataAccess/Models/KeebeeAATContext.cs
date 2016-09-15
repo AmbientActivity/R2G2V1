@@ -19,10 +19,6 @@ namespace Keebee.AAT.DataAccess.Models
 
         public DbSet<ConfigDetail> ConfigurationDetails { get; set; }
 
-        public DbSet<Profile> Profiles { get; set; }
-
-        public DbSet<Resident> Residents { get; set; }
-
         public DbSet<PhidgetType> PhidgetTypes { get; set; }
 
         public DbSet<PhidgetStyleType> PhidgetStyleTypes { get; set; }
@@ -42,6 +38,8 @@ namespace Keebee.AAT.DataAccess.Models
         public DbSet<MediaFile> MediaFiles { get; set; }
 
         public DbSet<MediaFileStream> MediaFileStreams { get; set; }
+
+        public DbSet<Resident> Residents { get; set; }
 
         public DbSet<Caregiver> Caregivers { get; set; }
 

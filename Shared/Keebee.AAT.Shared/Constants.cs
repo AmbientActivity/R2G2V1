@@ -38,9 +38,10 @@
         public const int Default = 1;
     }
 
-    public static class ProfileId
+    public static class GenericMedia
     {
-        public const int Generic = 1;
+        public const int Id = 0;
+        public const string Description = "Public Library";
     }
 
     public static class GameTypeId

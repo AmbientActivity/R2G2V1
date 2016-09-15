@@ -159,7 +159,6 @@
     <Compile Include="Controllers\ConfigDetailsController.cs" />
     <Compile Include="Controllers\GameEventLogsController.cs" />
     <Compile Include="Controllers\MediaFilesController.cs" />
-    <Compile Include="Controllers\ProfilesController.cs" />
     <Compile Include="Controllers\ResidentsController.cs" />
     <Compile Include="Controllers\ResponseTypesController.cs" />
     <Compile Include="Controllers\RfidEventLogsController.cs" />
@@ -177,6 +176,10 @@
     <Content Include="apiapp.json" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Shared\Keebee.AAT.Shared\Keebee.AAT.Shared.csproj">
+      <Project>{3cb12af2-7655-46f6-9969-990730f73964}</Project>
+      <Name>Keebee.AAT.Shared</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Keebee.AAT.Operations.Service\Keebee.AAT.Operations.Service.csproj">
       <Project>{b68b64da-0945-4963-a12f-3d2017ae442e}</Project>
       <Name>Keebee.AAT.Operations.Service</Name>

@@ -17,7 +17,6 @@ namespace Keebee.AAT.Operations
             // e.g. container.RegisterType<ITestService, TestService>();
 
             container.RegisterType<IResidentService, ResidentService>();
-            container.RegisterType<IProfileService, ProfileService>();
             container.RegisterType<IConfigService, ConfigService>();
             container.RegisterType<IConfigDetailService, ConfigDetailService>();
             container.RegisterType<IPhidgetStyleTypeService, PhidgetStyleTypeService>();

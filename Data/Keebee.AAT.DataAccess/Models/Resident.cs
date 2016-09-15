@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Keebee.AAT.DataAccess.Models
 {
@@ -18,12 +16,10 @@ namespace Keebee.AAT.DataAccess.Models
         [Required]
         public string Gender { get; set; }
 
+        public int GameDifficultyLevel { get; set; }
+
         public DateTime DateCreated { get; set; }
 
         public DateTime DateUpdated { get; set; }
-
-        [ForeignKey("Profile")]
-        public int ProfileId { get; set; }
-        public virtual Profile Profile { get; set; }
     }
 }

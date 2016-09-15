@@ -299,8 +299,7 @@
     <Content Include="Scripts\moment-with-locales.min.js" />
     <Content Include="Scripts\moment.js" />
     <Content Include="Scripts\moment.min.js" />
-    <Content Include="Scripts\Profiles\Edit.js" />
-    <Content Include="Scripts\Profiles\Index.js" />
+    <Content Include="Scripts\Residents\Media.js" />
     <Content Include="Scripts\Residents\Index.js" />
     <Content Include="Scripts\Site\Namespaces.js" />
     <Content Include="Scripts\Site\Site.js" />
@@ -313,7 +312,6 @@
     <Compile Include="Controllers\EventLogsController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\MediaFilesController.cs" />
-    <Compile Include="Controllers\ProfilesController.cs" />
     <Compile Include="Controllers\ResidentsController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -322,7 +320,6 @@
     <Compile Include="ViewModels\ConfigViewModel.cs" />
     <Compile Include="ViewModels\EventLogViewModel.cs" />
     <Compile Include="ViewModels\MediaFileViewModel.cs" />
-    <Compile Include="ViewModels\ProfileViewModel.cs" />
     <Compile Include="ViewModels\ResidentViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -337,15 +334,14 @@
     <Content Include="Scripts\jquery-3.1.0.slim.min.map" />
     <Content Include="Scripts\jquery-3.1.0.min.map" />
     <Content Include="Views\EventLogs\Export.cshtml" />
-    <Content Include="Views\Profiles\Index.cshtml" />
     <Content Include="Views\EventLogs\Index.cshtml" />
     <Content Include="Views\Residents\Index.cshtml" />
     <Content Include="Views\Residents\_ResidentEdit.cshtml" />
-    <Content Include="Views\Profiles\Edit.cshtml" />
     <Content Include="Views\Configurations\Index.cshtml" />
     <Content Include="Views\Configurations\_ConfigDetailEdit.cshtml" />
     <Content Include="Views\Configurations\_ConfigEdit.cshtml" />
     <Content Include="Views\MediaFiles\Index.cshtml" />
+    <Content Include="Views\Residents\Media.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

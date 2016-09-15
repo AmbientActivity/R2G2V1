@@ -37,6 +37,18 @@ namespace Keebee.AAT.Administrator.Controllers
         }
 
         [HttpGet]
+        public JsonResult GetDataMedia(int id)
+        {
+            var vm = new
+            {
+                FileList = GetFileList(id),
+                MediaTypeList = new Collection<string> { "images", "videos", "music", "pictures", "shapes", "sounds" }
+            };
+
+            return Json(vm, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpGet]
         public PartialViewResult GetResidentEditView(int id)
         {
             return PartialView("_ResidentEdit", LoadResidentEditViewModel(id));
@@ -75,10 +87,6 @@ namespace Keebee.AAT.Administrator.Controllers
         [HttpPost]
         public JsonResult Delete(int id)
         {
-            var profile = _opsClient.GetResidentProfile(id);
-            if (profile.Id != ProfileId.Generic)
-                _opsClient.DeleteProfile(profile.Id);
-
             _opsClient.DeleteResident(id);
 
             return Json(new
@@ -118,11 +126,9 @@ namespace Keebee.AAT.Administrator.Controllers
                 .Select(resident => new ResidentViewModel
                 {
                     Id = resident.Id,
-                    ProfileId = resident.Profile.Id > 0 ? resident.Profile.Id : 0,
                     FirstName = resident.FirstName,
                     LastName = resident.LastName,
                     Gender = resident.Gender,
-                    HasProfile = resident.Profile.Id != ProfileId.Generic,
                     DateCreated = resident.DateCreated,
                     DateUpdated = resident.DateUpdated,
                 }).OrderBy(x => x.Id);
@@ -154,6 +160,30 @@ namespace Keebee.AAT.Administrator.Controllers
             var id = _opsClient.PostResident(r);
 
             return id;
+        }
+
+        private IEnumerable<MediaFileViewModel> GetFileList(int id)
+        {
+            var list = new List<MediaFileViewModel>();
+            var media = _opsClient.GetMediaFilesForPath($"{id}").ToArray();
+
+            foreach (var m in media)
+            {
+                foreach (var file in m.Files.OrderBy(o => o.Filename))
+                {
+                    list.Add(new MediaFileViewModel
+                    {
+                        StreamId = file.StreamId,
+                        IsFolder = file.IsFolder,
+                        Filename = file.Filename,
+                        FileType = file.FileType,
+                        FileSize = file.FileSize,
+                        Path = m.Path
+                    });
+                }
+            }
+
+            return list;
         }
     }
 }

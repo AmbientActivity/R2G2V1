@@ -65,7 +65,7 @@ namespace Keebee.AAT.Display
         private ActiveConfigDetail _activeConfigDetail;
 
         // active profile
-        private ActiveProfile _activeProfile;
+        private ActiveResident _activeResident;
 
         // flags
         private bool _isNewResponse;
@@ -221,8 +221,9 @@ namespace Keebee.AAT.Display
             // if it is a new activity/response type then execute it
             if (_isNewResponse) return true;
 
-            // if it is a media player response type then execute it
-            return (responseTypeId == ResponseTypeId.Television) || (responseTypeId == ResponseTypeId.Radio); 
+            // if it is a media player or caregiver response type then execute it
+            return (responseTypeId == ResponseTypeId.Television)
+                || (responseTypeId == ResponseTypeId.Radio); 
         }
 
         private void StopCurrentResponse()
@@ -259,7 +260,7 @@ namespace Keebee.AAT.Display
 
         private string[] GetFiles(string fileType = null)
         {
-            var media = _opsClient.GetMediaFilesForPath(GetMediaPath(_activeProfile.Id)).Single();
+            var media = _opsClient.GetMediaFilesForPath(GetMediaPath(_activeResident.Id)).Single();
 
             var files = media.Files
                     .Where(x => x.FileType == fileType || fileType == null)
@@ -270,7 +271,7 @@ namespace Keebee.AAT.Display
             if (media.Files.Any()) return files;
 
             // if no media found, load generic content
-            media = _opsClient.GetMediaFilesForPath(GetMediaPath(ProfileId.Generic)).Single();
+            media = _opsClient.GetMediaFilesForPath(GetMediaPath(GenericMedia.Id)).Single();
 
             files = media.Files
                 .Where(x => x.FileType == fileType || fileType == null)
@@ -412,7 +413,7 @@ namespace Keebee.AAT.Display
                 slideViewerFlash1.Show();
                 slideViewerFlash1.Play(images);
 
-                _activityEventLogger.Add(_activeProfile.ConfigId, _activeConfigDetail.Id, _activeProfile.ResidentId);
+                _activityEventLogger.Add(_activeResident.ConfigId, _activeConfigDetail.Id, _activeResident.Id);
 
                 _currentResponseTypeId = ResponseTypeId.SlidShow;
             }
@@ -434,10 +435,10 @@ namespace Keebee.AAT.Display
 
                 matchingGame1.Show();
 
-                _activityEventLogger.Add(_activeProfile.ConfigId, _activeConfigDetail.Id, _activeProfile.ResidentId);
-                _gameEventLogger.Add(_activeProfile.ResidentId, GameTypeId.MatchThePictures, _activeProfile.GameDifficultyLevel, null, "New game has been initiated");
+                _activityEventLogger.Add(_activeResident.ConfigId, _activeConfigDetail.Id, _activeResident.Id);
+                _gameEventLogger.Add(_activeResident.Id, GameTypeId.MatchThePictures, _activeResident.GameDifficultyLevel, null, "New game has been initiated");
 
-                matchingGame1.Play(shapes, _activeProfile.GameDifficultyLevel, true);
+                matchingGame1.Play(shapes, _activeResident.GameDifficultyLevel, true);
 
                 _currentResponseTypeId = ResponseTypeId.MatchingGame;
             }
@@ -471,14 +472,14 @@ namespace Keebee.AAT.Display
                 var frmSplash = new Caregiver.Splash();
                 frmSplash.Show();
 
-                var genericMedia = _opsClient.GetMediaFilesForPath($@"Profiles\{ProfileId.Generic}");
-                var profile = _opsClient.GetGenericProfile();
+                var genericMedia = _opsClient.GetMediaFilesForPath($@"{MediaPath.Profiles}\{GenericMedia.Id}");
+                var config = _opsClient.GetActiveConfigDetails();
 
                 _caregiverInterface = new CaregiverInterface
                                          {
                                             EventLogger = _systemEventLogger,
                                             OperationsClient = _opsClient,
-                                            GenericProfile = profile,
+                                            Config = config,
                                             MediaList = genericMedia
                 };
 
@@ -529,12 +530,11 @@ namespace Keebee.AAT.Display
                 var serializer = new JavaScriptSerializer();
                 var response = serializer.Deserialize<ResponseMessage>(e.MessageBody);
 
-                _isNewResponse =
-                    (response.ActiveConfigDetail.Id != _activeConfigDetail?.Id) ||
-                    (response.ActiveProfile.Id != _activeProfile?.Id) ||
-                    (response.ActiveProfile.ResidentId != _activeProfile?.ResidentId);
+                _isNewResponse = 
+                     (response.ActiveConfigDetail.ResponseTypeId != _currentResponseTypeId) ||
+                     (response.ActiveResident.Id != _activeResident?.Id);
 
-                _activeProfile = response.ActiveProfile;
+                _activeResident = response.ActiveResident;
                 _activeConfigDetail = response.ActiveConfigDetail;
 
                 ExecuteResponse(response.ActiveConfigDetail.ResponseTypeId, response.SensorValue, response.IsSystem);
@@ -577,7 +577,7 @@ namespace Keebee.AAT.Display
             try
             {
                 var args = (MatchingGame.LogGameEventEventArgs)e;
-                _gameEventLogger.Add(_activeProfile.ResidentId, args.GameTypeId, args.DifficultyLevel, args.Success, args.Description);
+                _gameEventLogger.Add(_activeResident.Id, args.GameTypeId, args.DifficultyLevel, args.Success, args.Description);
             }
             catch (Exception ex)
             {
@@ -605,7 +605,7 @@ namespace Keebee.AAT.Display
             try
             {
                 var args = (MediaPlayer.LogVideoActivityEventEventArgs)e;
-                _activityEventLogger.Add(_activeProfile.ConfigId, _activeConfigDetail.Id, _activeProfile.ResidentId, args.Description);
+                _activityEventLogger.Add(_activeResident.ConfigId, _activeConfigDetail.Id, _activeResident.Id, args.Description);
             }
             catch (Exception ex)
             {
@@ -618,7 +618,6 @@ namespace Keebee.AAT.Display
             try
             {
                 ResumeAmbient();
-                _isNewResponse = true;
             }
             catch (Exception ex)
             {

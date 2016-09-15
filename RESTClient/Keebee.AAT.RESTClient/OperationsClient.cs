@@ -30,11 +30,10 @@ namespace Keebee.AAT.RESTClient
 
         IEnumerable<Resident> GetResidents();
         Resident GetResident(int residentId);
-        Profile GetResidentProfile(int residentId);
+        Resident GetGenericDetails();
         Resident GetResidentByNameGender(string firstName, string lastName, string gender);
-        bool ResidentProfileExists(int residentId);
-        Profile GetGenericProfile();
-        
+        bool ResidentExists(int residentId);
+
         // media
         MediaFileSingle GetMediaFile(Guid streamId);
         IEnumerable<Media> GetMediaFilesForPath(string path);
@@ -65,7 +64,6 @@ namespace Keebee.AAT.RESTClient
         void DeleteConfigDetail(int configDetailId);
 
         void DeleteResident(int residentId);
-        void DeleteProfile(int profileId);
         void DeleteActivityEventLogsForResident(int residentId);
         void DeleteGameEventLogsForResident(int residentId);
         void DeleteRfidEventLogsForResident(int residentId);
@@ -97,14 +95,8 @@ namespace Keebee.AAT.RESTClient
         // residents
         private const string UrlResidents = "residents";
         private const string UrlResident = "residents/{0}";
-        private const string UrlResidentDetails = "residents/{0}/details";
+        private const string UrlGenericDetails = "residents/generic";
         private const string UrlResidentByNameGender = "residents?firstName={0}&lastName={1}&gender={2}";
-        private const string UrlResidentProfile = "residents/{0}/profile";
-
-        // profiles
-        private const string UrlProfiles = "profiles";
-        private const string UrlProfile = "profiles/{0}";
-        private const string UrlProfileDetails = "profiles/{0}/details";
 
         // media files
         private const string UrlMediaFile = "mediafiles/{0}";
@@ -281,9 +273,9 @@ namespace Keebee.AAT.RESTClient
             return resident;
         }
 
-        public Resident GetResidentDetails(int residentId)
+        public Resident GetGenericDetails()
         {
-            var data = Get(string.Format(UrlResidentDetails, residentId));
+            var data = Get(string.Format(UrlGenericDetails));
             if (data == null) return null;
 
             var serializer = new JavaScriptSerializer();
@@ -303,56 +295,10 @@ namespace Keebee.AAT.RESTClient
             return resident;
         }
 
-        public Profile GetResidentProfile(int residentId)
+        public bool ResidentExists(int residentId)
         {
-            var data = Get(string.Format(UrlResidentProfile, residentId));
-            if (data == null) return null;
-
-            var serializer = new JavaScriptSerializer();
-            var profile = serializer.Deserialize<Profile>(data);
-
-            return profile;
+            return Exists(string.Format(UrlResident, residentId));
         }
-
-        public bool ResidentProfileExists(int residentId)
-        {
-            return Exists(string.Format(UrlResidentProfile, residentId));
-        }
-
-        public IEnumerable<Profile> GetProfiles()
-        {
-            var data = Get(UrlProfiles);
-            if (data == null) return null;
-
-            var serializer = new JavaScriptSerializer();
-            var profiles = serializer.Deserialize<ProfileList>(data).Profiles;
-
-            return profiles;
-        }
-
-        public Profile GetProfile(int profileId)
-        {
-            var data = Get(string.Format(UrlProfile, profileId));
-            if (data == null) return null;
-
-            var serializer = new JavaScriptSerializer();
-            var profile = serializer.Deserialize<Profile>(data);
-
-            return profile;
-        }
-
-        public Profile GetGenericProfile()
-        {
-            var data = Get(string.Format(UrlProfileDetails, ProfileId.Generic));
-            if (data == null) return null;
-
-            var serializer = new JavaScriptSerializer();
-            var profile = serializer.Deserialize<Profile>(data);
-            profile.ResidentId = 0;
-
-            return profile;
-        }
-
 
         // media
         public IEnumerable<ActivityEventLog> GetActivityEventLogsForDate(string date)
@@ -533,11 +479,6 @@ namespace Keebee.AAT.RESTClient
         public void DeleteResident(int residentId)
         {
             Delete(string.Format(UrlResident, residentId));
-        }
-
-        public void DeleteProfile(int profileId)
-        {
-            Delete(string.Format(UrlProfile, profileId));
         }
 
         public void DeleteActivityEventLogsForResident(int residentId)

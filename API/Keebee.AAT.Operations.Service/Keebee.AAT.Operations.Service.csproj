@@ -73,7 +73,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="FileManagement\ProfileManager.cs" />
+    <Compile Include="FileManagement\FileManager.cs" />
     <Compile Include="KeebeeClient.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -89,7 +89,6 @@
     <Compile Include="Services\GameEventLogService.cs" />
     <Compile Include="Services\MediaFileService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Services\ProfileService.cs" />
     <Compile Include="Services\ResidentService.cs" />
     <Compile Include="Services\ResponseTypeService.cs" />
     <Compile Include="Services\RfidEventLogService.cs" />

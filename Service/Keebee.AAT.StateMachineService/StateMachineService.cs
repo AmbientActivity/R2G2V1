@@ -31,7 +31,7 @@ namespace Keebee.AAT.StateMachineService
         private bool _reloadActiveConfig = true;
 
         // active profile
-        private Profile _activeProfile;
+        private Resident _activeResident;
 
         // display state
         private bool _displayIsActive;
@@ -60,7 +60,7 @@ namespace Keebee.AAT.StateMachineService
             while (true)
             {
                 // only execute if the display is active and the current active profile is "Generic"
-                if (_displayIsActive && _activeProfile?.ResidentId == 0)
+                if (_displayIsActive && _activeResident?.Id == 0)
                 {
                     var req = (HttpWebRequest)WebRequest.Create(UrlKeepAlive);
                     var response = (HttpWebResponse)req.GetResponse();
@@ -120,6 +120,9 @@ namespace Keebee.AAT.StateMachineService
         {
             try
             {
+                if (_activeResident == null)
+                    _activeResident = _opsClient.GetGenericDetails();
+
                 if (_reloadActiveConfig || _activeConfig == null)
                 {
                     _activeConfig = _opsClient.GetActiveConfigDetails();
@@ -145,13 +148,12 @@ namespace Keebee.AAT.StateMachineService
                             ResponseTypeId = configDetail.ResponseType.Id,
                             IsSystem = configDetail.ResponseType.IsSystem
                         },
-                    
-                    ActiveProfile = new ActiveProfile
+
+                    ActiveResident = new ActiveResident
                         {
-                            Id = _activeProfile.Id,
+                            Id = _activeResident.Id,
                             ConfigId = _activeConfig.Id,
-                            ResidentId = _activeProfile.ResidentId,
-                            GameDifficultyLevel = _activeProfile.GameDifficultyLevel
+                            GameDifficultyLevel = _activeResident.GameDifficultyLevel
                         }
                 };
 
@@ -207,16 +209,16 @@ namespace Keebee.AAT.StateMachineService
 
                 if (residentId > 0)
                 {
-                    if (_activeProfile?.ResidentId == residentId) return;
-                    _activeProfile = _opsClient.GetResidentProfile(residentId);
-                    LogRfidEvent(residentId, "New active profile");
+                    if (_activeResident?.Id == residentId) return;
+                    _activeResident = _opsClient.GetResident(residentId);
+                    LogRfidEvent(residentId, "New active resident");
                 }
                 else
                 {
-                    if (_activeProfile?.ResidentId == 0) return;
-                    _activeProfile = _opsClient.GetGenericProfile();
+                    if (_activeResident?.Id == 0) return;
+                    _activeResident = _opsClient.GetGenericDetails();
 
-                    LogRfidEvent(-1, "Active profile is generic");
+                    LogRfidEvent(-1, "Active resident is generic");
 
                 }
             }
@@ -248,8 +250,8 @@ namespace Keebee.AAT.StateMachineService
 
                 if (!_displayIsActive) return;
 
-                if (_activeProfile == null)
-                    _activeProfile = _opsClient.GetGenericProfile();
+                if (_activeResident == null)
+                    _activeResident = _opsClient.GetGenericDetails();
             }
             catch (Exception ex)
             {

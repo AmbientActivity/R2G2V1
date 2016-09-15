@@ -13,20 +13,19 @@ namespace Keebee.AAT.DataAccess
 
             builder.EntitySet<Config>("Configs");
             builder.EntitySet<ConfigDetail>("ConfigDetails");
-            builder.EntitySet<Resident>("Residents");
-            builder.EntitySet<Profile>("Profiles");
             builder.EntitySet<PhidgetStyleType>("PhidgetStyleTypes");
             builder.EntitySet<PhidgetType>("PhidgetTypes");
             builder.EntitySet<ResponseType>("ResponseTypes");
             builder.EntitySet<ResponseTypeCategory>("ResponseTypeCategories");
             builder.EntitySet<GameType>("GameTypes");
-            builder.EntitySet<Caregiver>("Caregivers");
-            builder.EntitySet<User>("Users");
             builder.EntitySet<ActivityEventLog>("ActivityEventLogs");
             builder.EntitySet<GameEventLog>("GameEventLogs");
             builder.EntitySet<RfidEventLog>("RfidEventLogs");
             builder.EntitySet<MediaFile>("MediaFiles");
             builder.EntitySet<MediaFileStream>("MediaFileStreams");
+            builder.EntitySet<Resident>("Residents");
+            builder.EntitySet<Caregiver>("Caregivers");
+            builder.EntitySet<User>("Users");
 
             config.MapODataServiceRoute("odata", "odata", builder.GetEdmModel());
         }

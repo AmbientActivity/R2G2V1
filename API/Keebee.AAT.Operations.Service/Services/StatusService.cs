@@ -15,7 +15,7 @@ namespace Keebee.AAT.Operations.Service.Services
         {
             var container = new Container(new Uri(ODataHost.Url));
             // keep the state machine service responsive for when a new rfid gets read
-            return container.Profiles.Count();
+            return container.Configs.Count();
         }
     }
 }

@@ -130,13 +130,6 @@ namespace Keebee.AAT.DataAccess.Controllers
             return StatusCode(HttpStatusCode.NoContent);
         }
 
-        // GET: odata/Residents(5)/Profile
-        [EnableQuery(MaxExpansionDepth = 4)]
-        public SingleResult<Profile> GetProfile([FromODataUri] int key)
-        {
-            return SingleResult.Create(db.Residents.Where(m => m.Id == key).Select(m => m.Profile));
-        }
-
         protected override void Dispose(bool disposing)
         {
             if (disposing)

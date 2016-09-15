@@ -6,24 +6,24 @@ using System.IO;
 
 namespace Keebee.AAT.Operations.Service.FileManagement
 {
-    public class ProfileManager
+    public class FileManager
     {
         private readonly SystemEventLogger _systemEventLogger;
 
-        public ProfileManager()
+        public FileManager()
         {
             _systemEventLogger = new SystemEventLogger(SystemEventLogType.FileManager);
         }
       
-        public void CreateFolders(int profileId)
+        public void CreateFolders(int residentId)
         {
             try
             {
-                var profilePath = $@"\\{Environment.MachineName}\{MediaPath.MediaRoot}\{MediaPath.Profiles}\{profileId}";
+                var mediaPath = $@"\\{Environment.MachineName}\{MediaPath.MediaRoot}\{MediaPath.Profiles}\{residentId}";
 
-                if (!Directory.Exists(profilePath))
+                if (!Directory.Exists(mediaPath))
                 {
-                    var dirInfo = new DirectoryInfo(profilePath);
+                    var dirInfo = new DirectoryInfo(mediaPath);
 
                     dirInfo.CreateSubdirectory(MediaPath.Images);
                     dirInfo.CreateSubdirectory(MediaPath.Videos);
@@ -39,11 +39,11 @@ namespace Keebee.AAT.Operations.Service.FileManagement
             }
         }
 
-        public void DeleteFolders(int profileId)
+        public void DeleteFolders(int residentId)
         {
             try
             {
-                var profilePath = $@"\\{Environment.MachineName}\{MediaPath.MediaRoot}\{MediaPath.Profiles}\{profileId}";
+                var profilePath = $@"\\{Environment.MachineName}\{MediaPath.MediaRoot}\{MediaPath.Profiles}\{residentId}";
 
                 if (Directory.Exists(profilePath))
                 {

@@ -12,7 +12,9 @@ namespace Keebee.AAT.Administrator.ViewModels
 
     public class MediaFileViewModel
     {
+        public string Title { get; set; }
         public Guid StreamId { get; set; }
+        public int ResidentId { get; set; }
         public bool IsFolder { get; set; }
         public string Filename { get; set; }
         public string FileType { get; set; }

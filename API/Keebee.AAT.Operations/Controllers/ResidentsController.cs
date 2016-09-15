@@ -1,9 +1,10 @@
 ﻿using Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models;
 using Keebee.AAT.Operations.Service.Services;
+using Keebee.AAT.Operations.Service.FileManagement;
+using Keebee.AAT.Shared;
 using System.Collections.ObjectModel;
 using System.Collections.Generic;
 using System.Dynamic;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Helpers;
@@ -44,16 +45,9 @@ namespace Keebee.AAT.Operations.Controllers
                     x.FirstName,
                     x.LastName,
                     x.Gender,
+                    x.GameDifficultyLevel,
                     x.DateCreated,
-                    x.DateUpdated,
-                    Profile = new
-                    {
-                        x.Profile.Id,
-                        x.Profile.Description,
-                        x.Profile.GameDifficultyLevel,
-                        x.Profile.DateCreated,
-                        x.Profile.DateUpdated,
-                    }
+                    x.DateUpdated
                 });
 
             return new DynamicJsonObject(exObj);
@@ -74,20 +68,13 @@ namespace Keebee.AAT.Operations.Controllers
 
             dynamic exObj = new ExpandoObject();
             exObj.Id = resident.Id;
-            exObj.ProfileId = resident.ProfileId;
             exObj.FirstName = resident.FirstName;
             exObj.LastName = resident.LastName;
             exObj.Gender = resident.Gender;
+            exObj.GameDifficultyLevel = resident.GameDifficultyLevel;
             exObj.DateCreated = resident.DateCreated;
             exObj.DateUpdated = resident.DateUpdated;
-            exObj.Profile = new
-                {
-                    resident.Profile.Id,
-                    resident.Profile.Description,
-                    resident.Profile.GameDifficultyLevel,
-                    resident.Profile.DateCreated,
-                    resident.Profile.DateUpdated
-            };
+
             return new DynamicJsonObject(exObj);
         }
 
@@ -105,160 +92,54 @@ namespace Keebee.AAT.Operations.Controllers
 
             dynamic exObj = new ExpandoObject();
             exObj.Id = resident.Id;
-            exObj.ProfileId = resident.ProfileId;
             exObj.FirstName = resident.FirstName;
             exObj.LastName = resident.LastName;
             exObj.Gender = resident.Gender;
+            exObj.GameDifficultyLevel = resident.GameDifficultyLevel;
             exObj.DateCreated = resident.DateCreated;
             exObj.DateUpdated = resident.DateUpdated;
             return new DynamicJsonObject(exObj);
         }
 
-        [Route("details")]
         [HttpGet]
-        public async Task<DynamicJsonObject> GetDetails()
+        [Route("generic")]
+        public async Task<DynamicJsonObject> GetGeneric()
         {
-            IEnumerable<Resident> residents = new Collection<Resident>();
+            var configuration = new Config();
 
             await Task.Run(() =>
             {
-                residents = _residentService.Get();
+                configuration = _configurationService.GetActiveDetails();
             });
 
-            if (residents == null) return new DynamicJsonObject(new ExpandoObject());
-
-            var configuration = _configurationService.GetActiveDetails();
+            if (configuration == null) return new DynamicJsonObject(new ExpandoObject());
 
             dynamic exObj = new ExpandoObject();
-            exObj.Residents = residents
-                .Select(resident => new
-                {
-                    resident.Id,
-                    resident.FirstName,
-                    resident.LastName,
-                    Profile = new
-                    {
-                        Id = resident.ProfileId,
-                        ResidentId = resident.Id,
-                        resident.Profile.GameDifficultyLevel,
-                        ConfigDetails = configuration
-                        .ConfigDetails.Select(detail => new
-                        {
-                            ResponseType = new
-                            {
-                                detail.ResponseType.Id,
-                                detail.ResponseType.Description,
-                                detail.ResponseType.IsInteractive
-                            }
-                        })
-                    }
-        });
-
-            return new DynamicJsonObject(exObj);
-        }
-
-        [HttpGet]
-        [Route("{id}/details")]
-        public async Task<DynamicJsonObject> GetDetails(int id)
-        {
-            var resident = new Resident();
-
-            await Task.Run(() =>
+            exObj.Id = GenericMedia.Id;
+            exObj.FirstName = GenericMedia.Description;
+            exObj.GameDifficultyLevel = 1;
+            exObj.ConfigDetails = configuration.ConfigDetails.Select(detail => new
             {
-                resident = _residentService.Get(id);
-            });
-
-            if (resident == null) return new DynamicJsonObject(new ExpandoObject());
-            var configuration = _configurationService.GetActiveDetails();
-
-            dynamic exObj = new ExpandoObject();
-            exObj.Id = resident.Id;
-            exObj.ProfileId = resident.ProfileId;
-            exObj.FirstName = resident.FirstName;
-            exObj.LastName = resident.LastName;
-            exObj.Gender = resident.Gender;
-            exObj.DateCreated = resident.DateCreated;
-            exObj.DateUpdated = resident.DateUpdated;
-            exObj.Profile = new
-            {
-                resident.Profile.Id,
-                resident.Profile.Description,
-                resident.Profile.GameDifficultyLevel,
-                resident.Profile.DateCreated,
-                resident.Profile.DateUpdated,
-                ConfigDetails = configuration
-                        .ConfigDetails.Select(detail => new
-                        {
-                            ResponseType = new
-                            {
-                                detail.ResponseType.Id,
-                                detail.ResponseType.Description,
-                                detail.ResponseType.IsInteractive
-                            }
-                        })
-            };
-            return new DynamicJsonObject(exObj);
-        }
-
-        [Route("{id}/profile")]
-        [HttpGet]
-        public async Task<DynamicJsonObject> GetProfile(int id)
-        {
-            var profile = new Profile();
-
-            await Task.Run(() =>
-            {
-                profile = _residentService.Get(id).Profile;
-            });
-
-            if (profile == null) return new DynamicJsonObject(new ExpandoObject());
-
-            dynamic exObj = new ExpandoObject();
-            exObj.Id = profile.Id;
-            exObj.ResidentId = id;
-            exObj.Description = profile.Description;
-            exObj.GameDifficultyLevel = profile.GameDifficultyLevel;
-            exObj.DateCreated = profile.DateCreated;
-            exObj.DateUpdated = profile.DateUpdated;
-
-            return new DynamicJsonObject(exObj);
-        }
-
-        [Route("{id}/profile/details")]
-        [HttpGet]
-        public async Task<DynamicJsonObject> GetProfileDetails(int id)
-        {
-            var profile = new Profile();
-
-            await Task.Run(() =>
-            {
-                profile = _residentService.Get(id).Profile;
-            });
-
-            if (profile == null) return new DynamicJsonObject(new ExpandoObject());
-
-            var configuration = _configurationService.GetDetailsForProfile(profile.Id);
-
-            dynamic exObj = new ExpandoObject();
-            exObj.Id = profile.Id;
-            exObj.Description = profile.Description;
-            exObj.GameDifficultyLevel = profile.GameDifficultyLevel;
-            exObj.DateCreated = profile.DateCreated;
-            exObj.DateUpdated = profile.DateUpdated;
-            exObj.ConfigDetails = configuration.ConfigDetails.Select(c => new 
-            {
-                c.Id,
-                c.ConfigId,
                 PhidgetType = new
                 {
-                    c.PhidgetType.Id,
-                    c.PhidgetType.Description
+                    detail.PhidgetType.Id,
+                    detail.PhidgetType.Description,
+                    PhidgetStyleType = new
+                    {
+                        detail.PhidgetStyleType.Id,
+                        detail.PhidgetStyleType.Description
+                    }
                 },
                 ResponseType = new
                 {
-                    c.ResponseType.Id,
-                    c.ResponseType.Description,
-                    c.ResponseType.IsInteractive
+                    detail.ResponseType.Id,
+                    detail.ResponseType.Description,
+                    detail.ResponseType.IsInteractive,
+                    ResponseCategoryType = new
+                    {
+                        detail.ResponseType.ResponseTypeCategory.Id,
+                        detail.ResponseType.ResponseTypeCategory.Description
+                    }
                 }
             });
 
@@ -271,7 +152,12 @@ namespace Keebee.AAT.Operations.Controllers
         {
             var serializer = new JavaScriptSerializer();
             var resident = serializer.Deserialize<Resident>(value);
-            return _residentService.Post(resident);
+            var residentId = _residentService.Post(resident);
+
+            var fileManager = new FileManager();
+            fileManager.CreateFolders(residentId);
+
+            return residentId;
         }
 
         // PATCH: api/Residents/5

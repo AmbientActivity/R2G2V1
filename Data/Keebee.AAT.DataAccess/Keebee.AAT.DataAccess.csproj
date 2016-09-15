@@ -133,7 +133,6 @@
     <Compile Include="Controllers\ActivityEventLogsController.cs" />
     <Compile Include="Controllers\GameEventLogsController.cs" />
     <Compile Include="Controllers\MediaFilesController.cs" />
-    <Compile Include="Controllers\ProfilesController.cs" />
     <Compile Include="Controllers\ResidentsController.cs" />
     <Compile Include="Controllers\ResponseTypesController.cs" />
     <Compile Include="Controllers\RfidEventLogsController.cs" />
@@ -152,7 +151,6 @@
     <Compile Include="Models\MediaFile.cs" />
     <Compile Include="Models\ActivityEventLogs.cs" />
     <Compile Include="Models\KeebeeAATContext.cs" />
-    <Compile Include="Models\Profile.cs" />
     <Compile Include="Models\Resident.cs" />
     <Compile Include="Models\ResponseType.cs" />
     <Compile Include="Models\ResponseTypeCategory.cs" />

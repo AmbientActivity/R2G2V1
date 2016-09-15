@@ -92,7 +92,7 @@ namespace Keebee.AAT.RfidReaderService
                 var residentId = GetResidentId();
                 if (residentId < 0) continue;
 
-                if ((residentId > 0) && _opsClient.ResidentProfileExists(residentId))
+                if ((residentId > 0) && _opsClient.ResidentExists(residentId))
                 {
 #if DEBUG
                     if (_readerMonitorIsActive)

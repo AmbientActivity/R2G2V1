@@ -50,7 +50,6 @@
     <Compile Include="DTO\ResponseType.cs" />
     <Compile Include="DTO\ActivityEventLog.cs" />
     <Compile Include="DTO\GameEventLog.cs" />
-    <Compile Include="DTO\Profile.cs" />
     <Compile Include="DTO\ConfigDetail.cs" />
     <Compile Include="DTO\Resident.cs" />
     <Compile Include="DTO\ResponseTypeCategory.cs" />

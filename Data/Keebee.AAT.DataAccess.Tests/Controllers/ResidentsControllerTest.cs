@@ -29,7 +29,6 @@ namespace Keebee.AAT.DataAccess.Tests.Controllers
 
             // Act
             var profile = _container.Residents.ByKey(residentId)
-                .Profile
                 .GetValue();
 
             // Assert
@@ -66,7 +65,6 @@ namespace Keebee.AAT.DataAccess.Tests.Controllers
             // Act
             var result = await _client.For<Resident>()
                 .Key(residentId)
-                .NavigateTo(x => x.Profile)
                 .FindEntriesAsync();
 
             var resident = result.Single();

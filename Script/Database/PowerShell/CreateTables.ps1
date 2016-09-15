@@ -1,7 +1,7 @@
 ﻿$server = $env:COMPUTERNAME + "\SQLEXPRESS"
 $database = "KeebeeAAT"
 $path = "C:\Users\" + $env:USERNAME + "\Source\Repos\R2G2V1\Script\Database\SQL Server\"
-$url = "http://localhost/Keebee.AAT.Operations/api/Profiles"
+$url = "http://localhost/Keebee.AAT.Operations/api/Configs"
 
 Write-Host "Dropping tables...” -NoNewline
 $queryFile = $path + "DropAll.sql"

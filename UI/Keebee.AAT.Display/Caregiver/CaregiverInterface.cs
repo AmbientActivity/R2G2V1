@@ -46,23 +46,24 @@ namespace Keebee.AAT.Display.Caregiver
             set { _opsClient = value; }
         }
 
-        private Profile _genericProfile;
-        public Profile GenericProfile
-        {
-            set { _genericProfile = value; }
-        }
-
         private IEnumerable<Media> _mediaList;
         public IEnumerable<Media> MediaList
         {
             set { _mediaList = value; }
         }
 
+        private Config _config;
+        public Config Config
+        {
+            set { _config = value; }
+        }
+
+        private Resident _resident;
+
         private const string PlaylistCaregiver = "caregiver";
         private IWMPPlaylist _playlist;
         private int _currentMusicIndex;
 
-        private Resident _resident;
         private int _currentResidentId = -1;
         private string[] _currentImageFiles;
         private string[] _currentPictureFiles;
@@ -79,7 +80,6 @@ namespace Keebee.AAT.Display.Caregiver
 
         private const int ListViewIActivitiesColumnDifficultyLevel = 1;
         private const int ListViewIActivitiesColumnName = 2;
-        private const int ListViewIActivitiesColumnResponseTypeId = 3;
 
         //TODO: find a way to compute these values dynamically
 #if DEBUG
@@ -135,6 +135,7 @@ namespace Keebee.AAT.Display.Caregiver
 #if !DEBUG
             _imageListMusic = imageListMusic;
 #endif
+            _resident = new Resident { Id = GenericMedia.Id, GameDifficultyLevel = 1 };
             ConfigureControls();
             ConfigureBackgroundWorkers();
             InitializeStartupPosition();
@@ -278,10 +279,10 @@ namespace Keebee.AAT.Display.Caregiver
 
         private void LoadResident(int residentId)
         {
-            _resident = _opsClient.GetResidentDetails(residentId);
-            _mediaList = _opsClient.GetMediaFilesForPath(_resident.Profile.Id > 0 
-                ? $@"{MediaPath.Profiles}\{_resident.Profile.Id}" 
-                : $@"{MediaPath.Profiles}\{ProfileId.Generic}");
+            _resident = _opsClient.GetResident(residentId);
+            _mediaList = _opsClient.GetMediaFilesForPath(_resident.Id > 0 
+                ? $@"{MediaPath.Profiles}\{_resident.Id}" 
+                : $@"{MediaPath.Profiles}\{GenericMedia.Id}");
         }
 
         private void LoadResidentDropDown()
@@ -291,7 +292,7 @@ namespace Keebee.AAT.Display.Caregiver
                 var residents = _opsClient.GetResidents().ToList();
                 var arrayList = new ArrayList();
 
-                var residentList = new List<Resident> { new Resident { Id = 0, FirstName = _genericProfile.Description } }
+                var residentList = new List<Resident> { new Resident { Id = GenericMedia.Id, FirstName = GenericMedia.Description } }
                     .Union(residents
                     .OrderBy(o => o.LastName).ThenBy(o => o.FirstName))
                     .ToArray();
@@ -458,22 +459,13 @@ namespace Keebee.AAT.Display.Caregiver
                 lvInteractiveResponses.Items.Clear();
 
                 var gameDifficulatyLevel = (residentId > 0)
-                    ? _resident
-                        .Profile.GameDifficultyLevel
-                    : _genericProfile.GameDifficultyLevel; 
+                    ? _resident.GameDifficultyLevel : 1;
 
-                var interactiveResponseTypes = (residentId > 0)
-                    ? _resident.Profile.ConfigDetails
-                        .Where(rt => rt.ResponseType.IsInteractive)
-                        .Select(rt => rt.ResponseType)
-                        .GroupBy(rt => rt.Id, (key, r) => r.FirstOrDefault())
-                        .ToArray()
-
-                    : _genericProfile.ConfigDetails
-                        .Where(rt => rt.ResponseType.IsInteractive)
-                        .Select(rt => rt.ResponseType)
-                        .GroupBy(rt => rt.Id, (key, r) => r.FirstOrDefault())
-                        .ToArray();
+                var interactiveResponseTypes = _config.ConfigDetails
+                    .Where(rt => rt.ResponseType.IsInteractive)
+                    .Select(rt => rt.ResponseType)
+                    .GroupBy(rt => rt.Id, (key, r) => r.FirstOrDefault())
+                    .ToArray();
 
                 var rowIndex = 0;
                 foreach (var rt in interactiveResponseTypes)
@@ -528,8 +520,7 @@ namespace Keebee.AAT.Display.Caregiver
             string[] files = null;
             try
             {
-                var profileId = _resident?.Profile.Id ?? ProfileId.Generic;
-                var media = _mediaList.Single(m => m.Path.Contains($@"{profileId}\{responseTypeCategory}"));
+                var media = _mediaList.Single(m => m.Path.Contains($@"{_resident.Id}\{responseTypeCategory}"));
 
                 if (streamId != null)
                 {
@@ -552,7 +543,7 @@ namespace Keebee.AAT.Display.Caregiver
             }
             catch (Exception ex)
             {
-                _systemEventLogger?.WriteEntry($"Caregiver.GetFiles: {ex.Message}", EventLogEntryType.Error);
+                _systemEventLogger?.WriteEntry($"Caregiver.GetFilePaths: {ex.Message}", EventLogEntryType.Error);
             }
 
             return files;
@@ -563,8 +554,7 @@ namespace Keebee.AAT.Display.Caregiver
             IEnumerable<MediaFile> files = null;
             try
             {
-                var profileId = _resident?.Profile.Id ?? ProfileId.Generic;
-                var media = _mediaList.Single(m => m.Path.Contains($@"{profileId}\{responseTypeCategory}"));
+                var media = _mediaList.Single(m => m.Path.Contains($@"{_resident.Id}\{responseTypeCategory}"));
 
                 files = media.Files
                     .Where(f => fileType == null || f.FileType == fileType)
@@ -576,7 +566,7 @@ namespace Keebee.AAT.Display.Caregiver
             }
             catch (Exception ex)
             {
-                _systemEventLogger?.WriteEntry($"Caregiver.GetFiles: {ex.Message}", EventLogEntryType.Error);
+                _systemEventLogger?.WriteEntry($"Caregiver.GetMediaFiles: {ex.Message}", EventLogEntryType.Error);
             }
 
             return files;

@@ -3,7 +3,7 @@ $database = "KeebeeAAT"
 $path = "C:\Users\" + $env:USERNAME + "\Source\Repos\R2G2V1\Script\Database\SQL Server\"
 
 # check if there are any profiles
-$query = Invoke-SqlQuery -Query "SELECT COUNT(*) AS ProfileCount FROM Profiles" -Server $server -Database $database
+$query = Invoke-SqlQuery -Query "SELECT COUNT(*) AS ConfigCount FROM Configs" -Server $server -Database $database
 $profileCount = $query.ProfileCount
 
 # if there's already data, don't rerun
@@ -21,8 +21,8 @@ else {
     Invoke-SqlQuery -File $queryFile -Server $server -Database $database
     Write-Host "done.`n”
 
-    Write-Host "Seeding startup profiles...” -NoNewline
-    $queryFile = $path + "7_SeedStartupProfiles.sql"
+    Write-Host "Seeding sample residents...” -NoNewline
+    $queryFile = $path + "7_SeedSampleResidents.sql"
     Invoke-SqlQuery -File $queryFile -Server $server -Database $database
     Write-Host "done.`n”
 

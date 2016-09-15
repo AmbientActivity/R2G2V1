@@ -14,7 +14,6 @@ IF OBJECT_ID('ResponseTypeCategories', 'U') IS NOT NULL DROP TABLE ResponseTypeC
 IF OBJECT_ID('PhidgetTypes', 'U') IS NOT NULL DROP TABLE PhidgetTypes
 IF OBJECT_ID('PhidgetStyleTypes', 'U') IS NOT NULL DROP TABLE PhidgetStyleTypes
 IF OBJECT_ID('Residents', 'U') IS NOT NULL DROP TABLE Residents
-IF OBJECT_ID('Profiles', 'U') IS NOT NULL DROP TABLE Profiles
 
 -- MediaFiles
 IF (EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'MediaFiles' AND TABLE_TYPE != 'VIEW'))

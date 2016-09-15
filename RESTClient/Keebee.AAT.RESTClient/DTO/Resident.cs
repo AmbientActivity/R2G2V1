@@ -10,9 +10,10 @@ namespace Keebee.AAT.RESTClient
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string Gender { get; set; }
+        public int GameDifficultyLevel { get; set; }
+        public IEnumerable<ConfigDetail> ConfigDetails { get; set; }
         public DateTime DateCreated { get; set; }
         public DateTime DateUpdated { get; set; }
-        public Profile Profile { get; set; }
     }
 
     public class ResidentEdit

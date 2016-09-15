@@ -26,10 +26,5 @@ else {
     Invoke-SqlQuery -File $queryFile -Server $server -Database $database
     Write-Host "done.`n”
 
-    Write-Host "Seeding profile responses...” -NoNewline
-    $queryFile = $path + "8_SeedResponses.sql"
-    Invoke-SqlQuery -File $queryFile -Server $server -Database $database
-    Write-Host "done.`n”
-
     Write-Host "Data seeded successfully!`n”
 }

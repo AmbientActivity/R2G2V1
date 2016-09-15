@@ -31,8 +31,6 @@ namespace Keebee.AAT.DataAccess.Models
 
         public DbSet<ResponseTypeCategory> ResponseTypeCategories { get; set; }
 
-        public DbSet<Response> Responses { get; set; }
-
         public DbSet<ActivityEventLog> ActivityEventLogs { get; set; }
 
         public DbSet<GameEventLog> GameEventLogs { get; set; }
@@ -41,13 +39,9 @@ namespace Keebee.AAT.DataAccess.Models
 
         public DbSet<GameType> GameTypes { get; set; }
 
-        public DbSet<PersonalPicture> PersonalPictures { get; set; }
-
         public DbSet<MediaFile> MediaFiles { get; set; }
 
         public DbSet<MediaFileStream> MediaFileStreams { get; set; }
-
-        public DbSet<AmbientResponse> AmbientResponses { get; set; }
 
         public DbSet<Caregiver> Caregivers { get; set; }
 

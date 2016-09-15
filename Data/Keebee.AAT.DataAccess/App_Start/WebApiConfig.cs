@@ -20,14 +20,11 @@ namespace Keebee.AAT.DataAccess
             builder.EntitySet<ResponseType>("ResponseTypes");
             builder.EntitySet<ResponseTypeCategory>("ResponseTypeCategories");
             builder.EntitySet<GameType>("GameTypes");
-            builder.EntitySet<Response>("Responses");
-            builder.EntitySet<AmbientResponse>("AmbientResponses");
             builder.EntitySet<Caregiver>("Caregivers");
             builder.EntitySet<User>("Users");
             builder.EntitySet<ActivityEventLog>("ActivityEventLogs");
             builder.EntitySet<GameEventLog>("GameEventLogs");
             builder.EntitySet<RfidEventLog>("RfidEventLogs");
-            builder.EntitySet<PersonalPicture>("PersonalPictures");
             builder.EntitySet<MediaFile>("MediaFiles");
             builder.EntitySet<MediaFileStream>("MediaFileStreams");
 

@@ -31,18 +31,24 @@ namespace Keebee.AAT.Operations.Controllers
             });
 
             if (media == null) return new DynamicJsonObject(new ExpandoObject());
+            if (!media.Any()) return new DynamicJsonObject(new ExpandoObject());
 
             dynamic exObj = new ExpandoObject();
 
-            exObj.Media = media.Select(m => new
-                            {
-                                m.StreamId,
-                                m.IsFolder,
-                                m.Filename,
-                                m.FileType,
-                                m.FileSize,
-                                m.Path
-                            });
+            exObj.Media = media.GroupBy(m => m.Path)
+                .Select(files => new { files.First().Path, Files = files })
+                .Select(x => new
+                {
+                    x.Path,
+                    Files = x.Files.Select(f => new
+                    {
+                                f.StreamId,
+                                f.IsFolder,
+                                f.Filename,
+                                f.FileType,
+                                f.FileSize
+                     })
+                });
 
             return new DynamicJsonObject(exObj);
         }
@@ -82,18 +88,24 @@ namespace Keebee.AAT.Operations.Controllers
             });
 
             if (media == null) return new DynamicJsonObject(new ExpandoObject());
+            if (!media.Any()) return new DynamicJsonObject(new ExpandoObject());
 
             dynamic exObj = new ExpandoObject();
 
-            exObj.Media = media.Select(m => new
-            {
-                m.StreamId,
-                m.IsFolder,
-                m.Filename,
-                m.FileType,
-                m.FileSize,
-                m.Path
-            });
+            exObj.Media = media.GroupBy(m => m.Path)
+                .Select(files => new { files.First().Path, Files = files })
+                .Select(x => new
+                {
+                    x.Path,
+                    Files = x.Files.Select(f => new
+                    {
+                        f.StreamId,
+                        f.IsFolder,
+                        f.Filename,
+                        f.FileType,
+                        f.FileSize
+                    })
+                });
 
             return new DynamicJsonObject(exObj);
         }
@@ -109,18 +121,24 @@ namespace Keebee.AAT.Operations.Controllers
             });
 
             if (media == null) return new DynamicJsonObject(new ExpandoObject());
+            if (!media.Any()) return new DynamicJsonObject(new ExpandoObject());
 
             dynamic exObj = new ExpandoObject();
 
-            exObj.Media = media.Select(m => new
-            {
-                m.StreamId,
-                m.IsFolder,
-                m.Filename,
-                m.FileType,
-                m.FileSize,
-                m.Path
-            });
+            exObj.Media = media.GroupBy(m => m.Path)
+                .Select(files => new { files.First().Path, Files = files })
+                .Select(x => new
+                {
+                    x.Path,
+                    Files = x.Files.Select(f => new
+                    {
+                        f.StreamId,
+                        f.IsFolder,
+                        f.Filename,
+                        f.FileType,
+                        f.FileSize
+                    })
+                });
 
             return new DynamicJsonObject(exObj);
         }
@@ -136,17 +154,18 @@ namespace Keebee.AAT.Operations.Controllers
             });
 
             if (media == null) return new DynamicJsonObject(new ExpandoObject());
+            if (!media.Any()) return new DynamicJsonObject(new ExpandoObject());
 
             dynamic exObj = new ExpandoObject();
 
-            exObj.Media = media.Select(m => new
+            exObj.Path = media.First().Path;
+            exObj.Files = media.Select(m => new
             {
                 m.StreamId,
                 m.IsFolder,
                 m.Filename,
                 m.FileType,
-                m.FileSize,
-                m.Path
+                m.FileSize
             });
 
             return new DynamicJsonObject(exObj);

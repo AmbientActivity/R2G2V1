@@ -91,7 +91,7 @@ namespace Keebee.AAT.Operations.Controllers
 
             if (profile == null) return new DynamicJsonObject(new ExpandoObject());
 
-            var config = _configService.GetMediaForProfile(profile.Id);
+            var config = _configService.GetDetailsForProfile(profile.Id);
 
             dynamic exObj = new ExpandoObject();
             exObj.Id = profile.Id;
@@ -127,7 +127,7 @@ namespace Keebee.AAT.Operations.Controllers
 
             if (profile == null) return new DynamicJsonObject(new ExpandoObject());
 
-            var config = _configService.GetMediaForProfile(profile.Id);
+            var config = _configService.GetDetailsForProfile(profile.Id);
 
             dynamic exObj = new ExpandoObject();
             exObj.Id = profile.Id;
@@ -149,77 +149,73 @@ namespace Keebee.AAT.Operations.Controllers
                     {
                         detail.ResponseType.Id,
                         detail.ResponseType.Description,
-                        detail.ResponseType.IsInteractive,
-                        Responses = detail.ResponseType.Responses
-                        .Where(x => x.ProfileId == profile.Id)
-                        .Select(response => new
-                        {
-                            response.Id,
-                            response.StreamId,
-                            Filename = response.MediaFile.Filename.Replace($".{response.MediaFile.FileType}", string.Empty),
-                            FilePath = Path.Combine(response.MediaFile.Path, response.MediaFile.Filename),
-                            response.MediaFile.FileType,
-                            response.MediaFile.FileSize
-                        })
-                    },
-                    
+                        detail.ResponseType.IsInteractive
+                        //MediaFiles = detail.ResponseType.MediaFiles
+                        //.Where(x => x.ProfileId == profile.Id)
+                        //.Select(mediaFile => new
+                        //{
+                        //    mediaFile.StreamId,
+                        //    Filename = mediaFile.Filename.Replace($".{mediaFile.FileType}", string.Empty),
+                        //    FilePath = Path.Combine(mediaFile.Path, mediaFile.Filename),
+                        //    mediaFile.FileType,
+                        //    mediaFile.FileSize
+                        //})
+                    }
                 });
 
             return new DynamicJsonObject(exObj);
         }
 
-        [Route("{id}/media")]
-        [HttpGet]
-        public async Task<DynamicJsonObject> GetWithMediaByCOnfigDetail(int id, int configDetailId)
-        {
-            Profile profile = new Profile();
+        //[Route("{id}/media")]
+        //[HttpGet]
+        //public async Task<DynamicJsonObject> GetWithMediaByConfigDetail(int id, int configDetailId)
+        //{
+        //    Profile profile = new Profile();
 
-            await Task.Run(() =>
-            {
-                profile = _profileService.Get(id);
-            });
+        //    await Task.Run(() =>
+        //    {
+        //        profile = _profileService.Get(id);
+        //    });
 
-            if (profile == null) return new DynamicJsonObject(new ExpandoObject());
+        //    if (profile == null) return new DynamicJsonObject(new ExpandoObject());
 
-            var config = _configService.GetMediaForProfileConfigDetail(profile.Id, configDetailId);
+        //    var config = _configService.GetMediaForProfileConfigDetail(profile.Id, configDetailId);
 
-            dynamic exObj = new ExpandoObject();
-            exObj.Id = profile.Id;
-            exObj.ResidentId = profile.ResidentId ?? 0;
-            exObj.Description = profile.Description;
-            exObj.GameDifficultyLevel = profile.GameDifficultyLevel;
-            exObj.ConfigDetails = config.ConfigDetails
-                .Select(detail => new
-                {
-                    detail.Id,
-                    detail.ConfigId,
-                    PhidgetType = new
-                    {
-                        detail.PhidgetType.Id,
-                        detail.PhidgetType.Description
-                    },
-                    ResponseType = new
-                    {
-                        detail.ResponseType.Id,
-                        detail.ResponseType.Description,
-                        detail.ResponseType.IsInteractive,
-                        Responses = detail.ResponseType.Responses
-                        .Where(x => x.ProfileId == profile.Id)
-                        .Select(response => new
-                        {
-                            response.Id,
-                            response.StreamId,
-                            Filename = response.MediaFile.Filename.Replace($".{response.MediaFile.FileType}", string.Empty),
-                            FilePath = Path.Combine(response.MediaFile.Path, response.MediaFile.Filename),
-                            response.MediaFile.FileType,
-                            response.MediaFile.FileSize
-                        })
-                    },
+        //    dynamic exObj = new ExpandoObject();
+        //    exObj.Id = profile.Id;
+        //    exObj.ResidentId = profile.ResidentId ?? 0;
+        //    exObj.Description = profile.Description;
+        //    exObj.GameDifficultyLevel = profile.GameDifficultyLevel;
+        //    exObj.ConfigDetails = config.ConfigDetails
+        //        .Select(detail => new
+        //        {
+        //            detail.Id,
+        //            detail.ConfigId,
+        //            PhidgetType = new
+        //            {
+        //                detail.PhidgetType.Id,
+        //                detail.PhidgetType.Description
+        //            },
+        //            ResponseType = new
+        //            {
+        //                detail.ResponseType.Id,
+        //                detail.ResponseType.Description,
+        //                detail.ResponseType.IsInteractive
+        //                //MediaFiles = detail.ResponseType.MediaFiles
+        //                //.Where(x => x.ProfileId == profile.Id)
+        //                //.Select(mediaFile => new
+        //                //{
+        //                //    mediaFile.StreamId,
+        //                //    Filename = mediaFile.Filename.Replace($".{mediaFile.FileType}", string.Empty),
+        //                //    FilePath = Path.Combine(mediaFile.Path, mediaFile.Filename),
+        //                //    mediaFile.FileType,
+        //                //    mediaFile.FileSize
+        //                //})
+        //            }
+        //        });
 
-                });
-
-            return new DynamicJsonObject(exObj);
-        }
+        //    return new DynamicJsonObject(exObj);
+        //}
 
         // POST: api/Profiles
         [HttpPost]

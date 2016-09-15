@@ -30,7 +30,6 @@ namespace Keebee.AAT.DataAccess.Tests.Controllers
             // Act
             var profile = _container.Residents.ByKey(residentId)
                 .Profile
-                //.Expand("ProfileDetails($expand=Activity($expand=PhidgetType),Response($expand=ResponseType,Responses))")
                 .GetValue();
 
             // Assert

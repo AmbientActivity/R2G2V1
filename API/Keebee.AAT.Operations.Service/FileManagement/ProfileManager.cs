@@ -14,33 +14,23 @@ namespace Keebee.AAT.Operations.Service.FileManagement
         {
             _systemEventLogger = new SystemEventLogger(SystemEventLogType.FileManager);
         }
-       
-        internal static class FolderName
-        {
-            public const string Images = "images";
-            public const string Videos = "videos";
-            public const string Music = "music";
-            public const string Pictures = "pictures";
-            public const string Shapes = "shapes";
-            public const string Sounds = "sounds";
-        }
-
+      
         public void CreateFolders(int profileId)
         {
             try
             {
-                var profilePath = $@"\\{Environment.MachineName}\{MediaPath.ProfileRoot}\{profileId}";
+                var profilePath = $@"\\{Environment.MachineName}\{MediaPath.MediaRoot}\{MediaPath.Profiles}\{profileId}";
 
                 if (!Directory.Exists(profilePath))
                 {
                     var dirInfo = new DirectoryInfo(profilePath);
 
-                    dirInfo.CreateSubdirectory(FolderName.Images);
-                    dirInfo.CreateSubdirectory(FolderName.Videos);
-                    dirInfo.CreateSubdirectory(FolderName.Music);
-                    dirInfo.CreateSubdirectory(FolderName.Pictures);
-                    dirInfo.CreateSubdirectory(FolderName.Shapes);
-                    dirInfo.CreateSubdirectory(FolderName.Sounds);
+                    dirInfo.CreateSubdirectory(MediaPath.Images);
+                    dirInfo.CreateSubdirectory(MediaPath.Videos);
+                    dirInfo.CreateSubdirectory(MediaPath.Music);
+                    dirInfo.CreateSubdirectory(MediaPath.Pictures);
+                    dirInfo.CreateSubdirectory(MediaPath.Shapes);
+                    dirInfo.CreateSubdirectory(MediaPath.Sounds);
                 }
             }
             catch (Exception ex)
@@ -53,7 +43,7 @@ namespace Keebee.AAT.Operations.Service.FileManagement
         {
             try
             {
-                var profilePath = $@"\\{Environment.MachineName}\{MediaPath.ProfileRoot}\{profileId}";
+                var profilePath = $@"\\{Environment.MachineName}\{MediaPath.MediaRoot}\{MediaPath.Profiles}\{profileId}";
 
                 if (Directory.Exists(profilePath))
                 {

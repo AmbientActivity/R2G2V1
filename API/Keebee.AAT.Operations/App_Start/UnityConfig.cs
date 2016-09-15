@@ -23,9 +23,6 @@ namespace Keebee.AAT.Operations
             container.RegisterType<IPhidgetStyleTypeService, PhidgetStyleTypeService>();
             container.RegisterType<IPhidgetTypeService, PhidgetTypeService>();
             container.RegisterType<IResponseTypeService, ResponseTypeService>();
-            container.RegisterType<IAmbientResponseService, AmbientResponseService>();
-            container.RegisterType<IResponseService, ResponseService>();
-            container.RegisterType<IPersonalPictureService, PersonalPictureService>();
             container.RegisterType<IActivityEventLogService, ActivityEventLogService>();
             container.RegisterType<IGameEventLogService, GameEventLogService>();
             container.RegisterType<IRfidEventLogService, RfidEventLogService>();

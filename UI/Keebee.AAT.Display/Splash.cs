@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 using AxWMPLib;
+using Keebee.AAT.Shared;
 using WMPLib;
 
 namespace Keebee.AAT.Display
@@ -67,13 +68,15 @@ namespace Keebee.AAT.Display
                 using (var mediaPlayer = new AxWindowsMediaPlayer())
                 {
                     Controls.Add(mediaPlayer);
+                    var media = _opsClient.GetMediaFilesForPath($@"{MediaPath.Ambient}\{MediaPath.Videos}").Single();
+                    var path = media.Path;
+                    var files = media.Files.ToArray();
 
-                    var responses = _opsClient.GetAmbientResponses();
-                    if (responses != null)
+                    if (files.Any())
                     {
-                        var ambientMediaFiles = responses
-                            .OrderBy(x => x.FilePath)
-                            .Select(x => x.FilePath)
+                        var ambientMediaFiles = files
+                            .OrderBy(x => x.Filename)
+                            .Select(x => $@"{path}{x.Filename}")
                             .ToArray();
 
                         if (ambientMediaFiles.Any())

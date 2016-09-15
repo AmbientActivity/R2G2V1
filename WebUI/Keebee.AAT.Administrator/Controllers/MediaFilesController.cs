@@ -26,17 +26,19 @@ namespace Keebee.AAT.Administrator.Controllers
         {
             var vm = new
             {
-                MediaFileList = GetMediaFileList(path)
+                Media = GetMedia(path)
             };
 
             return Json(vm, JsonRequestBehavior.AllowGet);
         }
 
-        private IEnumerable<MediaFileViewModel> GetMediaFileList(string path)
+        private IEnumerable<MediaFileViewModel> GetMedia(string path)
         {
-            var mediaFiles = _opsClient.GetMediaFilesForPath(path);
+            var mediaList = _opsClient.GetMediaFilesForPath(path);
 
-            var list = mediaFiles
+            var media = mediaList.First();
+
+            var list = media.Files
                 .Select(mediaFile => new MediaFileViewModel
                 {
                     StreamId = mediaFile.StreamId,
@@ -44,7 +46,7 @@ namespace Keebee.AAT.Administrator.Controllers
                     Filename = mediaFile.Filename,
                     FileType = mediaFile.FileType,
                     FileSize = mediaFile.FileSize,
-                    Path = mediaFile.Path
+                    Path = media.Path
                 }).OrderBy(x => x.Filename);
 
             return list;

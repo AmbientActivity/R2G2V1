@@ -25,7 +25,5 @@ namespace Keebee.AAT.DataAccess.Models
         [ForeignKey("Profile")]
         public int ProfileId { get; set; }
         public virtual Profile Profile { get; set; }
-
-        public virtual IList<PersonalPicture> PersonalPictures { get; set; }
     }
 }

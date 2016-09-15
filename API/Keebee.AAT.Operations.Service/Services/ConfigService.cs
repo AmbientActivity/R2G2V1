@@ -16,9 +16,7 @@ namespace Keebee.AAT.Operations.Service.Services
         void Patch(int id, Config config);
         void Delete(int id);
         Config GetDetails(int id);
-        Config GetMediaForProfile(int profileId);
-        Config GetMediaForProfileConfigDetail(int profileId, int configDetailId);
-        Config GetMedia();
+        Config GetDetailsForProfile(int profileId);
         void Activate(int id);
     }
 
@@ -118,15 +116,14 @@ namespace Keebee.AAT.Operations.Service.Services
             return config;
         }
 
-        public Config GetMediaForProfile(int profileId)
+        public Config GetDetailsForProfile(int profileId)
         {
             var container = new Container(new Uri(ODataHost.Url));
 
             var config = container.Configs
                     .AddQueryOption("$filter", "IsActive")
                     .Expand("ConfigDetails($filter=ResponseType/IsSystem eq false;" +
-                            "$expand=PhidgetType,ResponseType($expand=ResponseTypeCategory," +
-                            $"Responses($filter=ProfileId eq {profileId};$expand=MediaFile)))")
+                            "$expand=PhidgetType,ResponseType($expand=ResponseTypeCategory))")
                     .Single();
 
             return config;
@@ -140,18 +137,6 @@ namespace Keebee.AAT.Operations.Service.Services
                     .AddQueryOption("$filter", "IsActive")
                     .Expand($"ConfigDetails($filter=Id eq {configDetailId};" +
                             $"$expand=PhidgetType,ResponseType($filter=IsSystem;$expand=ResponseTypeCategory,Responses($filter=ProfileId eq {profileId};$expand=MediaFile)))")
-                    .FirstOrDefault();
-
-            return config;
-        }
-
-        public Config GetMedia()
-        {
-            var container = new Container(new Uri(ODataHost.Url));
-
-            var config = container.Configs
-                    .AddQueryOption("$filter", "IsActive")
-                    .Expand("ConfigDetails($expand=PhidgetType,ResponseType($expand=Responses($expand=MediaFile)))")
                     .FirstOrDefault();
 
             return config;

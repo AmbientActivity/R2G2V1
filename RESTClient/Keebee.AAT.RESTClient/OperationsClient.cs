@@ -30,19 +30,14 @@ namespace Keebee.AAT.RESTClient
 
         IEnumerable<Resident> GetResidents();
         Resident GetResident(int residentId);
-        Resident GetResidentMedia(int residentId);
         Profile GetResidentProfile(int residentId);
         Resident GetResidentByNameGender(string firstName, string lastName, string gender);
         bool ResidentProfileExists(int residentId);
         Profile GetGenericProfile();
         
-
-        IEnumerable<Response> GetAmbientResponses();
-        Profile GetProfileMedia(int profileId);
-        IEnumerable<Response> GetProfileMediaForConfigDetail(int profileId, int configDetailId);
-
-        MediaFile GetMediaFile(Guid streamId);
-        IEnumerable<MediaFile> GetMediaFilesForPath(string path);
+        // media
+        MediaFileSingle GetMediaFile(Guid streamId);
+        IEnumerable<Media> GetMediaFilesForPath(string path);
         byte[] GetMediaFileStream(Guid streamId);
 
         IEnumerable<ActivityEventLog> GetActivityEventLogsForDate(string date);
@@ -102,19 +97,14 @@ namespace Keebee.AAT.RESTClient
         // residents
         private const string UrlResidents = "residents";
         private const string UrlResident = "residents/{0}";
+        private const string UrlResidentDetails = "residents/{0}/details";
         private const string UrlResidentByNameGender = "residents?firstName={0}&lastName={1}&gender={2}";
         private const string UrlResidentProfile = "residents/{0}/profile";
-        private const string UrlResidentMedia = "residents/{0}/media";
 
         // profiles
         private const string UrlProfiles = "profiles";
         private const string UrlProfile = "profiles/{0}";
         private const string UrlProfileDetails = "profiles/{0}/details";
-        private const string UrlProfileMedia = "profiles/{0}/media";
-        private const string UrlProfileMediaForConfigDetail = "profiles/{0}/media?configDetailId={1}";
-
-        // ambient
-        private const string UrlAmbientResponses = "ambientresponses";
 
         // media files
         private const string UrlMediaFile = "mediafiles/{0}";
@@ -291,9 +281,9 @@ namespace Keebee.AAT.RESTClient
             return resident;
         }
 
-        public Resident GetResidentByNameGender(string firstName, string lastName, string gender)
+        public Resident GetResidentDetails(int residentId)
         {
-            var data = Get(string.Format(UrlResidentByNameGender, firstName, lastName, gender));
+            var data = Get(string.Format(UrlResidentDetails, residentId));
             if (data == null) return null;
 
             var serializer = new JavaScriptSerializer();
@@ -302,9 +292,9 @@ namespace Keebee.AAT.RESTClient
             return resident;
         }
 
-        public Resident GetResidentMedia(int residentId)
+        public Resident GetResidentByNameGender(string firstName, string lastName, string gender)
         {
-            var data = Get(string.Format(UrlResidentMedia, residentId));
+            var data = Get(string.Format(UrlResidentByNameGender, firstName, lastName, gender));
             if (data == null) return null;
 
             var serializer = new JavaScriptSerializer();
@@ -365,41 +355,6 @@ namespace Keebee.AAT.RESTClient
 
 
         // media
-        public IEnumerable<Response> GetAmbientResponses()
-        {
-            var data = Get(UrlAmbientResponses);
-            if (data == null) return null;
-
-            var serializer = new JavaScriptSerializer();
-            var ambientDetails = serializer.Deserialize<ResponseList>(data).AmbientResponses;
-
-            return ambientDetails;
-        }
-
-        public Profile GetProfileMedia(int profileId)
-        {
-            var data = Get(string.Format(UrlProfileMedia, profileId));
-            if (data == null) return null;
-
-            var serializer = new JavaScriptSerializer();
-            var profile = serializer.Deserialize<Profile>(data);
-
-            return profile;
-        }
-
-        public IEnumerable<Response> GetProfileMediaForConfigDetail(int profileId, int configDetailId)
-        {
-            var data = Get(string.Format(UrlProfileMediaForConfigDetail, profileId, configDetailId));
-            if (data == null) return null;
-
-            var serializer = new JavaScriptSerializer();
-            var details = serializer.Deserialize<ConfigDetailList>(data)
-                .ConfigDetails.Single()
-                .ResponseType.Responses;
-
-            return details;
-        }
-
         public IEnumerable<ActivityEventLog> GetActivityEventLogsForDate(string date)
         {
             var data = Get(string.Format(UrlActivityEventLogsForDate, date));
@@ -455,26 +410,26 @@ namespace Keebee.AAT.RESTClient
             return activityEventLogs;
         }
 
-        public MediaFile GetMediaFile(Guid streamId)
+        public MediaFileSingle GetMediaFile(Guid streamId)
         {
             var data = Get(string.Format(UrlMediaFile, streamId));
             if (data == null) return null;
 
             var serializer = new JavaScriptSerializer();
-            var mediaFile = serializer.Deserialize<MediaFile>(data);
+            var mediaFile = serializer.Deserialize<MediaFileSingle>(data);
 
             return mediaFile;
         }
 
-        public IEnumerable<MediaFile> GetMediaFilesForPath(string path)
+        public IEnumerable<Media> GetMediaFilesForPath(string path)
         {
             var data = Get(string.Format(UrlMediaFilesForPath, path));
             if (data == null) return null;
 
             var serializer = new JavaScriptSerializer();
-            var mediaFiles = serializer.Deserialize<MediaFileList>(data).Media;
+            var mediaList = serializer.Deserialize<MediaList>(data).Media;
 
-            return mediaFiles;
+            return mediaList;
         }
 
         public byte[] GetMediaFileStream(Guid streamId)

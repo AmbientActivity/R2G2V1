@@ -223,8 +223,6 @@ namespace Keebee.AAT.RfidReaderService
         }
 #endif
 
-
-
         protected override void OnStart(string[] args)
         {
             _systemEventLogger.WriteEntry("In OnStart");

@@ -3,6 +3,7 @@ using Keebee.AAT.Administrator.ViewModels;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Security.Policy;
 using System.Web.Mvc;
 using Keebee.AAT.RESTClient;
 
@@ -110,18 +111,24 @@ namespace Keebee.AAT.Administrator.Controllers
 
         private IEnumerable<MediaFileViewModel> GetFileList(int id)
         {
-            var mediaFiles = _opsClient.GetMediaFilesForPath($"{id}");
+            var list = new List<MediaFileViewModel>();
+            var media = _opsClient.GetMediaFilesForPath($"{id}").ToArray();
 
-            var list = mediaFiles
-                .Select(mediaFile => new MediaFileViewModel
+            foreach (var m in media)
+            {
+                foreach (var file in m.Files.OrderBy(o => o.Filename))
                 {
-                    StreamId = mediaFile.StreamId,
-                    IsFolder = mediaFile.IsFolder,
-                    Filename = mediaFile.Filename.Replace($".{mediaFile.FileType}", string.Empty),
-                    FileType = mediaFile.FileType,
-                    FileSize = mediaFile.FileSize,
-                    Path = mediaFile.Path
-                }).OrderBy(x => x.Filename);
+                    list.Add(new MediaFileViewModel
+                    {
+                        StreamId = file.StreamId,
+                        IsFolder = file.IsFolder,
+                        Filename = file.Filename,
+                        FileType = file.FileType,
+                        FileSize = file.FileSize,
+                        Path = m.Path
+                    });
+                }
+            }
 
             return list;
         }

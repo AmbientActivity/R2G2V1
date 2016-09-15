@@ -114,9 +114,9 @@ namespace Keebee.AAT.Operations.Controllers
             return new DynamicJsonObject(exObj);
         }
 
-        [Route("media")]
+        [Route("details")]
         [HttpGet]
-        public async Task<DynamicJsonObject> GetWithMedia()
+        public async Task<DynamicJsonObject> GetDetails()
         {
             IEnumerable<Resident> residents = new Collection<Resident>();
 
@@ -127,7 +127,7 @@ namespace Keebee.AAT.Operations.Controllers
 
             if (residents == null) return new DynamicJsonObject(new ExpandoObject());
 
-            var configuration = _configurationService.GetMedia();
+            var configuration = _configurationService.GetActiveDetails();
 
             dynamic exObj = new ExpandoObject();
             exObj.Residents = residents
@@ -141,107 +141,62 @@ namespace Keebee.AAT.Operations.Controllers
                         Id = resident.ProfileId,
                         ResidentId = resident.Id,
                         resident.Profile.GameDifficultyLevel,
-                        Media = configuration
+                        ConfigDetails = configuration
                         .ConfigDetails.Select(detail => new
                         {
                             ResponseType = new
                             {
                                 detail.ResponseType.Id,
                                 detail.ResponseType.Description,
-                                detail.ResponseType.IsInteractive,
-                                Responses = detail.ResponseType.Responses
-                                    .Where(r => r.ProfileId == resident.ProfileId)
-                                    .Select(response => new
-                                    {
-                                        response.Id,
-                                        response.StreamId,
-                                        Filename = response.MediaFile.Filename.Replace($".{response.MediaFile.FileType}", string.Empty),
-                                        FilePath = Path.Combine(response.MediaFile.Path, response.MediaFile.Filename),
-                                        response.MediaFile.FileType,
-                                        response.MediaFile.FileSize
-                                    })
+                                detail.ResponseType.IsInteractive
                             }
                         })
-                    },
-                    PersonalPictures = resident.PersonalPictures.Select(r => new
-                    {
-                        r.Id,
-                        ResidentId = resident.Id,
-                        r.StreamId,
-                        Filename = r.MediaFile.Filename.Replace($".{r.MediaFile.FileType}", string.Empty),
-                        FilePath = Path.Combine(r.MediaFile.Path, r.MediaFile.Filename),
-                        r.MediaFile.FileType,
-                        r.MediaFile.FileSize
-                    })
+                    }
         });
 
             return new DynamicJsonObject(exObj);
         }
 
-        [Route("{id}/media")]
         [HttpGet]
-        public async Task<DynamicJsonObject> GetWithMedia(int id)
+        [Route("{id}/details")]
+        public async Task<DynamicJsonObject> GetDetails(int id)
         {
-            Resident resident = new Resident();
+            var resident = new Resident();
 
             await Task.Run(() =>
             {
-                resident = _residentService.GetWithPersonalPictures(id);
+                resident = _residentService.Get(id);
             });
 
             if (resident == null) return new DynamicJsonObject(new ExpandoObject());
-
-            var configuration = _configurationService.GetMediaForProfile(resident.Profile.Id);
+            var configuration = _configurationService.GetActiveDetails();
 
             dynamic exObj = new ExpandoObject();
             exObj.Id = resident.Id;
+            exObj.ProfileId = resident.ProfileId;
             exObj.FirstName = resident.FirstName;
             exObj.LastName = resident.LastName;
             exObj.Gender = resident.Gender;
+            exObj.DateCreated = resident.DateCreated;
+            exObj.DateUpdated = resident.DateUpdated;
             exObj.Profile = new
-                {
-                    Id = resident.ProfileId,
-                    ResidentId = resident.Id,
-                    resident.Profile.GameDifficultyLevel,
-                    ConfigDetails = configuration.ConfigDetails.Select(detail => new
-                    {
-                        detail.Id,
-                        detail.ConfigId,
-                        PhidgetType = new
+            {
+                resident.Profile.Id,
+                resident.Profile.Description,
+                resident.Profile.GameDifficultyLevel,
+                resident.Profile.DateCreated,
+                resident.Profile.DateUpdated,
+                ConfigDetails = configuration
+                        .ConfigDetails.Select(detail => new
                         {
-                            detail.PhidgetType.Id,
-                            detail.PhidgetType.Description
-                        },
-                        detail.Description,
-                        ResponseType = new
-                        {
-                            detail.ResponseType.Id,
-                            detail.ResponseType.Description,
-                            detail.ResponseType.IsInteractive,
-                            Responses = detail.ResponseType.Responses
-                                .Select(response => new
-                                {
-                                    response.Id,
-                                    response.StreamId,
-                                    Filename = response.MediaFile.Filename.Replace($".{response.MediaFile.FileType}", string.Empty),
-                                    FilePath = Path.Combine(response.MediaFile.Path, response.MediaFile.Filename),
-                                    response.MediaFile.FileType,
-                                    response.MediaFile.FileSize
-                                })
+                            ResponseType = new
+                            {
+                                detail.ResponseType.Id,
+                                detail.ResponseType.Description,
+                                detail.ResponseType.IsInteractive
                             }
-                      })
-                };
-            exObj.PersonalPictures = resident.PersonalPictures.Select(p => new
-                {
-                    p.Id,
-                    ResidentId = resident.Id,
-                    p.StreamId,
-                    Filename = p.MediaFile.Filename.Replace($".{p.MediaFile.FileType}", string.Empty),
-                    FilePath = Path.Combine(p.MediaFile.Path, p.MediaFile.Filename),
-                    p.MediaFile.FileType,
-                    p.MediaFile.FileSize
-                });
-
+                        })
+            };
             return new DynamicJsonObject(exObj);
         }
 
@@ -282,7 +237,7 @@ namespace Keebee.AAT.Operations.Controllers
 
             if (profile == null) return new DynamicJsonObject(new ExpandoObject());
 
-            var configuration = _configurationService.GetMediaForProfile(profile.Id);
+            var configuration = _configurationService.GetDetailsForProfile(profile.Id);
 
             dynamic exObj = new ExpandoObject();
             exObj.Id = profile.Id;

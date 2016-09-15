@@ -10,11 +10,21 @@ namespace Keebee.AAT.RESTClient
         public string Filename { get; set; }
         public string FileType { get; set; }
         public int FileSize { get; set; }
+    }
+
+    public class MediaFileSingle : MediaFile
+    {
         public string Path { get; set; }
     }
 
-    public class MediaFileList
+    public class Media
     {
-        public IEnumerable<MediaFile> Media;
+        public string Path { get; set; }
+        public IEnumerable<MediaFile> Files;
+    }
+
+    public class MediaList
+    {
+        public IEnumerable<Media> Media;
     }
 }

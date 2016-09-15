@@ -213,15 +213,15 @@ namespace Keebee.AAT.Operations.Controllers
             return new DynamicJsonObject(exObj);
         }
 
-        [Route("profiles/{id}/media")]
+        [Route("profiles/{id}/details")]
         [HttpGet]
-        public async Task<DynamicJsonObject> GeMediaForProfile(int id)
+        public async Task<DynamicJsonObject> GetDetailsForProfile(int id)
         {
             var config = new Config();
 
             await Task.Run(() =>
             {
-                config = _configService.GetMediaForProfile(id);
+                config = _configService.GetDetailsForProfile(id);
             });
 
             if (config == null) return new DynamicJsonObject(new ExpandoObject());
@@ -245,15 +245,14 @@ namespace Keebee.AAT.Operations.Controllers
                     cd.ResponseType.Description,
                     cd.ResponseType.IsInteractive,
                     cd.ResponseType.IsSystem,
-                    Responses = cd.ResponseType.Responses
-                        .Select(response => new
-                        {
-                            response.Id,
-                            response.StreamId,
-                            Filename = response.MediaFile.Filename.Replace($".{response.MediaFile.FileType}", string.Empty),
-                            FilePath = Path.Combine(response.MediaFile.Path, response.MediaFile.Filename),
-                            response.MediaFile.FileType
-                        })
+                    //MediaFiles = cd.ResponseType.MediaFiles
+                    //    .Select(mediaFile => new
+                    //    {
+                    //        mediaFile.StreamId,
+                    //        Filename = mediaFile.Filename.Replace($".{mediaFile.FileType}", string.Empty),
+                    //        FilePath = Path.Combine(mediaFile.Path, mediaFile.Filename),
+                    //        mediaFile.FileType
+                    //    })
                   }
             });
 

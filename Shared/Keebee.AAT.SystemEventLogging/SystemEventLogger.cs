@@ -20,7 +20,6 @@ namespace Keebee.AAT.SystemEventLogging
     public class SystemEventLogger
     {
         private const string EventLogDisplay = "R2G2 Display";
-        private const string EventLogSimulator = "R2G2 Activity Simulator";
         private const string EventLogMessageQueuing = "R2G2 Message Queuing";
         private const string EventLogStateMachineService = "R2G2 State Machine Service";
         private const string EventLogRfidReaderService = "R2G2 RFID Reader Service";
@@ -56,9 +55,6 @@ namespace Keebee.AAT.SystemEventLogging
             {
                 case SystemEventLogType.Display:
                     literal = EventLogDisplay;
-                    break;
-                case SystemEventLogType.Simulator:
-                    literal = EventLogSimulator;
                     break;
                 case SystemEventLogType.KeebeeMessageQueuing:
                     literal = EventLogMessageQueuing;

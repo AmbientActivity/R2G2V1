@@ -52,6 +52,12 @@ namespace Keebee.AAT.Display.Caregiver
             set { _genericProfile = value; }
         }
 
+        private IEnumerable<Media> _mediaList;
+        public IEnumerable<Media> MediaList
+        {
+            set { _mediaList = value; }
+        }
+
         private const string PlaylistCaregiver = "caregiver";
         private IWMPPlaylist _playlist;
         private int _currentMusicIndex;
@@ -272,7 +278,10 @@ namespace Keebee.AAT.Display.Caregiver
 
         private void LoadResident(int residentId)
         {
-            _resident = _opsClient.GetResidentMedia(residentId);
+            _resident = _opsClient.GetResidentDetails(residentId);
+            _mediaList = _opsClient.GetMediaFilesForPath(_resident.Profile.Id > 0 
+                ? $@"{MediaPath.Profiles}\{_resident.Profile.Id}" 
+                : $@"{MediaPath.Profiles}\{ProfileId.Generic}");
         }
 
         private void LoadResidentDropDown()
@@ -304,57 +313,30 @@ namespace Keebee.AAT.Display.Caregiver
             }
         }
 
-        private IEnumerable<Response> GetMediaResponses(int residentId, int responseTypeId)
-        {
-            IEnumerable<Response> list = new List<Response>();
-
-            try
-            {
-                list =(residentId > 0)
-                    ? _resident
-                        .Profile.ConfigDetails
-                        .Where(cd => cd.ResponseType.Id == responseTypeId)
-                        .SelectMany(r => r.ResponseType.Responses)
-                        .OrderBy(o => o.Filename)
-                        .GroupBy(r => r.StreamId, (key, r) => r.FirstOrDefault())
-
-                    : _genericProfile.ConfigDetails
-                        .Where(cd => cd.ResponseType.Id == responseTypeId)
-                        .SelectMany(r => r.ResponseType.Responses)
-                        .OrderBy(o => o.Filename)
-                        .GroupBy(r => r.StreamId, (key, r) => r.FirstOrDefault())
-                        .ToArray();
-            }
-            catch (Exception ex)
-            {
-                _systemEventLogger?.WriteEntry($"Caregiver.GetMediaResponses: {ex.Message}", EventLogEntryType.Error);
-            }
-
-            return list;
-        }
-
-        private void LoadListViewVideos(int residentId)
+        private void LoadListViewVideos()
         {
             try
             {
                 lvVideos.Items.Clear();
 
-                var responses = GetMediaResponses(residentId, ResponseTypeId.Television).ToArray();
+                var files = GetMediaFiles(MediaPath.Videos, "mp4");
+
                 var rowIndex = 0;
-                foreach (var r in responses)
+                foreach (var f in files)
                 {
                     lvVideos.Items.Add(new ListViewItem(new[]
                                     {
                                         string.Empty,
-                                        r.Filename,
-                                        r.StreamId.ToString()
+                                        f.Filename,
+                                        f.StreamId.ToString()
                                     })
                                     {
                                         BackColor = ((rowIndex & 1) == 0) ? Color.AliceBlue : Color.White
                                     });
                     rowIndex++;
                 }
-                _currentVideoFiles = responses.Select(x => x.FilePath).ToArray();
+
+                _currentVideoFiles = GetFilePaths(MediaPath.Videos, "mp4");
 
                 if (_bgwVideoThumbnails.IsBusy) return;
                 lvVideos.SmallImageList?.Images.Clear();
@@ -366,29 +348,30 @@ namespace Keebee.AAT.Display.Caregiver
             }
         }
 
-        private void LoadListViewImages(int residentId)
+        private void LoadListViewImages()
         {
             try
             {
                 lvImages.Items.Clear();
 
-                var responses = GetMediaResponses(residentId, ResponseTypeId.SlidShow).ToArray();
-
+                var files = GetMediaFiles(MediaPath.Images).ToArray();
+                
                 var rowIndex = 0;
-                foreach (var r in responses)
+                foreach (var f in files)
                 {
                     lvImages.Items.Add(new ListViewItem(new[]
                                     {
                                         string.Empty,
-                                        r.Filename,
-                                        r.StreamId.ToString()
+                                        f.Filename,
+                                        f.StreamId.ToString()
                                     })
                     {
                         BackColor = ((rowIndex & 1) == 0) ? Color.AliceBlue : Color.White
                     });
                     rowIndex++;
                 }
-                _currentImageFiles = responses.Select(x => x.FilePath).ToArray();
+
+                _currentImageFiles = GetFilePaths(MediaPath.Images, null);
 
                 if (_bgwImageThumbnails.IsBusy) return;
                 lvImages.SmallImageList?.Images.Clear();
@@ -400,22 +383,22 @@ namespace Keebee.AAT.Display.Caregiver
             }
         }
 
-        private void LoadListViewMusic(int residentId)
+        private void LoadListViewMusic()
         {
             try
             {
                 lvMusic.Items.Clear();
 
-                var responses = GetMediaResponses(residentId, ResponseTypeId.Radio);
+                var files = GetMediaFiles(MediaPath.Music, "mp3");
                 var rowIndex = 0;
-                foreach (var r in responses)
+                foreach (var f in files)
                 {
                     lvMusic.Items.Add(new ListViewItem(new[]
                                     {
                                         string.Empty,
                                         string.Empty,
-                                        r.Filename,
-                                        r.StreamId.ToString()
+                                        f.Filename,
+                                        f.StreamId.ToString()
                                     })
                     {
                         ImageIndex = ImageIndexPlay,
@@ -430,25 +413,23 @@ namespace Keebee.AAT.Display.Caregiver
             }
         }
 
-        private void LoadListViewPictures(int residentId)
+        private void LoadListViewPictures()
         {
             try
             {
                 lvPictures.Items.Clear();
 
-                var pictures = _resident.PersonalPictures
-                    .Where(p => p.ResidentId == residentId)
-                    .ToArray();
+                var files = GetMediaFiles(MediaPath.Pictures);
 
                 var rowIndex = 0;
 
-                foreach (var p in pictures)
+                foreach (var f in files)
                 {
                     lvPictures.Items.Add(new ListViewItem(new[]
                     {
                         string.Empty,
-                        p.Filename,
-                        p.StreamId.ToString()
+                        f.Filename,
+                        f.StreamId.ToString()
                     })
                     {
                         BackColor = ((rowIndex & 1) == 0) ? Color.AliceBlue : Color.White
@@ -457,7 +438,7 @@ namespace Keebee.AAT.Display.Caregiver
                     rowIndex++;
                 }
 
-                _currentPictureFiles = pictures.Select(x => x.FilePath).ToArray();
+                _currentPictureFiles = GetFilePaths(MediaPath.Pictures, null);
 
                 if (_bgwPictureThumbnails.IsBusy) return;
 
@@ -520,18 +501,18 @@ namespace Keebee.AAT.Display.Caregiver
         {
             ShowPicturesTab(residentId > 0);
 
-            LoadListViewImages(residentId);
-            LoadListViewMusic(residentId);
-            LoadListViewVideos(residentId);
+            LoadListViewImages();
+            LoadListViewMusic();
+            LoadListViewVideos();
             LoadListViewInteractiveResponses(residentId);
 
             if (TabPageExists(tabPictures))
-                LoadListViewPictures(residentId);
+                LoadListViewPictures();
         }
 
-        private void LoadMusicPlaylist(int residentId)
+        private void LoadMusicPlaylist()
         {
-            var music = GetMusicFiles(residentId);
+            var music = GetFilePaths(MediaPath.Music, "mp3");
             _playlist = axWindowsMediaPlayer1.LoadPlaylist(PlaylistCaregiver, music);
 
             axWindowsMediaPlayer1.currentPlaylist = _playlist;
@@ -542,54 +523,32 @@ namespace Keebee.AAT.Display.Caregiver
 
         #region file queries
 
-        // images and videos
-        private string GetFilePath(int residentId, Guid streamId)
-        {
-            string filePath = null;
-            try
-            {
-                filePath = (residentId > 0)
-                    ? _resident.Profile.ConfigDetails
-                        .SelectMany(r => r.ResponseType.Responses.Where(x => x.StreamId == streamId))
-                        .GroupBy(r => r.StreamId, (key, r) => r.FirstOrDefault())
-                        .Select(f => f.FilePath).FirstOrDefault()
-
-                    : _genericProfile.ConfigDetails
-                        .SelectMany(r => r.ResponseType.Responses.Where(x => x.StreamId == streamId))
-                        .GroupBy(r => r.StreamId, (key, r) => r.FirstOrDefault())
-                        .Select(f => f.FilePath).FirstOrDefault();
-            }
-            catch (Exception ex)
-            {
-                _systemEventLogger?.WriteEntry($"Caregiver.GetFilePath: {ex.Message}", EventLogEntryType.Error);
-            }
-
-            return filePath;
-        }
-
-        private string[] GetFiles(int residentId, int responseTypeId, Guid streamId)
+        private string[] GetFilePaths(string responseTypeCategory, string fileType, Guid? streamId = null)
         {
             string[] files = null;
             try
             {
-                var selectedFilePath = GetFilePath(residentId, streamId);
+                var profileId = _resident?.Profile.Id ?? ProfileId.Generic;
+                var media = _mediaList.Single(m => m.Path.Contains($@"{profileId}\{responseTypeCategory}"));
 
-                files = (residentId > 0)
-                     ? new[] { selectedFilePath }
-                     .Union(_resident.Profile.ConfigDetails
-                        .Where(cd => cd.ResponseType.Id == responseTypeId)
-                        .SelectMany(r => r.ResponseType.Responses.Where(x => x.StreamId != streamId)
-                        .OrderBy(o => o.Filename))
-                        .GroupBy(r => r.StreamId, (key, r) => r.FirstOrDefault())
-                        .Select(f => f.FilePath)).ToArray()
+                if (streamId != null)
+                {
+                    var selectedFile = media.Files
+                        .Where(f => fileType == null || f.FileType == fileType)
+                        .Single(f => f.StreamId == streamId).Filename;
 
-                    : new [] { selectedFilePath }
-                    .Union(_genericProfile.ConfigDetails
-                        .Where(cd => cd.ResponseType.Id == responseTypeId)
-                        .SelectMany(r => r.ResponseType.Responses.Where(x => x.StreamId != streamId)
-                        .OrderBy(o => o.Filename))
-                        .GroupBy(r => r.StreamId, (key, r) => r.FirstOrDefault())
-                        .Select(f => f.FilePath)).ToArray();
+                    files = new[] {$@"{media.Path}\{selectedFile}"}
+                            .Union(media.Files
+                                .Where(f => fileType == null || f.FileType == fileType)
+                                .Where(f => f.StreamId != streamId)
+                                .Select(f => $@"{media.Path}{f.Filename}")).ToArray();
+                }
+                else
+                {
+                    files = media.Files
+                        .Where(f => fileType == null || f.FileType == fileType)
+                        .Select(f => $@"{media.Path}{f.Filename}").ToArray();
+                }
             }
             catch (Exception ex)
             {
@@ -599,104 +558,25 @@ namespace Keebee.AAT.Display.Caregiver
             return files;
         }
 
-        // music
-        private IEnumerable<string> GetMusicFiles(int residentId)
+        private IEnumerable<MediaFile> GetMediaFiles(string responseTypeCategory, string fileType = null)
         {
-            string[] musicFiles = null;
+            IEnumerable<MediaFile> files = null;
             try
             {
-                musicFiles = (residentId > 0)
-                    ? _resident.Profile.ConfigDetails
-                        .Where(cd => cd.ResponseType.Id == ResponseTypeId.Radio)
-                        .SelectMany(r => r.ResponseType.Responses)
-                        .OrderBy(o => o.Filename)
-                        .GroupBy(r => r.StreamId, (key, r) => r.FirstOrDefault())
-                        .Select(f => f.FilePath).ToArray()
+                var profileId = _resident?.Profile.Id ?? ProfileId.Generic;
+                var media = _mediaList.Single(m => m.Path.Contains($@"{profileId}\{responseTypeCategory}"));
 
-                    : _genericProfile.ConfigDetails
-                        .Where(cd => cd.ResponseType.Id == ResponseTypeId.Radio)
-                        .SelectMany(r => r.ResponseType.Responses)
-                        .OrderBy(o => o.Filename)
-                        .GroupBy(r => r.StreamId, (key, r) => r.FirstOrDefault())
-                        .Select(f => f.FilePath).ToArray();
+                files = media.Files
+                    .Where(f => fileType == null || f.FileType == fileType)
+                    .Select(f => new MediaFile
+                                 {
+                                     StreamId = f.StreamId,
+                                     Filename = f.Filename.Replace($".{f.FileType}", string.Empty)
+                                 });
             }
             catch (Exception ex)
             {
-                _systemEventLogger?.WriteEntry($"Caregiver.GetMusicFiles: {ex.Message}", EventLogEntryType.Error);
-            }
-
-            return musicFiles;
-        }
-
-        // personal pictures
-        private string GetPersonalPictureFilePath(Guid streamId)
-        {
-            string filePath = null;
-            try
-            {
-                filePath = _resident.PersonalPictures
-                    .Where(p => p.StreamId == streamId)
-                    .Select(f => f.FilePath).FirstOrDefault();
-            }
-            catch (Exception ex)
-            {
-                _systemEventLogger?.WriteEntry($"Caregiver.GetPersonalPictureFilePath: {ex.Message}", EventLogEntryType.Error);
-            }
-
-            return filePath;
-        }
-
-        private string[] GetPersonalPictureFiles(int residentId, Guid streamId)
-        {
-            string[] files = null;
-            try
-            {
-                var selectedFilePath = GetPersonalPictureFilePath(streamId);
-
-                files = new[] { selectedFilePath }
-                    .Union(_resident.PersonalPictures
-                        .Where(p => p.ResidentId == residentId)
-                        .Where(p => p.StreamId != streamId)
-                        .OrderBy(o => o.Filename)
-                        .Select(f => f.FilePath)).ToArray();
-            }
-            catch (Exception ex)
-            {
-                _systemEventLogger?.WriteEntry($"Caregiver.GetPersonalPictureFiles: {ex.Message}", EventLogEntryType.Error);
-            }
-
-            return files;
-        }
-
-        // interactive responses
-        private string[] GetInteractiveResponseFiles(int residentId, int responseTypeId)
-        {
-            string[] files = null;
-            try
-            {
-                switch (responseTypeId)
-                {
-                    case ResponseTypeId.MatchingGame:
-                        files = (residentId > 0)
-                            ? _resident.Profile.ConfigDetails
-                                .Where(cd => cd.ResponseType.Id == responseTypeId)
-                                .SelectMany(r => r.ResponseType.Responses)
-                                .OrderBy(o => o.Filename)
-                                .GroupBy(r => r.StreamId, (key, r) => r.FirstOrDefault())
-                                .Select(f => f.FilePath).ToArray()
-
-                            : _genericProfile.ConfigDetails
-                                .Where(cd => cd.ResponseType.Id == responseTypeId)
-                                .SelectMany(r => r.ResponseType.Responses)
-                                .OrderBy(o => o.Filename)
-                                .GroupBy(r => r.StreamId, (key, r) => r.FirstOrDefault())
-                                .Select(f => f.FilePath).ToArray();
-                        break;
-                }
-            }
-            catch (Exception ex)
-            {
-                _systemEventLogger?.WriteEntry($"Caregiver.GetInteractiveResponseFiles: {ex.Message}", EventLogEntryType.Error);
+                _systemEventLogger?.WriteEntry($"Caregiver.GetFiles: {ex.Message}", EventLogEntryType.Error);
             }
 
             return files;
@@ -706,11 +586,11 @@ namespace Keebee.AAT.Display.Caregiver
 
         #region play media
 
-        private void PlayVideos(int residentId, Guid selectedStreamId)
+        private void PlayVideos(Guid selectedStreamId)
         {
             try
             {
-                var videos = GetFiles(residentId, ResponseTypeId.Television, selectedStreamId);
+                var videos = GetFilePaths(MediaPath.Videos, "mp4", selectedStreamId);
 
                 var videoPlayer = new VideoPlayer
                 {
@@ -760,11 +640,11 @@ namespace Keebee.AAT.Display.Caregiver
             }
         }
 
-        private void DisplayImages(int residentId, Guid selectedStreamId)
+        private void DisplayImages(Guid selectedStreamId)
         {
             try
             {
-                var images = GetFiles(residentId, ResponseTypeId.SlidShow, selectedStreamId);
+                var images = GetFilePaths(MediaPath.Images, null, selectedStreamId);
 
                 var imageViewer = new ImageViewer
                 {
@@ -781,11 +661,11 @@ namespace Keebee.AAT.Display.Caregiver
             }
         }
 
-        private void ShowPersonalPictures(int residentId, Guid selectedStreamId)
+        private void ShowPersonalPictures(Guid selectedStreamId)
         {
             try
             {
-                var pictures = GetPersonalPictureFiles(residentId, selectedStreamId);
+                var pictures = GetFilePaths(MediaPath.Pictures, null, selectedStreamId);
 
                 var imageViewer = new ImageViewer
                 {
@@ -802,11 +682,11 @@ namespace Keebee.AAT.Display.Caregiver
             }
         }
 
-        private void PlayActivity(int responseId, int responseTypeId, int difficultyLevel, string activityName)
+        private void PlayActivity(int difficultyLevel, string activityName)
         {
             try
             {
-                var files = GetInteractiveResponseFiles(responseId, responseTypeId);
+                var files = GetFilePaths(MediaPath.Shapes, "png");
 
                 var activityPlayer = new ActivityPlayer
                 {
@@ -854,7 +734,7 @@ namespace Keebee.AAT.Display.Caregiver
                 var selectedStreamId = new Guid(lvVideos.SelectedItems[0].SubItems[ListViewMediaColumnStreamId].Text);
                 var residentId = Convert.ToInt32(cboResident.SelectedValue.ToString());
 
-                PlayVideos(residentId, selectedStreamId);
+                PlayVideos(selectedStreamId);
             }
             catch (Exception ex)
             {
@@ -903,9 +783,9 @@ namespace Keebee.AAT.Display.Caregiver
             try
             {
                 var selectedStreamId = new Guid(lvImages.SelectedItems[0].SubItems[ListViewMediaColumnStreamId].Text);
-                var residentId = Convert.ToInt32(cboResident.SelectedValue.ToString());
+                //var residentId = Convert.ToInt32(cboResident.SelectedValue.ToString());
 
-                DisplayImages(residentId, selectedStreamId);
+                DisplayImages(selectedStreamId);
             }
             catch (Exception ex)
             {
@@ -918,9 +798,9 @@ namespace Keebee.AAT.Display.Caregiver
             try
             {
                 var selectedStreamId = new Guid(lvPictures.SelectedItems[0].SubItems[ListViewMediaColumnStreamId].Text);
-                var residentId = Convert.ToInt32(cboResident.SelectedValue.ToString());
+                //var residentId = Convert.ToInt32(cboResident.SelectedValue.ToString());
 
-                ShowPersonalPictures(residentId, selectedStreamId);
+                ShowPersonalPictures(selectedStreamId);
             }
             catch (Exception ex)
             {
@@ -932,15 +812,12 @@ namespace Keebee.AAT.Display.Caregiver
         {
             try
             {
-                var residentId = Convert.ToInt32(cboResident.SelectedValue.ToString());
                 var difficultyLevel = Convert.ToInt32(lvInteractiveResponses.SelectedItems[0]
                     .SubItems[ListViewIActivitiesColumnDifficultyLevel].Text);
-                var responseTypeId = Convert.ToInt32(lvInteractiveResponses.SelectedItems[0]
-                    .SubItems[ListViewIActivitiesColumnResponseTypeId].Text);
                 var activityname = lvInteractiveResponses.SelectedItems[0]
                     .SubItems[ListViewIActivitiesColumnName].Text;
 
-                PlayActivity(residentId, responseTypeId, difficultyLevel, activityname);
+                PlayActivity(difficultyLevel, activityname);
             }
             catch (Exception ex)
             {
@@ -1004,7 +881,7 @@ namespace Keebee.AAT.Display.Caregiver
                 CancelBackgroundWorkers();
                 StopMusic();
                 LoadTabs(residentId);
-                LoadMusicPlaylist(residentId);
+                LoadMusicPlaylist();
 
                 _currentResidentId = residentId;
             }

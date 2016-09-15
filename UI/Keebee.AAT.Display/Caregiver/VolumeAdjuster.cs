@@ -14,7 +14,7 @@ namespace Keebee.AAT.Display.Caregiver
         private const string PlaylistCaregiver = "caregiver";
 
         // use Cats video for sample audio clip
-        private readonly string _catsVideo = $@"\\{Environment.MachineName}\{MediaPath.CatsVideo}";
+        private readonly string _catsVideo = $@"\\{Environment.MachineName}\{MediaPath.MediaRoot}\{MediaPath.Cats}";
 
         private SystemEventLogger _systemEventLogger;
         public SystemEventLogger EventLogger

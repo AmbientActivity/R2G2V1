@@ -19,11 +19,18 @@
         public const string Path = @"sqlexpress\KeebeeAATFilestream\Media\Exports\EventLog";
     }
 
-    //TODO: add an asociatian to this file in the database somehow
     public static class MediaPath
     {
-        public const string ProfileRoot = @"sqlexpress\KeebeeAATFilestream\Media\Profiles";
-        public const string CatsVideo = @"sqlexpress\KeebeeAATFilestream\Media\Cats\Cats.mp4";
+        public const string MediaRoot = @"sqlexpress\KeebeeAATFilestream\Media";
+        public const string Images = "images";
+        public const string Videos = "videos";
+        public const string Music = "music";
+        public const string Pictures = "pictures";
+        public const string Shapes = "shapes";
+        public const string Sounds = "sounds";
+        public const string Profiles = "Profiles";
+        public const string Cats = "Cats";
+        public const string Ambient = "Ambient";
     }
 
     public static class ConfigId

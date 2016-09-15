@@ -4,7 +4,6 @@ using Keebee.AAT.RESTClient;
 using Keebee.AAT.Shared;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Keebee.AAT.Exporting;
 using System.Web.Mvc;
 
@@ -66,9 +65,9 @@ namespace Keebee.AAT.Administrator.Controllers
 
         private IEnumerable<EventLogViewModel> GetEventLogList()
         {
-            var mediaFiles = _opsClient.GetMediaFilesForPath(Exports.EventLogPath);
+            var media = _opsClient.GetMediaFilesForPath(Exports.EventLogPath).Single();
 
-            var list = mediaFiles
+            var list = media.Files
                 .Select(mediaFile => new EventLogViewModel
                 {
                     StreamId = mediaFile.StreamId,

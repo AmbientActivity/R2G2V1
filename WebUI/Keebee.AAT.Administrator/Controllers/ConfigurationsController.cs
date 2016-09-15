@@ -165,7 +165,7 @@ namespace Keebee.AAT.Administrator.Controllers
                                     IsActive = config.IsActive,
                                     IsActiveEventLog = config.IsActiveEventLog,
                                     CanAdd = !config.IsActive,
-                                    CanEdit = !config.IsActive && config.Id != ConfigId.Default,
+                                    CanEdit = !config.IsActive,
                                     CanDelete = !activityLogs.Any()
                                                 && !config.IsActive
                                                 && ConfigId.Default != config.Id,

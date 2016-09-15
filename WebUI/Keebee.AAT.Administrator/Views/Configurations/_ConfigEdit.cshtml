@@ -9,6 +9,13 @@
     <div class="label label-default">Name</div>
     <input type="text" id="txtDescription" class="form-control" value="@Model.Description" maxlength="50"/>
     <div class="label label-default">Turn On Event Logging</div>
-    <input type="checkbox" id="chkIsActiveEventLog" text="Turn On Event Logging" value="@Model.IsActiveEventLog"/>
+    @if (Model.IsActiveEventLog)
+    {
+        <input type="checkbox" id="chkIsActiveEventLog" text="Turn On Event Logging" checked/>
+    }
+    else
+    {
+        <input type="checkbox" id="chkIsActiveEventLog" text="Turn On Event Logging" />
+    }
     <div class="validation-container" id="validation-container"></div>
 </div>

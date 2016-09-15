@@ -120,14 +120,8 @@ namespace Keebee.AAT.StateMachineService
         {
             try
             {
-                if (_activeResident == null)
-                    _activeResident = _opsClient.GetGenericDetails();
-
-                if (_reloadActiveConfig || _activeConfig == null)
-                {
-                    _activeConfig = _opsClient.GetActiveConfigDetails();
-                    _reloadActiveConfig = false;
-                }
+                LoadResident();
+                LoadActiveConfig();
 
                 // if the activity type is not defined in this config then exit
                 if (_activeConfig.ConfigDetails.All(x => x.PhidgetType.Id != phidgetTypeId))
@@ -167,6 +161,20 @@ namespace Keebee.AAT.StateMachineService
             {
                 _systemEventLogger.WriteEntry($"ExecuteResponse: {ex.Message}", EventLogEntryType.Error); 
             }
+        }
+
+        private void LoadResident()
+        {
+            if (_activeResident == null)
+                _activeResident = _opsClient.GetGenericDetails();
+        }
+
+        private void LoadActiveConfig()
+        {
+            if (!_reloadActiveConfig && _activeConfig != null) return;
+
+            _activeConfig = _opsClient.GetActiveConfigDetails();
+            _reloadActiveConfig = false;
         }
 
         #region message received event handlers
@@ -209,18 +217,20 @@ namespace Keebee.AAT.StateMachineService
                 var isValid = int.TryParse(e.MessageBody, out residentId);
                 if (!isValid) return;
 
+                LoadActiveConfig();
+
                 if (residentId > 0)
                 {
                     if (_activeResident?.Id == residentId) return;
                     _activeResident = _opsClient.GetResident(residentId);
-                    LogRfidEvent(residentId, "New active resident");
+                    LogRfidEvent(residentId, "New active resident", _activeConfig.IsActiveEventLog);
                 }
                 else
                 {
                     if (_activeResident?.Id == 0) return;
                     _activeResident = _opsClient.GetGenericDetails();
 
-                    LogRfidEvent(-1, "Active resident is generic");
+                    LogRfidEvent(-1, "Active resident is generic", _activeConfig.IsActiveEventLog);
 
                 }
             }
@@ -295,10 +305,12 @@ namespace Keebee.AAT.StateMachineService
             _systemEventLogger.WriteEntry("In OnStop");
         }
 
-        private void LogRfidEvent(int residentId, string description)
+        private void LogRfidEvent(int residentId, string description, bool isactive)
         {
             try
             {
+                if (!isactive) return;
+
                 var rfidEventLogger = new RfidEventLogger()
                 {
                     OperationsClient = _opsClient,

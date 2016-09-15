@@ -27,7 +27,7 @@ namespace Keebee.AAT.BusinessRules
 
             var config = _opsClient.GetConfigByDescription(description);
 
-            if (config.Id != 0)
+            if (config != null)
                 msgs.Add($"A configuration with the name '{description}' already exists");
 
             return msgs.Count > 0 ? msgs : null;

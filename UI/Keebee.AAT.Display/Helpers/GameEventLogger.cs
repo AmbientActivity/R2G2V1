@@ -19,10 +19,12 @@ namespace Keebee.AAT.Display.Helpers
             set { _systemEventLogger = value; }
         }
 
-        public void Add(int residentId, int gameTypeId, int difficultyLevel, bool? isSuccess, string description)
+        public void Add(int residentId, int gameTypeId, int difficultyLevel, bool? isSuccess, bool isactive, string description)
         {
             try
             {
+                if (!isactive) return;
+
                 var gamingEventLog = new GameEventLog
                                      {
                                          ResidentId = residentId > 0 ? residentId : (int?)null,

@@ -154,7 +154,9 @@ namespace Keebee.AAT.StateMachineService
                             Id = _activeResident.Id,
                             ConfigId = _activeConfig.Id,
                             GameDifficultyLevel = _activeResident.GameDifficultyLevel
-                        }
+                        },
+
+                    IsActiveEventLog = _activeConfig.IsActiveEventLog
                 };
 
                 var serializer = new JavaScriptSerializer();

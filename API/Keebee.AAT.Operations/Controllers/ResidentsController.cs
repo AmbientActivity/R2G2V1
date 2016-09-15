@@ -154,9 +154,6 @@ namespace Keebee.AAT.Operations.Controllers
             var resident = serializer.Deserialize<Resident>(value);
             var residentId = _residentService.Post(resident);
 
-            var fileManager = new FileManager();
-            fileManager.CreateFolders(residentId);
-
             return residentId;
         }
 

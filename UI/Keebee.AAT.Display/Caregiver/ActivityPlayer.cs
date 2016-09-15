@@ -23,6 +23,12 @@ namespace Keebee.AAT.Display.Caregiver
             set { _opsClient = value; }
         }
 
+        private bool _isActiveEventLog;
+        public bool IsActiveEventLog
+        {
+            set { _isActiveEventLog = value; }
+        }
+
         private string[] _files;
         public string[] Files
         {
@@ -111,7 +117,7 @@ namespace Keebee.AAT.Display.Caregiver
             try
             {
                 var args = (MatchingGame.LogGameEventEventArgs)e;
-                _gameEventLogger.Add(_residentId, args.GameTypeId, args.DifficultyLevel, args.Success, args.Description);
+                _gameEventLogger.Add(_residentId, args.GameTypeId, args.DifficultyLevel, args.Success, _isActiveEventLog, args.Description);
             }
             catch (Exception ex)
             {

@@ -62,15 +62,15 @@ namespace Keebee.AAT.Administrator.Controllers
             var residentId = r.Id;
             var residentRules = new ResidentRules { OperationsClient = _opsClient };
 
+            msgs = residentRules.Validate(r.FirstName, r.LastName, r.Gender, residentId == 0);
+
             if (residentId > 0)
             {
-                msgs = residentRules.Validate(r.FirstName, r.LastName, r.Gender, false);
                 if (msgs == null)
                     UpdateResident(r);
             }
             else
             {
-                msgs = residentRules.Validate(r.FirstName, r.LastName, r.Gender, true);
                 if (msgs == null)
                     residentId = AddResident(r);
             }
@@ -112,7 +112,14 @@ namespace Keebee.AAT.Administrator.Controllers
                 Genders = new SelectList( new Collection<SelectListItem> {
                     new SelectListItem { Value = "M", Text = "M" },
                     new SelectListItem { Value = "F", Text = "F" }},
-                    "Value", "Text", resident?.Gender)
+                    "Value", "Text", resident?.Gender),
+                GameDifficultyLevels = new SelectList(new Collection<SelectListItem> {
+                    new SelectListItem { Value = "1", Text = "1" },
+                    new SelectListItem { Value = "2", Text = "2" },
+                    new SelectListItem { Value = "3", Text = "3" },
+                    new SelectListItem { Value = "4", Text = "4" },
+                    new SelectListItem { Value = "5", Text = "5" }},
+                    "Value", "Text", resident?.GameDifficultyLevel)
             };
 
             return vm;
@@ -129,6 +136,7 @@ namespace Keebee.AAT.Administrator.Controllers
                     FirstName = resident.FirstName,
                     LastName = resident.LastName,
                     Gender = resident.Gender,
+                    GameDifficultyLevel = resident.GameDifficultyLevel,
                     DateCreated = resident.DateCreated,
                     DateUpdated = resident.DateUpdated,
                 }).OrderBy(x => x.Id);
@@ -142,7 +150,8 @@ namespace Keebee.AAT.Administrator.Controllers
             {
                 FirstName = residentDetail.FirstName,
                 LastName = residentDetail.LastName,
-                Gender = residentDetail.Gender
+                Gender = residentDetail.Gender,
+                GameDifficultyLevel = residentDetail.GameDifficultyLevel
             };
 
             _opsClient.PatchResident(residentDetail.Id, r);
@@ -154,7 +163,8 @@ namespace Keebee.AAT.Administrator.Controllers
             {
                 FirstName = residentDetail.FirstName,
                 LastName = residentDetail.LastName,
-                Gender = residentDetail.Gender
+                Gender = residentDetail.Gender,
+                GameDifficultyLevel = residentDetail.GameDifficultyLevel
             };
 
             var id = _opsClient.PostResident(r);

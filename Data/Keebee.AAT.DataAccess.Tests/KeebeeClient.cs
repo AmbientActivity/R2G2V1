@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-// Generation date: 9/14/2016 11:10:47 PM
+// Generation date: 9/15/2016 12:24:03 PM
 namespace Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models
 {
     /// <summary>
@@ -73,12 +73,14 @@ namespace Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models
         /// </summary>
         /// <param name="ID">Initial value of Id.</param>
         /// <param name="isActive">Initial value of IsActive.</param>
+        /// <param name="isActiveEventLog">Initial value of IsActiveEventLog.</param>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        public static Config CreateConfig(int ID, bool isActive)
+        public static Config CreateConfig(int ID, bool isActive, bool isActiveEventLog)
         {
             Config config = new Config();
             config.Id = ID;
             config.IsActive = isActive;
+            config.IsActiveEventLog = isActiveEventLog;
             return config;
         }
         /// <summary>
@@ -150,6 +152,29 @@ namespace Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models
         private bool _IsActive;
         partial void OnIsActiveChanging(bool value);
         partial void OnIsActiveChanged();
+        /// <summary>
+        /// There are no comments for Property IsActiveEventLog in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        [global::Microsoft.OData.Client.OriginalNameAttribute("IsActiveEventLog")]
+        public bool IsActiveEventLog
+        {
+            get
+            {
+                return this._IsActiveEventLog;
+            }
+            set
+            {
+                this.OnIsActiveEventLogChanging(value);
+                this._IsActiveEventLog = value;
+                this.OnIsActiveEventLogChanged();
+                this.OnPropertyChanged("IsActiveEventLog");
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private bool _IsActiveEventLog;
+        partial void OnIsActiveEventLogChanging(bool value);
+        partial void OnIsActiveEventLogChanged();
         /// <summary>
         /// There are no comments for Property ConfigDetails in the schema.
         /// </summary>
@@ -3895,6 +3920,7 @@ namespace Keebee.AAT.DataAccess.Tests.KeebeeAAT
         <Property Name=""Id"" Type=""Edm.Int32"" Nullable=""false"" />
         <Property Name=""Description"" Type=""Edm.String"" />
         <Property Name=""IsActive"" Type=""Edm.Boolean"" Nullable=""false"" />
+        <Property Name=""IsActiveEventLog"" Type=""Edm.Boolean"" Nullable=""false"" />
         <NavigationProperty Name=""ConfigDetails"" Type=""Collection(Keebee.AAT.DataAccess.Models.ConfigDetail)"" />
       </EntityType>
       <EntityType Name=""ConfigDetail"">

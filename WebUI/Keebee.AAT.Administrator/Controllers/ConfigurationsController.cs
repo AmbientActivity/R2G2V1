@@ -63,7 +63,7 @@ namespace Keebee.AAT.Administrator.Controllers
             var configid = c.Id;
             var configurationRules = new ConfigurationRules {OperationsClient = _opsClient};
 
-            var msgs = configurationRules.Validate(c.Description, configid > 0);
+            var msgs = configurationRules.Validate(c.Description, configid == 0);
 
             if (msgs == null)
             {
@@ -154,15 +154,26 @@ namespace Keebee.AAT.Administrator.Controllers
             var configs = _opsClient.GetConfigs().ToArray();
 
             var list = configs
-                .Select(config => new ConfigViewModel
+                .Select(config => 
                 {
-                    Id = config.Id,
-                    Description = config.Description,
-                    IsActive = config.IsActive,
-                    CanEdit = config.Id != ConfigId.Default,
-                    CanDelete = !_opsClient.GetActivityEventLogsForConfig(config.Id).Any() 
-                        && !config.IsActive 
-                        && ConfigId.Default != config.Id
+                    {
+                        var activityLogs = _opsClient.GetActivityEventLogsForConfig(config.Id);
+                        var vm = new ConfigViewModel
+                                {
+                                    Id = config.Id,
+                                    Description = config.Description,
+                                    IsActive = config.IsActive,
+                                    IsActiveEventLog = config.IsActiveEventLog,
+                                    CanAdd = !config.IsActive,
+                                    CanEdit = !config.IsActive && config.Id != ConfigId.Default,
+                                    CanDelete = !activityLogs.Any()
+                                                && !config.IsActive
+                                                && ConfigId.Default != config.Id,
+                                    CanAddDetail = !config.IsActive
+                                };
+
+                        return vm;
+                    }
                 });
 
             return list;
@@ -174,18 +185,22 @@ namespace Keebee.AAT.Administrator.Controllers
 
             var list = configs
                 .SelectMany(config => config.ConfigDetails
-                .Select(cd => new ConfigDetailViewModel
-                {
-                    Id = cd.Id,
-                    ConfigId = config.Id,
-                    SortOrder = cd.PhidgetType.Id,
-                    PhidgetType = cd.PhidgetType.Description,
-                    PhidgetStyleType = cd.PhidgetStyleType.Description,
-                    Description = cd.Description,
-                    ResponseType = cd.ResponseType.Description,
-                    CanDelete = !_opsClient.GetActivityEventLogsForConfigDetail(cd.Id).Any() && !config.IsActive
-                })).ToArray();
-
+                    .Select(cd =>
+                            {
+                                var activityLogs = _opsClient.GetActivityEventLogsForConfigDetail(cd.Id);
+                                var vm = new ConfigDetailViewModel
+                                         {
+                                             Id = cd.Id,
+                                             ConfigId = config.Id,
+                                             SortOrder = cd.PhidgetType.Id,
+                                             PhidgetType = cd.PhidgetType.Description,
+                                             PhidgetStyleType = cd.PhidgetStyleType.Description,
+                                             Description = cd.Description,
+                                             ResponseType = cd.ResponseType.Description,
+                                             CanEdit = !activityLogs.Any() && !config.IsActive
+                                         };
+                                return vm;
+                            })).ToArray();
             return list;
         }
 
@@ -207,7 +222,8 @@ namespace Keebee.AAT.Administrator.Controllers
             {
                 Id = config?.Id ?? 0,
                 SourceConfigName = selectedConfig?.Description,
-                Description = (config != null) ? config.Description : string.Empty
+                Description = (config != null) ? config.Description : string.Empty,
+                IsActiveEventLog = config?.IsActiveEventLog ?? false
             };
 
             return vm;
@@ -245,7 +261,8 @@ namespace Keebee.AAT.Administrator.Controllers
         {
             var newConfig = new ConfigEdit
             {
-                Description = config.Description
+                Description = config.Description,
+                IsActiveEventLog = config.IsActiveEventLog
             };
 
             var newId = _opsClient.PostConfig(newConfig);

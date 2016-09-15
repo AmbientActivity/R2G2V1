@@ -39,6 +39,7 @@
                 <tr>
                     <th class="col-glyphicon"></th>
                     <th class="col-glyphicon"></th>
+                    <th class="col-glyphicon"></th>
                     <!-- ko foreach: columns -->
                     <!-- ko if: !sortable -->
                     @*<th class="col-profile" data-bind="text: title"></th>*@
@@ -54,11 +55,12 @@
                 <tr data-bind="click: $parent.highlightRow, attr: {id: 'row_' +  id}">
                     <td><a href="#" data-bind="click: $parent.showDeleteDialog, css: 'glyphicon glyphicon-remove'"></a></td>
                     <td><a data-bind="attr: { href: '#' }, click: $parent.showEditDialog, css: 'glyphicon glyphicon-pencil'"></a></td>
-                    @*<td><a href="#" data-bind="click: $parent.editMedia">Media</a></td>*@
+                    <td><a data-bind="attr: { href: '#' }, click: $parent.editMedia, css: 'glyphicon glyphicon-film'"></a></td>
                     <td data-bind="text: id"></td>
                     <td data-bind="text: firstname"></td>
                     <td data-bind="text: lastname"></td>
                     <td data-bind="text: gender"></td>
+                    <td data-bind="text: gamedifficultylevel"></td>
                     <td data-bind="text: moment(datecreated).format('ll')"></td>
                     <td data-bind="text: moment(dateupdated).format('ll')"></td>
                 </tr>

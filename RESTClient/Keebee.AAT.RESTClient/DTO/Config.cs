@@ -7,6 +7,7 @@ namespace Keebee.AAT.RESTClient
         public int Id { get; set; }
         public string Description { get; set; }
         public bool IsActive { get; set; }
+        public bool IsActiveEventLog { get; set; }
         public virtual IList<ConfigDetail> ConfigDetails { get; set; }
     }
 
@@ -14,6 +15,7 @@ namespace Keebee.AAT.RESTClient
     {
         public string Description { get; set; }
         public bool IsActive { get; set; }
+        public bool IsActiveEventLog { get; set; }
     }
 
     public class ConfigList

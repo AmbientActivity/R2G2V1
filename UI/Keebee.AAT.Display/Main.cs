@@ -61,6 +61,9 @@ namespace Keebee.AAT.Display
         private int _currentRadioSensorValue;
         private int _currentResponseTypeId;
 
+        // active event logging
+        private bool _currentIsActiveEventLog;
+
         // active activity/response
         private ActiveConfigDetail _activeConfigDetail;
 
@@ -260,24 +263,29 @@ namespace Keebee.AAT.Display
 
         private string[] GetFiles(string fileType = null)
         {
-            var media = _opsClient.GetMediaFilesForPath(GetMediaPath(_activeResident.Id)).Single();
+            var mediaList = _opsClient.GetMediaFilesForPath(GetMediaPath(_activeResident.Id));
+            string[] files;
 
-            var files = media.Files
+            if (mediaList != null)
+            {
+                var media = mediaList.Single();
+                files = media.Files
                     .Where(x => x.FileType == fileType || fileType == null)
                     .OrderBy(x => x.Filename)
                     .Select(x => $"{media.Path}{x.Filename}")
                     .ToArray();
+            }
+            else
+            {
+                // if no media found, load generic content
+                var media = _opsClient.GetMediaFilesForPath(GetMediaPath(GenericMedia.Id)).Single();
 
-            if (media.Files.Any()) return files;
-
-            // if no media found, load generic content
-            media = _opsClient.GetMediaFilesForPath(GetMediaPath(GenericMedia.Id)).Single();
-
-            files = media.Files
-                .Where(x => x.FileType == fileType || fileType == null)
-                .OrderBy(x => x.Filename)
-                .Select(x => $"{media.Path}{x.Filename}")
-                .ToArray();
+                files = media.Files
+                    .Where(x => x.FileType == fileType || fileType == null)
+                    .OrderBy(x => x.Filename)
+                    .Select(x => $"{media.Path}{x.Filename}")
+                    .ToArray();
+            }
 
             return files;
         }
@@ -413,7 +421,7 @@ namespace Keebee.AAT.Display
                 slideViewerFlash1.Show();
                 slideViewerFlash1.Play(images);
 
-                _activityEventLogger.Add(_activeResident.ConfigId, _activeConfigDetail.Id, _activeResident.Id);
+                _activityEventLogger.Add(_activeResident.ConfigId, _activeConfigDetail.Id, _activeResident.Id, _currentIsActiveEventLog);
 
                 _currentResponseTypeId = ResponseTypeId.SlidShow;
             }
@@ -435,8 +443,8 @@ namespace Keebee.AAT.Display
 
                 matchingGame1.Show();
 
-                _activityEventLogger.Add(_activeResident.ConfigId, _activeConfigDetail.Id, _activeResident.Id);
-                _gameEventLogger.Add(_activeResident.Id, GameTypeId.MatchThePictures, _activeResident.GameDifficultyLevel, null, "New game has been initiated");
+                _activityEventLogger.Add(_activeResident.ConfigId, _activeConfigDetail.Id, _activeResident.Id, _currentIsActiveEventLog);
+                _gameEventLogger.Add(_activeResident.Id, GameTypeId.MatchThePictures, _activeResident.GameDifficultyLevel, null, _currentIsActiveEventLog, "New game has been initiated");
 
                 matchingGame1.Play(shapes, _activeResident.GameDifficultyLevel, true);
 
@@ -536,6 +544,7 @@ namespace Keebee.AAT.Display
 
                 _activeResident = response.ActiveResident;
                 _activeConfigDetail = response.ActiveConfigDetail;
+                _currentIsActiveEventLog = response.IsActiveEventLog;
 
                 ExecuteResponse(response.ActiveConfigDetail.ResponseTypeId, response.SensorValue, response.IsSystem);
             }
@@ -577,7 +586,7 @@ namespace Keebee.AAT.Display
             try
             {
                 var args = (MatchingGame.LogGameEventEventArgs)e;
-                _gameEventLogger.Add(_activeResident.Id, args.GameTypeId, args.DifficultyLevel, args.Success, args.Description);
+                _gameEventLogger.Add(_activeResident.Id, args.GameTypeId, args.DifficultyLevel, args.Success, _currentIsActiveEventLog, args.Description);
             }
             catch (Exception ex)
             {
@@ -605,7 +614,7 @@ namespace Keebee.AAT.Display
             try
             {
                 var args = (MediaPlayer.LogVideoActivityEventEventArgs)e;
-                _activityEventLogger.Add(_activeResident.ConfigId, _activeConfigDetail.Id, _activeResident.Id, args.Description);
+                _activityEventLogger.Add(_activeResident.ConfigId, _activeConfigDetail.Id, _activeResident.Id, _currentIsActiveEventLog, args.Description);
             }
             catch (Exception ex)
             {

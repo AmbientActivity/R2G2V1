@@ -12,8 +12,10 @@
             var HIGHLIGHT_ROW_COLOUR = "#e3e8ff";
 
             // buttons
+            var cmdAdd = $("#add");
             var cmdEdit = $("#edit");
             var cmdDelete = $("#delete");
+            var cmdAddDetail = $("#add-detail");
             var cmdActivate = $("#activate");
 
             // active config
@@ -42,7 +44,7 @@
                 });
             }
 
-            function ConfigDetail(id, configid, sortorder, phidgettype, phidgetstyletype, description, responsetype, candelete) {
+            function ConfigDetail(id, configid, sortorder, phidgettype, phidgetstyletype, description, responsetype, canedit) {
                 var self = this;
 
                 self.id = id;
@@ -52,17 +54,19 @@
                 self.phidgetstyletype = phidgetstyletype;
                 self.description = description;
                 self.responsetype = responsetype;
-                self.candelete = candelete;
+                self.canedit = canedit;
             }
 
-            function Config(id, description, isactive, canedit, candelete) {
+            function Config(id, description, isactive, isactiveeventlog, canedit, candelete, canadddetail) {
                 var self = this;
 
                 self.id = id;
                 self.description = description;
                 self.isactive = isactive;
+                self.isactiveeventlog = isactiveeventlog;
                 self.canedit = canedit;
                 self.candelete = candelete;
+                self.canadddetail = canadddetail;
             }
 
             function ConfigViewModel() {
@@ -75,6 +79,13 @@
                 self.activeConfig = ko.observable(activeConfig.Id);
                 self.selectedConfig = ko.observable(activeConfig.Id);
                 self.activeConfigDesc = ko.observable(activeConfig.Description);
+                self.IsActiveEventLog = ko.observable(activeConfig.IsActiveEventLog);
+
+                if (activeConfig.IsActiveEventLog === true)
+                    self.activeEventLogDesc = ko.observable("On");
+                else
+                    self.activeEventLogDesc = ko.observable("Off");
+
                 self.selectedConfigDetail = ko.observable([]);
                 self.isLoadingConfigs = ko.observable(false);
                 self.totalConfigDetails = ko.observable(0);
@@ -106,7 +117,8 @@
                 function initializeScreen() {
                     cmdActivate.attr("disabled", "disabled");
                     cmdDelete.attr("disabled", "disabled");
-                    // edit button
+                    cmdAddDetail.attr("disabled", "disabled");
+
                     if (!self.canEdit())
                         cmdEdit.attr("disabled", "disabled");
                     else
@@ -123,7 +135,7 @@
                 });
 
                 function pushConfig(value) {
-                    self.configs.push(new Config(value.Id, value.Description, value.IsActive, value.CanEdit, value.CanDelete));
+                    self.configs.push(new Config(value.Id, value.Description, value.IsActive, value.IsActiveEventLog, value.CanEdit, value.CanDelete, value.CanAddDetail));
                 };
 
                 function pushConfigDetail(value) {
@@ -134,7 +146,7 @@
                         value.PhidgetStyleType,
                         value.Description,
                         value.ResponseType,
-                        value.CanDelete));
+                        value.CanEdit));
                 };
 
                 self.sort = function() {
@@ -169,15 +181,18 @@
                 };
 
                 self.showEditDialog = function () {
+                    if (cmdEdit.is("[disabled]")) return;
                     var id = self.selectedConfig();
                     self.showConfigEditDialog(id);
                 };
 
                 self.showAddDialog = function () {
+                    if (cmdAdd.is("[disabled]")) return;
                     self.showConfigEditDialog(0);
                 };
 
                 self.showDeleteDialog = function () {
+                    if (cmdDelete.is("[disabled]")) return;
                     var id = self.selectedConfig();
 
                     self.showConfigDeleteDialog(id);
@@ -312,7 +327,7 @@
                     if (id <= 0) return;
 
                     BootstrapDialog.show({
-                        title: title + " Activate Configuration",
+                        title: title + " Configuration Activation",
                         message: "Activate the configuration <b>" + self.selectedConfigDesc() + "</b>?",
                         closable: false,
                         buttons: [
@@ -333,6 +348,10 @@
                                     self.activeConfig(activeConfig.Id);
                                     self.selectedConfig(activeConfig.Id);
                                     self.activeConfigDesc(activeConfig.Description);
+                                    if (activeConfig.IsActiveEventLog === true)
+                                        self.activeEventLogDesc("On");
+                                    else
+                                        self.activeEventLogDesc("Off");
                                     self.enableDetail();
                                     dialog.close();
                                     $("body").css("cursor", "default");
@@ -448,9 +467,11 @@
 
                 self.getConfigFromDialog = function () {
                     var description = $.trim($("#txtDescription").val());
+                    var isactiveeventlog = $.trim($("#chkIsActiveEventLog").is(":checked"));
 
                     return {
-                        Description: description
+                        Description: description,
+                        IsActiveEventLog: isactiveeventlog
                     };
                 };
 
@@ -648,12 +669,24 @@
                         cmdDelete.attr("disabled", "disabled");
                     else
                         cmdDelete.removeAttr("disabled");
+
+                    // add detail button
+                    if (!self.canAddDetailConfig(configId))
+                        cmdAddDetail.attr("disabled", "disabled");
+                    else
+                        cmdAddDetail.removeAttr("disabled");
                 };
 
                 self.canDeleteConfig = function (id) {
                     return self.configs()
                         .filter(function (value) { return value.id === id; })
                         [0].candelete;
+                };
+
+                self.canAddDetailConfig = function (id) {
+                    return self.configs()
+                        .filter(function (value) { return value.id === id; })
+                        [0].canadddetail;
                 };
 
                 self.canEditConfig = function (id) {

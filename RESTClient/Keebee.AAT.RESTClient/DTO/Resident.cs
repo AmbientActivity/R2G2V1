@@ -22,6 +22,7 @@ namespace Keebee.AAT.RESTClient
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string Gender { get; set; }
+        public int GameDifficultyLevel { get; set; }
     }
 
     public class ResidentList

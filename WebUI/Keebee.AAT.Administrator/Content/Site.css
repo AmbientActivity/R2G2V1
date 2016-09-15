@@ -111,12 +111,23 @@ a:hover, a:visited, a:link, a:active {
 .glyphicon-pencil {
     color: #265a88;
 }
+.glyphicon-film {
+    color: #419641;
+}
 .button-text {
     color: #fff;
 }
 .active-config-container {
     float: right;
-    margin: 5px 20px 0 0;
+    padding: 0;
+    margin: 20px 10px 0 0;
+}
+.active-config-label {
+    float: right;
+}
+.active-eventlog-label {
+    float: right;
+    margin-right: 20px;
 }
 .label-active-config {
     color: #419641;

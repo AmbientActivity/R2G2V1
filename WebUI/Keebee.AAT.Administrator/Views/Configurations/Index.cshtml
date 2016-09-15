@@ -10,20 +10,25 @@
 </script>
 
 <div class="row">
-    <div class="col-sm-7">
+    <div class="col-sm-6">
         <h3>System Configuration</h3>
     </div>
-    <div class="active-config-container">
-        <h5>Active: <i><label id="lblActiveConfigDesc" data-bind="text: activeConfigDesc, css: 'label-active-config'"></label></i></h5>
+    <div class="col-sm-6">
+        <div class="active-config-label">
+            <h5>Active: <i><label id="lblActiveConfigDesc" data-bind="text: activeConfigDesc, css: 'label-active-config'"></label></i></h5>
+        </div>
+        <div class="active-eventlog-label">
+            <h5>Event Logging is: <i><label id="lblActiveEventLog" data-bind="text: activeEventLogDesc"></label></i></h5>
+        </div>
     </div>
 </div>
 
 <div class="config-container">
     <div class="row">
-        <div class="col-sm-6">
+        <div class="col-sm-5">
             <select class="form-control" data-bind="options: configs, optionsValue: 'id', optionsText: 'description', value: selectedConfig, event: { change: enableDetail }, css: 'select-config'"></select>
         </div>
-        <div class="col-sm-5">
+        <div class="col-sm-6">
             <a id="add" href="#" class="btn btn-success btn-md" data-bind="click: showAddDialog, css: 'glyphicon glyphicon-duplicate button-text'"></a>
             <a id="edit" href="#" class="btn btn-primary btn-md" data-bind="click: showEditDialog, css: 'glyphicon glyphicon-pencil button-text'"></a>
             <a id="delete" href="#" class="btn btn-danger btn-md" data-bind="click: showDeleteDialog, css: 'glyphicon glyphicon-trash button-text'"></a>
@@ -60,13 +65,14 @@
 
                     <tbody data-bind="foreach: configDetailsTable">
                     <tr data-bind="click: $parent.highlightRow, attr: {id: 'row_' +  id}">
-                        <!-- ko if: candelete -->
+                        <!-- ko if: canedit -->
                         <td><a href="#" data-bind="click: $parent.showDeleteDetailDialog, css: 'glyphicon glyphicon-remove'"></a></td>
+                        <td><a data-bind="attr: { href: '#' }, click: $parent.showEditDetailDialog, css: 'glyphicon glyphicon-pencil'"></a></td>
                         <!-- /ko -->
-                        <!-- ko if: !candelete -->
+                        <!-- ko if: !canedit -->
+                        <td><span data-bind="css: 'glyphicon glyphicon-flag'"></span></td>
                         <td><span data-bind="css: 'glyphicon glyphicon-flag'"></span></td>
                         <!-- /ko -->
-                        <td><a data-bind="attr: { href: '#' }, click: $parent.showEditDetailDialog, css: 'glyphicon glyphicon-pencil'"></a></td>
                         <td data-bind="text: phidgettype"></td>
                         <td data-bind="text: phidgetstyletype"></td>
                         <td data-bind="text: description"></td>

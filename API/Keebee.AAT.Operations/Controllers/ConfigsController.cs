@@ -41,6 +41,7 @@ namespace Keebee.AAT.Operations.Controllers
                 c.Id,
                 c.Description,
                 c.IsActive,
+                c.IsActiveEventLog,
                 ConfigDetails = c.ConfigDetails.Select(cd => new
                     {
                         cd.Id,
@@ -87,6 +88,7 @@ namespace Keebee.AAT.Operations.Controllers
             exObj.Id = config.Id;
             exObj.Description = config.Description;
             exObj.IsActive = config.IsActive;
+            exObj.IsActiveEventLog = config.IsActiveEventLog;
 
             return new DynamicJsonObject(exObj);
         }
@@ -108,6 +110,7 @@ namespace Keebee.AAT.Operations.Controllers
             exObj.Id = config.Id;
             exObj.Description = config.Description;
             exObj.IsActive = config.IsActive;
+            exObj.IsActiveEventLog = config.IsActiveEventLog;
 
             return new DynamicJsonObject(exObj);
         }
@@ -131,6 +134,7 @@ namespace Keebee.AAT.Operations.Controllers
             exObj.Id = config.Id;
             exObj.Description = config.Description;
             exObj.IsActive = config.IsActive;
+            exObj.IsActiveEventLog = config.IsActiveEventLog;
             exObj.ConfigDetails = config.ConfigDetails.Select(cd => new
             {
                 cd.Id,
@@ -181,6 +185,7 @@ namespace Keebee.AAT.Operations.Controllers
             exObj.Id = config.Id;
             exObj.Description = config.Description;
             exObj.IsActive = config.IsActive;
+            exObj.IsActiveEventLog = config.IsActiveEventLog;
             exObj.ConfigDetails = config.ConfigDetails.Select(cd => new
             {
                 cd.Id,
@@ -209,52 +214,6 @@ namespace Keebee.AAT.Operations.Controllers
                     cd.ResponseType.IsSystem
                 }
             }).OrderBy(o => o.PhidgetType.Id);
-
-            return new DynamicJsonObject(exObj);
-        }
-
-        [Route("profiles/{id}/details")]
-        [HttpGet]
-        public async Task<DynamicJsonObject> GetDetailsForProfile(int id)
-        {
-            var config = new Config();
-
-            await Task.Run(() =>
-            {
-                config = _configService.GetDetailsForProfile(id);
-            });
-
-            if (config == null) return new DynamicJsonObject(new ExpandoObject());
-
-            dynamic exObj = new ExpandoObject();
-            exObj.Id = config.Id;
-            exObj.Description = config.Description;
-            exObj.IsActive = config.IsActive;
-            exObj.ConfigDetails = config.ConfigDetails.Select(cd => new
-            {
-                cd.Id,
-                PhidgetType = new
-                {
-                    cd.PhidgetType.Id,
-                    cd.PhidgetType.Description
-                },
-                cd.Description,
-                ResponseType = new
-                {
-                    cd.ResponseType.Id,
-                    cd.ResponseType.Description,
-                    cd.ResponseType.IsInteractive,
-                    cd.ResponseType.IsSystem,
-                    //MediaFiles = cd.ResponseType.MediaFiles
-                    //    .Select(mediaFile => new
-                    //    {
-                    //        mediaFile.StreamId,
-                    //        Filename = mediaFile.Filename.Replace($".{mediaFile.FileType}", string.Empty),
-                    //        FilePath = Path.Combine(mediaFile.Path, mediaFile.Filename),
-                    //        mediaFile.FileType
-                    //    })
-                  }
-            });
 
             return new DynamicJsonObject(exObj);
         }

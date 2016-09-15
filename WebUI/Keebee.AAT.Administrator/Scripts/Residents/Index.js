@@ -34,7 +34,7 @@
                 });
             }
 
-            function Resident(id, profileid, firstname, lastname, gender, hasprofile, datecreated, dateupdated) {
+            function Resident(id, profileid, firstname, lastname, gender, gamedifficultylevel, hasprofile, datecreated, dateupdated) {
                 var self = this;
 
                 self.id = id;
@@ -42,6 +42,7 @@
                 self.firstname = firstname;
                 self.lastname = lastname;
                 self.gender = gender;
+                self.gamedifficultylevel = gamedifficultylevel;
                 self.hasprofile = hasprofile;
                 self.datecreated = datecreated;
                 self.dateupdated = dateupdated;
@@ -75,13 +76,14 @@
                     arr.push({ title: "First Name", sortable: true, sortKey: "firstname" });
                     arr.push({ title: "Last Name", sortable: true, sortKey: "lastname" });
                     arr.push({ title: "Gender", sortable: true, sortKey: "gender" });
+                    arr.push({ title: "Game Difficulty", sortable: true, sortKey: "gamedifficultylevel" });
                     arr.push({ title: "Created", sortable: true, sortKey: "datecreated" });
                     arr.push({ title: "Updated", sortable: true, sortKey: "dateupdated" });
                     return arr;
                 });
 
                 function pushResident(value) {
-                    self.residents.push(new Resident(value.Id, value.ProfileId, value.FirstName, value.LastName, value.Gender, value.HasProfile, value.DateCreated, value.DateUpdated));
+                    self.residents.push(new Resident(value.Id, value.ProfileId, value.FirstName, value.LastName, value.Gender, value.GameDifficultyLevel, value.HasProfile, value.DateCreated, value.DateUpdated));
                 };
 
                 self.selectedResident(self.residents()[0]);
@@ -301,9 +303,10 @@
                     var firstname = $.trim($("#txtFirstName").val());
                     var lastname = $.trim($("#txtLastName").val());
                     var gender = $.trim($("#ddlGenders").val());
+                    var gamedifficultylevel = $.trim($("#ddlGameDifficultyLevels").val());
 
                     return {
-                        Id: self.selectedResident().id, FirstName: firstname, LastName: lastname, Gender: gender
+                        Id: self.selectedResident().id, FirstName: firstname, LastName: lastname, Gender: gender, GameDifficultyLevel: gamedifficultylevel
                     };
                 };
 

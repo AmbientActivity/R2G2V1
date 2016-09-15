@@ -3,6 +3,7 @@ using Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models;
 using System.Collections.Generic;
 using System;
 using System.Linq;
+using Keebee.AAT.Operations.Service.FileManagement;
 
 namespace Keebee.AAT.Operations.Service.Services
 {
@@ -53,6 +54,9 @@ namespace Keebee.AAT.Operations.Service.Services
             container.AddToResidents(resident);
             container.SaveChanges();
 
+            var fileManager = new FileManager();
+            fileManager.CreateFolders(resident.Id);
+
             return resident.Id;
         }
 
@@ -72,6 +76,9 @@ namespace Keebee.AAT.Operations.Service.Services
             if (resident.Gender != null)
                 r.Gender = resident.Gender;
 
+            if (resident.GameDifficultyLevel > 0)
+                r.GameDifficultyLevel = resident.GameDifficultyLevel;
+
             resident.DateUpdated = DateTime.Now;
 
             container.UpdateObject(r);
@@ -87,6 +94,9 @@ namespace Keebee.AAT.Operations.Service.Services
 
             container.DeleteObject(resident);
             container.SaveChanges();
+
+            var fileManager = new FileManager();
+            fileManager.DeleteFolders(id);
         }
 
         public bool ResidentExists(int id)

@@ -4,6 +4,7 @@
     {
         public int SensorValue { get; set; }
         public bool IsSystem { get; set; }
+        public bool IsActiveEventLog { get; set; }
         public ActiveResident ActiveResident { get; set; }
         public ActiveConfigDetail ActiveConfigDetail { get; set; }
     }

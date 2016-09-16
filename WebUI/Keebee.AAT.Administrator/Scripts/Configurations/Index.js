@@ -12,7 +12,6 @@
             var HIGHLIGHT_ROW_COLOUR = "#e3e8ff";
 
             // buttons
-            var cmdAdd = $("#add");
             var cmdEdit = $("#edit");
             var cmdDelete = $("#delete");
             var cmdAddDetail = $("#add-detail");
@@ -57,16 +56,14 @@
                 self.canedit = canedit;
             }
 
-            function Config(id, description, isactive, isactiveeventlog, canedit, candelete, canadddetail) {
+            function Config(id, description, isactive, isactiveeventlog, candelete) {
                 var self = this;
 
                 self.id = id;
                 self.description = description;
                 self.isactive = isactive;
                 self.isactiveeventlog = isactiveeventlog;
-                self.canedit = canedit;
                 self.candelete = candelete;
-                self.canadddetail = canadddetail;
             }
 
             function ConfigViewModel() {
@@ -92,7 +89,6 @@
 
                 createConfigDetailArray(lists.ConfigDetailList);
                 createConfigArray(lists.ConfigList);
-                self.canEdit = ko.observable(activeConfig.CanEdit);
 
                 initializeScreen();
 
@@ -117,12 +113,6 @@
                 function initializeScreen() {
                     cmdActivate.attr("disabled", "disabled");
                     cmdDelete.attr("disabled", "disabled");
-                    cmdAddDetail.attr("disabled", "disabled");
-
-                    if (!self.canEdit())
-                        cmdEdit.attr("disabled", "disabled");
-                    else
-                        cmdEdit.removeAttr("disabled");
                 }
 
                 self.columns = ko.computed(function() {
@@ -135,7 +125,7 @@
                 });
 
                 function pushConfig(value) {
-                    self.configs.push(new Config(value.Id, value.Description, value.IsActive, value.IsActiveEventLog, value.CanEdit, value.CanDelete, value.CanAddDetail));
+                    self.configs.push(new Config(value.Id, value.Description, value.IsActive, value.IsActiveEventLog, value.CanDelete));
                 };
 
                 function pushConfigDetail(value) {
@@ -187,7 +177,6 @@
                 };
 
                 self.showAddDialog = function () {
-                    if (cmdAdd.is("[disabled]")) return;
                     self.showConfigEditDialog(0);
                 };
 
@@ -221,6 +210,8 @@
                 self.deleteSelectedDetail = function (row) {
                     deleteConfigDetail(row.id);
                 };
+
+                // -----------------------------------------------------------------
 
                 self.showConfigEditDialog = function (id) {
                     var title = "<span class='glyphicon glyphicon-pencil'></span>";
@@ -269,6 +260,10 @@
                                         activeConfig = result.ConfigList.filter(function (value) { return value.IsActive; })[0];
                                         self.activeConfig(activeConfig.Id);
                                         self.activeConfigDesc(activeConfig.Description);
+                                        if (activeConfig.IsActiveEventLog === true)
+                                            self.activeEventLogDesc("On");
+                                        else
+                                            self.activeEventLogDesc("Off");
                                         self.enableDetail();
                                         dialog.close();
                                         $("body").css("cursor", "default");
@@ -340,7 +335,7 @@
                                 label: "Yes",
                                 cssClass: "btn-primary",
                                 action: function (dialog) {
-                                    var result = self.activateSelectedConfig();
+                                    var result = self.activateConfig();
                                     $.extend(lists, result);
                                     createConfigArray(lists.ConfigList);
                                     createConfigDetailArray(lists.ConfigDetailList);
@@ -471,7 +466,8 @@
 
                     return {
                         Description: description,
-                        IsActiveEventLog: isactiveeventlog
+                        IsActiveEventLog: isactiveeventlog,
+                        IsActive: self.selectedConfig() === self.activeConfig()
                     };
                 };
 
@@ -550,9 +546,9 @@
                     var phidgettypeid = $("#ddlPhidgetTypes").val();
                     var phidgetstyletypeid = $("#ddlPhidgetStyleTypes").val();
                     var responsetypeid = $("#ddlResponseTypes").val();
-
+                    
                     return {
-                        Id: self.selectedConfigDetail().id, Description: description, PhidgetTypeId: phidgettypeid, PhidgetStyleTypeId: phidgetstyletypeid, ResponseTypeId: responsetypeid
+                        Id: self.selectedConfigDetail().id, Description: description, PhidgetTypeId: phidgettypeid, PhidgetStyleTypeId: phidgetstyletypeid, ResponseTypeId: responsetypeid, IsActive: self.selectedConfig() === self.activeConfig()
                     };
                 };
 
@@ -591,11 +587,14 @@
 
                     var result;
 
-                    $.ajax({
-                        type: "POST",
-                        async: false,
-                        url: site.url + "Configurations/DeleteDetail/",
-                        data: { id: id },
+                        $.ajax({
+                            type: "POST",
+                            async: false,
+                            url: site.url + "Configurations/DeleteDetail/",
+                            data: {
+                                id: id,
+                                isActive: self.selectedConfig() === self.activeConfig()
+                    },
                         dataType: "json",
                         traditional: true,
                         failure: function () {
@@ -613,7 +612,7 @@
                     return result;
                 };
 
-                self.activateSelectedConfig = function() {
+                self.activateConfig = function() {
                     var configId = self.selectedConfig();
                     $("body").css("cursor", "wait");
                     var result;
@@ -658,23 +657,11 @@
                         cmdActivate.removeAttr("disabled");
                     }
 
-                    // edit button
-                    if (!self.canEditConfig(configId))
-                        cmdEdit.attr("disabled", "disabled");
-                    else
-                        cmdEdit.removeAttr("disabled");
-
                     // delete button
                     if (!self.canDeleteConfig(configId))
                         cmdDelete.attr("disabled", "disabled");
                     else
                         cmdDelete.removeAttr("disabled");
-
-                    // add detail button
-                    if (!self.canAddDetailConfig(configId))
-                        cmdAddDetail.attr("disabled", "disabled");
-                    else
-                        cmdAddDetail.removeAttr("disabled");
                 };
 
                 self.canDeleteConfig = function (id) {
@@ -687,12 +674,6 @@
                     return self.configs()
                         .filter(function (value) { return value.id === id; })
                         [0].canadddetail;
-                };
-
-                self.canEditConfig = function (id) {
-                    return self.configs()
-                        .filter(function (value) { return value.id === id; })
-                        [0].canedit;
                 };
 
                 self.selectedConfigDesc = function () {

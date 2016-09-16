@@ -23,12 +23,6 @@ namespace Keebee.AAT.Display.Caregiver
             set { _opsClient = value; }
         }
 
-        private bool _isActiveEventLog;
-        public bool IsActiveEventLog
-        {
-            set { _isActiveEventLog = value; }
-        }
-
         private string[] _files;
         public string[] Files
         {
@@ -45,6 +39,12 @@ namespace Keebee.AAT.Display.Caregiver
         public int DifficultyLevel
         {
             set { _difficultyLevel = value; }
+        }
+
+        private bool _isActiveEventLog;
+        public bool IsActiveEventLog
+        {
+            set { _isActiveEventLog = value; }
         }
 
         private int _residentId;
@@ -109,7 +109,7 @@ namespace Keebee.AAT.Display.Caregiver
             _gameEventLogger.SystemEventLogger = _systemEventLogger;
             _gameEventLogger.OperationsClient = _opsClient;
             matchingGame1.SystemEventLogger = _systemEventLogger;
-            matchingGame1.Play(_files, _difficultyLevel, false);
+            matchingGame1.Play(_files, _difficultyLevel, false, _isActiveEventLog);
         }
 
         private void LogGameEvent(object sender, EventArgs e)
@@ -117,7 +117,7 @@ namespace Keebee.AAT.Display.Caregiver
             try
             {
                 var args = (MatchingGame.LogGameEventEventArgs)e;
-                _gameEventLogger.Add(_residentId, args.GameTypeId, args.DifficultyLevel, args.Success, _isActiveEventLog, args.Description);
+                _gameEventLogger.Add(_residentId, args.GameTypeId, args.DifficultyLevel, args.Success, args.Description);
             }
             catch (Exception ex)
             {

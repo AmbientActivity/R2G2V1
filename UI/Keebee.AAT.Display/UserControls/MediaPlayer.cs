@@ -18,6 +18,8 @@ namespace Keebee.AAT.Display.UserControls
             set { _systemEventLogger = value; }
         }
 
+        private bool _isActiveEventLog;
+
         // event handler
         public event EventHandler MediaPlayerCompleteEvent;
         public event EventHandler LogVideoActivityEventEvent;
@@ -47,11 +49,12 @@ namespace Keebee.AAT.Display.UserControls
             axWindowsMediaPlayer1.PlayStateChange += PlayStateChange;
         }
 
-        public void Play(int responseTypeId, string[] files)
+        public void Play(int responseTypeId, string[] files, bool isActiveEventLog)
         {
             try
             {
                 _maxIndex = files.Length - 1;
+                _isActiveEventLog = isActiveEventLog;
 
                 if (files.Length > 1) 
                     files.Shuffle();
@@ -192,7 +195,9 @@ namespace Keebee.AAT.Display.UserControls
             {
                 case (int)WMPPlayState.wmppsPlaying:
                     _currentPlaylistItem = axWindowsMediaPlayer1.currentMedia.name;
-                    RaiseLogVideoActivityEventEvent(axWindowsMediaPlayer1.currentMedia.name);
+
+                    if (_isActiveEventLog)
+                        RaiseLogVideoActivityEventEvent(axWindowsMediaPlayer1.currentMedia.name);
                     break;
                 case (int)WMPPlayState.wmppsMediaEnded:
                     

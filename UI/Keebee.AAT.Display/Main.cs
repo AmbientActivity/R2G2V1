@@ -348,7 +348,7 @@ namespace Keebee.AAT.Display
                     StopCurrentResponse();
 
                     mediaPlayer1.Show();
-                    mediaPlayer1.Play(responseTypeId, mediaFiles);
+                    mediaPlayer1.Play(responseTypeId, mediaFiles, _currentIsActiveEventLog);
 
                     _currentResponseTypeId = responseTypeId;  // radio or television
                 }
@@ -421,7 +421,8 @@ namespace Keebee.AAT.Display
                 slideViewerFlash1.Show();
                 slideViewerFlash1.Play(images);
 
-                _activityEventLogger.Add(_activeResident.ConfigId, _activeConfigDetail.Id, _activeResident.Id, _currentIsActiveEventLog);
+                if (_currentIsActiveEventLog)
+                    _activityEventLogger.Add(_activeResident.ConfigId, _activeConfigDetail.Id, _activeResident.Id);
 
                 _currentResponseTypeId = ResponseTypeId.SlidShow;
             }
@@ -443,10 +444,13 @@ namespace Keebee.AAT.Display
 
                 matchingGame1.Show();
 
-                _activityEventLogger.Add(_activeResident.ConfigId, _activeConfigDetail.Id, _activeResident.Id, _currentIsActiveEventLog);
-                _gameEventLogger.Add(_activeResident.Id, GameTypeId.MatchThePictures, _activeResident.GameDifficultyLevel, null, _currentIsActiveEventLog, "New game has been initiated");
+                if (_currentIsActiveEventLog)
+                {
+                    _activityEventLogger.Add(_activeResident.ConfigId, _activeConfigDetail.Id, _activeResident.Id);
+                    _gameEventLogger.Add(_activeResident.Id, GameTypeId.MatchThePictures, _activeResident.GameDifficultyLevel, null, "New game has been initiated");
+                }
 
-                matchingGame1.Play(shapes, _activeResident.GameDifficultyLevel, true);
+                matchingGame1.Play(shapes, _activeResident.GameDifficultyLevel, true, _currentIsActiveEventLog);
 
                 _currentResponseTypeId = ResponseTypeId.MatchingGame;
             }
@@ -586,7 +590,7 @@ namespace Keebee.AAT.Display
             try
             {
                 var args = (MatchingGame.LogGameEventEventArgs)e;
-                _gameEventLogger.Add(_activeResident.Id, args.GameTypeId, args.DifficultyLevel, args.Success, _currentIsActiveEventLog, args.Description);
+                _gameEventLogger.Add(_activeResident.Id, args.GameTypeId, args.DifficultyLevel, args.Success, args.Description);
             }
             catch (Exception ex)
             {
@@ -614,7 +618,7 @@ namespace Keebee.AAT.Display
             try
             {
                 var args = (MediaPlayer.LogVideoActivityEventEventArgs)e;
-                _activityEventLogger.Add(_activeResident.ConfigId, _activeConfigDetail.Id, _activeResident.Id, _currentIsActiveEventLog, args.Description);
+                _activityEventLogger.Add(_activeResident.ConfigId, _activeConfigDetail.Id, _activeResident.Id, args.Description);
             }
             catch (Exception ex)
             {

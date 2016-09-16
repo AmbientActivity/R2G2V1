@@ -122,9 +122,12 @@ namespace Keebee.AAT.Administrator.Controllers
         }
 
         [HttpPost]
-        public JsonResult DeleteDetail(int id)
+        public JsonResult DeleteDetail(int id, bool isActive)
         {
             _opsClient.DeleteConfigDetail(id);
+
+            if (isActive)
+                _messageQueueConfigPhidget.Send("1");
 
             return Json(new
             {
@@ -164,12 +167,9 @@ namespace Keebee.AAT.Administrator.Controllers
                                     Description = config.Description,
                                     IsActive = config.IsActive,
                                     IsActiveEventLog = config.IsActiveEventLog,
-                                    CanAdd = !config.IsActive,
-                                    CanEdit = !config.IsActive,
                                     CanDelete = !activityLogs.Any()
                                                 && !config.IsActive
-                                                && ConfigId.Default != config.Id,
-                                    CanAddDetail = !config.IsActive
+                                                && ConfigId.Default != config.Id
                                 };
 
                         return vm;
@@ -197,7 +197,7 @@ namespace Keebee.AAT.Administrator.Controllers
                                              PhidgetStyleType = cd.PhidgetStyleType.Description,
                                              Description = cd.Description,
                                              ResponseType = cd.ResponseType.Description,
-                                             CanEdit = !activityLogs.Any() && !config.IsActive
+                                             CanEdit = !activityLogs.Any()
                                          };
                                 return vm;
                             })).ToArray();
@@ -251,10 +251,14 @@ namespace Keebee.AAT.Administrator.Controllers
         {
             var c = new ConfigEdit
             {
-                Description = config.Description
+                Description = config.Description,
+                IsActiveEventLog = config.IsActiveEventLog
             };
 
             _opsClient.PatchConfig(config.Id, c);
+
+            if(config.IsActive)
+                _messageQueueConfigPhidget.Send("1");
         }
 
         private int AddConfig(ConfigEditViewModel config, int selectedConfigId)
@@ -294,6 +298,9 @@ namespace Keebee.AAT.Administrator.Controllers
             };
 
             _opsClient.PatchConfigDetail(configDetail.Id, cd);
+
+            if (configDetail.IsActive)
+                _messageQueueConfigPhidget.Send("1");
         }
 
         private int AddConfigDetail(ConfigDetailEditViewModel configDetail)
@@ -308,6 +315,9 @@ namespace Keebee.AAT.Administrator.Controllers
             };
 
             var id = _opsClient.PostConfigDetail(cd);
+
+            if (configDetail.IsActive)
+                _messageQueueConfigPhidget.Send("1");
 
             return id;
         }

@@ -423,10 +423,10 @@ package
 		}
 		
 		private function LogGamingEvent(success:Number, description:String, isGameHasExpired:Boolean = false):void {
-			// comment the following line to test
 			var successDesc:String = "NULL";
 			if (success == 0) successDesc = "FALSE";
 			else if (success == 1) successDesc = "TRUE";
+			// comment the following line to test
 			ExternalInterface.call("FlashCall", currentGameTypeId, currentLevel.toString(), successDesc, description, isGameHasExpired);
 		}
 			

@@ -90,6 +90,8 @@ namespace Keebee.AAT.Operations.Service.Services
             if (config.Description != null)
                 c.Description = config.Description;
 
+            c.IsActiveEventLog = config.IsActiveEventLog;
+
             container.UpdateObject(c);
             container.SaveChanges();
         }

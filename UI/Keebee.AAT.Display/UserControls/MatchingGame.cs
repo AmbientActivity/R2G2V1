@@ -22,6 +22,8 @@ namespace Keebee.AAT.Display.UserControls
         public event EventHandler MatchingGameTimeoutExpiredEvent;
         public event EventHandler LogGameEventEvent;
 
+        private bool _isActiveEventLog;
+
         public class LogGameEventEventArgs : EventArgs
         {
             public int GameTypeId { get; set; }
@@ -48,9 +50,10 @@ namespace Keebee.AAT.Display.UserControls
             axShockwaveFlash1.Dock = DockStyle.Fill;
         }
 
-        public void Play(string[] shapes, int initialDifficultyLevel, bool enableTimeout)
+        public void Play(string[] shapes, int initialDifficultyLevel, bool enableTimeout, bool isActiveEventLog)
         {
             _initialDifficultyLevel = initialDifficultyLevel;
+            _isActiveEventLog = isActiveEventLog;
             _enableGameTimeout = enableTimeout;
             PlayGame(shapes);
         }
@@ -196,7 +199,8 @@ namespace Keebee.AAT.Display.UserControls
                     if (isGameHasExpired)
                         RaiseMatchingGameTimeoutExpired();
 
-                    RaiseLogGameEventEvent(eventLogEntryTypeId, difficultyLevel, isSuccess, description);
+                    if (_isActiveEventLog)
+                        RaiseLogGameEventEvent(eventLogEntryTypeId, difficultyLevel, isSuccess, description);
                 }
 
                 // no arguments implies "raise game complete event"

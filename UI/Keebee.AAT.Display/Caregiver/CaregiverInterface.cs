@@ -685,8 +685,9 @@ namespace Keebee.AAT.Display.Caregiver
                     OperationsClient = _opsClient,
                     Files = files,
                     DifficultyLevel = difficultyLevel,
-                    ActivityName = activityName
-            };
+                    ActivityName = activityName,
+                    IsActiveEventLog = _config.IsActiveEventLog
+                };
 
                 StopMusic();
                 activityPlayer.ShowDialog();

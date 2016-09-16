@@ -16,7 +16,7 @@ var site = (function () {
             if (rootUrl.indexOf("localhost") > 0) {
                 return rootUrl + keebeeUrl;
             } else {
-                return "http://aat/Keebee.AAT.Administrator/";
+                return rootUrl + keebeeUrl;
             }
         }
     };

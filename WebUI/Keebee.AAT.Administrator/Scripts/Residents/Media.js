@@ -9,7 +9,37 @@ function CuteWebUI_AjaxUploader_OnPostback() {
     document.forms[0].submit();
 }
 
+function CuteWebUI_AjaxUploader_OnError(msg) {
+    BootstrapDialog.show({
+        type: BootstrapDialog.TYPE_DANGER,
+        title: "File Error",
+        message: msg
+    });
+
+    EnableScreen();
+    return false;
+}
+
+function CuteWebUI_AjaxUploader_OnTaskError(obj, msg, reason) {
+    BootstrapDialog.show({
+        type: BootstrapDialog.TYPE_DANGER,
+        title: "Tssk Error",
+        message: "Error uploading file <b>" + obj.FileName + "</b>.\nMessage: " + msg
+    });
+
+    EnableScreen();
+    return false;
+}
+
 function CuteWebUI_AjaxUploader_OnStop() {
+    EnableScreen();
+}
+
+function CuteWebUI_AjaxUploader_OnSelect() {
+    DisableScreen();
+}
+
+function EnableScreen() {
     $("#lblGoBackDisabled").attr("hidden", "hidden");
     $("#lnkGoBack").removeAttr("hidden");
     $("#txtSearchFilename").removeAttr("disabled");
@@ -18,13 +48,13 @@ function CuteWebUI_AjaxUploader_OnStop() {
     $("#main-menu").removeAttr("hidden");
 }
 
-function CuteWebUI_AjaxUploader_OnSelect() {
-    $("#lnkGoBack").attr("hidden", "hidden");
-    $("#lblGoBackDisabled").removeAttr("hidden");
-    $("#txtSearchFilename").attr("disabled", "disabled");
-    $("#uploadbutton").attr("disabled", "disabled");
-    $("select").attr("disabled", "disabled");
-    $("#main-menu").attr("hidden", "hidden");
+function DisableScreen() {
+    $("#lblGoBackDisabled").attr("hidden", "hidden");
+    $("#lnkGoBack").removeAttr("hidden");
+    $("#txtSearchFilename").removeAttr("disabled");
+    $("#uploadbutton").removeAttr("disabled");
+    $("select").removeAttr("disabled");
+    $("#main-menu").removeAttr("hidden");
 }
 
 ; (function ($) {

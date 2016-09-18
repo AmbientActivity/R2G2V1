@@ -1,16 +1,15 @@
-﻿using System;
-using System.Collections;
-using Keebee.AAT.RESTClient;
+﻿using Keebee.AAT.RESTClient;
 using Keebee.AAT.Administrator.ViewModels;
 using Keebee.AAT.BusinessRules;
 using Keebee.AAT.FileManagement;
 using Keebee.AAT.Administrator.Extensions;
+using Keebee.AAT.Shared;
+using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Web.Mvc;
-using Keebee.AAT.Shared;
-using Newtonsoft.Json;
+using System;
 
 namespace Keebee.AAT.Administrator.Controllers
 {
@@ -67,7 +66,9 @@ namespace Keebee.AAT.Administrator.Controllers
                 {
                     var fileguid = new Guid(strguid);
                     var file = uploader.GetUploadedFile(fileguid);
-                    if (file == null) continue;
+                    if (file?.FileName == null) continue;
+
+                    if (!IsValidFile(file.FileName, mediaType)) continue;
 
                     var filePath = fileManager.GetFilePath(id, mediaType, file.FileName);
                     // delete it if it already exists
@@ -325,26 +326,48 @@ namespace Keebee.AAT.Administrator.Controllers
             switch (mediaType.ToLower())
             {
                 case MediaPath.Images:
+                case MediaPath.Pictures:
                     extensions = "*.jpg,*.jpeg,*.png,*.gif";
                     break;
                 case MediaPath.Videos:
                     extensions = "*.mp4";
                     break;
                 case MediaPath.Music:
+                case MediaPath.Sounds:
                     extensions = "*.mp3";
-                    break;
-                case MediaPath.Pictures:
-                    extensions = "*.jpg,*.jpeg,*.png,*.gif";
                     break;
                 case MediaPath.Shapes:
                     extensions = "*.png";
                     break;
-                case MediaPath.Sounds:
-                    extensions = "*.mp3";
-                    break;
             }
 
             return extensions;
+        }
+
+        private static bool IsValidFile(string filename, string mediaType)
+        {
+            var isValid = false;
+            var name = filename.ToLower();
+
+            switch (mediaType.ToLower())
+            {
+                case MediaPath.Images:
+                case MediaPath.Pictures:
+                    isValid = name.Contains("jpg") || name.Contains("jpeg") || name.Contains("png") || name.Contains("gif");
+                    break;
+                case MediaPath.Videos:
+                    isValid = name.Contains("mp4");
+                    break;
+                case MediaPath.Music:
+                case MediaPath.Sounds:
+                    isValid = name.Contains("mp3");
+                    break;
+                case MediaPath.Shapes:
+                    isValid = name.Contains("png");
+                    break;
+            }
+
+            return isValid;
         }
     }
 }

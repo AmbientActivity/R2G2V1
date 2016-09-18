@@ -40,8 +40,8 @@ function CuteWebUI_AjaxUploader_OnSelect() {
 }
 
 function EnableScreen() {
-    $("#lblGoBackDisabled").attr("hidden", "hidden");
     $("#lnkGoBack").removeAttr("hidden");
+    $("#lblGoBackDisabled").attr("hidden", "hidden");
     $("#txtSearchFilename").removeAttr("disabled");
     $("#uploadbutton").removeAttr("disabled");
     $("select").removeAttr("disabled");
@@ -49,12 +49,12 @@ function EnableScreen() {
 }
 
 function DisableScreen() {
-    $("#lblGoBackDisabled").attr("hidden", "hidden");
-    $("#lnkGoBack").removeAttr("hidden");
-    $("#txtSearchFilename").removeAttr("disabled");
-    $("#uploadbutton").removeAttr("disabled");
-    $("select").removeAttr("disabled");
-    $("#main-menu").removeAttr("hidden");
+    $("#lnkGoBack").attr("hidden", "hidden");
+    $("#lblGoBackDisabled").removeAttr("hidden");
+    $("#txtSearchFilename").attr("disabled", "disabled");
+    $("#uploadbutton").attr("disabled", "disabled");
+    $("select").attr("disabled", "disabled");
+    $("#main-menu").attr("hidden", "hidden");
 }
 
 ; (function ($) {

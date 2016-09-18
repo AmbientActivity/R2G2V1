@@ -219,6 +219,9 @@ function DisableScreen() {
                     if (id <= 0) return;
 
                     var mediaType = self.selectedMediaType();
+                    if (mediaType.charAt(mediaType.length - 1) === "s") {
+                        mediaType = mediaType.slice(0, -1);
+                    }
 
                     BootstrapDialog.show({
                         type: BootstrapDialog.TYPE_DANGER,

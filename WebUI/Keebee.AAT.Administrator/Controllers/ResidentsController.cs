@@ -1,6 +1,10 @@
-﻿using Keebee.AAT.RESTClient;
+﻿using System;
+using System.Collections;
+using Keebee.AAT.RESTClient;
 using Keebee.AAT.Administrator.ViewModels;
 using Keebee.AAT.BusinessRules;
+using Keebee.AAT.FileManagement;
+using Keebee.AAT.Administrator.Extensions;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -20,9 +24,59 @@ namespace Keebee.AAT.Administrator.Controllers
         }
 
         // GET: Resident
-        public ActionResult Index()
+        public ActionResult Index(int? id, string rfid, string firstname, string lastname, string sortcolumn,
+            int? sortdescending)
         {
-            return View();
+            return
+                View(LoadResidentsViewModel(id ?? 0, null, true, rfid, firstname, lastname, sortcolumn, sortdescending));
+        }
+
+        public ActionResult Media(
+            int id, 
+            string rfid, 
+            string firstname, 
+            string lastname, 
+            string sortcolumn, 
+            string mediaType, 
+            string myuploader, 
+            int? sortdescending)
+        {
+            // first time loading
+            if (mediaType == null)
+                mediaType = MediaPath.Images.ToUppercaseFirst();
+
+            var vm = LoadResidentMediaViewModel(id, rfid, firstname, lastname, mediaType, sortcolumn, sortdescending);
+
+            using (var uploader = new CuteWebUI.MvcUploader(System.Web.HttpContext.Current))
+            {
+                uploader.UploadUrl = Response.ApplyAppPathModifier("~/UploadHandler.ashx");
+                uploader.Name = "myuploader";
+                uploader.AllowedFileExtensions = GetAllowedExtensions(mediaType);
+                uploader.MultipleFilesUpload = true;
+                uploader.InsertButtonID = "uploadbutton";
+                vm.UploaderHtml = uploader.Render();
+
+                // GET:
+                if (string.IsNullOrEmpty(myuploader))
+                    return View(vm);
+
+                // POST:
+                var fileManager = new FileManager();
+                // for multiple files the value is string : guid/guid/guid 
+                foreach (var strguid in myuploader.Split('/'))
+                {
+                    var fileguid = new Guid(strguid);
+                    var file = uploader.GetUploadedFile(fileguid);
+                    if (file == null) continue;
+
+                    var filePath = fileManager.GetFilePath(id, mediaType, file.FileName);
+                    // delete it if it already exists
+                    fileManager.DeleteFile(filePath);
+                    file.MoveTo(filePath);
+                }
+            }
+
+            return View(vm);
         }
 
         [HttpGet]
@@ -37,13 +91,21 @@ namespace Keebee.AAT.Administrator.Controllers
         }
 
         [HttpGet]
-        public JsonResult GetDataMedia(int id)
+        public JsonResult GetDataMedia(int id, string mediaType)
         {
             var vm = new
             {
-                FileList = GetFileList(id),
-                MediaTypeList = new Collection<string> { "images", "videos", "music", "pictures", "shapes", "sounds" }
-            };
+                FileList = GetFileList(id, mediaType),
+                MediaTypeList = new Collection<string>
+                {
+                    MediaPath.Images.ToUppercaseFirst(),
+                    MediaPath.Videos.ToUppercaseFirst(),
+                    MediaPath.Music.ToUppercaseFirst(),
+                    MediaPath.Pictures.ToUppercaseFirst(),
+                    MediaPath.Shapes.ToUppercaseFirst(),
+                    MediaPath.Sounds.ToUppercaseFirst()
+                }
+        };
 
             return Json(vm, JsonRequestBehavior.AllowGet);
         }
@@ -58,11 +120,10 @@ namespace Keebee.AAT.Administrator.Controllers
         public JsonResult Save(string resident)
         {
             var r = JsonConvert.DeserializeObject<ResidentEditViewModel>(resident);
-            IEnumerable<string> msgs;
             var residentId = r.Id;
             var residentRules = new ResidentRules { OperationsClient = _opsClient };
 
-            msgs = residentRules.Validate(r.FirstName, r.LastName, r.Gender, residentId == 0);
+            IEnumerable<string> msgs = residentRules.Validate(r.FirstName, r.LastName, r.Gender, residentId == 0);
 
             if (residentId > 0)
             {
@@ -96,6 +157,42 @@ namespace Keebee.AAT.Administrator.Controllers
             }, JsonRequestBehavior.AllowGet);
         }
 
+        [HttpPost]
+        public JsonResult DeleteFile(Guid streamId, int residentId, string mediaType)
+        {
+            var file = _opsClient.GetMediaFile(streamId);
+
+            if (file != null)
+            {
+                var fileManager = new FileManager();
+                fileManager.DeleteFile($@"{file.Path}\{file.Filename}");
+            }
+
+            return Json(new
+            {
+                FileList = GetFileList(residentId, mediaType)
+            }, JsonRequestBehavior.AllowGet);
+        }
+
+        private static ResidentsViewModel LoadResidentsViewModel(int id, List<string> msgs, bool success, 
+            string rfid, string firstname, string lastname, string sortcolumn, int? sortdescending)
+        {
+            var vm = new ResidentsViewModel
+            {
+                SelectedId = (int)id,
+                ErrorMessages = msgs,
+                Success = success,
+
+                RfidSearch = rfid,
+                FirstNameSearch = firstname,
+                LastNameSearch = lastname,
+                SortColumnName = sortcolumn,
+                SortDescending = sortdescending
+            };
+
+            return vm;
+        }
+
         private ResidentEditViewModel LoadResidentEditViewModel(int id)
         {
             Resident resident = null;
@@ -120,6 +217,29 @@ namespace Keebee.AAT.Administrator.Controllers
                     new SelectListItem { Value = "4", Text = "4" },
                     new SelectListItem { Value = "5", Text = "5" }},
                     "Value", "Text", resident?.GameDifficultyLevel)
+            };
+
+            return vm;
+        }
+
+        private ResidentMediaViewModel LoadResidentMediaViewModel(int id, string rfid, string firstname, string lastname, string mediaType, string sortcolumn, int? sortdescending)
+        {
+            var resident = _opsClient.GetResident(id);
+            var fullName = (resident.LastName.Length > 0)
+                ? $"{resident.FirstName} {resident.LastName}"
+                : resident.FirstName;
+
+            var vm = new ResidentMediaViewModel
+            {
+                ResidentId = resident.Id,
+                FullName = fullName,
+                UploadButtonText = $"Upload {mediaType}",
+                RfidSearch = rfid,
+                FirstNameSearch = firstname,
+                LastNameSearch = lastname,
+                SortColumn = sortcolumn,
+                SortDescending = sortdescending,
+                SelectedMediaType = mediaType
             };
 
             return vm;
@@ -172,10 +292,12 @@ namespace Keebee.AAT.Administrator.Controllers
             return id;
         }
 
-        private IEnumerable<MediaFileViewModel> GetFileList(int id)
+        private IEnumerable<MediaFileViewModel> GetFileList(int id, string mediaType)
         {
             var list = new List<MediaFileViewModel>();
-            var media = _opsClient.GetMediaFilesForPath($"{id}").ToArray();
+            var media = _opsClient.GetMediaFilesForPath($@"{id}\{mediaType}");
+
+            if (media == null) return list;
 
             foreach (var m in media)
             {
@@ -185,8 +307,8 @@ namespace Keebee.AAT.Administrator.Controllers
                     {
                         StreamId = file.StreamId,
                         IsFolder = file.IsFolder,
-                        Filename = file.Filename,
-                        FileType = file.FileType,
+                        Filename = file.Filename.Replace($".{file.FileType}", string.Empty),
+                        FileType = file.FileType.ToUpper(),
                         FileSize = file.FileSize,
                         Path = m.Path
                     });
@@ -194,6 +316,35 @@ namespace Keebee.AAT.Administrator.Controllers
             }
 
             return list;
+        }
+
+        private static string GetAllowedExtensions(string mediaType)
+        {
+            var extensions = string.Empty;
+
+            switch (mediaType.ToLower())
+            {
+                case MediaPath.Images:
+                    extensions = "*.jpg,*.jpeg,*.png,*.gif";
+                    break;
+                case MediaPath.Videos:
+                    extensions = "*.mp4";
+                    break;
+                case MediaPath.Music:
+                    extensions = "*.mp3";
+                    break;
+                case MediaPath.Pictures:
+                    extensions = "*.jpg,*.jpeg,*.png,*.gif";
+                    break;
+                case MediaPath.Shapes:
+                    extensions = "*.png";
+                    break;
+                case MediaPath.Sounds:
+                    extensions = "*.mp3";
+                    break;
+            }
+
+            return extensions;
         }
     }
 }

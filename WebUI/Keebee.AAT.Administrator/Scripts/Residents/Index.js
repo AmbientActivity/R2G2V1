@@ -9,9 +9,23 @@
     var HIGHLIGHT_ROW_COLOUR = "#e3e8ff";
 
     residents.index = {
-        init: function () {
-            var _sortDescending = false;
+        init: function (values) {
             var _currentSortKey = "id";
+            var _sortDescending = false;
+
+            var config = {
+                selectedid: 0,
+                rfid: "",
+                firstname: "",
+                lastname: "",
+                sortcolumn: "",
+                sortdescending: 0
+            }
+
+            $.extend(config, values);
+
+            if (config.sortcolumn.length > 0)
+                _currentSortKey = config.sortcolumn;
 
             var lists = {
                 ResidentList: []
@@ -20,6 +34,14 @@
             loadData();
 
             ko.applyBindings(new ResidentViewModel());
+
+            // pre-select the resident whose media was just being managed
+            if (parseInt(config.selectedid) > 0) { $("#row_" + config.selectedid).trigger("click"); }
+
+            // pre-sort the list after media was managed
+            _sortDescending = (config.sortdescending === "0");
+            if (config.sortcolumn.length > 0)
+                $("#resident-col-" + config.sortcolumn).trigger("click");
 
             function loadData() {
                 $.ajax({
@@ -34,11 +56,10 @@
                 });
             }
 
-            function Resident(id, profileid, firstname, lastname, gender, gamedifficultylevel, hasprofile, datecreated, dateupdated) {
+            function Resident(id, firstname, lastname, gender, gamedifficultylevel, hasprofile, datecreated, dateupdated) {
                 var self = this;
 
                 self.id = id;
-                self.profileid = profileid;
                 self.firstname = firstname;
                 self.lastname = lastname;
                 self.gender = gender;
@@ -55,11 +76,12 @@
 
                 self.residents = ko.observableArray([]);
                 self.selectedResident = ko.observable();
-                self.firstNameSearch = ko.observable("");
-                self.lastNameSearch = ko.observable("");
-                self.rfidSearch = ko.observable("");
-                self.totalResidents = ko.observable(0);
+                self.rfidSearch = ko.observable(config.rfid);
+                self.firstNameSearch = ko.observable(config.firstname);
+                self.lastNameSearch = ko.observable(config.lastname);
 
+                self.totalResidents = ko.observable(0);
+                
                 createResidentArray(lists.ResidentList);
 
                 function createResidentArray(list) {
@@ -68,7 +90,7 @@
                         pushResident(value);
                     });
                 };
-                
+
                 self.columns = ko.computed(function () {
                     var arr = [];
                     arr.push({ title: "Profile", sortable: false  });
@@ -83,7 +105,7 @@
                 });
 
                 function pushResident(value) {
-                    self.residents.push(new Resident(value.Id, value.ProfileId, value.FirstName, value.LastName, value.Gender, value.GameDifficultyLevel, value.HasProfile, value.DateCreated, value.DateUpdated));
+                    self.residents.push(new Resident(value.Id, value.FirstName, value.LastName, value.Gender, value.GameDifficultyLevel, value.HasProfile, value.DateCreated, value.DateUpdated));
                 };
 
                 self.selectedResident(self.residents()[0]);
@@ -151,11 +173,19 @@
                     self.showResidentEditDialog(row);
                 };
 
-                self.editProfile = function (row) {
-                    var id = row.profileid;
+                self.editMedia = function (row) {
+                    var id = row.id;
+
+                    var sortdescending = 0;
+                    if (_sortDescending) sortdescending = "1";
 
                     if (id > 0) {
-                        window.location = site.url + "Profiles/Edit/" + id;
+                        window.location = site.url + "Residents/Media/" + id
+                            + "?rfid=" + self.rfidSearch()
+                            + "&firstname=" + self.firstNameSearch()
+                            + "&lastname=" + self.lastNameSearch()
+                            + "&sortcolumn=" + _currentSortKey
+                            + "&sortdescending=" + sortdescending;
                     }
                 };
 

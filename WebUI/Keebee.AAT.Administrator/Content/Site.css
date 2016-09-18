@@ -90,7 +90,18 @@ a:hover, a:visited, a:link, a:active {
     width: 470px;
 }
 .record-total {
-    margin-right: 10px;
+    margin-right: 15px;
+}
+.link-back-to-residents {
+    font-size: 16px;
+    margin: -20px 0 0 0;
+    padding: 0;
+}
+.link-back-to-residents-disabled {
+    font-size: 16px;
+    color: #838383;
+    margin: -20px 0 0 0;
+    padding: 0;
 }
 .resident-edit {
     width: 400px;
@@ -128,6 +139,10 @@ a:hover, a:visited, a:link, a:active {
 .active-eventlog-label {
     float: right;
     margin-right: 20px;
+}
+.media-manager-button-container {
+    padding: 0;
+    margin: 0 0 10px 0;
 }
 .label-active-config {
     color: #419641;

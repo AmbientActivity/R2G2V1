@@ -1,4 +1,6 @@
-﻿@{
+﻿@model Keebee.AAT.Administrator.ViewModels.ResidentsViewModel
+
+@{
     ViewBag.Title = "Resident Manager";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
@@ -7,7 +9,15 @@
 
 <script type="text/javascript">
     $(document).ready(function() {
-        residents.index.init();
+        residents.index.init(
+        {
+            selectedid: '@Model.SelectedId',
+            rfid: '@Model.RfidSearch',
+            firstname: '@Model.FirstNameSearch',
+            lastname: '@Model.LastNameSearch',
+            sortcolumn: '@Model.SortColumnName',
+            sortdescending: '@Model.SortDescending'
+        });
     });
 </script>
 
@@ -41,9 +51,6 @@
                     <th class="col-glyphicon"></th>
                     <th class="col-glyphicon"></th>
                     <!-- ko foreach: columns -->
-                    <!-- ko if: !sortable -->
-                    @*<th class="col-profile" data-bind="text: title"></th>*@
-                    <!-- /ko -->
                     <!-- ko if: sortable -->
                     <th data-bind="click: $parent.sort, attr: { id: 'resident-col-' + sortKey } "><a href="#" data-bind="text: title"></a></th>
                     <!-- /ko -->

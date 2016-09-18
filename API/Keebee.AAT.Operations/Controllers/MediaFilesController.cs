@@ -21,6 +21,7 @@ namespace Keebee.AAT.Operations.Controllers
         }
 
         // GET: api/MediaFiles
+        [HttpGet]
         public async Task<DynamicJsonObject> Get()
         {
             IEnumerable<MediaFile> media = new Collection<MediaFile>();
@@ -54,6 +55,7 @@ namespace Keebee.AAT.Operations.Controllers
         }
 
         // GET: api/MediaFiles/55a32e73-b176-e611-8a92-90e6bac7161a
+        [HttpGet]
         public async Task<DynamicJsonObject> Get(Guid id)
         {
             var media = new MediaFile();
@@ -78,6 +80,7 @@ namespace Keebee.AAT.Operations.Controllers
         }
 
         // GET: api/MediaFiles?profileId=5
+        [HttpGet]
         public async Task<DynamicJsonObject> GetForProfile(int profileId)
         {
             IEnumerable<MediaFile> media = new Collection<MediaFile>();
@@ -111,6 +114,7 @@ namespace Keebee.AAT.Operations.Controllers
         }
 
         // GET: api/MediaFiles?path=Exports\EventLog
+        [HttpGet]
         public async Task<DynamicJsonObject> GetForPath(string path)
         {
             IEnumerable<MediaFile> media = new Collection<MediaFile>();
@@ -144,6 +148,7 @@ namespace Keebee.AAT.Operations.Controllers
         }
 
         // GET: api/MediaFiles/Videos?profileId=5&path=music
+        [HttpGet]
         public async Task<DynamicJsonObject> GetForProfilePath(int profileId, string path)
         {
             IEnumerable<MediaFile> media = new Collection<MediaFile>();

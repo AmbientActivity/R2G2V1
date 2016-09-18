@@ -35,7 +35,8 @@ namespace Keebee.AAT.Administrator
             var thirdPartyScriptBundle = new Bundle("~/bundles/ThirdPartyScripts");
             thirdPartyScriptBundle.Include(
                 "~/Scripts/knockout-{version}.js",
-                 "~/Scripts/moment.js");
+                "~/Scripts/moment.js",
+                "~/Scripts/jquery.blockUI.js");
             thirdPartyScriptBundle.Builder = nullBuilder;
             thirdPartyScriptBundle.Transforms.Add(scriptTransformer);
             bundles.Add(thirdPartyScriptBundle);
@@ -48,8 +49,7 @@ namespace Keebee.AAT.Administrator
                 "~/Scripts/Residents/Media.js",
                 "~/Scripts/EventLogs/Index.js",
                 "~/Scripts/EventLogs/Export.js",
-                "~/Scripts/Configurations/Index.js",
-                "~/Scripts/MediaFiles/Index.js");
+                "~/Scripts/Configurations/Index.js");
             customScriptBundle.Builder = nullBuilder;
             customScriptBundle.Transforms.Add(scriptTransformer);
             bundles.Add(customScriptBundle);

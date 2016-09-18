@@ -3,6 +3,7 @@ using Keebee.AAT.Operations.Service.KeebeeAAT;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Keebee.AAT.FileManagement;
 
 namespace Keebee.AAT.Operations.Service.Services
 {
@@ -31,10 +32,9 @@ namespace Keebee.AAT.Operations.Service.Services
         {
             var container = new Container(new Uri(ODataHost.Url));
 
-            var media = container.MediaFiles.ByKey(streamId)
-                .GetValue();
+            var media = container.MediaFiles.ByKey(streamId);
 
-            return media;
+            return media.GetValue();
         }
 
         public IEnumerable<MediaFile> GetForProfile(int profileId)

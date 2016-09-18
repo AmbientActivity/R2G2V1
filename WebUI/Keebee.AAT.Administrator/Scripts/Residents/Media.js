@@ -1,16 +1,44 @@
 ﻿/*!
- * Profiles/Edit.js
+ * Residents/Media.js
  * Author: John Charlton
  * Date: 2015-05
  */
+
+function CuteWebUI_AjaxUploader_OnPostback() {
+    $.blockUI({ message: "<h4>Saving...</h4>" });
+    document.forms[0].submit();
+}
+
+function CuteWebUI_AjaxUploader_OnStop() {
+    $("#lblGoBackDisabled").attr("hidden", "hidden");
+    $("#lnkGoBack").removeAttr("hidden");
+    $("#txtSearchFilename").removeAttr("disabled");
+    $("#uploadbutton").removeAttr("disabled");
+    $("select").removeAttr("disabled");
+    $("#main-menu").removeAttr("hidden");
+}
+
+function CuteWebUI_AjaxUploader_OnSelect() {
+    $("#lnkGoBack").attr("hidden", "hidden");
+    $("#lblGoBackDisabled").removeAttr("hidden");
+    $("#txtSearchFilename").attr("disabled", "disabled");
+    $("#uploadbutton").attr("disabled", "disabled");
+    $("select").attr("disabled", "disabled");
+    $("#main-menu").attr("hidden", "hidden");
+}
 
 ; (function ($) {
 
     var HIGHLIGHT_ROW_COLOUR = "#e3e8ff";
 
-    profiles.edit = {
-        init: function (config) {
-            var profileid = config.id;
+    residents.media = {
+        init: function (values) {
+            var config = {
+                residentid: 0
+            }
+
+            $.extend(config, values);
+
             var _sortDescending = false;
             var _currentSortKey = "filename";
 
@@ -24,9 +52,10 @@
             ko.applyBindings(new FileViewModel());
 
             function loadData() {
+                var mediaType = $("#mediaType").val();
                 $.ajax({
                     type: "GET",
-                    url: site.url + "Profiles/GetDataEdit/" + profileid,
+                    url: site.url + "Residents/GetDataMedia/" + config.residentid + "?mediaType=" + mediaType,
                     dataType: "json",
                     traditional: true,
                     async: false,
@@ -47,20 +76,15 @@
                 self.path = path;
             }
 
-            function MediaType(description) {
-                var self = this;
-                self.description = description;
-            }
-
             function FileViewModel() {
                 var tblFile = $("#tblFile");
 
                 var self = this;
 
                 self.files = ko.observableArray([]);
-                self.mediaTypes = ko.observableArray([]);
+                self.mediaTypes = ko.observableArray(["images","videos"]);
                 self.selectedFile = ko.observable();
-                self.selectedMediaType = ko.observable("");
+                self.selectedMediaType = ko.observable($("#mediaType").val());
                 self.filenameSearch = ko.observable("");
                 self.totalFiles = ko.observable(0);
 
@@ -77,7 +101,7 @@
                 function createMediaTypeArray(list) {
                     self.mediaTypes.removeAll();
                     $(list).each(function (index, value) {
-                        pushMediaType(value);
+                        self.mediaTypes.push(value);
                     });
                 };
 
@@ -91,11 +115,7 @@
 
                 function pushFile(value) {
                     self.files.push(new File(value.StreamId, value.IsFolder, value.Filename, value.FileType, value.FileSize, value.Path));
-                };
-
-                function pushMediaType(value) {
-                    self.mediaTypes.push(new MediaType(value));
-                };
+                }
 
                 self.selectedFile(self.files()[0]);
 
@@ -136,9 +156,7 @@
                 self.filteredFiles = ko.computed(function () {
                     return ko.utils.arrayFilter(self.files(), function (f) {
                         return (self.filenameSearch().length === 0 ||
-                            f.filename.toLowerCase().indexOf(self.filenameSearch().toLowerCase()) !== -1) &&
-                        (self.selectedMediaType().length === 0 ||
-                            f.path.toLowerCase().indexOf(self.selectedMediaType().toLowerCase()) !== -1);
+                            f.filename.toLowerCase().indexOf(self.filenameSearch().toLowerCase()) !== -1);
                     });
                 });
 
@@ -149,27 +167,12 @@
                     return filteredFiles;
                 });
 
-                self.showEditDialog = function (row) {
-                    var id = row.id;
+                // ------------------
 
-                    if (id > 0) {
-                        self.highlightRow(row);
-                    }
-
-                    self.showFileEditDialog(row);
-                };
-
-                self.editProfile = function (row) {
-                    var id = row.profileid;
-
-                    if (id > 0) {
-                        self.highlightRow(row);
-                    }
-                };
-
-                self.deleteSelectedFile = function (row) {
-                    deleteFile(row.id);
-                };
+                self.doPostBack = function () {
+                    $("#mediaType").val(self.selectedMediaType());
+                    document.forms[0].submit();
+                }
 
                 self.showDeleteDialog = function (row) {
                     self.highlightRow(row);
@@ -177,19 +180,13 @@
                 };
 
                 self.showFileDeleteDialog = function (row) {
-                    var id = (typeof row.id !== "undefined" ? row.id : 0);
+                    var id = (typeof row.streamid !== "undefined" ? row.streamid : 0);
                     if (id <= 0) return;
-                    var r = self.getFile(id);
-                    var messageGender;
-
-                    if (r.gender === "M") messageGender = "his";
-                    else messageGender = "her";
 
                     BootstrapDialog.show({
                         type: BootstrapDialog.TYPE_DANGER,
                         title: "Delete File?",
-                        message: "Permanently delete the file <i><b>" + r.firstname + " " + r.lastname + "</b></i>?\n\n" +
-                            "<b>Warning:</b> All " + messageGender + " personal media files will be removed!",
+                        message: "Delete the file <i><b>" + row.filename + "</b></i>?",
                         closable: false,
                         buttons: [
                             {
@@ -201,7 +198,7 @@
                                 label: "Yes, Delete",
                                 cssClass: "btn-danger",
                                 action: function (dialog) {
-                                    var result = self.deleteFile(row.id);
+                                    var result = self.deleteFile(id);
                                     lists.FileList = result.FileList;
                                     createFileArray(lists.FileList);
                                     self.sort({ afterSave: true });
@@ -213,80 +210,11 @@
                     });
                 };
 
-                self.showFileEditDialog = function (row) {
-                    var id = (typeof row.id !== "undefined" ? row.id : 0);
-                    var title = "<span class='glyphicon glyphicon-pencil'></span>";
-                    var message;
-
-                    if (id > 0) {
-                        title = title + " Edit File";
-                        var file = self.getFile(id);
-                        self.selectedFile(file);
-                    } else {
-                        title = title + " Add File";
-                        self.selectedFile([]);
-                    }
-
-                    $.ajax({
-                        type: "GET",
-                        async: false,
-                        url: site.url + "Files/GetFileEditView/" + id,
-                        success: function (data) {
-                            message = data;
-                        }
-                    });
-
-                    BootstrapDialog.show({
-                        title: title,
-                        message: message,
-                        onshown: function () {
-                            $("#txtFirstName").focus();
-                        },
-                        closable: false,
-                        buttons: [
-                            {
-                                label: "Cancel",
-                                action: function (dialog) {
-                                    dialog.close();
-                                }
-                            }, {
-                                label: "OK",
-                                cssClass: "btn-primary",
-                                action: function (dialog) {
-                                    var result = self.saveFile();
-
-                                    if (result.ErrorMessages === null) {
-                                        lists.FileList = result.FileList;
-                                        createFileArray(lists.FileList);
-                                        self.selectedFile(self.getFile(result.SelectedId));
-                                        self.sort({ afterSave: true });
-                                        self.highlightRow(self.selectedFile());
-                                        dialog.close();
-                                        $("body").css("cursor", "default");
-                                    } else {
-                                        $("#validation-container").show();
-                                        $("#validation-container").html("");
-                                        $("body").css("cursor", "default");
-                                        var html = "<ul>";
-                                        for (var i = 0; i < result.ErrorMessages.length; i++) {
-                                            var message = result.ErrorMessages[i];
-                                            html = html + "<li>" + message + "</li>";
-                                        }
-                                        html = html + "</ul>";
-                                        $("#validation-container").append(html);
-                                        $("body").css("cursor", "default");
-                                    }
-                                }
-                            }
-                        ]
-                    });
-                };
-
-                self.getFile = function (fileid) {
+                self.getFile = function (streamid) {
                     var file = null;
 
                     ko.utils.arrayForEach(self.files(), function (item) {
-                        if (item.id === fileid) {
+                        if (item.streamid === streamid) {
                             file = item;
                         }
                     });
@@ -346,16 +274,17 @@
                     return result;
                 };
 
-                self.deleteFile = function (id) {
+                self.deleteFile = function (streamid) {
                     $("body").css("cursor", "wait");
 
                     var result;
+                    var mediatype = $("#mediaType").val();
 
                     $.ajax({
                         type: "POST",
                         async: false,
-                        url: site.url + "Files/Delete/",
-                        data: { id: id },
+                        url: site.url + "Residents/DeleteFile/",
+                        data: { streamId: streamid, residentId: config.residentid, mediaType: mediatype },
                         dataType: "json",
                         traditional: true,
                         failure: function () {
@@ -384,3 +313,5 @@
         }
     }
 })(jQuery);
+
+

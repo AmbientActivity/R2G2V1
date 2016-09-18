@@ -73,7 +73,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="FileManagement\FileManager.cs" />
     <Compile Include="KeebeeClient.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -107,6 +106,10 @@
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Shared\Keebee.AAT.FileManagement\Keebee.AAT.FileManagement.csproj">
+      <Project>{6b1d10cc-6bf2-4848-93db-6ce9cf864078}</Project>
+      <Name>Keebee.AAT.FileManagement</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Shared\Keebee.AAT.Shared\Keebee.AAT.Shared.csproj">
       <Project>{3cb12af2-7655-46f6-9969-990730f73964}</Project>
       <Name>Keebee.AAT.Shared</Name>

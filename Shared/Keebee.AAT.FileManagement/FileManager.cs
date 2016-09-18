@@ -4,7 +4,7 @@ using System;
 using System.Diagnostics;
 using System.IO;
 
-namespace Keebee.AAT.Operations.Service.FileManagement
+namespace Keebee.AAT.FileManagement
 {
     public class FileManager
     {
@@ -14,7 +14,27 @@ namespace Keebee.AAT.Operations.Service.FileManagement
         {
             _systemEventLogger = new SystemEventLogger(SystemEventLogType.FileManager);
         }
-      
+
+        public string GetFilePath (int residentId, string mediaType, string filename)
+        {
+            return $@"\\{Environment.MachineName}\{MediaPath.MediaRoot}\{MediaPath.Profiles}\{residentId}\{mediaType}\{filename}";
+        }
+
+        public void DeleteFile(string path)
+        {
+            try
+            {
+                if (File.Exists(path))
+                {
+                    File.Delete(path);
+                }
+            }
+            catch (Exception ex)
+            {
+                _systemEventLogger.WriteEntry($"FileManagement.ProfileManager.CreateFolders :{ex.Message}", EventLogEntryType.Error);
+            }
+        }
+
         public void CreateFolders(int residentId)
         {
             try
@@ -48,7 +68,7 @@ namespace Keebee.AAT.Operations.Service.FileManagement
                 if (Directory.Exists(profilePath))
                 {
                     var dirInfo = new DirectoryInfo(profilePath);
-                    
+
                     dirInfo.Delete(true);
                 }
             }

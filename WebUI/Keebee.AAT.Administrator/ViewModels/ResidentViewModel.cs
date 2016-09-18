@@ -9,6 +9,12 @@ namespace Keebee.AAT.Administrator.ViewModels
         public int SelectedId { get; set; }
         public List<string> ErrorMessages { get; set; }
         public bool Success { get; set; }
+
+        public string RfidSearch { get; set; }
+        public string FirstNameSearch { get; set; }
+        public string LastNameSearch { get; set; }
+        public string SortColumnName { get; set; }
+        public int? SortDescending { get; set; }
     }
 
     public class ResidentViewModel
@@ -33,5 +39,20 @@ namespace Keebee.AAT.Administrator.ViewModels
         public SelectList Genders { get; set; }
         public int GameDifficultyLevel { get; set; }
         public SelectList GameDifficultyLevels { get; set; }
+    }
+
+    public class ResidentMediaViewModel
+    {
+        public int ResidentId { get; set; }
+        public string FullName { get; set; }
+        public string UploadButtonText { get; set; }
+        public string RfidSearch { get; set; }
+        public string FirstNameSearch { get; set; }
+        public string LastNameSearch { get; set; }
+        public string SortColumn { get; set; }
+        public int? SortDescending { get; set; }
+        public string SelectedMediaType{ get; set; }
+        public string UploaderHtml { get; set; }
+        public string UploadedMessage { get; set; }
     }
 }

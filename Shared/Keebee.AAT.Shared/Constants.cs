@@ -9,6 +9,12 @@
         Value5 = 999
     }
 
+    public static class ScreenSize
+    {
+        public const int Width = 1920;
+        public const int Height = 1080;
+    }
+
     public static class Exports
     {
         public const string EventLogPath = @"Exports\EventLog";
@@ -22,15 +28,25 @@
     public static class MediaPath
     {
         public const string MediaRoot = @"sqlexpress\KeebeeAATFilestream\Media";
+        public const string Profiles = "Profiles";
+        public const string Cats = "Cats";
+        public const string Ambient = "Ambient";
         public const string Images = "images";
         public const string Videos = "videos";
         public const string Music = "music";
         public const string Pictures = "pictures";
         public const string Shapes = "shapes";
         public const string Sounds = "sounds";
-        public const string Profiles = "Profiles";
-        public const string Cats = "Cats";
-        public const string Ambient = "Ambient";
+    }
+
+    public static class MediaType
+    {
+        public const string Images = "Images";
+        public const string Videos = "Videos";
+        public const string Music = "Music";
+        public const string Pictures = "Pictures";
+        public const string Shapes = "Shapes";
+        public const string Sounds = "Sounds";
     }
 
     public static class ConfigId

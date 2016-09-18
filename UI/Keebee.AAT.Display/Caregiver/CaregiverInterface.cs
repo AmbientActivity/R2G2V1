@@ -292,16 +292,19 @@ namespace Keebee.AAT.Display.Caregiver
                 var residents = _opsClient.GetResidents().ToList();
                 var arrayList = new ArrayList();
 
-                var residentList = new List<Resident> { new Resident { Id = GenericMedia.Id, FirstName = GenericMedia.Description } }
+                var residentList = new List<Resident>
+                { new Resident { Id = GenericMedia.Id, FirstName = GenericMedia.Description, LastName = string.Empty } }
                     .Union(residents
                     .OrderBy(o => o.LastName).ThenBy(o => o.FirstName))
                     .ToArray();
 
                 foreach (var r in residentList)
                 {
-                    arrayList.Add(r.Id > 0
-                        ? new {r.Id, Name = $"{r.LastName}, {r.FirstName}"}
-                        : new {r.Id, Name = r.FirstName});
+                    var name = (r.LastName.Length > 0)
+                        ? $"{r.LastName}, {r.FirstName}"
+                        : r.FirstName;
+
+                    arrayList.Add(new {r.Id, Name = name});
                 }
 
                 cboResident.ValueMember = "Id";

@@ -4,12 +4,14 @@ using Keebee.AAT.BusinessRules;
 using Keebee.AAT.FileManagement;
 using Keebee.AAT.Administrator.Extensions;
 using Keebee.AAT.Shared;
+using CuteWebUI;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Web.Mvc;
 using System;
+using System.Drawing;
 
 namespace Keebee.AAT.Administrator.Controllers
 {
@@ -42,7 +44,7 @@ namespace Keebee.AAT.Administrator.Controllers
         {
             // first time loading
             if (mediaType == null)
-                mediaType = MediaPath.Images.ToUppercaseFirst();
+                mediaType = MediaType.Images;
 
             var vm = LoadResidentMediaViewModel(id, rfid, firstname, lastname, mediaType, sortcolumn, sortdescending);
 
@@ -73,7 +75,15 @@ namespace Keebee.AAT.Administrator.Controllers
                     var filePath = fileManager.GetFilePath(id, mediaType, file.FileName);
                     // delete it if it already exists
                     fileManager.DeleteFile(filePath);
-                    file.MoveTo(filePath);
+
+                    if (mediaType == MediaType.Images || mediaType == MediaType.Pictures)
+                    {
+                        ResizeAndSaveImage(file, filePath);
+                    }
+                    else
+                    {
+                        file.MoveTo(filePath);
+                    } 
                 }
             }
 
@@ -99,12 +109,12 @@ namespace Keebee.AAT.Administrator.Controllers
                 FileList = GetFileList(id, mediaType),
                 MediaTypeList = new Collection<string>
                 {
-                    MediaPath.Images.ToUppercaseFirst(),
-                    MediaPath.Videos.ToUppercaseFirst(),
-                    MediaPath.Music.ToUppercaseFirst(),
-                    MediaPath.Pictures.ToUppercaseFirst(),
-                    MediaPath.Shapes.ToUppercaseFirst(),
-                    MediaPath.Sounds.ToUppercaseFirst()
+                    MediaType.Images,
+                    MediaType.Videos,
+                    MediaType.Music,
+                    MediaType.Pictures,
+                    MediaType.Shapes,
+                    MediaType.Sounds
                 }
         };
 
@@ -175,8 +185,15 @@ namespace Keebee.AAT.Administrator.Controllers
             }, JsonRequestBehavior.AllowGet);
         }
 
-        private static ResidentsViewModel LoadResidentsViewModel(int id, List<string> msgs, bool success, 
-            string rfid, string firstname, string lastname, string sortcolumn, int? sortdescending)
+        private static ResidentsViewModel LoadResidentsViewModel(
+            int id, 
+            List<string> msgs, 
+            bool success, 
+            string rfid, 
+            string firstname, 
+            string lastname, 
+            string sortcolumn, 
+            int? sortdescending)
         {
             var vm = new ResidentsViewModel
             {
@@ -323,20 +340,20 @@ namespace Keebee.AAT.Administrator.Controllers
         {
             var extensions = string.Empty;
 
-            switch (mediaType.ToLower())
+            switch (mediaType)
             {
-                case MediaPath.Images:
-                case MediaPath.Pictures:
+                case MediaType.Images:
+                case MediaType.Pictures:
                     extensions = "*.jpg,*.jpeg,*.png,*.gif";
                     break;
-                case MediaPath.Videos:
+                case MediaType.Videos:
                     extensions = "*.mp4";
                     break;
-                case MediaPath.Music:
-                case MediaPath.Sounds:
+                case MediaType.Music:
+                case MediaType.Sounds:
                     extensions = "*.mp3";
                     break;
-                case MediaPath.Shapes:
+                case MediaType.Shapes:
                     extensions = "*.png";
                     break;
             }
@@ -349,25 +366,35 @@ namespace Keebee.AAT.Administrator.Controllers
             var isValid = false;
             var name = filename.ToLower();
 
-            switch (mediaType.ToLower())
+            switch (mediaType)
             {
-                case MediaPath.Images:
-                case MediaPath.Pictures:
+                case MediaType.Images:
+                case MediaType.Pictures:
                     isValid = name.Contains("jpg") || name.Contains("jpeg") || name.Contains("png") || name.Contains("gif");
                     break;
-                case MediaPath.Videos:
+                case MediaType.Videos:
                     isValid = name.Contains("mp4");
                     break;
-                case MediaPath.Music:
-                case MediaPath.Sounds:
+                case MediaType.Music:
+                case MediaType.Sounds:
                     isValid = name.Contains("mp3");
                     break;
-                case MediaPath.Shapes:
+                case MediaType.Shapes:
                     isValid = name.Contains("png");
                     break;
             }
 
             return isValid;
+        }
+
+        private static void ResizeAndSaveImage(MvcUploadFile file, string filePath)
+        {
+            using (var stream = file.OpenStream())
+            {
+                var image = Image.FromStream(stream);
+                var newImage = image.Scale();
+                newImage.Save(filePath);
+            }
         }
     }
 }

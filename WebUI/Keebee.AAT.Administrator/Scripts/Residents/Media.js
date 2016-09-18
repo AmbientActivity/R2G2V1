@@ -218,10 +218,12 @@ function DisableScreen() {
                     var id = (typeof row.streamid !== "undefined" ? row.streamid : 0);
                     if (id <= 0) return;
 
+                    var mediaType = self.selectedMediaType();
+
                     BootstrapDialog.show({
                         type: BootstrapDialog.TYPE_DANGER,
-                        title: "Delete File?",
-                        message: "Delete the file <i><b>" + row.filename + "</b></i>?",
+                        title: "Delete " + mediaType + "?",
+                        message: "Delete the " + mediaType.toLowerCase() + " <i><b>" + row.filename + "</b></i>?",
                         closable: false,
                         buttons: [
                             {

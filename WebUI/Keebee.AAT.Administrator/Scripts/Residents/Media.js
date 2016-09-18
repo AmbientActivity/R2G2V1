@@ -209,6 +209,11 @@ function DisableScreen() {
                     self.showFileDeleteDialog(row);
                 };
 
+                self.showPreview = function (row) {
+                    self.highlightRow(row);
+                    self.showFilePreviewDialog(row);
+                };
+
                 self.showFileDeleteDialog = function (row) {
                     var id = (typeof row.streamid !== "undefined" ? row.streamid : 0);
                     if (id <= 0) return;
@@ -234,6 +239,26 @@ function DisableScreen() {
                                     self.sort({ afterSave: true });
                                     dialog.close();
                                     $("body").css("cursor", "default");
+                                }
+                            }
+                        ]
+                    });
+                };
+
+                self.showFilePreviewDialog = function (row) {
+                    var id = (typeof row.streamid !== "undefined" ? row.streamid : 0);
+                    if (id <= 0) return;
+
+                    BootstrapDialog.show({
+                        type: BootstrapDialog.TYPE_INFO,
+                        title: "File Preview",
+                        message: "Feature not implemented yet.",
+                        closable: false,
+                        buttons: [
+                            {
+                                label: "Close",
+                                action: function (dialog) {
+                                    dialog.close();
                                 }
                             }
                         ]

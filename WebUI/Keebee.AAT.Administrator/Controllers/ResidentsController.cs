@@ -2,7 +2,6 @@
 using Keebee.AAT.Administrator.ViewModels;
 using Keebee.AAT.BusinessRules;
 using Keebee.AAT.FileManagement;
-using Keebee.AAT.Administrator.Extensions;
 using Keebee.AAT.Shared;
 using CuteWebUI;
 using Newtonsoft.Json;
@@ -48,7 +47,7 @@ namespace Keebee.AAT.Administrator.Controllers
 
             var vm = LoadResidentMediaViewModel(id, rfid, firstname, lastname, mediaType, sortcolumn, sortdescending);
 
-            using (var uploader = new CuteWebUI.MvcUploader(System.Web.HttpContext.Current))
+            using (var uploader = new MvcUploader(System.Web.HttpContext.Current))
             {
                 uploader.UploadUrl = Response.ApplyAppPathModifier("~/UploadHandler.ashx");
                 uploader.Name = "myuploader";
@@ -75,17 +74,7 @@ namespace Keebee.AAT.Administrator.Controllers
                     var filePath = fileManager.GetFilePath(id, mediaType, file.FileName);
                     // delete it if it already exists
                     fileManager.DeleteFile(filePath);
-
-                    if (mediaType == MediaType.Images || mediaType == MediaType.Pictures)
-                    {
-                        //TODO: Fix this
-                        //ResizeAndSaveImage(file, filePath);
-                        file.MoveTo(filePath);
-                    }
-                    else
-                    {
-                        file.MoveTo(filePath);
-                    } 
+                    file.MoveTo(filePath);
                 }
             }
 
@@ -387,16 +376,6 @@ namespace Keebee.AAT.Administrator.Controllers
             }
 
             return isValid;
-        }
-
-        private static void ResizeAndSaveImage(MvcUploadFile file, string filePath)
-        {
-            using (var stream = file.OpenStream())
-            {
-                var image = Image.FromStream(stream);
-                var newImage = image.Scale();
-                newImage.Save(filePath);
-            }
         }
     }
 }

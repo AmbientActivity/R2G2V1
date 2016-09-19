@@ -384,7 +384,6 @@
     <Compile Include="Controllers\EventLogsController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ResidentsController.cs" />
-    <Compile Include="Extensions\BitmapExtensions.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>

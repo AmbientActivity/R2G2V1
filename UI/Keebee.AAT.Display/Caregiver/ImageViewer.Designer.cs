@@ -35,10 +35,10 @@
             this.btnNext = new System.Windows.Forms.Button();
             this.btnPrevious = new System.Windows.Forms.Button();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.slideViewerSimple1 = new Keebee.AAT.Display.UserControls.SlideViewerSimple();
             this.btnPlay = new System.Windows.Forms.Button();
             this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this.lblAutoMode = new System.Windows.Forms.Label();
+            this.slideViewerFlash1 = new Keebee.AAT.Display.UserControls.SlideViewerFlash();
             this.tableLayoutPanel1.SuspendLayout();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
@@ -52,7 +52,7 @@
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 63F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 70F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 71F));
             this.tableLayoutPanel1.Controls.Add(this.btnClose, 5, 1);
             this.tableLayoutPanel1.Controls.Add(this.btnNext, 3, 1);
             this.tableLayoutPanel1.Controls.Add(this.btnPrevious, 2, 1);
@@ -107,21 +107,12 @@
             // 
             this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.tableLayoutPanel1.SetColumnSpan(this.panel1, 6);
-            this.panel1.Controls.Add(this.slideViewerSimple1);
+            this.panel1.Controls.Add(this.slideViewerFlash1);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel1.Location = new System.Drawing.Point(3, 3);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(625, 335);
             this.panel1.TabIndex = 12;
-            // 
-            // slideViewerSimple1
-            // 
-            this.slideViewerSimple1.BackColor = System.Drawing.Color.Yellow;
-            this.slideViewerSimple1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.slideViewerSimple1.Location = new System.Drawing.Point(0, 0);
-            this.slideViewerSimple1.Name = "slideViewerSimple1";
-            this.slideViewerSimple1.Size = new System.Drawing.Size(623, 333);
-            this.slideViewerSimple1.TabIndex = 0;
             // 
             // btnPlay
             // 
@@ -152,6 +143,15 @@
             this.lblAutoMode.TabIndex = 16;
             this.lblAutoMode.Text = "Auto Mode";
             // 
+            // slideViewerFlash1
+            // 
+            this.slideViewerFlash1.BackColor = System.Drawing.Color.Yellow;
+            this.slideViewerFlash1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.slideViewerFlash1.Location = new System.Drawing.Point(0, 0);
+            this.slideViewerFlash1.Name = "slideViewerFlash1";
+            this.slideViewerFlash1.Size = new System.Drawing.Size(623, 333);
+            this.slideViewerFlash1.TabIndex = 1;
+            // 
             // ImageViewer
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -165,6 +165,7 @@
             this.Name = "ImageViewer";
             this.ShowInTaskbar = false;
             this.Text = "Image Viewer";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.ImageViewerFormClosing);
             this.Shown += new System.EventHandler(this.ImageViewerShown);
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();
@@ -176,12 +177,12 @@
         #endregion
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private System.Windows.Forms.Button btnClose;
-        private UserControls.SlideViewerSimple slideViewerSimple1;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Button btnPrevious;
         private System.Windows.Forms.Button btnNext;
         private System.Windows.Forms.Button btnPlay;
         private System.Windows.Forms.ImageList imageList1;
         private System.Windows.Forms.Label lblAutoMode;
+        private UserControls.SlideViewerFlash slideViewerFlash1;
     }
 }

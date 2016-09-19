@@ -28,8 +28,10 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SlideViewerFlash));
             this.axShockwaveFlash1 = new AxShockwaveFlashObjects.AxShockwaveFlash();
+            this.timer1 = new System.Windows.Forms.Timer(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.axShockwaveFlash1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -43,7 +45,11 @@
             this.axShockwaveFlash1.OcxState = ((System.Windows.Forms.AxHost.State)(resources.GetObject("axShockwaveFlash1.OcxState")));
             this.axShockwaveFlash1.Size = new System.Drawing.Size(434, 296);
             this.axShockwaveFlash1.TabIndex = 0;
-            this.axShockwaveFlash1.FlashCall += new AxShockwaveFlashObjects._IShockwaveFlashEvents_FlashCallEventHandler(this.SlideShowComplete);
+            this.axShockwaveFlash1.FlashCall += new AxShockwaveFlashObjects._IShockwaveFlashEvents_FlashCallEventHandler(this.FlashCall);
+            // 
+            // timer1
+            // 
+            this.timer1.Tick += new System.EventHandler(this.TimerTick);
             // 
             // SlideViewerFlash
             // 
@@ -61,5 +67,6 @@
         #endregion
 
         private AxShockwaveFlashObjects.AxShockwaveFlash axShockwaveFlash1;
+        private System.Windows.Forms.Timer timer1;
     }
 }

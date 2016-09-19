@@ -15,6 +15,7 @@ namespace Keebee.AAT.Display.UserControls
 {
     public partial class SlideViewerFlash : UserControl
     {
+        private const int Interval = 8000;
         // event handler
         public event EventHandler SlideShowCompleteEvent;
 
@@ -27,6 +28,14 @@ namespace Keebee.AAT.Display.UserControls
         // delegate
         private delegate void RaiseSlideShowCompleteEventDelegate();
 
+        // slide show
+        private string[] _images;
+
+        private int _currentImageIndex;
+        private int _totalImages;
+
+        private bool _isFinite;
+
         public SlideViewerFlash()
         {
             InitializeComponent();
@@ -36,21 +45,29 @@ namespace Keebee.AAT.Display.UserControls
         private void ConfigureComponents()
         {
             axShockwaveFlash1.Dock = DockStyle.Fill;
+
+            timer1.Interval = Interval;
         }   
 
-        public void Play(string[] files)
+        public void Play(string[] files, bool autoStart, bool isFinite)
         {
             try
             {
+                // ensure files are the correct type
                 var validFiles = GetValidatedFiles(files);
-                if (!validFiles.Any()) return;
 
-                var totalImages = validFiles.Count();
+                if (validFiles.Any())
+                {
+                    _totalImages = validFiles.Count();
+                    _currentImageIndex = 0;
+                    _images = validFiles;
 
-                if (totalImages > 1)
-                    validFiles.Shuffle();
+                    InitializeFlash();
+                    DisplayImage();
 
-                PlaySlideShow(validFiles);
+                    if (autoStart) timer1.Start();
+                    _isFinite = isFinite;
+                }
             }
             catch (Exception ex)
             {
@@ -58,9 +75,40 @@ namespace Keebee.AAT.Display.UserControls
             }
         }
 
+        public void ShowPrevious()
+        {
+            _currentImageIndex--;
+
+            if (_currentImageIndex < 0 && !_isFinite)
+                _currentImageIndex = _totalImages - 1;
+
+            HideImage();
+        }
+
+        public void ShowNext()
+        {
+            _currentImageIndex++;
+
+            if (_currentImageIndex >= _totalImages && !_isFinite)
+                _currentImageIndex = 0;
+
+            HideImage();
+        }
+
+        public void StartTimer()
+        {
+            timer1.Start();
+        }
+
+        public void StopTimer()
+        {
+            timer1.Stop();
+        }
+
         public void Stop()
         {
-            axShockwaveFlash1.CallFunction("<invoke name=\"stopSlideShow\"></invoke>");
+            timer1.Dispose();
+            axShockwaveFlash1.CallFunction("<invoke name=\"stopImage\"></invoke>");
         }
 
         private static string[] GetValidatedFiles(IEnumerable<string> files)
@@ -82,34 +130,54 @@ namespace Keebee.AAT.Display.UserControls
             return validFiles.ToArray();
         }
 
-        private void PlaySlideShow(IEnumerable<string> files)
+        private void InitializeFlash()
         {
             var swf = Path.Combine(Application.StartupPath, "SlideViewer.swf");
             axShockwaveFlash1.LoadMovie(0, swf);
 
-            var xml = GetXmlString(files);
-            axShockwaveFlash1.CallFunction(
-                $"<invoke name=\"playSlideShow\"><arguments><string>{xml}</string></arguments></invoke>");
+            axShockwaveFlash1.CallFunction("<invoke name=\"initializeMovie\"></invoke>");
         }
 
-        private static string GetXmlString(IEnumerable<string> files)
+        private void DisplayImage()
+        {
+            var filename = _images[_currentImageIndex];
+            var xml = GetXmlString(filename);
+
+            axShockwaveFlash1.CallFunction(
+                $"<invoke name=\"showImage\"><arguments><string>{xml}</string></arguments></invoke>");
+        }
+
+        private void HideImage()
+        {
+            axShockwaveFlash1.CallFunction("<invoke name=\"hideImage\"></invoke>");
+        }
+
+        private static string GetXmlString(string file)
         {
             var xmlBuilder = new StringBuilder();
 
             xmlBuilder.Append("<xml>");
-            foreach (var file in files)
-            {
-                xmlBuilder.Append($"<images><pic>{file}</pic></images>");
-            }
+            xmlBuilder.Append($"<images><pic>{file}</pic></images>");
             xmlBuilder.Append("</xml>");
 
            return xmlBuilder.ToString();
         }
 
-        // raised by the shockwave activex component
-        private void SlideShowComplete(object sender, _IShockwaveFlashEvents_FlashCallEvent e)
+        private void OnImageHidden()
         {
-            RaiseSlideShowCompleteEvent();
+            if (_isFinite)
+            {
+                if (_currentImageIndex == _totalImages)
+                    RaiseSlideShowCompleteEvent();
+            }
+            DisplayImage();
+        }
+
+        // raised by the shockwave activex component
+        // let's us know when the image is finised being hidden
+        private void FlashCall(object sender, _IShockwaveFlashEvents_FlashCallEvent e)
+        {
+            OnImageHidden();
         }
 
         private void RaiseSlideShowCompleteEvent()
@@ -124,6 +192,12 @@ namespace Keebee.AAT.Display.UserControls
             {
                 SlideShowCompleteEvent(new object(), new EventArgs());
             }
+        }
+
+        private void TimerTick(object sender, EventArgs e)
+        {
+            _currentImageIndex++;
+            HideImage();
         }
     }
 }

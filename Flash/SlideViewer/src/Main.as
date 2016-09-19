@@ -27,24 +27,37 @@ package
 		private var movieClip:MovieClip;
 		
 		public function Main() {
-			ExternalInterface.addCallback("playSlideShow", playSlideShow);
-			ExternalInterface.addCallback("stopSlideShow", stopSlideShow);
+			ExternalInterface.addCallback("initializeMovie", initializeMovie);
+			ExternalInterface.addCallback("showImage", showImage);
+			ExternalInterface.addCallback("hideImage", hideImage);
+			ExternalInterface.addCallback("stopImage", stopImage);
 		}
 		
 		// called externally by the Windows UserControl 
-		private function playSlideShow(xmlString:String) : void {
+		private function initializeMovie() : void {
 			movieClip = new MovieClip();
 			movieClip.alpha = 0;    // hide the image until it is loaded
-
-			xml = new XML(xmlString);
-			var il:XMLList = xml.images;
-			totalImages = il.length();
-			
-			populateArray();
 		}
 		
 		// called externally by the Windows UserControl 
-		private function stopSlideShow() : void {
+		private function showImage(xmlString:String) : void {
+			imageArray = new Array();
+			painterArray = new Array();
+			xml = new XML(xmlString);
+			
+			if (numChildren == 1) {
+				stopAllMovieClips();
+				movieClip.removeChildAt(0);
+				removeChild(movieClip);
+				TweenLite.killTweensOf(movieClip);
+			}
+			
+			imageArray[0] = xml.images[0].pic;
+			beginImage();
+		}
+		
+		// called externally by the Windows UserControl 
+		private function stopImage() : void {
 			// stop and kill the movie clip tween
 			stopAllMovieClips();
 			removeChild(movieClip);
@@ -52,17 +65,6 @@ package
 			imageArray = null;
 			painterArray = null;
 			movieClip = null;
-		}
-		
-		private function populateArray():void {
-			imageArray = new Array();
-			painterArray = new Array();
-			
-			var i:Number;
-			for (i = 0; i < totalImages; i++) {
-				imageArray[i] = xml.images[i].pic;
-			}
-			beginImage();
 		}
 		
 		private function beginImage():void {
@@ -82,16 +84,6 @@ package
 
 			function catchFunction(e:IOErrorEvent) : void {
 				//trace("Bad URL: " + imageArray[currentIndex] + " does not exist");
-				
-				//take out the bad URL from the array
-				imageArray.splice(currentIndex, 1);
-				painterArray.splice(currentIndex, 1);
-
-				if (imageArray.length == 0) {
-					ExternalInterface.call("SlideShowComplete");
-				} else {
-					beginImage();
-				}
 			}
 
 			function imgLoaded(event:Event):void {
@@ -114,28 +106,17 @@ package
 		}
 
 		private function easeIn():void {
-			TweenLite.to(movieClip, 6, {scaleX:.9, scaleY:.9, x:finalX, y:finalY, onComplete:hideStuff});
+			TweenLite.to(movieClip, 6, {scaleX:.9, scaleY:.9, x:finalX, y:finalY});
 			TweenLite.to(movieClip, 1, {alpha:1, overwrite:0});
 		}
 
-		private function hideStuff():void {
-			TweenLite.to(movieClip, 1, {alpha:0, onComplete:nextImage});
+		private function hideImage():void {
+			TweenLite.to(movieClip, 1, {alpha:0, onComplete: imageHidden});
 		}
 
-		private function nextImage():void {
-			// take out the image that was just displayed
-			imageArray.splice(currentIndex, 1);
-			painterArray.splice(currentIndex, 1);
-
-			// remove the picture
-			movieClip.removeChildAt(0);
-
-			if (imageArray.length == 0) {
-				// raise the SlideShowComplete event
-				ExternalInterface.call("SlideShowComplete");
-			} else {
-				beginImage();
-			}
+		private function imageHidden():void {
+			//movieClip.removeChildAt(0);
+			ExternalInterface.call("FlashCall")
 		}
 	}
 }

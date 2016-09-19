@@ -18,14 +18,14 @@ namespace Keebee.AAT.Administrator.Extensions
         {
             var dimensions = GetDimensions(image);
             var destRect = new Rectangle(0, 0, dimensions.Width, dimensions.Height);
-            var destImage = new Bitmap(dimensions.Width, dimensions.Height);
+            var destImage = new Bitmap(image.Width, image.Height);
 
             destImage.SetResolution(image.HorizontalResolution, image.VerticalResolution);
 
             using (var graphics = Graphics.FromImage(destImage))
             {
                 graphics.CompositingMode = CompositingMode.SourceCopy;
-                graphics.CompositingQuality = CompositingQuality.HighQuality;
+                graphics.CompositingQuality = CompositingQuality.HighSpeed;
                 graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
                 graphics.SmoothingMode = SmoothingMode.HighQuality;
                 graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
@@ -47,9 +47,6 @@ namespace Keebee.AAT.Administrator.Extensions
 
             double screenRatio = ScreenSize.Width / (double)ScreenSize.Height;
             double imageRatio = image.Width / (double)image.Height;
-
-            int x;
-            int y;
 
             // if the picture is landscape or a perfect square
             if (imageRatio >= 1)

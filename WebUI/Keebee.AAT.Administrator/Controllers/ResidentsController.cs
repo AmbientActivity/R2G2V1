@@ -78,7 +78,9 @@ namespace Keebee.AAT.Administrator.Controllers
 
                     if (mediaType == MediaType.Images || mediaType == MediaType.Pictures)
                     {
-                        ResizeAndSaveImage(file, filePath);
+                        //TODO: Fix this
+                        //ResizeAndSaveImage(file, filePath);
+                        file.MoveTo(filePath);
                     }
                     else
                     {

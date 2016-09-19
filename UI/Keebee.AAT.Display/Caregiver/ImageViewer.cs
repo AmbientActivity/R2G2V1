@@ -46,7 +46,7 @@ namespace Keebee.AAT.Display.Caregiver
         private void ConfigureComponents()
         {
             panel1.Dock = DockStyle.Fill;
-            slideViewerSimple1.Dock = DockStyle.Fill;
+            slideViewerFlash1.Dock = DockStyle.Fill;
             lblAutoMode.Font = new Font("Microsoft Sans Serif", AutoModeLabelFontSize);
             lblAutoMode.Margin = new Padding(3, AutoModeLabeMarginTop, 0, 0);
             tableLayoutPanel1.ColumnStyles[1].Width = TableLayoutPanelColTwoWidth;
@@ -74,24 +74,25 @@ namespace Keebee.AAT.Display.Caregiver
 
         private void PreviousButtonClick(object sender, EventArgs e)
         {
-            slideViewerSimple1.ShowPrevious();
+            slideViewerFlash1.ShowPrevious();
         }
 
         private void NextButtonClick(object sender, EventArgs e)
         {
-            slideViewerSimple1.ShowNext();
+            slideViewerFlash1.ShowNext();
         }
 
         private void PlayButtonClick(object sender, EventArgs e)
         {
             if (btnPlay.ImageIndex == 0)
             {
-                slideViewerSimple1.StartTimer();
+                slideViewerFlash1.ShowNext();
+                slideViewerFlash1.StartTimer();
                 btnPlay.ImageIndex = 1;
             }
             else
             {
-                slideViewerSimple1.StopTimer();
+                slideViewerFlash1.StopTimer();
                 btnPlay.ImageIndex = 0;
             }
         }
@@ -103,10 +104,17 @@ namespace Keebee.AAT.Display.Caregiver
 
         private void ImageViewerShown(object sender, EventArgs e)
         {
-            slideViewerSimple1.SystemEventLogger = _systemEventLogger;
-            slideViewerSimple1.Show(_images);
+            slideViewerFlash1.SystemEventLogger = _systemEventLogger;
+            slideViewerFlash1.Play(_images, false, false);
+        }
+
+        private void ImageViewerFormClosing(object sender, FormClosingEventArgs e)
+        {
+            slideViewerFlash1.Stop();
         }
 
         #endregion
+
+
     }
 }

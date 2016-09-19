@@ -419,7 +419,7 @@ namespace Keebee.AAT.Display
                 StopCurrentResponse();
 
                 slideViewerFlash1.Show();
-                slideViewerFlash1.Play(images);
+                slideViewerFlash1.Play(images, true, true);
 
                 if (_currentIsActiveEventLog)
                     _activityEventLogger.Add(_activeResident.ConfigId, _activeConfigDetail.Id, _activeResident.Id);

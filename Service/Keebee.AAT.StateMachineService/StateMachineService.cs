@@ -59,12 +59,15 @@ namespace Keebee.AAT.StateMachineService
         {
             while (true)
             {
-                var req = (HttpWebRequest)WebRequest.Create(UrlKeepAlive);
-                var response = (HttpWebResponse)req.GetResponse();
+                if (_activeResident != null)
+                {
+                    var req = (HttpWebRequest) WebRequest.Create(UrlKeepAlive);
+                    var response = (HttpWebResponse) req.GetResponse();
 
-                if (response.StatusCode != HttpStatusCode.OK)
-                    _systemEventLogger.WriteEntry(
-                        $"Error accessing web host.{Environment.NewLine}StatusCode: {response.StatusCode}");
+                    if (response.StatusCode != HttpStatusCode.OK)
+                        _systemEventLogger.WriteEntry(
+                            $"Error accessing web host.{Environment.NewLine}StatusCode: {response.StatusCode}");
+                }
 
                 try
                 {

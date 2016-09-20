@@ -59,16 +59,12 @@ namespace Keebee.AAT.StateMachineService
         {
             while (true)
             {
-                // only execute if the display is active and the current active profile is "Generic"
-                if (_displayIsActive && _activeResident?.Id == 0)
-                {
-                    var req = (HttpWebRequest)WebRequest.Create(UrlKeepAlive);
-                    var response = (HttpWebResponse)req.GetResponse();
+                var req = (HttpWebRequest)WebRequest.Create(UrlKeepAlive);
+                var response = (HttpWebResponse)req.GetResponse();
 
-                    if (response.StatusCode != HttpStatusCode.OK)
-                        _systemEventLogger.WriteEntry(
-                            $"Error accessing web host.{Environment.NewLine}StatusCode: {response.StatusCode}");
-                }
+                if (response.StatusCode != HttpStatusCode.OK)
+                    _systemEventLogger.WriteEntry(
+                        $"Error accessing web host.{Environment.NewLine}StatusCode: {response.StatusCode}");
 
                 try
                 {

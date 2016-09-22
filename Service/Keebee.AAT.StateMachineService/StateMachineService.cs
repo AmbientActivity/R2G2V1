@@ -201,6 +201,8 @@ namespace Keebee.AAT.StateMachineService
 
             _activeConfig = _opsClient.GetActiveConfigDetails();
             _reloadActiveConfig = false;
+
+            _systemEventLogger.WriteEntry($"{_activeConfig.Description} has been activated");
         }
 
         #region message received event handlers
@@ -302,7 +304,6 @@ namespace Keebee.AAT.StateMachineService
             {
                 if (e.MessageBody != "1") return;
                 _reloadActiveConfig = true;
-                _systemEventLogger.WriteEntry($"{_activeConfig.Description} has been activated");
             }
             catch (Exception ex)
             {

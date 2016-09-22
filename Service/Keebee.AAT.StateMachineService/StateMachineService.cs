@@ -197,7 +197,7 @@ namespace Keebee.AAT.StateMachineService
 
         private void LoadActiveConfig()
         {
-            if (!_reloadActiveConfig && _activeConfig != null) return;
+            if (!_reloadActiveConfig) return;
 
             _activeConfig = _opsClient.GetActiveConfigDetails();
             _reloadActiveConfig = false;

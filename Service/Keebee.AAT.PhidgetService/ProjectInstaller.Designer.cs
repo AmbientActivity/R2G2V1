@@ -45,7 +45,8 @@
             this.phidgetServiceInstaller.DisplayName = "Keebee AAT Phidget Service";
             this.phidgetServiceInstaller.ServiceName = "PhidgetService";
             this.phidgetServiceInstaller.ServicesDependedOn = new string[] {
-        "MSMQ"};
+        "MSMQ",
+        "StateMachineService"};
             this.phidgetServiceInstaller.StartType = System.ServiceProcess.ServiceStartMode.Automatic;
             this.phidgetServiceInstaller.AfterInstall += new System.Configuration.Install.InstallEventHandler(this.phidgetServiceInstaller_AfterInstall);
             // 

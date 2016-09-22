@@ -3,21 +3,23 @@ using Keebee.AAT.SystemEventLogging;
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
+using Keebee.AAT.RESTClient;
 
 namespace Keebee.AAT.FileManagement
 {
     public class FileManager
     {
         private readonly SystemEventLogger _systemEventLogger;
+        private readonly OperationsClient _opsClient;
+
+        // media path
+        private readonly MediaSourcePath _mediaPath = new MediaSourcePath();
 
         public FileManager()
         {
             _systemEventLogger = new SystemEventLogger(SystemEventLogType.FileManager);
-        }
-
-        public string GetFilePath (int residentId, string mediaType, string filename)
-        {
-            return $@"\\{Environment.MachineName}\{MediaPath.MediaRoot}\{MediaPath.Profiles}\{residentId}\{mediaType}\{filename}";
+            _opsClient = new OperationsClient();
         }
 
         public void DeleteFile(string path)
@@ -39,18 +41,15 @@ namespace Keebee.AAT.FileManagement
         {
             try
             {
-                var mediaPath = $@"\\{Environment.MachineName}\{MediaPath.MediaRoot}\{MediaPath.Profiles}\{residentId}";
+                var mediaRoot = $@"{_mediaPath.ProfileRoot}\{residentId}";
+                var paths = _opsClient.GetMediaPathTypes();
 
-                if (!Directory.Exists(mediaPath))
+                if (Directory.Exists(mediaRoot)) return;
+
+                var dirInfo = new DirectoryInfo(mediaRoot);
+                foreach (var path in paths)
                 {
-                    var dirInfo = new DirectoryInfo(mediaPath);
-
-                    dirInfo.CreateSubdirectory(MediaPath.Images);
-                    dirInfo.CreateSubdirectory(MediaPath.Videos);
-                    dirInfo.CreateSubdirectory(MediaPath.Music);
-                    dirInfo.CreateSubdirectory(MediaPath.Pictures);
-                    dirInfo.CreateSubdirectory(MediaPath.Shapes);
-                    dirInfo.CreateSubdirectory(MediaPath.Sounds);
+                    dirInfo.CreateSubdirectory(path.Description);
                 }
             }
             catch (Exception ex)
@@ -63,7 +62,7 @@ namespace Keebee.AAT.FileManagement
         {
             try
             {
-                var profilePath = $@"\\{Environment.MachineName}\{MediaPath.MediaRoot}\{MediaPath.Profiles}\{residentId}";
+                var profilePath = $@"{_mediaPath.ProfileRoot}\{residentId}";
 
                 if (Directory.Exists(profilePath))
                 {
@@ -76,6 +75,12 @@ namespace Keebee.AAT.FileManagement
             {
                 _systemEventLogger.WriteEntry($"FileManagement.ProfileManager.CreateFolders :{ex.Message}", EventLogEntryType.Error);
             }
+        }
+
+        public Guid GetStreamId(string path, string filename)
+        {
+            var file = _opsClient.GetMediaFileFromPath(path, filename);
+            return file.StreamId;
         }
     }
 }

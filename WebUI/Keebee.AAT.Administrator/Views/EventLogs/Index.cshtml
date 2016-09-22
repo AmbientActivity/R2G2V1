@@ -14,14 +14,12 @@
 
 <div class="panel panel-default">
     <div class="panel-heading">
-        <div class="row">
-            <div class="pull-right record-total">
-                <label>Total:</label> <span data-bind="text: totalEventLogs()"></span>
-            </div>
-        </div>
         <ul class="nav nav-pills">
             <li>
-                <input id="txtSearchFilename" type="text" class="form-control" placeholder="Name" data-bind="value: filenameSearch, valueUpdate: 'keyup'" />
+                <input id="txtSearchFilename" type="text" class="form-control" placeholder="Name" data-bind="value: filenameSearch, valueUpdate: 'keyup'"/>
+            </li>
+            <li class="pull-right">
+                <label>Total:</label> <span data-bind="text: totalEventLogs()"></span>
             </li>
         </ul>
     </div>

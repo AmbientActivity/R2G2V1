@@ -123,6 +123,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Controllers\MediaPathTypesController.cs" />
+    <Compile Include="Controllers\PublicMediaFilesController.cs" />
+    <Compile Include="Controllers\ResidentMediaFilesController.cs" />
     <Compile Include="Controllers\MediaFileStreamsController.cs" />
     <Compile Include="Controllers\PhidgetStyleTypesController.cs" />
     <Compile Include="Controllers\PhidgetTypesController.cs" />
@@ -142,6 +145,9 @@
     </Compile>
     <Compile Include="Models\ConfigDetail.cs" />
     <Compile Include="Models\Config.cs" />
+    <Compile Include="Models\MediaPathType.cs" />
+    <Compile Include="Models\PublicMediaFile.cs" />
+    <Compile Include="Models\ResidentMediaFile.cs" />
     <Compile Include="Models\MediaFileStream.cs" />
     <Compile Include="Models\PhidgetStyleType.cs" />
     <Compile Include="Models\PhidgetType.cs" />

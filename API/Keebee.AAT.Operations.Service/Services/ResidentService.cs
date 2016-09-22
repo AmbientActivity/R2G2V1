@@ -12,6 +12,7 @@ namespace Keebee.AAT.Operations.Service.Services
         IEnumerable<Resident> Get();
         Resident Get(int id);
         Resident GetByNameGender(string firstName, string lastName, string gender);
+        Resident GetWithMedia(int id);
         int Post(Resident resident);
         void Patch(int id, Resident resident);
         void Delete(int id);
@@ -32,7 +33,8 @@ namespace Keebee.AAT.Operations.Service.Services
         {
             var container = new Container(new Uri(ODataHost.Url));
 
-            return container.Residents.ByKey(id).GetValue();
+            return container.Residents.ByKey(id)
+                .GetValue();
         }
 
         public Resident GetByNameGender(string firstName, string lastName, string gender)
@@ -41,7 +43,17 @@ namespace Keebee.AAT.Operations.Service.Services
 
             return container.Residents
                 .AddQueryOption("$filter", $"FirstName eq '{firstName}' and LastName eq '{lastName}' and Gender eq '{gender}'")
+                .Expand("MediaFiles($expand=MediaFile)")
                 .Single();
+        }
+
+        public Resident GetWithMedia(int id)
+        {
+            var container = new Container(new Uri(ODataHost.Url));
+
+            return container.Residents.ByKey(id)
+                .Expand("MediaFiles($expand=MediaFile,MediaPathType,ResponseType($expand=ResponseTypeCategory))")
+                .GetValue();
         }
 
         public int Post(Resident resident)

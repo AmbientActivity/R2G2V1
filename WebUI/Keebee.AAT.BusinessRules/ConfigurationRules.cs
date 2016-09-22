@@ -46,56 +46,26 @@ namespace Keebee.AAT.BusinessRules
         // view model
         public ConfigEditModel GetConfigEditViewModel(int id, int configId)
         {
-            ConfigDetail configDetail = null;
-            IEnumerable<int> usedPhidgetIds;
-            IEnumerable<ResponseType> availableResponseTypes;
-            IEnumerable<PhidgetType> availablePhidgetTypes;
+            var availableResponseTypes = _opsClient.GetResponseTypes();
             var allPhidgetTypes = _opsClient.GetPhidgetTypes().ToArray();
             var availablePhidgetStyleTypes = _opsClient.GetPhidgetStyleTypes().ToArray();
+            var configDetail = _opsClient.GetConfigDetail(id);
 
+            IEnumerable<int> usedPhidgetIds;
+            IEnumerable<PhidgetType> availablePhidgetTypes;
             // edit mode
             if (id > 0)
             {
-                var config = _opsClient.GetConfig(configId);
-                configDetail = _opsClient.GetConfigDetail(id);
+                // get all unused phidgets plus the one being edited
+                usedPhidgetIds = _opsClient.GetConfigWithDetails(configDetail.ConfigId)
+                    .ConfigDetails
+                    .Where(cd => cd.PhidgetType.Id != configDetail.PhidgetType.Id)
+                    .Select(cd => cd.PhidgetType.Id);
 
-                // acive config - don't allow modification of phidget or reponse type
-                if (config.IsActive)
-                {
-                    availableResponseTypes = new Collection<ResponseType>()
-                                    {
-                                        new ResponseType
-                                        {
-                                            Id = configDetail.ResponseType.Id,
-                                            Description = configDetail.ResponseType.Description
-                                        }
-                                    };
-
-                    usedPhidgetIds = allPhidgetTypes
-                        .Where(pt => pt.Id != configDetail.PhidgetType.Id)
-                        .Select(pt => pt.Id);
-
-                    availablePhidgetTypes = allPhidgetTypes.Where(pt => !usedPhidgetIds.Contains(pt.Id)).ToArray();
-                }
-                else // non-active config
-                {
-                    // get all response types
-                    availableResponseTypes = _opsClient.GetResponseTypes();
-
-                    // get all unused phidgets plus the one being edited
-                    usedPhidgetIds = _opsClient.GetConfigWithDetails(configDetail.ConfigId)
-                        .ConfigDetails
-                        .Where(cd => cd.PhidgetType.Id != configDetail.PhidgetType.Id)
-                        .Select(cd => cd.PhidgetType.Id);
-
-                    availablePhidgetTypes = allPhidgetTypes.Where(pt => !usedPhidgetIds.Contains(pt.Id)).ToArray();
-                }
+                availablePhidgetTypes = allPhidgetTypes.Where(pt => !usedPhidgetIds.Contains(pt.Id)).ToArray();
             }
             else // add mode
             {
-                // get all response types
-                availableResponseTypes = _opsClient.GetResponseTypes();
-
                 // get only unused phidgets
                 usedPhidgetIds = _opsClient.GetConfigWithDetails(configId)
                     .ConfigDetails

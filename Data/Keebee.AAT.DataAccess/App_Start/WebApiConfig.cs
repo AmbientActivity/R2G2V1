@@ -23,6 +23,9 @@ namespace Keebee.AAT.DataAccess
             builder.EntitySet<RfidEventLog>("RfidEventLogs");
             builder.EntitySet<MediaFile>("MediaFiles");
             builder.EntitySet<MediaFileStream>("MediaFileStreams");
+            builder.EntitySet<MediaPathType>("MediaPathTypes");
+            builder.EntitySet<ResidentMediaFile>("ResidentMediaFiles");
+            builder.EntitySet<PublicMediaFile>("PublicMediaFiles");
             builder.EntitySet<Resident>("Residents");
             builder.EntitySet<Caregiver>("Caregivers");
             builder.EntitySet<User>("Users");

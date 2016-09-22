@@ -14,6 +14,7 @@ namespace Keebee.AAT.RESTClient
         public IEnumerable<ConfigDetail> ConfigDetails { get; set; }
         public DateTime DateCreated { get; set; }
         public DateTime DateUpdated { get; set; }
+        public IEnumerable<MediaResponseType> MediaFiles;
     }
 
     public class ResidentEdit

@@ -23,7 +23,7 @@ function CuteWebUI_AjaxUploader_OnError(msg) {
 function CuteWebUI_AjaxUploader_OnTaskError(obj, msg, reason) {
     BootstrapDialog.show({
         type: BootstrapDialog.TYPE_DANGER,
-        title: "Tssk Error",
+        title: "Task Error",
         message: "Error uploading file <b>" + obj.FileName + "</b>.\nMessage: " + msg
     });
 
@@ -69,12 +69,17 @@ function DisableScreen() {
 
             $.extend(config, values);
 
+            // buttons
+            var divUpload = $(".upload-action-container");
+            var divAddPublic = $(".add-public-action-container");
+
             var _sortDescending = false;
             var _currentSortKey = "filename";
 
             var lists = {
                 FileList: [],
-                MediaTypeList: []
+                MediaPathTypeList: [],
+                MediaSourceTypeList: []
             };
 
             loadData();
@@ -82,10 +87,14 @@ function DisableScreen() {
             ko.applyBindings(new FileViewModel());
 
             function loadData() {
-                var mediaType = $("#mediaType").val();
+                var mediaPathTypeId = $("#mediaPathTypeId").val();
+                var mediaSourceTypeId = $("#mediaSourceTypeId").val();
+
                 $.ajax({
                     type: "GET",
-                    url: site.url + "Residents/GetDataMedia/" + config.residentid + "?mediaType=" + mediaType,
+                    url: site.url + "Residents/GetDataMedia/" + config.residentid
+                        + "?mediaPathTypeId=" + mediaPathTypeId
+                        + "&mediaSourceTypeId=" + mediaSourceTypeId,
                     dataType: "json",
                     traditional: true,
                     async: false,
@@ -95,7 +104,21 @@ function DisableScreen() {
                 });
             }
 
-            function File(streamid, isfolder, filename, filetype, filesize, path) {
+            function MediaPathType(id, description) {
+                var self = this;
+
+                self.id = id;
+                self.description = description;
+            }
+
+            function MediaSourceType(id, description) {
+                var self = this;
+
+                self.id = id;
+                self.description = description;
+            }
+
+            function File(streamid, isfolder, filename, filetype, filesize, path, ispublic) {
                 var self = this;
 
                 self.streamid = streamid;
@@ -104,6 +127,7 @@ function DisableScreen() {
                 self.filetype = filetype;
                 self.filesize = filesize;
                 self.path = path;
+                self.ispublic = ispublic;
             }
 
             function FileViewModel() {
@@ -112,14 +136,18 @@ function DisableScreen() {
                 var self = this;
 
                 self.files = ko.observableArray([]);
-                self.mediaTypes = ko.observableArray(["images","videos"]);
+                self.mediaPathTypes = ko.observableArray([]);
+                self.mediaSourceTypes = ko.observableArray();
                 self.selectedFile = ko.observable();
-                self.selectedMediaType = ko.observable($("#mediaType").val());
+                self.isLoadingMediaSourceTypes = ko.observable(false);
+                self.selectedMediaPathType = ko.observable($("#mediaPathTypeId").val());
+                self.selectedMediaSourceType = ko.observable($("#mediaSourceTypeId").val());
                 self.filenameSearch = ko.observable("");
                 self.totalFiles = ko.observable(0);
 
                 createFileArray(lists.FileList);
-                createMediaTypeArray(lists.MediaTypeList);
+                createMediaPathTypeArray(lists.MediaPathTypeList);
+                createMediaSourceTypeArray(lists.MediaSourceTypeList);
 
                 function createFileArray(list) {
                     self.files.removeAll();
@@ -128,11 +156,20 @@ function DisableScreen() {
                     });
                 };
 
-                function createMediaTypeArray(list) {
-                    self.mediaTypes.removeAll();
+                function createMediaPathTypeArray(list) {
+                    self.mediaPathTypes.removeAll();
                     $(list).each(function (index, value) {
-                        self.mediaTypes.push(value);
+                        pushMediaPathType(value);
                     });
+                };
+
+                function createMediaSourceTypeArray(list) {
+                    self.isLoadingMediaSourceTypes(true);
+                    self.mediaSourceTypes.removeAll();
+                    $(list).each(function (index, value) {
+                        pushMediaSourceType(value);
+                    });
+                    self.isLoadingMediaSourceTypes(false);
                 };
 
                 self.columns = ko.computed(function () {
@@ -143,8 +180,16 @@ function DisableScreen() {
                     return arr;
                 });
 
+                function pushMediaPathType(value) {
+                    self.mediaPathTypes.push(new MediaPathType(value.Id, value.Description));
+                }
+
+                function pushMediaSourceType(value) {
+                    self.mediaSourceTypes.push(new MediaSourceType(value.Id, value.Description));
+                }
+
                 function pushFile(value) {
-                    self.files.push(new File(value.StreamId, value.IsFolder, value.Filename, value.FileType, value.FileSize, value.Path));
+                    self.files.push(new File(value.StreamId, value.IsFolder, value.Filename, value.FileType, value.FileSize, value.Path, value.IsPublic));
                 }
 
                 self.selectedFile(self.files()[0]);
@@ -185,8 +230,11 @@ function DisableScreen() {
 
                 self.filteredFiles = ko.computed(function () {
                     return ko.utils.arrayFilter(self.files(), function (f) {
-                        return (self.filenameSearch().length === 0 ||
-                            f.filename.toLowerCase().indexOf(self.filenameSearch().toLowerCase()) !== -1);
+                        var ispublic = (self.selectedMediaSourceType() === 0);
+                        return (
+                            self.filenameSearch().length === 0 ||
+                            f.filename.toLowerCase().indexOf(self.filenameSearch().toLowerCase()) !== -1) &&
+                            f.ispublic === ispublic;
                     });
                 });
 
@@ -197,10 +245,12 @@ function DisableScreen() {
                     return filteredFiles;
                 });
 
+
                 // ------------------
 
                 self.doPostBack = function () {
-                    $("#mediaType").val(self.selectedMediaType());
+                    $("#mediaPathTypeId").val(self.selectedMediaPathType());
+                    $("#mediaSourceTypeId").val(self.selectedMediaSourceType());
                     document.forms[0].submit();
                 }
 
@@ -211,22 +261,21 @@ function DisableScreen() {
 
                 self.showPreview = function (row) {
                     self.highlightRow(row);
-                    self.showFilePreviewDialog(row);
+                    self.showFeatureNotDoneYetDialog();
+                };
+
+                self.showAddPublicDialog = function () {
+                    self.showFeatureNotDoneYetDialog();
                 };
 
                 self.showFileDeleteDialog = function (row) {
                     var id = (typeof row.streamid !== "undefined" ? row.streamid : 0);
                     if (id <= 0) return;
 
-                    var mediaType = self.selectedMediaType();
-                    if (mediaType.charAt(mediaType.length - 1) === "s") {
-                        mediaType = mediaType.slice(0, -1);
-                    }
-
                     BootstrapDialog.show({
                         type: BootstrapDialog.TYPE_DANGER,
-                        title: "Delete " + mediaType + "?",
-                        message: "Delete the " + mediaType.toLowerCase() + " <i><b>" + row.filename + "</b></i>?",
+                        title: "Delete File?",
+                        message: "Delete the file <i><b>" + row.filename + "." + row.filetype.toLowerCase() + "</b></i>?",
                         closable: false,
                         buttons: [
                             {
@@ -250,14 +299,11 @@ function DisableScreen() {
                     });
                 };
 
-                self.showFilePreviewDialog = function (row) {
-                    var id = (typeof row.streamid !== "undefined" ? row.streamid : 0);
-                    if (id <= 0) return;
-
+                self.showFeatureNotDoneYetDialog = function () {
                     BootstrapDialog.show({
                         type: BootstrapDialog.TYPE_INFO,
-                        title: "File Preview",
-                        message: "Feature not implemented yet.",
+                        title: "Under Development",
+                        message: "This feature has not been implemented yet.",
                         closable: false,
                         buttons: [
                             {
@@ -305,6 +351,21 @@ function DisableScreen() {
                     };
                 };
 
+                self.enableDetail = ko.computed(function () {
+                    if (self.isLoadingMediaSourceTypes()) return;
+
+                    var ispublic = self.selectedMediaSourceType() === 0;
+
+                    //  buttons
+                    if (ispublic) {
+                        divAddPublic.removeAttr("hidden");
+                        divUpload.attr("hidden", "hidden");
+                    } else {
+                        divAddPublic.attr("hidden", "hidden");
+                        divUpload.removeAttr("hidden");
+                    }
+                });
+
                 self.saveFile = function () {
                     var filedetail = self.getFileDetailFromDialog();
                     var jsonData = JSON.stringify(filedetail);
@@ -338,13 +399,20 @@ function DisableScreen() {
                     $("body").css("cursor", "wait");
 
                     var result;
-                    var mediatype = $("#mediaType").val();
+                    var mediaPathTypeId = $("#mediaPathTypeId").val();
+                    var mediaSourceTypeId = $("#mediaSourceTypeId").val();
 
-                    $.ajax({
-                        type: "POST",
-                        async: false,
-                        url: site.url + "Residents/DeleteFile/",
-                        data: { streamId: streamid, residentId: config.residentid, mediaType: mediatype },
+                        $.ajax({
+                            type: "POST",
+                            async: false,
+                            url: site.url + "Residents/DeleteFile/",
+                            data:
+                            {
+                                streamId: streamid,
+                                residentId: config.residentid,
+                                mediaPathTypeId: mediaPathTypeId,
+                                mediaSourceTypeId: mediaSourceTypeId
+                            },
                         dataType: "json",
                         traditional: true,
                         failure: function () {

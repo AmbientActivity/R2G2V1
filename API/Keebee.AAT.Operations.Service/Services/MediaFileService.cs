@@ -3,7 +3,6 @@ using Keebee.AAT.Operations.Service.KeebeeAAT;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Keebee.AAT.FileManagement;
 
 namespace Keebee.AAT.Operations.Service.Services
 {
@@ -11,9 +10,10 @@ namespace Keebee.AAT.Operations.Service.Services
     {
         IEnumerable<MediaFile> Get();
         MediaFile Get(Guid streamId);
-        IEnumerable<MediaFile> GetForProfile(int profileId);
+        IEnumerable<MediaFile> GetForResident(int residentId);
         IEnumerable<MediaFile> GetForPath(string path);
-        IEnumerable<MediaFile> GetForProfilePath(int profileId, string path);
+        IEnumerable<MediaFile> GetForResidentPath(int profileId, string path);
+        MediaFile GetSingleFromPath(string path, string filename);
     }
 
     public class MediaFileService : IMediaFileService
@@ -37,12 +37,12 @@ namespace Keebee.AAT.Operations.Service.Services
             return media.GetValue();
         }
 
-        public IEnumerable<MediaFile> GetForProfile(int profileId)
+        public IEnumerable<MediaFile> GetForResident(int residentId)
         {
             var container = new Container(new Uri(ODataHost.Url));
 
             var media = container.MediaFiles
-                .AddQueryOption("$filter", $@"indexof(Path, 'Profiles\{profileId}') gt 0 and IsFolder eq false")
+                .AddQueryOption("$filter", $@"indexof(Path, 'Profiles\{residentId}') gt 0 and IsFolder eq false")
                 .AsEnumerable();
 
             return media;
@@ -60,12 +60,23 @@ namespace Keebee.AAT.Operations.Service.Services
             return media;
         }
 
-        public IEnumerable<MediaFile> GetForProfilePath(int profileId, string path)
+        public MediaFile GetSingleFromPath(string path, string filename)
         {
             var container = new Container(new Uri(ODataHost.Url));
 
             var media = container.MediaFiles
-                .AddQueryOption("$filter", $@"indexof(Path, 'Profiles\{profileId}\{path}') gt 0 " +
+                .AddQueryOption("$filter", $@"indexof(Path, '{path}') gt 0 " +
+                    $"and Filename eq '{filename}'");
+
+            return media?.Single();
+        }
+
+        public IEnumerable<MediaFile> GetForResidentPath(int residentId, string path)
+        {
+            var container = new Container(new Uri(ODataHost.Url));
+
+            var media = container.MediaFiles
+                .AddQueryOption("$filter", $@"indexof(Path, 'Profiles\{residentId}\{path}') gt 0 " +
                     "and IsFolder eq false")
                 .AsEnumerable();
 

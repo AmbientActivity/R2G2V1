@@ -23,11 +23,6 @@
 
 <div class="panel panel-default">
     <div class="panel-heading">
-        <div class="row">
-            <div class="pull-right record-total">
-                <label>Total:</label> <span data-bind="text: totalResidents()"></span>
-            </div>
-        </div>
         <ul class="nav nav-pills">
             <li>
                 <input type="button" class="btn btn-success" value="Add Resident" data-bind="click: showEditDialog"/>
@@ -39,7 +34,10 @@
                 <input id="txtSearchFirstName" type="text" class="form-control" placeholder="First Name" data-bind="value: firstNameSearch, valueUpdate: 'keyup'"/>
             </li>
             <li>
-                <input id="txtSearchLastName" type="text" class="form-control" placeholder="Last Name" data-bind="value: lastNameSearch, valueUpdate: 'keyup'" />
+                <input id="txtSearchLastName" type="text" class="form-control" placeholder="Last Name" data-bind="value: lastNameSearch, valueUpdate: 'keyup'"/>
+            </li>
+            <li class="pull-right record-total">
+                <label>Total:</label> <span data-bind="text: totalResidents()"></span>
             </li>
         </ul>
     </div>

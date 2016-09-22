@@ -1,5 +1,4 @@
-﻿using Keebee.AAT.Shared;
-using Keebee.AAT.SystemEventLogging;
+﻿using Keebee.AAT.SystemEventLogging;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Script.Serialization;
@@ -31,13 +30,24 @@ namespace Keebee.AAT.RESTClient
         IEnumerable<Resident> GetResidents();
         Resident GetResident(int residentId);
         Resident GetGenericDetails();
+        Resident GetResidentWithMedia(int residentId);
         Resident GetResidentByNameGender(string firstName, string lastName, string gender);
         bool ResidentExists(int residentId);
 
         // media
         MediaFileSingle GetMediaFile(Guid streamId);
         IEnumerable<Media> GetMediaFilesForPath(string path);
+        MediaFileSingle GetMediaFileFromPath(string path, string filename);
         byte[] GetMediaFileStream(Guid streamId);
+
+        IEnumerable<MediaPathType> GetMediaPathTypes();
+        MediaPathType GetMediaPathType(int mediaPathTypeId);
+        PublicMedia GetPublicMediaFiles();
+        PublicMedia GetPublicMediaFilesForResponseType(int responseTypeId);
+        IEnumerable<ResidentMedia> GetResidentMediaFiles();
+        ResidentMediaFile GetResidentMediaFile(int id);
+        ResidentMedia GetResidentMediaFilesForResident(int residentId);
+        ResidentMedia GetResidentMediaFilesForResponseType(int responseTypeId);
 
         IEnumerable<ActivityEventLog> GetActivityEventLogsForDate(string date);
         IEnumerable<GameEventLog> GetGameEventLogsForDate(string date);
@@ -53,6 +63,8 @@ namespace Keebee.AAT.RESTClient
         void PostGameEventLog(GameEventLog gameEventLog);
         void PostRfidEventLog(RfidEventLog rfidEventLog);
         void PostActivateConfig(int configId);
+        int PostResidentMediaFile(ResidentMediaFileEdit residentMediaFile);
+
 
         // PATCH
         void PatchResident(int residentId, ResidentEdit resident);
@@ -97,11 +109,23 @@ namespace Keebee.AAT.RESTClient
         private const string UrlResident = "residents/{0}";
         private const string UrlGenericDetails = "residents/generic";
         private const string UrlResidentByNameGender = "residents?firstName={0}&lastName={1}&gender={2}";
+        private const string UrlResidentWithMedia = "residents/{0}/media";
 
         // media files
         private const string UrlMediaFile = "mediafiles/{0}";
         private const string UrlMediaFilesForPath = "mediafiles?path={0}";
+        private const string UrlMediaFileFromPath = "mediafiles?path={0}&filename={1}";
         private const string UrlMediaFileStream = "mediafilestreams/{0}";
+
+        private const string UrlMediaPathTypes = "mediaPathtypes";
+        private const string UrlMediaPathType = "mediaPathtypes/{0}";
+        private const string UrlPublicMediaFiles = "publicmediafiles";
+        private const string UrlPublicMediaFilesForResponseType = "publicmediafiles?responseTypeId={0}";
+
+        private const string UrlResidentMediaFiles = "residentmediafiles";
+        private const string UrlResidentMediaFile = "residentmediafiles/{0}";
+        private const string UrlResidentMediaFilesForResident = "residentmediafiles?residentId={0}";
+        private const string UrlResidentMediaFilesForResponseType = "residentmediafiles?responseTypeId={0}";
 
         // activity event logs
         private const string UrlActivityEventLogs = "activityeventlogs";
@@ -295,12 +319,23 @@ namespace Keebee.AAT.RESTClient
             return resident;
         }
 
+        public Resident GetResidentWithMedia(int residentId)
+        {
+            var data = Get(string.Format(UrlResidentWithMedia, residentId));
+            if (data == null) return null;
+
+            var serializer = new JavaScriptSerializer();
+            var resident = serializer.Deserialize<Resident>(data);
+
+            return resident;
+        }
+
         public bool ResidentExists(int residentId)
         {
             return Exists(string.Format(UrlResident, residentId));
         }
 
-        // media
+        // event log
         public IEnumerable<ActivityEventLog> GetActivityEventLogsForDate(string date)
         {
             var data = Get(string.Format(UrlActivityEventLogsForDate, date));
@@ -356,6 +391,8 @@ namespace Keebee.AAT.RESTClient
             return activityEventLogs;
         }
 
+
+        // media
         public MediaFileSingle GetMediaFile(Guid streamId)
         {
             var data = Get(string.Format(UrlMediaFile, streamId));
@@ -378,12 +415,113 @@ namespace Keebee.AAT.RESTClient
             return mediaList;
         }
 
+        public MediaFileSingle GetMediaFileFromPath(string path, string filename)
+        {
+            var data = Get(string.Format(UrlMediaFileFromPath, path, filename));
+            if (data == null) return null;
+
+            var serializer = new JavaScriptSerializer();
+            var media = serializer.Deserialize<MediaFileSingle>(data);
+
+            return media;
+        }
+
         public byte[] GetMediaFileStream(Guid streamId)
         {
             var data = GetBytes(string.Format(UrlMediaFileStream, streamId));
 
             return data;
         }
+
+
+        public IEnumerable<MediaPathType> GetMediaPathTypes()
+        {
+            var data = Get(UrlMediaPathTypes);
+            if (data == null) return null;
+
+            var serializer = new JavaScriptSerializer();
+            var pathTypes = serializer.Deserialize<MediaPathTypeList>(data).MediaPathTypes;
+
+            return pathTypes;
+        }
+
+        public MediaPathType GetMediaPathType(int mediaPathTypeId)
+        {
+            var data = Get(string.Format(UrlMediaPathType, mediaPathTypeId));
+            if (data == null) return null;
+
+            var serializer = new JavaScriptSerializer();
+            var pathType = serializer.Deserialize<MediaPathType>(data);
+
+            return pathType;
+        }
+
+        public PublicMedia GetPublicMediaFiles()
+        {
+            var data = Get(UrlPublicMediaFiles);
+            if (data == null) return null;
+
+            var serializer = new JavaScriptSerializer();
+            var publicMedia = serializer.Deserialize<PublicMedia>(data);
+
+            return publicMedia;
+        }
+
+        public PublicMedia GetPublicMediaFilesForResponseType(int responseTypeId)
+        {
+            var data = Get(string.Format(UrlPublicMediaFilesForResponseType, responseTypeId));
+            if (data == null) return null;
+
+            var serializer = new JavaScriptSerializer();
+            var publicMedia = serializer.Deserialize<PublicMedia>(data);
+
+            return publicMedia;
+        }
+
+        public IEnumerable<ResidentMedia> GetResidentMediaFiles()
+        {
+            var data = Get(UrlResidentMediaFiles);
+            if (data == null) return null;
+
+            var serializer = new JavaScriptSerializer();
+            var residentMedia = serializer.Deserialize<ResidentMediaList>(data).Media;
+
+            return residentMedia;
+        }
+
+        public ResidentMediaFile GetResidentMediaFile(int id)
+        {
+            var data = Get(string.Format(UrlResidentMediaFile, id));
+            if (data == null) return null;
+
+            var serializer = new JavaScriptSerializer();
+            var residentMediaFile = serializer.Deserialize<ResidentMediaFile>(data);
+
+            return residentMediaFile;
+        }
+
+        public ResidentMedia GetResidentMediaFilesForResident(int residentId)
+        {
+            var data = Get(string.Format(UrlResidentMediaFilesForResident, residentId));
+            if (data == null) return null;
+
+            var serializer = new JavaScriptSerializer();
+            var residentMedia = serializer.Deserialize<ResidentMediaSingle>(data).ResidentMedia;
+
+            return residentMedia;
+        }
+
+        public ResidentMedia GetResidentMediaFilesForResponseType(int responseTypeId)
+        {
+            var data = Get(string.Format(UrlResidentMediaFilesForResponseType, responseTypeId));
+            if (data == null) return null;
+
+            var serializer = new JavaScriptSerializer();
+            var residentMedia = serializer.Deserialize<ResidentMedia>(data);
+
+            return residentMedia;
+        }
+
 
         // POST
 
@@ -438,6 +576,14 @@ namespace Keebee.AAT.RESTClient
         public void PostActivateConfig(int configId)
         {
             Post(string.Format(UrlActivateConfig, configId), string.Empty);
+        }
+
+        public int PostResidentMediaFile(ResidentMediaFileEdit residenttMediaFile)
+        {
+            var serializer = new JavaScriptSerializer();
+            var el = serializer.Serialize(residenttMediaFile);
+
+            return Post(UrlResidentMediaFiles, el);
         }
 
         // PATCH

@@ -9,8 +9,10 @@ using System.Web.Script.Serialization;
 using System.Diagnostics;
 using System.Drawing;
 using System;
+using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Linq;
+using Keebee.AAT.Display.Extensions;
 using WMPLib;
 
 namespace Keebee.AAT.Display
@@ -80,6 +82,9 @@ namespace Keebee.AAT.Display
         // custom event loggers
         private readonly GameEventLogger _gameEventLogger;
         private readonly ActivityEventLogger _activityEventLogger;
+
+        // media path
+        private readonly MediaSourcePath _mediaPath = new MediaSourcePath();
 
         public Main()
         {
@@ -261,59 +266,45 @@ namespace Keebee.AAT.Display
             }
         }
 
-        private string[] GetFiles(string fileType = null)
+        private string[] GetFilesForResponseType(int responseTypeId, int mediaPathTypeId)
         {
-            var mediaList = _opsClient.GetMediaFilesForPath(GetMediaPath(_activeResident.Id));
-            string[] files;
+            var files = new string[0];
+            var mediaFiles = _activeResident.Id == PublicMediaSource.Id
+                ? _opsClient.GetPublicMediaFiles().MediaFiles.ToArray()
+                : _opsClient.GetResidentMediaFilesForResident(_activeResident.Id).MediaFiles.ToArray();
 
-            if (mediaList != null)
+            var numResponseTypes = mediaFiles.Count(x => x.ResponseType.Id == responseTypeId);
+       
+            if (numResponseTypes != 1) return files;
             {
-                var media = mediaList.Single();
-                files = media.Files
-                    .Where(x => x.FileType == fileType || fileType == null)
-                    .OrderBy(x => x.Filename)
-                    .Select(x => $"{media.Path}{x.Filename}")
-                    .ToArray();
-            }
-            else
-            {
-                // if no media found, load generic content
-                var media = _opsClient.GetMediaFilesForPath(GetMediaPath(GenericMedia.Id)).Single();
+                files = GetFiles(mediaFiles, responseTypeId, mediaPathTypeId);
 
-                files = media.Files
-                    .Where(x => x.FileType == fileType || fileType == null)
-                    .OrderBy(x => x.Filename)
-                    .Select(x => $"{media.Path}{x.Filename}")
-                    .ToArray();
+                if (files.Any()) return files;
             }
 
             return files;
         }
 
-        private string GetMediaPath(int profileId)
+        private string[] GetFiles(ICollection<MediaResponseType> mediaFiles, int responseTypeId, int mediaPathTypeId)
         {
-            string path = string.Empty;
+            var pathRoot = $@"{_mediaPath.ProfileRoot}\{_activeResident.Id}";
 
-            switch (_activeConfigDetail.ResponseTypeId)
-            {
-                case ResponseTypeId.SlidShow:
-                    path = $@"{profileId}\{MediaPath.Images}";
-                    break;
-                case ResponseTypeId.Radio:
-                    path = $@"{profileId}\{MediaPath.Music}";
-                    break;
-                case ResponseTypeId.Television:
-                    path = $@"{profileId}\{MediaPath.Videos}";
-                    break;
-                case ResponseTypeId.MatchingGame:
-                    path = $@"{profileId}\{MediaPath.Shapes}";
-                    break;
-                case ResponseTypeId.Cats:
-                    path = MediaPath.Cats;
-                    break;
-            }
+            var mediaPaths = mediaFiles
+                .Single(x => x.ResponseType.Id == responseTypeId).Paths.ToArray();
 
-            return path;
+            var mediaPathType = mediaPaths
+                .Single(x => x.MediaPathType.Id == mediaPathTypeId)
+                .MediaPathType.Description;
+
+            var fileList = mediaFiles
+                .Single(x => x.ResponseType.Id == responseTypeId).Paths
+                .Where(x => x.MediaPathType.Id == mediaPathTypeId)
+                .SelectMany(x => x.Files)
+                .OrderBy(x => x.Filename)
+                .Select(x => $@"{pathRoot}\{mediaPathType}\{x.Filename}")
+                .ToArray();
+
+            return fileList.Any() ? fileList : new string[0];
         }
 
         #region callback
@@ -328,23 +319,24 @@ namespace Keebee.AAT.Display
             {
                 if (_isNewResponse)
                 {
-                    var fileType = string.Empty;
+                    var mediaPathTypeId = 0;
                     switch (responseTypeId)
                     {
                         case ResponseTypeId.Radio:
-                            fileType = "mp3";
+                            mediaPathTypeId = MediaPathTypeId.Music;
                             break;
                         case ResponseTypeId.Television:
-                            fileType = "mp4";
+                            mediaPathTypeId = MediaPathTypeId.Videos;
                             break;
                         case ResponseTypeId.Cats:
-                            fileType = "mp4";
+                            mediaPathTypeId = MediaPathTypeId.Videos;
                             break;
                     }
 
-                    var mediaFiles = GetFiles(fileType);
+                    var mediaFiles = GetFilesForResponseType(responseTypeId, mediaPathTypeId);
                     if (!mediaFiles.Any()) return;
 
+                    mediaFiles.Shuffle();
                     StopCurrentResponse();
 
                     mediaPlayer1.Show();
@@ -413,9 +405,10 @@ namespace Keebee.AAT.Display
             }
             else
             {
-                var images = GetFiles();
+                var images = GetFilesForResponseType(ResponseTypeId.SlidShow, MediaPathTypeId.Images);
                 if (!images.Any()) return;
 
+                images.Shuffle();
                 StopCurrentResponse();
 
                 slideViewerFlash1.Show();
@@ -436,10 +429,12 @@ namespace Keebee.AAT.Display
             }
             else
             {
-                var shapes = GetFiles("png");
+                var shapes = GetFilesForResponseType(ResponseTypeId.MatchingGame, MediaPathTypeId.Shapes);
                 if (!shapes.Any()) return;
 
+                shapes.Shuffle();
                 StopCurrentResponse();
+
                 _isMatchingGameTimeoutExpired = false;
 
                 matchingGame1.Show();
@@ -484,7 +479,7 @@ namespace Keebee.AAT.Display
                 var frmSplash = new Caregiver.Splash();
                 frmSplash.Show();
 
-                var genericMedia = _opsClient.GetMediaFilesForPath($@"{MediaPath.Profiles}\{GenericMedia.Id}");
+                var publicMedia = _opsClient.GetPublicMediaFiles().MediaFiles;
                 var config = _opsClient.GetActiveConfigDetails();
 
                 _caregiverInterface = new CaregiverInterface
@@ -492,7 +487,7 @@ namespace Keebee.AAT.Display
                                             EventLogger = _systemEventLogger,
                                             OperationsClient = _opsClient,
                                             Config = config,
-                                            MediaList = genericMedia
+                                            MediaFiles = publicMedia
                 };
 
                 _caregiverInterface.CaregiverCompleteEvent += CaregiverComplete;

@@ -1,6 +1,7 @@
 using Keebee.AAT.Operations.Service.Services;
 using Microsoft.Practices.Unity;
 using System.Web.Http;
+using Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models;
 using Unity.WebApi;
 
 namespace Keebee.AAT.Operations
@@ -27,6 +28,9 @@ namespace Keebee.AAT.Operations
             container.RegisterType<IRfidEventLogService, RfidEventLogService>();
             container.RegisterType<IMediaFileService, MediaFileService>();
             container.RegisterType<IMediaFileStreamService, MediaFileStreamService>();
+            container.RegisterType<IMediaPathTypeService, MediaPathTypeService>();
+            container.RegisterType<IResidentMediaFileService, ResidentMediaFileService>();
+            container.RegisterType<IPublicMediaFileService, PublicMediaFileService>();
             container.RegisterType<IStatusService, StatusService>();
 
             GlobalConfiguration.Configuration.DependencyResolver = new UnityDependencyResolver(container);

@@ -45,13 +45,14 @@ namespace Keebee.AAT.Administrator.ViewModels
     {
         public int ResidentId { get; set; }
         public string FullName { get; set; }
-        public string UploadButtonText { get; set; }
+        public string AddButtonText { get; set; }
         public string RfidSearch { get; set; }
         public string FirstNameSearch { get; set; }
         public string LastNameSearch { get; set; }
         public string SortColumn { get; set; }
         public int? SortDescending { get; set; }
-        public string SelectedMediaType{ get; set; }
+        public int? SelectedMediaPathType { get; set; }
+        public int? SelectedMediaSourceType { get; set; }
         public string UploaderHtml { get; set; }
         public string UploadedMessage { get; set; }
     }

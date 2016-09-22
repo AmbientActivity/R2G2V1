@@ -2,8 +2,10 @@
 using Keebee.AAT.Display.Helpers;
 using Keebee.AAT.SystemEventLogging;
 using Keebee.AAT.Shared;
+using Keebee.AAT.RESTClient;
 using System;
 using System.Diagnostics;
+using System.Linq;
 using System.Windows.Forms;
 using WMPLib;
 
@@ -14,7 +16,6 @@ namespace Keebee.AAT.Display.Caregiver
         private const string PlaylistCaregiver = "caregiver";
 
         // use Cats video for sample audio clip
-        private readonly string _catsVideo = $@"\\{Environment.MachineName}\{MediaPath.MediaRoot}\{MediaPath.Cats}";
 
         private SystemEventLogger _systemEventLogger;
         public SystemEventLogger EventLogger
@@ -22,11 +23,20 @@ namespace Keebee.AAT.Display.Caregiver
             set { _systemEventLogger = value; }
         }
 
+        private OperationsClient _opsClient;
+        public OperationsClient OperationsClient
+        {
+            set { _opsClient = value; }
+        }
+
         private bool _isMusicPlaying;
         public bool IsMusicPlaying
         {
             set { _isMusicPlaying = value; }
         }
+
+        // media path
+        private readonly MediaSourcePath _mediaPath = new MediaSourcePath();
 
         private IWMPPlaylist _playlist;
 
@@ -58,8 +68,15 @@ namespace Keebee.AAT.Display.Caregiver
         {
             try
             {
-                
-                _playlist = axWindowsMediaPlayer1.LoadPlaylist(PlaylistCaregiver, new [] { _catsVideo });
+                var mediaPath = _opsClient.GetPublicMediaFilesForResponseType(ResponseTypeId.Cats)
+                    .MediaFiles.Single().Paths.First();
+
+                var mediaPathType = mediaPath.MediaPathType.Description;
+                var filename = mediaPath.Files.First().Filename;
+
+                var fullPath = $@"{_mediaPath.ProfileRoot}\{PublicMediaSource.Id}\{mediaPathType}\{filename}";
+
+                _playlist = axWindowsMediaPlayer1.LoadPlaylist(PlaylistCaregiver, new [] { fullPath });
                 axWindowsMediaPlayer1.currentPlaylist = _playlist;
             }
             catch (Exception ex)

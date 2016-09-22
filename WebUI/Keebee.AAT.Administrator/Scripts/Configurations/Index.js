@@ -14,7 +14,6 @@
             // buttons
             var cmdEdit = $("#edit");
             var cmdDelete = $("#delete");
-            var cmdAddDetail = $("#add-detail");
             var cmdActivate = $("#activate");
 
             // active config

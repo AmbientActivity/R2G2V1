@@ -26,5 +26,10 @@ else {
     Invoke-SqlQuery -File $queryFile -Server $server -Database $database
     Write-Host "done.`n”
 
+    Write-Host "Seeding media file references...” -NoNewline
+    $queryFile = $path + "8_SeedMediaFiles.sql"
+    Invoke-SqlQuery -File $queryFile -Server $server -Database $database
+    Write-Host "done.`n”
+
     Write-Host "Data seeded successfully!`n”
 }

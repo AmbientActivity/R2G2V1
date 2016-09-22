@@ -1,5 +1,16 @@
-﻿namespace Keebee.AAT.Shared
+﻿using System;
+
+namespace Keebee.AAT.Shared
 {
+    public class MediaSourcePath
+    {
+        private const string SqlServerFilestream = @"sqlexpress\KeebeeAATFilestream\Media";
+
+        public string MediaRoot = $@"\\{Environment.MachineName}\{SqlServerFilestream}";
+        public string ProfileRoot = $@"\\{Environment.MachineName}\{SqlServerFilestream}\Profiles";
+        public string ExportEventLogRoot = $@"\\{Environment.MachineName}\{SqlServerFilestream}\Exports\EventLog";
+    }
+
     public enum RotationSensorStep
     {
         Value1 = 200,
@@ -20,33 +31,26 @@
         public const string EventLogPath = @"Exports\EventLog";
     }
 
-    public static class CustomEventLog
+    public static class MediaPathTypeId
     {
-        public const string Path = @"sqlexpress\KeebeeAATFilestream\Media\Exports\EventLog";
+        public const int Images = 1;
+        public const int Videos = 2;
+        public const int Music = 3;
+        public const int Pictures = 4;
+        public const int Shapes = 5;
+        public const int Sounds = 6;
     }
 
-    public static class MediaPath
+    public static class MediaSourceType
     {
-        public const string MediaRoot = @"sqlexpress\KeebeeAATFilestream\Media";
-        public const string Profiles = "Profiles";
-        public const string Cats = "Cats";
-        public const string Ambient = "Ambient";
-        public const string Images = "images";
-        public const string Videos = "videos";
-        public const string Music = "music";
-        public const string Pictures = "pictures";
-        public const string Shapes = "shapes";
-        public const string Sounds = "sounds";
+        public const string Personal = "Personal Content";
+        public const string Public = "Public Library";
     }
 
-    public static class MediaType
+    public static class MediaSourceTypeId
     {
-        public const string Images = "Images";
-        public const string Videos = "Videos";
-        public const string Music = "Music";
-        public const string Pictures = "Pictures";
-        public const string Shapes = "Shapes";
-        public const string Sounds = "Sounds";
+        public const int Public = 0;
+        public const int Personal = 1;
     }
 
     public static class ConfigId
@@ -54,7 +58,7 @@
         public const int Default = 1;
     }
 
-    public static class GenericMedia
+    public static class PublicMediaSource
     {
         public const int Id = 0;
         public const string Description = "Public Library";

@@ -295,7 +295,6 @@ namespace Keebee.AAT.StateMachineService
         protected override void OnStart(string[] args)
         {
             _systemEventLogger.WriteEntry("In OnStart");
-            _activeConfig = _opsClient.GetActiveConfigDetails();
         }
 
         protected override void OnStop()

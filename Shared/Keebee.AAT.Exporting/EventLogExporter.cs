@@ -20,6 +20,9 @@ namespace Keebee.AAT.Exporting
             _systemEventLogger = new SystemEventLogger(SystemEventLogType.EventLog);
         }
 
+        // media path
+        private readonly MediaSourcePath _mediaPath = new MediaSourcePath();
+
         public byte[] Export(string date)
         {
             var workbook = GetWorkbook(date);
@@ -34,7 +37,7 @@ namespace Keebee.AAT.Exporting
         {
             var workbook = GetWorkbook(date);
 
-            var filename = $@"\\{Environment.MachineName}\{CustomEventLog.Path}\EventLog_{date.Replace("/", "_")}.xls";
+            var filename = $@"{_mediaPath.ExportEventLogRoot}\EventLog_{date.Replace("/", "_")}.xls";
 
             workbook.Save(filename);
         }

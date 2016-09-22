@@ -43,6 +43,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DTO\MediaFile.cs" />
+    <Compile Include="DTO\MediaPathType.cs" />
+    <Compile Include="DTO\PublicMediaFile.cs" />
+    <Compile Include="DTO\ResidentMediaFile.cs" />
     <Compile Include="DTO\MediaFileStream.cs" />
     <Compile Include="DTO\PhidgetStyleType.cs" />
     <Compile Include="DTO\PhidgetType.cs" />
@@ -58,10 +61,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Shared\Keebee.AAT.Shared\Keebee.AAT.Shared.csproj">
-      <Project>{3cb12af2-7655-46f6-9969-990730f73964}</Project>
-      <Name>Keebee.AAT.Shared</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\Shared\Keebee.AAT.SystemEventLogging\Keebee.AAT.SystemEventLogging.csproj">
       <Project>{6f0a1aef-997e-4355-bb38-a4acf6710edf}</Project>
       <Name>Keebee.AAT.SystemEventLogging</Name>

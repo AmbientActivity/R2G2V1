@@ -151,6 +151,9 @@
     <Compile Include="App_Start\SwaggerConfig.cs" />
     <Compile Include="App_Start\UnityConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Controllers\MediaPathTypesController.cs" />
+    <Compile Include="Controllers\PublicMediaFilesController.cs" />
+    <Compile Include="Controllers\ResidentMediaFilesController.cs" />
     <Compile Include="Controllers\MediaFileStreamsController.cs" />
     <Compile Include="Controllers\PhidgetStyleTypesController.cs" />
     <Compile Include="Controllers\PhidgetTypesController.cs" />

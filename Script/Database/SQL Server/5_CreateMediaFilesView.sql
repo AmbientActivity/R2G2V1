@@ -1,8 +1,16 @@
 USE [KeebeeAAT]
 GO
 
-IF (EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = 'FK_dbo.Responses_dbo.MediaFiles_StreamId'))
-	ALTER TABLE [dbo].[Responses] DROP CONSTRAINT [FK_dbo.Responses_dbo.MediaFiles_StreamId]
+IF (EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = 'FK_dbo.ResidentMediaFiles_dbo.MediaFiles_StreamId'))
+	ALTER TABLE [dbo].[ResidentMediaFiles] DROP CONSTRAINT [FK_dbo.ResidentMediaFiles_dbo.MediaFiles_StreamId]
+GO
+
+IF (EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = 'FK_dbo.PublicMediaFiles_dbo.MediaFiles_StreamId'))
+	ALTER TABLE [dbo].[PublicMediaFiles] DROP CONSTRAINT [FK_dbo.PublicMediaFiles_dbo.MediaFiles_StreamId]
+GO
+
+IF (EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = 'FK_dbo.AmbientMediaFiles_dbo.MediaFiles_StreamId'))
+	ALTER TABLE [dbo].[AmbientMediaFiles] DROP CONSTRAINT [FK_dbo.AmbientMediaFiles_dbo.MediaFiles_StreamId]
 GO
 
 IF (EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'MediaFiles'))

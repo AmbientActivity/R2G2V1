@@ -2,13 +2,13 @@
 using Keebee.AAT.RESTClient;
 using Keebee.AAT.SystemEventLogging;
 using Keebee.AAT.Display.Extensions;
+using Keebee.AAT.Shared;
 using System;
 using System.Linq;
 using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 using AxWMPLib;
-using Keebee.AAT.Shared;
 using WMPLib;
 
 namespace Keebee.AAT.Display
@@ -27,6 +27,9 @@ namespace Keebee.AAT.Display
 
         // event logger
         private readonly SystemEventLogger _systemEventLogger;
+
+        // media path
+        private readonly MediaSourcePath _mediaPath = new MediaSourcePath();
 
         public Splash()
         {
@@ -68,15 +71,21 @@ namespace Keebee.AAT.Display
                 using (var mediaPlayer = new AxWindowsMediaPlayer())
                 {
                     Controls.Add(mediaPlayer);
-                    var media = _opsClient.GetMediaFilesForPath($@"{MediaPath.Ambient}\{MediaPath.Videos}").Single();
-                    var path = media.Path;
-                    var files = media.Files.ToArray();
+                    var media = _opsClient.GetPublicMediaFilesForResponseType(ResponseTypeId.Ambient);
+                    if (media == null) return false;
+                    if (!media.MediaFiles.Any()) return false;
+
+                    var mediaPath = media.MediaFiles.Single().Paths.First();
+                    var mediaPathType = mediaPath.MediaPathType.Description;
+                    var path = $@"{_mediaPath.ProfileRoot}\{PublicMediaSource.Id}\{mediaPathType}";
+
+                    var files = mediaPath.Files.ToArray();
 
                     if (files.Any())
                     {
                         var ambientMediaFiles = files
                             .OrderBy(x => x.Filename)
-                            .Select(x => $@"{path}{x.Filename}")
+                            .Select(x => $@"{path}\{x.Filename}")
                             .ToArray();
 
                         if (ambientMediaFiles.Any())

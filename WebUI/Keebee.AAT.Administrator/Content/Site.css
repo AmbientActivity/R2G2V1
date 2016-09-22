@@ -79,7 +79,7 @@ a:hover, a:visited, a:link, a:active {
   background-color: #231b10;
 }
 
-/* custom */
+/* dialogs */
 #validation-container {
     color: #c12e2a;
 }
@@ -89,30 +89,66 @@ a:hover, a:visited, a:link, a:active {
 .modal-content {
     width: 470px;
 }
-.record-total {
-    margin-right: 15px;
+
+/* residents */
+.resident-edit {
+    width: 400px;
 }
-.link-back-to-residents {
+
+/* residents media */
+.back-to-residents-container {
     font-size: 16px;
-    margin: -20px 0 0 0;
-    padding: 0;
+    margin: -30px 0 0 0;
 }
 .link-back-to-residents-disabled {
     font-size: 16px;
     color: #838383;
-    margin: -20px 0 0 0;
-    padding: 0;
 }
-.resident-edit {
-    width: 400px;
+.link-back-to-residents {
+    font-size: 16px;
+    margin: -30px 0 0 0;
 }
+.add-media-description {
+    font-size: 14px;
+    font-style: normal;
+    color: grey;
+    margin: 0 0 0 5px;
+}
+.add-button-container {
+    font-size: 16px;
+    margin: 0 0 5px 3px;
+}
+
+/* confgurations */
 .config-container {
     width: 780px;
     margin-bottom: 10px;
 }
+.active-config-container {
+    float: right;
+    padding: 0;
+    margin: 20px 10px 0 0;
+}
+.active-config-label {
+    float: right;
+}
+.active-eventlog-label {
+    float: right;
+    margin-right: 20px;
+}
+.label-active-config {
+    color: #419641;
+}
+
+/* tables */
+.record-total {
+    /*margin-right: 10px;*/
+}
 .col-profile {
     width: 30px;
 }
+
+/* bootstrap glyphicons*/
 .col-glyphicon {
     width: 20px;
 }
@@ -128,23 +164,5 @@ a:hover, a:visited, a:link, a:active {
 .button-text {
     color: #fff;
 }
-.active-config-container {
-    float: right;
-    padding: 0;
-    margin: 20px 10px 0 0;
-}
-.active-config-label {
-    float: right;
-}
-.active-eventlog-label {
-    float: right;
-    margin-right: 20px;
-}
-.media-manager-button-container {
-    padding: 0;
-    margin: 0 0 10px 0;
-}
-.label-active-config {
-    color: #419641;
-}
+
 

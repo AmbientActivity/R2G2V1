@@ -79,15 +79,15 @@ namespace Keebee.AAT.Operations.Controllers
             return new DynamicJsonObject(exObj);
         }
 
-        // GET: api/MediaFiles?profileId=5
+        // GET: api/MediaFiles?residentId=5
         [HttpGet]
-        public async Task<DynamicJsonObject> GetForProfile(int profileId)
+        public async Task<DynamicJsonObject> GetForResident(int residentId)
         {
             IEnumerable<MediaFile> media = new Collection<MediaFile>();
 
             await Task.Run(() =>
             {
-                media = _mediaFileService.GetForProfile(profileId);
+                media = _mediaFileService.GetForResident(residentId);
             });
 
             if (media == null) return new DynamicJsonObject(new ExpandoObject());
@@ -147,15 +147,15 @@ namespace Keebee.AAT.Operations.Controllers
             return new DynamicJsonObject(exObj);
         }
 
-        // GET: api/MediaFiles/Videos?profileId=5&path=music
+        // GET: api/MediaFiles?residentId=5&path=music
         [HttpGet]
-        public async Task<DynamicJsonObject> GetForProfilePath(int profileId, string path)
+        public async Task<DynamicJsonObject> GetForResidentPath(int residentId, string path)
         {
             IEnumerable<MediaFile> media = new Collection<MediaFile>();
 
             await Task.Run(() =>
             {
-                media = _mediaFileService.GetForProfilePath(profileId, path);
+                media = _mediaFileService.GetForResidentPath(residentId, path);
             });
 
             if (media == null) return new DynamicJsonObject(new ExpandoObject());
@@ -172,6 +172,29 @@ namespace Keebee.AAT.Operations.Controllers
                 m.FileType,
                 m.FileSize
             });
+
+            return new DynamicJsonObject(exObj);
+        }
+
+        // GET: api/MediaFiles?&path=0\images&filename=2008_01_21.jpg
+        [HttpGet]
+        public async Task<DynamicJsonObject> GetSingleFromPath(string path, string filename)
+        {
+            var media = new MediaFile();
+
+            await Task.Run(() =>
+            {
+                media = _mediaFileService.GetSingleFromPath(path, filename);
+            });
+
+            if (media == null) return new DynamicJsonObject(new ExpandoObject());
+
+            dynamic exObj = new ExpandoObject();
+
+            exObj.StreamId = media.StreamId;
+            exObj.Filename = media.Filename;
+            exObj.FileType = media.FileType;
+            exObj.FileSize = media.FileSize;
 
             return new DynamicJsonObject(exObj);
         }

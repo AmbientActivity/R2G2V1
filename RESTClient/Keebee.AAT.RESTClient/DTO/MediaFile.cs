@@ -10,6 +10,7 @@ namespace Keebee.AAT.RESTClient
         public string Filename { get; set; }
         public string FileType { get; set; }
         public int FileSize { get; set; }
+        public bool IsPublic { get; set; }
     }
 
     public class MediaFileSingle : MediaFile
@@ -17,6 +18,24 @@ namespace Keebee.AAT.RESTClient
         public string Path { get; set; }
     }
 
+    public class MediaFilePath
+    {
+        public MediaPathType MediaPathType { get; set; }
+        public IEnumerable<MediaFile> Files;
+    }
+
+    public class MediaResponseType
+    {
+        public ResponseType ResponseType { get; set; }
+        public IEnumerable<MediaFilePath> Paths;
+    }
+
+    public class MediaResponseTypeList
+    {
+        public IEnumerable<MediaResponseType> Media;
+    }
+
+    // when accessing the media files controller directly
     public class Media
     {
         public string Path { get; set; }

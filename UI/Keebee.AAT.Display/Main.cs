@@ -269,25 +269,41 @@ namespace Keebee.AAT.Display
         private string[] GetFilesForResponseType(int responseTypeId, int mediaPathTypeId)
         {
             var files = new string[0];
-            var mediaFiles = _activeResident.Id == PublicMediaSource.Id
-                ? _opsClient.GetPublicMediaFiles().MediaFiles.ToArray()
-                : _opsClient.GetResidentMediaFilesForResident(_activeResident.Id).MediaFiles.ToArray();
+            ICollection<MediaResponseType> mediaFiles = null;
+            var numResponseTypes = 0;
+            var residentId = _activeResident.Id;
 
-            var numResponseTypes = mediaFiles.Count(x => x.ResponseType.Id == responseTypeId);
-       
-            if (numResponseTypes != 1) return files;
+            if (_activeResident.Id == PublicMediaSource.Id)
             {
-                files = GetFiles(mediaFiles, responseTypeId, mediaPathTypeId);
-
-                if (files.Any()) return files;
+                mediaFiles = _opsClient.GetPublicMediaFiles().MediaFiles.ToArray();
+                numResponseTypes = mediaFiles.Count(x => x.ResponseType.Id == responseTypeId);
             }
+            else
+            {
+                var media = _opsClient.GetResidentMediaFilesForResident(residentId);
+
+                if (media != null)
+                {
+                    mediaFiles = media.MediaFiles.ToArray();
+                    numResponseTypes = mediaFiles.Count(x => x.ResponseType.Id == responseTypeId);
+                }
+            }
+
+            if (numResponseTypes == 0)
+            {
+                residentId = PublicMediaSource.Id;
+                mediaFiles = _opsClient.GetPublicMediaFiles().MediaFiles.ToArray();
+            }
+
+            if (mediaFiles != null)
+                files = GetFiles(mediaFiles.ToArray(), residentId, responseTypeId, mediaPathTypeId);
 
             return files;
         }
 
-        private string[] GetFiles(ICollection<MediaResponseType> mediaFiles, int responseTypeId, int mediaPathTypeId)
+        private string[] GetFiles(ICollection<MediaResponseType> mediaFiles, int residentId, int responseTypeId, int mediaPathTypeId)
         {
-            var pathRoot = $@"{_mediaPath.ProfileRoot}\{_activeResident.Id}";
+            var pathRoot = $@"{_mediaPath.ProfileRoot}\{residentId}";
 
             var mediaPaths = mediaFiles
                 .Single(x => x.ResponseType.Id == responseTypeId).Paths.ToArray();

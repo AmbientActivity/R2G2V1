@@ -9,6 +9,8 @@ namespace Keebee.AAT.Shared
         public string MediaRoot = $@"\\{Environment.MachineName}\{SqlServerFilestream}";
         public string ProfileRoot = $@"\\{Environment.MachineName}\{SqlServerFilestream}\Profiles";
         public string ExportEventLogRoot = $@"\\{Environment.MachineName}\{SqlServerFilestream}\Exports\EventLog";
+        public string MatchingGamePublicSounds = $@"\\{Environment.MachineName}\{SqlServerFilestream}\Profiles\0\sounds";
+        public string MatchingGamePublicShapes = $@"\\{Environment.MachineName}\{SqlServerFilestream}\Profiles\0\shapes";
     }
 
     public enum RotationSensorStep

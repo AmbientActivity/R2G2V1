@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using Keebee.AAT.Shared;
 
 namespace Keebee.AAT.Display.UserControls
 {
@@ -23,6 +24,7 @@ namespace Keebee.AAT.Display.UserControls
         public event EventHandler LogGameEventEvent;
 
         private bool _isActiveEventLog;
+        private string _pathPublicSounds;
 
         public class LogGameEventEventArgs : EventArgs
         {
@@ -50,10 +52,11 @@ namespace Keebee.AAT.Display.UserControls
             axShockwaveFlash1.Dock = DockStyle.Fill;
         }
 
-        public void Play(string[] shapes, int initialDifficultyLevel, bool enableTimeout, bool isActiveEventLog)
+        public void Play(string[] shapes, int initialDifficultyLevel, string pathPublicSounds, bool enableTimeout, bool isActiveEventLog)
         {
             _initialDifficultyLevel = initialDifficultyLevel;
             _isActiveEventLog = isActiveEventLog;
+            _pathPublicSounds = pathPublicSounds;
             _enableGameTimeout = enableTimeout;
             PlayGame(shapes);
         }
@@ -68,14 +71,14 @@ namespace Keebee.AAT.Display.UserControls
                 if (!files.Any()) return;
 
                 var path = GetPath(files.First());
-                var genericPath = GetGenericSoundsPath(path);
+
                 var xml = GetXmlString(files);
                 var enableTimeout = _enableGameTimeout ? 1 : 0;
 
                 axShockwaveFlash1.CallFunction(
                     "<invoke name=\"loadMedia\"><arguments>" +
                     $"<string>{xml}</string><string>{path}</string>" +
-                    $"<string>{genericPath}</string>" +
+                    $"<string>{_pathPublicSounds}</string>" +
                     $"<number>{_initialDifficultyLevel}</number>" +
                     $"<number>{enableTimeout}</number></arguments></invoke>");
                 axShockwaveFlash1.CallFunction("<invoke name=\"playMatchingGame\"></invoke>");
@@ -111,14 +114,6 @@ namespace Keebee.AAT.Display.UserControls
             var filename = Path.GetFileName(filePath);
 
             return filePath.Replace($"\\shapes\\{filename}", string.Empty);
-        }
-
-        private static string GetGenericSoundsPath(string path)
-        {
-            var indexOfSlash = path.LastIndexOf("\\", StringComparison.Ordinal) + 1;
-            var profileId = path.Substring(indexOfSlash, (path.Length - indexOfSlash));
-
-            return path.Replace($"\\Profiles\\{profileId}", "\\MatchingGame\\sounds");
         }
 
         private string GetXmlString(IEnumerable<string> files)

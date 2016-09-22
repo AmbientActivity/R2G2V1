@@ -461,7 +461,8 @@ namespace Keebee.AAT.Display
                     _gameEventLogger.Add(_activeResident.Id, GameTypeId.MatchThePictures, _activeResident.GameDifficultyLevel, null, "New game has been initiated");
                 }
 
-                matchingGame1.Play(shapes, _activeResident.GameDifficultyLevel, true, _currentIsActiveEventLog);
+                var mediaPath = new MediaSourcePath();
+                matchingGame1.Play(shapes, _activeResident.GameDifficultyLevel, mediaPath.MatchingGamePublicSounds, true, _currentIsActiveEventLog);
 
                 _currentResponseTypeId = ResponseTypeId.MatchingGame;
             }

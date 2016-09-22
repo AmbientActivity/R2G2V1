@@ -16,6 +16,7 @@ namespace Keebee.AAT.StateMachineService
     public partial class StateMachineService : ServiceBase
     {
         private const string UrlKeepAlive = "http://localhost/Keebee.AAT.Operations/api/status";
+        private const string UrlKeepAliveAdmin = "http://localhost/Keebee.AAT.Administrator";
 
         // operations REST client
         private readonly IOperationsClient _opsClient;
@@ -53,6 +54,9 @@ namespace Keebee.AAT.StateMachineService
 
             var keepAliveThread = new Thread(KeepAlive);
             keepAliveThread.Start();
+
+            var keepAliveThreadAdmin = new Thread(KeepAliveAdmin);
+            keepAliveThreadAdmin.Start();
         }
 
         private void KeepAlive()
@@ -68,6 +72,29 @@ namespace Keebee.AAT.StateMachineService
                         _systemEventLogger.WriteEntry(
                             $"Error accessing web host.{Environment.NewLine}StatusCode: {response.StatusCode}");
                 }
+
+                try
+                {
+                    Thread.Sleep(60000);
+                }
+
+                catch (ThreadAbortException)
+                {
+                    break;
+                }
+            }
+        }
+
+        private void KeepAliveAdmin()
+        {
+            while (true)
+            {
+                var req = (HttpWebRequest)WebRequest.Create(UrlKeepAliveAdmin);
+                var response = (HttpWebResponse)req.GetResponse();
+
+                if (response.StatusCode != HttpStatusCode.OK)
+                    _systemEventLogger.WriteEntry(
+                        $"Error accessing web host.{Environment.NewLine}StatusCode: {response.StatusCode}");
 
                 try
                 {

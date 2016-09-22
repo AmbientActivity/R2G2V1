@@ -2,6 +2,7 @@
 using Keebee.AAT.RESTClient;
 using Keebee.AAT.Display.Helpers;
 using Keebee.AAT.Display.UserControls;
+using Keebee.AAT.Shared;
 using System;
 using System.Diagnostics;
 using System.Drawing;
@@ -109,7 +110,9 @@ namespace Keebee.AAT.Display.Caregiver
             _gameEventLogger.SystemEventLogger = _systemEventLogger;
             _gameEventLogger.OperationsClient = _opsClient;
             matchingGame1.SystemEventLogger = _systemEventLogger;
-            matchingGame1.Play(_files, _difficultyLevel, false, _isActiveEventLog);
+
+            var mediaPath = new MediaSourcePath();
+            matchingGame1.Play(_files, _difficultyLevel, mediaPath.MatchingGamePublicSounds, false, _isActiveEventLog);
         }
 
         private void LogGameEvent(object sender, EventArgs e)

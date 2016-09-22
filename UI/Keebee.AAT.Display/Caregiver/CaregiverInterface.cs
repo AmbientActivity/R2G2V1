@@ -62,6 +62,7 @@ namespace Keebee.AAT.Display.Caregiver
         {
             Id = PublicMediaSource.Id,
             FirstName = PublicMediaSource.Description,
+            LastName = string.Empty,
             GameDifficultyLevel = 1
         };
 
@@ -312,7 +313,7 @@ namespace Keebee.AAT.Display.Caregiver
 
                 foreach (var r in residentList)
                 {
-                    var name = (r.LastName != null)
+                    var name = (r.LastName.Length > 0)
                         ? $"{r.LastName}, {r.FirstName}"
                         : r.FirstName;
 

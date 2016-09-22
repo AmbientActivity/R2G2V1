@@ -117,8 +117,8 @@ namespace Keebee.AAT.RESTClient
         private const string UrlMediaFileFromPath = "mediafiles?path={0}&filename={1}";
         private const string UrlMediaFileStream = "mediafilestreams/{0}";
 
-        private const string UrlMediaPathTypes = "mediaPathtypes";
-        private const string UrlMediaPathType = "mediaPathtypes/{0}";
+        private const string UrlMediaPathTypes = "mediapathtypes";
+        private const string UrlMediaPathType = "mediapathtypes/{0}";
         private const string UrlPublicMediaFiles = "publicmediafiles";
         private const string UrlPublicMediaFilesForResponseType = "publicmediafiles?responseTypeId={0}";
 

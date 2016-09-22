@@ -386,6 +386,7 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ResidentsController.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
+    <Compile Include="FileManagement\FileManager.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -433,10 +434,6 @@
       <Project>{97ca2119-5977-4de5-9c91-a64d97cb9035}</Project>
       <Name>Keebee.AAT.Exporting</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Shared\Keebee.AAT.FileManagement\Keebee.AAT.FileManagement.csproj">
-      <Project>{6b1d10cc-6bf2-4848-93db-6ce9cf864078}</Project>
-      <Name>Keebee.AAT.FileManagement</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\Shared\Keebee.AAT.MessageQueuing\Keebee.AAT.MessageQueuing.csproj">
       <Project>{84a25d9a-4747-4b69-9c79-5c23210530d2}</Project>
       <Name>Keebee.AAT.MessageQueuing</Name>
@@ -444,6 +441,10 @@
     <ProjectReference Include="..\..\Shared\Keebee.AAT.Shared\Keebee.AAT.Shared.csproj">
       <Project>{3cb12af2-7655-46f6-9969-990730f73964}</Project>
       <Name>Keebee.AAT.Shared</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Shared\Keebee.AAT.SystemEventLogging\Keebee.AAT.SystemEventLogging.csproj">
+      <Project>{6f0a1aef-997e-4355-bb38-a4acf6710edf}</Project>
+      <Name>Keebee.AAT.SystemEventLogging</Name>
     </ProjectReference>
     <ProjectReference Include="..\Keebee.AAT.BusinessRules\Keebee.AAT.BusinessRules.csproj">
       <Project>{8b0e0633-3be9-470c-8c3c-ea2960650194}</Project>

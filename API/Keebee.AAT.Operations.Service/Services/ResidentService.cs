@@ -1,6 +1,5 @@
 ﻿using Keebee.AAT.Operations.Service.KeebeeAAT;
 using Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models;
-using Keebee.AAT.FileManagement;
 using System.Collections.Generic;
 using System;
 using System.Linq;
@@ -41,10 +40,12 @@ namespace Keebee.AAT.Operations.Service.Services
         {
             var container = new Container(new Uri(ODataHost.Url));
 
-            return container.Residents
+            var residents = container.Residents
                 .AddQueryOption("$filter", $"FirstName eq '{firstName}' and LastName eq '{lastName}' and Gender eq '{gender}'")
                 .Expand("MediaFiles($expand=MediaFile)")
-                .Single();
+                .ToList();
+
+            return residents.Any() ? residents.Single() : null;
         }
 
         public Resident GetWithMedia(int id)
@@ -65,9 +66,6 @@ namespace Keebee.AAT.Operations.Service.Services
 
             container.AddToResidents(resident);
             container.SaveChanges();
-
-            var fileManager = new FileManager();
-            fileManager.CreateFolders(resident.Id);
 
             return resident.Id;
         }
@@ -106,9 +104,6 @@ namespace Keebee.AAT.Operations.Service.Services
 
             container.DeleteObject(resident);
             container.SaveChanges();
-
-            var fileManager = new FileManager();
-            fileManager.DeleteFolders(id);
         }
 
         public bool ResidentExists(int id)

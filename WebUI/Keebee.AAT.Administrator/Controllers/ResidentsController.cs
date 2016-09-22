@@ -1,7 +1,6 @@
 ﻿using Keebee.AAT.RESTClient;
 using Keebee.AAT.Administrator.ViewModels;
 using Keebee.AAT.BusinessRules;
-using Keebee.AAT.FileManagement;
 using Keebee.AAT.Shared;
 using CuteWebUI;
 using Newtonsoft.Json;
@@ -10,6 +9,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Web.Mvc;
 using System;
+using FileManager = Keebee.AAT.Administrator.FileManagement.FileManager;
 
 namespace Keebee.AAT.Administrator.Controllers
 {
@@ -162,6 +162,7 @@ namespace Keebee.AAT.Administrator.Controllers
         public JsonResult Delete(int id)
         {
             _opsClient.DeleteResident(id);
+            _fileManager.DeleteFolders(id);
 
             return Json(new
             {
@@ -317,6 +318,7 @@ namespace Keebee.AAT.Administrator.Controllers
             };
 
             var id = _opsClient.PostResident(r);
+            _fileManager.CreateFolders(id);
 
             return id;
         }

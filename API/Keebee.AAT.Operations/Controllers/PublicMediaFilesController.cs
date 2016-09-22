@@ -45,7 +45,12 @@ namespace Keebee.AAT.Operations.Controllers
                     ResponseType = new
                     {
                         mf.ResponseType.Id,
-                        mf.ResponseType.Description
+                        mf.ResponseType.Description,
+                        ResponseTypeCatgory = new
+                        {
+                            mf.ResponseType.ResponseTypeCategory.Id,
+                            mf.ResponseType.ResponseTypeCategory.Description
+                        }
                     },
                     Paths = mf.MediaFiles
                         .GroupBy(pt => pt.MediaPathType)
@@ -64,8 +69,8 @@ namespace Keebee.AAT.Operations.Controllers
                                 f.MediaFile.FileType,
                                 f.MediaFile.FileSize
                             })
-                        })
-                });
+                        }).OrderBy(o => o.MediaPathType.Id)
+                }).OrderBy(o => o.ResponseType.Id);
 
             return new DynamicJsonObject(exObj);
         }
@@ -133,7 +138,12 @@ namespace Keebee.AAT.Operations.Controllers
                     ResponseType = new
                     {
                         mf.ResponseType.Id,
-                        mf.ResponseType.Description
+                        mf.ResponseType.Description,
+                        ResponseTypeCatgory = new
+                        {
+                            mf.ResponseType.ResponseTypeCategory.Id,
+                            mf.ResponseType.ResponseTypeCategory.Description
+                        }
                     },
                     Paths = mf.MediaFiles
                         .GroupBy(pt => pt.MediaPathType)
@@ -152,7 +162,7 @@ namespace Keebee.AAT.Operations.Controllers
                                 f.MediaFile.FileType,
                                 f.MediaFile.FileSize
                             })
-                        })
+                        }).OrderBy(o => o.MediaPathType.Id)
                 });
 
             return new DynamicJsonObject(exObj);

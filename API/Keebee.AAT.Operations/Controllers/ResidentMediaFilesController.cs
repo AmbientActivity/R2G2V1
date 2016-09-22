@@ -82,9 +82,9 @@ namespace Keebee.AAT.Operations.Controllers
                                                 f.MediaFile.FileSize,
                                                 f.IsPublic
                                         })
-                                    })
-                                })
-                        });
+                                    }).OrderBy(o => o.MediaPathType.Id)
+                        }).OrderBy(o => o.ResponseType.Id)
+                }).OrderBy(o => o.Resident.Id);
 
             return new DynamicJsonObject(exObj);
         }
@@ -202,8 +202,8 @@ namespace Keebee.AAT.Operations.Controllers
                                         f.MediaFile.FileSize,
                                         f.IsPublic
                                     })
-                                })
-                        })
+                                }).OrderBy(o => o.MediaPathType.Id)
+                        }).OrderBy(o => o.ResponseType.Id)
                 }).Single();
 
             return new DynamicJsonObject(exObj);
@@ -270,8 +270,8 @@ namespace Keebee.AAT.Operations.Controllers
                                         f.MediaFile.FileSize,
                                         f.IsPublic
                                     })
-                                })
-                        })
+                                }).OrderBy(o => o.MediaPathType.Id)
+                        }).OrderBy(o => o.ResponseType.Id)
                 });
 
             return new DynamicJsonObject(exObj);

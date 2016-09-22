@@ -88,13 +88,11 @@ function DisableScreen() {
 
             function loadData() {
                 var mediaPathTypeId = $("#mediaPathTypeId").val();
-                var mediaSourceTypeId = $("#mediaSourceTypeId").val();
 
                 $.ajax({
                     type: "GET",
                     url: site.url + "Residents/GetDataMedia/" + config.residentid
-                        + "?mediaPathTypeId=" + mediaPathTypeId
-                        + "&mediaSourceTypeId=" + mediaSourceTypeId,
+                        + "?mediaPathTypeId=" + mediaPathTypeId,
                     dataType: "json",
                     traditional: true,
                     async: false,
@@ -244,7 +242,6 @@ function DisableScreen() {
 
                     return filteredFiles;
                 });
-
 
                 // ------------------
 
@@ -400,7 +397,6 @@ function DisableScreen() {
 
                     var result;
                     var mediaPathTypeId = $("#mediaPathTypeId").val();
-                    var mediaSourceTypeId = $("#mediaSourceTypeId").val();
 
                         $.ajax({
                             type: "POST",
@@ -410,8 +406,7 @@ function DisableScreen() {
                             {
                                 streamId: streamid,
                                 residentId: config.residentid,
-                                mediaPathTypeId: mediaPathTypeId,
-                                mediaSourceTypeId: mediaSourceTypeId
+                                mediaPathTypeId: mediaPathTypeId
                             },
                         dataType: "json",
                         traditional: true,

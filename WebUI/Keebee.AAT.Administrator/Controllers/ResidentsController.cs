@@ -100,10 +100,10 @@ namespace Keebee.AAT.Administrator.Controllers
         }
 
         [HttpGet]
-        public JsonResult GetDataMedia(int id, int mediaPathTypeId, int mediaSourceTypeId)
+        public JsonResult GetDataMedia(int id, int mediaPathTypeId)
         {
             var mediaPathTypes = _opsClient.GetMediaPathTypes();
-            var fileList = GetMediaFiles(id, mediaPathTypeId, mediaSourceTypeId);
+            var fileList = GetMediaFiles(id, mediaPathTypeId);
 
             var vm = new
             {
@@ -172,7 +172,7 @@ namespace Keebee.AAT.Administrator.Controllers
         }
 
         [HttpPost]
-        public JsonResult DeleteFile(Guid streamId, int residentId, int mediaPathTypeId, int mediaSourceTypeId)
+        public JsonResult DeleteFile(Guid streamId, int residentId, int mediaPathTypeId)
         {
             var file = _opsClient.GetMediaFile(streamId);
 
@@ -184,7 +184,7 @@ namespace Keebee.AAT.Administrator.Controllers
 
             return Json(new
             {
-                FileList = GetMediaFiles(residentId, mediaPathTypeId, mediaSourceTypeId)
+                FileList = GetMediaFiles(residentId, mediaPathTypeId)
             }, JsonRequestBehavior.AllowGet);
         }
 
@@ -340,7 +340,7 @@ namespace Keebee.AAT.Administrator.Controllers
             var id = _opsClient.PostResidentMediaFile(mf);
         }
 
-        private IEnumerable<MediaFileViewModel> GetMediaFiles(int id, int mediaPathTypeId, int mediaSourceTypeId)
+        private IEnumerable<MediaFileViewModel> GetMediaFiles(int id, int mediaPathTypeId)
         {
             var list = new List<MediaFileViewModel>();
             var residentMediaFiles = _opsClient.GetResidentMediaFilesForResident(id);
@@ -361,7 +361,6 @@ namespace Keebee.AAT.Administrator.Controllers
 
             list = mediaPaths
                 .SelectMany(x => x.Files)
-                .Where(x => x.IsPublic == (mediaSourceTypeId == MediaSourceTypeId.Public))
                 .OrderBy(x => x.Filename)
                 .Select(file => new MediaFileViewModel
                 {

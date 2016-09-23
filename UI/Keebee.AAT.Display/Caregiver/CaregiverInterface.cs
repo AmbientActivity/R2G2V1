@@ -134,7 +134,7 @@ namespace Keebee.AAT.Display.Caregiver
         private const int TabPageFontSize = 20;
 #endif
 
-        // to prevent backgrund workers from lingering
+        // to prevent background workers from lingering
         private bool _formIsClosing;
 
         public CaregiverInterface()
@@ -536,7 +536,17 @@ namespace Keebee.AAT.Display.Caregiver
             string[] files = null;
             try
             {
+                var isPublic = _currentResident.Id == PublicMediaSource.Id;
                 var pathRoot = $@"{_mediaPath.ProfileRoot}\{_currentResident.Id}";
+
+                var responseTypeCount = _mediaFiles
+                    .Count(x => x.ResponseType.Id == responseTypeId || responseTypeId == null);
+
+                if (responseTypeCount == 0 && responseTypeId == ResponseTypeId.MatchingGame)
+                {
+                    _mediaFiles = _opsClient.GetPublicMediaFiles().MediaFiles.ToArray();
+                    pathRoot = $@"{_mediaPath.ProfileRoot}\{PublicMediaSource.Id}";
+                }
 
                 var mediaPath = _mediaFiles
                     .Where(x => x.ResponseType.Id == responseTypeId || responseTypeId == null)
@@ -544,6 +554,8 @@ namespace Keebee.AAT.Display.Caregiver
                     .Single(x => x.MediaPathType.Id == mediaPathTypeId);
 
                 var mediaPathType = mediaPath.MediaPathType.Description;
+
+                
 
                 if (streamId != null)
                 {
@@ -553,11 +565,13 @@ namespace Keebee.AAT.Display.Caregiver
                     files = new[] {$@"{pathRoot}\{mediaPathType}\{selectedFile}"}
                                 .Union(mediaPath.Files
                                 .Where(f => f.StreamId != streamId)
+                                .Where(f => f.IsPublic == false || isPublic)
                                 .Select(f => $@"{pathRoot}\{mediaPathType}\{f.Filename}")).ToArray();
                 }
                 else
                 {
                     files = mediaPath.Files
+                        .Where(f => f.IsPublic == false || isPublic)
                         .Select(f => $@"{pathRoot}\{mediaPathType}\{f.Filename}").ToArray();
                 }
             }
@@ -574,12 +588,23 @@ namespace Keebee.AAT.Display.Caregiver
             IEnumerable<MediaFile> files = null;
             try
             {
+                var isPublic = _currentResident.Id == PublicMediaSource.Id;
+
+                var responseTypeCount = _mediaFiles
+                    .Count(x => x.ResponseType.Id == responseTypeId || responseTypeId == null);
+
+                if (responseTypeCount == 0 && responseTypeId == ResponseTypeId.MatchingGame)
+                {
+                    _mediaFiles = _opsClient.GetPublicMediaFiles().MediaFiles.ToArray();
+                }
+
                 var mediaPath = _mediaFiles
                     .Where(x => x.ResponseType.Id == responseTypeId || responseTypeId == null)
                     .SelectMany(x => x.Paths)
                     .Single(x => x.MediaPathType.Id == mediaPathTypeId);
 
                 files = mediaPath.Files
+                    .Where(f => f.IsPublic == false || isPublic)
                     .Select(f => new MediaFile
                                  {
                                      StreamId = f.StreamId,
@@ -677,7 +702,7 @@ namespace Keebee.AAT.Display.Caregiver
         {
             try
             {
-                var files = GetFilePaths(MediaPathTypeId.Shapes);
+                var files = GetFilePaths(MediaPathTypeId.Shapes, ResponseTypeId.MatchingGame);
 
                 var activityPlayer = new ActivityPlayer
                 {

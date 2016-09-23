@@ -249,6 +249,8 @@ namespace Keebee.AAT.StateMachineService
                 var displayMessage = GetDisplayStateFromMessageBody(e.MessageBody);
                 _displayIsActive = displayMessage.IsActive;
 
+                if (!_displayIsActive) return;
+
                 LoadResident();
                 LoadConfig();
             }
@@ -327,6 +329,7 @@ namespace Keebee.AAT.StateMachineService
                                     }
                                     )
             };
+            _systemEventLogger.WriteEntry($"'{config.Description}' has been activated");
         }
 
         private void LoadResident()

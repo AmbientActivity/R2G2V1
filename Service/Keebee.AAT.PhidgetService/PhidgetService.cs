@@ -259,6 +259,8 @@ namespace Keebee.AAT.PhidgetService
                 var displayMessage = GetDisplayStateFromMessageBody(e.MessageBody);
                 _displayIsActive = displayMessage.IsActive;
 
+                if (!_displayIsActive) return;
+
                 LoadConfig();
             }
             catch (Exception ex)
@@ -300,6 +302,7 @@ namespace Keebee.AAT.PhidgetService
                                                  }
                                     )
                             };
+            _systemEventLogger.WriteEntry($"'{config.Description}' has been activated");
         }
 
 #if DEBUG

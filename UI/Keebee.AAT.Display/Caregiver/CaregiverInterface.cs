@@ -294,9 +294,18 @@ namespace Keebee.AAT.Display.Caregiver
                 ? _genericResident
                 : _opsClient.GetResident(residentId);
 
-            _mediaFiles = residentId == PublicMediaSource.Id
-                ? _opsClient.GetPublicMediaFiles().MediaFiles
-                : _opsClient.GetResidentMediaFilesForResident(_currentResident.Id).MediaFiles;
+            if (residentId == PublicMediaSource.Id)
+            {
+                _mediaFiles = _opsClient.GetPublicMediaFiles().MediaFiles;
+            }
+            else
+            {
+                var media = _opsClient.GetResidentMediaFilesForResident(_currentResident.Id);
+
+                _mediaFiles = media != null 
+                    ? _opsClient.GetResidentMediaFilesForResident(_currentResident.Id).MediaFiles 
+                    : new List<MediaResponseType>();
+            }
         }
 
         private void LoadResidentDropDown()
@@ -539,14 +548,18 @@ namespace Keebee.AAT.Display.Caregiver
                 var isPublic = _currentResident.Id == PublicMediaSource.Id;
                 var pathRoot = $@"{_mediaPath.ProfileRoot}\{_currentResident.Id}";
 
-                var responseTypeCount = _mediaFiles
-                    .Count(x => x.ResponseType.Id == responseTypeId || responseTypeId == null);
+                var mediaTypeCount = _mediaFiles
+                    .Where(x => x.ResponseType.Id == responseTypeId || responseTypeId == null)
+                    .SelectMany(x => x.Paths)
+                    .Count(x => x.MediaPathType.Id == mediaPathTypeId);
 
-                if (responseTypeCount == 0 && responseTypeId == ResponseTypeId.MatchingGame)
+                if (mediaTypeCount == 0 && responseTypeId == ResponseTypeId.MatchingGame)
                 {
                     _mediaFiles = _opsClient.GetPublicMediaFiles().MediaFiles.ToArray();
                     pathRoot = $@"{_mediaPath.ProfileRoot}\{PublicMediaSource.Id}";
                 }
+
+                if (!_mediaFiles.Any()) return new string[0];
 
                 var mediaPath = _mediaFiles
                     .Where(x => x.ResponseType.Id == responseTypeId || responseTypeId == null)
@@ -554,8 +567,6 @@ namespace Keebee.AAT.Display.Caregiver
                     .Single(x => x.MediaPathType.Id == mediaPathTypeId);
 
                 var mediaPathType = mediaPath.MediaPathType.Description;
-
-                
 
                 if (streamId != null)
                 {
@@ -590,13 +601,15 @@ namespace Keebee.AAT.Display.Caregiver
             {
                 var isPublic = _currentResident.Id == PublicMediaSource.Id;
 
-                var responseTypeCount = _mediaFiles
-                    .Count(x => x.ResponseType.Id == responseTypeId || responseTypeId == null);
+                var mediaTypeCount = _mediaFiles
+                    .Where(x => x.ResponseType.Id == responseTypeId || responseTypeId == null)
+                    .SelectMany(x => x.Paths)
+                    .Count(x => x.MediaPathType.Id == mediaPathTypeId);
 
-                if (responseTypeCount == 0 && responseTypeId == ResponseTypeId.MatchingGame)
-                {
+                if (mediaTypeCount == 0 && responseTypeId == ResponseTypeId.MatchingGame)
                     _mediaFiles = _opsClient.GetPublicMediaFiles().MediaFiles.ToArray();
-                }
+
+                if (!_mediaFiles.Any()) return new List<MediaFile>();
 
                 var mediaPath = _mediaFiles
                     .Where(x => x.ResponseType.Id == responseTypeId || responseTypeId == null)

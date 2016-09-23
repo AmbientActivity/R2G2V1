@@ -186,7 +186,7 @@ function DisableScreen() {
                 }
 
                 function pushFile(value) {
-                    self.files.push(new File(value.StreamId, value.IsFolder, value.Filename, value.FileType, value.FileSize, value.Path, value.IsPublic));
+                    self.files.push(new File(value.StreamId, value.Filename, value.FileType, value.FileSize, value.Path, value.IsPublic));
                 }
 
                 self.selectedFile(self.files()[0]);

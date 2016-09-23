@@ -1,6 +1,7 @@
 ﻿// define global namespaces
 ; (function () {
-    window.configurations = {};
+    window.sysconfigs = {};
+    window.publicmedia = {};
     window.residents = {};
     window.profiles = {};
     window.eventlogs = {};

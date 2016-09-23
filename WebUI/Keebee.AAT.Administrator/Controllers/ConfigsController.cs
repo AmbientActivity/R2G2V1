@@ -10,12 +10,12 @@ using Newtonsoft.Json;
 
 namespace Keebee.AAT.Administrator.Controllers
 {
-    public class ConfigurationsController : Controller
+    public class ConfigsController : Controller
     {
         private readonly OperationsClient _opsClient;
         private readonly CustomMessageQueue _messageQueueConfigSms;
 
-        public ConfigurationsController()
+        public ConfigsController()
         {
             _opsClient = new OperationsClient();
 
@@ -60,9 +60,9 @@ namespace Keebee.AAT.Administrator.Controllers
         {
             var c = JsonConvert.DeserializeObject<ConfigEditViewModel>(config);
             var configid = c.Id;
-            var configurationRules = new ConfigurationRules {OperationsClient = _opsClient};
+            var rules = new ConfigRules {OperationsClient = _opsClient};
 
-            var msgs = configurationRules.Validate(c.Description, configid == 0);
+            var msgs = rules.Validate(c.Description, configid == 0);
 
             if (msgs == null)
             {
@@ -99,7 +99,7 @@ namespace Keebee.AAT.Administrator.Controllers
         {
             var cd = JsonConvert.DeserializeObject<ConfigDetailEditViewModel>(configDetail);
             var configDetailid = cd.Id;
-            var configurationRules = new ConfigurationRules();
+            var configurationRules = new ConfigRules();
 
             var msgs = configurationRules.ValidateDetail(cd.Description);
 
@@ -230,7 +230,7 @@ namespace Keebee.AAT.Administrator.Controllers
 
         private ConfigDetailEditViewModel LoadConfigDetailEditViewModel(int id, int configId)
         {
-            var configurationRules = new ConfigurationRules {OperationsClient = _opsClient};
+            var configurationRules = new ConfigRules {OperationsClient = _opsClient};
             var configEdit = configurationRules.GetConfigEditViewModel(id, configId);
             var configDetail = configEdit.ConfigDetail;
 
@@ -323,9 +323,8 @@ namespace Keebee.AAT.Administrator.Controllers
 
         private void SendNotificationOfConfigChange(int configId)
         {
-            var rules = new ConfigurationRules();
-            var config = _opsClient.GetConfigWithDetails(configId);
-            _messageQueueConfigSms.Send(rules.GetMessageBody(config));
+            var rules = new ConfigRules { OperationsClient = _opsClient };
+            _messageQueueConfigSms.Send(rules.GetMessageBody(configId));
         }
     }
 }

@@ -245,6 +245,7 @@ namespace Keebee.AAT.PhidgetService
             try
             {
                 _activeConfig = GetConfigFromMessageBody(e.MessageBody);
+                _systemEventLogger.WriteEntry($"The configuration '{_activeConfig.Description}' has been activated");
             }
             catch (Exception ex)
             {
@@ -302,7 +303,7 @@ namespace Keebee.AAT.PhidgetService
                                                  }
                                     )
                             };
-            _systemEventLogger.WriteEntry($"'{config.Description}' has been activated");
+            _systemEventLogger.WriteEntry($"The configuration '{config.Description}' has been activated");
         }
 
 #if DEBUG

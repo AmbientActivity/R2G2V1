@@ -42,8 +42,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ConfigurationRules.cs" />
+    <Compile Include="ConfigRules.cs" />
     <Compile Include="DTO\ConfigEditModel.cs" />
+    <Compile Include="PublicMediaRules.cs" />
     <Compile Include="ResidentRules.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

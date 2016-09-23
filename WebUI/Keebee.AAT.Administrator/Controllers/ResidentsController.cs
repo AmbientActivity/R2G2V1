@@ -9,6 +9,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Web.Mvc;
 using System;
+using Keebee.AAT.Administrator.Extensions;
 using FileManager = Keebee.AAT.Administrator.FileManagement.FileManager;
 
 namespace Keebee.AAT.Administrator.Controllers
@@ -40,15 +41,17 @@ namespace Keebee.AAT.Administrator.Controllers
             string lastname, 
             string sortcolumn, 
             int? mediaPathTypeId,
-            int? mediaSourceTypeId,
+            //int? mediaSourceTypeId,
             string myuploader, 
             int? sortdescending)
         {
             // first time loading
             if (mediaPathTypeId == null) mediaPathTypeId = MediaPathTypeId.Images;
-            if (mediaSourceTypeId == null) mediaSourceTypeId = MediaSourceTypeId.Personal;
+            //if (mediaSourceTypeId == null) mediaSourceTypeId = MediaSourceTypeId.Personal;
 
-            var vm = LoadResidentMediaViewModel(id, rfid, firstname, lastname, mediaPathTypeId, mediaSourceTypeId, sortcolumn, sortdescending);
+            var vm = LoadResidentMediaViewModel(id, rfid, firstname, lastname, mediaPathTypeId, 
+                //mediaSourceTypeId, 
+                sortcolumn, sortdescending);
 
             using (var uploader = new MvcUploader(System.Web.HttpContext.Current))
             {
@@ -111,13 +114,13 @@ namespace Keebee.AAT.Administrator.Controllers
                 MediaPathTypeList = mediaPathTypes.Select(x => new
                 {
                     x.Id,
-                    x.Description
-                }),
-                MediaSourceTypeList = new Collection<object>
-                {
-                    new { PublicMediaSource.Id, Description = MediaSourceType.Public },
-                    new { Id = 1, Description = MediaSourceType.Personal } 
-                }
+                    Description = x.Description.ToUppercaseFirst()
+                })//,
+                //MediaSourceTypeList = new Collection<object>
+                //{
+                //    new { PublicMediaSource.Id, Description = MediaSourceType.Public },
+                //    new { Id = 1, Description = MediaSourceType.Personal } 
+                //}
             };
 
             return Json(vm, JsonRequestBehavior.AllowGet);
@@ -134,9 +137,9 @@ namespace Keebee.AAT.Administrator.Controllers
         {
             var r = JsonConvert.DeserializeObject<ResidentEditViewModel>(resident);
             var residentId = r.Id;
-            var residentRules = new ResidentRules { OperationsClient = _opsClient };
+            var rules = new ResidentRules { OperationsClient = _opsClient };
 
-            IEnumerable<string> msgs = residentRules.Validate(r.FirstName, r.LastName, r.Gender, residentId == 0);
+            IEnumerable<string> msgs = rules.Validate(r.FirstName, r.LastName, r.Gender, residentId == 0);
 
             if (residentId > 0)
             {
@@ -249,7 +252,7 @@ namespace Keebee.AAT.Administrator.Controllers
             string firstname, 
             string lastname, 
             int? mediaPathTypeId,
-            int? mediaSourceTypeId,
+            //int? mediaSourceTypeId,
             string sortcolumn, 
             int? sortdescending)
         {
@@ -262,14 +265,14 @@ namespace Keebee.AAT.Administrator.Controllers
             {
                 ResidentId = resident.Id,
                 FullName = fullName,
-                AddButtonText = $"Add {GetMediaPathType(mediaPathTypeId)}",
+                AddButtonText = $"Upload {GetMediaPathType(mediaPathTypeId).ToUppercaseFirst()}",
                 RfidSearch = rfid,
                 FirstNameSearch = firstname,
                 LastNameSearch = lastname,
                 SortColumn = sortcolumn,
                 SortDescending = sortdescending,
-                SelectedMediaPathType = mediaPathTypeId ?? MediaPathTypeId.Images,
-                SelectedMediaSourceType = mediaSourceTypeId ?? MediaSourceTypeId.Personal
+                SelectedMediaPathType = mediaPathTypeId ?? MediaPathTypeId.Images//,
+                //SelectedMediaSourceType = mediaSourceTypeId ?? MediaSourceTypeId.Personal
             };
 
             return vm;
@@ -365,7 +368,6 @@ namespace Keebee.AAT.Administrator.Controllers
                 .Select(file => new MediaFileViewModel
                 {
                     StreamId = file.StreamId,
-                    IsFolder = file.IsFolder,
                     Filename = file.Filename.Replace($".{file.FileType}", string.Empty),
                     FileType = file.FileType.ToUpper(),
                     FileSize = file.FileSize,

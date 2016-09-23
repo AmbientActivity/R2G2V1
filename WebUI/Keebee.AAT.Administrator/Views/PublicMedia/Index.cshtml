@@ -1,31 +1,17 @@
-﻿@model Keebee.AAT.Administrator.ViewModels.ResidentMediaViewModel
+﻿
+@model Keebee.AAT.Administrator.ViewModels.PublicMediaViewModel
 
 @{
     ViewBag.Title = "Resident Media";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h3>Manage media for <i><b>@Model.FullName</b></i></h3>
-
-<div class="pull-right back-to-residents-container">
-    <span id="lblGoBackDisabled" class="link-back-to-residents-disabled" hidden>Back To Residents</span>
-    <a id="lnkGoBack" class="link-back-to-residents" href="#" onclick="location.href =
-    '@Url.Action("Index", "Residents",
-         new
-         {
-             @id = @Model.ResidentId,
-             @rfid = @Model.RfidSearch,
-             @firstname = @Model.FirstNameSearch,
-             @lastname = @Model.LastNameSearch,
-             @sortcolumn = @Model.SortColumn,
-             @sortdescending = @Model.SortDescending
-         })'">Back To Residents</a>
-</div>
+<h3>Manage media for <i><b>@Model.Title</b></i></h3>
 
 <script type="text/javascript">
     $(document)
         .ready(function() {
-            residents.media.init({ residentid: '@Model.ResidentId' });
+            publicmedia.index.init();
         });
 </script>
 
@@ -35,29 +21,24 @@
         <div class="add-button-container">
             <div class="upload-action-container">
                 <button id="uploadbutton" type="button" class="btn btn-md btn-success" onclick="return" false;">@Model.AddButtonText</button>
-                @*<span class="add-media-description">Upload personal media content</span>*@
             </div>
-            @*<div class="add-public-action-container" hidden>
-                <button id="add-public" type="button" class="btn btn-md btn-success" data-bind="click: showAddPublicDialog">@Model.AddButtonText</button>
-                <span class="add-media-description">Add media from the public library</span>
-            </div>*@
             @Html.Raw(@Model.UploaderHtml)
             <input id="mediaPathTypeId" name="mediaPathTypeId" type="hidden" value="@Model.SelectedMediaPathType" />
-            @*<input id="mediaSourceTypeId" name="mediaSourceTypeId" type="hidden" value="@Model.SelectedMediaSourceType" />*@
+            <input id="responseTypeId" name="responseTypeId" type="hidden" value="@Model.SelectedResponseType" />
         </div>
         <ul class="nav nav-pills">
             <li>
 
             </li>
             <li>
-                <input id="txtSearchFilename" type="text" class="form-control" placeholder="Name" data-bind="value: filenameSearch, valueUpdate: 'keyup'"/>
+                <input id="txtSearchFilename" type="text" class="form-control" placeholder="Name" data-bind="value: filenameSearch, valueUpdate: 'keyup'" />
             </li>
             <li>
                 <select id="ddlMediaPathTypes" class="form-control" data-bind="options: mediaPathTypes, optionsValue: 'id', optionsText: 'description', value: selectedMediaPathType, event: { change: doPostBack }"></select>
             </li>
-            @*<li>
-                <select id="ddlMediaSourceTypes" class="form-control" data-bind="options: mediaSourceTypes, optionsValue: 'id', optionsText: 'description', value: selectedMediaSourceType"></select>
-            </li>*@
+            <li>
+                <select id="ddlResponseTypes" class="form-control" data-bind="options: responseTypes, optionsValue: 'id', optionsText: 'description', value: selectedResponseType"></select>
+            </li>
             <li class="pull-right">
                 <label>Total:</label> <span data-bind="text: totalFiles()"></span>
             </li>
@@ -88,8 +69,8 @@
                     <td data-bind="text: filetype"></td>
                     <td data-bind="text: filesize"></td>
                 </tr>
-                </tbody>
-            </table>
-        </div>
+            </tbody>
+        </table>
     </div>
+</div>
 @{Html.EndForm();}

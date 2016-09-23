@@ -5,10 +5,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web.Script.Serialization;
 
-
 namespace Keebee.AAT.BusinessRules
 {
-    public class ConfigurationRules
+    public class ConfigRules
     {
         private OperationsClient _opsClient;
         public OperationsClient OperationsClient
@@ -88,24 +87,25 @@ namespace Keebee.AAT.BusinessRules
         }
 
         // message queue
-        public string GetMessageBody(Config config)
+        public string GetMessageBody(int configId)
         {
+            var config = _opsClient.GetConfigWithDetails(configId);
+
             var configMessage = new ConfigMessage
             {
                 Id = config.Id,
                 Description = config.Description,
                 IsActiveEventLog = config.IsActiveEventLog,
                 ConfigDetails = config.ConfigDetails
-                                        .Select(x => new
-                                        ConfigDetailMessage
-                                        {
-                                            Id = x.Id,
-                                            ConfigId = config.Id,
-                                            ResponseTypeId = x.ResponseType.Id,
-                                            PhidgetTypeId = x.PhidgetType.Id,
-                                            PhidgetStyleTypeId = x.PhidgetStyleType.Id
-                                        }
-                                        )
+                    .Select(x => new
+                        ConfigDetailMessage
+                        {
+                            Id = x.Id,
+                            ConfigId = config.Id,
+                            ResponseTypeId = x.ResponseType.Id,
+                            PhidgetTypeId = x.PhidgetType.Id,
+                            PhidgetStyleTypeId = x.PhidgetStyleType.Id
+                        })
             };
 
 

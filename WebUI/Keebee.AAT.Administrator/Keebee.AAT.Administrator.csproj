@@ -286,7 +286,7 @@
     <Content Include="Scripts\bootstrap-dialog.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
-    <Content Include="Scripts\Configurations\Index.js" />
+    <Content Include="Scripts\Configs\Index.js" />
     <Content Include="Scripts\EventLogs\Export.js" />
     <Content Include="Scripts\EventLogs\Index.js" />
     <Content Include="Scripts\jquery-3.1.0.js" />
@@ -369,7 +369,7 @@
     <Content Include="Scripts\moment-with-locales.min.js" />
     <Content Include="Scripts\moment.js" />
     <Content Include="Scripts\moment.min.js" />
-    <Content Include="Scripts\PublicMediaFiles\Index.js" />
+    <Content Include="Scripts\PublicMedia\Index.js" />
     <Content Include="Scripts\Residents\AddPublicMedia.js" />
     <Content Include="Scripts\Residents\Media.js" />
     <Content Include="Scripts\Residents\Index.js" />
@@ -382,10 +382,10 @@
   <ItemGroup>
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
-    <Compile Include="Controllers\ConfigurationsController.cs" />
+    <Compile Include="Controllers\ConfigsController.cs" />
     <Compile Include="Controllers\EventLogsController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
-    <Compile Include="Controllers\PublicMediaFilesController.cs" />
+    <Compile Include="Controllers\PublicMediaController.cs" />
     <Compile Include="Controllers\ResidentsController.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="FileManagement\FileManager.cs" />
@@ -396,7 +396,7 @@
     <Compile Include="ViewModels\ConfigViewModel.cs" />
     <Compile Include="ViewModels\EventLogViewModel.cs" />
     <Compile Include="ViewModels\MediaFileViewModel.cs" />
-    <Compile Include="ViewModels\PublicMediaFilesViewModel.cs" />
+    <Compile Include="ViewModels\PublicMediaViewModel.cs" />
     <Compile Include="ViewModels\ResidentViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -414,13 +414,13 @@
     <Content Include="Views\EventLogs\Index.cshtml" />
     <Content Include="Views\Residents\Index.cshtml" />
     <Content Include="Views\Residents\_ResidentEdit.cshtml" />
-    <Content Include="Views\Configurations\Index.cshtml" />
-    <Content Include="Views\Configurations\_ConfigDetailEdit.cshtml" />
-    <Content Include="Views\Configurations\_ConfigEdit.cshtml" />
+    <Content Include="Views\Configs\Index.cshtml" />
+    <Content Include="Views\Configs\_ConfigDetailEdit.cshtml" />
+    <Content Include="Views\Configs\_ConfigEdit.cshtml" />
     <Content Include="Views\Residents\Media.cshtml" />
     <Content Include="UploadHandler.ashx" />
     <Content Include="Views\Residents\_AddPublicMedia.cshtml" />
-    <Content Include="Views\PublicMediaFiles\Index.cshtml" />
+    <Content Include="Views\PublicMedia\Index.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

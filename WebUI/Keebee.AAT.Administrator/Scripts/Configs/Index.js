@@ -1,13 +1,13 @@
 ﻿/*!
  * 1.0 Keebee AAT Copyright © 2015
- * Configurations/Index.js
+ * Configs/Index.js
  * Author: John Charlton
  * Date: 2016-09
  */
 
 ; (function ($) {
 
-    configurations.index = {
+    sysconfigs.index = {
         init: function() {
             var HIGHLIGHT_ROW_COLOUR = "#e3e8ff";
 
@@ -31,7 +31,7 @@
             function loadData() {
                 $.ajax({
                     type: "GET",
-                    url: site.url + "Configurations/GetData/",
+                    url: site.url + "Configs/GetData/",
                     dataType: "json",
                     traditional: true,
                     async: false,
@@ -225,7 +225,7 @@
                     $.ajax({
                         type: "GET",
                         async: false,
-                        url: site.url + "Configurations/GetConfigEditView/" + id,
+                        url: site.url + "Configs/GetConfigEditView/" + id,
                         data: { selectedConfigid: self.selectedConfig() },
                         success: function (data) {
                             message = data;
@@ -308,6 +308,7 @@
                                     var result = self.deleteConfig(id);
                                     lists.ConfigList = result.ConfigList;
                                     createConfigArray(lists.ConfigList);
+                                    self.enableDetail();
                                     dialog.close();
                                     $("body").css("cursor", "default");
                                 }
@@ -372,7 +373,7 @@
                     $.ajax({
                         type: "GET",
                         async: false,
-                        url: site.url + "Configurations/GetConfigDetailEditView/" + id,
+                        url: site.url + "Configs/GetConfigDetailEditView/" + id,
                         data: { id: id, configId: self.selectedConfig() },
                         success: function (data) {
                             message = data;
@@ -482,7 +483,7 @@
                     $.ajax({
                         type: "POST",
                         async: false,
-                        url: site.url + "Configurations/Save/",
+                        url: site.url + "Configs/Save/",
                         data: { config: jsonData, selectedConfigId: self.selectedConfig() },
                         dataType: "json",
                         traditional: true,
@@ -509,7 +510,7 @@
                     $.ajax({
                         type: "POST",
                         async: false,
-                        url: site.url + "Configurations/Delete/",
+                        url: site.url + "Configs/Delete/",
                         data: { id: id },
                         dataType: "json",
                         traditional: true,
@@ -562,7 +563,7 @@
                     $.ajax({
                         type: "POST",
                         async: false,
-                        url: site.url + "Configurations/SaveDetail/",
+                        url: site.url + "Configs/SaveDetail/",
                         data: { configdetail: jsonData },
                         dataType: "json",
                         traditional: true,
@@ -588,7 +589,7 @@
                         $.ajax({
                             type: "POST",
                             async: false,
-                            url: site.url + "Configurations/DeleteDetail/",
+                            url: site.url + "Configs/DeleteDetail/",
                             data: {
                                 id: id,
                                 configId: self.selectedConfig(),
@@ -619,7 +620,7 @@
                     $.ajax({
                         type: "POST",
                         async: false,
-                        url: site.url + "Configurations/Activate/",
+                        url: site.url + "Configs/Activate/",
                         data: { configId: configId },
                         dataType: "json",
                         traditional: true,

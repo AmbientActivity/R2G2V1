@@ -1,5 +1,5 @@
 ﻿/*!
- * Residents/Media.js
+ * PublicMedia/Index.js
  * Author: John Charlton
  * Date: 2015-05
  */
@@ -61,25 +61,16 @@ function DisableScreen() {
 
     var HIGHLIGHT_ROW_COLOUR = "#e3e8ff";
 
-    residents.media = {
-        init: function (values) {
-            var config = {
-                residentid: 0
-            }
-
-            $.extend(config, values);
-
-            // buttons
-            var divUpload = $(".upload-action-container");
-            var divAddPublic = $(".add-public-action-container");
+    publicmedia.index = {
+        init: function () {
 
             var _sortDescending = false;
             var _currentSortKey = "filename";
 
             var lists = {
                 FileList: [],
-                MediaPathTypeList: []//,
-                //MediaSourceTypeList: []
+                MediaPathTypeList: [],
+                ResponseTypeList: []
             };
 
             loadData();
@@ -91,8 +82,7 @@ function DisableScreen() {
 
                 $.ajax({
                     type: "GET",
-                    url: site.url + "Residents/GetDataMedia/" + config.residentid
-                        + "?mediaPathTypeId=" + mediaPathTypeId,
+                    url: site.url + "PublicMedia/GetData?" + "mediaPathTypeId=" + mediaPathTypeId,
                     dataType: "json",
                     traditional: true,
                     async: false,
@@ -109,14 +99,14 @@ function DisableScreen() {
                 self.description = description;
             }
 
-            //function MediaSourceType(id, description) {
-            //    var self = this;
+            function ResponseType(id, description) {
+                var self = this;
 
-            //    self.id = id;
-            //    self.description = description;
-            //}
+                self.id = id;
+                self.description = description;
+            }
 
-            function File(streamid, filename, filetype, filesize, path, ispublic) {
+            function File(streamid, filename, filetype, filesize, path, responsetypeid) {
                 var self = this;
 
                 self.streamid = streamid;
@@ -124,7 +114,7 @@ function DisableScreen() {
                 self.filetype = filetype;
                 self.filesize = filesize;
                 self.path = path;
-                self.ispublic = ispublic;
+                self.responsetypeid = responsetypeid;
             }
 
             function FileViewModel() {
@@ -134,17 +124,17 @@ function DisableScreen() {
 
                 self.files = ko.observableArray([]);
                 self.mediaPathTypes = ko.observableArray([]);
-                self.mediaSourceTypes = ko.observableArray();
+                self.responseTypes = ko.observableArray();
                 self.selectedFile = ko.observable();
-                //self.isLoadingMediaSourceTypes = ko.observable(false);
+                self.isLoadingResponseTypes = ko.observable(false);
                 self.selectedMediaPathType = ko.observable($("#mediaPathTypeId").val());
-                //self.selectedMediaSourceType = ko.observable($("#mediaSourceTypeId").val());
+                self.selectedResponseType = ko.observable($("#responseTypeId").val());
                 self.filenameSearch = ko.observable("");
                 self.totalFiles = ko.observable(0);
 
                 createFileArray(lists.FileList);
                 createMediaPathTypeArray(lists.MediaPathTypeList);
-                //createMediaSourceTypeArray(lists.MediaSourceTypeList);
+                createResponseTypeArray(lists.ResponseTypeList);
 
                 function createFileArray(list) {
                     self.files.removeAll();
@@ -160,14 +150,14 @@ function DisableScreen() {
                     });
                 };
 
-                //function createMediaSourceTypeArray(list) {
-                //    self.isLoadingMediaSourceTypes(true);
-                //    self.mediaSourceTypes.removeAll();
-                //    $(list).each(function (index, value) {
-                //        pushMediaSourceType(value);
-                //    });
-                //    self.isLoadingMediaSourceTypes(false);
-                //};
+                function createResponseTypeArray(list) {
+                    self.isLoadingResponseTypes(true);
+                    self.responseTypes.removeAll();
+                    $(list).each(function (index, value) {
+                        pushResponseType(value);
+                    });
+                    self.isLoadingResponseTypes(false);
+                };
 
                 self.columns = ko.computed(function () {
                     var arr = [];
@@ -181,12 +171,12 @@ function DisableScreen() {
                     self.mediaPathTypes.push(new MediaPathType(value.Id, value.Description));
                 }
 
-                //function pushMediaSourceType(value) {
-                //    self.mediaSourceTypes.push(new MediaSourceType(value.Id, value.Description));
-                //}
+                function pushResponseType(value) {
+                    self.responseTypes.push(new ResponseType(value.Id, value.Description));
+                }
 
                 function pushFile(value) {
-                    self.files.push(new File(value.StreamId, value.Filename, value.FileType, value.FileSize, value.Path, value.IsPublic));
+                    self.files.push(new File(value.StreamId, value.Filename, value.FileType, value.FileSize, value.Path, value.ResponseTypeId));
                 }
 
                 self.selectedFile(self.files()[0]);
@@ -226,12 +216,13 @@ function DisableScreen() {
                 };
 
                 self.filteredFiles = ko.computed(function () {
+                    var responseType = self.selectedResponseType();
+                    $("#responseTypeId").val(self.selectedResponseType());
                     return ko.utils.arrayFilter(self.files(), function (f) {
-                        //var ispublic = (self.selectedMediaSourceType() === 0);
                         return (
                             self.filenameSearch().length === 0 ||
-                                f.filename.toLowerCase().indexOf(self.filenameSearch().toLowerCase()) !== -1);
-                        //&& f.ispublic === ispublic;
+                            f.filename.toLowerCase().indexOf(self.filenameSearch().toLowerCase()) !== -1) &&
+                            f.responsetypeid === self.selectedResponseType();
                     });
                 });
 
@@ -246,7 +237,7 @@ function DisableScreen() {
 
                 self.doPostBack = function () {
                     $("#mediaPathTypeId").val(self.selectedMediaPathType());
-                    //$("#mediaSourceTypeId").val(self.selectedMediaSourceType());
+                    $("#responseTypeId").val(self.selectedResponseType());
                     document.forms[0].submit();
                 }
 
@@ -337,21 +328,6 @@ function DisableScreen() {
                     tblFile.attr("tr:hover", HIGHLIGHT_ROW_COLOUR);
                 };
 
-                self.enableDetail = ko.computed(function () {
-                    //if (self.isLoadingMediaSourceTypes()) return;
-
-                    //var ispublic = self.selectedMediaSourceType() === 0;
-
-                    //  buttons
-                    //if (ispublic) {
-                    //    divAddPublic.removeAttr("hidden");
-                    //    divUpload.attr("hidden", "hidden");
-                    //} else {
-                    //    divAddPublic.attr("hidden", "hidden");
-                     //   divUpload.removeAttr("hidden");
-                    //}
-                });
-
                 self.deleteFile = function (streamid) {
                     $("body").css("cursor", "wait");
 
@@ -361,11 +337,10 @@ function DisableScreen() {
                         $.ajax({
                             type: "POST",
                             async: false,
-                            url: site.url + "Residents/DeleteFile/",
+                            url: site.url + "PublicMedia/DeleteFile/",
                             data:
                             {
                                 streamId: streamid,
-                                residentId: config.residentid,
                                 mediaPathTypeId: mediaPathTypeId
                             },
                         dataType: "json",

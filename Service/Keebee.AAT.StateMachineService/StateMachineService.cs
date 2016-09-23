@@ -251,7 +251,7 @@ namespace Keebee.AAT.StateMachineService
 
                 if (!_displayIsActive) return;
 
-                LoadResident();
+                _activeResident = new ResidentMessage { Id = PublicMediaSource.Id, GameDifficultyLevel = 1 };
                 LoadConfig();
             }
             catch (Exception ex)
@@ -265,6 +265,7 @@ namespace Keebee.AAT.StateMachineService
             try
             {
                 _activeConfig = GetConfigFromMessageBody(e.MessageBody);
+                _systemEventLogger.WriteEntry($"The configuration '{_activeConfig.Description}' has been activated");
                 _messageQueueConfigPhidget.Send(e.MessageBody);
             }
             catch (Exception ex)
@@ -287,19 +288,11 @@ namespace Keebee.AAT.StateMachineService
             return config;
         }
 
-        private ResidentMessage GetResidentFromMessageBody(string messageBody)
+        private static ResidentMessage GetResidentFromMessageBody(string messageBody)
         {
-            var resident = new ResidentMessage {Id = PublicMediaSource.Id, GameDifficultyLevel = 1};
-            try
-            {
-                var serializer = new JavaScriptSerializer();
-                resident = serializer.Deserialize<ResidentMessage>(messageBody);
-               
-            }
-            catch (Exception ex)
-            {
-                _systemEventLogger.WriteEntry($"GetResidentFromMessageBody{Environment.NewLine}{ex.Message}", EventLogEntryType.Error);
-            }
+            var serializer = new JavaScriptSerializer();
+            var resident = serializer.Deserialize<ResidentMessage>(messageBody);
+
             return resident;
         }
 
@@ -312,31 +305,33 @@ namespace Keebee.AAT.StateMachineService
 
         private void LoadConfig()
         {
-            var config = _opsClient.GetActiveConfigDetails();
-            _activeConfig = new ConfigMessage
+            try
             {
-                Id = config.Id,
-                Description = config.Description,
-                IsActiveEventLog = config.IsActiveEventLog,
-                ConfigDetails = config.ConfigDetails
-                                    .Select(x => new
-                                    ConfigDetailMessage
-                                    {
-                                        Id = x.Id,
-                                        ResponseTypeId = x.ResponseType.Id,
-                                        PhidgetTypeId = x.PhidgetType.Id,
-                                        PhidgetStyleTypeId = x.PhidgetStyleType.Id
-                                    }
-                                    )
-            };
-            _systemEventLogger.WriteEntry($"'{config.Description}' has been activated");
-        }
+                var config = _opsClient.GetActiveConfigDetails();
+                _activeConfig = new ConfigMessage
+                                {
+                                    Id = config.Id,
+                                    Description = config.Description,
+                                    IsActiveEventLog = config.IsActiveEventLog,
+                                    ConfigDetails = config.ConfigDetails
+                                        .Select(x => new
+                                        ConfigDetailMessage
+                                                     {
+                                                         Id = x.Id,
+                                                         ResponseTypeId = x.ResponseType.Id,
+                                                         PhidgetTypeId = x.PhidgetType.Id,
+                                                         PhidgetStyleTypeId = x.PhidgetStyleType.Id
+                                                     }
+                                        )
+                                };
 
-        private void LoadResident()
-        {
-            // only for the first time
-            if (_activeResident == null)
-                _activeResident = new ResidentMessage { Id = PublicMediaSource.Id, GameDifficultyLevel = 1 };
+                _systemEventLogger.WriteEntry($"The configuration '{config.Description}' has been activated");
+            }
+
+            catch (Exception ex)
+            {
+                _systemEventLogger.WriteEntry($"LoadConfig{Environment.NewLine}{ex.Message}", EventLogEntryType.Error);
+            }
         }
 
         #endregion

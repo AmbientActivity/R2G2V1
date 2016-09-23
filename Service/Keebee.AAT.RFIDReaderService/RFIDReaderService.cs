@@ -1,10 +1,7 @@
 ﻿using Keebee.AAT.RESTClient;
 using Keebee.AAT.SystemEventLogging;
 using Keebee.AAT.MessageQueuing;
-#if DEBUG
 using Keebee.AAT.Shared;
-using System.Web.Script.Serialization;
-#endif
 using SkyeTek.Devices;
 using SkyeTek.STPv3;
 using SkyeTek.Tags;
@@ -13,6 +10,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.ServiceProcess;
 using System.Threading;
+using System.Web.Script.Serialization;
 
 namespace Keebee.AAT.RfidReaderService
 {
@@ -92,22 +90,16 @@ namespace Keebee.AAT.RfidReaderService
                 var residentId = GetResidentId();
                 if (residentId < 0) continue;
 
-                if ((residentId > 0) && _opsClient.ResidentExists(residentId))
-                {
+                var resident = residentId == 0 
+                    ? new Resident { Id = PublicMediaSource.Id, GameDifficultyLevel = 1} 
+                    : _opsClient.GetResident(residentId);
+
+                if (resident == null) continue;
 #if DEBUG
-                    if (_readerMonitorIsActive)
-                        _messageQueueRfidMonitor.Send(CreateMessageBody(true, 1, residentId));
+                if (_readerMonitorIsActive)
+                    _messageQueueRfidMonitor.Send(CreateMessageBody(true, 1, residentId));
 #endif
-                    _messageQueueRfid.Send(Convert.ToString(residentId));
-                }
-                else
-                {
-#if DEBUG
-                    if (_readerMonitorIsActive)
-                        _messageQueueRfidMonitor.Send(CreateMessageBody(true, 1, 0));
-#endif
-                    _messageQueueRfid.Send("0");
-                }
+                _messageQueueRfid.Send(CreateMessageBodyFromResident(resident));
             }
         }
 
@@ -202,6 +194,16 @@ namespace Keebee.AAT.RfidReaderService
             }
 
             return residentId;
+        }
+
+        private static string CreateMessageBodyFromResident(Resident resident)
+        {
+            var residentMessage = new ResidentMessage { Id = resident.Id, GameDifficultyLevel = resident.GameDifficultyLevel };
+
+            var serializer = new JavaScriptSerializer();
+            var messageBody = serializer.Serialize(residentMessage);
+
+            return messageBody;
         }
 
 #if DEBUG

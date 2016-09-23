@@ -116,11 +116,10 @@ function DisableScreen() {
                 self.description = description;
             }
 
-            function File(streamid, isfolder, filename, filetype, filesize, path, ispublic) {
+            function File(streamid, filename, filetype, filesize, path, ispublic) {
                 var self = this;
 
                 self.streamid = streamid;
-                self.isfolder = isfolder;
                 self.filename = filename;
                 self.filetype = filetype;
                 self.filesize = filesize;

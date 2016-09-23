@@ -47,6 +47,7 @@ namespace Keebee.AAT.Administrator
                 "~/Scripts/Site/Site.js",
                 "~/Scripts/Residents/Index.js",
                 "~/Scripts/Residents/Media.js",
+                "~/Scripts/PublicMediaFiles/Index.js",
                 "~/Scripts/EventLogs/Index.js",
                 "~/Scripts/EventLogs/Export.js",
                 "~/Scripts/Configurations/Index.js");

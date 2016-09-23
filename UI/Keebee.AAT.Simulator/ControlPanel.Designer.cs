@@ -28,10 +28,10 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.cboProfile = new System.Windows.Forms.ComboBox();
+            this.cboResident = new System.Windows.Forms.ComboBox();
             this.btnScan = new System.Windows.Forms.Button();
             this.grpRFReader = new System.Windows.Forms.GroupBox();
-            this.grpAutoProfile = new System.Windows.Forms.GroupBox();
+            this.grpAutoResident = new System.Windows.Forms.GroupBox();
             this.radioButton1 = new System.Windows.Forms.RadioButton();
             this.radOn = new System.Windows.Forms.RadioButton();
             this.grpAutoSensor = new System.Windows.Forms.GroupBox();
@@ -41,7 +41,7 @@
             this.lblValue = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.lblSensor = new System.Windows.Forms.Label();
-            this.lblProfile = new System.Windows.Forms.Label();
+            this.lblResident = new System.Windows.Forms.Label();
             this.lblSensorLabel = new System.Windows.Forms.Label();
             this.lblProfileLabel = new System.Windows.Forms.Label();
             this.MatchingGameSensor = new System.Windows.Forms.Button();
@@ -64,20 +64,20 @@
             this.TelevisionSensorLeft = new System.Windows.Forms.Button();
             this.RadioSensorLeft = new System.Windows.Forms.Button();
             this.grpRFReader.SuspendLayout();
-            this.grpAutoProfile.SuspendLayout();
+            this.grpAutoResident.SuspendLayout();
             this.grpAutoSensor.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.grpInterfaceKit.SuspendLayout();
             this.SuspendLayout();
             // 
-            // cboProfile
+            // cboResident
             // 
-            this.cboProfile.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.cboProfile.FormattingEnabled = true;
-            this.cboProfile.Location = new System.Drawing.Point(9, 30);
-            this.cboProfile.Name = "cboProfile";
-            this.cboProfile.Size = new System.Drawing.Size(160, 24);
-            this.cboProfile.TabIndex = 5;
+            this.cboResident.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.cboResident.FormattingEnabled = true;
+            this.cboResident.Location = new System.Drawing.Point(9, 30);
+            this.cboResident.Name = "cboResident";
+            this.cboResident.Size = new System.Drawing.Size(160, 24);
+            this.cboResident.TabIndex = 5;
             // 
             // btnScan
             // 
@@ -88,11 +88,11 @@
             this.btnScan.TabIndex = 6;
             this.btnScan.Text = "Activate";
             this.btnScan.UseVisualStyleBackColor = true;
-            this.btnScan.Click += new System.EventHandler(this.ActivateProfileClick);
+            this.btnScan.Click += new System.EventHandler(this.ActivateResidentClick);
             // 
             // grpRFReader
             // 
-            this.grpRFReader.Controls.Add(this.cboProfile);
+            this.grpRFReader.Controls.Add(this.cboResident);
             this.grpRFReader.Controls.Add(this.btnScan);
             this.grpRFReader.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.grpRFReader.Location = new System.Drawing.Point(13, 57);
@@ -102,17 +102,17 @@
             this.grpRFReader.TabStop = false;
             this.grpRFReader.Text = "Profile";
             // 
-            // grpAutoProfile
+            // grpAutoResident
             // 
-            this.grpAutoProfile.Controls.Add(this.radioButton1);
-            this.grpAutoProfile.Controls.Add(this.radOn);
-            this.grpAutoProfile.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.grpAutoProfile.Location = new System.Drawing.Point(282, 67);
-            this.grpAutoProfile.Name = "grpAutoProfile";
-            this.grpAutoProfile.Size = new System.Drawing.Size(89, 70);
-            this.grpAutoProfile.TabIndex = 16;
-            this.grpAutoProfile.TabStop = false;
-            this.grpAutoProfile.Text = "Auto Profile";
+            this.grpAutoResident.Controls.Add(this.radioButton1);
+            this.grpAutoResident.Controls.Add(this.radOn);
+            this.grpAutoResident.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.grpAutoResident.Location = new System.Drawing.Point(282, 67);
+            this.grpAutoResident.Name = "grpAutoResident";
+            this.grpAutoResident.Size = new System.Drawing.Size(89, 70);
+            this.grpAutoResident.TabIndex = 16;
+            this.grpAutoResident.TabStop = false;
+            this.grpAutoResident.Text = "Auto Profile";
             // 
             // radioButton1
             // 
@@ -126,7 +126,7 @@
             this.radioButton1.TabStop = true;
             this.radioButton1.Text = "Off";
             this.radioButton1.UseVisualStyleBackColor = true;
-            this.radioButton1.CheckedChanged += new System.EventHandler(this.AutoProfileCheckChanged);
+            this.radioButton1.CheckedChanged += new System.EventHandler(this.AutoResidentCheckChanged);
             // 
             // radOn
             // 
@@ -139,7 +139,7 @@
             this.radOn.TabStop = true;
             this.radOn.Text = "On";
             this.radOn.UseVisualStyleBackColor = true;
-            this.radOn.CheckedChanged += new System.EventHandler(this.AutoProfileCheckChanged);
+            this.radOn.CheckedChanged += new System.EventHandler(this.AutoResidentCheckChanged);
             // 
             // grpAutoSensor
             // 
@@ -184,7 +184,7 @@
             this.groupBox2.Controls.Add(this.lblValue);
             this.groupBox2.Controls.Add(this.label2);
             this.groupBox2.Controls.Add(this.lblSensor);
-            this.groupBox2.Controls.Add(this.lblProfile);
+            this.groupBox2.Controls.Add(this.lblResident);
             this.groupBox2.Controls.Add(this.lblSensorLabel);
             this.groupBox2.Controls.Add(this.lblProfileLabel);
             this.groupBox2.Location = new System.Drawing.Point(12, 5);
@@ -226,16 +226,16 @@
             this.lblSensor.TabIndex = 23;
             this.lblSensor.Text = "0";
             // 
-            // lblProfile
+            // lblResident
             // 
-            this.lblProfile.AutoSize = true;
-            this.lblProfile.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblProfile.ForeColor = System.Drawing.Color.Blue;
-            this.lblProfile.Location = new System.Drawing.Point(70, 12);
-            this.lblProfile.Name = "lblProfile";
-            this.lblProfile.Size = new System.Drawing.Size(84, 24);
-            this.lblProfile.TabIndex = 22;
-            this.lblProfile.Text = "Generic";
+            this.lblResident.AutoSize = true;
+            this.lblResident.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblResident.ForeColor = System.Drawing.Color.Blue;
+            this.lblResident.Location = new System.Drawing.Point(78, 11);
+            this.lblResident.Name = "lblResident";
+            this.lblResident.Size = new System.Drawing.Size(131, 24);
+            this.lblResident.TabIndex = 22;
+            this.lblResident.Text = "Public Media";
             // 
             // lblSensorLabel
             // 
@@ -255,9 +255,9 @@
             this.lblProfileLabel.ForeColor = System.Drawing.Color.Blue;
             this.lblProfileLabel.Location = new System.Drawing.Point(8, 11);
             this.lblProfileLabel.Name = "lblProfileLabel";
-            this.lblProfileLabel.Size = new System.Drawing.Size(67, 24);
+            this.lblProfileLabel.Size = new System.Drawing.Size(76, 24);
             this.lblProfileLabel.TabIndex = 20;
-            this.lblProfileLabel.Text = "Profile:";
+            this.lblProfileLabel.Text = "Source:";
             // 
             // MatchingGameSensor
             // 
@@ -496,7 +496,7 @@
             this.ClientSize = new System.Drawing.Size(477, 409);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.grpAutoSensor);
-            this.Controls.Add(this.grpAutoProfile);
+            this.Controls.Add(this.grpAutoResident);
             this.Controls.Add(this.grpInterfaceKit);
             this.Controls.Add(this.grpRFReader);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
@@ -507,8 +507,8 @@
             this.Text = "Keebee AAT Simulator";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.ControlPanelClosing);
             this.grpRFReader.ResumeLayout(false);
-            this.grpAutoProfile.ResumeLayout(false);
-            this.grpAutoProfile.PerformLayout();
+            this.grpAutoResident.ResumeLayout(false);
+            this.grpAutoResident.PerformLayout();
             this.grpAutoSensor.ResumeLayout(false);
             this.grpAutoSensor.PerformLayout();
             this.groupBox2.ResumeLayout(false);
@@ -521,10 +521,10 @@
 
         #endregion
 
-        private System.Windows.Forms.ComboBox cboProfile;
+        private System.Windows.Forms.ComboBox cboResident;
         private System.Windows.Forms.Button btnScan;
         private System.Windows.Forms.GroupBox grpRFReader;
-        private System.Windows.Forms.GroupBox grpAutoProfile;
+        private System.Windows.Forms.GroupBox grpAutoResident;
         private System.Windows.Forms.RadioButton radioButton1;
         private System.Windows.Forms.RadioButton radOn;
         private System.Windows.Forms.GroupBox grpAutoSensor;
@@ -532,7 +532,7 @@
         private System.Windows.Forms.RadioButton radioButton3;
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.Label lblSensor;
-        private System.Windows.Forms.Label lblProfile;
+        private System.Windows.Forms.Label lblResident;
         private System.Windows.Forms.Label lblSensorLabel;
         private System.Windows.Forms.Label lblProfileLabel;
         private System.Windows.Forms.Label lblValue;

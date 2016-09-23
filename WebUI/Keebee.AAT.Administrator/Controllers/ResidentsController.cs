@@ -337,7 +337,7 @@ namespace Keebee.AAT.Administrator.Controllers
                 IsPublic = false
             };
 
-            var id = _opsClient.PostResidentMediaFile(mf);
+            _opsClient.PostResidentMediaFile(mf);
         }
 
         private IEnumerable<MediaFileViewModel> GetMediaFiles(int id, int mediaPathTypeId)

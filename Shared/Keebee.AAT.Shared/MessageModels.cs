@@ -1,27 +1,38 @@
-﻿namespace Keebee.AAT.Shared
+﻿using System.Collections.Generic;
+
+namespace Keebee.AAT.Shared
 {
+    public class ConfigMessage
+    {
+        public int Id { get; set; }
+        public string Description { get; set; }
+        public bool IsActiveEventLog { get; set; }
+        public IEnumerable<ConfigDetailMessage> ConfigDetails { get; set; }
+    }
+
+    public class ConfigDetailMessage
+    {
+        public int Id { get; set; }
+        public int ConfigId { get; set; }
+        public int PhidgetTypeId { get; set; }
+        public int PhidgetStyleTypeId { get; set; }
+        public int ResponseTypeId { get; set; }
+        public bool IsSystemReponseType { get; set; }
+    }
+
+    public class ResidentMessage
+    {
+        public int Id { get; set; }
+        public int GameDifficultyLevel { get; set; }
+    }
+
     public class ResponseMessage
     {
         public int SensorValue { get; set; }
         public bool IsSystem { get; set; }
         public bool IsActiveEventLog { get; set; }
-        public ActiveResident ActiveResident { get; set; }
-        public ActiveConfigDetail ActiveConfigDetail { get; set; }
-    }
-
-    public class ActiveResident
-    {
-        public int Id { get; set; }
-        public int ConfigId { get; set; }
-        public int GameDifficultyLevel { get; set; }
-    }
-
-    public class ActiveConfigDetail
-    {
-        public int Id { get; set; }
-        public int PhidgetTypeId { get; set; }
-        public int ResponseTypeId { get; set; }
-        public bool IsSystem { get; set; }
+        public ResidentMessage Resident { get; set; }
+        public ConfigDetailMessage ConfigDetail { get; set; }
     }
 
     public class DisplayMessage

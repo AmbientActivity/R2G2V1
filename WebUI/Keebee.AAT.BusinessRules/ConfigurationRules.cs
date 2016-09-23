@@ -1,8 +1,10 @@
 ﻿using Keebee.AAT.RESTClient;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
 using Keebee.AAT.BusinessRules.DTO;
+using Keebee.AAT.Shared;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web.Script.Serialization;
+
 
 namespace Keebee.AAT.BusinessRules
 {
@@ -83,6 +85,34 @@ namespace Keebee.AAT.BusinessRules
                 PhidgetStyleTypes = availablePhidgetStyleTypes,
                 ResponseTypes = availableResponseTypes
             };
+        }
+
+        // message queue
+        public string GetMessageBody(Config config)
+        {
+            var configMessage = new ConfigMessage
+            {
+                Id = config.Id,
+                Description = config.Description,
+                IsActiveEventLog = config.IsActiveEventLog,
+                ConfigDetails = config.ConfigDetails
+                                        .Select(x => new
+                                        ConfigDetailMessage
+                                        {
+                                            Id = x.Id,
+                                            ConfigId = config.Id,
+                                            ResponseTypeId = x.ResponseType.Id,
+                                            PhidgetTypeId = x.PhidgetType.Id,
+                                            PhidgetStyleTypeId = x.PhidgetStyleType.Id
+                                        }
+                                        )
+            };
+
+
+            var serializer = new JavaScriptSerializer();
+            var messageBody = serializer.Serialize(configMessage);
+
+            return messageBody;
         }
     }
 }

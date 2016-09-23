@@ -585,13 +585,13 @@
                     $("body").css("cursor", "wait");
 
                     var result;
-
                         $.ajax({
                             type: "POST",
                             async: false,
                             url: site.url + "Configurations/DeleteDetail/",
                             data: {
                                 id: id,
+                                configId: self.selectedConfig(),
                                 isActive: self.selectedConfig() === self.activeConfig()
                     },
                         dataType: "json",

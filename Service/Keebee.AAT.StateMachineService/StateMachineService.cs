@@ -23,16 +23,16 @@ namespace Keebee.AAT.StateMachineService
 
         // message queue sender
         private readonly CustomMessageQueue _messageQueueResponse;
+        private readonly CustomMessageQueue _messageQueueConfigPhidget;
 
         // event logger
         private readonly SystemEventLogger _systemEventLogger;
 
         // active config
-        private Config _activeConfig;
-        private bool _reloadActiveConfig = true;
+        private ConfigMessage _activeConfig;
 
         // active profile
-        private Resident _activeResident;
+        private ResidentMessage _activeResident;
 
         // display state
         private bool _displayIsActive;
@@ -51,6 +51,12 @@ namespace Keebee.AAT.StateMachineService
             {
                 QueueName = MessageQueueType.Response
             }) {SystemEventLogger = _systemEventLogger};
+
+            _messageQueueConfigPhidget = new CustomMessageQueue(new CustomMessageQueueArgs
+            {
+                QueueName = MessageQueueType.ConfigPhidget
+            })
+            { SystemEventLogger = _systemEventLogger };
 
             var keepAliveThread = new Thread(KeepAlive);
             keepAliveThread.Start();
@@ -92,10 +98,12 @@ namespace Keebee.AAT.StateMachineService
                 var req = (HttpWebRequest)WebRequest.Create(UrlKeepAliveAdmin);
                 var response = (HttpWebResponse)req.GetResponse();
 
-                if (response.StatusCode != HttpStatusCode.OK)
-                    _systemEventLogger.WriteEntry(
-                        $"Error accessing web host.{Environment.NewLine}StatusCode: {response.StatusCode}");
-
+                if (_activeResident != null)
+                {
+                    if (response.StatusCode != HttpStatusCode.OK)
+                        _systemEventLogger.WriteEntry(
+                            $"Error accessing web host.{Environment.NewLine}StatusCode: {response.StatusCode}");
+                }
                 try
                 {
                     Thread.Sleep(60000);
@@ -130,8 +138,8 @@ namespace Keebee.AAT.StateMachineService
 
             var q4 = new CustomMessageQueue(new CustomMessageQueueArgs
             {
-                QueueName = MessageQueueType.Display,
-                MessageReceivedCallback = MessageReceivedDisplay
+                QueueName = MessageQueueType.DisplaySms,
+                MessageReceivedCallback = MessageReceivedDisplaySms
             }) { SystemEventLogger = _systemEventLogger };
 
             var q5 = new CustomMessageQueue(new CustomMessageQueueArgs
@@ -146,36 +154,19 @@ namespace Keebee.AAT.StateMachineService
         {
             try
             {
-                LoadResident();
-                LoadActiveConfig();
-
-                // if the activity type is not defined in this config then exit
-                if (_activeConfig.ConfigDetails.All(x => x.PhidgetType.Id != phidgetTypeId))
+                // if the activity is not defined in the config then exit
+                if (_activeConfig.ConfigDetails.All(x => x.PhidgetTypeId != phidgetTypeId))
                     return;
 
                 var configDetail =
                     _activeConfig.ConfigDetails
-                    .Single(cd => cd.PhidgetType.Id == phidgetTypeId);
+                    .Single(cd => cd.PhidgetTypeId == phidgetTypeId);
 
                 var responseMessage = new ResponseMessage
                 {
                     SensorValue = sensorValue,
-
-                    ActiveConfigDetail = new ActiveConfigDetail
-                        {
-                            Id = configDetail.Id,
-                            PhidgetTypeId = configDetail.PhidgetType.Id,
-                            ResponseTypeId = configDetail.ResponseType.Id,
-                            IsSystem = configDetail.ResponseType.IsSystem
-                        },
-
-                    ActiveResident = new ActiveResident
-                        {
-                            Id = _activeResident.Id,
-                            ConfigId = _activeConfig.Id,
-                            GameDifficultyLevel = _activeResident.GameDifficultyLevel
-                        },
-
+                    ConfigDetail = configDetail,
+                    Resident =_activeResident,
                     IsActiveEventLog = _activeConfig.IsActiveEventLog
                 };
 
@@ -187,22 +178,6 @@ namespace Keebee.AAT.StateMachineService
             {
                 _systemEventLogger.WriteEntry($"ExecuteResponse: {ex.Message}", EventLogEntryType.Error); 
             }
-        }
-
-        private void LoadResident()
-        {
-            if (_activeResident == null)
-                _activeResident = _opsClient.GetGenericDetails();
-        }
-
-        private void LoadActiveConfig()
-        {
-            if (!_reloadActiveConfig) return;
-
-            _activeConfig = _opsClient.GetActiveConfigDetails();
-            _reloadActiveConfig = false;
-
-            _systemEventLogger.WriteEntry($"{_activeConfig.Description} has been activated");
         }
 
         #region message received event handlers
@@ -230,36 +205,24 @@ namespace Keebee.AAT.StateMachineService
             }
         }
 
-        private static PhidgetMessage GetPhidgetFromMessageBody(string messageBody)
-        {
-            var serializer = new JavaScriptSerializer();
-            var phidget = serializer.Deserialize<PhidgetMessage>(messageBody);
-            return phidget;
-        }
-
         private void MessageReceivedRfid(object source, MessageEventArgs e)
         {
             try
             {
-                int residentId;
-                var isValid = int.TryParse(e.MessageBody, out residentId);
-                if (!isValid) return;
+                var resident = GetResidentFromMessageBody(e.MessageBody);
 
-                LoadActiveConfig();
-
-                if (residentId > 0)
+                if (resident.Id > 0)
                 {
-                    if (_activeResident?.Id == residentId) return;
-                    _activeResident = _opsClient.GetResident(residentId);
-                    LogRfidEvent(residentId, "New active resident");
+                    if (_activeResident?.Id == resident.Id) return;
+                    LogRfidEvent(resident.Id, "New active resident");
                 }
                 else
                 {
-                    if (_activeResident?.Id == 0) return;
-                    _activeResident = _opsClient.GetGenericDetails();
-
-                    LogRfidEvent(-1, "Active resident is generic");
+                    if (_activeResident?.Id == PublicMediaSource.Id) return;
+                    LogRfidEvent(PublicMediaSource.Id, "Active resident is public");
                 }
+
+                _activeResident = resident;
             }
 
             catch (Exception ex)
@@ -279,22 +242,19 @@ namespace Keebee.AAT.StateMachineService
             }
         }
 
-        private void MessageReceivedDisplay(object source, MessageEventArgs e)
+        private void MessageReceivedDisplaySms(object source, MessageEventArgs e)
         {
             try
             {
-                var displayMessage = GetDisplayFromMessageBody(e.MessageBody);
-
+                var displayMessage = GetDisplayStateFromMessageBody(e.MessageBody);
                 _displayIsActive = displayMessage.IsActive;
 
-                if (!_displayIsActive) return;
-
-                if (_activeResident == null)
-                    _activeResident = _opsClient.GetGenericDetails();
+                LoadResident();
+                LoadConfig();
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"MessageReceivedDisplay{Environment.NewLine}{ex.Message}", EventLogEntryType.Error);
+                _systemEventLogger.WriteEntry($"MessageReceivedDisplaySms{Environment.NewLine}{ex.Message}", EventLogEntryType.Error);
             }
         }
 
@@ -302,8 +262,8 @@ namespace Keebee.AAT.StateMachineService
         {
             try
             {
-                if (e.MessageBody != "1") return;
-                _reloadActiveConfig = true;
+                _activeConfig = GetConfigFromMessageBody(e.MessageBody);
+                _messageQueueConfigPhidget.Send(e.MessageBody);
             }
             catch (Exception ex)
             {
@@ -311,11 +271,69 @@ namespace Keebee.AAT.StateMachineService
             }
         }
 
-        private static DisplayMessage GetDisplayFromMessageBody(string messageBody)
+        private static PhidgetMessage GetPhidgetFromMessageBody(string messageBody)
+        {
+            var serializer = new JavaScriptSerializer();
+            var phidget = serializer.Deserialize<PhidgetMessage>(messageBody);
+            return phidget;
+        }
+
+        private static ConfigMessage GetConfigFromMessageBody(string messageBody)
+        {
+            var serializer = new JavaScriptSerializer();
+            var config = serializer.Deserialize<ConfigMessage>(messageBody);
+            return config;
+        }
+
+        private ResidentMessage GetResidentFromMessageBody(string messageBody)
+        {
+            var resident = new ResidentMessage {Id = PublicMediaSource.Id, GameDifficultyLevel = 1};
+            try
+            {
+                var serializer = new JavaScriptSerializer();
+                resident = serializer.Deserialize<ResidentMessage>(messageBody);
+               
+            }
+            catch (Exception ex)
+            {
+                _systemEventLogger.WriteEntry($"GetResidentFromMessageBody{Environment.NewLine}{ex.Message}", EventLogEntryType.Error);
+            }
+            return resident;
+        }
+
+        private static DisplayMessage GetDisplayStateFromMessageBody(string messageBody)
         {
             var serializer = new JavaScriptSerializer();
             var display = serializer.Deserialize<DisplayMessage>(messageBody);
             return display;
+        }
+
+        private void LoadConfig()
+        {
+            var config = _opsClient.GetActiveConfigDetails();
+            _activeConfig = new ConfigMessage
+            {
+                Id = config.Id,
+                Description = config.Description,
+                IsActiveEventLog = config.IsActiveEventLog,
+                ConfigDetails = config.ConfigDetails
+                                    .Select(x => new
+                                    ConfigDetailMessage
+                                    {
+                                        Id = x.Id,
+                                        ResponseTypeId = x.ResponseType.Id,
+                                        PhidgetTypeId = x.PhidgetType.Id,
+                                        PhidgetStyleTypeId = x.PhidgetStyleType.Id
+                                    }
+                                    )
+            };
+        }
+
+        private void LoadResident()
+        {
+            // only for the first time
+            if (_activeResident == null)
+                _activeResident = new ResidentMessage { Id = PublicMediaSource.Id, GameDifficultyLevel = 1 };
         }
 
         #endregion
@@ -334,6 +352,7 @@ namespace Keebee.AAT.StateMachineService
         {
             try
             {
+                if (!_displayIsActive) return;
                 if (!_activeConfig.IsActiveEventLog) return;
 
                 var rfidEventLogger = new RfidEventLogger()

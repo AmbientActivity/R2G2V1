@@ -62,9 +62,9 @@ namespace Keebee.AAT.RESTClient
         void PostActivityEventLog(ActivityEventLog activityEventLog);
         void PostGameEventLog(GameEventLog gameEventLog);
         void PostRfidEventLog(RfidEventLog rfidEventLog);
-        void PostActivateConfig(int configId);
+        int PostActivateConfig(int configId);
         int PostResidentMediaFile(ResidentMediaFileEdit residentMediaFile);
-
+        int PostPublicMediaFile(PublicMediaFileEdit publicMediaFile);
 
         // PATCH
         void PatchResident(int residentId, ResidentEdit resident);
@@ -119,6 +119,7 @@ namespace Keebee.AAT.RESTClient
 
         private const string UrlMediaPathTypes = "mediapathtypes";
         private const string UrlMediaPathType = "mediapathtypes/{0}";
+
         private const string UrlPublicMediaFiles = "publicmediafiles";
         private const string UrlPublicMediaFilesForResponseType = "publicmediafiles?responseTypeId={0}";
 
@@ -573,9 +574,9 @@ namespace Keebee.AAT.RESTClient
             Post(UrlRfidEventLogs, el);
         }
 
-        public void PostActivateConfig(int configId)
+        public int PostActivateConfig(int configId)
         {
-            Post(string.Format(UrlActivateConfig, configId), string.Empty);
+            return Post(string.Format(UrlActivateConfig, configId), string.Empty);
         }
 
         public int PostResidentMediaFile(ResidentMediaFileEdit residenttMediaFile)
@@ -584,6 +585,14 @@ namespace Keebee.AAT.RESTClient
             var el = serializer.Serialize(residenttMediaFile);
 
             return Post(UrlResidentMediaFiles, el);
+        }
+
+        public int PostPublicMediaFile(PublicMediaFileEdit publicMediaFile)
+        {
+            var serializer = new JavaScriptSerializer();
+            var el = serializer.Serialize(publicMediaFile);
+
+            return Post(UrlPublicMediaFiles, el);
         }
 
         // PATCH

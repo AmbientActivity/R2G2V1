@@ -7,6 +7,7 @@ using System.Linq;
 using System;
 using System.Windows.Forms;
 using System.Configuration;
+using System.Web.Script.Serialization;
 using Timer = System.Threading.Timer;
 
 namespace Keebee.AAT.Simulator
@@ -34,16 +35,16 @@ namespace Keebee.AAT.Simulator
         // timer
         private readonly int _autoSensorInterval;
         private Timer _timerSensor;
-        private readonly int _autoProfileInterval;
-        private Timer _timerProfile;
+        private readonly int _autoResidentInterval;
+        private Timer _timerResident;
 
         // activity
         private int _currentSensorId = -1;
         private const int MaxSensorId = 3;
 
         // profile
-        private int _currentProfileIndex = -1;
-        private readonly int _totalProfiles;
+        private int _currentResidentIndex = -1;
+        private readonly int _totalResidents;
 
         // turn dial sensors
         private const int MaxSensorValue = 1000;
@@ -57,7 +58,7 @@ namespace Keebee.AAT.Simulator
             InitializeComponent();
 
             _autoSensorInterval = Convert.ToInt32(ConfigurationManager.AppSettings["AutoSensorInterval"]);
-            _autoProfileInterval = Convert.ToInt32(ConfigurationManager.AppSettings["AutoProfileInterval"]);
+            _autoResidentInterval = Convert.ToInt32(ConfigurationManager.AppSettings["AutoResidentInterval"]);
 
             _opsClient = new OperationsClient ();
 
@@ -74,17 +75,17 @@ namespace Keebee.AAT.Simulator
 
             });
 
-            LoadProfileDropDown();
-            _totalProfiles = _residents.Count();
+            LoadResidentDropDown();
+            _totalResidents = _residents.Count();
         }
 
-        private void LoadProfileDropDown()
+        private void LoadResidentDropDown()
         {
 
             var arrayList = new ArrayList();
             _residents = _opsClient.GetResidents().ToArray();
 
-            var profiles = new List<Resident> { new Resident {Id = 0, FirstName = "Generic" }}
+            var residents = new List<Resident> { new Resident {Id = PublicMediaSource.Id, FirstName = PublicMediaSource.Description } }
                 .Union(_residents.Select(r => new Resident
                                                 {
                                                     Id = r.Id,
@@ -92,31 +93,31 @@ namespace Keebee.AAT.Simulator
                                                     LastName = r.LastName,
                                                 })).ToList();
 
-            foreach (var p in profiles)
+            foreach (var r in residents)
             {
-                arrayList.Add(new {p.Id, Name = p.LastName == null 
-                    ? $"{p.FirstName}" 
-                    : $"{p.FirstName} {p.LastName}" });
+                arrayList.Add(new {r.Id, Name = r.LastName == null 
+                    ? $"{r.FirstName}" 
+                    : $"{r.FirstName} {r.LastName}" });
             }
 
-            cboProfile.ValueMember = "Id";
-            cboProfile.DisplayMember = "Name";
-            cboProfile.DataSource = arrayList;
+            cboResident.ValueMember = "Id";
+            cboResident.DisplayMember = "Name";
+            cboResident.DataSource = arrayList;
 
-            // sending resident "0" will make Generic the active profile
-            _messageQueueRfid.Send("0");
+            // make public library active
+            _messageQueueRfid.Send(CreateMessageBodyFromResident(new Resident { Id = PublicMediaSource.Id, GameDifficultyLevel =  1}));
         }
 
-        private void UpdatProfileLabel(string text)
+        private void UpdatResidentLabel(string text)
         {
             if (InvokeRequired)
             {
-                UpdateLabelDelegate d = UpdatProfileLabel;
+                UpdateLabelDelegate d = UpdatResidentLabel;
                 Invoke(d, new object[] { text });
             }
             else
             {
-                lblProfile.Text = text;
+                lblResident.Text = text;
             }
         }
 
@@ -310,10 +311,27 @@ namespace Keebee.AAT.Simulator
             _messageQueuePhidget.Send(string.Format("{0}\"SensorId\":13,\"SensorValue\":{1}{2}", "{", MaxSensorValue - 1, "}"));
         }
         
-        private void ActivateProfileClick(object sender, EventArgs e)
+        private void ActivateResidentClick(object sender, EventArgs e)
         {
-            _messageQueueRfid.Send(cboProfile.SelectedValue.ToString());
-            lblProfile.Text = cboProfile.Text;
+            var id = Convert.ToInt32(cboResident.SelectedValue.ToString());
+
+            var resident = (id == PublicMediaSource.Id)
+                ? new Resident { Id = PublicMediaSource.Id, GameDifficultyLevel = 1 }
+                :_residents.Single(x => x.Id == id);
+
+            CreateMessageBodyFromResident(resident);
+            _messageQueueRfid.Send(CreateMessageBodyFromResident(resident));
+            lblResident.Text = cboResident.Text;
+        }
+
+        private static string CreateMessageBodyFromResident(Resident resident)
+        {
+            var residentMessage = new ResidentMessage { Id = resident.Id, GameDifficultyLevel = resident.GameDifficultyLevel };
+
+            var serializer = new JavaScriptSerializer();
+            var messageBody = serializer.Serialize(residentMessage);
+
+            return messageBody;
         }
 
         private void TimerSensorTick(object sender)
@@ -330,29 +348,26 @@ namespace Keebee.AAT.Simulator
             _messageQueuePhidget.Send(string.Format("{0}\"SensorId\":{1},\"SensorValue\":{2}{3}", "{", _currentSensorId, MaxSensorValue - 1, "}"));
         }
 
-        private void TimerProfileTick(object sender)
+        private void TimerResidentTick(object sender)
         {
-            if (_timerProfile == null) return;
+            if (_timerResident == null) return;
 
-            if (_currentProfileIndex < (_totalProfiles - 1))
-                _currentProfileIndex++;
+            if (_currentResidentIndex < (_totalResidents - 1))
+                _currentResidentIndex++;
             else
-                _currentProfileIndex = 0;
+                _currentResidentIndex = 0;
 
-            var residentId = _residents[_currentProfileIndex].Id;
-            var firstName = _residents[_currentProfileIndex].FirstName;
-            UpdatProfileLabel(firstName);
+            var residentId = _residents[_currentResidentIndex].Id;
+            var firstName = _residents[_currentResidentIndex].FirstName;
+            UpdatResidentLabel(firstName);
 
             _messageQueueRfid.Send(Convert.ToString(residentId));
         }
 
         private void ControlPanelClosing(object sender, FormClosingEventArgs e)
         {
-            if (_timerSensor != null)
-                _timerSensor.Dispose();
-
-            if (_timerProfile != null)
-                _timerProfile.Dispose();
+            _timerSensor?.Dispose();
+            _timerResident?.Dispose();
         }
 
         private void AutoSensorCheckChanged(object sender, EventArgs e)
@@ -378,24 +393,24 @@ namespace Keebee.AAT.Simulator
             }
         }
 
-        private void AutoProfileCheckChanged(object sender, EventArgs e)
+        private void AutoResidentCheckChanged(object sender, EventArgs e)
         {
-            foreach (var result in from control in grpAutoProfile.Controls.OfType<RadioButton>() 
+            foreach (var result in from control in grpAutoResident.Controls.OfType<RadioButton>() 
                                    select control into radio where radio.Checked select radio.Text)
             {
                 if (result == "On")
                 {
-                    if (_timerProfile == null)
+                    if (_timerResident == null)
                     {
-                        _timerProfile = new Timer(TimerProfileTick, null, 0, _autoProfileInterval);
+                        _timerResident = new Timer(TimerResidentTick, null, 0, _autoResidentInterval);
                     }
                 }
                 else
                 {
-                    if (_timerProfile == null) continue;
+                    if (_timerResident == null) continue;
 
-                    _timerProfile.Dispose();
-                    _timerProfile = null;
+                    _timerResident.Dispose();
+                    _timerResident = null;
                 }
             }
         }

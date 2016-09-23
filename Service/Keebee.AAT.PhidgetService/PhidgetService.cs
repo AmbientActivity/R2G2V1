@@ -41,16 +41,16 @@ namespace Keebee.AAT.PhidgetService
     internal partial class PhidgetService : ServiceBase
     {
 
+        // operations REST client
+        private readonly IOperationsClient _opsClient;
+
 #if DEBUG
         private readonly CustomMessageQueue _messageQueuePhidgetMonitor;
         private bool _phidgetMonitorIsActive;
 #endif
-        // operations REST client
-        private readonly IOperationsClient _opsClient;
 
         // message queue sender
         private readonly CustomMessageQueue _messageQueuePhidget;
-        private readonly CustomMessageQueue _messageQueueConfigSms;
 
         // event logger
         private readonly SystemEventLogger _systemEventLogger;
@@ -61,8 +61,10 @@ namespace Keebee.AAT.PhidgetService
         private readonly int _sensorThreshold;
 
         // active config
-        private Config _activeConfig;
-        private bool _reloadActiveConfig = true;
+        private ConfigMessage _activeConfig;
+
+        // display state
+        private bool _displayIsActive;
 
         public PhidgetService()
         {
@@ -82,13 +84,21 @@ namespace Keebee.AAT.PhidgetService
                                                               QueueName = MessageQueueType.Phidget
                                                           }) { SystemEventLogger = _systemEventLogger };
 
-            _messageQueueConfigSms = new CustomMessageQueue(new CustomMessageQueueArgs
+#if DEBUG
+            _messageQueuePhidgetMonitor = new CustomMessageQueue(new CustomMessageQueueArgs
             {
-                QueueName = MessageQueueType.ConfigSms
-            })
-            { SystemEventLogger = _systemEventLogger };
-
+                QueueName = MessageQueueType.PhidgetMonitor
+            });
+#endif
             // message queue listeners
+            InitializeMessageQueueListeners();
+
+            // open the phidget using the command line arguments
+            openCmdLine(interfaceKit);
+        }
+
+        private void InitializeMessageQueueListeners()
+        {
             var q1 = new CustomMessageQueue(new CustomMessageQueueArgs
             {
                 QueueName = MessageQueueType.ConfigPhidget,
@@ -96,20 +106,21 @@ namespace Keebee.AAT.PhidgetService
             })
 
             { SystemEventLogger = _systemEventLogger };
-#if DEBUG
-            _messageQueuePhidgetMonitor = new CustomMessageQueue(new CustomMessageQueueArgs
-            {
-                QueueName = MessageQueueType.PhidgetMonitor
-            });
 
-            var q = new CustomMessageQueue(new CustomMessageQueueArgs
+            var q2 = new CustomMessageQueue(new CustomMessageQueueArgs
+            {
+                QueueName = MessageQueueType.DisplayPhidget,
+                MessageReceivedCallback = MessageReceivedDisplayPhidget
+            })
+            { SystemEventLogger = _systemEventLogger };
+
+#if DEBUG
+            var q3 = new CustomMessageQueue(new CustomMessageQueueArgs
             {
                 QueueName = MessageQueueType.PhidgetMonitorState,
                 MessageReceivedCallback = PhidgetMonitorMessageReceived
             });
 #endif
-            // open the phidget using the command line arguments
-            openCmdLine(interfaceKit);
         }
 
         private int ValidateSensorThreshold(string threshold)
@@ -136,8 +147,6 @@ namespace Keebee.AAT.PhidgetService
         {
             try
             {
-                if (e.Index < 0 || e.Index > 7)
-                    throw new Exception($"Invalid SensorId: {e.Index}");
 #if DEBUG
                 if (_phidgetMonitorIsActive)
                 {
@@ -145,24 +154,20 @@ namespace Keebee.AAT.PhidgetService
                     _messageQueuePhidgetMonitor.Send(message);
                 }
 #endif
+                if (!_displayIsActive) return;
+
                 int sensorId;
                 int sensorValue = e.Value;
 
                 var isValid = int.TryParse(Convert.ToString(e.Index), out sensorId);
                 if (!isValid) return;
 
-                if (_reloadActiveConfig || _activeConfig == null)
-                {
-                    _activeConfig = _opsClient.GetActiveConfigDetails();
-                    _reloadActiveConfig = false;
-                }
-
-                if (_activeConfig.ConfigDetails.All(cd => cd.PhidgetType.Id != sensorId + 1))
+                if (_activeConfig.ConfigDetails.All(cd => cd.PhidgetTypeId != sensorId + 1))
                     return;
 
-                var configDetail = _activeConfig.ConfigDetails.Single(cd => cd.PhidgetType.Id == sensorId + 1);
+                var configDetail = _activeConfig.ConfigDetails.Single(cd => cd.PhidgetTypeId == sensorId + 1);
 
-                switch (configDetail.PhidgetStyleType.Id)
+                switch (configDetail.PhidgetStyleTypeId)
                 {
                     case PhidgetStyleTypeIdId.Touch:
                         if (sensorValue >= _sensorThreshold)
@@ -228,9 +233,7 @@ namespace Keebee.AAT.PhidgetService
 
         private static string CreateMessageBodyFromSensor(int sensorId, int sensorValue)
         {
-            var phidgetMessage = sensorValue >= 0 
-                ? new PhidgetMessage { SensorId = sensorId, SensorValue = sensorValue }     // user activity
-                : new PhidgetMessage { SensorId = 0, SensorValue = sensorValue };           // system activity
+            var phidgetMessage = new PhidgetMessage {SensorId = sensorId, SensorValue = sensorValue};
                 
             var serializer = new JavaScriptSerializer();
             var messageBody = serializer.Serialize(phidgetMessage);
@@ -241,14 +244,62 @@ namespace Keebee.AAT.PhidgetService
         {
             try
             {
-                if (e.MessageBody != "1") return;
-                _reloadActiveConfig = true;
-                _messageQueueConfigSms.Send("1");
+                _activeConfig = GetConfigFromMessageBody(e.MessageBody);
             }
             catch (Exception ex)
             {
                 _systemEventLogger.WriteEntry($"MessageReceiveConfigPhidget{Environment.NewLine}{ex.Message}", EventLogEntryType.Error);
             }
+        }
+
+        private void MessageReceivedDisplayPhidget(object source, MessageEventArgs e)
+        {
+            try
+            {
+                var displayMessage = GetDisplayStateFromMessageBody(e.MessageBody);
+                _displayIsActive = displayMessage.IsActive;
+
+                LoadConfig();
+            }
+            catch (Exception ex)
+            {
+                _systemEventLogger.WriteEntry($"MessageReceivedDisplayPhidget{Environment.NewLine}{ex.Message}", EventLogEntryType.Error);
+            }
+        }
+
+        private static ConfigMessage GetConfigFromMessageBody(string messageBody)
+        {
+            var serializer = new JavaScriptSerializer();
+            var config = serializer.Deserialize<ConfigMessage>(messageBody);
+            return config;
+        }
+
+        private static DisplayMessage GetDisplayStateFromMessageBody(string messageBody)
+        {
+            var serializer = new JavaScriptSerializer();
+            var display = serializer.Deserialize<DisplayMessage>(messageBody);
+            return display;
+        }
+
+        private void LoadConfig()
+        {
+            var config = _opsClient.GetActiveConfigDetails();
+            _activeConfig = new ConfigMessage
+                            {
+                                Id = config.Id,
+                                Description = config.Description,
+                                IsActiveEventLog = config.IsActiveEventLog,
+                                ConfigDetails = config.ConfigDetails
+                                    .Select(x => new
+                                    ConfigDetailMessage
+                                                 {
+                                                     Id = x.Id,
+                                                     ResponseTypeId = x.ResponseType.Id,
+                                                     PhidgetTypeId = x.PhidgetType.Id,
+                                                     PhidgetStyleTypeId = x.PhidgetStyleType.Id
+                                                 }
+                                    )
+                            };
         }
 
 #if DEBUG

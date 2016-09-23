@@ -7,18 +7,19 @@ namespace Keebee.AAT.MessageQueuing
 {
     public enum MessageQueueType
     {
-        Display = 1,
-        Phidget = 2,
-        Response = 3,
-        Rfid = 4,
-        Video = 5,
-        ConfigSms = 6,
-        ConfigPhidget = 7
+        DisplaySms = 1,
+        DisplayPhidget = 2,
+        Phidget = 3,
+        Response = 4,
+        Rfid = 5,
+        Video = 6,
+        ConfigSms = 7,
+        ConfigPhidget = 8
 #if DEBUG
-        , PhidgetMonitor = 8,
-        PhidgetMonitorState = 9,
-        RfidMonitor = 10,
-        RfidMonitorState = 11
+        , PhidgetMonitor = 9,
+        PhidgetMonitorState = 10,
+        RfidMonitor = 11,
+        RfidMonitorState = 12
 #endif
     }
 
@@ -35,7 +36,8 @@ namespace Keebee.AAT.MessageQueuing
 
     public class CustomMessageQueue
     {
-        private const string QueueNameDisplay = "Display";
+        private const string QueueNameDisplaySms = "Display-SMS";
+        private const string QueueNameDisplayPhidget = "Display-Phidget";
         private const string QueueNamePhidget = "Phidget";
         private const string QueueNameResponse = "Response";
         private const string QueueNameRfid = "RFID";
@@ -114,8 +116,11 @@ namespace Keebee.AAT.MessageQueuing
 
             switch (queueName)
             {
-                case MessageQueueType.Display:
-                    literal = QueueNameDisplay;
+                case MessageQueueType.DisplaySms:
+                    literal = QueueNameDisplaySms;
+                    break;
+                case MessageQueueType.DisplayPhidget:
+                    literal = QueueNameDisplaySms;
                     break;
                 case MessageQueueType.Phidget:
                     literal = QueueNamePhidget;

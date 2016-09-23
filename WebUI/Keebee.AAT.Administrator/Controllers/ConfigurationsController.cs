@@ -4,7 +4,6 @@ using Keebee.AAT.MessageQueuing;
 using Keebee.AAT.BusinessRules;
 using Keebee.AAT.Shared;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Web.Mvc;
 using Newtonsoft.Json;
@@ -14,15 +13,15 @@ namespace Keebee.AAT.Administrator.Controllers
     public class ConfigurationsController : Controller
     {
         private readonly OperationsClient _opsClient;
-        private readonly CustomMessageQueue _messageQueueConfigPhidget;
+        private readonly CustomMessageQueue _messageQueueConfigSms;
 
         public ConfigurationsController()
         {
             _opsClient = new OperationsClient();
 
-            _messageQueueConfigPhidget = new CustomMessageQueue(new CustomMessageQueueArgs
+            _messageQueueConfigSms = new CustomMessageQueue(new CustomMessageQueueArgs
             {
-                QueueName = MessageQueueType.ConfigPhidget
+                QueueName = MessageQueueType.ConfigSms
             });
         }
 
@@ -122,12 +121,12 @@ namespace Keebee.AAT.Administrator.Controllers
         }
 
         [HttpPost]
-        public JsonResult DeleteDetail(int id, bool isActive)
+        public JsonResult DeleteDetail(int id, int configId, bool isActive)
         {
             _opsClient.DeleteConfigDetail(id);
 
             if (isActive)
-                _messageQueueConfigPhidget.Send("1");
+                SendNotificationOfConfigChange(configId);
 
             return Json(new
             {
@@ -140,7 +139,7 @@ namespace Keebee.AAT.Administrator.Controllers
         public JsonResult Activate(int configId)
         {
             _opsClient.PostActivateConfig(configId);
-            _messageQueueConfigPhidget.Send("1");
+            SendNotificationOfConfigChange(configId);
 
             var vm = new
             {
@@ -258,7 +257,7 @@ namespace Keebee.AAT.Administrator.Controllers
             _opsClient.PatchConfig(config.Id, c);
 
             if(config.IsActive)
-                _messageQueueConfigPhidget.Send("1");
+                SendNotificationOfConfigChange(config.Id);
         }
 
         private int AddConfig(ConfigEditViewModel config, int selectedConfigId)
@@ -300,7 +299,7 @@ namespace Keebee.AAT.Administrator.Controllers
             _opsClient.PatchConfigDetail(configDetail.Id, cd);
 
             if (configDetail.IsActive)
-                _messageQueueConfigPhidget.Send("1");
+                SendNotificationOfConfigChange(configDetail.ConfigId);
         }
 
         private int AddConfigDetail(ConfigDetailEditViewModel configDetail)
@@ -317,9 +316,16 @@ namespace Keebee.AAT.Administrator.Controllers
             var id = _opsClient.PostConfigDetail(cd);
 
             if (configDetail.IsActive)
-                _messageQueueConfigPhidget.Send("1");
+                SendNotificationOfConfigChange(configDetail.ConfigId);
 
             return id;
+        }
+
+        private void SendNotificationOfConfigChange(int configId)
+        {
+            var rules = new ConfigurationRules();
+            var config = _opsClient.GetConfigWithDetails(configId);
+            _messageQueueConfigSms.Send(rules.GetMessageBody(config));
         }
     }
 }

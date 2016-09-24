@@ -511,7 +511,7 @@ namespace Keebee.AAT.Display
                                             EventLogger = _systemEventLogger,
                                             OperationsClient = _opsClient,
                                             Config = config,
-                                            MediaFiles = publicMedia
+                                            PublicMediaFiles = publicMedia
                 };
 
                 _caregiverInterface.CaregiverCompleteEvent += CaregiverComplete;

@@ -190,7 +190,8 @@ namespace Keebee.AAT.RfidReaderService
 
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"Read: {ex.Message}", EventLogEntryType.Error);
+                if (ex.Message != "Thread was being aborted.")
+                    _systemEventLogger.WriteEntry($"Read: {ex.Message}", EventLogEntryType.Error);
             }
 
             return residentId;

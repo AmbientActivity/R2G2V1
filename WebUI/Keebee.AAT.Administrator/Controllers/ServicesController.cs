@@ -22,7 +22,7 @@ namespace Keebee.AAT.Administrator.Controllers
         public void RestartServices()
         {
             var rules = new ServicesRules{ EventLogger = _systemEventLogger };
-            rules.RestartService("StateMchaineService", 10000);
+            rules.RestartService("StateMachineService", 10000);
         }
     }
 }

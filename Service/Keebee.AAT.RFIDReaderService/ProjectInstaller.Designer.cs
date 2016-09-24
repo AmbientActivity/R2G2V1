@@ -42,7 +42,8 @@
             // 
             // rfidReaderServiceInstaller
             // 
-            this.rfidReaderServiceInstaller.Description = "Keebee AAT RFID Reader Service";
+            this.rfidReaderServiceInstaller.Description = "Processes all RFID Reader event from the Skyetek receiver and hands them to the S" +
+    "tate Machine Service";
             this.rfidReaderServiceInstaller.DisplayName = "Keebee AAT RFID Reader Service";
             this.rfidReaderServiceInstaller.ServiceName = "RfidReaderService";
             this.rfidReaderServiceInstaller.ServicesDependedOn = new string[] {

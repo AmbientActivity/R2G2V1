@@ -9,15 +9,19 @@ namespace Keebee.AAT.Administrator.FileManagement
 {
     public class FileManager
     {
-        private readonly SystemEventLogger _systemEventLogger;
         private readonly OperationsClient _opsClient;
+
+        private SystemEventLogger _systemEventLogger;
+        public SystemEventLogger EventLogger
+        {
+            set { _systemEventLogger = value; }
+        }
 
         // media path
         private readonly MediaSourcePath _mediaPath = new MediaSourcePath();
 
         public FileManager()
         {
-            _systemEventLogger = new SystemEventLogger(SystemEventLogType.FileManager);
             _opsClient = new OperationsClient();
         }
 
@@ -32,7 +36,7 @@ namespace Keebee.AAT.Administrator.FileManagement
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"FileManagement.ProfileManager.CreateFolders :{ex.Message}", EventLogEntryType.Error);
+                _systemEventLogger.WriteEntry($"FileManagement.DeleteFile :{ex.Message}", EventLogEntryType.Error);
             }
         }
 
@@ -53,7 +57,7 @@ namespace Keebee.AAT.Administrator.FileManagement
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"FileManagement.ProfileManager.CreateFolders :{ex.Message}", EventLogEntryType.Error);
+                _systemEventLogger.WriteEntry($"FileManagement.CreateFolders :{ex.Message}", EventLogEntryType.Error);
             }
         }
 
@@ -72,7 +76,7 @@ namespace Keebee.AAT.Administrator.FileManagement
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"FileManagement.ProfileManager.CreateFolders :{ex.Message}", EventLogEntryType.Error);
+                _systemEventLogger.WriteEntry($"FileManagement.DeleteFolders :{ex.Message}", EventLogEntryType.Error);
             }
         }
 

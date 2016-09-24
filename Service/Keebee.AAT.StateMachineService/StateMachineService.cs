@@ -71,12 +71,20 @@ namespace Keebee.AAT.StateMachineService
             {
                 if (_activeResident != null)
                 {
-                    var req = (HttpWebRequest) WebRequest.Create(UrlKeepAlive);
-                    var response = (HttpWebResponse) req.GetResponse();
+                    try
+                    {
+                        var req = (HttpWebRequest) WebRequest.Create(UrlKeepAlive);
+                        var response = (HttpWebResponse) req.GetResponse();
 
-                    if (response.StatusCode != HttpStatusCode.OK)
+                        if (response.StatusCode != HttpStatusCode.OK)
+                            _systemEventLogger.WriteEntry(
+                                $"Error accessing api.{Environment.NewLine}StatusCode: {response.StatusCode}");
+                    }
+                    catch (Exception ex)
+                    {
                         _systemEventLogger.WriteEntry(
-                            $"Error accessing web host.{Environment.NewLine}StatusCode: {response.StatusCode}");
+                                $"Error accessing api.{Environment.NewLine}Error: {ex.Message}");
+                    }
                 }
 
                 try
@@ -95,15 +103,25 @@ namespace Keebee.AAT.StateMachineService
         {
             while (true)
             {
-                var req = (HttpWebRequest)WebRequest.Create(UrlKeepAliveAdmin);
-                var response = (HttpWebResponse)req.GetResponse();
-
-                if (_activeResident != null)
+                try
                 {
-                    if (response.StatusCode != HttpStatusCode.OK)
-                        _systemEventLogger.WriteEntry(
-                            $"Error accessing web host.{Environment.NewLine}StatusCode: {response.StatusCode}");
+                    var req = (HttpWebRequest)WebRequest.Create(UrlKeepAliveAdmin);
+                    var response = (HttpWebResponse)req.GetResponse();
+
+                    if (_activeResident != null)
+                    {
+                        if (response.StatusCode != HttpStatusCode.OK)
+                            _systemEventLogger.WriteEntry(
+                                $"Error accessing admin sitet.{Environment.NewLine}StatusCode: {response.StatusCode}");
+
+                    }
                 }
+                catch (Exception ex)
+                {
+                    _systemEventLogger.WriteEntry(
+                            $"Error accessing admin site.{Environment.NewLine}Error: {ex.Message}");
+                }
+
                 try
                 {
                     Thread.Sleep(60000);

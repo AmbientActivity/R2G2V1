@@ -1,7 +1,7 @@
 ﻿/*!
  * PublicMedia/Index.js
  * Author: John Charlton
- * Date: 2015-05
+ * Date: 2016-09
  */
 
 function CuteWebUI_AjaxUploader_OnPostback() {

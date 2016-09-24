@@ -370,9 +370,9 @@
     <Content Include="Scripts\moment.js" />
     <Content Include="Scripts\moment.min.js" />
     <Content Include="Scripts\PublicMedia\Index.js" />
-    <Content Include="Scripts\Residents\AddPublicMedia.js" />
     <Content Include="Scripts\Residents\Media.js" />
     <Content Include="Scripts\Residents\Index.js" />
+    <Content Include="Scripts\Services\Index.js" />
     <Content Include="Scripts\Site\Namespaces.js" />
     <Content Include="Scripts\Site\Site.js" />
     <Content Include="Web.config">
@@ -387,6 +387,7 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\PublicMediaController.cs" />
     <Compile Include="Controllers\ResidentsController.cs" />
+    <Compile Include="Controllers\ServicesController.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="FileManagement\FileManager.cs" />
     <Compile Include="Global.asax.cs">
@@ -421,6 +422,7 @@
     <Content Include="UploadHandler.ashx" />
     <Content Include="Views\Residents\_AddPublicMedia.cshtml" />
     <Content Include="Views\PublicMedia\Index.cshtml" />
+    <Content Include="Views\Services\Index.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

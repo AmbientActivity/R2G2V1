@@ -20,6 +20,9 @@
 
     #scheduled tasks
     "R2G2 Automated Export,R2G2AutomatedExport"
+
+    #admin interface
+    "R2G2 Administrator Interface,R2G2AdministratorInterface"
  )
  
  # loop through each event log, source pair to create the source on the specified log if it does not exist.

@@ -1,7 +1,7 @@
 ﻿/*!
  * Residents/Index.js
  * Author: John Charlton
- * Date: 2015-05
+ * Date: 2016-08
  */
 
 ; (function ($) {

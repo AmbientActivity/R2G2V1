@@ -141,7 +141,7 @@ a:hover, a:visited, a:link, a:active {
 
 /* tables */
 .record-total {
-    /*margin-right: 10px;*/
+    margin-top: 8px;
 }
 .col-profile {
     width: 30px;

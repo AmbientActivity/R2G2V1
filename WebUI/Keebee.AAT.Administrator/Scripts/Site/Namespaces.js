@@ -6,4 +6,5 @@
     window.profiles = {};
     window.eventlogs = {};
     window.mediafiles = {};
+    window.winservices = {};
 })();

@@ -41,7 +41,7 @@
             // 
             // stateMachineServiceInstaller
             // 
-            this.stateMachineServiceInstaller.Description = "Keebee AAT State Machine Service";
+            this.stateMachineServiceInstaller.Description = "Processes all Keebee AAT activities and hands them to the main Display App";
             this.stateMachineServiceInstaller.DisplayName = "Keebee AAT State Machine Service";
             this.stateMachineServiceInstaller.ServiceName = "StateMachineService";
             this.stateMachineServiceInstaller.ServicesDependedOn = new string[] {

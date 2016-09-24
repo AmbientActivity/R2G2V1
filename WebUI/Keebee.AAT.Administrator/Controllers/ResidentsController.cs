@@ -2,6 +2,9 @@
 using Keebee.AAT.Administrator.ViewModels;
 using Keebee.AAT.BusinessRules;
 using Keebee.AAT.Shared;
+using Keebee.AAT.Administrator.Extensions;
+using Keebee.AAT.Administrator.FileManagement;
+using Keebee.AAT.SystemEventLogging;
 using CuteWebUI;
 using Newtonsoft.Json;
 using System.Collections.Generic;
@@ -9,21 +12,20 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Web.Mvc;
 using System;
-using Keebee.AAT.Administrator.Extensions;
-using FileManager = Keebee.AAT.Administrator.FileManagement.FileManager;
 
 namespace Keebee.AAT.Administrator.Controllers
 {
     public class ResidentsController : Controller
     {
         private readonly OperationsClient _opsClient;
-        
+        private readonly SystemEventLogger _systemEventLogger;
+
         private readonly MediaSourcePath _mediaPath = new MediaSourcePath();
-        private readonly FileManager _fileManager = new FileManager();
 
         public ResidentsController()
         {
             _opsClient = new OperationsClient();
+            _systemEventLogger = new SystemEventLogger(SystemEventLogType.AdminInterface);
         }
 
         // GET: Resident
@@ -67,7 +69,9 @@ namespace Keebee.AAT.Administrator.Controllers
                     return View(vm);
 
                 // POST:
-                
+
+                var fileManager = new FileManager { EventLogger = _systemEventLogger };
+
                 // for multiple files the value is string : guid/guid/guid 
                 foreach (var strguid in myuploader.Split('/'))
                 {
@@ -81,7 +85,7 @@ namespace Keebee.AAT.Administrator.Controllers
                     var filePath = $@"{_mediaPath.ProfileRoot}\{id}\{mediaPathType}\{file.FileName}";
 
                     // delete it if it already exists
-                    _fileManager.DeleteFile(filePath);
+                    fileManager.DeleteFile(filePath);
                     file.MoveTo(filePath);
 
                     AddResidentMediaFile(id, file.FileName, (int)mediaPathTypeId, mediaPathType);   
@@ -165,7 +169,9 @@ namespace Keebee.AAT.Administrator.Controllers
         public JsonResult Delete(int id)
         {
             _opsClient.DeleteResident(id);
-            _fileManager.DeleteFolders(id);
+
+            var fileManager = new FileManager { EventLogger = _systemEventLogger };
+            fileManager.DeleteFolders(id);
 
             return Json(new
             {
@@ -181,7 +187,7 @@ namespace Keebee.AAT.Administrator.Controllers
 
             if (file != null)
             {
-                var fileManager = new FileManager();
+                var fileManager = new FileManager { EventLogger = _systemEventLogger };
                 fileManager.DeleteFile($@"{file.Path}\{file.Filename}");
             }
 
@@ -321,14 +327,17 @@ namespace Keebee.AAT.Administrator.Controllers
             };
 
             var id = _opsClient.PostResident(r);
-            _fileManager.CreateFolders(id);
+
+            var fileManager = new FileManager { EventLogger = _systemEventLogger };
+            fileManager.CreateFolders(id);
 
             return id;
         }
 
         private void AddResidentMediaFile(int residentId, string filename, int mediaPathTypeId, string mediaPathType)
         {
-            var streamId = _fileManager.GetStreamId($@"{residentId}\{mediaPathType}", filename);
+            var fileManager = new FileManager { EventLogger = _systemEventLogger };
+            var streamId = fileManager.GetStreamId($@"{residentId}\{mediaPathType}", filename);
             var responseTypeId = GetResponseTypeId(mediaPathTypeId);
 
             var mf = new ResidentMediaFileEdit

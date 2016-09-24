@@ -41,7 +41,8 @@
             // 
             // phidgetServiceInstaller
             // 
-            this.phidgetServiceInstaller.Description = "Keebee AAT Phidget Service";
+            this.phidgetServiceInstaller.Description = "Processes all phidget sensor change events and hands them to the State Machine Se" +
+    "rvice";
             this.phidgetServiceInstaller.DisplayName = "Keebee AAT Phidget Service";
             this.phidgetServiceInstaller.ServiceName = "PhidgetService";
             this.phidgetServiceInstaller.ServicesDependedOn = new string[] {

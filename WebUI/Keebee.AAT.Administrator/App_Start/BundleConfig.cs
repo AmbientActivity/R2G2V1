@@ -50,7 +50,8 @@ namespace Keebee.AAT.Administrator
                 "~/Scripts/Residents/Index.js",
                 "~/Scripts/Residents/Media.js",
                 "~/Scripts/EventLogs/Index.js",
-                "~/Scripts/EventLogs/Export.js");
+                "~/Scripts/EventLogs/Export.js",
+                "~/Scripts/Services/Index.js");
             customScriptBundle.Builder = nullBuilder;
             customScriptBundle.Transforms.Add(scriptTransformer);
             bundles.Add(customScriptBundle);

@@ -152,7 +152,7 @@ namespace Keebee.AAT.Administrator.Controllers
 
             foreach (var mediafile in publicMediaFiles.MediaFiles)
             {
-                foreach (var path in mediafile.Paths)
+                foreach (var path in mediaPaths)
                 {
                     foreach (var file in path.Files.OrderBy(x => x.Filename))
                     {

@@ -280,6 +280,7 @@ namespace Keebee.AAT.Display
             var numResponseTypes = 0;
             var residentId = _activeResident.Id;
 
+            // get media from public library for the response type
             if (_activeResident.Id == PublicMediaSource.Id)
             {
                 mediaFiles = _opsClient.GetPublicMediaFiles().MediaFiles.ToArray();
@@ -287,25 +288,28 @@ namespace Keebee.AAT.Display
             }
             else
             {
+                // get media from resident's profile for the response type
                 var media = _opsClient.GetResidentMediaFilesForResident(residentId);
 
+                // look for the response type
                 if (media != null)
                 {
                     mediaFiles = media.MediaFiles.ToArray();
                     numResponseTypes = mediaFiles.Count(x => x.ResponseType.Id == responseTypeId);
                 }
+
+                // if no response type then look in public library
+                if (numResponseTypes == 0)
+                {
+                    residentId = PublicMediaSource.Id;
+                    mediaFiles = _opsClient.GetPublicMediaFiles().MediaFiles.ToArray();
+                    numResponseTypes = mediaFiles.Count(x => x.ResponseType.Id == responseTypeId);
+                }
             }
 
-            if (numResponseTypes == 0)
-            {
-                residentId = PublicMediaSource.Id;
-                mediaFiles = _opsClient.GetPublicMediaFiles().MediaFiles.ToArray();
-            }
-
-            if (mediaFiles != null)
-                files = GetFiles(mediaFiles.ToArray(), residentId, responseTypeId, mediaPathTypeId);
-
-            return files;
+            return (mediaFiles != null && numResponseTypes > 0)
+                ? GetFiles(mediaFiles.ToArray(), residentId, responseTypeId, mediaPathTypeId)
+                : files;
         }
 
         private string[] GetFiles(ICollection<MediaResponseType> mediaFiles, int residentId, int responseTypeId, int mediaPathTypeId)

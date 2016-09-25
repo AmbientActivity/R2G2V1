@@ -323,6 +323,7 @@ namespace Keebee.AAT.StateMachineService
 
         private void LoadConfig()
         {
+            if (_activeConfig != null) return;
             try
             {
                 var config = _opsClient.GetActiveConfigDetails();

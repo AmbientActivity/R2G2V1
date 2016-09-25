@@ -1,4 +1,5 @@
-﻿using Keebee.AAT.BusinessRules;
+﻿using System.Configuration;
+using Keebee.AAT.BusinessRules;
 using Keebee.AAT.SystemEventLogging;
 using Keebee.AAT.MessageQueuing;
 using Keebee.AAT.RESTClient;
@@ -50,12 +51,16 @@ namespace Keebee.AAT.Administrator.Controllers
 
         public string ReinstallServices()
         {
+            var smsPath = ConfigurationManager.AppSettings["StateMachineServiceLocation"];
+            var phidgetPath = ConfigurationManager.AppSettings["PhidgetServiceLocation"];
+            var rfidPath = ConfigurationManager.AppSettings["RfidReaderServiceLocation"];
+
             _messageQueueDisplaySms.Send(CreateDisplayMessageBody(false));
             _messageQueueDisplayPhidget.Send(CreateDisplayMessageBody(false));
 
             // uninstall / reinstall the services
             var rules = new UtilityRules {EventLogger = _systemEventLogger};
-            var msg = rules.ReinstallServices();
+            var msg = rules.ReinstallServices(smsPath, phidgetPath, rfidPath);
 
             if (msg.Length != 0) return msg;
 

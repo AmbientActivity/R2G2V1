@@ -1,9 +1,9 @@
 ﻿using Keebee.AAT.SystemEventLogging;
+using Keebee.AAT.Shared;
 using System;
 using System.Configuration.Install;
 using System.Diagnostics;
 using System.ServiceProcess;
-using Keebee.AAT.Shared;
 using System.Linq;
 
 namespace Keebee.AAT.BusinessRules
@@ -90,25 +90,19 @@ namespace Keebee.AAT.BusinessRules
             return string.Empty;
         }
 
-        public string ReinstallServices()
+        public string ReinstallServices(string smsPath, string phidgetPath, string rfidPath)
         {
-            var servicePath = new ServicesPath();
-            var exePathSms = servicePath.StateMachine;
-            var exePathPhidget = servicePath.Phidget;
-            var exePathRfidReader = servicePath.RfidReader;
+            var exePathSms = $@"{smsPath}\{ServiceName.StateMachineExe}";
+            var exePathPhidget = $@"{phidgetPath}\{ServiceName.PhidgetExe}";
+            var exePathRfidReader = $@"{rfidPath}\{ServiceName.RfidReaderExe}";
 
             try
             {
-                var msg = ServiceInstaller.Uninstall(exePathRfidReader);
+                ServiceInstaller.Uninstall(exePathRfidReader);
+                ServiceInstaller.Uninstall(exePathPhidget);
+                ServiceInstaller.Uninstall(exePathSms);
 
-                if (msg.Length == 0)
-                    msg = ServiceInstaller.Uninstall(exePathPhidget);
-
-                if (msg.Length == 0)
-                    ServiceInstaller.Uninstall(exePathSms);
-
-                if (msg.Length == 0)
-                    msg = ServiceInstaller.Install(exePathSms);
+                var msg = ServiceInstaller.Install(exePathSms);
 
                 if (msg.Length == 0)
                     ServiceInstaller.Install(exePathPhidget);

@@ -55,7 +55,7 @@ package
 			painterArray = new Array();
 			xml = new XML(xmlString);
 			
-			if (numChildren == 1) {
+			if (numChildren > 0) {
 				stopAllMovieClips();
 				movieClip.removeChildAt(0);
 				removeChild(movieClip);

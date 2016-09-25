@@ -7,22 +7,23 @@
 
  $eventSources = @(
     # windows services
-    "R2G2 State Machine Service,R2G2StateMachineService",
-    "R2G2 Phidget Service,R2G2PhidgetService",
-    "R2G2 Rfid Reader Service,R2G2RfidReaderService",
+    "R2G2 State Machine Service, R2G2StateMachineService",
+    "R2G2 Phidget Service, R2G2PhidgetService",
+    "R2G2 Rfid Reader Service, R2G2RfidReaderService",
+    "R2G2 Keep IIS Alive Service, R2G2KeepIISAliveService"
 
     # Display app
     "R2G2 Display,R2G2Display",
 
     # shared
-    "R2G2 Message Queuing,R2G2MessageQueuing",
-    "R2G2 Event Log,R2G2EventLog",
+    "R2G2 Message Queuing, R2G2MessageQueuing",
+    "R2G2 Event Log, R2G2EventLog",
 
     #scheduled tasks
-    "R2G2 Automated Export,R2G2AutomatedExport"
+    "R2G2 Automated Export, R2G2AutomatedExport"
 
     #admin interface
-    "R2G2 Administrator Interface,R2G2AdministratorInterface"
+    "R2G2 Administrator Interface, R2G2AdministratorInterface"
  )
  
  # loop through each event log, source pair to create the source on the specified log if it does not exist.

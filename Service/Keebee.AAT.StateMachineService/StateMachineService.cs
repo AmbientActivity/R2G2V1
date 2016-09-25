@@ -3,8 +3,6 @@ using Keebee.AAT.RESTClient;
 using Keebee.AAT.MessageQueuing;
 using Keebee.AAT.Shared;
 using Keebee.AAT.SystemEventLogging;
-using System.Net;
-using System.Threading;
 using System;
 using System.Web.Script.Serialization;
 using System.ServiceProcess;
@@ -15,9 +13,6 @@ namespace Keebee.AAT.StateMachineService
 {
     public partial class StateMachineService : ServiceBase
     {
-        private const string UrlKeepAlive = "http://localhost/Keebee.AAT.Operations/api/status";
-        private const string UrlKeepAliveAdmin = "http://localhost/Keebee.AAT.Administrator";
-
         // operations REST client
         private readonly IOperationsClient _opsClient;
 
@@ -58,80 +53,11 @@ namespace Keebee.AAT.StateMachineService
             })
             { SystemEventLogger = _systemEventLogger };
 
-            var keepAliveThread = new Thread(KeepAlive);
-            keepAliveThread.Start();
+            //var keepAliveThread = new Thread(KeepAlive);
+            //keepAliveThread.Start();
 
-            var keepAliveThreadAdmin = new Thread(KeepAliveAdmin);
-            keepAliveThreadAdmin.Start();
-        }
-
-        private void KeepAlive()
-        {
-            while (true)
-            {
-                if (_activeResident != null)
-                {
-                    try
-                    {
-                        var req = (HttpWebRequest) WebRequest.Create(UrlKeepAlive);
-                        var response = (HttpWebResponse) req.GetResponse();
-
-                        if (response.StatusCode != HttpStatusCode.OK)
-                            _systemEventLogger.WriteEntry(
-                                $"Error accessing api.{Environment.NewLine}StatusCode: {response.StatusCode}");
-                    }
-                    catch (Exception ex)
-                    {
-                        _systemEventLogger.WriteEntry(
-                                $"Error accessing api.{Environment.NewLine}Error: {ex.Message}");
-                    }
-                }
-
-                try
-                {
-                    Thread.Sleep(60000);
-                }
-
-                catch (ThreadAbortException)
-                {
-                    break;
-                }
-            }
-        }
-
-        private void KeepAliveAdmin()
-        {
-            while (true)
-            {
-                try
-                {
-                    var req = (HttpWebRequest)WebRequest.Create(UrlKeepAliveAdmin);
-                    var response = (HttpWebResponse)req.GetResponse();
-
-                    if (_activeResident != null)
-                    {
-                        if (response.StatusCode != HttpStatusCode.OK)
-                            _systemEventLogger.WriteEntry(
-                                $"Error accessing admin sitet.{Environment.NewLine}StatusCode: {response.StatusCode}");
-
-                    }
-                }
-                catch (Exception ex)
-                {
-                    _systemEventLogger.WriteEntry(
-                            $"Error accessing admin site.{Environment.NewLine}Error: {ex.Message}");
-                }
-
-                try
-                {
-                    Thread.Sleep(60000);
-                }
-
-                catch (ThreadAbortException)
-                {
-                    break;
-                }
-            }
+            //var keepAliveThreadAdmin = new Thread(KeepAliveAdmin);
+            //keepAliveThreadAdmin.Start();
         }
 
         private void InitializeMessageQueueListeners()

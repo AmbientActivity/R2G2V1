@@ -2,6 +2,12 @@
 
 namespace Keebee.AAT.Shared
 {
+    public static class KeepAliveUrl
+    {
+        public const string OperationsApi = "http://localhost/Keebee.AAT.Operations/api/status";
+        public const string AdministratorHome = "http://localhost/Keebee.AAT.Administrator";
+    }
+
     public class MediaSourcePath
     {
         private const string SqlServerFilestream = @"sqlexpress\KeebeeAATFilestream\Media";

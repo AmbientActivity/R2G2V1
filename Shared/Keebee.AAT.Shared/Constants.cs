@@ -2,6 +2,15 @@
 
 namespace Keebee.AAT.Shared
 {
+    public class ServicesPath
+    {
+        private const string RootServicePath = @"Source\Repos\R2G2V1\Service";
+
+        public string StateMachine = $@"C:\Users\{Environment.UserName}\{RootServicePath}\Keebee.AAT.StateMachineService\bin\Debug\Keebee.AAT.StateMachineService.exe";
+        public string Phidget = $@"C:\Users\{Environment.UserName}\{RootServicePath}\Keebee.AAT.PhidgetService\bin\Debug\Keebee.AAT.PhidgetService.exe";
+        public string RfidReader = $@"C:\Users\{Environment.UserName}\{RootServicePath}\Keebee.AAT.RFIDReaderService\bin\Debug\Keebee.AAT.RFIDReaderService.exe";
+    }
+
     public class MediaSourcePath
     {
         private const string SqlServerFilestream = @"sqlexpress\KeebeeAATFilestream\Media";
@@ -11,6 +20,13 @@ namespace Keebee.AAT.Shared
         public string ExportEventLogRoot = $@"\\{Environment.MachineName}\{SqlServerFilestream}\Exports\EventLog";
         public string MatchingGamePublicSounds = $@"\\{Environment.MachineName}\{SqlServerFilestream}\Profiles\0\sounds";
         public string MatchingGamePublicShapes = $@"\\{Environment.MachineName}\{SqlServerFilestream}\Profiles\0\shapes";
+    }
+
+    public static class ServiceName
+    {
+        public const string StateMachine = "StateMachineService";
+        public const string Phidget = "PhidgetService";
+        public const string RfidReader = "RfidReaderService";
     }
 
     public enum RotationSensorStep

@@ -1,5 +1,4 @@
-﻿using Keebee.AAT.Display.Extensions;
-using Keebee.AAT.SystemEventLogging;
+﻿using Keebee.AAT.SystemEventLogging;
 using AxShockwaveFlashObjects;
 using System;
 using System.Text;
@@ -111,20 +110,27 @@ namespace Keebee.AAT.Display.UserControls
             axShockwaveFlash1.CallFunction("<invoke name=\"stopImage\"></invoke>");
         }
 
-        private static string[] GetValidatedFiles(IEnumerable<string> files)
+        private string[] GetValidatedFiles(IEnumerable<string> files)
         {
             var validFiles = new Collection<string>();
 
-            ImageCodecInfo[] infos = ImageCodecInfo.GetImageEncoders();
-            string ext = infos.Aggregate("", (current, info) => current + (info.FilenameExtension + ";"));
-
-            foreach (var file in files)
+            try
             {
-                var extension = Path.GetExtension(file);
-                if (extension != null && ext.ToUpper().IndexOf(extension.ToUpper(), StringComparison.Ordinal) >= 0)
+                ImageCodecInfo[] infos = ImageCodecInfo.GetImageEncoders();
+                string ext = infos.Aggregate("", (current, info) => current + (info.FilenameExtension + ";"));
+
+                foreach (var file in files)
                 {
-                    validFiles.Add(file);
+                    var extension = Path.GetExtension(file);
+                    if (extension != null && ext.ToUpper().IndexOf(extension.ToUpper(), StringComparison.Ordinal) >= 0)
+                    {
+                        validFiles.Add(file);
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                _systemEventLogger.WriteEntry($"SlideViewerFlash.GetValidatedFiles: {ex.Message}", EventLogEntryType.Error);
             }
 
             return validFiles.ToArray();
@@ -132,24 +138,45 @@ namespace Keebee.AAT.Display.UserControls
 
         private void InitializeFlash()
         {
-            var swf = Path.Combine(Application.StartupPath, "SlideViewer.swf");
-            axShockwaveFlash1.LoadMovie(0, swf);
+            try
+            {
+                var swf = Path.Combine(Application.StartupPath, "SlideViewer.swf");
+                axShockwaveFlash1.LoadMovie(0, swf);
 
-            axShockwaveFlash1.CallFunction("<invoke name=\"initializeMovie\"></invoke>");
+                axShockwaveFlash1.CallFunction("<invoke name=\"initializeMovie\"></invoke>");
+            }
+            catch (Exception ex)
+            {
+                _systemEventLogger.WriteEntry($"SlideViewerFlash.InitializeFlash: {ex.Message}", EventLogEntryType.Error);
+            }
         }
 
         private void DisplayImage()
         {
-            var filename = _images[_currentImageIndex];
-            var xml = GetXmlString(filename);
+            try
+            {
+                var filename = _images[_currentImageIndex];
+                var xml = GetXmlString(filename);
 
-            axShockwaveFlash1.CallFunction(
-                $"<invoke name=\"showImage\"><arguments><string>{xml}</string></arguments></invoke>");
+                axShockwaveFlash1.CallFunction(
+                    $"<invoke name=\"showImage\"><arguments><string>{xml}</string></arguments></invoke>");
+            }
+            catch (Exception ex)
+            {
+                _systemEventLogger.WriteEntry($"SlideViewerFlash.DisplayImage: {ex.Message}", EventLogEntryType.Error);
+            }
         }
 
         private void HideImage()
         {
-            axShockwaveFlash1.CallFunction("<invoke name=\"hideImage\"></invoke>");
+            try
+            {
+                axShockwaveFlash1.CallFunction("<invoke name=\"hideImage\"></invoke>");
+            }
+            catch (Exception ex)
+            {
+                _systemEventLogger.WriteEntry($"SlideViewerFlash.HideImage: {ex.Message}", EventLogEntryType.Error);
+            }
         }
 
         private static string GetXmlString(string file)
@@ -169,8 +196,15 @@ namespace Keebee.AAT.Display.UserControls
             {
                 if (_currentImageIndex == _totalImages)
                     RaiseSlideShowCompleteEvent();
+                else
+                    DisplayImage();
             }
-            DisplayImage();
+            else
+            {
+                if (_currentImageIndex == _totalImages)
+                    _currentImageIndex = 0;
+                DisplayImage();
+            }
         }
 
         // raised by the shockwave activex component
@@ -190,7 +224,7 @@ namespace Keebee.AAT.Display.UserControls
             }
             else
             {
-                SlideShowCompleteEvent(new object(), new EventArgs());
+                SlideShowCompleteEvent?.Invoke(new object(), new EventArgs());
             }
         }
 

@@ -387,7 +387,7 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\PublicMediaController.cs" />
     <Compile Include="Controllers\ResidentsController.cs" />
-    <Compile Include="Controllers\ServicesController.cs" />
+    <Compile Include="Controllers\UtilitiesController.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="FileManagement\FileManager.cs" />
     <Compile Include="Global.asax.cs">
@@ -422,7 +422,7 @@
     <Content Include="UploadHandler.ashx" />
     <Content Include="Views\Residents\_AddPublicMedia.cshtml" />
     <Content Include="Views\PublicMedia\Index.cshtml" />
-    <Content Include="Views\Services\Index.cshtml" />
+    <Content Include="Views\Utilities\Index.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

@@ -18,6 +18,7 @@ namespace Keebee.AAT.RESTClient
         // GET
         IEnumerable<Config> GetConfigs();
         Config GetConfig(int id);
+        Config GetActiveConfig();
         Config GetConfigByDescription(string desciption);
         ConfigDetail GetConfigDetail(int id);
         IEnumerable<ConfigDetail> GetConfigDetails();
@@ -90,6 +91,7 @@ namespace Keebee.AAT.RESTClient
         // configurations
         private const string UrlConfigs = "configs";
         private const string UrlConfig = "configs/{0}";
+        private const string UrlActiveConfig = "configs/active";
         private const string UrlConfigByDescription = "configs?description={0}";
         private const string UrlConfigWithDetails = "configs/{0}/details";
         private const string UrlActiveConfigDetails = "configs/active/details";
@@ -188,6 +190,17 @@ namespace Keebee.AAT.RESTClient
         public Config GetConfig(int configId)
         {
             var data = Get(string.Format(UrlConfig, configId));
+            if (data == null) return null;
+
+            var serializer = new JavaScriptSerializer();
+            var config = serializer.Deserialize<Config>(data);
+
+            return config;
+        }
+
+        public Config GetActiveConfig()
+        {
+            var data = Get(UrlActiveConfig);
             if (data == null) return null;
 
             var serializer = new JavaScriptSerializer();

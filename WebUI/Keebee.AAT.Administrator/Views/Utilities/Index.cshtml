@@ -1,0 +1,30 @@
+﻿
+@{
+    ViewBag.Title = "Maintenance Utilities";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        winservices.management.init();
+    });
+</script>
+
+
+<div class="container-fluid">
+    <div>
+        <h3>Service Utilities</h3>
+        <span>Various techniques for reactivating the services in the even of failure</span>
+    </div>
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <button id="restart" class="btn btn-primary btn-md">Restart Services</button>
+            <button id="reinstall" class="btn btn-primary btn-md">Reinstall Services</button>
+        </div>
+    </div>
+</div>
+
+
+
+

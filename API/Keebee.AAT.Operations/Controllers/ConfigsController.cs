@@ -116,6 +116,30 @@ namespace Keebee.AAT.Operations.Controllers
         }
 
         // GET: api/Configs/active
+        [Route("active")]
+        [HttpGet]
+        public async Task<DynamicJsonObject> GetActive()
+        {
+            var config = new Config();
+
+            await Task.Run(() =>
+            {
+                config = _configService.GetActiveDetails();
+            });
+
+            if (config == null) return new DynamicJsonObject(new ExpandoObject());
+
+            dynamic exObj = new ExpandoObject();
+
+            exObj.Id = config.Id;
+            exObj.Description = config.Description;
+            exObj.IsActive = config.IsActive;
+            exObj.IsActiveEventLog = config.IsActiveEventLog;
+
+            return new DynamicJsonObject(exObj);
+        }
+
+        // GET: api/Configs/active/details
         [Route("active/details")]
         [HttpGet]
         public async Task<DynamicJsonObject> GetActiveDetails()

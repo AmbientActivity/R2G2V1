@@ -668,7 +668,7 @@ namespace Keebee.AAT.Display
                 // set any properties that can't be set in the constructor (because they are not initialized until now)
                 SetPostLoadProperties();
 
-                // inform the state machine service that the display is now active and idle
+                // inform the services that the display is now active
                 _messageQueueDisplaySms.Send(CreateDisplayMessageBody(true));
                 _messageQueueDisplayPhidget.Send(CreateDisplayMessageBody(true));
 

@@ -10,6 +10,7 @@ namespace Keebee.AAT.Operations.Service.Services
     {
         IEnumerable<Config> Get();
         Config Get(int id);
+        Config GetActive();
         Config GetByDescription(string description);
         Config GetActiveDetails();
         int Post(Config config);
@@ -41,6 +42,17 @@ namespace Keebee.AAT.Operations.Service.Services
                 .ByKey(id)
                 .Expand("ConfigDetails($expand=PhidgetType,PhidgetStyleType,ResponseType)")
                 .GetValue();
+
+            return config;
+        }
+
+        public Config GetActive()
+        {
+            var container = new Container(new Uri(ODataHost.Url));
+
+            var config = container.Configs
+                .AddQueryOption("$filter", "IsActive")
+                .Single();
 
             return config;
         }

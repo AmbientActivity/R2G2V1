@@ -16,38 +16,6 @@ namespace Keebee.AAT.BusinessRules
             set { _systemEventLogger = value; }
         }
 
-        public void StartService(string serviceName, int timeoutMilliseconds)
-        {
-            var service = new ServiceController(serviceName);
-            try
-            {
-                var timeout = TimeSpan.FromMilliseconds(timeoutMilliseconds);
-
-                service.Start();
-                service.WaitForStatus(ServiceControllerStatus.Running, timeout);
-            }
-            catch (Exception ex)
-            {
-                _systemEventLogger.WriteEntry($"StartService: {ex.Message}", EventLogEntryType.Error);
-            }
-        }
-
-        public void StopService(string serviceName, int timeoutMilliseconds)
-        {
-            var service = new ServiceController(serviceName);
-            try
-            {
-                var timeout = TimeSpan.FromMilliseconds(timeoutMilliseconds);
-
-                service.Stop();
-                service.WaitForStatus(ServiceControllerStatus.Stopped, timeout);
-            }
-            catch (Exception ex)
-            {
-                _systemEventLogger.WriteEntry($"StopService: {ex.Message}", EventLogEntryType.Error);
-            }
-        }
-
         public string RestartServices()
         {
             try
@@ -61,25 +29,24 @@ namespace Keebee.AAT.BusinessRules
                 if (service.CanStop)
                 {
                     service.Stop();
-                    service.WaitForStatus(ServiceControllerStatus.Stopped, timeout);
+                    service.WaitForStatus(ServiceControllerStatus.Stopped);
+                    while (StateMachineIsInstalled()) { }
                 }
 
                 service.Start();
-                service.WaitForStatus(ServiceControllerStatus.Running, timeout);
+                service.WaitForStatus(ServiceControllerStatus.Running);
 
-                // wait for the duplicate to disappear
-                while (StateMachineIsMultiple()) { }
-
-                // state machine
+                // rfid reader
                 service = new ServiceController(ServiceName.RfidReader);
 
                 service.Start();
-                service.WaitForStatus(ServiceControllerStatus.Running, timeout);
+                service.WaitForStatus(ServiceControllerStatus.Running);
 
+                // phidget
                 service = new ServiceController(ServiceName.Phidget);
 
                 service.Start();
-                service.WaitForStatus(ServiceControllerStatus.Running, timeout);
+                service.WaitForStatus(ServiceControllerStatus.Running);
             }
             catch (Exception ex)
             {
@@ -102,6 +69,8 @@ namespace Keebee.AAT.BusinessRules
                 ServiceInstaller.Uninstall(exePathPhidget);
                 ServiceInstaller.Uninstall(exePathSms);
 
+                while (StateMachineIsInstalled()) { }
+
                 var msg = ServiceInstaller.Install(exePathSms);
 
                 if (msg.Length == 0)
@@ -109,9 +78,6 @@ namespace Keebee.AAT.BusinessRules
 
                 if (msg.Length == 0)
                     ServiceInstaller.Install(exePathRfidReader);
-
-                // wait for the duplicate to disappear
-                while (StateMachineIsMultiple()) { }
 
                 return msg;
             }
@@ -123,10 +89,10 @@ namespace Keebee.AAT.BusinessRules
             }
         }
 
-        private static bool StateMachineIsMultiple()
+        private static bool StateMachineIsInstalled()
         {
             var processes = Process.GetProcessesByName("Keebee.AAT.StateMachineService");
-            return (processes.Count() > 1);
+            return (processes.Any());
         }
 
         private static class ServiceInstaller
@@ -139,7 +105,7 @@ namespace Keebee.AAT.BusinessRules
                     ManagedInstallerClass.InstallHelper(
                         new string[] { exePath });
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     return ex.Message;
                 }

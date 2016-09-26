@@ -102,6 +102,30 @@ namespace Keebee.AAT.Operations.Controllers
             return new DynamicJsonObject(exObj);
         }
 
+        // GET: api/RfidEventLogs?residentId=6
+        [HttpGet]
+        public async Task<DynamicJsonObject> GetForResident(int residentId)
+        {
+            IEnumerable<RfidEventLog> rfidEventLogs = new Collection<RfidEventLog>();
+
+            await Task.Run(() =>
+            {
+                rfidEventLogs = _rfidEventLogService.GetForResident(residentId);
+            });
+
+            if (rfidEventLogs == null) return new DynamicJsonObject(new ExpandoObject());
+
+            dynamic exObj = new ExpandoObject();
+            exObj.RfidEventLogs = rfidEventLogs
+                .Select(x => new
+                {
+                    x.Id,
+                    x.Description
+                });
+
+            return new DynamicJsonObject(exObj);
+        }
+
         // POST: api/RfidEventLogs
         [HttpPost]
         public void Post([FromBody]string value)

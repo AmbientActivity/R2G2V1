@@ -11,6 +11,7 @@ namespace Keebee.AAT.Operations.Service.Services
         IEnumerable<RfidEventLog> Get();
         RfidEventLog Get(int id);
         IEnumerable<RfidEventLog> GetForDate(string date);
+        IEnumerable<RfidEventLog> GetForResident(int residentId);
         void Post(RfidEventLog rfidEventLog);
         void Patch(int id, RfidEventLog rfidEventLog);
         void Delete(int id);
@@ -61,6 +62,16 @@ namespace Keebee.AAT.Operations.Service.Services
             var rfidEventLogs = container.RfidEventLogs.AddQueryOption("$filter", filter)
                 .Expand("Resident")
                 .ToList();
+
+            return rfidEventLogs;
+        }
+
+        public IEnumerable<RfidEventLog> GetForResident(int residentId)
+        {
+            var container = new Container(new Uri(ODataHost.Url));
+
+            var rfidEventLogs = container.RfidEventLogs
+                .AddQueryOption("$filter", $"ResidentId eq {residentId}");
 
             return rfidEventLogs;
         }

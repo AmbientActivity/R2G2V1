@@ -4,6 +4,8 @@ namespace Keebee.AAT.RESTClient
 {
     public class RfidEventLog
     {
+        public int Id { get; set; }
+
         // for insert
         public int? ResidentId { get; set; }
         public string Description { get; set; }

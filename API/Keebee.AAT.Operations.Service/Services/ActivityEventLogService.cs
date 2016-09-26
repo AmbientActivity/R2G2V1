@@ -13,6 +13,7 @@ namespace Keebee.AAT.Operations.Service.Services
         IEnumerable<ActivityEventLog> GetForDate(string date);
         IEnumerable<ActivityEventLog> GetForConfig(int configId);
         IEnumerable<ActivityEventLog> GetForConfigDetail(int configDetailId);
+        IEnumerable<ActivityEventLog> GetForResident(int residentId);
         void Post(ActivityEventLog activityEventLog);
         void Patch(int id, ActivityEventLog activityEventLog);
         void Delete(int id);
@@ -87,6 +88,16 @@ namespace Keebee.AAT.Operations.Service.Services
             var activityEventLogs = container.ActivityEventLogs
                 .AddQueryOption("$filter", $"ConfigDetailId eq {configDetailId}")
                 .Expand("Resident,ConfigDetail");
+
+            return activityEventLogs;
+        }
+
+        public IEnumerable<ActivityEventLog> GetForResident(int residentId)
+        {
+            var container = new Container(new Uri(ODataHost.Url));
+
+            var activityEventLogs = container.ActivityEventLogs
+                .AddQueryOption("$filter", $"ResidentId eq {residentId}");
 
             return activityEventLogs;
         }

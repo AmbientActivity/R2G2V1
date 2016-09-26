@@ -223,12 +223,8 @@
                                 label: "Yes, Delete",
                                 cssClass: "btn-danger",
                                 action: function (dialog) {
-                                    var result = self.deleteResident(row.id);
-                                    lists.ResidentList = result.ResidentList;
-                                    createResidentArray(lists.ResidentList);
-                                    self.sort({ afterSave: true });
+                                    self.deleteResident(row.id);
                                     dialog.close();
-                                    $("body").css("cursor", "default");
                                 }
                             }
                         ]
@@ -372,28 +368,41 @@
                 self.deleteResident = function (id) {
                     $("body").css("cursor", "wait");
 
-                    var result;
+                    $.blockUI({ message: "<h4>Deleting resident...</h4>" });
 
                     $.ajax({
                         type: "POST",
-                        async: false,
+                        async: true,
+                        traditional: true,
                         url: site.url + "Residents/Delete/",
                         data: { id: id },
                         dataType: "json",
-                        traditional: true,
-                        failure: function () {
-                            $("body").css("cursor", "default");
-                            $("#validation-container").html("");
-                        },
                         success: function (data) {
-                            result = data;
-                        },
+
+                            $.unblockUI();
+                            $("body").css("cursor", "default");
+                            if (data.Success) {
+                                lists.ResidentList = data.ResidentList;
+                                createResidentArray(lists.ResidentList);
+                                self.sort({ afterSave: true });
+                            } else {
+                            BootstrapDialog.show({
+                                type: BootstrapDialog.TYPE_DANGER,
+                                title: "Delete Error",
+                                message: data.ErrorMessage
+                            });
+                                    }
+                                },
                         error: function (data) {
-                            result = data;
+                            $.unblockUI();
+                            $("body").css("cursor", "default");
+                            BootstrapDialog.show({
+                                type: BootstrapDialog.TYPE_DANGER,
+                                title: "Delete Error",
+                                message: "Unexpected Error\n" + data
+                            });
                         }
                     });
-
-                    return result;
                 };
             };
 

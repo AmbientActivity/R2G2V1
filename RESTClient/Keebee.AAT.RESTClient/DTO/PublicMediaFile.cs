@@ -28,4 +28,9 @@ namespace Keebee.AAT.RESTClient
         public int MediaPathTypeId { get; set; }
         public int ResponseTypeId { get; set; }
     }
+
+    public class PublicMediaStreamIdList
+    {
+        public IEnumerable<PublicMediaFile> MediaFiles;
+    }
 }

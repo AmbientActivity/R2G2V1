@@ -52,14 +52,17 @@ namespace Keebee.AAT.RESTClientTests
         }
 
         [TestMethod]
-        public void GetAmbientMedia()
+        public void GetPublicMediaFilesForStreamId()
         {
-            //// Act
-            //var media = _client.GetAmbientMediaFiles();
+            // Arrange
+            var streamId = new Guid("0d7434bc-cc81-e611-8aa6-90e6bac7161a");
 
-            //// Assert
-            //Assert.IsNotNull(media);
-            //Assert.IsTrue(media.MediaFiles.Any());
+            // Act
+            var streamIds = _client.GetPublicMediaFilesForStreamId(streamId);
+
+            // Assert
+            Assert.IsNotNull(streamIds);
+            Assert.IsTrue(streamIds.Any());
         }
 
         [TestMethod]

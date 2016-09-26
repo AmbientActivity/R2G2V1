@@ -4,6 +4,8 @@ namespace Keebee.AAT.RESTClient
 {
     public class GameEventLog
     {
+        public int Id { get; set; }
+
         // for insert
         public int? ResidentId { get; set; }
         public int GameTypeId { get; set; }

@@ -43,15 +43,21 @@ namespace Keebee.AAT.Administrator.Controllers
             string lastname, 
             string sortcolumn, 
             int? mediaPathTypeId,
+
+            //TODO: for when 'choose from public library' gets implemented
             //int? mediaSourceTypeId,
             string myuploader, 
             int? sortdescending)
         {
             // first time loading
             if (mediaPathTypeId == null) mediaPathTypeId = MediaPathTypeId.Images;
+
+            //TODO: for when 'choose from public library' gets implemented
             //if (mediaSourceTypeId == null) mediaSourceTypeId = MediaSourceTypeId.Personal;
 
-            var vm = LoadResidentMediaViewModel(id, rfid, firstname, lastname, mediaPathTypeId, 
+            var vm = LoadResidentMediaViewModel(id, rfid, firstname, lastname, mediaPathTypeId,
+
+                //TODO: for when 'choose from public library' gets implemented
                 //mediaSourceTypeId, 
                 sortcolumn, sortdescending);
 
@@ -59,7 +65,7 @@ namespace Keebee.AAT.Administrator.Controllers
             {
                 uploader.UploadUrl = Response.ApplyAppPathModifier("~/UploadHandler.ashx");
                 uploader.Name = "myuploader";
-                uploader.AllowedFileExtensions = GetAllowedExtensions(mediaPathTypeId);
+                uploader.AllowedFileExtensions = ResidentRules.GetAllowedExtensions(mediaPathTypeId);
                 uploader.MultipleFilesUpload = true;
                 uploader.InsertButtonID = "uploadbutton";
                 vm.UploaderHtml = uploader.Render();
@@ -69,7 +75,6 @@ namespace Keebee.AAT.Administrator.Controllers
                     return View(vm);
 
                 // POST:
-
                 var fileManager = new FileManager { EventLogger = _systemEventLogger };
 
                 // for multiple files the value is string : guid/guid/guid 
@@ -79,7 +84,7 @@ namespace Keebee.AAT.Administrator.Controllers
                     var file = uploader.GetUploadedFile(fileguid);
                     if (file?.FileName == null) continue;
 
-                    if (!IsValidFile(file.FileName, mediaPathTypeId)) continue;
+                    if (!ResidentRules.IsValidFile(file.FileName, mediaPathTypeId)) continue;
 
                     var mediaPathType = GetMediaPathType(mediaPathTypeId);
                     var filePath = $@"{_mediaPath.ProfileRoot}\{id}\{mediaPathType}\{file.FileName}";
@@ -160,7 +165,7 @@ namespace Keebee.AAT.Administrator.Controllers
             {
                 ResidentList = GetResidentList(),
                 SelectedId = residentId,
-                Success = (null == msgs),
+                Success = (null == msgs) && (residentId > 0),
                 ErrorMessages = msgs
             }, JsonRequestBehavior.AllowGet);
         }
@@ -168,31 +173,52 @@ namespace Keebee.AAT.Administrator.Controllers
         [HttpPost]
         public JsonResult Delete(int id)
         {
-            _opsClient.DeleteResident(id);
+            var rules = new ResidentRules {OperationsClient = _opsClient};
+            var result = rules.DeleteResident(id);
 
-            var fileManager = new FileManager { EventLogger = _systemEventLogger };
-            fileManager.DeleteFolders(id);
-
-            return Json(new
-            {
-                ResidentList = GetResidentList(),
-                Success = true,
-            }, JsonRequestBehavior.AllowGet);
-        }
-
-        [HttpPost]
-        public JsonResult DeleteFile(Guid streamId, int residentId, int mediaPathTypeId)
-        {
-            var file = _opsClient.GetMediaFile(streamId);
-
-            if (file != null)
+            if (result.Length == 0)
             {
                 var fileManager = new FileManager { EventLogger = _systemEventLogger };
-                fileManager.DeleteFile($@"{file.Path}\{file.Filename}");
+                fileManager.DeleteFolders(id);
             }
 
             return Json(new
             {
+                Success = (result.Length == 0),
+                ErrorMessage = result,
+                ResidentList = GetResidentList(),
+            }, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        public JsonResult DeleteSelectedMediaFiles(Guid[] streamIds, int residentId, int mediaPathTypeId)
+        {
+            bool success;
+            var errormessage = string.Empty;
+
+            try
+            {
+                foreach (var id in streamIds)
+                {
+                    var file = _opsClient.GetMediaFile(id);
+
+                    if (file == null) continue;
+
+                    var fileManager = new FileManager { EventLogger = _systemEventLogger };
+                    fileManager.DeleteFile($@"{file.Path}\{file.Filename}");
+                }
+                success = true;
+            }
+            catch (Exception ex)
+            {
+                success = false;
+                errormessage = ex.Message;
+            }
+
+            return Json(new
+            {
+                Success = success,
+                ErrorMessage = errormessage,
                 FileList = GetMediaFiles(residentId, mediaPathTypeId)
             }, JsonRequestBehavior.AllowGet);
         }
@@ -258,6 +284,8 @@ namespace Keebee.AAT.Administrator.Controllers
             string firstname, 
             string lastname, 
             int? mediaPathTypeId,
+
+            //TODO: for when 'choose from public library' gets implemented
             //int? mediaSourceTypeId,
             string sortcolumn, 
             int? sortdescending)
@@ -278,6 +306,8 @@ namespace Keebee.AAT.Administrator.Controllers
                 SortColumn = sortcolumn,
                 SortDescending = sortdescending,
                 SelectedMediaPathType = mediaPathTypeId ?? MediaPathTypeId.Images//,
+
+                //TODO: for when 'choose from public library' gets implemented
                 //SelectedMediaSourceType = mediaSourceTypeId ?? MediaSourceTypeId.Personal
             };
 
@@ -328,7 +358,9 @@ namespace Keebee.AAT.Administrator.Controllers
 
             var id = _opsClient.PostResident(r);
 
-            var fileManager = new FileManager { EventLogger = _systemEventLogger };
+            if (id <= 0) return id;
+
+            var fileManager = new FileManager {EventLogger = _systemEventLogger};
             fileManager.CreateFolders(id);
 
             return id;
@@ -355,11 +387,11 @@ namespace Keebee.AAT.Administrator.Controllers
         private IEnumerable<MediaFileViewModel> GetMediaFiles(int id, int mediaPathTypeId)
         {
             var list = new List<MediaFileViewModel>();
-            var residentMediaFiles = _opsClient.GetResidentMediaFilesForResident(id);
+            var residentMedia = _opsClient.GetResidentMediaFilesForResident(id);
 
-            if (residentMediaFiles == null) return list;
+            if (residentMedia == null) return list;
 
-            var mediaPaths = residentMediaFiles.MediaFiles.SelectMany(x => x.Paths)
+            var mediaPaths = residentMedia.MediaFiles.SelectMany(x => x.Paths)
                 .Where(x => x.MediaPathType.Id == mediaPathTypeId)
                 .ToArray();
 
@@ -417,61 +449,6 @@ namespace Keebee.AAT.Administrator.Controllers
             }
 
             return responseTypeId;
-        }
-
-        private static string GetAllowedExtensions(int? mediaPathTypeId)
-        {
-            if (mediaPathTypeId == null) return string.Empty;
-
-            var extensions = string.Empty;
-
-            switch (mediaPathTypeId)
-            {
-                case MediaPathTypeId.Images:
-                case MediaPathTypeId.Pictures:
-                    extensions = "*.jpg,*.jpeg,*.png,*.gif";
-                    break;
-                case MediaPathTypeId.Videos:
-                    extensions = "*.mp4";
-                    break;
-                case MediaPathTypeId.Music:
-                case MediaPathTypeId.Sounds:
-                    extensions = "*.mp3";
-                    break;
-                case MediaPathTypeId.Shapes:
-                    extensions = "*.png";
-                    break;
-            }
-
-            return extensions;
-        }
-
-        private static bool IsValidFile(string filename, int? mediaPathTypeId)
-        {
-            if (mediaPathTypeId == null) return false;
-
-            var isValid = false;
-            var name = filename.ToLower();
-
-            switch (mediaPathTypeId)
-            {
-                case MediaPathTypeId.Images:
-                case MediaPathTypeId.Pictures:
-                    isValid = name.Contains("jpg") || name.Contains("jpeg") || name.Contains("png") || name.Contains("gif");
-                    break;
-                case MediaPathTypeId.Videos:
-                    isValid = name.Contains("mp4");
-                    break;
-                case MediaPathTypeId.Music:
-                case MediaPathTypeId.Sounds:
-                    isValid = name.Contains("mp3");
-                    break;
-                case MediaPathTypeId.Shapes:
-                    isValid = name.Contains("png");
-                    break;
-            }
-
-            return isValid;
         }
     }
 }

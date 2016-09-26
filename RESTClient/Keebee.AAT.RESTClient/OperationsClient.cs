@@ -45,16 +45,22 @@ namespace Keebee.AAT.RESTClient
         MediaPathType GetMediaPathType(int mediaPathTypeId);
         PublicMedia GetPublicMediaFiles();
         PublicMedia GetPublicMediaFilesForResponseType(int responseTypeId);
+        PublicMedia GetPublicMediaFilesForMediaPathType(int mediaPathTypeId);
+        IEnumerable<PublicMediaFile> GetPublicMediaFilesForStreamId(Guid streamId);
+
         IEnumerable<ResidentMedia> GetResidentMediaFiles();
         ResidentMediaFile GetResidentMediaFile(int id);
         ResidentMedia GetResidentMediaFilesForResident(int residentId);
         ResidentMedia GetResidentMediaFilesForResponseType(int responseTypeId);
 
         IEnumerable<ActivityEventLog> GetActivityEventLogsForDate(string date);
-        IEnumerable<GameEventLog> GetGameEventLogsForDate(string date);
         IEnumerable<RfidEventLog> GetRfidEventLogsForDate(string date);
+        IEnumerable<GameEventLog> GetGameEventLogsForDate(string date);
         IEnumerable<ActivityEventLog> GetActivityEventLogsForConfig(int configId);
         IEnumerable<ActivityEventLog> GetActivityEventLogsForConfigDetail(int configDetailId);
+        IEnumerable<ActivityEventLog> GetActivityEventLogsForResident(int residentId);
+        IEnumerable<RfidEventLog> GetRfidEventLogsForResident(int residentId);
+        IEnumerable<GameEventLog> GetGameEventLogsForResident(int residentId);
 
         // POST
         int PostResident(ResidentEdit resident);
@@ -75,11 +81,11 @@ namespace Keebee.AAT.RESTClient
         // DELETE
         void DeleteConfig(int configId);
         void DeleteConfigDetail(int configDetailId);
-
-        void DeleteResident(int residentId);
-        void DeleteActivityEventLogsForResident(int residentId);
-        void DeleteGameEventLogsForResident(int residentId);
-        void DeleteRfidEventLogsForResident(int residentId);
+        string DeletePublicMediaFile(int mediaFileId);
+        string DeleteResident(int residentId);
+        string DeleteActivityEventLog(int activityLogId);
+        string DeleteRfidEventLog(int rfidEventLogId);
+        string DeleteGameEventLog(int gameEventLogId);
     }
 
     public class OperationsClient : IOperationsClient
@@ -123,29 +129,35 @@ namespace Keebee.AAT.RESTClient
         private const string UrlMediaPathType = "mediapathtypes/{0}";
 
         private const string UrlPublicMediaFiles = "publicmediafiles";
+        private const string UrlPublicMediaFile = "publicmediafiles/{0}";
         private const string UrlPublicMediaFilesForResponseType = "publicmediafiles?responseTypeId={0}";
+        private const string UrlPublicMediaFilesForMediaPathType = "publicmediafiles?mediaPathTypeId={0}";
+        private const string UrlPublicMediaFilesForMediaStreamId = "publicmediafiles?streamId={0}";
 
         private const string UrlResidentMediaFiles = "residentmediafiles";
         private const string UrlResidentMediaFile = "residentmediafiles/{0}";
         private const string UrlResidentMediaFilesForResident = "residentmediafiles?residentId={0}";
         private const string UrlResidentMediaFilesForResponseType = "residentmediafiles?responseTypeId={0}";
 
+        // rfid event logs
+        private const string UrlRfidEventLogs = "rfideventlogs";
+        private const string UrlRfidEventLog = "rfideventlogs/{0}";
+        private const string UrlRfidEventLogsForResident = "rfideventlogs?residentId={0}";
+        private const string UrlRfidEventLogsForDate = "rfideventlogs?date={0}";
+
         // activity event logs
         private const string UrlActivityEventLogs = "activityeventlogs";
-        private const string UrlActivityEventLogsForResident = "activityeventlogs?residentId={0}";
+        private const string UrlActivityEventLog = "activityeventlogs/{0}";
         private const string UrlActivityEventLogsForDate = "activityeventlogs?date={0}";
         private const string UrlActivityEventLogsForConfig = "activityeventlogs?configId={0}";
         private const string UrlActivityEventLogsForConfigDetail = "activityeventlogs?configDetailId={0}";
+        private const string UrlActivityEventLogsForResident = "activityeventlogs?residentId={0}";
 
         // game event logs
         private const string UrlGameEventLogs = "gameeventlogs";
+        private const string UrlGameEventLog = "gameeventlogs/{0}";
         private const string UrlGameEventLogsForResident = "gameeventlogs?residentId={0}";
         private const string UrlGameEventLogsForDate = "gameeventlogs?date={0}";
-
-        // rfid event logs
-        private const string UrlRfidEventLogs = "rfideventlogs";
-        private const string UrlRfidEventLogsForResident = "rfideventlogs?residentId={0}";
-        private const string UrlRfidEventLogsForDate = "rfideventlogs?date={0}";
 
         #endregion
 
@@ -350,6 +362,17 @@ namespace Keebee.AAT.RESTClient
         }
 
         // event log
+        public IEnumerable<RfidEventLog> GetRfidEventLogsForDate(string date)
+        {
+            var data = Get(string.Format(UrlRfidEventLogsForDate, date));
+            if (data == null) return null;
+
+            var serializer = new JavaScriptSerializer();
+            var rfidEventLogs = serializer.Deserialize<RfidEventLogList>(data).RfidEventLogs;
+
+            return rfidEventLogs;
+        }
+
         public IEnumerable<ActivityEventLog> GetActivityEventLogsForDate(string date)
         {
             var data = Get(string.Format(UrlActivityEventLogsForDate, date));
@@ -372,16 +395,6 @@ namespace Keebee.AAT.RESTClient
             return gameEventLogs;
         }
 
-        public IEnumerable<RfidEventLog> GetRfidEventLogsForDate(string date)
-        {
-            var data = Get(string.Format(UrlRfidEventLogsForDate, date));
-            if (data == null) return null;
-
-            var serializer = new JavaScriptSerializer();
-            var rfidEventLogs = serializer.Deserialize<RfidEventLogList>(data).RfidEventLogs;
-
-            return rfidEventLogs;
-        }
 
         public IEnumerable<ActivityEventLog> GetActivityEventLogsForConfig(int configId)
         {
@@ -403,6 +416,40 @@ namespace Keebee.AAT.RESTClient
             var activityEventLogs = serializer.Deserialize<ActivityEventLogList>(data).ActivityEventLogs;
 
             return activityEventLogs;
+        }
+
+
+        public IEnumerable<ActivityEventLog> GetActivityEventLogsForResident(int residentId)
+        {
+            var data = Get(string.Format(UrlActivityEventLogsForResident, residentId));
+            if (data == null) return null;
+
+            var serializer = new JavaScriptSerializer();
+            var activityEventLogs = serializer.Deserialize<ActivityEventLogList>(data).ActivityEventLogs;
+
+            return activityEventLogs;
+        }
+
+        public IEnumerable<RfidEventLog> GetRfidEventLogsForResident(int residentId)
+        {
+            var data = Get(string.Format(UrlRfidEventLogsForResident, residentId));
+            if (data == null) return null;
+
+            var serializer = new JavaScriptSerializer();
+            var rfidEventLosg = serializer.Deserialize<RfidEventLogList>(data).RfidEventLogs;
+
+            return rfidEventLosg;
+        }
+
+        public IEnumerable<GameEventLog> GetGameEventLogsForResident(int residentId)
+        {
+            var data = Get(string.Format(UrlGameEventLogsForResident, residentId));
+            if (data == null) return null;
+
+            var serializer = new JavaScriptSerializer();
+            var gameEventLogs = serializer.Deserialize<GameEventLogList>(data).GameEventLogs;
+
+            return gameEventLogs;
         }
 
 
@@ -470,6 +517,7 @@ namespace Keebee.AAT.RESTClient
             return pathType;
         }
 
+
         public PublicMedia GetPublicMediaFiles()
         {
             var data = Get(UrlPublicMediaFiles);
@@ -490,6 +538,28 @@ namespace Keebee.AAT.RESTClient
             var publicMedia = serializer.Deserialize<PublicMedia>(data);
 
             return publicMedia;
+        }
+
+        public PublicMedia GetPublicMediaFilesForMediaPathType(int mediaPathTypeId)
+        {
+            var data = Get(string.Format(UrlPublicMediaFilesForMediaPathType, mediaPathTypeId));
+            if (data == null) return null;
+
+            var serializer = new JavaScriptSerializer();
+            var publicMedia = serializer.Deserialize<PublicMedia>(data);
+
+            return publicMedia;
+        }
+
+        public IEnumerable<PublicMediaFile> GetPublicMediaFilesForStreamId(Guid streamId)
+        {
+            var data = Get(string.Format(UrlPublicMediaFilesForMediaStreamId, streamId));
+            if (data == null) return null;
+
+            var serializer = new JavaScriptSerializer();
+            var mediaStreamIds = serializer.Deserialize<PublicMediaStreamIdList>(data).MediaFiles;
+
+            return mediaStreamIds;
         }
 
         public IEnumerable<ResidentMedia> GetResidentMediaFiles()
@@ -644,24 +714,29 @@ namespace Keebee.AAT.RESTClient
             Delete(string.Format(UrlConfigDetail, configId));
         }
 
-        public void DeleteResident(int residentId)
+        public string DeletePublicMediaFile(int mediaFileId)
         {
-            Delete(string.Format(UrlResident, residentId));
+           return Delete(string.Format(UrlPublicMediaFile, mediaFileId));
         }
 
-        public void DeleteActivityEventLogsForResident(int residentId)
+        public string DeleteResident(int residentId)
         {
-            Delete(string.Format(UrlActivityEventLogsForResident, residentId));
+            return Delete(string.Format(UrlResident, residentId));
         }
 
-        public void DeleteGameEventLogsForResident(int residentId)
+        public string DeleteActivityEventLog(int activityEventLogId)
         {
-            Delete(string.Format(UrlGameEventLogsForResident, residentId));
+            return Delete(string.Format(UrlActivityEventLog, activityEventLogId));
         }
 
-        public void DeleteRfidEventLogsForResident(int residentId)
+        public string DeleteRfidEventLog(int rfidEventLogId)
         {
-            Delete(string.Format(UrlRfidEventLogsForResident, residentId));
+            return Delete(string.Format(UrlRfidEventLog, rfidEventLogId));
+        }
+
+        public string DeleteGameEventLog(int gameEventLogId)
+        {
+            return Delete(string.Format(UrlGameEventLog, gameEventLogId));
         }
 
         // private
@@ -834,8 +909,10 @@ namespace Keebee.AAT.RESTClient
             }
         }
 
-        private void Delete(string url)
+        private string Delete(string url)
         {
+            var result = string.Empty;
+
             try
             {
                 using (var client = new HttpClient())
@@ -854,8 +931,11 @@ namespace Keebee.AAT.RESTClient
 
             catch (Exception ex)
             {
+                result = ex.Message;
                 _systemEventLogger?.WriteEntry($"RESTClient.Delete: {ex.Message}{Environment.NewLine}url:{url}", EventLogEntryType.Error);
             }
+
+            return result;
         }
     }
 }

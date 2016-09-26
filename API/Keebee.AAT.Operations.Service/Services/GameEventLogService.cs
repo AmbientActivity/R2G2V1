@@ -11,6 +11,7 @@ namespace Keebee.AAT.Operations.Service.Services
         IEnumerable<GameEventLog> Get();
         GameEventLog Get(int id);
         IEnumerable<GameEventLog> GetForDate(string date);
+        IEnumerable<GameEventLog> GetForResident(int residentid);
         void Post(GameEventLog gameEventLog);
         void Patch(int id, GameEventLog gameEventLog);
         void Delete(int id);
@@ -61,6 +62,16 @@ namespace Keebee.AAT.Operations.Service.Services
             var gameEventLogs = container.GameEventLogs.AddQueryOption("$filter", filter)
                 .Expand("GameType,Resident")
                 .ToList();
+
+            return gameEventLogs;
+        }
+
+        public IEnumerable<GameEventLog> GetForResident(int residentId)
+        {
+            var container = new Container(new Uri(ODataHost.Url));
+
+            var gameEventLogs = container.GameEventLogs
+                .AddQueryOption("$filter", $"ResidentId eq {residentId}");
 
             return gameEventLogs;
         }

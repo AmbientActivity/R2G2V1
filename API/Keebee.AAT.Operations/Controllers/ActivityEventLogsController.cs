@@ -187,6 +187,30 @@ namespace Keebee.AAT.Operations.Controllers
             return new DynamicJsonObject(exObj);
         }
 
+        // GET: api/ActivityEventLogs?residentId=6
+        [HttpGet]
+        public async Task<DynamicJsonObject> GetForResident(int residentId)
+        {
+            IEnumerable<ActivityEventLog> activityEventLogs = new Collection<ActivityEventLog>();
+
+            await Task.Run(() =>
+            {
+                activityEventLogs = _activityEventLogService.GetForResident(residentId);
+            });
+
+            if (activityEventLogs == null) return new DynamicJsonObject(new ExpandoObject());
+
+            dynamic exObj = new ExpandoObject();
+            exObj.ActivityEventLogs = activityEventLogs
+                .Select(x => new
+                {
+                    x.Id,
+                   x.Description
+                });
+
+            return new DynamicJsonObject(exObj);
+        }
+
         // POST: api/ActivityEventLogs
         [HttpPost]
         public void Post([FromBody]string value)

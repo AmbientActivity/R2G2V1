@@ -69,9 +69,12 @@ function DisableScreen() {
 
             $.extend(config, values);
 
+            //TODO: for when 'choose from public library' gets implemented
+            //var divUpload = $(".upload-action-container");
+            //var divAddPublic = $(".add-public-action-container");
+
             // buttons
-            var divUpload = $(".upload-action-container");
-            var divAddPublic = $(".add-public-action-container");
+            var cmdDelete = $("#delete");
 
             var _sortDescending = false;
             var _currentSortKey = "filename";
@@ -109,6 +112,7 @@ function DisableScreen() {
                 self.description = description;
             }
 
+            //TODO: for when 'choose from public library' gets implemented
             //function MediaSourceType(id, description) {
             //    var self = this;
 
@@ -125,6 +129,7 @@ function DisableScreen() {
                 self.filesize = filesize;
                 self.path = path;
                 self.ispublic = ispublic;
+                self.isselected = false;
             }
 
             function FileViewModel() {
@@ -134,16 +139,23 @@ function DisableScreen() {
 
                 self.files = ko.observableArray([]);
                 self.mediaPathTypes = ko.observableArray([]);
-                self.mediaSourceTypes = ko.observableArray();
                 self.selectedFile = ko.observable();
+
+                //TODO: for when 'choose from public library' gets implemented
+                //self.mediaSourceTypes = ko.observableArray([]);
                 //self.isLoadingMediaSourceTypes = ko.observable(false);
-                self.selectedMediaPathType = ko.observable($("#mediaPathTypeId").val());
                 //self.selectedMediaSourceType = ko.observable($("#mediaSourceTypeId").val());
+
+                self.selectedMediaPathType = ko.observable($("#mediaPathTypeId").val());
                 self.filenameSearch = ko.observable("");
                 self.totalFiles = ko.observable(0);
+                self.selectAllIsSelected = ko.observable(false);
+                self.selectedStreamIds = ko.observable([]);
 
                 createFileArray(lists.FileList);
                 createMediaPathTypeArray(lists.MediaPathTypeList);
+
+                //TODO: for when 'choose from public library' gets implemented
                 //createMediaSourceTypeArray(lists.MediaSourceTypeList);
 
                 function createFileArray(list) {
@@ -226,6 +238,8 @@ function DisableScreen() {
                 };
 
                 self.filteredFiles = ko.computed(function () {
+                    //$("#mediaSourceTypeId").val(self.selectedMediaSourceType());
+
                     return ko.utils.arrayFilter(self.files(), function (f) {
                         //var ispublic = (self.selectedMediaSourceType() === 0);
                         return (
@@ -250,9 +264,8 @@ function DisableScreen() {
                     document.forms[0].submit();
                 }
 
-                self.showDeleteDialog = function (row) {
-                    self.highlightRow(row);
-                    self.showFileDeleteDialog(row);
+                self.showDeleteSelectedDialog = function (row) {
+                    self.showSelectedFileDeleteDialog(row);
                 };
 
                 self.showPreview = function (row) {
@@ -264,14 +277,11 @@ function DisableScreen() {
                     self.showFeatureNotDoneYetDialog();
                 };
 
-                self.showFileDeleteDialog = function (row) {
-                    var id = (typeof row.streamid !== "undefined" ? row.streamid : 0);
-                    if (id <= 0) return;
-
+                self.showSelectedFileDeleteDialog = function () {
                     BootstrapDialog.show({
                         type: BootstrapDialog.TYPE_DANGER,
-                        title: "Delete File?",
-                        message: "Delete the file <i><b>" + row.filename + "." + row.filetype.toLowerCase() + "</b></i>?",
+                        title: "Delete Files?",
+                        message: "Delete all selected files?",
                         closable: false,
                         buttons: [
                             {
@@ -283,11 +293,13 @@ function DisableScreen() {
                                 label: "Yes, Delete",
                                 cssClass: "btn-danger",
                                 action: function (dialog) {
-                                    var result = self.deleteFile(id);
+                                    dialog.close();
+                                    var result = self.deleteSelected();
                                     lists.FileList = result.FileList;
                                     createFileArray(lists.FileList);
                                     self.sort({ afterSave: true });
-                                    dialog.close();
+                                    self.enableDetail();
+                                    
                                     $("body").css("cursor", "default");
                                 }
                             }
@@ -324,66 +336,137 @@ function DisableScreen() {
                     return file;
                 };
 
-                self.highlightRow = function (row) {
-                    if (row == null) return;
+                self.selectAllRows = function () {
+                    $.each(self.files(), function (item, value) {
 
+                        if (self.selectAllIsSelected()) 
+                            self.selectedStreamIds().push(value.streamid);
+                        else
+                            self.selectedStreamIds().pop(value.streamid);
+
+                        value.isselected = self.selectAllIsSelected();
+                        var chk = tblFile.find("#chk_" + value.streamid);
+                        chk.prop("checked", self.selectAllIsSelected());
+                    });
+
+                    self.highlightSelectedRows();
+                    self.enableDetail();
+
+                    return true;
+                };
+
+                self.selectFile = function (row) {
+                    if (typeof row === "undefined") return false;
+                    if (row === null) return false;
+
+                    if (row.isselected)
+                        self.selectedStreamIds().push(row.streamid);
+                    else
+                        self.selectedStreamIds().pop(row.streamid);
+
+                    self.highlightSelectedRows();
+                    self.enableDetail();
+
+                    return true;
+                };
+
+                self.highlightSelectedRows = function () {
                     var rows = tblFile.find("tr:gt(0)");
                     rows.each(function () {
                         $(this).css("background-color", "#ffffff");
                     });
+                    
+                    var selected = self.files()
+                        .filter(function (data) { return data.isselected; });
 
-                    var r = tblFile.find("#row_" + row.streamid);
-                    r.css("background-color", HIGHLIGHT_ROW_COLOUR);
-                    tblFile.attr("tr:hover", HIGHLIGHT_ROW_COLOUR);
+                    $.each(selected, function (item, value) {
+                        var r = tblFile.find("#row_" + value.streamid);
+                        r.css("background-color", HIGHLIGHT_ROW_COLOUR);
+                        tblFile.attr("tr:hover", HIGHLIGHT_ROW_COLOUR);
+                    });
+
+                    return true;
                 };
 
-                self.enableDetail = ko.computed(function () {
-                    //if (self.isLoadingMediaSourceTypes()) return;
-
-                    //var ispublic = self.selectedMediaSourceType() === 0;
-
-                    //  buttons
-                    //if (ispublic) {
-                    //    divAddPublic.removeAttr("hidden");
-                    //    divUpload.attr("hidden", "hidden");
-                    //} else {
-                    //    divAddPublic.attr("hidden", "hidden");
-                     //   divUpload.removeAttr("hidden");
-                    //}
-                });
-
-                self.deleteFile = function (streamid) {
+                self.deleteSelected = function () {
                     $("body").css("cursor", "wait");
 
-                    var result;
+                    var streamIds = self.selectedStreamIds();
+                    var residentId = config.residentid;
                     var mediaPathTypeId = $("#mediaPathTypeId").val();
 
-                        $.ajax({
-                            type: "POST",
-                            async: false,
-                            url: site.url + "Residents/DeleteFile/",
-                            data:
-                            {
-                                streamId: streamid,
-                                residentId: config.residentid,
-                                mediaPathTypeId: mediaPathTypeId
-                            },
-                        dataType: "json",
+                    $.blockUI({ message: "<h4>Deleting files...</h4>" });
+
+                    $.ajax({
+                        type: "POST",
+                        async: true,
                         traditional: true,
+                        url: site.url + "PublicMedia/DeleteSelected/",
+                        data:
+                        {
+                            streamIds: streamIds,
+                            residentId: residentId,
+                            mediaPathTypeId: mediaPathTypeId
+                        },
+                        dataType: "json",
                         failure: function () {
                             $("body").css("cursor", "default");
                             $("#validation-container").html("");
                         },
                         success: function (data) {
-                            result = data;
+                            $.unblockUI();
+                            $("body").css("cursor", "default");
+                            if (data.Success) {
+                                lists.FileList = data.FileList;
+                                createFileArray(lists.FileList);
+                                self.sort({ afterSave: true });
+                                self.enableDetail();
+                            } else {
+                                BootstrapDialog.show({
+                                    type: BootstrapDialog.TYPE_DANGER,
+                                    title: "Delete Error",
+                                    message: data.ErrorMessage
+                                });
+                            }
+
                         },
                         error: function (data) {
-                            result = data;
+                            $.unblockUI();
+                            $("body").css("cursor", "default");
+                            BootstrapDialog.show({
+                                type: BootstrapDialog.TYPE_DANGER,
+                                title: "Delete Error",
+                                message: "Unexpected Error\n" + data
+                            });
                         }
                     });
-
-                    return result;
                 };
+
+                self.enableDetail = function() {
+                    var selected = self.files()
+                        .filter(function(data) { return data.isselected; });
+
+                    if (selected.length > 0)
+                        cmdDelete.removeAttr("disabled");
+                    else
+                        cmdDelete.attr("disabled", "disabled");
+                };
+
+                //TODO: for when 'add from public library' gets implemented
+                //self.enableDetail = ko.computed(function () {
+                //if (self.isLoadingMediaSourceTypes()) return;
+
+                //var ispublic = self.selectedMediaSourceType() === 0;
+
+                //  buttons
+                //if (ispublic) {
+                //    divAddPublic.removeAttr("hidden");
+                //    divUpload.attr("hidden", "hidden");
+                //} else {
+                //    divAddPublic.attr("hidden", "hidden");
+                //   divUpload.removeAttr("hidden");
+                //}
+                //});
             };
 
             //---------------------------------------------- VIEW MODEL (END) -----------------------------------------------------

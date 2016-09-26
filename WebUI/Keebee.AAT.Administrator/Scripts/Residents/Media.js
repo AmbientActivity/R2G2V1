@@ -401,7 +401,7 @@ function DisableScreen() {
                         type: "POST",
                         async: true,
                         traditional: true,
-                        url: site.url + "PublicMedia/DeleteSelected/",
+                        url: site.url + "Residents/DeleteSelectedMediaFiles/",
                         data:
                         {
                             streamIds: streamIds,

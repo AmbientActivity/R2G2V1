@@ -101,7 +101,7 @@ namespace Keebee.AAT.BusinessRules
         public string DeletePublicMediaFile(Guid streamId, int reponseTypeId)
         {
             var id = _opsClient.GetPublicMediaFilesForStreamId(streamId)
-                .Single(x => x.ResponseType.Id == reponseTypeId).Id;
+                .First(x => x.ResponseType.Id == reponseTypeId).Id;
 
             return _opsClient.DeletePublicMediaFile(id);
         }

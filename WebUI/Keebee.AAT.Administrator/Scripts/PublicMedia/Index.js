@@ -314,8 +314,8 @@ function DisableScreen() {
                 };
 
                 self.selectAllRows = function () {
+                    self.selectedStreamIds([]);
                     $.each(self.filteredFiles(), function (item, value) {
-
                         if (self.selectAllIsSelected()) 
                             self.selectedStreamIds().push(value.streamid);
                         else

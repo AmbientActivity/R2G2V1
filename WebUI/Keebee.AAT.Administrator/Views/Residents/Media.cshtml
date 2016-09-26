@@ -28,7 +28,6 @@
             residents.media.init({ residentid: '@Model.ResidentId' });
         });
 </script>
-
 @{Html.BeginForm();}
 <div class="panel panel-default">
     <div class="panel-heading">
@@ -43,13 +42,11 @@
                 <span class="add-media-description">Add media from the public library</span>
             </div>*@
             @Html.Raw(@Model.UploaderHtml)
-            <input id="mediaPathTypeId" name="mediaPathTypeId" type="hidden" value="@Model.SelectedMediaPathType" />
+            <input id="mediaPathTypeId" name="mediaPathTypeId" type="hidden" value="@Model.SelectedMediaPathType"/>
             @*<input id="mediaSourceTypeId" name="mediaSourceTypeId" type="hidden" value="@Model.SelectedMediaSourceType" />*@
         </div>
+        <img alt="" src="\\dev1\sqlexpress\KeebeeAATFilestream\Media\Profiles\1\images\animal-1405602.JPG" />
         <ul class="nav nav-pills">
-            <li>
-
-            </li>
             <li>
                 <input id="txtSearchFilename" type="text" class="form-control" placeholder="Name" data-bind="value: filenameSearch, valueUpdate: 'keyup'"/>
             </li>
@@ -69,7 +66,11 @@
             <thead>
                 <tr>
                     <th class="col-glyphicon"><input type="checkbox" id="chk_all" data-bind="checked: selectAllIsSelected, click: selectAllRows" /></th>
+
+                    <!-- ko if: selectedMediaPathType() === 1 || selectedMediaPathType() === 4 || selectedMediaPathType() === 5 -->
                     <th class="col-glyphicon"></th>
+                    <!-- /ko -->
+
                     <!-- ko foreach: columns -->
                     <!-- ko if: !sortable -->
                     <th class="col-file" data-bind="text: title"></th>
@@ -82,9 +83,11 @@
             </thead>
 
             <tbody data-bind="foreach: filesTable">
-                <tr data-bind="attr: {id: 'row_' +  streamid}">
-                    <td><input type="checkbox" data-bind="attr: { id: 'chk_' + streamid }, checked: isselected, click: $parent.selectFile" /></td>
+                <tr data-bind="attr: {id: 'row_' +  id}">
+                    <td><input type="checkbox" data-bind="attr: { id: 'chk_' + id }, checked: isselected, click: $parent.selectFile" /></td>
+                    <!-- ko if: $parent.selectedMediaPathType() === 1 || $parent.selectedMediaPathType() === 4 || $parent.selectedMediaPathType() === 5 -->
                     <td><a href="#" data-bind="click: $parent.showPreview, css: 'glyphicon glyphicon-eye-open'"></a></td>
+                    <!-- /ko -->
                     <td data-bind="text: filename"></td>
                     <td data-bind="text: filetype"></td>
                     <td data-bind="text: filesize"></td>

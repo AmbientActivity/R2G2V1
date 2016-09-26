@@ -9,6 +9,7 @@ namespace Keebee.AAT.Operations.Service.Services
     public interface IMediaFileStreamService
     {
         MediaFileStream Get(Guid streamId);
+        MediaFileStream GetSingleFromPath(string path, string filename);
         IEnumerable<MediaFileStream> GetForPath(string path);
     }
 
@@ -22,6 +23,17 @@ namespace Keebee.AAT.Operations.Service.Services
                 .GetValue();
 
             return media;
+        }
+
+        public MediaFileStream GetSingleFromPath(string path, string filename)
+        {
+            var container = new Container(new Uri(ODataHost.Url));
+
+            var fileStream = container.MediaFileStreams
+                .AddQueryOption("$filter", $@"indexof(Path, '{path}') gt 0 " +
+                    $"and Filename eq '{filename}'");
+
+            return fileStream?.Single();
         }
 
         public IEnumerable<MediaFileStream> GetForPath(string path)

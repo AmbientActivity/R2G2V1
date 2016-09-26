@@ -120,9 +120,10 @@ function DisableScreen() {
             //    self.description = description;
             //}
 
-            function File(streamid, filename, filetype, filesize, path, ispublic) {
+            function File(id, streamid, filename, filetype, filesize, path, ispublic) {
                 var self = this;
 
+                self.id = id;
                 self.streamid = streamid;
                 self.filename = filename;
                 self.filetype = filetype;
@@ -150,7 +151,7 @@ function DisableScreen() {
                 self.filenameSearch = ko.observable("");
                 self.totalFiles = ko.observable(0);
                 self.selectAllIsSelected = ko.observable(false);
-                self.selectedStreamIds = ko.observable([]);
+                self.selectedIds = ko.observable([]);
 
                 createFileArray(lists.FileList);
                 createMediaPathTypeArray(lists.MediaPathTypeList);
@@ -198,7 +199,7 @@ function DisableScreen() {
                 //}
 
                 function pushFile(value) {
-                    self.files.push(new File(value.StreamId, value.Filename, value.FileType, value.FileSize, value.Path, value.IsPublic));
+                    self.files.push(new File(value.Id, value.StreamId, value.Filename, value.FileType, value.FileSize, value.Path, value.IsPublic));
                 }
 
                 self.selectedFile(self.files()[0]);
@@ -222,16 +223,26 @@ function DisableScreen() {
 
                     $(self.columns()).each(function (index, value) {
                         if (value.sortKey === sortKey) {
-                            self.files.sort(function (a, b) {
-                                if (_sortDescending) {
-                                    return a[sortKey].toString().toLowerCase() > b[sortKey].toString().toLowerCase()
-                                        ? -1 : a[sortKey].toString().toLowerCase() < b[sortKey].toString().toLowerCase()
-                                        || a.filename.toLowerCase() > b.filename.toLowerCase() ? 1 : 0;
-                                } else {
-                                    return a[sortKey].toString().toLowerCase() < b[sortKey].toString().toLowerCase()
-                                        ? -1 : a[sortKey].toString().toLowerCase() > b[sortKey].toString().toLowerCase()
-                                        || a.filename.toLowerCase() > b.filename.toLowerCase() ? 1 : 0;
-                                }
+                            self.files.sort(function (a, b) {    
+                                if (sortKey === "size") {
+                                    if (_sortDescending) {
+                                          return a[sortKey] > b[sortKey]
+                                                ? -1 : a[sortKey] < b[sortKey] || a.filename > b.filename ? 1 : 0;
+                                        } else {
+                                            return a[sortKey] < b[sortKey]
+                                                ? -1 : a[sortKey] > b[sortKey] || a.filename > b.filename ? 1 : 0;
+                                        }
+                                    } else {
+                                        if (_sortDescending) {
+                                            return a[sortKey].toString().toLowerCase() > b[sortKey].toString().toLowerCase()
+                                                ? -1 : a[sortKey].toString().toLowerCase() < b[sortKey].toString().toLowerCase()
+                                                || a.filename.toLowerCase() > b.filename.toLowerCase() ? 1 : 0;
+                                        } else {
+                                            return a[sortKey].toString().toLowerCase() < b[sortKey].toString().toLowerCase()
+                                                ? -1 : a[sortKey].toString().toLowerCase() > b[sortKey].toString().toLowerCase()
+                                                || a.filename.toLowerCase() > b.filename.toLowerCase() ? 1 : 0;
+                                        }
+                                    }
                             });
                         }
                     });
@@ -269,8 +280,7 @@ function DisableScreen() {
                 };
 
                 self.showPreview = function (row) {
-                    self.highlightRow(row);
-                    self.showFeatureNotDoneYetDialog();
+                    self.showImagePreview(row);
                 };
 
                 self.showAddPublicDialog = function () {
@@ -324,11 +334,11 @@ function DisableScreen() {
                     });
                 };
 
-                self.getFile = function (streamid) {
+                self.getFile = function (id) {
                     var file = null;
 
                     ko.utils.arrayForEach(self.files(), function (item) {
-                        if (item.streamid === streamid) {
+                        if (item.id === id) {
                             file = item;
                         }
                     });
@@ -337,15 +347,17 @@ function DisableScreen() {
                 };
 
                 self.selectAllRows = function () {
+                    self.selectedIds([]);
+
                     $.each(self.files(), function (item, value) {
 
                         if (self.selectAllIsSelected()) 
-                            self.selectedStreamIds().push(value.streamid);
+                            self.selectedIds().push(value.id);
                         else
-                            self.selectedStreamIds().pop(value.streamid);
+                            self.selectedIds().pop(value.id);
 
                         value.isselected = self.selectAllIsSelected();
-                        var chk = tblFile.find("#chk_" + value.streamid);
+                        var chk = tblFile.find("#chk_" + value.id);
                         chk.prop("checked", self.selectAllIsSelected());
                     });
 
@@ -360,9 +372,9 @@ function DisableScreen() {
                     if (row === null) return false;
 
                     if (row.isselected)
-                        self.selectedStreamIds().push(row.streamid);
+                        self.selectedIds().push(row.id);
                     else
-                        self.selectedStreamIds().pop(row.streamid);
+                        self.selectedIds().pop(row.id);
 
                     self.highlightSelectedRows();
                     self.enableDetail();
@@ -380,7 +392,7 @@ function DisableScreen() {
                         .filter(function (data) { return data.isselected; });
 
                     $.each(selected, function (item, value) {
-                        var r = tblFile.find("#row_" + value.streamid);
+                        var r = tblFile.find("#row_" + value.id);
                         r.css("background-color", HIGHLIGHT_ROW_COLOUR);
                         tblFile.attr("tr:hover", HIGHLIGHT_ROW_COLOUR);
                     });
@@ -391,7 +403,7 @@ function DisableScreen() {
                 self.deleteSelected = function () {
                     $("body").css("cursor", "wait");
 
-                    var streamIds = self.selectedStreamIds();
+                    var ids = self.selectedIds();
                     var residentId = config.residentid;
                     var mediaPathTypeId = $("#mediaPathTypeId").val();
 
@@ -404,15 +416,11 @@ function DisableScreen() {
                         url: site.url + "Residents/DeleteSelectedMediaFiles/",
                         data:
                         {
-                            streamIds: streamIds,
+                            ids: ids,
                             residentId: residentId,
                             mediaPathTypeId: mediaPathTypeId
                         },
                         dataType: "json",
-                        failure: function () {
-                            $("body").css("cursor", "default");
-                            $("#validation-container").html("");
-                        },
                         success: function (data) {
                             $.unblockUI();
                             $("body").css("cursor", "default");
@@ -439,6 +447,37 @@ function DisableScreen() {
                                 message: "Unexpected Error\n" + data
                             });
                         }
+                    });
+                };
+
+                self.showImagePreview = function (row) {
+                    $("body").css("cursor", "wait");
+                    var message;
+
+                    $.ajax({
+                        type: "GET",
+                        async: false,
+                        url: site.url + "Residents/GetImagePreviewView?streamId=" + row.streamid + "&fileType=" + row.filetype,
+                        success: function (data) {
+                            message = data;
+                        },
+                        error: function () {
+                            message = "An error occured";
+                        }
+                    });
+
+                    BootstrapDialog.show({
+                        type: BootstrapDialog.TYPE_INFO,
+                        title: "Image Preview",
+                        message: message,
+                        closable: false,
+                        onshown: function() { $("body").css("cursor", "default"); },
+                        buttons: [{
+                            label: "Close",
+                            action: function (dialog) {
+                                dialog.close();
+                            }
+                        }]
                     });
                 };
 

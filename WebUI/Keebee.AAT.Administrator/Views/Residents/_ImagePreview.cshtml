@@ -1,0 +1,9 @@
+﻿@model Keebee.AAT.Administrator.ViewModels.FilePreviewViewModel
+
+<div style="padding-left: @Model.PaddingLeft">
+    <img id="image-preview" class="img-rounded" style="margin: 0 auto;" width="@Model.Width" height="@Model.Height" src=@Url.Action("GetFileStream", "Residents",
+                                                                                                                        new {
+                                                                                                                            filePath = @Model.FilePath,
+                                                                                                                            fileType = @Model.FileType,
+                                                                                                                        }) alt="" />
+</div>

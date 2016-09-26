@@ -91,19 +91,26 @@ namespace Keebee.AAT.BusinessRules
         }
 
         // when doing a single delete, don't delete the file, just the link if it exists in another response type
-        public bool IsMultipleReponseTypes(Guid streamId)
+        public bool IsMultipleReponseTypes(int id)
         {
+            var streamId = _opsClient.GetPublicMediaFile(id).MediaFile.StreamId;
             var streamIds = _opsClient.GetPublicMediaFilesForStreamId(streamId).ToArray();
 
             return streamIds.Count() > 1;
         }
 
-        public string DeletePublicMediaFile(Guid streamId, int reponseTypeId)
+        public string DeletePublicMediaFile(int id)
         {
-            var id = _opsClient.GetPublicMediaFilesForStreamId(streamId)
-                .First(x => x.ResponseType.Id == reponseTypeId).Id;
+            return _opsClient.DeletePublicMediaFile(id); 
+        }
 
-            return _opsClient.DeletePublicMediaFile(id);
+        public MediaFileSingle GetMediaFile(int id)
+        {
+            var mediaFile = _opsClient.GetPublicMediaFile(id);
+
+            return mediaFile == null 
+                ? null 
+                : _opsClient.GetMediaFile(mediaFile.MediaFile.StreamId);
         }
 
         public static string GetAllowedExtensions(int? mediaPathTypeId)

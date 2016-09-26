@@ -76,6 +76,7 @@ namespace Keebee.AAT.Operations.Controllers
                                         },
                                     Files = pt.Files.Select(f => new
                                         {
+                                                f.Id,
                                                 f.StreamId,
                                                 f.MediaFile.Filename,
                                                 f.MediaFile.FileType,
@@ -196,6 +197,7 @@ namespace Keebee.AAT.Operations.Controllers
                                     },
                                     Files = pt.Files.Select(f => new
                                     {
+                                        f.Id,
                                         f.StreamId,
                                         f.MediaFile.Filename,
                                         f.MediaFile.FileType,
@@ -264,6 +266,7 @@ namespace Keebee.AAT.Operations.Controllers
                                     },
                                     Files = pt.Files.Select(f => new
                                     {
+                                        f.Id,
                                         f.StreamId,
                                         f.MediaFile.Filename,
                                         f.MediaFile.FileType,

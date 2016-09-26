@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
 using System;
+using System.IO;
 
 namespace Keebee.AAT.Administrator.Controllers
 {
@@ -111,7 +112,7 @@ namespace Keebee.AAT.Administrator.Controllers
         }
 
         [HttpPost]
-        public JsonResult DeleteSelected(Guid[] streamIds, int mediaPathTypeId, int responseTypeId)
+        public JsonResult DeleteSelected(int[] ids, int mediaPathTypeId, int responseTypeId)
         {
             bool success;
             string errormessage;
@@ -120,20 +121,20 @@ namespace Keebee.AAT.Administrator.Controllers
             {
                 var rules = new PublicMediaRules {OperationsClient = _opsClient};
 
-                errormessage = rules.CanDeleteMultiple(streamIds.Length, mediaPathTypeId, responseTypeId);
+                errormessage = rules.CanDeleteMultiple(ids.Length, mediaPathTypeId, responseTypeId);
                 if (errormessage.Length > 0)
                     throw new Exception(errormessage);
 
-                foreach (var id in streamIds)
+                foreach (var id in ids)
                 {
-                    var file = _opsClient.GetMediaFile(id);
+                    var file = rules.GetMediaFile(id);
                     if (file == null) continue;
 
                     // if the file is used in multiple response types
                     if (rules.IsMultipleReponseTypes(id))
                     {
                         // delete the link only
-                        errormessage = rules.DeletePublicMediaFile(id, responseTypeId);
+                        errormessage = rules.DeletePublicMediaFile(id);
                         if (errormessage.Length > 0)
                             throw new Exception(errormessage);
                     }
@@ -161,6 +162,37 @@ namespace Keebee.AAT.Administrator.Controllers
                     }, JsonRequestBehavior.AllowGet);
         }
 
+        [HttpGet]
+        public PartialViewResult GetImagePreviewView(Guid streamId, string fileType)
+        {
+            const int maxWidth = ImagePreviewRules.PreviewConstants.MaxImagePreviewgWidth;
+
+            var rules = new ImagePreviewRules();
+            var file = _opsClient.GetMediaFile(streamId);
+
+            var originalSize = rules.GetOriginalSize(file);
+            var size = ImagePreviewRules.GetImageSize(originalSize.Width, originalSize.Height);
+
+            var paddingLeft = (size.Width < maxWidth)
+                ? $"{(maxWidth - size.Width) / 2}px" : "0";
+
+            return PartialView("_ImagePreview", new FilePreviewViewModel
+            {
+                FilePath = $@"{file.Path}\{file.Filename}",
+                FileType = fileType,
+                Width = size.Width,
+                Height = size.Height,
+                PaddingLeft = paddingLeft
+            });
+        }
+
+        [HttpGet]
+        public FileResult GetFileStream(string filePath, string fileType)
+        {
+            var info = new FileInfo(filePath);
+            return File(info.OpenRead(), $"image/{info}");
+        }
+
         private void AddPublicMediaFile(string filename, int responseTypeId, int mediaPathTypeId, string mediaPathType)
         {
             var fileManager = new FileManager { EventLogger = _systemEventLogger };
@@ -176,13 +208,30 @@ namespace Keebee.AAT.Administrator.Controllers
             _opsClient.PostPublicMediaFile(mf);
         }
 
+        private PublicMediaViewModel LoadPublicMediaViewModel(
+                int? mediaPathTypeId,
+                int? responseTypeId)
+        {
+            var rules = new PublicMediaRules {OperationsClient = _opsClient};
+            var vm = new PublicMediaViewModel
+            {
+                Title = PublicMediaSource.Description,
+                AddButtonText = $"Upload {rules.GetMediaPathType(mediaPathTypeId).ToUppercaseFirst()}",
+                SelectedMediaPathType = mediaPathTypeId ?? MediaPathTypeId.Images,
+                SelectedResponseType = responseTypeId ?? ResponseTypeId.SlidShow
+            };
+
+            return vm;
+        }
+
+
         private IEnumerable<PublicMediaFileViewModel> GetMediaFiles(int mediaPathTypeId)
         {
             var list = new List<PublicMediaFileViewModel>();
-            var publicMedia= _opsClient.GetPublicMediaFiles();
+            var publicMedia = _opsClient.GetPublicMediaFiles();
 
             if (publicMedia == null) return list;
- 
+
             var mediaPaths = publicMedia.MediaFiles.SelectMany(x => x.Paths)
                 .Where(x => x.MediaPathType.Id == mediaPathTypeId)
                 .ToArray();
@@ -203,6 +252,7 @@ namespace Keebee.AAT.Administrator.Controllers
                     {
                         var vm = new PublicMediaFileViewModel
                         {
+                            Id = file.Id,
                             StreamId = file.StreamId,
                             Filename = file.Filename.Replace($".{file.FileType}", string.Empty),
                             FileType = file.FileType.ToUpper(),
@@ -213,26 +263,11 @@ namespace Keebee.AAT.Administrator.Controllers
 
                         list.Add(vm);
                     }
-                }         
+                }
             }
 
             return list;
         }
 
-        private PublicMediaViewModel LoadPublicMediaViewModel(
-                int? mediaPathTypeId,
-                int? responseTypeId)
-        {
-            var rules = new PublicMediaRules {OperationsClient = _opsClient};
-            var vm = new PublicMediaViewModel
-            {
-                Title = PublicMediaSource.Description,
-                AddButtonText = $"Upload {rules.GetMediaPathType(mediaPathTypeId).ToUppercaseFirst()}",
-                SelectedMediaPathType = mediaPathTypeId ?? MediaPathTypeId.Images,
-                SelectedResponseType = responseTypeId ?? ResponseTypeId.SlidShow
-            };
-
-            return vm;
-        }
     }
 }

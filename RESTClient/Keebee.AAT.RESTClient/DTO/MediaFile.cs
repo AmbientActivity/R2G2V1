@@ -13,15 +13,25 @@ namespace Keebee.AAT.RESTClient
         public bool IsPublic { get; set; }
     }
 
+    public class LinkedMediaFile : MediaFile
+    {
+        public int Id { get; set; }
+    }
+
     public class MediaFileSingle : MediaFile
     {
         public string Path { get; set; }
     }
 
+    public class MediaFileStreamSingle : MediaFile
+    {
+        public byte[] Stream{ get; set; }
+    }
+
     public class MediaFilePath
     {
         public MediaPathType MediaPathType { get; set; }
-        public IEnumerable<MediaFile> Files;
+        public IEnumerable<LinkedMediaFile> Files;
     }
 
     public class MediaResponseType

@@ -130,15 +130,25 @@
                     $(self.columns()).each(function (index, value) {
                         if (value.sortKey === sortKey) {
                             self.residents.sort(function (a, b) {
-                                if (_sortDescending) {
-                                    return a[sortKey].toString().toLowerCase() > b[sortKey].toString().toLowerCase()
-                                        ? -1 : a[sortKey].toString().toLowerCase() < b[sortKey].toString().toLowerCase()
-                                        || a.lastname.toLowerCase() > b.lastname.toLowerCase() ? 1 : 0;
-                                } else {
-                                    return a[sortKey].toString().toLowerCase() < b[sortKey].toString().toLowerCase()
-                                        ? -1 : a[sortKey].toString().toLowerCase() > b[sortKey].toString().toLowerCase()
-                                        || a.lastname.toLowerCase() > b.lastname.toLowerCase() ? 1 : 0;
-                                }
+                                if (sortKey === "id" || sortKey === "gamedifficultylevel" || sortKey === "datecreated" || sortKey === "dateupdated") {
+                                    if (_sortDescending) {
+                                          return a[sortKey]> b[sortKey]
+                                                ? -1: a[sortKey]< b[sortKey]|| a.filename > b.filename ? 1: 0;
+                                                } else {
+                                            return a[sortKey] < b[sortKey]
+                                                ? -1: a[sortKey]> b[sortKey]|| a.filename > b.filename ? 1: 0;
+                                        }
+                                    } else {
+                                        if(_sortDescending) {
+                                            return a[sortKey].toString().toLowerCase() > b[sortKey].toString().toLowerCase()
+                                                ? -1: a[sortKey].toString().toLowerCase() < b[sortKey].toString().toLowerCase()
+                                                || a.filename.toLowerCase() > b.filename.toLowerCase() ? 1: 0;
+                                            } else {
+                                            return a[sortKey].toString().toLowerCase() < b[sortKey].toString().toLowerCase()
+                                                ? -1: a[sortKey].toString().toLowerCase() > b[sortKey].toString().toLowerCase()
+                                                || a.filename.toLowerCase() > b.filename.toLowerCase() ? 1: 0;
+                                        }
+                                    }
                             });
                         }
                     });

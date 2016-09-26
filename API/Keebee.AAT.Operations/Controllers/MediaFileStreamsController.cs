@@ -27,5 +27,18 @@ namespace Keebee.AAT.Operations.Controllers
 
             return media.Stream;
         }
+
+        // GET: api/MediaFileStreams?path=0/images&filename=2008_02_06.jpg
+        public async Task<byte[]> Get(string path, string filename)
+        {
+            var media = new MediaFileStream();
+
+            await Task.Run(() =>
+            {
+                media = _mediaFileStreamService.GetSingleFromPath(path, filename);
+            });
+
+            return media.Stream;
+        }
     }
 }

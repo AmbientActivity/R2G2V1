@@ -34,6 +34,7 @@
     <Reference Include="System" />
     <Reference Include="System.Configuration.Install" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.ServiceProcess" />
     <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Xml.Linq" />
@@ -46,6 +47,7 @@
   <ItemGroup>
     <Compile Include="ConfigRules.cs" />
     <Compile Include="DTO\ConfigEditModel.cs" />
+    <Compile Include="ImagePreviewRules.cs" />
     <Compile Include="PublicMediaRules.cs" />
     <Compile Include="ResidentRules.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

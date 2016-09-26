@@ -49,8 +49,12 @@
         <table class="table table-striped table-bordered table-hover" id="tblFile">
             <thead>
             <tr>
-                <th class="col-glyphicon"><input type="checkbox" id="chk_all" data-bind="checked: selectAllIsSelected, click: selectAllRows" /></th>
+                <th class="col-glyphicon"><input type="checkbox" id="chk_all" data-bind="checked: selectAllIsSelected, click: selectAllRows"/></th>
+
+                <!-- ko if: selectedMediaPathType() === 1 || selectedMediaPathType() === 5 -->
                 <th class="col-glyphicon"></th>
+                <!-- /ko -->
+
                 <!-- ko foreach: columns -->
                 <!-- ko if: !sortable -->
                 <th class="col-file" data-bind="text: title"></th>
@@ -63,9 +67,11 @@
             </thead>
 
             <tbody data-bind="foreach: filesTable">
-                <tr data-bind="attr: {id: 'row_' +  streamid}">
-                    <td><input type="checkbox" data-bind="attr: { id: 'chk_' + streamid }, checked: isselected, click: $parent.selectFile"/></td>
+                <tr data-bind="attr: { id: 'row_' + id }">
+                    <td><input type="checkbox" data-bind="attr: { id: 'chk_' + id }, checked: isselected, click: $parent.selectFile"/></td>
+                    <!-- ko if: $parent.selectedMediaPathType() === 1 || $parent.selectedMediaPathType() === 5 -->
                     <td><a href="#" data-bind="click: $parent.showPreview, css: 'glyphicon glyphicon-eye-open'"></a></td>
+                    <!-- /ko -->
                     <td data-bind="text: filename"></td>
                     <td data-bind="text: filetype"></td>
                     <td data-bind="text: filesize"></td>

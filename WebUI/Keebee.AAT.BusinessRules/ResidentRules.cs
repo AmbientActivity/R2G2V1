@@ -2,8 +2,8 @@
 using Keebee.AAT.Shared;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
-
 
 namespace Keebee.AAT.BusinessRules
 {
@@ -119,6 +119,15 @@ namespace Keebee.AAT.BusinessRules
             return isValid;
         }
 
+        public MediaFileSingle GetMediaFile(int id)
+        {
+            var mediaFile = _opsClient.GetResidentMediaFile(id);
+
+            return mediaFile == null
+                ? null
+                : _opsClient.GetMediaFile(mediaFile.MediaFile.StreamId);
+        }
+
         public static string GetAllowedExtensions(int? mediaPathTypeId)
         {
             if (mediaPathTypeId == null) return string.Empty;
@@ -144,6 +153,45 @@ namespace Keebee.AAT.BusinessRules
             }
 
             return extensions;
+        }
+
+        public string GetMediaPathType(int? mediaPathTypeId)
+        {
+            return mediaPathTypeId != null
+                ? _opsClient.GetMediaPathType((int)mediaPathTypeId).Description
+                : _opsClient.GetMediaPathType(MediaPathTypeId.Images).Description;
+        }
+
+        public static int GetResponseTypeId(int mediaPathTypeId)
+        {
+            var responseTypeId = -1;
+
+            switch (mediaPathTypeId)
+            {
+                case MediaPathTypeId.Images:
+                case MediaPathTypeId.Pictures:
+                    responseTypeId = ResponseTypeId.SlidShow;
+                    break;
+                case MediaPathTypeId.Videos:
+                    responseTypeId = ResponseTypeId.Television;
+                    break;
+                case MediaPathTypeId.Music:
+                    responseTypeId = ResponseTypeId.Radio;
+                    break;
+                case MediaPathTypeId.Shapes:
+                case MediaPathTypeId.Sounds:
+                    responseTypeId = ResponseTypeId.MatchingGame;
+                    break;
+            }
+
+            return responseTypeId;
+        }
+
+        public byte[] GetFile(string path, string filename)
+        {
+            var file = _opsClient.GetMediaFileStreamFromPath(path, filename);
+
+            return file;
         }
     }
 }

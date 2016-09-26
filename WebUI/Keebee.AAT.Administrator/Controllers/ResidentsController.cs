@@ -12,6 +12,8 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Web.Mvc;
 using System;
+using System.Drawing;
+using System.IO;
 
 namespace Keebee.AAT.Administrator.Controllers
 {
@@ -76,7 +78,7 @@ namespace Keebee.AAT.Administrator.Controllers
 
                 // POST:
                 var fileManager = new FileManager { EventLogger = _systemEventLogger };
-
+                var rules = new ResidentRules {OperationsClient = _opsClient};
                 // for multiple files the value is string : guid/guid/guid 
                 foreach (var strguid in myuploader.Split('/'))
                 {
@@ -86,7 +88,7 @@ namespace Keebee.AAT.Administrator.Controllers
 
                     if (!ResidentRules.IsValidFile(file.FileName, mediaPathTypeId)) continue;
 
-                    var mediaPathType = GetMediaPathType(mediaPathTypeId);
+                    var mediaPathType = rules.GetMediaPathType(mediaPathTypeId);
                     var filePath = $@"{_mediaPath.ProfileRoot}\{id}\{mediaPathType}\{file.FileName}";
 
                     // delete it if it already exists
@@ -191,17 +193,17 @@ namespace Keebee.AAT.Administrator.Controllers
         }
 
         [HttpPost]
-        public JsonResult DeleteSelectedMediaFiles(Guid[] streamIds, int residentId, int mediaPathTypeId)
+        public JsonResult DeleteSelectedMediaFiles(int[] ids, int residentId, int mediaPathTypeId)
         {
             bool success;
             var errormessage = string.Empty;
 
             try
             {
-                foreach (var id in streamIds)
+                var rules = new ResidentRules {OperationsClient = _opsClient};
+                foreach (var id in ids)
                 {
-                    var file = _opsClient.GetMediaFile(id);
-
+                    var file = rules.GetMediaFile(id);
                     if (file == null) continue;
 
                     var fileManager = new FileManager { EventLogger = _systemEventLogger };
@@ -221,6 +223,37 @@ namespace Keebee.AAT.Administrator.Controllers
                 ErrorMessage = errormessage,
                 FileList = GetMediaFiles(residentId, mediaPathTypeId)
             }, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpGet]
+        public PartialViewResult GetImagePreviewView(Guid streamId, string fileType)
+        {
+            const int maxWidth = ImagePreviewRules.PreviewConstants.MaxImagePreviewgWidth;
+
+            var rules = new ImagePreviewRules();
+            var file = _opsClient.GetMediaFile(streamId);
+
+            var originalSize = rules.GetOriginalSize(file);
+            var size = ImagePreviewRules.GetImageSize(originalSize.Width, originalSize.Height);
+            
+            var paddingLeft = (size.Width < maxWidth)
+                ? $"{(maxWidth - size.Width) / 2}px" : "0";
+
+            return PartialView("_ImagePreview", new FilePreviewViewModel
+            {
+                FilePath = $@"{file.Path}\{file.Filename}",
+                FileType = fileType,
+                Width = size.Width,
+                Height = size.Height,
+                PaddingLeft = paddingLeft
+            });
+        }
+
+        [HttpGet]
+        public FileResult GetFileStream(string filePath, string fileType)
+        {
+            var info = new FileInfo(filePath);
+            return File(info.OpenRead(), $"image/{info}");
         }
 
         private static ResidentsViewModel LoadResidentsViewModel(
@@ -294,12 +327,13 @@ namespace Keebee.AAT.Administrator.Controllers
             var fullName = (resident.LastName.Length > 0)
                 ? $"{resident.FirstName} {resident.LastName}"
                 : resident.FirstName;
+            var rules = new ResidentRules {OperationsClient = _opsClient};
 
             var vm = new ResidentMediaViewModel
             {
                 ResidentId = resident.Id,
                 FullName = fullName,
-                AddButtonText = $"Upload {GetMediaPathType(mediaPathTypeId).ToUppercaseFirst()}",
+                AddButtonText = $"Upload {rules.GetMediaPathType(mediaPathTypeId).ToUppercaseFirst()}",
                 RfidSearch = rfid,
                 FirstNameSearch = firstname,
                 LastNameSearch = lastname,
@@ -370,7 +404,7 @@ namespace Keebee.AAT.Administrator.Controllers
         {
             var fileManager = new FileManager { EventLogger = _systemEventLogger };
             var streamId = fileManager.GetStreamId($@"{residentId}\{mediaPathType}", filename);
-            var responseTypeId = GetResponseTypeId(mediaPathTypeId);
+            var responseTypeId = ResidentRules.GetResponseTypeId(mediaPathTypeId);
 
             var mf = new ResidentMediaFileEdit
             {
@@ -408,6 +442,7 @@ namespace Keebee.AAT.Administrator.Controllers
                 .OrderBy(x => x.Filename)
                 .Select(file => new MediaFileViewModel
                 {
+                    Id = file.Id,
                     StreamId = file.StreamId,
                     Filename = file.Filename.Replace($".{file.FileType}", string.Empty),
                     FileType = file.FileType.ToUpper(),
@@ -417,38 +452,6 @@ namespace Keebee.AAT.Administrator.Controllers
                 }).ToList();
 
             return list;
-        }
-
-        private string GetMediaPathType(int? mediaPathTypeId)
-        {
-            return mediaPathTypeId != null
-                ? _opsClient.GetMediaPathType((int)mediaPathTypeId).Description
-                : _opsClient.GetMediaPathType(MediaPathTypeId.Images).Description;
-        }
-
-        private static int GetResponseTypeId(int mediaPathTypeId)
-        {
-            int responseTypeId = -1;
-
-            switch (mediaPathTypeId)
-            {
-                case MediaPathTypeId.Images:
-                case MediaPathTypeId.Pictures:
-                    responseTypeId = ResponseTypeId.SlidShow;
-                    break;
-                case MediaPathTypeId.Videos:
-                    responseTypeId = ResponseTypeId.Television;
-                    break;
-                case MediaPathTypeId.Music:
-                    responseTypeId = ResponseTypeId.Radio;
-                    break;
-                case MediaPathTypeId.Shapes:
-                case MediaPathTypeId.Sounds:
-                    responseTypeId = ResponseTypeId.MatchingGame;
-                    break;
-            }
-
-            return responseTypeId;
         }
     }
 }

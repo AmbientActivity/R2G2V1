@@ -40,10 +40,12 @@ namespace Keebee.AAT.RESTClient
         IEnumerable<Media> GetMediaFilesForPath(string path);
         MediaFileSingle GetMediaFileFromPath(string path, string filename);
         byte[] GetMediaFileStream(Guid streamId);
+        byte[] GetMediaFileStreamFromPath(string path, string filename);
 
         IEnumerable<MediaPathType> GetMediaPathTypes();
         MediaPathType GetMediaPathType(int mediaPathTypeId);
         PublicMedia GetPublicMediaFiles();
+        PublicMediaFile GetPublicMediaFile(int id);
         PublicMedia GetPublicMediaFilesForResponseType(int responseTypeId);
         PublicMedia GetPublicMediaFilesForMediaPathType(int mediaPathTypeId);
         IEnumerable<PublicMediaFile> GetPublicMediaFilesForStreamId(Guid streamId);
@@ -124,6 +126,7 @@ namespace Keebee.AAT.RESTClient
         private const string UrlMediaFilesForPath = "mediafiles?path={0}";
         private const string UrlMediaFileFromPath = "mediafiles?path={0}&filename={1}";
         private const string UrlMediaFileStream = "mediafilestreams/{0}";
+        private const string UrlMediaFileStreamFromPath = "mediafilestreams?path={0}&filename={1}";
 
         private const string UrlMediaPathTypes = "mediapathtypes";
         private const string UrlMediaPathType = "mediapathtypes/{0}";
@@ -494,6 +497,16 @@ namespace Keebee.AAT.RESTClient
             return data;
         }
 
+        public byte[] GetMediaFileStreamFromPath(string path, string filename)
+        {
+            var data = Get(string.Format(UrlMediaFileStreamFromPath, path, filename));
+            if (data == null) return null;
+
+            var serializer = new JavaScriptSerializer();
+            var media = serializer.Deserialize<MediaFileStreamSingle>(data).Stream;
+
+            return media;
+        }
 
         public IEnumerable<MediaPathType> GetMediaPathTypes()
         {
@@ -517,6 +530,17 @@ namespace Keebee.AAT.RESTClient
             return pathType;
         }
 
+
+        public PublicMediaFile GetPublicMediaFile(int id)
+        {
+            var data = Get(string.Format(UrlPublicMediaFile, id));
+            if (data == null) return null;
+
+            var serializer = new JavaScriptSerializer();
+            var mediaFile = serializer.Deserialize<PublicMediaFile>(data);
+
+            return mediaFile;
+        }
 
         public PublicMedia GetPublicMediaFiles()
         {
@@ -561,6 +585,7 @@ namespace Keebee.AAT.RESTClient
 
             return mediaStreamIds;
         }
+
 
         public IEnumerable<ResidentMedia> GetResidentMediaFiles()
         {
@@ -773,6 +798,7 @@ namespace Keebee.AAT.RESTClient
             return result;
         }
 
+        // TODO: Figure out why this doesn't work (returns too many bytes)
         private byte[] GetBytes(string url)
         {
             byte[] result = null;
@@ -783,11 +809,12 @@ namespace Keebee.AAT.RESTClient
                 {
                     client.BaseAddress = _uriBase;
                     client.DefaultRequestHeaders.Accept.Clear();
-                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
                     HttpResponseMessage response = client.GetAsync(url).Result;
+
                     if (response.IsSuccessStatusCode)
                     {
+                        response.Content.Headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");
                         result = response.Content.ReadAsByteArrayAsync().Result;
                     }
                     else

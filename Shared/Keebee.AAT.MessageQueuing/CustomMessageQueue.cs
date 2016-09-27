@@ -9,17 +9,18 @@ namespace Keebee.AAT.MessageQueuing
     {
         DisplaySms = 1,
         DisplayPhidget = 2,
-        Phidget = 3,
-        Response = 4,
-        Rfid = 5,
-        Video = 6,
-        ConfigSms = 7,
-        ConfigPhidget = 8
+        DisplayVideoCapture = 3,
+        Phidget = 4,
+        Response = 5,
+        Rfid = 6,
+        VideoCapture = 7,
+        ConfigSms = 8,
+        ConfigPhidget = 9
 #if DEBUG
-        , PhidgetMonitor = 9,
-        PhidgetMonitorState = 10,
-        RfidMonitor = 11,
-        RfidMonitorState = 12
+        , PhidgetMonitor = 10,
+        PhidgetMonitorState = 11,
+        RfidMonitor = 12,
+        RfidMonitorState = 13
 #endif
     }
 
@@ -38,10 +39,11 @@ namespace Keebee.AAT.MessageQueuing
     {
         private const string QueueNameDisplaySms = "Display-SMS";
         private const string QueueNameDisplayPhidget = "Display-Phidget";
+        private const string QueueNameDisplayVideoCapture = "Display-Video-Capture";
         private const string QueueNamePhidget = "Phidget";
         private const string QueueNameResponse = "Response";
         private const string QueueNameRfid = "RFID";
-        private const string QueueNameVideo = "Video";
+        private const string QueueNameVideoCapture = "Video-Capture";
         private const string QueueNameConfigSms = "Config-SMS";
         private const string QueueNameConfigPhidget = "Config-Phidget";
 #if DEBUG
@@ -82,12 +84,12 @@ namespace Keebee.AAT.MessageQueuing
             {
                 var queueMessage = sourceQueue.EndReceive(e.AsyncResult);
 
-                queueMessage.Formatter = new XmlMessageFormatter(new[] {"System.String,mscorlib"});
+                queueMessage.Formatter = new XmlMessageFormatter(new[] { "System.String,mscorlib" });
 
                 MessageReceivedCallback(source, new MessageEventArgs { MessageBody = queueMessage.Body.ToString() });
             }
 
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 _systemEventLogger?.WriteEntry($"CustomMessageQueue.Send: {ex.Message}", EventLogEntryType.Error);
             }
@@ -120,7 +122,10 @@ namespace Keebee.AAT.MessageQueuing
                     literal = QueueNameDisplaySms;
                     break;
                 case MessageQueueType.DisplayPhidget:
-                    literal = QueueNameDisplaySms;
+                    literal = QueueNameDisplayPhidget;
+                    break;
+                case MessageQueueType.DisplayVideoCapture:
+                    literal = QueueNameDisplayVideoCapture;
                     break;
                 case MessageQueueType.Phidget:
                     literal = QueueNamePhidget;
@@ -131,8 +136,8 @@ namespace Keebee.AAT.MessageQueuing
                 case MessageQueueType.Rfid:
                     literal = QueueNameRfid;
                     break;
-                case MessageQueueType.Video:
-                    literal = QueueNameVideo;
+                case MessageQueueType.VideoCapture:
+                    literal = QueueNameVideoCapture;
                     break;
                 case MessageQueueType.ConfigSms:
                     literal = QueueNameConfigSms;
@@ -159,7 +164,7 @@ namespace Keebee.AAT.MessageQueuing
         }
 
         private MessageQueue Create(MessageQueueType queueNameType)
-        {  
+        {
             MessageQueue messageQueue;
 
             try
@@ -182,7 +187,7 @@ namespace Keebee.AAT.MessageQueuing
                 _systemEventLogger?.WriteEntry($"CustomMessageQueue.Create: {ex.Message}", EventLogEntryType.Error);
                 return null;
             }
-            
+
             return messageQueue;
         }
     }

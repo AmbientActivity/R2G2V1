@@ -11,8 +11,8 @@ $qObject = $msmq::Create($qname)
 $qObject.SetPermissions("Everyone", [System.Messaging.MessageQueueAccessRights]::FullControl, [System.Messaging.AccessControlEntryType]::Allow)
 $qObject.SetPermissions("ANONYMOUS LOGON", [System.Messaging.MessageQueueAccessRights]::FullControl, [System.Messaging.AccessControlEntryType]::Allow)
 
-# Video Message Queue
-$name = "Video"
+# Video Capture Message Queue
+$name = "Video-Capture"
 $qname = “.\private$\” + $name
 If (($msmq::Exists($qname))) {
     $qObject = $msmq::Delete($qname)
@@ -57,6 +57,18 @@ $qObject.SetPermissions("ANONYMOUS LOGON", [System.Messaging.MessageQueueAccessR
 
 # Display Message Queue (to alert the Phidget Service when the Display App is running)
 $name = "Display-Phidget"
+$qname = “.\private$\” + $name
+$qname = “.\private$\” + $name
+If (($msmq::Exists($qname))) {
+    $qObject = $msmq::Delete($qname)
+}
+
+$qObject = $msmq::Create($qname) 
+$qObject.SetPermissions("Everyone", [System.Messaging.MessageQueueAccessRights]::FullControl, [System.Messaging.AccessControlEntryType]::Allow)
+$qObject.SetPermissions("ANONYMOUS LOGON", [System.Messaging.MessageQueueAccessRights]::FullControl, [System.Messaging.AccessControlEntryType]::Allow)
+
+# Display Message Queue (to alert the Video Capture Service when the Display App is running)
+$name = "Display-Video-Capture"
 $qname = “.\private$\” + $name
 $qname = “.\private$\” + $name
 If (($msmq::Exists($qname))) {

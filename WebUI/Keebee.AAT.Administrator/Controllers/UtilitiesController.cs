@@ -19,6 +19,7 @@ namespace Keebee.AAT.Administrator.Controllers
         private readonly CustomMessageQueue _messageQueueConfigSms;
         private readonly CustomMessageQueue _messageQueueDisplaySms;
         private readonly CustomMessageQueue _messageQueueDisplayPhidget;
+        private readonly CustomMessageQueue _messageQueueDisplayVideoCapture;
 
         public UtilitiesController()
         {
@@ -26,9 +27,9 @@ namespace Keebee.AAT.Administrator.Controllers
 
             // config-sms message queue sender
             _messageQueueConfigSms = new CustomMessageQueue(new CustomMessageQueueArgs
-                                                            {
-                                                                QueueName = MessageQueueType.ConfigSms
-                                                            });
+            {
+                QueueName = MessageQueueType.ConfigSms
+            });
 
             // display-sms message queue sender
             _messageQueueDisplaySms = new CustomMessageQueue(new CustomMessageQueueArgs
@@ -40,6 +41,12 @@ namespace Keebee.AAT.Administrator.Controllers
             _messageQueueDisplayPhidget = new CustomMessageQueue(new CustomMessageQueueArgs
             {
                 QueueName = MessageQueueType.DisplayPhidget
+            });
+
+            // display-phidget message queue sender
+            _messageQueueDisplayVideoCapture = new CustomMessageQueue(new CustomMessageQueueArgs
+            {
+                QueueName = MessageQueueType.DisplayVideoCapture
             });
         }
 
@@ -57,9 +64,10 @@ namespace Keebee.AAT.Administrator.Controllers
 
             _messageQueueDisplaySms.Send(CreateDisplayMessageBody(false));
             _messageQueueDisplayPhidget.Send(CreateDisplayMessageBody(false));
+            _messageQueueDisplayVideoCapture.Send(CreateDisplayMessageBody(false));
 
             // uninstall / reinstall the services
-            var rules = new UtilityRules {EventLogger = _systemEventLogger};
+            var rules = new UtilityRules { EventLogger = _systemEventLogger };
             var msg = rules.ReinstallServices(smsPath, phidgetPath, rfidPath);
 
             if (msg.Length != 0) return msg;
@@ -68,6 +76,7 @@ namespace Keebee.AAT.Administrator.Controllers
             {
                 _messageQueueDisplaySms.Send(CreateDisplayMessageBody(true));
                 _messageQueueDisplayPhidget.Send(CreateDisplayMessageBody(true));
+                _messageQueueDisplayVideoCapture.Send(CreateDisplayMessageBody(true));
             }
             else
             {
@@ -85,6 +94,7 @@ namespace Keebee.AAT.Administrator.Controllers
         {
             _messageQueueDisplaySms.Send(CreateDisplayMessageBody(false));
             _messageQueueDisplayPhidget.Send(CreateDisplayMessageBody(false));
+            _messageQueueDisplayVideoCapture.Send(CreateDisplayMessageBody(false));
 
             var rules = new UtilityRules { EventLogger = _systemEventLogger };
             var msg = rules.RestartServices();
@@ -95,6 +105,7 @@ namespace Keebee.AAT.Administrator.Controllers
             {
                 _messageQueueDisplaySms.Send(CreateDisplayMessageBody(true));
                 _messageQueueDisplayPhidget.Send(CreateDisplayMessageBody(true));
+                _messageQueueDisplayVideoCapture.Send(CreateDisplayMessageBody(true));
             }
             else
             {

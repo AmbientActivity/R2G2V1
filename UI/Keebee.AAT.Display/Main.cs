@@ -55,6 +55,7 @@ namespace Keebee.AAT.Display
         // message queue sender
         private readonly CustomMessageQueue _messageQueueDisplaySms;
         private readonly CustomMessageQueue _messageQueueDisplayPhidget;
+        private readonly CustomMessageQueue _messageQueueDisplayVideoCapture;
 
         // message queue listener
         private readonly CustomMessageQueue _messageQueueResponse;
@@ -94,7 +95,7 @@ namespace Keebee.AAT.Display
 
             // display-sms message queue sender
             _messageQueueDisplaySms = new CustomMessageQueue(new CustomMessageQueueArgs
-            { 
+            {
                 QueueName = MessageQueueType.DisplaySms
             });
 
@@ -102,6 +103,12 @@ namespace Keebee.AAT.Display
             _messageQueueDisplayPhidget = new CustomMessageQueue(new CustomMessageQueueArgs
             {
                 QueueName = MessageQueueType.DisplayPhidget
+            });
+
+            // display-video-capture message queue sender
+            _messageQueueDisplayVideoCapture = new CustomMessageQueue(new CustomMessageQueueArgs
+            {
+                QueueName = MessageQueueType.DisplayVideoCapture
             });
 
             // response message queue listener
@@ -138,8 +145,8 @@ namespace Keebee.AAT.Display
             Location = new Point(0, 0);
 
             // set form size to 1/3 primary monitor size
-            Width = SystemInformation.PrimaryMonitorSize.Width/3;
-            Height = SystemInformation.PrimaryMonitorSize.Height/3;
+            Width = SystemInformation.PrimaryMonitorSize.Width / 3;
+            Height = SystemInformation.PrimaryMonitorSize.Height / 3;
 
 #elif !DEBUG
             WindowState = FormWindowState.Maximized;
@@ -166,6 +173,8 @@ namespace Keebee.AAT.Display
             // the _systemEventLogger is not available in the constructor - this gets called later in MainShown()
             _opsClient.SystemEventLogger = _systemEventLogger;
             _messageQueueDisplaySms.SystemEventLogger = _systemEventLogger;
+            _messageQueueDisplayPhidget.SystemEventLogger = _systemEventLogger;
+            _messageQueueDisplayVideoCapture.SystemEventLogger = _systemEventLogger;
             _messageQueueResponse.SystemEventLogger = _systemEventLogger;
 
             _gameEventLogger.OperationsClient = _opsClient;
@@ -238,7 +247,7 @@ namespace Keebee.AAT.Display
 
             // if it is a media player or caregiver response type then execute it
             return (responseTypeId == ResponseTypeId.Television)
-                || (responseTypeId == ResponseTypeId.Radio); 
+                || (responseTypeId == ResponseTypeId.Radio);
         }
 
         private void StopCurrentResponse()
@@ -336,7 +345,7 @@ namespace Keebee.AAT.Display
 
         #region callback
 
-        private void PlayMedia (int responseTypeId, int responseValue)
+        private void PlayMedia(int responseTypeId, int responseValue)
         {
             if (InvokeRequired)
             {
@@ -511,11 +520,11 @@ namespace Keebee.AAT.Display
                 var config = _opsClient.GetActiveConfigDetails();
 
                 _caregiverInterface = new CaregiverInterface
-                                         {
-                                            EventLogger = _systemEventLogger,
-                                            OperationsClient = _opsClient,
-                                            Config = config,
-                                            PublicMediaFiles = publicMedia
+                {
+                    EventLogger = _systemEventLogger,
+                    OperationsClient = _opsClient,
+                    Config = config,
+                    PublicMediaFiles = publicMedia
                 };
 
                 _caregiverInterface.CaregiverCompleteEvent += CaregiverComplete;
@@ -538,6 +547,8 @@ namespace Keebee.AAT.Display
                 StopCurrentResponse();
                 // alert the State Machine Service that the display is no longer active or idle
                 _messageQueueDisplaySms.Send(CreateDisplayMessageBody(false));
+                _messageQueueDisplayPhidget.Send(CreateDisplayMessageBody(false));
+                _messageQueueDisplayVideoCapture.Send(CreateDisplayMessageBody(false));
                 Application.Exit();
             }
         }
@@ -565,7 +576,7 @@ namespace Keebee.AAT.Display
                 var serializer = new JavaScriptSerializer();
                 var response = serializer.Deserialize<ResponseMessage>(e.MessageBody);
 
-                _isNewResponse = 
+                _isNewResponse =
                      (response.ConfigDetail.ResponseTypeId != _currentResponseTypeId) ||
                      (response.Resident.Id != _activeResident?.Id);
 
@@ -671,11 +682,12 @@ namespace Keebee.AAT.Display
                 // inform the services that the display is now active
                 _messageQueueDisplaySms.Send(CreateDisplayMessageBody(true));
                 _messageQueueDisplayPhidget.Send(CreateDisplayMessageBody(true));
+                _messageQueueDisplayVideoCapture.Send(CreateDisplayMessageBody(true));
 
                 ambient1.Show();
                 ambient1.Play(_ambientPlaylist);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 _systemEventLogger.WriteEntry($"Main.MainShown: {ex.Message}", EventLogEntryType.Error);
             }

@@ -80,9 +80,10 @@ namespace Keebee.AAT.PhidgetService
 
             // message queue senders
             _messageQueuePhidget = new CustomMessageQueue(new CustomMessageQueueArgs
-                                                          {
-                                                              QueueName = MessageQueueType.Phidget
-                                                          }) { SystemEventLogger = _systemEventLogger };
+            {
+                QueueName = MessageQueueType.Phidget
+            })
+            { SystemEventLogger = _systemEventLogger };
 
 #if DEBUG
             _messageQueuePhidgetMonitor = new CustomMessageQueue(new CustomMessageQueueArgs
@@ -125,7 +126,7 @@ namespace Keebee.AAT.PhidgetService
 
         private int ValidateSensorThreshold(string threshold)
         {
-            
+
             int thresholdValue;
 
             var isValid = int.TryParse(threshold, out thresholdValue);
@@ -177,7 +178,7 @@ namespace Keebee.AAT.PhidgetService
                     case PhidgetStyleTypeIdId.StopTurn:
                     case PhidgetStyleTypeIdId.Slider:
                         var stepValue = GetStepValue(sensorValue);
-                        if (stepValue > 0) 
+                        if (stepValue > 0)
                             _messageQueuePhidget.Send(CreateMessageBodyFromSensor(sensorId, stepValue));
                         break;
                 }
@@ -205,7 +206,7 @@ namespace Keebee.AAT.PhidgetService
                 // input1 => sensor9
                 // etc
                 _messageQueuePhidget.Send(CreateMessageBodyFromSensor(sensorId + 8, 999));
-  
+
             }
             catch (Exception ex)
             {
@@ -233,8 +234,8 @@ namespace Keebee.AAT.PhidgetService
 
         private static string CreateMessageBodyFromSensor(int sensorId, int sensorValue)
         {
-            var phidgetMessage = new PhidgetMessage {SensorId = sensorId, SensorValue = sensorValue};
-                
+            var phidgetMessage = new PhidgetMessage { SensorId = sensorId, SensorValue = sensorValue };
+
             var serializer = new JavaScriptSerializer();
             var messageBody = serializer.Serialize(phidgetMessage);
             return messageBody;
@@ -288,21 +289,23 @@ namespace Keebee.AAT.PhidgetService
         {
             var config = _opsClient.GetActiveConfigDetails();
             _activeConfig = new ConfigMessage
-                            {
-                                Id = config.Id,
-                                Description = config.Description,
-                                IsActiveEventLog = config.IsActiveEventLog,
-                                ConfigDetails = config.ConfigDetails
+            {
+                Id = config.Id,
+                Description = config.Description,
+                IsActiveEventLog = config.IsActiveEventLog,
+                ConfigDetails = config.ConfigDetails
                                     .Select(x => new
                                     ConfigDetailMessage
-                                                 {
-                                                     Id = x.Id,
-                                                     ResponseTypeId = x.ResponseType.Id,
-                                                     PhidgetTypeId = x.PhidgetType.Id,
-                                                     PhidgetStyleTypeId = x.PhidgetStyleType.Id
-                                                 }
+                                    {
+                                        Id = x.Id,
+                                        ConfigId = x.ConfigId,
+                                        ResponseTypeId = x.ResponseType.Id,
+                                        PhidgetTypeId = x.PhidgetType.Id,
+                                        PhidgetStyleTypeId = x.PhidgetStyleType.Id,
+                                        IsSystemReponseType = x.ResponseType.IsSystem
+                                    }
                                     )
-                            };
+            };
             _systemEventLogger.WriteEntry($"The configuration '{config.Description}' has been activated");
         }
 

@@ -19,6 +19,7 @@ namespace Keebee.AAT.StateMachineService
         // message queue sender
         private readonly CustomMessageQueue _messageQueueResponse;
         private readonly CustomMessageQueue _messageQueueConfigPhidget;
+        private readonly CustomMessageQueue _messageQueueVideoCapture;
 
         // event logger
         private readonly SystemEventLogger _systemEventLogger;
@@ -38,14 +39,15 @@ namespace Keebee.AAT.StateMachineService
 
             _systemEventLogger = new SystemEventLogger(SystemEventLogType.StateMachineService);
             _opsClient = new OperationsClient { SystemEventLogger = _systemEventLogger };
- 
+
             InitializeMessageQueueListeners();
 
             // message queue sender
             _messageQueueResponse = new CustomMessageQueue(new CustomMessageQueueArgs
             {
                 QueueName = MessageQueueType.Response
-            }) {SystemEventLogger = _systemEventLogger};
+            })
+            { SystemEventLogger = _systemEventLogger };
 
             _messageQueueConfigPhidget = new CustomMessageQueue(new CustomMessageQueueArgs
             {
@@ -53,11 +55,11 @@ namespace Keebee.AAT.StateMachineService
             })
             { SystemEventLogger = _systemEventLogger };
 
-            //var keepAliveThread = new Thread(KeepAlive);
-            //keepAliveThread.Start();
-
-            //var keepAliveThreadAdmin = new Thread(KeepAliveAdmin);
-            //keepAliveThreadAdmin.Start();
+            _messageQueueVideoCapture = new CustomMessageQueue(new CustomMessageQueueArgs
+            {
+                QueueName = MessageQueueType.VideoCapture
+            })
+            { SystemEventLogger = _systemEventLogger };
         }
 
         private void InitializeMessageQueueListeners()
@@ -66,30 +68,27 @@ namespace Keebee.AAT.StateMachineService
             {
                 QueueName = MessageQueueType.Phidget,
                 MessageReceivedCallback = MessageReceivedPhidget
-            }) { SystemEventLogger = _systemEventLogger };
+            })
+            { SystemEventLogger = _systemEventLogger };
 
             var q2 = new CustomMessageQueue(new CustomMessageQueueArgs
             {
-                QueueName = MessageQueueType.Video,
-                MessageReceivedCallback = MessageReceivedVideo
-            }) { SystemEventLogger = _systemEventLogger };
+                QueueName = MessageQueueType.VideoCapture,
+                MessageReceivedCallback = MessageReceivedVideoCapture
+            })
+            { SystemEventLogger = _systemEventLogger };
 
             var q3 = new CustomMessageQueue(new CustomMessageQueueArgs
             {
                 QueueName = MessageQueueType.Rfid,
                 MessageReceivedCallback = MessageReceivedRfid
-            }) { SystemEventLogger = _systemEventLogger };
+            })
+            { SystemEventLogger = _systemEventLogger };
 
             var q4 = new CustomMessageQueue(new CustomMessageQueueArgs
             {
                 QueueName = MessageQueueType.DisplaySms,
                 MessageReceivedCallback = MessageReceivedDisplaySms
-            }) { SystemEventLogger = _systemEventLogger };
-
-            var q5 = new CustomMessageQueue(new CustomMessageQueueArgs
-            {
-                QueueName = MessageQueueType.ConfigSms,
-                MessageReceivedCallback = MessageReceiveConfigSms
             })
             { SystemEventLogger = _systemEventLogger };
         }
@@ -110,17 +109,21 @@ namespace Keebee.AAT.StateMachineService
                 {
                     SensorValue = sensorValue,
                     ConfigDetail = configDetail,
-                    Resident =_activeResident,
+                    Resident = _activeResident,
                     IsActiveEventLog = _activeConfig.IsActiveEventLog
                 };
 
                 var serializer = new JavaScriptSerializer();
                 var responseMessageBody = serializer.Serialize(responseMessage);
                 _messageQueueResponse.Send(responseMessageBody);
+
+                if (!configDetail.IsSystemReponseType)
+                    _messageQueueVideoCapture.Send("1");
+
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"ExecuteResponse: {ex.Message}", EventLogEntryType.Error); 
+                _systemEventLogger.WriteEntry($"ExecuteResponse: {ex.Message}", EventLogEntryType.Error);
             }
         }
 
@@ -145,7 +148,7 @@ namespace Keebee.AAT.StateMachineService
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"QueueMessageReceivedPhidget: {ex.Message}", EventLogEntryType.Error);
+                _systemEventLogger.WriteEntry($"MessageReceivedPhidget: {ex.Message}", EventLogEntryType.Error);
             }
         }
 
@@ -175,7 +178,7 @@ namespace Keebee.AAT.StateMachineService
             }
         }
 
-        private void MessageReceivedVideo(object source, MessageEventArgs e)
+        private void MessageReceivedVideoCapture(object source, MessageEventArgs e)
         {
             try
             {
@@ -254,21 +257,23 @@ namespace Keebee.AAT.StateMachineService
             {
                 var config = _opsClient.GetActiveConfigDetails();
                 _activeConfig = new ConfigMessage
-                                {
-                                    Id = config.Id,
-                                    Description = config.Description,
-                                    IsActiveEventLog = config.IsActiveEventLog,
-                                    ConfigDetails = config.ConfigDetails
+                {
+                    Id = config.Id,
+                    Description = config.Description,
+                    IsActiveEventLog = config.IsActiveEventLog,
+                    ConfigDetails = config.ConfigDetails
                                         .Select(x => new
                                         ConfigDetailMessage
-                                                     {
-                                                         Id = x.Id,
-                                                         ResponseTypeId = x.ResponseType.Id,
-                                                         PhidgetTypeId = x.PhidgetType.Id,
-                                                         PhidgetStyleTypeId = x.PhidgetStyleType.Id
-                                                     }
+                                        {
+                                            Id = x.Id,
+                                            ConfigId = x.ConfigId,
+                                            ResponseTypeId = x.ResponseType.Id,
+                                            PhidgetTypeId = x.PhidgetType.Id,
+                                            PhidgetStyleTypeId = x.PhidgetStyleType.Id,
+                                            IsSystemReponseType = x.ResponseType.IsSystem
+                                        }
                                         )
-                                };
+                };
 
                 _systemEventLogger.WriteEntry($"The configuration '{config.Description}' has been activated");
             }

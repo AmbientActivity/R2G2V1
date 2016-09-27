@@ -45,8 +45,7 @@
             this.keepIISAliveServiceInstaller.DisplayName = "Keebee AAT Keep IIS Alive Service";
             this.keepIISAliveServiceInstaller.ServiceName = "KeepIISAliveService";
             this.keepIISAliveServiceInstaller.ServicesDependedOn = new string[] {
-        "MSMQ",
-        "MSSQL$SQLEXPRESS"};
+        "W3SVC"};
             this.keepIISAliveServiceInstaller.StartType = System.ServiceProcess.ServiceStartMode.Automatic;
             this.keepIISAliveServiceInstaller.AfterInstall += new System.Configuration.Install.InstallEventHandler(this.keepIISAliveServiceInstaller_AfterInstall);
             // 

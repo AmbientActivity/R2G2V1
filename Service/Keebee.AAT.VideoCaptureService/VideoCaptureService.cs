@@ -75,12 +75,12 @@ namespace Keebee.AAT.VideoCaptureService
                 // do nothing unless the display is active
                 if (!_displayIsActive) return;
 
-                if (_capture.Stopped)
-                {
-                    StartCapture();
-                    Thread.Sleep(5000);
-                    StopCapture();
-                }
+                //if (_capture.Stopped)
+                //{
+                //    StartCapture();
+                //    Thread.Sleep(5000);
+                //    StopCapture();
+                //}
 
             }
             catch (Exception ex)

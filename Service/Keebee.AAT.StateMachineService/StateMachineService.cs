@@ -73,8 +73,8 @@ namespace Keebee.AAT.StateMachineService
 
             var q2 = new CustomMessageQueue(new CustomMessageQueueArgs
             {
-                QueueName = MessageQueueType.VideoCapture,
-                MessageReceivedCallback = MessageReceivedVideoCapture
+                QueueName = MessageQueueType.ConfigSms,
+                MessageReceivedCallback = MessageReceivedConfigSms
             })
             { SystemEventLogger = _systemEventLogger };
 
@@ -89,6 +89,13 @@ namespace Keebee.AAT.StateMachineService
             {
                 QueueName = MessageQueueType.DisplaySms,
                 MessageReceivedCallback = MessageReceivedDisplaySms
+            })
+            { SystemEventLogger = _systemEventLogger };
+
+            var q5 = new CustomMessageQueue(new CustomMessageQueueArgs
+            {
+                QueueName = MessageQueueType.VideoCapture,
+                MessageReceivedCallback = MessageReceivedVideoCapture
             })
             { SystemEventLogger = _systemEventLogger };
         }
@@ -207,7 +214,7 @@ namespace Keebee.AAT.StateMachineService
             }
         }
 
-        private void MessageReceiveConfigSms(object source, MessageEventArgs e)
+        private void MessageReceivedConfigSms(object source, MessageEventArgs e)
         {
             try
             {

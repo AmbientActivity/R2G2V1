@@ -1,6 +1,6 @@
 ﻿namespace Keebee.AAT.Administrator.ViewModels
 {
-    public class FilePreviewViewModel
+    public class ImageViewerViewModel
     {
         public string FilePath{ get; set; }
         public string FileType { get; set; }

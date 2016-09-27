@@ -2,7 +2,6 @@
 using Keebee.AAT.Shared;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
 
 namespace Keebee.AAT.BusinessRules

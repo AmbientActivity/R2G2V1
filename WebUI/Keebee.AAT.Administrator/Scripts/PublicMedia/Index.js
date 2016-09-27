@@ -249,6 +249,19 @@ function DisableScreen() {
                     return filteredFiles;
                 });
 
+                self.checkAllReset = ko.computed(function () {
+                    $("#responseTypeId").val(self.selectedResponseType());
+                    $("#chk_all").prop("checked", false);
+
+                    self.selectedIds([]);
+                    $.each(self.filteredFiles(), function(item, value) {
+                        value.isselected = false;
+
+                        var chk = tblFile.find("#chk_" + value.id);
+                        chk.prop("checked", false);
+                    });
+                });
+
                 // ------------------
 
                 self.doPostBack = function () {
@@ -433,7 +446,7 @@ function DisableScreen() {
                     $.ajax({
                         type: "GET",
                         async: false,
-                        url: site.url + "PublicMedia/GetImagePreviewView?streamId=" + row.streamid + "&fileType=" + row.filetype,
+                        url: site.url + "PublicMedia/GetImageViewerView?streamId=" + row.streamid + "&fileType=" + row.filetype,
                         success: function (data) {
                             message = data;
                         },
@@ -444,7 +457,7 @@ function DisableScreen() {
 
                     BootstrapDialog.show({
                         type: BootstrapDialog.TYPE_INFO,
-                        title: "Image Preview",
+                        title: "Image Viewer",
                         message: message,
                         closable: false,
                         onshown: function() { $("body").css("cursor", "default"); },

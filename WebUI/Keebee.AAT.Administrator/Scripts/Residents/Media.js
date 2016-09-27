@@ -457,7 +457,7 @@ function DisableScreen() {
                     $.ajax({
                         type: "GET",
                         async: false,
-                        url: site.url + "Residents/GetImagePreviewView?streamId=" + row.streamid + "&fileType=" + row.filetype,
+                        url: site.url + "Residents/GetImageViewerView?streamId=" + row.streamid + "&fileType=" + row.filetype,
                         success: function (data) {
                             message = data;
                         },
@@ -468,7 +468,7 @@ function DisableScreen() {
 
                     BootstrapDialog.show({
                         type: BootstrapDialog.TYPE_INFO,
-                        title: "Image Preview",
+                        title: "Image Viewer",
                         message: message,
                         closable: false,
                         onshown: function() { $("body").css("cursor", "default"); },

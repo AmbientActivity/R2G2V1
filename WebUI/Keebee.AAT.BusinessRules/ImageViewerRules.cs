@@ -1,9 +1,11 @@
-﻿using Keebee.AAT.RESTClient;
+﻿using System;
+using Keebee.AAT.RESTClient;
 using System.Drawing;
+using Keebee.AAT.BusinessRules.DTO;
 
 namespace Keebee.AAT.BusinessRules
 {
-    public class ImagePreviewRules
+    public class ImageViewerRules
     {
         public static class PreviewConstants
         {
@@ -11,13 +13,42 @@ namespace Keebee.AAT.BusinessRules
             public const int MaxImagePreviewHeight = 333;
         }
 
-        public struct ImageSize
+        private OperationsClient _opsClient;
+        public OperationsClient OperationsClient
+        {
+            set { _opsClient = value; }
+        }
+
+        private struct ImageSize
         {
             public int Width;
             public int Height;
         }
 
-        public ImageSize GetOriginalSize(MediaFileSingle file)
+        public ImageViewerModel GetImageViewerModel(Guid streamId, string fileType)
+        {
+            const int maxWidth = PreviewConstants.MaxImagePreviewgWidth;
+
+            var rules = new ImageViewerRules();
+            var file = _opsClient.GetMediaFile(streamId);
+
+            var originalSize = GetOriginalSize(file);
+            var size = GetImageSize(originalSize.Width, originalSize.Height);
+
+            var paddingLeft = (size.Width < maxWidth)
+                ? $"{(maxWidth - size.Width) / 2}px" : "0";
+
+            return new ImageViewerModel
+            {
+                FilePath = $@"{file.Path}\{file.Filename}",
+                FileType = fileType,
+                Width = size.Width,
+                Height = size.Height,
+                PaddingLeft = paddingLeft
+            };
+        }
+
+        private static ImageSize GetOriginalSize(MediaFileSingle file)
         {
             int originalWidth;
             int originalHeight;
@@ -34,7 +65,7 @@ namespace Keebee.AAT.BusinessRules
             return new ImageSize { Width = originalWidth, Height = originalHeight };
         }
 
-        public static ImageSize GetImageSize(int width, int height)
+        private static ImageSize GetImageSize(int width, int height)
         {
             int newWidth;
             int newHeight;
@@ -72,5 +103,7 @@ namespace Keebee.AAT.BusinessRules
 
             return new ImageSize { Width = newWidth, Height = newHeight };
         }
+
+
     }
 }

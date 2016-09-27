@@ -226,26 +226,18 @@ namespace Keebee.AAT.Administrator.Controllers
         }
 
         [HttpGet]
-        public PartialViewResult GetImagePreviewView(Guid streamId, string fileType)
+        public PartialViewResult GetImageViewerView(Guid streamId, string fileType)
         {
-            const int maxWidth = ImagePreviewRules.PreviewConstants.MaxImagePreviewgWidth;
+            var rules = new ImageViewerRules { OperationsClient = _opsClient };
+            var m = rules.GetImageViewerModel(streamId, fileType);
 
-            var rules = new ImagePreviewRules();
-            var file = _opsClient.GetMediaFile(streamId);
-
-            var originalSize = rules.GetOriginalSize(file);
-            var size = ImagePreviewRules.GetImageSize(originalSize.Width, originalSize.Height);
-            
-            var paddingLeft = (size.Width < maxWidth)
-                ? $"{(maxWidth - size.Width) / 2}px" : "0";
-
-            return PartialView("_ImagePreview", new FilePreviewViewModel
+            return PartialView("_ImageViewer", new ImageViewerViewModel
             {
-                FilePath = $@"{file.Path}\{file.Filename}",
-                FileType = fileType,
-                Width = size.Width,
-                Height = size.Height,
-                PaddingLeft = paddingLeft
+                FilePath = m.FilePath,
+                FileType = m.FileType,
+                Width = m.Width,
+                Height = m.Height,
+                PaddingLeft = m.PaddingLeft
             });
         }
 

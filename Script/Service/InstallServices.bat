@@ -10,12 +10,12 @@ echo ---------------------------------------------------
 echo Done.
 echo Installing Phidget Service...
 echo ---------------------------------------------------
-installutil C:\Users\%USERNAME\Source\Repos\R2G2V1\Service\Keebee.AAT.PhidgetService\bin\Debug\Keebee.AAT.PhidgetService.exe
+installutil C:\Users\%USERNAME%\Source\Repos\R2G2V1\Service\Keebee.AAT.PhidgetService\bin\Debug\Keebee.AAT.PhidgetService.exe
 echo ---------------------------------------------------
 echo Done.
 echo Installing Rfid Reader Service...
 echo ---------------------------------------------------
-installutil C:\Users\%USERNAME\Source\Repos\R2G2V1\Service\Keebee.AAT.RfidReaderService\bin\Debug\Keebee.AAT.RfidReaderService.exe
+installutil C:\Users\%USERNAME%\Source\Repos\R2G2V1\Service\Keebee.AAT.RfidReaderService\bin\Debug\Keebee.AAT.RfidReaderService.exe
 echo ---------------------------------------------------
 echo Done.
 pause

@@ -15,8 +15,8 @@ namespace Keebee.AAT.VideoCaptureService
         // event logger
         private readonly SystemEventLogger _systemEventLogger;
 
-        private readonly Capture _capture;
-        private readonly Filters _filters = new Filters();
+        //private readonly Capture _capture;
+        //private readonly Filters _filters = new Filters();
 
         // display state
         private bool _displayIsActive;
@@ -27,8 +27,8 @@ namespace Keebee.AAT.VideoCaptureService
 
             _systemEventLogger = new SystemEventLogger(SystemEventLogType.VideoCaptureService);
 
-            _capture = new Capture(_filters.VideoInputDevices[0], _filters.AudioInputDevices[0]);
-            _capture.CaptureComplete += new EventHandler(OnCaptureComplete);
+            //_capture = new Capture(_filters.VideoInputDevices[0], _filters.AudioInputDevices[0]);
+            //_capture.CaptureComplete += OnCaptureComplete;
 
             var q1 = new CustomMessageQueue(new CustomMessageQueueArgs
             {
@@ -43,29 +43,6 @@ namespace Keebee.AAT.VideoCaptureService
                 MessageReceivedCallback = MessageReceivedDisplayVideoCapture
             })
             { SystemEventLogger = _systemEventLogger };
-        }
-
-        private void StartCapture()
-        {
-            try
-            {
-                var mediaPath = new MediaSourcePath();
-                //if (!_capture.Cued)
-                var filename = $"Capture_{DateTime.Now.Ticks}.avi";
-
-                //_capture.Filename = $@"{mediaPath.MediaRoot}\VideoCaptures\{filename}";
-                _capture.Filename = $@"C:\VideoCaptures\{filename}";
-                _capture.Start();
-            }
-            catch (Exception ex)
-            {
-                _systemEventLogger.WriteEntry($"StartCapture: {ex.Message}", EventLogEntryType.Error);
-            }
-        }
-
-        private void StopCapture()
-        {
-            _capture.Stop();
         }
 
         private void MessageReceivedVideoCapture(object source, MessageEventArgs e)
@@ -109,10 +86,6 @@ namespace Keebee.AAT.VideoCaptureService
             return display;
         }
 
-        private static void OnCaptureComplete(object sender, EventArgs e)
-        {
-        }
-
         protected override void OnStart(string[] args)
         {
             _systemEventLogger.WriteEntry("In OnStart");
@@ -121,9 +94,6 @@ namespace Keebee.AAT.VideoCaptureService
         protected override void OnStop()
         {
             _systemEventLogger.WriteEntry("In OnStop");
-
-            if (_capture != null)
-                _capture.Stop();
         }
     }
 }

@@ -97,6 +97,9 @@ namespace Keebee.AAT.Operations.Service.Services
             if (configDetail.PhidgetTypeId > 0)
                 el.PhidgetTypeId = configDetail.PhidgetTypeId;
 
+            if (configDetail.PhidgetStyleTypeId > 0)
+                el.PhidgetStyleTypeId = configDetail.PhidgetStyleTypeId;
+
             if (configDetail.ResponseTypeId > 0)
                 el.ResponseTypeId = configDetail.ResponseTypeId;
 

@@ -12,7 +12,6 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Web.Mvc;
 using System;
-using System.Drawing;
 using System.IO;
 
 namespace Keebee.AAT.Administrator.Controllers

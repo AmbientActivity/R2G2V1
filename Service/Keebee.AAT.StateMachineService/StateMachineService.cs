@@ -19,7 +19,7 @@ namespace Keebee.AAT.StateMachineService
         // message queue sender
         private readonly CustomMessageQueue _messageQueueResponse;
         private readonly CustomMessageQueue _messageQueueConfigPhidget;
-        private readonly CustomMessageQueue _messageQueueVideoCapture;
+        //private readonly CustomMessageQueue _messageQueueVideoCapture;
 
         // event logger
         private readonly SystemEventLogger _systemEventLogger;
@@ -55,11 +55,11 @@ namespace Keebee.AAT.StateMachineService
             })
             { SystemEventLogger = _systemEventLogger };
 
-            _messageQueueVideoCapture = new CustomMessageQueue(new CustomMessageQueueArgs
-            {
-                QueueName = MessageQueueType.VideoCapture
-            })
-            { SystemEventLogger = _systemEventLogger };
+            //_messageQueueVideoCapture = new CustomMessageQueue(new CustomMessageQueueArgs
+            //{
+            //    QueueName = MessageQueueType.VideoCapture
+            //})
+            //{ SystemEventLogger = _systemEventLogger };
         }
 
         private void InitializeMessageQueueListeners()
@@ -91,13 +91,6 @@ namespace Keebee.AAT.StateMachineService
                 MessageReceivedCallback = MessageReceivedDisplaySms
             })
             { SystemEventLogger = _systemEventLogger };
-
-            var q5 = new CustomMessageQueue(new CustomMessageQueueArgs
-            {
-                QueueName = MessageQueueType.VideoCapture,
-                MessageReceivedCallback = MessageReceivedVideoCapture
-            })
-            { SystemEventLogger = _systemEventLogger };
         }
 
         private void ExecuteResponse(int phidgetTypeId, int sensorValue)
@@ -120,13 +113,12 @@ namespace Keebee.AAT.StateMachineService
                     IsActiveEventLog = _activeConfig.IsActiveEventLog
                 };
 
+                //if (!configDetail.IsSystemReponseType)
+                // _messageQueueVideoCapture.Send("1");
+
                 var serializer = new JavaScriptSerializer();
                 var responseMessageBody = serializer.Serialize(responseMessage);
                 _messageQueueResponse.Send(responseMessageBody);
-
-                if (!configDetail.IsSystemReponseType)
-                    _messageQueueVideoCapture.Send("1");
-
             }
             catch (Exception ex)
             {
@@ -182,17 +174,6 @@ namespace Keebee.AAT.StateMachineService
             catch (Exception ex)
             {
                 _systemEventLogger.WriteEntry($"MessageReceivedRfid{Environment.NewLine}{ex.Message}", EventLogEntryType.Error);
-            }
-        }
-
-        private void MessageReceivedVideoCapture(object source, MessageEventArgs e)
-        {
-            try
-            {
-            }
-            catch (Exception ex)
-            {
-                _systemEventLogger.WriteEntry(ex.Message, EventLogEntryType.Error);
             }
         }
 

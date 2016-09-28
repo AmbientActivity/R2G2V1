@@ -7,7 +7,7 @@ echo ---------------------------------------------------
 \debug
 echo Uninstalling RFID Reader Service...
 echo ---------------------------------------------------
-installutil /u C:\Users\John\Source\Repos\R2G2V1\Service\Keebee.AAT.KeepIISAliveService\bin\Debug\Keebee.AAT.KeepIISAliveService.exe
+installutil /u C:\%USERNAME\John\Source\Repos\R2G2V1\Service\Keebee.AAT.KeepIISAliveService\bin\Debug\Keebee.AAT.KeepIISAliveService.exe
 echo ---------------------------------------------------
 echo Done.
 pause

@@ -7,15 +7,15 @@ echo ---------------------------------------------------
 \debug
 echo Uninstalling RFID Reader Service...
 echo ---------------------------------------------------
-installutil /u C:\Users\John\Source\Repos\R2G2V1\Service\Keebee.AAT.RfidReaderService\bin\Debug\Keebee.AAT.RfidReaderService.exe
+installutil /u C:\Users\%USERNAME\Source\Repos\R2G2V1\Service\Keebee.AAT.RfidReaderService\bin\Debug\Keebee.AAT.RfidReaderService.exe
 echo ---------------------------------------------------
 echo Done.
 echo Uninstalling Phidget Service...
 echo ---------------------------------------------------
-installutil /u C:\Users\John\Source\Repos\R2G2V1\Service\Keebee.AAT.PhidgetService\bin\Debug\Keebee.AAT.PhidgetService.exe
+installutil /u C:\Users\%USERNAME\Source\Repos\R2G2V1\Service\Keebee.AAT.PhidgetService\bin\Debug\Keebee.AAT.PhidgetService.exe
 echo ---------------------------------------------------
 echo Done.
-installutil /u C:\Users\John\Source\Repos\R2G2V1\Service\Keebee.AAT.StateMachineService\bin\Debug\Keebee.AAT.StateMachineService.exe
+installutil /u C:\Users\%USERNAME\Source\Repos\R2G2V1\Service\Keebee.AAT.StateMachineService\bin\Debug\Keebee.AAT.StateMachineService.exe
 echo ---------------------------------------------------
 echo Done.
 pause

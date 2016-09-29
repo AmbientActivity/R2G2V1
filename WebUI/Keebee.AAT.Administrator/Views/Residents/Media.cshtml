@@ -32,7 +32,7 @@
 <div class="panel panel-default">
     <div class="panel-heading">
         <div class="add-button-container">
-            <div class="upload-action-container">
+            <div class="upload-action-container" hidden>
                 <button id="uploadbutton" type="button" class="btn btn-md btn-success" onclick="return" false;">@Model.AddButtonText</button>
                 <button id="delete" disabled type="button" class="btn btn-md btn-danger" data-bind="click: showDeleteSelectedDialog">Delete Selected</button>
                 @*<span class="add-media-description">Upload personal media content</span>*@
@@ -45,7 +45,7 @@
             <input id="mediaPathTypeId" name="mediaPathTypeId" type="hidden" value="@Model.SelectedMediaPathType"/>
             @*<input id="mediaSourceTypeId" name="mediaSourceTypeId" type="hidden" value="@Model.SelectedMediaSourceType" />*@
         </div>
-        <img alt="" src="\\dev1\sqlexpress\KeebeeAATFilestream\Media\Profiles\1\images\animal-1405602.JPG" />
+
         <ul class="nav nav-pills">
             <li>
                 <input id="txtSearchFilename" type="text" class="form-control" placeholder="Name" data-bind="value: filenameSearch, valueUpdate: 'keyup'"/>

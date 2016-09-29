@@ -93,14 +93,13 @@
 
                 self.columns = ko.computed(function () {
                     var arr = [];
-                    arr.push({ title: "Profile", sortable: false  });
-                    arr.push({ title: "RFID", sortable: true, sortKey: "id" });
-                    arr.push({ title: "First Name", sortable: true, sortKey: "firstname" });
-                    arr.push({ title: "Last Name", sortable: true, sortKey: "lastname" });
-                    arr.push({ title: "Gender", sortable: true, sortKey: "gender" });
-                    arr.push({ title: "Game Difficulty", sortable: true, sortKey: "gamedifficultylevel" });
-                    arr.push({ title: "Created", sortable: true, sortKey: "datecreated" });
-                    arr.push({ title: "Updated", sortable: true, sortKey: "dateupdated" });
+                    arr.push({ title: "RFID", sortable: true, sortKey: "id", numeric: true });
+                    arr.push({ title: "First Name", sortable: true, sortKey: "firstname", numeric: false });
+                    arr.push({ title: "Last Name", sortable: true, sortKey: "lastname", numeric: false });
+                    arr.push({ title: "Gender", sortable: true, sortKey: "gender", numeric: false });
+                    arr.push({ title: "Game Difficulty", sortable: true, sortKey: "gamedifficultylevel", numeric: true });
+                    arr.push({ title: "Created", sortable: true, sortKey: "datecreated", numeric: true });
+                    arr.push({ title: "Updated", sortable: true, sortKey: "dateupdated", numeric: true });
                     return arr;
                 });
 
@@ -130,7 +129,7 @@
                     $(self.columns()).each(function (index, value) {
                         if (value.sortKey === sortKey) {
                             self.residents.sort(function (a, b) {
-                                if (sortKey === "id" || sortKey === "gamedifficultylevel" || sortKey === "datecreated" || sortKey === "dateupdated") {
+                                if (value.numeric) {
                                     if (_sortDescending) {
                                           return a[sortKey]> b[sortKey]
                                                 ? -1: a[sortKey]< b[sortKey]|| a.filename > b.filename ? 1: 0;
@@ -142,11 +141,11 @@
                                         if(_sortDescending) {
                                             return a[sortKey].toString().toLowerCase() > b[sortKey].toString().toLowerCase()
                                                 ? -1: a[sortKey].toString().toLowerCase() < b[sortKey].toString().toLowerCase()
-                                                || a.filename.toLowerCase() > b.filename.toLowerCase() ? 1: 0;
+                                                || a.firstname.toLowerCase() > b.firstname.toLowerCase() ? 1 : 0;
                                             } else {
                                             return a[sortKey].toString().toLowerCase() < b[sortKey].toString().toLowerCase()
                                                 ? -1: a[sortKey].toString().toLowerCase() > b[sortKey].toString().toLowerCase()
-                                                || a.filename.toLowerCase() > b.filename.toLowerCase() ? 1: 0;
+                                                || a.firstname.toLowerCase() > b.firstname.toLowerCase() ? 1 : 0;
                                         }
                                     }
                             });

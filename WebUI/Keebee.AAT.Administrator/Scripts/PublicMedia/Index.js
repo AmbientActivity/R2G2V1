@@ -167,9 +167,9 @@ function DisableScreen() {
 
                 self.columns = ko.computed(function () {
                     var arr = [];
-                    arr.push({ title: "Name", sortable: true, sortKey: "filename" });
-                    arr.push({ title: "Type", sortable: true, sortKey: "filetype" });
-                    arr.push({ title: "Size", sortable: true, sortKey: "filesize" });
+                    arr.push({ title: "Name", sortable: true, sortKey: "filename", numeric: false });
+                    arr.push({ title: "Type", sortable: true, sortKey: "filetype", numeric: false });
+                    arr.push({ title: "Size", sortable: true, sortKey: "filesize", numeric: true });
                     return arr;
                 });
 
@@ -207,7 +207,7 @@ function DisableScreen() {
                     $(self.columns()).each(function (index, value) {
                         if (value.sortKey === sortKey) {
                             self.files.sort(function (a, b) {
-                                if (sortKey === "size") {
+                                if (value.numeric) {
                                     if (_sortDescending) {
                                         return a[sortKey] > b[sortKey]
                                               ? -1 : a[sortKey] < b[sortKey] || a.filename > b.filename ? 1 : 0;

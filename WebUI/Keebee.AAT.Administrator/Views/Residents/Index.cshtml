@@ -49,9 +49,7 @@
                     <th class="col-glyphicon"></th>
                     <th class="col-glyphicon"></th>
                     <!-- ko foreach: columns -->
-                    <!-- ko if: sortable -->
                     <th data-bind="click: $parent.sort, attr: { id: 'resident-col-' + sortKey } "><a href="#" data-bind="text: title"></a></th>
-                    <!-- /ko -->
                     <!-- /ko -->
                 </tr>
             </thead>

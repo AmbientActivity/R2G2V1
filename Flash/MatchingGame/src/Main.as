@@ -384,14 +384,16 @@ package
 		}
 			
 		private function imgClicked(event:MouseEvent):void {
-			var mainFilename:String = mainImage[0].substring(mainImage[0].lastIndexOf("\\") + 1, mainImage[0].length).toLowerCase();
+			var fullPathMainImage:String = mainImage[0];
+			var mainFilename:String = fullPathMainImage.substring(fullPathMainImage.lastIndexOf("\\") + 1, fullPathMainImage.length).toLowerCase();
+			
 			var fullPath:String = event.target.content.loaderInfo.url;
 			var filename:String = fullPath.substring(fullPath.lastIndexOf("\\") + 1, fullPath.length).toLowerCase();
 			
 			clickCount++;
 			
 			// correct - go to next level
-			if (mainFilename.indexOf(filename) >= 0) {
+			if (mainFilename == filename) {
 				setTimeout(timedFunctionImage, 3000);
 				SoundMixer.stopAll();
 				playCorrectSound();

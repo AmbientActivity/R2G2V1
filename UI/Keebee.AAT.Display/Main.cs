@@ -286,37 +286,44 @@ namespace Keebee.AAT.Display
         {
             var files = new string[0];
             ICollection<MediaResponseType> mediaFiles = null;
-            var numResponseTypes = 0;
+            var numFiles = 0;
             var residentId = _activeResident.Id;
 
             // get media from public library for the response type
             if (_activeResident.Id == PublicMediaSource.Id)
             {
                 mediaFiles = _opsClient.GetPublicMediaFiles().MediaFiles.ToArray();
-                numResponseTypes = mediaFiles.Count(x => x.ResponseType.Id == responseTypeId);
+                numFiles = mediaFiles.Where(x => x.ResponseType.Id == responseTypeId)
+                    .SelectMany(m => m.Paths).Where(p => p.MediaPathType.Id == mediaPathTypeId)
+                    .SelectMany(p => p.Files).Count();
             }
             else
             {
                 // get media from resident's profile for the response type
                 var media = _opsClient.GetResidentMediaFilesForResident(residentId);
 
-                // look for the response type
+                // get a count of files for the response type
                 if (media != null)
                 {
                     mediaFiles = media.MediaFiles.ToArray();
-                    numResponseTypes = mediaFiles.Count(x => x.ResponseType.Id == responseTypeId);
+                    numFiles = mediaFiles
+                        .Where(x => x.ResponseType.Id == responseTypeId)
+                        .SelectMany(m => m.Paths).Where(p => p.MediaPathType.Id == mediaPathTypeId)
+                        .SelectMany(p => p.Files).Count();
                 }
 
-                // if no response type then look in public library
-                if (numResponseTypes == 0)
+                // if no files then look in public library
+                if (numFiles == 0)
                 {
                     residentId = PublicMediaSource.Id;
                     mediaFiles = _opsClient.GetPublicMediaFiles().MediaFiles.ToArray();
-                    numResponseTypes = mediaFiles.Count(x => x.ResponseType.Id == responseTypeId);
+                    numFiles = mediaFiles.Where(x => x.ResponseType.Id == responseTypeId)
+                        .SelectMany(m => m.Paths).Where(p => p.MediaPathType.Id == mediaPathTypeId)
+                        .SelectMany(p => p.Files).Count();
                 }
             }
 
-            return (mediaFiles != null && numResponseTypes > 0)
+            return (mediaFiles != null && numFiles > 0)
                 ? AssembleFileList(mediaFiles, residentId, responseTypeId, mediaPathTypeId)
                 : files;
         }

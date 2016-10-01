@@ -872,6 +872,7 @@ namespace Keebee.AAT.Display.Caregiver
             {
                 var difficultyLevel = Convert.ToInt32(lvInteractiveResponses.SelectedItems[0]
                     .SubItems[ListViewIActivitiesColumnDifficultyLevel].Text);
+
                 var activityname = lvInteractiveResponses.SelectedItems[0]
                     .SubItems[ListViewIActivitiesColumnName].Text;
 

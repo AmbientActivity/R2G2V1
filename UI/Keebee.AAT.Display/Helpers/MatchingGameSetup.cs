@@ -2,6 +2,7 @@
 using Keebee.AAT.Shared;
 using System;
 using System.Linq;
+using Keebee.AAT.Display.Extensions;
 
 namespace Keebee.AAT.Display.Helpers
 {
@@ -48,12 +49,15 @@ namespace Keebee.AAT.Display.Helpers
 
             var publicShapes = publicShapeMediaFiles.SelectMany(m => m.Paths)
                 .SelectMany(p => p.Files)
-                .Take(MatchingGameConfig.MinNumShapes - shapeCount)
                 .Select(f => $@"{pathRoot}\{mediaPathType}\{f.Filename}")
                 .Except(residentShapes)
                 .ToArray();
 
-            return residentShapes.Concat(publicShapes).ToArray();
+            publicShapes.Shuffle();
+
+            var additionalShapes = publicShapes.Take(MatchingGameConfig.MinNumShapes - shapeCount);
+
+            return residentShapes.Concat(additionalShapes).ToArray();
         }
 
         public string[] GetTotalSounds(string[] residentSounds)
@@ -75,55 +79,53 @@ namespace Keebee.AAT.Display.Helpers
                 .MediaPathType.Description;
 
             var publicSounds = mediaFiles.SelectMany(m => m.Paths)
-                .SelectMany(p => p.Files
-                    .Where(f => f.Filename == MatchingGameConfig.WouldYouListToMatchThePictures
-                        || f.Filename == MatchingGameConfig.WouldYouListToMatchThePairs))
+                .SelectMany(p => p.Files)
                 .Select(f => $@"{pathRoot}\{mediaPathType}\{f.Filename}")
                 .ToArray();
 
-            if (residentSounds.All(s => s != MatchingGameConfig.WouldYouListToMatchThePictures))
+            if (residentSounds.All(s => !s.Contains(MatchingGameConfig.WouldYouListToMatchThePictures)))
             {
                 var sound = publicSounds.Where(s => s.Contains(MatchingGameConfig.WouldYouListToMatchThePictures)).ToArray();
                 residentSounds = residentSounds.Concat(sound).ToArray();
             }
 
-            if (residentSounds.All(s => s != MatchingGameConfig.WouldYouListToMatchThePairs))
+            if (residentSounds.All(s => !s.Contains(MatchingGameConfig.WouldYouListToMatchThePairs)))
             {
                 var sound = publicSounds.Where(s => s.Contains(MatchingGameConfig.WouldYouListToMatchThePairs)).ToArray();
                 residentSounds = residentSounds.Concat(sound).ToArray();
             }
 
-            if (residentSounds.All(s => s != MatchingGameConfig.Correct))
+            if (residentSounds.All(s => !s.Contains(MatchingGameConfig.Correct)))
             {
                 var sound = publicSounds.Where(s => s.Contains(MatchingGameConfig.Correct)).ToArray();
                 residentSounds = residentSounds.Concat(sound).ToArray();
             }
 
-            if (residentSounds.All(s => s != MatchingGameConfig.GoodJob))
+            if (residentSounds.All(s => !s.Contains(MatchingGameConfig.GoodJob)))
             {
                 var sound = publicSounds.Where(s => s.Contains(MatchingGameConfig.GoodJob)).ToArray();
                 residentSounds = residentSounds.Concat(sound).ToArray();
             }
 
-            if (residentSounds.All(s => s != MatchingGameConfig.WellDone))
+            if (residentSounds.All(s => !s.Contains(MatchingGameConfig.WellDone)))
             {
                 var sound = publicSounds.Where(s => s.Contains(MatchingGameConfig.WellDone)).ToArray();
                 residentSounds = residentSounds.Concat(sound).ToArray();
             }
 
-            if (residentSounds.All(s => s != MatchingGameConfig.TryAgain))
+            if (residentSounds.All(s => !s.Contains(MatchingGameConfig.TryAgain)))
             {
                 var sound = publicSounds.Where(s => s.Contains(MatchingGameConfig.TryAgain)).ToArray();
                 residentSounds = residentSounds.Concat(sound).ToArray();
             }
 
-            if (residentSounds.All(s => s != MatchingGameConfig.LetsTryAgain))
+            if (residentSounds.All(s => !s.Contains(MatchingGameConfig.LetsTryAgain)))
             {
                 var sound = publicSounds.Where(s => s.Contains(MatchingGameConfig.LetsTryAgain)).ToArray();
                 residentSounds = residentSounds.Concat(sound).ToArray();
             }
 
-            if (residentSounds.All(s => s != MatchingGameConfig.LetsTrySomethingDifferent))
+            if (residentSounds.All(s => !s.Contains(MatchingGameConfig.LetsTrySomethingDifferent)))
             {
                 var sound = publicSounds.Where(s => s.Contains(MatchingGameConfig.LetsTrySomethingDifferent)).ToArray();
                 residentSounds = residentSounds.Concat(sound).ToArray();

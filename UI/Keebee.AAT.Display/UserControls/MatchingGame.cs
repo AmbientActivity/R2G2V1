@@ -73,14 +73,14 @@ namespace Keebee.AAT.Display.UserControls
                 var xmlShapes = GetXmlString(shapes);
                 var enableTimeout = _enableGameTimeout ? 1 : 0;
 
-                var wouldYouLikeToMatchThePictures = sounds.Single(s => s.Contains(MatchingGameConfig.WouldYouListToMatchThePictures));
-                var wouldYouLikeToMatchThePairs = sounds.Single(s => s.Contains(MatchingGameConfig.WouldYouListToMatchThePairs));
-                var correct = sounds.Single(s => s.Contains(MatchingGameConfig.Correct));
-                var goodJob = sounds.Single(s => s.Contains(MatchingGameConfig.GoodJob));
-                var wellDone = sounds.Single(s => s.Contains(MatchingGameConfig.WellDone));
-                var tryAgain = sounds.Single(s => s.Contains(MatchingGameConfig.TryAgain));
-                var letsTryAgain = sounds.Single(s => s.Contains(MatchingGameConfig.LetsTryAgain));
-                var letsTrySomethingDifferent = sounds.Single(s => s.Contains(MatchingGameConfig.LetsTrySomethingDifferent));
+                var wouldYouLikeToMatchThePictures = sounds.Single(s => Path.GetFileName(s) == MatchingGameConfig.WouldYouListToMatchThePictures);
+                var wouldYouLikeToMatchThePairs = sounds.Single(s => Path.GetFileName(s) == MatchingGameConfig.WouldYouListToMatchThePairs);
+                var correct = sounds.Single(s => Path.GetFileName(s) == MatchingGameConfig.Correct);
+                var goodJob = sounds.Single(s => Path.GetFileName(s) == MatchingGameConfig.GoodJob);
+                var wellDone = sounds.Single(s => Path.GetFileName(s) == MatchingGameConfig.WellDone);
+                var tryAgain = sounds.Single(s => Path.GetFileName(s) == MatchingGameConfig.TryAgain);
+                var letsTryAgain = sounds.Single(s => Path.GetFileName(s) == MatchingGameConfig.LetsTryAgain);
+                var letsTrySomethingDifferent = sounds.Single(s => Path.GetFileName(s) == MatchingGameConfig.LetsTrySomethingDifferent);
 
                 axShockwaveFlash1.CallFunction(
                     "<invoke name=\"loadMedia\"><arguments>" +

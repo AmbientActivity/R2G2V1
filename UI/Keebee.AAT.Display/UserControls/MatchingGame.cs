@@ -73,14 +73,14 @@ namespace Keebee.AAT.Display.UserControls
                 var xmlShapes = GetXmlString(shapes);
                 var enableTimeout = _enableGameTimeout ? 1 : 0;
 
-                var wouldYouLikeToMatchThePictures = sounds.First(s => s.Contains(MatchingGameConfig.WouldYouListToMatchThePictures));
-                var wouldYouLikeToMatchThePairs = sounds.First(s => s.Contains(MatchingGameConfig.WouldYouListToMatchThePairs));
-                var correct = sounds.First(s => s.Contains(MatchingGameConfig.Correct));
-                var goodJob = sounds.First(s => s.Contains(MatchingGameConfig.GoodJob));
-                var wellDone = sounds.First(s => s.Contains(MatchingGameConfig.WellDone));
-                var tryAgain = sounds.First(s => s.Contains(MatchingGameConfig.TryAgain));
-                var letsTryAgain = sounds.First(s => s.Contains(MatchingGameConfig.LetsTryAgain));
-                var letsTrySomethingDifferent = sounds.First(s => s.Contains(MatchingGameConfig.LetsTrySomethingDifferent));
+                var wouldYouLikeToMatchThePictures = sounds.Single(s => s.Contains(MatchingGameConfig.WouldYouListToMatchThePictures));
+                var wouldYouLikeToMatchThePairs = sounds.Single(s => s.Contains(MatchingGameConfig.WouldYouListToMatchThePairs));
+                var correct = sounds.Single(s => s.Contains(MatchingGameConfig.Correct));
+                var goodJob = sounds.Single(s => s.Contains(MatchingGameConfig.GoodJob));
+                var wellDone = sounds.Single(s => s.Contains(MatchingGameConfig.WellDone));
+                var tryAgain = sounds.Single(s => s.Contains(MatchingGameConfig.TryAgain));
+                var letsTryAgain = sounds.Single(s => s.Contains(MatchingGameConfig.LetsTryAgain));
+                var letsTrySomethingDifferent = sounds.Single(s => s.Contains(MatchingGameConfig.LetsTrySomethingDifferent));
 
                 axShockwaveFlash1.CallFunction(
                     "<invoke name=\"loadMedia\"><arguments>" +
@@ -121,13 +121,6 @@ namespace Keebee.AAT.Display.UserControls
                 _systemEventLogger.WriteEntry($"Display.MatchingGame.Stop{Environment.NewLine}{ex.Message}", EventLogEntryType.Error);
             }
             
-        }
-
-        private static string GetPathersonalizedSounds(string filePath)
-        {
-            var filename = Path.GetFileName(filePath);
-
-            return filePath.Replace($"\\shapes\\{filename}", string.Empty);
         }
 
         private string GetXmlString(IEnumerable<string> files)

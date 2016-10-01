@@ -1,8 +1,7 @@
 ﻿using Keebee.AAT.RESTClient;
 using Keebee.AAT.Shared;
-using System;
-using System.Linq;
 using Keebee.AAT.Display.Extensions;
+using System.Linq;
 
 namespace Keebee.AAT.Display.Helpers
 {

@@ -2,7 +2,6 @@
 using Keebee.AAT.RESTClient;
 using Keebee.AAT.Display.Helpers;
 using Keebee.AAT.Display.UserControls;
-using Keebee.AAT.Shared;
 using System;
 using System.Diagnostics;
 using System.Drawing;
@@ -10,7 +9,7 @@ using System.Windows.Forms;
 
 namespace Keebee.AAT.Display.Caregiver
 {
-    public partial class ActivityPlayer : Form
+    public partial class MatchingGamePlayer : Form
     {
         private SystemEventLogger _systemEventLogger;
         public SystemEventLogger SystemEventLogger
@@ -24,10 +23,16 @@ namespace Keebee.AAT.Display.Caregiver
             set { _opsClient = value; }
         }
 
-        private string[] _files;
-        public string[] Files
+        private string[] _shapes;
+        public string[] Shapes
         {
-            set { _files = value; }
+            set { _shapes = value; }
+        }
+
+        private string[] _sounds;
+        public string[] Sounds
+        {
+            set { _sounds = value; }
         }
 
         private string _activityName;
@@ -63,7 +68,7 @@ namespace Keebee.AAT.Display.Caregiver
         private const int ActivityNameLabelFontSize = 30;
 #endif
 
-        public ActivityPlayer()
+        public MatchingGamePlayer()
         {
             InitializeComponent();
             ConfigureComponents();
@@ -103,7 +108,7 @@ namespace Keebee.AAT.Display.Caregiver
             Close();
         }
 
-        private void ActivityPlayerShown(object sender, EventArgs e)
+        private void MatchingGamePlayerShown(object sender, EventArgs e)
         {
             lblActivityName.Text = _activityName;
             lblActivityName.Font = new Font("Microsoft Sans Serif", ActivityNameLabelFontSize);
@@ -111,8 +116,7 @@ namespace Keebee.AAT.Display.Caregiver
             _gameEventLogger.OperationsClient = _opsClient;
             matchingGame1.SystemEventLogger = _systemEventLogger;
 
-            var mediaPath = new MediaSourcePath();
-            matchingGame1.Play(_files, _difficultyLevel, mediaPath.MatchingGamePublicSounds, false, _isActiveEventLog);
+            matchingGame1.Play(_shapes, _sounds, _difficultyLevel, false, _isActiveEventLog);
         }
 
         private void LogGameEvent(object sender, EventArgs e)

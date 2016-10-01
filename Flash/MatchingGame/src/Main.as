@@ -55,10 +55,17 @@ package
 		private const GameTypeId_MatchPictures:Number = 1;
 		private const GameTypeId_MatchPairs:Number = 2;
 		private var currentGameTypeId:Number;
-		// uncomment to test
-		//private var xmlShapesTest:String = "<images><image><name>Duck.png</name></image><image><name>Kangaroo.png</name></image><image><name>bear.png</name></image><image><name>bird.png</name></image><image><name>butterfly.png</name></image><image><name>camel.png</name></image><image><name>cat.png</name></image><image><name>chicken.png</name></image><image><name>cow.png</name></image><image><name>deer.png</name></image><image><name>dog.png</name></image><image><name>elephant.png</name></image><image><name>fish.png</name></image><image><name>horse.png</name></image><image><name>leopard.png</name></image><image><name>monkey.png</name></image><image><name>parrot.png</name></image><image><name>pig.png</name></image><image><name>rabbit.png</name></image><image><name>rhinoceros.png</name></image><image><name>snail.png</name></image></images>"
-		//private var pathMediaTest:String = "\\\\Dev1\\sqlexpress\\KeebeeAATFilestream\\Media\\Profiles\\4";
-		//private var pathRootMediaTest:String = "\\\\\Dev1\\sqlexpress\\KeebeeAATFilestream\\Media\\MatchingGame\\sounds";
+		
+		// for standalone testing
+		private var xmlShapesTest:String = "<images><image><name>\\\\WIN10\\sqlexpress\\KeebeeAATFilestream\\Media\\Profiles\\0\\shapes\\cloud.png</name></image><image><name>\\\\WIN10\\sqlexpress\\KeebeeAATFilestream\\Media\\Profiles\\0\\shapes\\sun.png</name></image><image><name>\\\\WIN10\\sqlexpress\\KeebeeAATFilestream\\Media\\Profiles\\0\\shapes\\snail.png</name></image><image><name>\\\\WIN10\\sqlexpress\\KeebeeAATFilestream\\Media\\Profiles\\0\\shapes\\airplane.png</name></image><image><name>\\\\WIN10\\sqlexpress\\KeebeeAATFilestream\\Media\\Profiles\\0\\shapes\\dog.png</name></image><image><name>\\\\WIN10\\sqlexpress\\KeebeeAATFilestream\\Media\\Profiles\\0\\shapes\\car.png</name></image><image><name>\\\\WIN10\\sqlexpress\\KeebeeAATFilestream\\Media\\Profiles\\0\\shapes\\umbrella.png</name></image><image><name>\\\\WIN10\\sqlexpress\\KeebeeAATFilestream\\Media\\Profiles\\0\\shapes\\moon.png</name></image><image><name>\\\\WIN10\\sqlexpress\\KeebeeAATFilestream\\Media\\Profiles\\0\\shapes\\envelope.png</name></image><image><name>\\\\WIN10\\sqlexpress\\KeebeeAATFilestream\\Media\\Profiles\\0\\shapes\\cat.png</name></image><image><name>\\\\WIN10\\sqlexpress\\KeebeeAATFilestream\\Media\\Profiles\\0\\shapes\\rabbit.png</name></image><image><name>\\\\WIN10\\sqlexpress\\KeebeeAATFilestream\\Media\\Profiles\\0\\shapes\\hanf.png</name></image><image><name>\\WIN10\sqlexpress\KeebeeAATFilestream\Media\Profiles\0\shapes\house.png</name></image><image><name>\\WIN10\sqlexpress\KeebeeAATFilestream\Media\Profiles\0\shapes\pine-tree.png</name></image><image><name>\\WIN10\sqlexpress\KeebeeAATFilestream\Media\Profiles\0\shapes\light-bulb.png</name></image><image><name>\\WIN10\sqlexpress\KeebeeAATFilestream\Media\Profiles\0\shapes\butterfly.png</name></image><image><name>\\WIN10\sqlexpress\KeebeeAATFilestream\Media\Profiles\0\shapes\phone.png</name></image><image><name>\\WIN10\sqlexpress\KeebeeAATFilestream\Media\Profiles\0\shapes\parrot.png</name></image><image><name>\\WIN10\sqlexpress\KeebeeAATFilestream\Media\Profiles\0\shapes\flower.png</name></image><image><name>\\WIN10\sqlexpress\KeebeeAATFilestream\Media\Profiles\0\shapes\fish.png</name></image><image><name>\\WIN10\sqlexpress\KeebeeAATFilestream\Media\Profiles\0\shapes\bird.png</name></image><image><name>\\WIN10\sqlexpress\KeebeeAATFilestream\Media\Profiles\0\shapes\bicycle.png</name></image><image><name>\\WIN10\sqlexpress\KeebeeAATFilestream\Media\Profiles\0\shapes\maple-leaf.png</name></image></images>";
+		private var wouldYouLikeToMatchThePicturesTest:String = "\\\\WIN10\\sqlexpress\\KeebeeAATFilestream\\Media\\Profiles\\0\\sounds\\would-you-like-to-match-the-pictures.mp3";
+		private var wouldYouLikeToMatchThePairsTest:String = "\\\\WIN10\\sqlexpress\\KeebeeAATFilestream\\Media\\Profiles\\0\\sounds\\would-you-like-to-match-the-pairs.mp3";
+		private var correctTest:String = "\\\\WIN10\\sqlexpress\\KeebeeAATFilestream\\Media\\Profiles\\0\\sounds\\correct.mp3";
+		private var goodJobTest:String = "\\\\WIN10\\sqlexpress\\KeebeeAATFilestream\\Media\\Profiles\\0\\sounds\good-job.mp3";
+		private var wellDoneTest:String = "\\\\WIN10\\sqlexpress\\KeebeeAATFilestream\\Media\\Profiles\\0\\sounds\\well-done.mp3";
+		private var TryAgainTest:String = "\\\\WIN10\\sqlexpress\\KeebeeAATFilestream\\Media\\Profiles\\0\\sounds\\try-again.mp3";
+		private var letsTryAgainTest:String = "\\\\WIN10\\sqlexpress\\KeebeeAATFilestream\\Media\\Profiles\\0\\sounds\\lets-try-again.mp3";
+		private var letsTrySomethingDifferentTest:String = "\\\\WIN10\\sqlexpress\\KeebeeAATFilestream\\Media\\Profiles\\0\\sounds\\lets-try-something-different.mp3";
 		
 		// media
 		private var xmlShapes:String;
@@ -121,28 +128,37 @@ package
 			ExternalInterface.addCallback("stopMatchingGame", stopMatchingGame);
 			
 			// uncomment to test
-			//loadMedia(xmlShapesTest, pathMediaTest, pathRootMediaTest, 1, 1);
-			//playMatchingGame();
+			//loadMedia(xmlShapesTest, wouldYouLikeToMatchThePicturesTest, wouldYouLikeToMatchThePairsTest, 
+			//	correctTest, goodJobTest, wellDoneTest, TryAgainTest, letsTryAgainTest, letsTrySomethingDifferentTest, 1, 1);
+				
+			playMatchingGame();
 		}
 		
 		// called externally by the Windows UserControl
-		private function loadMedia(xml:String, path:String, pathRootMedia:String, difficultyLevel:Number, enableTimeout:Number):void {
-			xmlShapes = xml;
-			pathMedia = path;
+		private function loadMedia(xmlShapePaths:String, 
+			wouldYouLikeToMatchThePicturesPath:String, 
+			wouldYouLikeToMatchThePairsPath:String,
+			correctPath:String,
+			goodJobPath:String,
+			wellDonePath:String,
+			tryAgainPath:String,
+			letsTryAgainPath:String,
+			letsTrySomethingDifferentPath:String,
+			difficultyLevel:Number, 
+			enableTimeout:Number):void {
+
+			xmlShapes = xmlShapePaths;
 			enableGameTimeout = (enableTimeout == 1);
 			
-			// generic (non-personalized sounds)
-			urlSoundCorrect = new URLRequest(pathRootMedia + "\\correct.mp3");
-			urlSoundGoodJob = new URLRequest(pathRootMedia + "\\good-job.mp3");
-			urlSoundWellDone = new URLRequest(pathRootMedia + "\\well-done.mp3");
-			urlSoundTryAgain = new URLRequest(pathRootMedia + "\\try-again.mp3");
-			urlSoundLetsTryAgain = new URLRequest(pathRootMedia + "\\lets-try-again.mp3");
-			urlSoundLetsTrySomethingDifferent = new URLRequest(pathRootMedia + "\\lets-try-something-different.mp3");
-			
-			// personalized
-			urlSoundWouldYouLikeToMatchThePictures = new URLRequest(path + "\\sounds\\would-you-like-to-match-the-pictures.mp3");
-			urlSoundWouldYouLikeToMatchThePairs = new URLRequest(path + "\\sounds\\would-you-like-to-match-the-pairs.mp3");
-			
+			urlSoundWouldYouLikeToMatchThePictures = new URLRequest(wouldYouLikeToMatchThePicturesPath);
+			urlSoundWouldYouLikeToMatchThePairs = new URLRequest(wouldYouLikeToMatchThePairsPath);
+			urlSoundCorrect = new URLRequest(correctPath);
+			urlSoundGoodJob = new URLRequest(goodJobPath);
+			urlSoundWellDone = new URLRequest(wellDonePath);
+			urlSoundTryAgain = new URLRequest(tryAgainPath);
+			urlSoundLetsTryAgain = new URLRequest(letsTryAgainPath);
+			urlSoundLetsTrySomethingDifferent = new URLRequest(letsTrySomethingDifferentPath);
+
 			soundCorrect = new Sound();
 			soundGoodJob = new Sound();
 			soundWellDone = new Sound();
@@ -220,7 +236,6 @@ package
 			clickedImagesPairs = null;
 			childImagesPairs = null;
 			clickedImagesPairsInstance = null;
-			//LogGamingEvent(-1, "Game has been interrupted");
 		}
 		
 		private function loadScreen():void {
@@ -285,7 +300,7 @@ package
 					var urlReq:URLRequest;
 					var imgLoader:Loader = new Loader();
 					var r:uint = Math.floor(Math.random() * images.length);
-					var url:String = pathMedia + "\\shapes\\" + images[r];
+					var url:String = images[r];
 					
 					loadedImages.push(images[r]);
 					images.splice(r, 1);
@@ -369,14 +384,14 @@ package
 		}
 			
 		private function imgClicked(event:MouseEvent):void {
-			var mainFilename:String = mainImage[0].toLowerCase();
+			var mainFilename:String = mainImage[0].substring(mainImage[0].lastIndexOf("\\") + 1, mainImage[0].length).toLowerCase();
 			var fullPath:String = event.target.content.loaderInfo.url;
 			var filename:String = fullPath.substring(fullPath.lastIndexOf("\\") + 1, fullPath.length).toLowerCase();
 			
 			clickCount++;
 			
 			// correct - go to next level
-			if (mainFilename == filename) {
+			if (mainFilename.indexOf(filename) >= 0) {
 				setTimeout(timedFunctionImage, 3000);
 				SoundMixer.stopAll();
 				playCorrectSound();
@@ -457,7 +472,7 @@ package
 					var urlReq:URLRequest;
 					var imgLoader:Loader = new Loader();
 					var fr:uint = Math.floor(Math.random() * loadedImagesPairs.length);
-					var url:String = pathMedia + "\\shapes\\" + loadedImagesPairs[fr];
+					var url:String = loadedImagesPairs[fr];
 					
 					mainImage.push(loadedImagesPairs[fr]);
 					loadedImagesPairs.splice(fr,1);
@@ -686,7 +701,7 @@ package
 			var mainImgUrlReq:URLRequest;
 			var mainImgLoader:Loader = new Loader();
 			var fr:uint = Math.floor(Math.random() * loadedImages.length);
-			var mainUrl:String = pathMedia + "\\shapes\\" + loadedImages[fr];
+			var mainUrl:String = loadedImages[fr];
 			var mainFilename:String = loadedImages[fr];
 			
 			mainImage.push(loadedImages[fr]);

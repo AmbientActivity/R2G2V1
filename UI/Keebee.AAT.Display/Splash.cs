@@ -15,7 +15,7 @@ namespace Keebee.AAT.Display
 {
     public partial class Splash : Form
     {
-        private const string PlaylistAmbient = "ambient";
+        private const string PlaylistAmbient = PlaylistName.Ambient;
 
         private Timer _timer;
 

@@ -1,6 +1,6 @@
 ﻿namespace Keebee.AAT.Display.Caregiver
 {
-    partial class ActivityPlayer
+    partial class MatchingGamePlayer
     {
         /// <summary>
         /// Required designer variable.
@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ActivityPlayer));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MatchingGamePlayer));
             this.matchingGame1 = new Keebee.AAT.Display.UserControls.MatchingGame();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.btnClose = new System.Windows.Forms.Button();
@@ -110,7 +110,7 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Name = "ActivityPlayer";
             this.Text = "ActivityPlayer";
-            this.Shown += new System.EventHandler(this.ActivityPlayerShown);
+            this.Shown += new System.EventHandler(this.MatchingGamePlayerShown);
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();
             this.panel1.ResumeLayout(false);

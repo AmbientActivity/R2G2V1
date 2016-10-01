@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using Keebee.AAT.Display.Helpers;
 using Keebee.AAT.Shared;
 
 namespace Keebee.AAT.Display.UserControls
@@ -24,7 +25,6 @@ namespace Keebee.AAT.Display.UserControls
         public event EventHandler LogGameEventEvent;
 
         private bool _isActiveEventLog;
-        private string _pathPublicSounds;
 
         public class LogGameEventEventArgs : EventArgs
         {
@@ -52,33 +52,47 @@ namespace Keebee.AAT.Display.UserControls
             axShockwaveFlash1.Dock = DockStyle.Fill;
         }
 
-        public void Play(string[] shapes, int initialDifficultyLevel, string pathPublicSounds, bool enableTimeout, bool isActiveEventLog)
+        public void Play(string[] shapes, string[] sounds, int initialDifficultyLevel, bool enableTimeout, bool isActiveEventLog)
         {
             _initialDifficultyLevel = initialDifficultyLevel;
             _isActiveEventLog = isActiveEventLog;
-            _pathPublicSounds = pathPublicSounds;
             _enableGameTimeout = enableTimeout;
-            PlayGame(shapes);
+            PlayGame(shapes, sounds);
         }
 
-        private void PlayGame(ICollection<string> files)
+        private void PlayGame(ICollection<string> shapes, ICollection<string> sounds)
         {
             try
             {
                 var swf = Path.Combine(Application.StartupPath, "MatchingGame.swf");
                 axShockwaveFlash1.LoadMovie(0, swf);
 
-                if (!files.Any()) return;
+                if (!shapes.Any()) return;
+                if (!sounds.Any()) return;
 
-                var path = GetPath(files.First());
-
-                var xml = GetXmlString(files);
+                var xmlShapes = GetXmlString(shapes);
                 var enableTimeout = _enableGameTimeout ? 1 : 0;
+
+                var wouldYouLikeToMatchThePictures = sounds.First(s => s.Contains(MatchingGameConfig.WouldYouListToMatchThePictures));
+                var wouldYouLikeToMatchThePairs = sounds.First(s => s.Contains(MatchingGameConfig.WouldYouListToMatchThePairs));
+                var correct = sounds.First(s => s.Contains(MatchingGameConfig.Correct));
+                var goodJob = sounds.First(s => s.Contains(MatchingGameConfig.GoodJob));
+                var wellDone = sounds.First(s => s.Contains(MatchingGameConfig.WellDone));
+                var tryAgain = sounds.First(s => s.Contains(MatchingGameConfig.TryAgain));
+                var letsTryAgain = sounds.First(s => s.Contains(MatchingGameConfig.LetsTryAgain));
+                var letsTrySomethingDifferent = sounds.First(s => s.Contains(MatchingGameConfig.LetsTrySomethingDifferent));
 
                 axShockwaveFlash1.CallFunction(
                     "<invoke name=\"loadMedia\"><arguments>" +
-                    $"<string>{xml}</string><string>{path}</string>" +
-                    $"<string>{_pathPublicSounds}</string>" +
+                    $"<string>{xmlShapes}</string>" + 
+                    $"<string>{wouldYouLikeToMatchThePictures}</string>" +
+                    $"<string>{wouldYouLikeToMatchThePairs}</string>" +
+                    $"<string>{correct}</string>" +
+                    $"<string>{goodJob}</string>" +
+                    $"<string>{wellDone}</string>" +
+                    $"<string>{tryAgain}</string>" +
+                    $"<string>{letsTryAgain}</string>" +
+                    $"<string>{letsTrySomethingDifferent}</string>" +
                     $"<number>{_initialDifficultyLevel}</number>" +
                     $"<number>{enableTimeout}</number></arguments></invoke>");
                 axShockwaveFlash1.CallFunction("<invoke name=\"playMatchingGame\"></invoke>");
@@ -109,7 +123,7 @@ namespace Keebee.AAT.Display.UserControls
             
         }
 
-        private static string GetPath(string filePath)
+        private static string GetPathersonalizedSounds(string filePath)
         {
             var filename = Path.GetFileName(filePath);
 
@@ -125,7 +139,7 @@ namespace Keebee.AAT.Display.UserControls
                 xmlBuilder.Append("<images>");
                 foreach (var file in files)
                 {
-                    xmlBuilder.Append($"<image><name>{Path.GetFileName(file)}</name></image>");
+                    xmlBuilder.Append($"<image><name>{file}</name></image>");
                 }
                 xmlBuilder.Append("</images>");
             }

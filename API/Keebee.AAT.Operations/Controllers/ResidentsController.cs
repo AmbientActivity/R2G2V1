@@ -102,51 +102,6 @@ namespace Keebee.AAT.Operations.Controllers
         }
 
         [HttpGet]
-        [Route("generic")]
-        public async Task<DynamicJsonObject> GetGeneric()
-        {
-            var configuration = new Config();
-
-            await Task.Run(() =>
-            {
-                configuration = _configurationService.GetActiveDetails();
-            });
-
-            if (configuration == null) return new DynamicJsonObject(new ExpandoObject());
-
-            dynamic exObj = new ExpandoObject();
-            exObj.Id = PublicMediaSource.Id;
-            exObj.FirstName = PublicMediaSource.Description;
-            exObj.GameDifficultyLevel = 1;
-            exObj.ConfigDetails = configuration.ConfigDetails.Select(detail => new
-            {
-                PhidgetType = new
-                {
-                    detail.PhidgetType.Id,
-                    detail.PhidgetType.Description,
-                    PhidgetStyleType = new
-                    {
-                        detail.PhidgetStyleType.Id,
-                        detail.PhidgetStyleType.Description
-                    }
-                },
-                ResponseType = new
-                {
-                    detail.ResponseType.Id,
-                    detail.ResponseType.Description,
-                    detail.ResponseType.IsInteractive,
-                    ResponseCategoryType = new
-                    {
-                        detail.ResponseType.ResponseTypeCategory.Id,
-                        detail.ResponseType.ResponseTypeCategory.Description
-                    }
-                }
-            });
-
-            return new DynamicJsonObject(exObj);
-        }
-
-        [HttpGet]
         [Route("{id}/media")]
         public async Task<DynamicJsonObject> GetWithdMedia(int id)
         {

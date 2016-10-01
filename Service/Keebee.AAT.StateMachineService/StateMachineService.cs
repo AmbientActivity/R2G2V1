@@ -113,6 +113,7 @@ namespace Keebee.AAT.StateMachineService
                     IsActiveEventLog = _activeConfig.IsActiveEventLog
                 };
 
+                //TODO: for when video capture gets implemented
                 //if (!configDetail.IsSystemReponseType)
                 // _messageQueueVideoCapture.Send("1");
 

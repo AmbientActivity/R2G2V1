@@ -10,7 +10,7 @@ namespace Keebee.AAT.Display.UserControls
 {
     public partial class MediaPlayer : UserControl
     {
-        private const string PlaylistProfile = "profile";
+        private const string PlaylistProfile = PlaylistName.Profile;
 
         private SystemEventLogger _systemEventLogger;
         public SystemEventLogger SystemEventLogger

@@ -13,9 +13,10 @@ namespace Keebee.AAT.Display.Caregiver
 {
     public partial class VolumeAdjuster : Form
     {
-        private const string PlaylistCaregiver = "caregiver";
+        // use the audio from the cats video as a sample
+        private const int ResponseTypeIdCats = ResponseTypeId.Cats;
 
-        // use Cats video for sample audio clip
+        private const string PlaylistCaregiver = PlaylistName.Caregiver;
 
         private SystemEventLogger _systemEventLogger;
         public SystemEventLogger EventLogger
@@ -68,7 +69,7 @@ namespace Keebee.AAT.Display.Caregiver
         {
             try
             {
-                var mediaPath = _opsClient.GetPublicMediaFilesForResponseType(ResponseTypeId.Cats)
+                var mediaPath = _opsClient.GetPublicMediaFilesForResponseType(ResponseTypeIdCats)
                     .MediaFiles.Single().Paths.First();
 
                 var mediaPathType = mediaPath.MediaPathType.Description;

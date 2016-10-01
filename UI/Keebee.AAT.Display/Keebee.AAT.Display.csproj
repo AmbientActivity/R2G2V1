@@ -52,11 +52,11 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Caregiver\ActivityPlayer.cs">
+    <Compile Include="Caregiver\MatchingGamePlayer.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Caregiver\ActivityPlayer.Designer.cs">
-      <DependentUpon>ActivityPlayer.cs</DependentUpon>
+    <Compile Include="Caregiver\MatchingGamePlayer.Designer.cs">
+      <DependentUpon>MatchingGamePlayer.cs</DependentUpon>
     </Compile>
     <Compile Include="Caregiver\CustomControls\ListViewLarge.cs">
       <SubType>UserControl</SubType>
@@ -104,6 +104,7 @@
     <Compile Include="Helpers\ActivityEventLogger.cs" />
     <Compile Include="Helpers\AudioControl.cs" />
     <Compile Include="Helpers\GameEventLogger.cs" />
+    <Compile Include="Helpers\MatchingGameSetup.cs" />
     <Compile Include="Helpers\Taskbar.cs" />
     <Compile Include="Main.cs">
       <SubType>Form</SubType>
@@ -166,8 +167,8 @@
     <Compile Include="UserControls\SlideViewerSimple.Designer.cs">
       <DependentUpon>SlideViewerSimple.cs</DependentUpon>
     </Compile>
-    <EmbeddedResource Include="Caregiver\ActivityPlayer.resx">
-      <DependentUpon>ActivityPlayer.cs</DependentUpon>
+    <EmbeddedResource Include="Caregiver\MatchingGamePlayer.resx">
+      <DependentUpon>MatchingGamePlayer.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Caregiver\CustomControls\ListViewLarge.resx">
       <DependentUpon>ListViewLarge.cs</DependentUpon>

@@ -1,7 +1,7 @@
 ﻿using Keebee.AAT.SystemEventLogging;
 using Keebee.AAT.MessageQueuing;
 using Keebee.AAT.Shared;
-using DirectX.Capture;
+//using DirectX.Capture;
 using System;
 using System.Threading;
 using System.Web.Script.Serialization;

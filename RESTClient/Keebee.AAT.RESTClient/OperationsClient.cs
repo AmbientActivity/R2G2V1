@@ -30,7 +30,6 @@ namespace Keebee.AAT.RESTClient
 
         IEnumerable<Resident> GetResidents();
         Resident GetResident(int residentId);
-        Resident GetGenericDetails();
         Resident GetResidentWithMedia(int residentId);
         Resident GetResidentByNameGender(string firstName, string lastName, string gender);
         bool ResidentExists(int residentId);
@@ -117,7 +116,6 @@ namespace Keebee.AAT.RESTClient
         // residents
         private const string UrlResidents = "residents";
         private const string UrlResident = "residents/{0}";
-        private const string UrlGenericDetails = "residents/generic";
         private const string UrlResidentByNameGender = "residents?firstName={0}&lastName={1}&gender={2}";
         private const string UrlResidentWithMedia = "residents/{0}/media";
 
@@ -318,17 +316,6 @@ namespace Keebee.AAT.RESTClient
         public Resident GetResident(int residentId)
         {
             var data = Get(string.Format(UrlResident, residentId));
-            if (data == null) return null;
-
-            var serializer = new JavaScriptSerializer();
-            var resident = serializer.Deserialize<Resident>(data);
-
-            return resident;
-        }
-
-        public Resident GetGenericDetails()
-        {
-            var data = Get(string.Format(UrlGenericDetails));
             if (data == null) return null;
 
             var serializer = new JavaScriptSerializer();

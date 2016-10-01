@@ -15,8 +15,6 @@ namespace Keebee.AAT.Shared
         public string MediaRoot = $@"\\{Environment.MachineName}\{SqlServerFilestream}";
         public string ProfileRoot = $@"\\{Environment.MachineName}\{SqlServerFilestream}\Profiles";
         public string ExportEventLogRoot = $@"\\{Environment.MachineName}\{SqlServerFilestream}\Exports\EventLog";
-        public string MatchingGamePublicSounds = $@"\\{Environment.MachineName}\{SqlServerFilestream}\Profiles\0\sounds";
-        public string MatchingGamePublicShapes = $@"\\{Environment.MachineName}\{SqlServerFilestream}\Profiles\0\shapes";
     }
 
     public static class ServiceName
@@ -28,6 +26,13 @@ namespace Keebee.AAT.Shared
         public const string StateMachineExe = "Keebee.AAT.StateMachineService.exe";
         public const string PhidgetExe = "Keebee.AAT.PhidgetService.exe";
         public const string RfidReaderExe = "Keebee.AAT.RfidReaderService.exe";
+    }
+
+    public static class PlaylistName
+    {
+        public const string Ambient = "ambient";
+        public const string Profile = "profile";
+        public const string Caregiver = "caregiver";
     }
 
     public enum RotationSensorStep

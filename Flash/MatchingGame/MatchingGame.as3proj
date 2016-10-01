@@ -8,7 +8,7 @@
     <movie fps="30" />
     <movie width="1920" />
     <movie height="1080" />
-    <movie version="18" />
+    <movie version="23" />
     <movie minorVersion="0" />
     <movie platform="Flash Player" />
     <movie background="#FFFFFF" />
@@ -85,7 +85,7 @@
   <!-- Other project options -->
   <options>
     <option showHiddenPaths="False" />
-    <option testMovie="Default" />
+    <option testMovie="Unknown" />
     <option testMovieCommand="" />
   </options>
   <!-- Plugin storage -->

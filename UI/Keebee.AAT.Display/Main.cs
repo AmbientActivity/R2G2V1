@@ -317,11 +317,11 @@ namespace Keebee.AAT.Display
             }
 
             return (mediaFiles != null && numResponseTypes > 0)
-                ? GetFiles(mediaFiles.ToArray(), residentId, responseTypeId, mediaPathTypeId)
+                ? AssembleFileList(mediaFiles, residentId, responseTypeId, mediaPathTypeId)
                 : files;
         }
 
-        private string[] GetFiles(ICollection<MediaResponseType> mediaFiles, int residentId, int responseTypeId, int mediaPathTypeId)
+        private string[] AssembleFileList(ICollection<MediaResponseType> mediaFiles, int residentId, int responseTypeId, int mediaPathTypeId)
         {
             var pathRoot = $@"{_mediaPath.ProfileRoot}\{residentId}";
 
@@ -333,11 +333,11 @@ namespace Keebee.AAT.Display
                 .MediaPathType.Description;
 
             var fileList = mediaFiles
-                .Single(x => x.ResponseType.Id == responseTypeId).Paths
-                .Where(x => x.MediaPathType.Id == mediaPathTypeId)
-                .SelectMany(x => x.Files)
-                .OrderBy(x => x.Filename)
-                .Select(x => $@"{pathRoot}\{mediaPathType}\{x.Filename}")
+                .Single(m => m.ResponseType.Id == responseTypeId)
+                .Paths.Where(p =>p.MediaPathType.Id == mediaPathTypeId)
+                .SelectMany(p => p.Files)
+                .OrderBy(f => f.Filename)
+                .Select(f => $@"{pathRoot}\{mediaPathType}\{f.Filename}")
                 .ToArray();
 
             return fileList.Any() ? fileList : new string[0];
@@ -466,11 +466,16 @@ namespace Keebee.AAT.Display
             else
             {
                 var shapes = GetFilesForResponseType(ResponseTypeId.MatchingGame, MediaPathTypeId.Shapes);
-                if (!shapes.Any()) return;
+                var sounds = GetFilesForResponseType(ResponseTypeId.MatchingGame, MediaPathTypeId.Sounds);
 
-                shapes.Shuffle();
+                // ensure there are enough shapes and sounds to play the game
+                var gameSetup = new MatchingGameSetup { OperationsClient = _opsClient };
+                var totalShapes = gameSetup.GetTotalShapes(shapes);
+                var totalSounds = gameSetup.GetTotalSounds(sounds);
+
+                totalShapes.Shuffle();
+
                 StopCurrentResponse();
-
                 _isMatchingGameTimeoutExpired = false;
 
                 matchingGame1.Show();
@@ -480,9 +485,8 @@ namespace Keebee.AAT.Display
                     _activityEventLogger.Add(_activeConfigDetail.ConfigId, _activeConfigDetail.Id, _activeResident.Id);
                     _gameEventLogger.Add(_activeResident.Id, GameTypeId.MatchThePictures, _activeResident.GameDifficultyLevel, null, "New game has been initiated");
                 }
-
-                var mediaPath = new MediaSourcePath();
-                matchingGame1.Play(shapes, _activeResident.GameDifficultyLevel, mediaPath.MatchingGamePublicSounds, true, _currentIsActiveEventLog);
+    
+                matchingGame1.Play(totalShapes, totalSounds, _activeResident.GameDifficultyLevel, true, _currentIsActiveEventLog);
 
                 _currentResponseTypeId = ResponseTypeId.MatchingGame;
             }

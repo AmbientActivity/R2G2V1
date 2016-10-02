@@ -8,26 +8,26 @@ using System.Web.OData;
 
 namespace Keebee.AAT.DataAccess.Controllers
 {
-    public class CaregiversController : ODataController
+    public class UserRolesController : ODataController
     {
         private KeebeeAATContext db = new KeebeeAATContext();
 
-        // GET: odata/Caregivers
-        [EnableQuery]
-        public IQueryable<Caregiver> GetCaregivers()
+        // GET: odata/UserRoles
+        [EnableQuery(MaxExpansionDepth = 3)]
+        public IQueryable<UserRole> Get()
         {
-            return db.Caregivers;
+            return db.UserRoles.OrderBy(o => o.Id);
         }
 
-        // GET: odata/Caregivers(5)
-        [EnableQuery]
-        public SingleResult<Caregiver> GetCaregiver([FromODataUri] int key)
+        // GET: odata/UserRoles(5)
+        [EnableQuery(MaxExpansionDepth = 3)]
+        public SingleResult<UserRole> Get([FromODataUri] int key)
         {
-            return SingleResult.Create(db.Caregivers.Where(caregiver => caregiver.Id == key));
+            return SingleResult.Create(db.UserRoles.Where(userRole => userRole.Id == key));
         }
 
-        // PUT: odata/Caregivers(5)
-        public async Task<IHttpActionResult> Put([FromODataUri] int key, Delta<Caregiver> patch)
+        // PUT: odata/UserRoles(5)
+        public async Task<IHttpActionResult> Put([FromODataUri] int key, Delta<UserRole> patch)
         {
             Validate(patch.GetEntity());
 
@@ -36,13 +36,13 @@ namespace Keebee.AAT.DataAccess.Controllers
                 return BadRequest(ModelState);
             }
 
-            Caregiver caregiver = await db.Caregivers.FindAsync(key);
-            if (caregiver == null)
+            UserRole userRole = await db.UserRoles.FindAsync(key);
+            if (userRole == null)
             {
                 return NotFound();
             }
 
-            patch.Put(caregiver);
+            patch.Put(userRole);
 
             try
             {
@@ -50,7 +50,7 @@ namespace Keebee.AAT.DataAccess.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!CaregiverExists(key))
+                if (!UserRoleExists(key))
                 {
                     return NotFound();
                 }
@@ -60,26 +60,26 @@ namespace Keebee.AAT.DataAccess.Controllers
                 }
             }
 
-            return Updated(caregiver);
+            return Updated(userRole);
         }
 
-        // POST: odata/Caregivers
-        public async Task<IHttpActionResult> Post(Caregiver caregiver)
+        // POST: odata/UserRoles
+        public async Task<IHttpActionResult> Post(UserRole userRole)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            db.Caregivers.Add(caregiver);
+            db.UserRoles.Add(userRole);
             await db.SaveChangesAsync();
 
-            return Created(caregiver);
+            return Created(userRole);
         }
 
-        // PATCH: odata/Caregivers(5)
+        // PATCH: odata/UserRoles(5)
         [AcceptVerbs("PATCH", "MERGE")]
-        public async Task<IHttpActionResult> Patch([FromODataUri] int key, Delta<Caregiver> patch)
+        public async Task<IHttpActionResult> Patch([FromODataUri] int key, Delta<UserRole> patch)
         {
             Validate(patch.GetEntity());
 
@@ -88,13 +88,13 @@ namespace Keebee.AAT.DataAccess.Controllers
                 return BadRequest(ModelState);
             }
 
-            Caregiver caregiver = await db.Caregivers.FindAsync(key);
-            if (caregiver == null)
+            UserRole userRole = await db.UserRoles.FindAsync(key);
+            if (userRole == null)
             {
                 return NotFound();
             }
 
-            patch.Patch(caregiver);
+            patch.Patch(userRole);
 
             try
             {
@@ -102,7 +102,7 @@ namespace Keebee.AAT.DataAccess.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!CaregiverExists(key))
+                if (!UserRoleExists(key))
                 {
                     return NotFound();
                 }
@@ -112,19 +112,19 @@ namespace Keebee.AAT.DataAccess.Controllers
                 }
             }
 
-            return Updated(caregiver);
+            return Updated(userRole);
         }
 
-        // DELETE: odata/Caregivers(5)
+        // DELETE: odata/UserRoles(5)
         public async Task<IHttpActionResult> Delete([FromODataUri] int key)
         {
-            Caregiver caregiver = await db.Caregivers.FindAsync(key);
-            if (caregiver == null)
+            UserRole userRole = await db.UserRoles.FindAsync(key);
+            if (userRole == null)
             {
                 return NotFound();
             }
 
-            db.Caregivers.Remove(caregiver);
+            db.UserRoles.Remove(userRole);
             await db.SaveChangesAsync();
 
             return StatusCode(HttpStatusCode.NoContent);
@@ -139,9 +139,9 @@ namespace Keebee.AAT.DataAccess.Controllers
             base.Dispose(disposing);
         }
 
-        private bool CaregiverExists(int key)
+        private bool UserRoleExists(int key)
         {
-            return db.Caregivers.Count(e => e.Id == key) > 0;
+            return db.UserRoles.Count(e => e.Id == key) > 0;
         }
     }
 }

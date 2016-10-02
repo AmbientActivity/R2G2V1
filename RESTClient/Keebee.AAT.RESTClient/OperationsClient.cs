@@ -28,6 +28,17 @@ namespace Keebee.AAT.RESTClient
         IEnumerable<PhidgetStyleType> GetPhidgetStyleTypes();
         IEnumerable<ResponseType> GetResponseTypes();
 
+        // user
+        IEnumerable<User> GetUsers();
+        User GetUser(int userId);
+        User GetUserByUsername(string username);
+
+        // user roles
+        IEnumerable<UserRole> GetUserRoles();
+        UserRole GetUserRole(int userRoleId);
+        IEnumerable<UserRoleSingle> GetRolesByUser(int userId);
+
+        // resident
         IEnumerable<Resident> GetResidents();
         Resident GetResident(int residentId);
         Resident GetResidentWithMedia(int residentId);
@@ -64,6 +75,7 @@ namespace Keebee.AAT.RESTClient
         IEnumerable<GameEventLog> GetGameEventLogsForResident(int residentId);
 
         // POST
+        int PostUser(User user);
         int PostResident(ResidentEdit resident);
         int PostConfigDetail(ConfigDetailEdit configDetail);
         int PostConfig(ConfigEdit config);
@@ -80,10 +92,11 @@ namespace Keebee.AAT.RESTClient
         void PatchConfigDetail(int configDetailId, ConfigDetailEdit configDetail);
 
         // DELETE
+        string DeleteUser(int userId);
+        string DeleteResident(int residentId);
         void DeleteConfig(int configId);
         void DeleteConfigDetail(int configDetailId);
         string DeletePublicMediaFile(int mediaFileId);
-        string DeleteResident(int residentId);
         string DeleteActivityEventLog(int activityLogId);
         string DeleteRfidEventLog(int rfidEventLogId);
         string DeleteGameEventLog(int gameEventLogId);
@@ -112,6 +125,16 @@ namespace Keebee.AAT.RESTClient
 
         // response types
         private const string UrlResponseTypes = "responsetypes";
+
+        // users
+        private const string UrlUsers = "users";
+        private const string UrlUser = "users/{0}";
+        private const string UrlUserByUsername = "users?username={0}";
+
+        // user roles
+        private const string UrlUserRoles = "userroles";
+        private const string UrlUserRole = "userroles/{0}";
+        private const string UrlUserRolesByUser = "userroles?userId={0}";
 
         // residents
         private const string UrlResidents = "residents";
@@ -300,6 +323,74 @@ namespace Keebee.AAT.RESTClient
             return responseTypes;
         }
 
+
+        // user
+        public IEnumerable<User> GetUsers()
+        {
+            var data = Get(UrlUsers);
+            if (data == null) return null;
+
+            var serializer = new JavaScriptSerializer();
+            var users = serializer.Deserialize<UserList>(data).Users.ToList();
+
+            return users;
+        }
+
+        public User GetUser(int userId)
+        {
+            var data = Get(string.Format(UrlUser, userId));
+            if (data == null) return null;
+
+            var serializer = new JavaScriptSerializer();
+            var user = serializer.Deserialize<User>(data);
+
+            return user;
+        }
+
+        public User GetUserByUsername(string username)
+        {
+            var data = Get(string.Format(UrlUserByUsername, username));
+            if (data == null) return null;
+
+            var serializer = new JavaScriptSerializer();
+            var user = serializer.Deserialize<User>(data);
+
+            return user;
+        }
+
+        // user role
+        public IEnumerable<UserRole> GetUserRoles()
+        {
+            var data = Get(UrlUserRoles);
+            if (data == null) return null;
+
+            var serializer = new JavaScriptSerializer();
+            var userroles = serializer.Deserialize<UserRoleList>(data).UserRoles.ToList();
+
+            return userroles;
+        }
+
+        public UserRole GetUserRole(int userRoleId)
+        {
+            var data = Get(string.Format(UrlUserRole, userRoleId));
+            if (data == null) return null;
+
+            var serializer = new JavaScriptSerializer();
+            var userRole = serializer.Deserialize<UserRole>(data);
+
+            return userRole;
+        }
+
+        public IEnumerable<UserRoleSingle> GetRolesByUser(int userId)
+        {
+            var data = Get(string.Format(UrlUserRolesByUser, userId));
+            if (data == null) return null;
+
+            var serializer = new JavaScriptSerializer();
+            var userRoles = serializer.Deserialize<UserRolesList>(data).UserRoles;
+
+            return userRoles;
+        }
 
         // resident
         public IEnumerable<Resident> GetResidents()
@@ -621,6 +712,22 @@ namespace Keebee.AAT.RESTClient
 
         // POST
 
+        public int PostUser(User user)
+        {
+            var serializer = new JavaScriptSerializer();
+            var el = serializer.Serialize(user);
+
+            return Post(UrlUsers, el);
+        }
+
+        public int PostResident(ResidentEdit resident)
+        {
+            var serializer = new JavaScriptSerializer();
+            var el = serializer.Serialize(resident);
+
+            return Post(UrlResidents, el);
+        }
+
         public int PostConfig(ConfigEdit config)
         {
             var serializer = new JavaScriptSerializer();
@@ -635,14 +742,6 @@ namespace Keebee.AAT.RESTClient
             var el = serializer.Serialize(configDetail);
 
             return Post(UrlConfigDetails, el);
-        }
-
-        public int PostResident(ResidentEdit resident)
-        {
-            var serializer = new JavaScriptSerializer();
-            var el = serializer.Serialize(resident);
-
-            return Post(UrlResidents, el);
         }
 
         public void PostActivityEventLog(ActivityEventLog activityEventLog)
@@ -716,6 +815,16 @@ namespace Keebee.AAT.RESTClient
         }
 
         // DELETE
+        public string DeleteUser(int userId)
+        {
+            return Delete(string.Format(UrlUser, userId));
+        }
+
+        public string DeleteResident(int residentId)
+        {
+            return Delete(string.Format(UrlResident, residentId));
+        }
+
         public void DeleteConfig(int configId)
         {
             Delete(string.Format(UrlConfig, configId));
@@ -729,11 +838,6 @@ namespace Keebee.AAT.RESTClient
         public string DeletePublicMediaFile(int mediaFileId)
         {
            return Delete(string.Format(UrlPublicMediaFile, mediaFileId));
-        }
-
-        public string DeleteResident(int residentId)
-        {
-            return Delete(string.Format(UrlResident, residentId));
         }
 
         public string DeleteActivityEventLog(int activityEventLogId)

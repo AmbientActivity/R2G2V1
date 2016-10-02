@@ -31,6 +31,9 @@ namespace Keebee.AAT.Operations
             container.RegisterType<IMediaPathTypeService, MediaPathTypeService>();
             container.RegisterType<IResidentMediaFileService, ResidentMediaFileService>();
             container.RegisterType<IPublicMediaFileService, PublicMediaFileService>();
+            container.RegisterType<IUserService, UserService>();
+            container.RegisterType<IRoleService, RoleService>();
+            container.RegisterType<IUserRoleService, UserRoleService>();
             container.RegisterType<IStatusService, StatusService>();
 
             GlobalConfiguration.Configuration.DependencyResolver = new UnityDependencyResolver(container);

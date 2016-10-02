@@ -57,6 +57,9 @@
     <Compile Include="DTO\Resident.cs" />
     <Compile Include="DTO\ResponseTypeCategory.cs" />
     <Compile Include="DTO\RfidEventLog.cs" />
+    <Compile Include="DTO\Role.cs" />
+    <Compile Include="DTO\User.cs" />
+    <Compile Include="DTO\UserRole.cs" />
     <Compile Include="OperationsClient.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

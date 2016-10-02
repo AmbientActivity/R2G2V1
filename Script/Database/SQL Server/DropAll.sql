@@ -1,8 +1,6 @@
 USE [KeebeeAAT]
 
 IF OBJECT_ID('__MigrationHistory', 'U') IS NOT NULL DROP TABLE __MigrationHistory
-IF OBJECT_ID('Users', 'U') IS NOT NULL DROP TABLE Users
-IF OBJECT_ID('Caregivers', 'U') IS NOT NULL DROP TABLE Caregivers
 IF OBJECT_ID('ActivityEventLogs', 'U') IS NOT NULL DROP TABLE ActivityEventLogs
 IF OBJECT_ID('GameEventLogs', 'U') IS NOT NULL DROP TABLE GameEventLogs
 IF OBJECT_ID('RfidEventLogs', 'U') IS NOT NULL DROP TABLE RfidEventLogs
@@ -17,6 +15,9 @@ IF OBJECT_ID('MediaPathTypes', 'U') IS NOT NULL DROP TABLE MediaPathTypes
 IF OBJECT_ID('PhidgetTypes', 'U') IS NOT NULL DROP TABLE PhidgetTypes
 IF OBJECT_ID('PhidgetStyleTypes', 'U') IS NOT NULL DROP TABLE PhidgetStyleTypes
 IF OBJECT_ID('Residents', 'U') IS NOT NULL DROP TABLE Residents
+IF OBJECT_ID('UserRoles', 'U') IS NOT NULL DROP TABLE UserRoles
+IF OBJECT_ID('Roles', 'U') IS NOT NULL DROP TABLE Roles
+IF OBJECT_ID('Users', 'U') IS NOT NULL DROP TABLE Users
 
 -- MediaFiles
 IF (EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'MediaFiles' AND TABLE_TYPE != 'VIEW'))

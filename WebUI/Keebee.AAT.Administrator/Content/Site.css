@@ -79,6 +79,13 @@ a:hover, a:visited, a:link, a:active {
   background-color: #231b10;
 }
 
+/* login */
+.greeting {
+    float: right;
+    margin-top: 15px;
+    color: #0060ff;
+}
+
 /* dialogs */
 #validation-container {
     color: #c12e2a;

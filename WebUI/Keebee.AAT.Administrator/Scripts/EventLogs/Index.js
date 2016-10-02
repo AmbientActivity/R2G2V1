@@ -1,4 +1,5 @@
 ﻿/*!
+ * 1.0 Keebee AAT Copyright © 2016
  * EventLogs/Index.js
  * Author: John Charlton
  * Date: 2015-05

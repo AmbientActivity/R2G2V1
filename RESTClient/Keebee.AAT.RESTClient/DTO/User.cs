@@ -1,14 +1,16 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
 
-namespace Keebee.AAT.DataAccess.Models
+namespace Keebee.AAT.RESTClient
 {
     public class User
     {
-        [Key]
         public int Id { get; set; }
-        [Required]
         public string Username { get; set; }
-        [Required]
         public string Password { get; set; }
+    }
+
+    public class UserList
+    {
+        public IEnumerable<User> Users;
     }
 }

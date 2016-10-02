@@ -11,7 +11,7 @@ using System.Web.Script.Serialization;
 
 namespace Keebee.AAT.Administrator.Controllers
 {
-    public class UtilitiesController : Controller
+    public class MaintenanceController : Controller
     {
         private readonly SystemEventLogger _systemEventLogger;
 
@@ -21,7 +21,7 @@ namespace Keebee.AAT.Administrator.Controllers
         private readonly CustomMessageQueue _messageQueueDisplayPhidget;
         private readonly CustomMessageQueue _messageQueueDisplayVideoCapture;
 
-        public UtilitiesController()
+        public MaintenanceController()
         {
             _systemEventLogger = new SystemEventLogger(SystemEventLogType.AdminInterface);
 

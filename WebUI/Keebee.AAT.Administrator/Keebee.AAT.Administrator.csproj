@@ -286,9 +286,10 @@
     <Content Include="Scripts\bootstrap-dialog.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
-    <Content Include="Scripts\Configs\Index.js" />
+    <Content Include="Scripts\PhidgetConfig\Index.js" />
     <Content Include="Scripts\EventLogs\Export.js" />
     <Content Include="Scripts\EventLogs\Index.js" />
+    <Content Include="Scripts\Home\Index.js" />
     <Content Include="Scripts\jquery-3.1.0.js" />
     <Content Include="Scripts\jquery-3.1.0.min.js" />
     <Content Include="Scripts\jquery-3.1.0.slim.js" />
@@ -372,7 +373,7 @@
     <Content Include="Scripts\PublicMedia\Index.js" />
     <Content Include="Scripts\Residents\Media.js" />
     <Content Include="Scripts\Residents\Index.js" />
-    <Content Include="Scripts\Services\Index.js" />
+    <Content Include="Scripts\Maintenance\Index.js" />
     <Content Include="Scripts\Site\Namespaces.js" />
     <Content Include="Scripts\Site\Site.js" />
     <Content Include="Web.config">
@@ -382,12 +383,12 @@
   <ItemGroup>
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
-    <Compile Include="Controllers\ConfigsController.cs" />
+    <Compile Include="Controllers\PhidgetConfigController.cs" />
     <Compile Include="Controllers\EventLogsController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\PublicMediaController.cs" />
     <Compile Include="Controllers\ResidentsController.cs" />
-    <Compile Include="Controllers\UtilitiesController.cs" />
+    <Compile Include="Controllers\MaintenanceController.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="FileManagement\FileManager.cs" />
     <Compile Include="Global.asax.cs">
@@ -397,6 +398,7 @@
     <Compile Include="ViewModels\ConfigViewModel.cs" />
     <Compile Include="ViewModels\EventLogViewModel.cs" />
     <Compile Include="ViewModels\ImageViewerViewModel.cs" />
+    <Compile Include="ViewModels\LoginViewModel.cs" />
     <Compile Include="ViewModels\MediaFileViewModel.cs" />
     <Compile Include="ViewModels\PublicMediaViewModel.cs" />
     <Compile Include="ViewModels\ResidentViewModel.cs" />
@@ -416,16 +418,18 @@
     <Content Include="Views\EventLogs\Index.cshtml" />
     <Content Include="Views\Residents\Index.cshtml" />
     <Content Include="Views\Residents\_ResidentEdit.cshtml" />
-    <Content Include="Views\Configs\Index.cshtml" />
-    <Content Include="Views\Configs\_ConfigDetailEdit.cshtml" />
-    <Content Include="Views\Configs\_ConfigEdit.cshtml" />
+    <Content Include="Views\PhidgetConfig\Index.cshtml" />
+    <Content Include="Views\PhidgetConfig\_ConfigDetailEdit.cshtml" />
+    <Content Include="Views\PhidgetConfig\_ConfigEdit.cshtml" />
     <Content Include="Views\Residents\Media.cshtml" />
     <Content Include="UploadHandler.ashx" />
     <Content Include="Views\Residents\_AddPublicMedia.cshtml" />
     <Content Include="Views\PublicMedia\Index.cshtml" />
-    <Content Include="Views\Utilities\Index.cshtml" />
+    <Content Include="Views\Maintenance\Index.cshtml" />
     <Content Include="Views\Residents\_ImageViewer.cshtml" />
     <Content Include="Views\PublicMedia\_ImageViewer.cshtml" />
+    <Content Include="Views\Home\_Login.cshtml" />
+    <Content Include="Views\Shared\_LogOnPartial.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

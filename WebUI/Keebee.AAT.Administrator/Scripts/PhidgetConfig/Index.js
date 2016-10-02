@@ -1,5 +1,5 @@
 ﻿/*!
- * 1.0 Keebee AAT Copyright © 2015
+ * 1.0 Keebee AAT Copyright © 2016
  * Configs/Index.js
  * Author: John Charlton
  * Date: 2016-09
@@ -7,7 +7,7 @@
 
 ; (function ($) {
 
-    sysconfigs.index = {
+    phidgetconfig.index = {
         init: function() {
             var HIGHLIGHT_ROW_COLOUR = "#e3e8ff";
 
@@ -31,7 +31,7 @@
             function loadData() {
                 $.ajax({
                     type: "GET",
-                    url: site.url + "Configs/GetData/",
+                    url: site.url + "PhidgetConfig/GetData/",
                     dataType: "json",
                     traditional: true,
                     async: false,
@@ -225,7 +225,7 @@
                     $.ajax({
                         type: "GET",
                         async: false,
-                        url: site.url + "Configs/GetConfigEditView/" + id,
+                        url: site.url + "PhidgetConfig/GetConfigEditView/" + id,
                         data: { selectedConfigid: self.selectedConfig() },
                         success: function (data) {
                             message = data;
@@ -373,7 +373,7 @@
                     $.ajax({
                         type: "GET",
                         async: false,
-                        url: site.url + "Configs/GetConfigDetailEditView/" + id,
+                        url: site.url + "PhidgetConfig/GetConfigDetailEditView/" + id,
                         data: { id: id, configId: self.selectedConfig() },
                         success: function (data) {
                             message = data;
@@ -483,7 +483,7 @@
                     $.ajax({
                         type: "POST",
                         async: false,
-                        url: site.url + "Configs/Save/",
+                        url: site.url + "PhidgetConfig/Save/",
                         data: { config: jsonData, selectedConfigId: self.selectedConfig() },
                         dataType: "json",
                         traditional: true,
@@ -510,7 +510,7 @@
                     $.ajax({
                         type: "POST",
                         async: false,
-                        url: site.url + "Configs/Delete/",
+                        url: site.url + "PhidgetConfig/Delete/",
                         data: { id: id },
                         dataType: "json",
                         traditional: true,
@@ -563,7 +563,7 @@
                     $.ajax({
                         type: "POST",
                         async: false,
-                        url: site.url + "Configs/SaveDetail/",
+                        url: site.url + "PhidgetConfig/SaveDetail/",
                         data: { configdetail: jsonData },
                         dataType: "json",
                         traditional: true,
@@ -589,7 +589,7 @@
                         $.ajax({
                             type: "POST",
                             async: false,
-                            url: site.url + "Configs/DeleteDetail/",
+                            url: site.url + "PhidgetConfig/DeleteDetail/",
                             data: {
                                 id: id,
                                 configId: self.selectedConfig(),
@@ -620,7 +620,7 @@
                     $.ajax({
                         type: "POST",
                         async: false,
-                        url: site.url + "Configs/Activate/",
+                        url: site.url + "PhidgetConfig/Activate/",
                         data: { configId: configId },
                         dataType: "json",
                         traditional: true,

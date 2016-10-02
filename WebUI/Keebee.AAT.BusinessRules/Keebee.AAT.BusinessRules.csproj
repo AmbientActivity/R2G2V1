@@ -48,10 +48,12 @@
     <Compile Include="ConfigRules.cs" />
     <Compile Include="DTO\ConfigEditModel.cs" />
     <Compile Include="DTO\ImageViewerModel.cs" />
+    <Compile Include="DTO\UserModel.cs" />
     <Compile Include="ImageViewerRules.cs" />
     <Compile Include="PublicMediaRules.cs" />
     <Compile Include="ResidentRules.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UserRules.cs" />
     <Compile Include="UtilityRules.cs" />
   </ItemGroup>
   <ItemGroup>

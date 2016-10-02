@@ -1,0 +1,11 @@
+﻿@if (Request.IsAuthenticated)
+{
+    <text>Welcome <strong>
+        <span>@User.Identity.Name</span></strong>
+    </text>
+    @Html.ActionLink("Log Off", "LogOff", "Home");
+}
+else
+{
+    <a id="login" href="javascript:;">Login</a>
+}

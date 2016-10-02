@@ -10,12 +10,12 @@ using Newtonsoft.Json;
 
 namespace Keebee.AAT.Administrator.Controllers
 {
-    public class ConfigsController : Controller
+    public class PhidgetConfigController : Controller
     {
         private readonly OperationsClient _opsClient;
         private readonly CustomMessageQueue _messageQueueConfigSms;
 
-        public ConfigsController()
+        public PhidgetConfigController()
         {
             _opsClient = new OperationsClient();
 
@@ -25,7 +25,7 @@ namespace Keebee.AAT.Administrator.Controllers
             });
         }
 
-        // GET: Configs
+        // GET: PhidgetConfig
         public ActionResult Index()
         {
             return View();

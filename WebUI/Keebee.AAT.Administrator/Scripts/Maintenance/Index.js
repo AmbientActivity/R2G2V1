@@ -1,13 +1,13 @@
 ﻿/*!
  * 1.0 Keebee AAT Copyright © 2015
- * Services/Index.js
+ * Maintenance/Index.js
  * Author: John Charlton
  * Date: 2016-09
  */
 
 ; (function ($) {
 
-    winservices.management = {
+    maintenance.index = {
         init: function() {
             var cmdReinstall = $("#reinstall");
             var cmdRestart = $("#restart");
@@ -66,7 +66,7 @@
                     type: "GET",
                     async: true,
                     traditional: true,
-                    url: site.url + "Utilities/" + functionName,
+                    url: site.url + "Maintenance/" + functionName,
                     success: function(data) {
                         $("body").css("cursor", "default");
                         $.unblockUI();

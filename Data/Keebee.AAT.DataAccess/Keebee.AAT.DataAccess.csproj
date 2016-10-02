@@ -129,7 +129,6 @@
     <Compile Include="Controllers\MediaFileStreamsController.cs" />
     <Compile Include="Controllers\PhidgetStyleTypesController.cs" />
     <Compile Include="Controllers\PhidgetTypesController.cs" />
-    <Compile Include="Controllers\CaregiversController.cs" />
     <Compile Include="Controllers\ConfigDetailsController.cs" />
     <Compile Include="Controllers\ConfigsController.cs" />
     <Compile Include="Controllers\GameTypesController.cs" />
@@ -139,6 +138,8 @@
     <Compile Include="Controllers\ResidentsController.cs" />
     <Compile Include="Controllers\ResponseTypesController.cs" />
     <Compile Include="Controllers\RfidEventLogsController.cs" />
+    <Compile Include="Controllers\RolesController.cs" />
+    <Compile Include="Controllers\UserRolesController.cs" />
     <Compile Include="Controllers\UsersController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -151,7 +152,6 @@
     <Compile Include="Models\MediaFileStream.cs" />
     <Compile Include="Models\PhidgetStyleType.cs" />
     <Compile Include="Models\PhidgetType.cs" />
-    <Compile Include="Models\Caregiver.cs" />
     <Compile Include="Models\GameType.cs" />
     <Compile Include="Models\GameEventLog.cs" />
     <Compile Include="Models\MediaFile.cs" />
@@ -161,7 +161,9 @@
     <Compile Include="Models\ResponseType.cs" />
     <Compile Include="Models\ResponseTypeCategory.cs" />
     <Compile Include="Models\RfidEventLog.cs" />
+    <Compile Include="Models\Role.cs" />
     <Compile Include="Models\User.cs" />
+    <Compile Include="Models\UserRole.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -16,9 +16,9 @@
 <body>
     <div class="navbar navbar-fixed-top">
         <div class="container">
-            <div class="navbar-brand">
-                @*<a href="~/Home"><img src="~/Content/Images/logo_small.png" alt="" /></a>*@
-            </div>
+            @*<div class="navbar-brand">
+                 <a href="~/Home"><img src="~/Content/Images/logo_small.png" alt="" /></a>
+            </div>*@
             <div class="navbar-header">
                 <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
                     <span class="icon-bar"></span>
@@ -29,23 +29,33 @@
             <div class="navbar-collapse collapse">
                 <ul id="main-menu" class="nav navbar-nav">
                     <li>@Html.ActionLink("Home", "Index", "Home")</li>
-                    <li><a href="#" onclick="location.href = '@Url.Action("Index", "Residents")'">Residents</a></li>
-                    <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Event Logs<b class="caret"></b></a>
-                        <ul class="dropdown-menu">
-                            <li>@Html.ActionLink("View", "Index", "EventLogs")</li>
-                            <li>@Html.ActionLink("Export", "Export", "EventLogs")</li>
-                        </ul>
-                    </li>
-                    <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">System<b class="caret"></b></a>
-                        <ul class="dropdown-menu">
-                            <li>@Html.ActionLink("Public Library", "Index", "PublicMedia")</li>
-                            <li>@Html.ActionLink("Phidget Configuration", "Index", "Configs")</li>
-                            <li>@Html.ActionLink("Maintenance", "Index", "Utilities")</li>
-                        </ul>
-                    </li>
+                    @if (Request.IsAuthenticated)
+                    {
+                        if (User.IsInRole("Caregiver"))
+                        {
+                            <li><a href="#" onclick="location.href = '@Url.Action("Index", "Residents")'">Residents</a></li>
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Event Logs<b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    <li>@Html.ActionLink("View", "Index", "EventLogs")</li>
+                                    <li>@Html.ActionLink("Export", "Export", "EventLogs")</li>
+                                </ul>
+                            </li>
+                        }
+                        if (User.IsInRole("Administrator"))
+                        {
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">System<b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    <li>@Html.ActionLink("Public Library", "Index", "PublicMedia")</li>
+                                    <li>@Html.ActionLink("Phidget Configuration", "Index", "PhidgetConfig")</li>
+                                    <li>@Html.ActionLink("Maintenance", "Index", "Maintenance")</li>
+                                </ul>
+                            </li>
+                        }
+                    }
                 </ul>
+                <div class="greeting" id="greeting">@Html.Partial("_LogOnPartial")</div>
             </div>
         </div>
     </div>

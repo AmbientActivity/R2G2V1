@@ -1,10 +1,18 @@
-﻿// define global namespaces
+﻿/*!
+ * 1.0 Keebee AAT Copyright © 2016
+ * Site/Namespaces.js
+ * Author: John Charlton
+ * Date: 2015-08
+ */
+
+// define global namespaces
 ; (function () {
-    window.sysconfigs = {};
-    window.publicmedia = {};
+    window.home = {};
     window.residents = {};
     window.profiles = {};
     window.eventlogs = {};
     window.mediafiles = {};
-    window.winservices = {};
+    window.phidgetconfig = {};
+    window.publicmedia = {};
+    window.maintenance = {};
 })();

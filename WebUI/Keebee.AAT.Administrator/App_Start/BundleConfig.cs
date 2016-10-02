@@ -45,13 +45,14 @@ namespace Keebee.AAT.Administrator
             customScriptBundle.Include(
                 "~/Scripts/Site/Namespaces.js",
                 "~/Scripts/Site/Site.js",
-                "~/Scripts/Configs/Index.js",
-                "~/Scripts/PublicMedia/Index.js",
+                "~/Scripts/Home/Index.js",
                 "~/Scripts/Residents/Index.js",
                 "~/Scripts/Residents/Media.js",
                 "~/Scripts/EventLogs/Index.js",
                 "~/Scripts/EventLogs/Export.js",
-                "~/Scripts/Services/Index.js");
+                "~/Scripts/PhidgetConfig/Index.js",
+                "~/Scripts/PublicMedia/Index.js",
+                "~/Scripts/Maintenance/Index.js");
             customScriptBundle.Builder = nullBuilder;
             customScriptBundle.Transforms.Add(scriptTransformer);
             bundles.Add(customScriptBundle);

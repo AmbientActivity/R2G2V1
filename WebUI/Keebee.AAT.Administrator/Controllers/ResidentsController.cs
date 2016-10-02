@@ -47,6 +47,7 @@ namespace Keebee.AAT.Administrator.Controllers
 
             //TODO: for when 'choose from public library' gets implemented
             //int? mediaSourceTypeId,
+
             string myuploader, 
             int? sortdescending)
         {
@@ -125,8 +126,9 @@ namespace Keebee.AAT.Administrator.Controllers
                 {
                     x.Id,
                     Description = x.Description.ToUppercaseFirst()
-                })//,
-                //MediaSourceTypeList = new Collection<object>
+                })
+                //TODO: for when 'choose from public library' gets implemented
+                //,MediaSourceTypeList = new Collection<object>
                 //{
                 //    new { PublicMediaSource.Id, Description = MediaSourceType.Public },
                 //    new { Id = 1, Description = MediaSourceType.Personal } 
@@ -311,6 +313,7 @@ namespace Keebee.AAT.Administrator.Controllers
 
             //TODO: for when 'choose from public library' gets implemented
             //int? mediaSourceTypeId,
+
             string sortcolumn, 
             int? sortdescending)
         {

@@ -94,7 +94,10 @@
     <Compile Include="Services\ResidentService.cs" />
     <Compile Include="Services\ResponseTypeService.cs" />
     <Compile Include="Services\RfidEventLogService.cs" />
+    <Compile Include="Services\RoleService.cs" />
     <Compile Include="Services\StatusService.cs" />
+    <Compile Include="Services\UserRoleService.cs" />
+    <Compile Include="Services\UserService.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

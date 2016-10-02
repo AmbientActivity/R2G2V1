@@ -27,8 +27,9 @@ namespace Keebee.AAT.DataAccess
             builder.EntitySet<ResidentMediaFile>("ResidentMediaFiles");
             builder.EntitySet<PublicMediaFile>("PublicMediaFiles");
             builder.EntitySet<Resident>("Residents");
-            builder.EntitySet<Caregiver>("Caregivers");
             builder.EntitySet<User>("Users");
+            builder.EntitySet<Role>("Roles");
+            builder.EntitySet<UserRole>("UserRoles");
 
             config.MapODataServiceRoute("odata", "odata", builder.GetEdmModel());
         }

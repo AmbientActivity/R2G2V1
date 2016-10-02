@@ -29,7 +29,8 @@ namespace Keebee.AAT.Administrator.Controllers
             _systemEventLogger = new SystemEventLogger(SystemEventLogType.AdminInterface);
         }
 
-        // GET: Resident
+        // GET: Residen
+        [Authorize]
         public ActionResult Index(int? id, string rfid, string firstname, string lastname, string sortcolumn,
             int? sortdescending)
         {
@@ -37,6 +38,7 @@ namespace Keebee.AAT.Administrator.Controllers
                 View(LoadResidentsViewModel(id ?? 0, null, true, rfid, firstname, lastname, sortcolumn, sortdescending));
         }
 
+        [Authorize]
         public ActionResult Media(
             int id, 
             string rfid, 
@@ -103,6 +105,7 @@ namespace Keebee.AAT.Administrator.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public JsonResult GetData()
         {
             var vm = new
@@ -114,6 +117,7 @@ namespace Keebee.AAT.Administrator.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public JsonResult GetDataMedia(int id, int mediaPathTypeId)
         {
             var mediaPathTypes = _opsClient.GetMediaPathTypes();
@@ -139,12 +143,14 @@ namespace Keebee.AAT.Administrator.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public PartialViewResult GetResidentEditView(int id)
         {
             return PartialView("_ResidentEdit", LoadResidentEditViewModel(id));
         }
 
         [HttpPost]
+        [Authorize]
         public JsonResult Save(string resident)
         {
             var r = JsonConvert.DeserializeObject<ResidentEditViewModel>(resident);
@@ -174,6 +180,7 @@ namespace Keebee.AAT.Administrator.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public JsonResult Delete(int id)
         {
             var rules = new ResidentRules {OperationsClient = _opsClient};
@@ -194,6 +201,7 @@ namespace Keebee.AAT.Administrator.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public JsonResult DeleteSelectedMediaFiles(int[] ids, int residentId, int mediaPathTypeId)
         {
             bool success;
@@ -227,6 +235,7 @@ namespace Keebee.AAT.Administrator.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public PartialViewResult GetImageViewerView(Guid streamId, string fileType)
         {
             var rules = new ImageViewerRules { OperationsClient = _opsClient };

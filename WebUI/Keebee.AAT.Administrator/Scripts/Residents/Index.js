@@ -378,40 +378,47 @@
                 self.deleteResident = function (id) {
                     $("body").css("cursor", "wait");
 
-                    $.blockUI({ message: "<h4>Deleting resident...</h4>" });
+                    BootstrapDialog.show({
+                        type: BootstrapDialog.TYPE_INFO,
+                        title: "Resident",
+                        message: "Deleting resident...",
+                        closable: false,
+                        onshown: function(dialog) {
+                            $.ajax({
+                                type: "POST",
+                                async: true,
+                                traditional: true,
+                                url: site.url + "Residents/Delete/",
+                                data: { id: id },
+                                dataType: "json",
+                                success: function (data) {
 
-                    $.ajax({
-                        type: "POST",
-                        async: true,
-                        traditional: true,
-                        url: site.url + "Residents/Delete/",
-                        data: { id: id },
-                        dataType: "json",
-                        success: function (data) {
-
-                            $.unblockUI();
-                            $("body").css("cursor", "default");
-                            if (data.Success) {
-                                lists.ResidentList = data.ResidentList;
-                                createResidentArray(lists.ResidentList);
-                                self.sort({ afterSave: true });
-                            } else {
-                            BootstrapDialog.show({
-                                type: BootstrapDialog.TYPE_DANGER,
-                                title: "Delete Error",
-                                message: data.ErrorMessage
-                            });
+                                    dialog.close();
+                                    $("body").css("cursor", "default");
+                                    if (data.Success) {
+                                        lists.ResidentList = data.ResidentList;
+                                        createResidentArray(lists.ResidentList);
+                                        self.sort({ afterSave: true });
+                                    } else {
+                                        BootstrapDialog.show({
+                                            type: BootstrapDialog.TYPE_DANGER,
+                                            title: "Delete Error",
+                                            message: data.ErrorMessage
+                                        });
                                     }
                                 },
-                        error: function (data) {
-                            $.unblockUI();
-                            $("body").css("cursor", "default");
-                            BootstrapDialog.show({
-                                type: BootstrapDialog.TYPE_DANGER,
-                                title: "Delete Error",
-                                message: "Unexpected Error\n" + data
+                                error: function (data) {
+                                    dialog.close();
+                                    $("body").css("cursor", "default");
+                                    BootstrapDialog.show({
+                                        type: BootstrapDialog.TYPE_DANGER,
+                                        title: "Delete Error",
+                                        message: "Unexpected Error\n" + data
+                                    });
+                                }
                             });
                         }
+
                     });
                 };
             };

@@ -19,18 +19,21 @@ namespace Keebee.AAT.Administrator.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public ActionResult Index()
         {
             return View();
         }
 
         [HttpGet]
+        [Authorize]
         public ActionResult Export()
         {
             return View();
         }
 
         [HttpGet]
+        [Authorize]
         public FileResult DoExport(string date)
         {
             var exporter = new EventLogExporter();
@@ -41,6 +44,7 @@ namespace Keebee.AAT.Administrator.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public FileResult Download(string streamId)
         {
             var mediaFile = _opsClient.GetMediaFile(new Guid(streamId));
@@ -53,6 +57,7 @@ namespace Keebee.AAT.Administrator.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public JsonResult GetData()
         {
             var vm = new

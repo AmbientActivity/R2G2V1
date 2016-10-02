@@ -35,8 +35,7 @@ namespace Keebee.AAT.Administrator
             var thirdPartyScriptBundle = new Bundle("~/bundles/ThirdPartyScripts");
             thirdPartyScriptBundle.Include(
                 "~/Scripts/knockout-{version}.js",
-                "~/Scripts/moment.js",
-                "~/Scripts/jquery.blockUI.js");
+                "~/Scripts/moment.js");
             thirdPartyScriptBundle.Builder = nullBuilder;
             thirdPartyScriptBundle.Transforms.Add(scriptTransformer);
             bundles.Add(thirdPartyScriptBundle);

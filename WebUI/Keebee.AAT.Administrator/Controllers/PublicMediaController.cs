@@ -28,6 +28,7 @@ namespace Keebee.AAT.Administrator.Controllers
         }
 
         // GET: PublicMediaFile
+        [Authorize]
         public ActionResult Index(
             int? mediaPathTypeId,
             int? responseTypeId,
@@ -86,6 +87,7 @@ namespace Keebee.AAT.Administrator.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public JsonResult GetData(int mediaPathTypeId)
         {
             var rules = new PublicMediaRules { OperationsClient =  _opsClient };
@@ -112,6 +114,7 @@ namespace Keebee.AAT.Administrator.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public JsonResult DeleteSelected(int[] ids, int mediaPathTypeId, int responseTypeId)
         {
             bool success;
@@ -163,6 +166,7 @@ namespace Keebee.AAT.Administrator.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public PartialViewResult GetImageViewerView(Guid streamId, string fileType)
         {
             var rules = new ImageViewerRules { OperationsClient = _opsClient };
@@ -179,6 +183,7 @@ namespace Keebee.AAT.Administrator.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public FileResult GetFileStream(string filePath, string fileType)
         {
             var info = new FileInfo(filePath);

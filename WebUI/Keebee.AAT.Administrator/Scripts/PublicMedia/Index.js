@@ -6,7 +6,12 @@
  */
 
 function CuteWebUI_AjaxUploader_OnPostback() {
-    $.blockUI({ message: "<h4>Saving...</h4>" });
+    BootstrapDialog.show({
+        type: BootstrapDialog.TYPE_INFO,
+        title: "Public Library",
+        message: "Saving...",
+        closable: false
+    });
     document.forms[0].submit();
 }
 
@@ -390,51 +395,58 @@ function DisableScreen() {
                     return true;
                 };
 
-                self.deleteSelected = function () {
+                self.deleteSelected = function() {
                     $("body").css("cursor", "wait");
 
                     var ids = self.selectedIds();
                     var mediaPathTypeId = $("#mediaPathTypeId").val();
                     var responseTypeId = $("#responseTypeId").val();
 
-                    $.blockUI({ message: "<h4>Deleting files...</h4>" });
+                    BootstrapDialog.show({
+                        type: BootstrapDialog.TYPE_INFO,
+                        title: "Public Library",
+                        message: "Deleting files from public library...",
+                        closable: false,
+                        onshown: function(dialog) {
 
-                    $.ajax({
-                        type: "POST",
-                        async: true,
-                        traditional: true,
-                        url: site.url + "PublicMedia/DeleteSelected/",
-                        data:
-                        {
-                            ids: ids,
-                            mediaPathTypeId: mediaPathTypeId,
-                            responseTypeId: responseTypeId
-                        },
-                        dataType: "json",
-                        success: function (data) {
-                            $("body").css("cursor", "default");
-                            $.unblockUI();
-                            if (data.Success) {
-                                lists.FileList = data.FileList;
-                                createFileArray(lists.FileList);
-                                self.sort({ afterSave: true });
-                                self.enableDetail();
-                            } else {
-                                BootstrapDialog.show({
-                                    type: BootstrapDialog.TYPE_DANGER,
-                                    title: "Delete Error",
-                                    message: data.ErrorMessage
-                                });
-                            }
+                            $.ajax({
+                                type: "POST",
+                                async: true,
+                                traditional: true,
+                                url: site.url + "PublicMedia/DeleteSelected/",
+                                data:
+                                {
+                                    ids: ids,
+                                    mediaPathTypeId: mediaPathTypeId,
+                                    responseTypeId: responseTypeId
+                                },
+                                dataType: "json",
+                                success: function(data) {
+                                    $("body").css("cursor", "default");
+                                    dialog.close();
+                                    if (data.Success) {
+                                        lists.FileList = data.FileList;
+                                        createFileArray(lists.FileList);
+                                        self.sort({ afterSave: true });
+                                        self.enableDetail();
+                                    } else {
+                                        BootstrapDialog.show({
+                                            type: BootstrapDialog.TYPE_DANGER,
+                                            title: "Delete Error",
+                                            message: data.ErrorMessage
+                                        });
+                                    }
 
-                        },
-                        error: function (data) {
-                            $("body").css("cursor", "default");
-                            $.unblockUI();
-                            BootstrapDialog.show({
-                                type: BootstrapDialog.TYPE_DANGER,
-                                title: "Delete Error",
-                                message: "Unexpected Error\n" + data
+                                },
+                                error: function(data) {
+                                    $("body").css("cursor", "default");
+                                    dialog.close();
+                                    BootstrapDialog.show({
+                                        type: BootstrapDialog.TYPE_DANGER,
+                                        title: "Delete Error",
+                                        message: "Unexpected Error\n" + data
+                                    });
+                                }
                             });
                         }
                     });

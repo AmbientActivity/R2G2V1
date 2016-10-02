@@ -5,7 +5,12 @@
  */
 
 function CuteWebUI_AjaxUploader_OnPostback() {
-    $.blockUI({ message: "<h4>Saving...</h4>" });
+    BootstrapDialog.show({
+        type: BootstrapDialog.TYPE_INFO,
+        title: "Resident Media",
+        message: "Saving...",
+        closable: false
+    });
     document.forms[0].submit();
 }
 
@@ -81,8 +86,10 @@ function DisableScreen() {
 
             var lists = {
                 FileList: [],
-                MediaPathTypeList: []//,
-                //MediaSourceTypeList: []
+                MediaPathTypeList: []
+
+                //TODO: for when 'choose from public library' gets implemented
+                //, MediaSourceTypeList: []
             };
 
             loadData();
@@ -176,6 +183,7 @@ function DisableScreen() {
                     });
                 };
 
+                //TODO: for when 'choose from public library' gets implemented
                 //function createMediaSourceTypeArray(list) {
                 //    self.isLoadingMediaSourceTypes(true);
                 //    self.mediaSourceTypes.removeAll();
@@ -197,6 +205,7 @@ function DisableScreen() {
                     self.mediaPathTypes.push(new MediaPathType(value.Id, value.Description));
                 }
 
+                //TODO: for when 'choose from public library' gets implemented
                 //function pushMediaSourceType(value) {
                 //    self.mediaSourceTypes.push(new MediaSourceType(value.Id, value.Description));
                 //}
@@ -403,51 +412,58 @@ function DisableScreen() {
                     return true;
                 };
 
-                self.deleteSelected = function () {
+                self.deleteSelected = function() {
                     $("body").css("cursor", "wait");
 
                     var ids = self.selectedIds();
                     var residentId = config.residentid;
                     var mediaPathTypeId = $("#mediaPathTypeId").val();
 
-                    $.blockUI({ message: "<h4>Deleting files...</h4>" });
+                    BootstrapDialog.show({
+                        type: BootstrapDialog.TYPE_INFO,
+                        title: "Resident Media",
+                        message: "Deleting files...",
+                        closable: false,
+                        onshown: function(dialog) {
 
-                    $.ajax({
-                        type: "POST",
-                        async: true,
-                        traditional: true,
-                        url: site.url + "Residents/DeleteSelectedMediaFiles/",
-                        data:
-                        {
-                            ids: ids,
-                            residentId: residentId,
-                            mediaPathTypeId: mediaPathTypeId
-                        },
-                        dataType: "json",
-                        success: function (data) {
-                            $.unblockUI();
-                            $("body").css("cursor", "default");
-                            if (data.Success) {
-                                lists.FileList = data.FileList;
-                                createFileArray(lists.FileList);
-                                self.sort({ afterSave: true });
-                                self.enableDetail();
-                            } else {
-                                BootstrapDialog.show({
-                                    type: BootstrapDialog.TYPE_DANGER,
-                                    title: "Delete Error",
-                                    message: data.ErrorMessage
-                                });
-                            }
+                            $.ajax({
+                                type: "POST",
+                                async: true,
+                                traditional: true,
+                                url: site.url + "Residents/DeleteSelectedMediaFiles/",
+                                data:
+                                {
+                                    ids: ids,
+                                    residentId: residentId,
+                                    mediaPathTypeId: mediaPathTypeId
+                                },
+                                dataType: "json",
+                                success: function(data) {
+                                    dialog.close();
+                                    $("body").css("cursor", "default");
+                                    if (data.Success) {
+                                        lists.FileList = data.FileList;
+                                        createFileArray(lists.FileList);
+                                        self.sort({ afterSave: true });
+                                        self.enableDetail();
+                                    } else {
+                                        BootstrapDialog.show({
+                                            type: BootstrapDialog.TYPE_DANGER,
+                                            title: "Delete Error",
+                                            message: data.ErrorMessage
+                                        });
+                                    }
 
-                        },
-                        error: function (data) {
-                            $.unblockUI();
-                            $("body").css("cursor", "default");
-                            BootstrapDialog.show({
-                                type: BootstrapDialog.TYPE_DANGER,
-                                title: "Delete Error",
-                                message: "Unexpected Error\n" + data
+                                },
+                                error: function(data) {
+                                    dialog.close();
+                                    $("body").css("cursor", "default");
+                                    BootstrapDialog.show({
+                                        type: BootstrapDialog.TYPE_DANGER,
+                                        title: "Delete Error",
+                                        message: "Unexpected Error\n" + data
+                                    });
+                                }
                             });
                         }
                     });

@@ -51,11 +51,13 @@ namespace Keebee.AAT.Administrator.Controllers
         }
 
         // GET: Services
+        [Authorize]
         public ActionResult Index()
         {
             return View();
         }
 
+        [Authorize]
         public string ReinstallServices()
         {
             var smsPath = ConfigurationManager.AppSettings["StateMachineServiceLocation"];
@@ -90,6 +92,7 @@ namespace Keebee.AAT.Administrator.Controllers
             return msg;
         }
 
+        [Authorize]
         public string RestartServices()
         {
             _messageQueueDisplaySms.Send(CreateDisplayMessageBody(false));

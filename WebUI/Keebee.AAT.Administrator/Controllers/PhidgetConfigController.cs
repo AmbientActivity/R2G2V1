@@ -26,12 +26,14 @@ namespace Keebee.AAT.Administrator.Controllers
         }
 
         // GET: PhidgetConfig
+        [Authorize]
         public ActionResult Index()
         {
             return View();
         }
 
         [HttpGet]
+        [Authorize]
         public JsonResult GetData()
         {
             var vm = new
@@ -44,18 +46,21 @@ namespace Keebee.AAT.Administrator.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public PartialViewResult GetConfigEditView(int id, int selectedConfigId)
         {
             return PartialView("_ConfigEdit", LoadConfigEditViewModel(id, selectedConfigId));
         }
 
         [HttpGet]
+        [Authorize]
         public PartialViewResult GetConfigDetailEditView(int id, int configId)
         {
             return PartialView("_ConfigDetailEdit", LoadConfigDetailEditViewModel(id, configId));
         }
 
         [HttpPost]
+        [Authorize]
         public JsonResult Save(string config, int selectedConfigId)
         {
             var c = JsonConvert.DeserializeObject<ConfigEditViewModel>(config);
@@ -83,6 +88,7 @@ namespace Keebee.AAT.Administrator.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public JsonResult Delete(int id)
         {
             _opsClient.DeleteConfig(id);
@@ -95,6 +101,7 @@ namespace Keebee.AAT.Administrator.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public JsonResult SaveDetail(string configDetail)
         {
             var cd = JsonConvert.DeserializeObject<ConfigDetailEditViewModel>(configDetail);
@@ -121,6 +128,7 @@ namespace Keebee.AAT.Administrator.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public JsonResult DeleteDetail(int id, int configId, bool isActive)
         {
             _opsClient.DeleteConfigDetail(id);
@@ -136,6 +144,7 @@ namespace Keebee.AAT.Administrator.Controllers
         }
 
         // POST: Activate?configId=2
+        [Authorize]
         public JsonResult Activate(int configId)
         {
             _opsClient.PostActivateConfig(configId);

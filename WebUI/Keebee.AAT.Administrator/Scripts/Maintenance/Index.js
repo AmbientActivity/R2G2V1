@@ -59,63 +59,71 @@
             });
 
             function execute(functionName, waitMessage, verbage) {
-                $.blockUI({ message: "<h4>" + waitMessage + "</h4>" });
-                $("body").css("cursor", "wait");
+                BootstrapDialog.show({
+                    type: BootstrapDialog.TYPE_INFO,
+                    title: "Service Utilities",
+                    message: waitMessage,
+                    closable: false,
+                    onshown: function(dialog) {
+                        $("body").css("cursor", "wait");
 
-                $.ajax({
-                    type: "GET",
-                    async: true,
-                    traditional: true,
-                    url: site.url + "Maintenance/" + functionName,
-                    success: function(data) {
-                        $("body").css("cursor", "default");
-                        $.unblockUI();
+                        $.ajax({
+                            type: "GET",
+                            async: true,
+                            traditional: true,
+                            url: site.url + "Maintenance/" + functionName,
+                            success: function (data) {
+                                $("body").css("cursor", "default");
+                                dialog.close();
 
-                        if (data.length === 0)
-                            BootstrapDialog.show({
-                                title: "Success",
-                                closable: false,
-                                type: BootstrapDialog.TYPE_SUCCESS,
-                                message: verbage,
-                                buttons: [
-                                {
-                                    label: "Close",
-                                    action: function (dialog) {
-                                        dialog.close();
-                                    }
-                                }]
-                            });
-                        else
-                            BootstrapDialog.show({
-                                title: "Error",
-                                closable: false,
-                                type: BootstrapDialog.TYPE_DANGER,
-                                message: "The following error occured:\n" + data,
-                                buttons: [{
-                                    label: "Close",
-                                    action: function (dialog) {
-                                        dialog.close();
-                                    }
-                                }]
-                            });
-                    },
-                    error: function(data) {
-                        $("body").css("cursor", "default");
-                        $.unblockUI();
-                        BootstrapDialog.show({
-                            title: "Error",
-                            closable: false,
-                            type: BootstrapDialog.TYPE_DANGER,
-                            message: "The following error occured:\n" + data,
-                            buttons: [{
-                                label: "Close",
-                                action: function (dialog) {
-                                    dialog.close();
-                                }
-                            }]
+                                if (data.length === 0)
+                                    BootstrapDialog.show({
+                                        title: "Success",
+                                        closable: false,
+                                        type: BootstrapDialog.TYPE_SUCCESS,
+                                        message: verbage,
+                                        buttons: [
+                                        {
+                                            label: "Close",
+                                            action: function (dialog) {
+                                                dialog.close();
+                                            }
+                                        }]
+                                    });
+                                else
+                                    BootstrapDialog.show({
+                                        title: "Error",
+                                        closable: false,
+                                        type: BootstrapDialog.TYPE_DANGER,
+                                        message: "The following error occured:\n" + data,
+                                        buttons: [{
+                                            label: "Close",
+                                            action: function (dialog) {
+                                                dialog.close();
+                                            }
+                                        }]
+                                    });
+                            },
+                            error: function (data) {
+                                $("body").css("cursor", "default");
+                                dialog.close();
+                                BootstrapDialog.show({
+                                    title: "Error",
+                                    closable: false,
+                                    type: BootstrapDialog.TYPE_DANGER,
+                                    message: "The following error occured:\n" + data,
+                                    buttons: [{
+                                        label: "Close",
+                                        action: function (dialog) {
+                                            dialog.close();
+                                        }
+                                    }]
+                                });
+                            }
                         });
                     }
                 });
+                
             };
         }
     }

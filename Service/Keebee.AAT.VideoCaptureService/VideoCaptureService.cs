@@ -3,11 +3,11 @@ using Keebee.AAT.MessageQueuing;
 using Keebee.AAT.Shared;
 using System;
 using System.Configuration;
-using System.Threading;
 using System.Web.Script.Serialization;
 using System.ServiceProcess;
 using System.Diagnostics;
 using System.Linq;
+using System.Timers;
 using Microsoft.Expression.Encoder.Devices;
 using Microsoft.Expression.Encoder.Live;
 
@@ -15,7 +15,10 @@ namespace Keebee.AAT.VideoCaptureService
 {
     internal partial class VideoCaptureService : ServiceBase
     {
-        private const int VideoDuration = 120; // in seconds
+        private const string OutputPath = @"C:\VideoCaptures";
+        private readonly Timer _timer;
+        private const int VideoDuration = 120000; // in milliseconds
+
         // event logger
         private readonly SystemEventLogger _systemEventLogger;
 
@@ -46,6 +49,9 @@ namespace Keebee.AAT.VideoCaptureService
 
             _job = new LiveJob();
             InitializeEncoderDevices();
+
+            _timer = new Timer(VideoDuration);
+            _timer.Elapsed += OnTimerElapsed;
         }
 
         private void InitializeEncoderDevices()
@@ -61,41 +67,49 @@ namespace Keebee.AAT.VideoCaptureService
 
         private void StartCapture()
         {
-            var fileOut = new FileArchivePublishFormat
+            try
             {
-                OutputFileName = $@"C:\VideoCaptures\Capture_{DateTime.Now:yyyyMMdd_hhmmss}.wmv"
-            };
+                var fileOut = new FileArchivePublishFormat
+                {
+                    OutputFileName = $@"{OutputPath}\{DateTime.Now:yyyyMMdd_hhmmss}.wmv"
+                };
 
-            _job.PublishFormats.Add(fileOut);
-            _job.StartEncoding();
+                _job.PublishFormats.Add(fileOut);
+                _job.StartEncoding();
+            }
+            catch (Exception ex)
+            {
+                _systemEventLogger.WriteEntry($"StartCapture: {ex.Message}", EventLogEntryType.Error);
+            }
+        }
+
+        private void StopCapture()
+        {
+            try
+            {
+                if (!_job.IsCapturing) return;
+
+                _job.StopEncoding();
+                _job.PublishFormats.Clear();
+            }
+            catch (Exception ex)
+            {
+                _systemEventLogger.WriteEntry($"StopCapture: {ex.Message}", EventLogEntryType.Error);
+            }
+        }
+
+        private void OnTimerElapsed(object source, ElapsedEventArgs e)
+        {
+            StopCapture();
+            _timer.Stop();
         }
 
         private void MessageReceivedVideoCapture(object source, MessageEventArgs e)
         {
-            try
-            {
-                // do nothing unless the display is active
-                if (!_displayIsActive) return;
+            if (!_displayIsActive || _job.IsCapturing) return;
 
-                if (!_job.IsCapturing)
-                {
-                    StartCapture();
-
-                    for (var second = 0; second <= VideoDuration; second++)
-                    {
-                        if (_displayIsActive)
-                            Thread.Sleep(1000);
-                        else break;
-                    }
-
-                    _job.StopEncoding();
-                    _job.PublishFormats.Clear();
-                }
-            }
-            catch (Exception ex)
-            {
-                _systemEventLogger.WriteEntry($"MessageReceivedVideoCapture: {ex.Message}", EventLogEntryType.Error);
-            }
+            StartCapture();
+            _timer.Start();
         }
 
         private void MessageReceivedDisplayVideoCapture(object source, MessageEventArgs e)
@@ -104,6 +118,12 @@ namespace Keebee.AAT.VideoCaptureService
             {
                 var displayMessage = GetDisplayStateFromMessageBody(e.MessageBody);
                 _displayIsActive = displayMessage.IsActive;
+
+                if (!_displayIsActive)
+                {
+                    _timer.Stop();
+                    StopCapture();
+                }
             }
             catch (Exception ex)
             {
@@ -126,6 +146,8 @@ namespace Keebee.AAT.VideoCaptureService
         protected override void OnStop()
         {
             _systemEventLogger.WriteEntry("In OnStop");
+            _timer.Stop();
+            _timer.Dispose();
         }
     }
 }

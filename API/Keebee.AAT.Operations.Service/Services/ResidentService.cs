@@ -30,10 +30,19 @@ namespace Keebee.AAT.Operations.Service.Services
 
         public Resident Get(int id)
         {
-            var container = new Container(new Uri(ODataHost.Url));
+            Resident resident = null;
+            try
+            {
+                var container = new Container(new Uri(ODataHost.Url));
 
-            return container.Residents.ByKey(id)
-                .GetValue();
+                resident = container.Residents.ByKey(id)
+                    .GetValue();
+            }
+            catch
+            {
+                // ignored
+            }
+            return resident;
         }
 
         public Resident GetByNameGender(string firstName, string lastName, string gender)

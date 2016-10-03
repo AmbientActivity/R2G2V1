@@ -307,7 +307,8 @@ namespace Keebee.AAT.Administrator.Controllers
                     new SelectListItem { Value = "3", Text = "3" },
                     new SelectListItem { Value = "4", Text = "4" },
                     new SelectListItem { Value = "5", Text = "5" }},
-                    "Value", "Text", resident?.GameDifficultyLevel)
+                    "Value", "Text", resident?.GameDifficultyLevel),
+                AllowVideoCapturing = resident?.AllowVideoCapturing ?? false,
             };
 
             return vm;
@@ -377,7 +378,8 @@ namespace Keebee.AAT.Administrator.Controllers
                 FirstName = residentDetail.FirstName,
                 LastName = residentDetail.LastName,
                 Gender = residentDetail.Gender,
-                GameDifficultyLevel = residentDetail.GameDifficultyLevel
+                GameDifficultyLevel = residentDetail.GameDifficultyLevel,
+                AllowVideoCapturing = residentDetail.AllowVideoCapturing
             };
 
             _opsClient.PatchResident(residentDetail.Id, r);
@@ -390,7 +392,8 @@ namespace Keebee.AAT.Administrator.Controllers
                 FirstName = residentDetail.FirstName,
                 LastName = residentDetail.LastName,
                 Gender = residentDetail.Gender,
-                GameDifficultyLevel = residentDetail.GameDifficultyLevel
+                GameDifficultyLevel = residentDetail.GameDifficultyLevel,
+                AllowVideoCapturing = residentDetail.AllowVideoCapturing
             };
 
             var id = _opsClient.PostResident(r);

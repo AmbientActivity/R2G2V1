@@ -42,6 +42,37 @@
                 };
             };
 
+            function changePassword() {
+                var result;
+                var jsonData = getChangePasswordDetailFromDialog();
+
+                $.ajax({
+                    type: "GET",
+                    async: false,
+                    data: jsonData,
+                    dataType: "json",
+                    url: site.url + "Home/ChangePassword",
+                    success: function (data) {
+                        result = data;
+                    },
+                    error: function (data) {
+                        result = data;
+                    }
+                });
+
+                return result;
+            }
+
+            function getChangePasswordDetailFromDialog() {
+                var oldpassword = $.trim($("#txtOldPassword").val());
+                var newpassword = $.trim($("#txtNewPassword").val());
+                var retypepassword = $.trim($("#txtRetypeNewPassword").val());
+
+                return {
+                    OldPassword: oldpassword, NewPassword: newpassword, RetypeNewPassword: retypepassword
+                };
+            };
+
             cmdLogin.click(function () {
                 var message;
 

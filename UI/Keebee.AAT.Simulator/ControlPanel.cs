@@ -316,7 +316,7 @@ namespace Keebee.AAT.Simulator
             var id = Convert.ToInt32(cboResident.SelectedValue.ToString());
 
             var resident = (id == PublicMediaSource.Id)
-                ? new Resident { Id = PublicMediaSource.Id, GameDifficultyLevel = 1 }
+                ? new Resident { Id = PublicMediaSource.Id, GameDifficultyLevel = 1, AllowVideoCapturing = false }
                 :_residents.Single(x => x.Id == id);
 
             CreateMessageBodyFromResident(resident);
@@ -326,7 +326,12 @@ namespace Keebee.AAT.Simulator
 
         private static string CreateMessageBodyFromResident(Resident resident)
         {
-            var residentMessage = new ResidentMessage { Id = resident.Id, GameDifficultyLevel = resident.GameDifficultyLevel };
+            var residentMessage = new ResidentMessage
+            {
+                Id = resident.Id,
+                GameDifficultyLevel = resident.GameDifficultyLevel,
+                AllowVideoCapturing = resident.AllowVideoCapturing
+            };
 
             var serializer = new JavaScriptSerializer();
             var messageBody = serializer.Serialize(residentMessage);

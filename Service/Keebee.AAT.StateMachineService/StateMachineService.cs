@@ -114,7 +114,11 @@ namespace Keebee.AAT.StateMachineService
                 };
 
                 if (!configDetail.IsSystemReponseType)
-                    _messageQueueVideoCapture.Send("1");
+                {
+                    if (_activeResident.AllowVideoCapturing)
+                        // send a signal to the video capture service to start recording
+                        _messageQueueVideoCapture.Send("1");
+                }
 
                 var serializer = new JavaScriptSerializer();
                 var responseMessageBody = serializer.Serialize(responseMessage);
@@ -186,7 +190,13 @@ namespace Keebee.AAT.StateMachineService
 
                 if (!_displayIsActive) return;
 
-                _activeResident = new ResidentMessage { Id = PublicMediaSource.Id, GameDifficultyLevel = 1 };
+                _activeResident = new ResidentMessage
+                {
+                    Id = PublicMediaSource.Id,
+                    GameDifficultyLevel = 1,
+                    AllowVideoCapturing = false
+                };
+
                 LoadConfig();
             }
             catch (Exception ex)

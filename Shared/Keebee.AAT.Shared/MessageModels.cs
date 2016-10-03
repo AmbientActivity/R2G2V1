@@ -24,6 +24,7 @@ namespace Keebee.AAT.Shared
     {
         public int Id { get; set; }
         public int GameDifficultyLevel { get; set; }
+        public bool AllowVideoCapturing { get; set; }
     }
 
     public class ResponseMessage

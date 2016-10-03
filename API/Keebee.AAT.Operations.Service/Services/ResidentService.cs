@@ -98,6 +98,8 @@ namespace Keebee.AAT.Operations.Service.Services
             if (resident.GameDifficultyLevel > 0)
                 r.GameDifficultyLevel = resident.GameDifficultyLevel;
 
+            r.AllowVideoCapturing = resident.AllowVideoCapturing;
+
             resident.DateUpdated = DateTime.Now;
 
             container.UpdateObject(r);

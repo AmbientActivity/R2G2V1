@@ -61,6 +61,12 @@ namespace Keebee.AAT.Administrator.Controllers
             return PartialView("_Login", LoadLoginViewModel());
         }
 
+        [HttpGet]
+        public PartialViewResult GetChangePasswordView()
+        {
+            return PartialView("_ChangePassword", new ChangePasswordViewModel());
+        }
+
         private static LoginViewModel LoadLoginViewModel()
         {
             var vm = new LoginViewModel

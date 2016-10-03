@@ -429,6 +429,7 @@
     <Content Include="Views\PublicMedia\_ImageViewer.cshtml" />
     <Content Include="Views\Home\_Login.cshtml" />
     <Content Include="Views\Shared\_LogOnPartial.cshtml" />
+    <Content Include="Views\Home\_ChangePassword.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -11,12 +12,28 @@ namespace Keebee.AAT.PhidgetMonitor
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
+        static readonly Mutex Mutex = new Mutex(true, "{8F6F0AC4-B9A1-45fd-A8CF-72F04E6BDE8D}");
+        
         [STAThread]
         static void Main()
         {
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Monitor());
+            if (Mutex.WaitOne(TimeSpan.Zero, true))
+            {
+                try
+                {
+                    Application.EnableVisualStyles();
+                    Application.SetCompatibleTextRenderingDefault(false);
+                    Application.Run(new Monitor());
+                }
+                finally
+                {
+                    Mutex.ReleaseMutex();
+                }
+            }
+            else
+            {
+                MessageBox.Show("Phidget Monitor is already running.");
+            }
         }
     }
 }

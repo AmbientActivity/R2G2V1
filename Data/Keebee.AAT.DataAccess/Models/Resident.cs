@@ -19,6 +19,8 @@ namespace Keebee.AAT.DataAccess.Models
 
         public int GameDifficultyLevel { get; set; }
 
+        public bool AllowVideoCapturing { get; set; }
+
         public DateTime DateCreated { get; set; }
 
         public DateTime DateUpdated { get; set; }

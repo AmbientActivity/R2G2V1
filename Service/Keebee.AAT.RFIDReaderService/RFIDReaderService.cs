@@ -199,7 +199,12 @@ namespace Keebee.AAT.RfidReaderService
 
         private static string CreateMessageBodyFromResident(Resident resident)
         {
-            var residentMessage = new ResidentMessage { Id = resident.Id, GameDifficultyLevel = resident.GameDifficultyLevel };
+            var residentMessage = new ResidentMessage
+            {
+                Id = resident.Id,
+                GameDifficultyLevel = resident.GameDifficultyLevel,
+                AllowVideoCapturing = resident.AllowVideoCapturing
+            };
 
             var serializer = new JavaScriptSerializer();
             var messageBody = serializer.Serialize(residentMessage);

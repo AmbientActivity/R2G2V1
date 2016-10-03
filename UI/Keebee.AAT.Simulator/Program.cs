@@ -29,7 +29,7 @@ namespace Keebee.AAT.Simulator
             }
             else
             {
-                MessageBox.Show("Keebee AAT Simulator is already running.");
+                MessageBox.Show("Simulator is already running.");
             }
         }
     }

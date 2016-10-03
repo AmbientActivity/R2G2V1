@@ -340,9 +340,10 @@
                     var lastname = $.trim($("#txtLastName").val());
                     var gender = $.trim($("#ddlGenders").val());
                     var gamedifficultylevel = $.trim($("#ddlGameDifficultyLevels").val());
+                    var allowVideoCapturing = $.trim($("#chkAllowVideoCapturing").is(":checked"));
 
                     return {
-                        Id: self.selectedResident().id, FirstName: firstname, LastName: lastname, Gender: gender, GameDifficultyLevel: gamedifficultylevel
+                        Id: self.selectedResident().id, FirstName: firstname, LastName: lastname, Gender: gender, GameDifficultyLevel: gamedifficultylevel, AllowVideoCapturing: allowVideoCapturing
                     };
                 };
 

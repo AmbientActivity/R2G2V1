@@ -39,6 +39,7 @@ namespace Keebee.AAT.Administrator.ViewModels
         public SelectList Genders { get; set; }
         public int GameDifficultyLevel { get; set; }
         public SelectList GameDifficultyLevels { get; set; }
+        public bool AllowVideoCapturing { get; set; }
     }
 
     public class ResidentMediaViewModel

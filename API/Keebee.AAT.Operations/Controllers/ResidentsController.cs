@@ -45,6 +45,7 @@ namespace Keebee.AAT.Operations.Controllers
                     x.LastName,
                     x.Gender,
                     x.GameDifficultyLevel,
+                    x.AllowVideoCapturing,
                     x.DateCreated,
                     x.DateUpdated
                 });
@@ -71,6 +72,7 @@ namespace Keebee.AAT.Operations.Controllers
             exObj.LastName = resident.LastName;
             exObj.Gender = resident.Gender;
             exObj.GameDifficultyLevel = resident.GameDifficultyLevel;
+            exObj.AllowVideoCapturing = resident.AllowVideoCapturing; ;
             exObj.DateCreated = resident.DateCreated;
             exObj.DateUpdated = resident.DateUpdated;
 
@@ -95,6 +97,7 @@ namespace Keebee.AAT.Operations.Controllers
             exObj.LastName = resident.LastName;
             exObj.Gender = resident.Gender;
             exObj.GameDifficultyLevel = resident.GameDifficultyLevel;
+            exObj.AllowVideoCapturing = resident.AllowVideoCapturing;
             exObj.DateCreated = resident.DateCreated;
             exObj.DateUpdated = resident.DateUpdated;
 
@@ -120,6 +123,7 @@ namespace Keebee.AAT.Operations.Controllers
             exObj.LastName = resident.LastName;
             exObj.Gender = resident.Gender;
             exObj.GameDifficultyLevel = resident.GameDifficultyLevel;
+            exObj.AllowVideoCapturing = resident.AllowVideoCapturing;
             exObj.DateCreated = resident.DateCreated;
             exObj.DateUpdated = resident.DateUpdated;
             exObj.MediaFiles = resident.MediaFiles

@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-// Generation date: 9/21/2016 11:44:38 AM
+// Generation date: 2016-10-03 6:15:46 PM
 namespace Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models
 {
     /// <summary>
@@ -3355,6 +3355,7 @@ namespace Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models
         /// <param name="firstName">Initial value of FirstName.</param>
         /// <param name="gender">Initial value of Gender.</param>
         /// <param name="gameDifficultyLevel">Initial value of GameDifficultyLevel.</param>
+        /// <param name="allowVideoCapturing">Initial value of AllowVideoCapturing.</param>
         /// <param name="dateCreated">Initial value of DateCreated.</param>
         /// <param name="dateUpdated">Initial value of DateUpdated.</param>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
@@ -3362,6 +3363,7 @@ namespace Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models
                     string firstName, 
                     string gender, 
                     int gameDifficultyLevel, 
+                    bool allowVideoCapturing, 
                     global::System.DateTimeOffset dateCreated, 
                     global::System.DateTimeOffset dateUpdated)
         {
@@ -3370,6 +3372,7 @@ namespace Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models
             resident.FirstName = firstName;
             resident.Gender = gender;
             resident.GameDifficultyLevel = gameDifficultyLevel;
+            resident.AllowVideoCapturing = allowVideoCapturing;
             resident.DateCreated = dateCreated;
             resident.DateUpdated = dateUpdated;
             return resident;
@@ -3490,6 +3493,29 @@ namespace Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models
         partial void OnGameDifficultyLevelChanging(int value);
         partial void OnGameDifficultyLevelChanged();
         /// <summary>
+        /// There are no comments for Property AllowVideoCapturing in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        [global::Microsoft.OData.Client.OriginalNameAttribute("AllowVideoCapturing")]
+        public bool AllowVideoCapturing
+        {
+            get
+            {
+                return this._AllowVideoCapturing;
+            }
+            set
+            {
+                this.OnAllowVideoCapturingChanging(value);
+                this._AllowVideoCapturing = value;
+                this.OnAllowVideoCapturingChanged();
+                this.OnPropertyChanged("AllowVideoCapturing");
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private bool _AllowVideoCapturing;
+        partial void OnAllowVideoCapturingChanging(bool value);
+        partial void OnAllowVideoCapturingChanged();
+        /// <summary>
         /// There are no comments for Property DateCreated in the schema.
         /// </summary>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
@@ -3577,168 +3603,6 @@ namespace Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models
         }
     }
     /// <summary>
-    /// There are no comments for CaregiverSingle in the schema.
-    /// </summary>
-    [global::Microsoft.OData.Client.OriginalNameAttribute("CaregiverSingle")]
-    public partial class CaregiverSingle : global::Microsoft.OData.Client.DataServiceQuerySingle<Caregiver>
-    {
-        /// <summary>
-        /// Initialize a new CaregiverSingle object.
-        /// </summary>
-        public CaregiverSingle(global::Microsoft.OData.Client.DataServiceContext context, string path)
-            : base(context, path) {}
-
-        /// <summary>
-        /// Initialize a new CaregiverSingle object.
-        /// </summary>
-        public CaregiverSingle(global::Microsoft.OData.Client.DataServiceContext context, string path, bool isComposable)
-            : base(context, path, isComposable) {}
-
-        /// <summary>
-        /// Initialize a new CaregiverSingle object.
-        /// </summary>
-        public CaregiverSingle(global::Microsoft.OData.Client.DataServiceQuerySingle<Caregiver> query)
-            : base(query) {}
-
-    }
-    /// <summary>
-    /// There are no comments for Caregiver in the schema.
-    /// </summary>
-    /// <KeyProperties>
-    /// Id
-    /// </KeyProperties>
-    [global::Microsoft.OData.Client.Key("Id")]
-    [global::Microsoft.OData.Client.OriginalNameAttribute("Caregiver")]
-    public partial class Caregiver : global::Microsoft.OData.Client.BaseEntityType, global::System.ComponentModel.INotifyPropertyChanged
-    {
-        /// <summary>
-        /// Create a new Caregiver object.
-        /// </summary>
-        /// <param name="ID">Initial value of Id.</param>
-        /// <param name="firstName">Initial value of FirstName.</param>
-        /// <param name="lastName">Initial value of LastName.</param>
-        /// <param name="gender">Initial value of Gender.</param>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        public static Caregiver CreateCaregiver(int ID, string firstName, string lastName, string gender)
-        {
-            Caregiver caregiver = new Caregiver();
-            caregiver.Id = ID;
-            caregiver.FirstName = firstName;
-            caregiver.LastName = lastName;
-            caregiver.Gender = gender;
-            return caregiver;
-        }
-        /// <summary>
-        /// There are no comments for Property Id in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        [global::Microsoft.OData.Client.OriginalNameAttribute("Id")]
-        public int Id
-        {
-            get
-            {
-                return this._Id;
-            }
-            set
-            {
-                this.OnIdChanging(value);
-                this._Id = value;
-                this.OnIdChanged();
-                this.OnPropertyChanged("Id");
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private int _Id;
-        partial void OnIdChanging(int value);
-        partial void OnIdChanged();
-        /// <summary>
-        /// There are no comments for Property FirstName in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        [global::Microsoft.OData.Client.OriginalNameAttribute("FirstName")]
-        public string FirstName
-        {
-            get
-            {
-                return this._FirstName;
-            }
-            set
-            {
-                this.OnFirstNameChanging(value);
-                this._FirstName = value;
-                this.OnFirstNameChanged();
-                this.OnPropertyChanged("FirstName");
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private string _FirstName;
-        partial void OnFirstNameChanging(string value);
-        partial void OnFirstNameChanged();
-        /// <summary>
-        /// There are no comments for Property LastName in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        [global::Microsoft.OData.Client.OriginalNameAttribute("LastName")]
-        public string LastName
-        {
-            get
-            {
-                return this._LastName;
-            }
-            set
-            {
-                this.OnLastNameChanging(value);
-                this._LastName = value;
-                this.OnLastNameChanged();
-                this.OnPropertyChanged("LastName");
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private string _LastName;
-        partial void OnLastNameChanging(string value);
-        partial void OnLastNameChanged();
-        /// <summary>
-        /// There are no comments for Property Gender in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        [global::Microsoft.OData.Client.OriginalNameAttribute("Gender")]
-        public string Gender
-        {
-            get
-            {
-                return this._Gender;
-            }
-            set
-            {
-                this.OnGenderChanging(value);
-                this._Gender = value;
-                this.OnGenderChanged();
-                this.OnPropertyChanged("Gender");
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private string _Gender;
-        partial void OnGenderChanging(string value);
-        partial void OnGenderChanged();
-        /// <summary>
-        /// This event is raised when the value of the property is changed
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        public event global::System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
-        /// <summary>
-        /// The value of the property is changed
-        /// </summary>
-        /// <param name="property">property name</param>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        protected virtual void OnPropertyChanged(string property)
-        {
-            if ((this.PropertyChanged != null))
-            {
-                this.PropertyChanged(this, new global::System.ComponentModel.PropertyChangedEventArgs(property));
-            }
-        }
-    }
-    /// <summary>
     /// There are no comments for UserSingle in the schema.
     /// </summary>
     [global::Microsoft.OData.Client.OriginalNameAttribute("UserSingle")]
@@ -3779,17 +3643,13 @@ namespace Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models
         /// <param name="ID">Initial value of Id.</param>
         /// <param name="username">Initial value of Username.</param>
         /// <param name="password">Initial value of Password.</param>
-        /// <param name="firstName">Initial value of FirstName.</param>
-        /// <param name="lastName">Initial value of LastName.</param>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        public static User CreateUser(int ID, string username, string password, string firstName, string lastName)
+        public static User CreateUser(int ID, string username, string password)
         {
             User user = new User();
             user.Id = ID;
             user.Username = username;
             user.Password = password;
-            user.FirstName = firstName;
-            user.LastName = lastName;
             return user;
         }
         /// <summary>
@@ -3862,51 +3722,340 @@ namespace Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models
         partial void OnPasswordChanging(string value);
         partial void OnPasswordChanged();
         /// <summary>
-        /// There are no comments for Property FirstName in the schema.
+        /// This event is raised when the value of the property is changed
         /// </summary>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        [global::Microsoft.OData.Client.OriginalNameAttribute("FirstName")]
-        public string FirstName
-        {
-            get
-            {
-                return this._FirstName;
-            }
-            set
-            {
-                this.OnFirstNameChanging(value);
-                this._FirstName = value;
-                this.OnFirstNameChanged();
-                this.OnPropertyChanged("FirstName");
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private string _FirstName;
-        partial void OnFirstNameChanging(string value);
-        partial void OnFirstNameChanged();
+        public event global::System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
         /// <summary>
-        /// There are no comments for Property LastName in the schema.
+        /// The value of the property is changed
+        /// </summary>
+        /// <param name="property">property name</param>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        protected virtual void OnPropertyChanged(string property)
+        {
+            if ((this.PropertyChanged != null))
+            {
+                this.PropertyChanged(this, new global::System.ComponentModel.PropertyChangedEventArgs(property));
+            }
+        }
+    }
+    /// <summary>
+    /// There are no comments for RoleSingle in the schema.
+    /// </summary>
+    [global::Microsoft.OData.Client.OriginalNameAttribute("RoleSingle")]
+    public partial class RoleSingle : global::Microsoft.OData.Client.DataServiceQuerySingle<Role>
+    {
+        /// <summary>
+        /// Initialize a new RoleSingle object.
+        /// </summary>
+        public RoleSingle(global::Microsoft.OData.Client.DataServiceContext context, string path)
+            : base(context, path) {}
+
+        /// <summary>
+        /// Initialize a new RoleSingle object.
+        /// </summary>
+        public RoleSingle(global::Microsoft.OData.Client.DataServiceContext context, string path, bool isComposable)
+            : base(context, path, isComposable) {}
+
+        /// <summary>
+        /// Initialize a new RoleSingle object.
+        /// </summary>
+        public RoleSingle(global::Microsoft.OData.Client.DataServiceQuerySingle<Role> query)
+            : base(query) {}
+
+    }
+    /// <summary>
+    /// There are no comments for Role in the schema.
+    /// </summary>
+    /// <KeyProperties>
+    /// Id
+    /// </KeyProperties>
+    [global::Microsoft.OData.Client.Key("Id")]
+    [global::Microsoft.OData.Client.OriginalNameAttribute("Role")]
+    public partial class Role : global::Microsoft.OData.Client.BaseEntityType, global::System.ComponentModel.INotifyPropertyChanged
+    {
+        /// <summary>
+        /// Create a new Role object.
+        /// </summary>
+        /// <param name="ID">Initial value of Id.</param>
+        /// <param name="description">Initial value of Description.</param>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        public static Role CreateRole(int ID, string description)
+        {
+            Role role = new Role();
+            role.Id = ID;
+            role.Description = description;
+            return role;
+        }
+        /// <summary>
+        /// There are no comments for Property Id in the schema.
         /// </summary>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        [global::Microsoft.OData.Client.OriginalNameAttribute("LastName")]
-        public string LastName
+        [global::Microsoft.OData.Client.OriginalNameAttribute("Id")]
+        public int Id
         {
             get
             {
-                return this._LastName;
+                return this._Id;
             }
             set
             {
-                this.OnLastNameChanging(value);
-                this._LastName = value;
-                this.OnLastNameChanged();
-                this.OnPropertyChanged("LastName");
+                this.OnIdChanging(value);
+                this._Id = value;
+                this.OnIdChanged();
+                this.OnPropertyChanged("Id");
             }
         }
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private string _LastName;
-        partial void OnLastNameChanging(string value);
-        partial void OnLastNameChanged();
+        private int _Id;
+        partial void OnIdChanging(int value);
+        partial void OnIdChanged();
+        /// <summary>
+        /// There are no comments for Property Description in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        [global::Microsoft.OData.Client.OriginalNameAttribute("Description")]
+        public string Description
+        {
+            get
+            {
+                return this._Description;
+            }
+            set
+            {
+                this.OnDescriptionChanging(value);
+                this._Description = value;
+                this.OnDescriptionChanged();
+                this.OnPropertyChanged("Description");
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private string _Description;
+        partial void OnDescriptionChanging(string value);
+        partial void OnDescriptionChanged();
+        /// <summary>
+        /// This event is raised when the value of the property is changed
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        public event global::System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        /// <summary>
+        /// The value of the property is changed
+        /// </summary>
+        /// <param name="property">property name</param>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        protected virtual void OnPropertyChanged(string property)
+        {
+            if ((this.PropertyChanged != null))
+            {
+                this.PropertyChanged(this, new global::System.ComponentModel.PropertyChangedEventArgs(property));
+            }
+        }
+    }
+    /// <summary>
+    /// There are no comments for UserRoleSingle in the schema.
+    /// </summary>
+    [global::Microsoft.OData.Client.OriginalNameAttribute("UserRoleSingle")]
+    public partial class UserRoleSingle : global::Microsoft.OData.Client.DataServiceQuerySingle<UserRole>
+    {
+        /// <summary>
+        /// Initialize a new UserRoleSingle object.
+        /// </summary>
+        public UserRoleSingle(global::Microsoft.OData.Client.DataServiceContext context, string path)
+            : base(context, path) {}
+
+        /// <summary>
+        /// Initialize a new UserRoleSingle object.
+        /// </summary>
+        public UserRoleSingle(global::Microsoft.OData.Client.DataServiceContext context, string path, bool isComposable)
+            : base(context, path, isComposable) {}
+
+        /// <summary>
+        /// Initialize a new UserRoleSingle object.
+        /// </summary>
+        public UserRoleSingle(global::Microsoft.OData.Client.DataServiceQuerySingle<UserRole> query)
+            : base(query) {}
+
+        /// <summary>
+        /// There are no comments for User in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        [global::Microsoft.OData.Client.OriginalNameAttribute("User")]
+        public global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.UserSingle User
+        {
+            get
+            {
+                if (!this.IsComposable)
+                {
+                    throw new global::System.NotSupportedException("The previous function is not composable.");
+                }
+                if ((this._User == null))
+                {
+                    this._User = new global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.UserSingle(this.Context, GetPath("User"));
+                }
+                return this._User;
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.UserSingle _User;
+        /// <summary>
+        /// There are no comments for Role in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        [global::Microsoft.OData.Client.OriginalNameAttribute("Role")]
+        public global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.RoleSingle Role
+        {
+            get
+            {
+                if (!this.IsComposable)
+                {
+                    throw new global::System.NotSupportedException("The previous function is not composable.");
+                }
+                if ((this._Role == null))
+                {
+                    this._Role = new global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.RoleSingle(this.Context, GetPath("Role"));
+                }
+                return this._Role;
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.RoleSingle _Role;
+    }
+    /// <summary>
+    /// There are no comments for UserRole in the schema.
+    /// </summary>
+    /// <KeyProperties>
+    /// Id
+    /// </KeyProperties>
+    [global::Microsoft.OData.Client.Key("Id")]
+    [global::Microsoft.OData.Client.OriginalNameAttribute("UserRole")]
+    public partial class UserRole : global::Microsoft.OData.Client.BaseEntityType, global::System.ComponentModel.INotifyPropertyChanged
+    {
+        /// <summary>
+        /// Create a new UserRole object.
+        /// </summary>
+        /// <param name="ID">Initial value of Id.</param>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        public static UserRole CreateUserRole(int ID)
+        {
+            UserRole userRole = new UserRole();
+            userRole.Id = ID;
+            return userRole;
+        }
+        /// <summary>
+        /// There are no comments for Property Id in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        [global::Microsoft.OData.Client.OriginalNameAttribute("Id")]
+        public int Id
+        {
+            get
+            {
+                return this._Id;
+            }
+            set
+            {
+                this.OnIdChanging(value);
+                this._Id = value;
+                this.OnIdChanged();
+                this.OnPropertyChanged("Id");
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private int _Id;
+        partial void OnIdChanging(int value);
+        partial void OnIdChanged();
+        /// <summary>
+        /// There are no comments for Property UserId in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        [global::Microsoft.OData.Client.OriginalNameAttribute("UserId")]
+        public global::System.Nullable<int> UserId
+        {
+            get
+            {
+                return this._UserId;
+            }
+            set
+            {
+                this.OnUserIdChanging(value);
+                this._UserId = value;
+                this.OnUserIdChanged();
+                this.OnPropertyChanged("UserId");
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private global::System.Nullable<int> _UserId;
+        partial void OnUserIdChanging(global::System.Nullable<int> value);
+        partial void OnUserIdChanged();
+        /// <summary>
+        /// There are no comments for Property RoleId in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        [global::Microsoft.OData.Client.OriginalNameAttribute("RoleId")]
+        public global::System.Nullable<int> RoleId
+        {
+            get
+            {
+                return this._RoleId;
+            }
+            set
+            {
+                this.OnRoleIdChanging(value);
+                this._RoleId = value;
+                this.OnRoleIdChanged();
+                this.OnPropertyChanged("RoleId");
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private global::System.Nullable<int> _RoleId;
+        partial void OnRoleIdChanging(global::System.Nullable<int> value);
+        partial void OnRoleIdChanged();
+        /// <summary>
+        /// There are no comments for Property User in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        [global::Microsoft.OData.Client.OriginalNameAttribute("User")]
+        public global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.User User
+        {
+            get
+            {
+                return this._User;
+            }
+            set
+            {
+                this.OnUserChanging(value);
+                this._User = value;
+                this.OnUserChanged();
+                this.OnPropertyChanged("User");
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.User _User;
+        partial void OnUserChanging(global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.User value);
+        partial void OnUserChanged();
+        /// <summary>
+        /// There are no comments for Property Role in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        [global::Microsoft.OData.Client.OriginalNameAttribute("Role")]
+        public global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.Role Role
+        {
+            get
+            {
+                return this._Role;
+            }
+            set
+            {
+                this.OnRoleChanging(value);
+                this._Role = value;
+                this.OnRoleChanged();
+                this.OnPropertyChanged("Role");
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.Role _Role;
+        partial void OnRoleChanging(global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.Role value);
+        partial void OnRoleChanged();
         /// <summary>
         /// This event is raised when the value of the property is changed
         /// </summary>
@@ -4299,29 +4448,6 @@ namespace Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models
             return new global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.ResidentSingle(source.Context, source.GetKeyPath(global::Microsoft.OData.Client.Serializer.GetKeyString(source.Context, keys)));
         }
         /// <summary>
-        /// Get an entity of type global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.Caregiver as global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.CaregiverSingle specified by key from an entity set
-        /// </summary>
-        /// <param name="source">source entity set</param>
-        /// <param name="keys">dictionary with the names and values of keys</param>
-        public static global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.CaregiverSingle ByKey(this global::Microsoft.OData.Client.DataServiceQuery<global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.Caregiver> source, global::System.Collections.Generic.Dictionary<string, object> keys)
-        {
-            return new global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.CaregiverSingle(source.Context, source.GetKeyPath(global::Microsoft.OData.Client.Serializer.GetKeyString(source.Context, keys)));
-        }
-        /// <summary>
-        /// Get an entity of type global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.Caregiver as global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.CaregiverSingle specified by key from an entity set
-        /// </summary>
-        /// <param name="source">source entity set</param>
-        /// <param name="id">The value of id</param>
-        public static global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.CaregiverSingle ByKey(this global::Microsoft.OData.Client.DataServiceQuery<global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.Caregiver> source,
-            int id)
-        {
-            global::System.Collections.Generic.Dictionary<string, object> keys = new global::System.Collections.Generic.Dictionary<string, object>
-            {
-                { "Id", id }
-            };
-            return new global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.CaregiverSingle(source.Context, source.GetKeyPath(global::Microsoft.OData.Client.Serializer.GetKeyString(source.Context, keys)));
-        }
-        /// <summary>
         /// Get an entity of type global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.User as global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.UserSingle specified by key from an entity set
         /// </summary>
         /// <param name="source">source entity set</param>
@@ -4343,6 +4469,52 @@ namespace Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models
                 { "Id", id }
             };
             return new global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.UserSingle(source.Context, source.GetKeyPath(global::Microsoft.OData.Client.Serializer.GetKeyString(source.Context, keys)));
+        }
+        /// <summary>
+        /// Get an entity of type global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.Role as global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.RoleSingle specified by key from an entity set
+        /// </summary>
+        /// <param name="source">source entity set</param>
+        /// <param name="keys">dictionary with the names and values of keys</param>
+        public static global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.RoleSingle ByKey(this global::Microsoft.OData.Client.DataServiceQuery<global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.Role> source, global::System.Collections.Generic.Dictionary<string, object> keys)
+        {
+            return new global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.RoleSingle(source.Context, source.GetKeyPath(global::Microsoft.OData.Client.Serializer.GetKeyString(source.Context, keys)));
+        }
+        /// <summary>
+        /// Get an entity of type global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.Role as global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.RoleSingle specified by key from an entity set
+        /// </summary>
+        /// <param name="source">source entity set</param>
+        /// <param name="id">The value of id</param>
+        public static global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.RoleSingle ByKey(this global::Microsoft.OData.Client.DataServiceQuery<global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.Role> source,
+            int id)
+        {
+            global::System.Collections.Generic.Dictionary<string, object> keys = new global::System.Collections.Generic.Dictionary<string, object>
+            {
+                { "Id", id }
+            };
+            return new global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.RoleSingle(source.Context, source.GetKeyPath(global::Microsoft.OData.Client.Serializer.GetKeyString(source.Context, keys)));
+        }
+        /// <summary>
+        /// Get an entity of type global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.UserRole as global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.UserRoleSingle specified by key from an entity set
+        /// </summary>
+        /// <param name="source">source entity set</param>
+        /// <param name="keys">dictionary with the names and values of keys</param>
+        public static global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.UserRoleSingle ByKey(this global::Microsoft.OData.Client.DataServiceQuery<global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.UserRole> source, global::System.Collections.Generic.Dictionary<string, object> keys)
+        {
+            return new global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.UserRoleSingle(source.Context, source.GetKeyPath(global::Microsoft.OData.Client.Serializer.GetKeyString(source.Context, keys)));
+        }
+        /// <summary>
+        /// Get an entity of type global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.UserRole as global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.UserRoleSingle specified by key from an entity set
+        /// </summary>
+        /// <param name="source">source entity set</param>
+        /// <param name="id">The value of id</param>
+        public static global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.UserRoleSingle ByKey(this global::Microsoft.OData.Client.DataServiceQuery<global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.UserRole> source,
+            int id)
+        {
+            global::System.Collections.Generic.Dictionary<string, object> keys = new global::System.Collections.Generic.Dictionary<string, object>
+            {
+                { "Id", id }
+            };
+            return new global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.UserRoleSingle(source.Context, source.GetKeyPath(global::Microsoft.OData.Client.Serializer.GetKeyString(source.Context, keys)));
         }
     }
 }
@@ -4704,24 +4876,6 @@ namespace Keebee.AAT.DataAccess.Tests.KeebeeAAT
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
         private global::Microsoft.OData.Client.DataServiceQuery<global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.Resident> _Residents;
         /// <summary>
-        /// There are no comments for Caregivers in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        [global::Microsoft.OData.Client.OriginalNameAttribute("Caregivers")]
-        public global::Microsoft.OData.Client.DataServiceQuery<global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.Caregiver> Caregivers
-        {
-            get
-            {
-                if ((this._Caregivers == null))
-                {
-                    this._Caregivers = base.CreateQuery<global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.Caregiver>("Caregivers");
-                }
-                return this._Caregivers;
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private global::Microsoft.OData.Client.DataServiceQuery<global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.Caregiver> _Caregivers;
-        /// <summary>
         /// There are no comments for Users in the schema.
         /// </summary>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
@@ -4739,6 +4893,42 @@ namespace Keebee.AAT.DataAccess.Tests.KeebeeAAT
         }
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
         private global::Microsoft.OData.Client.DataServiceQuery<global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.User> _Users;
+        /// <summary>
+        /// There are no comments for Roles in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        [global::Microsoft.OData.Client.OriginalNameAttribute("Roles")]
+        public global::Microsoft.OData.Client.DataServiceQuery<global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.Role> Roles
+        {
+            get
+            {
+                if ((this._Roles == null))
+                {
+                    this._Roles = base.CreateQuery<global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.Role>("Roles");
+                }
+                return this._Roles;
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private global::Microsoft.OData.Client.DataServiceQuery<global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.Role> _Roles;
+        /// <summary>
+        /// There are no comments for UserRoles in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        [global::Microsoft.OData.Client.OriginalNameAttribute("UserRoles")]
+        public global::Microsoft.OData.Client.DataServiceQuery<global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.UserRole> UserRoles
+        {
+            get
+            {
+                if ((this._UserRoles == null))
+                {
+                    this._UserRoles = base.CreateQuery<global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.UserRole>("UserRoles");
+                }
+                return this._UserRoles;
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private global::Microsoft.OData.Client.DataServiceQuery<global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.UserRole> _UserRoles;
         /// <summary>
         /// There are no comments for Configs in the schema.
         /// </summary>
@@ -4868,20 +5058,28 @@ namespace Keebee.AAT.DataAccess.Tests.KeebeeAAT
             base.AddObject("Residents", resident);
         }
         /// <summary>
-        /// There are no comments for Caregivers in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        public void AddToCaregivers(global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.Caregiver caregiver)
-        {
-            base.AddObject("Caregivers", caregiver);
-        }
-        /// <summary>
         /// There are no comments for Users in the schema.
         /// </summary>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
         public void AddToUsers(global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.User user)
         {
             base.AddObject("Users", user);
+        }
+        /// <summary>
+        /// There are no comments for Roles in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        public void AddToRoles(global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.Role role)
+        {
+            base.AddObject("Roles", role);
+        }
+        /// <summary>
+        /// There are no comments for UserRoles in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        public void AddToUserRoles(global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.UserRole userRole)
+        {
+            base.AddObject("UserRoles", userRole);
         }
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
         private abstract class GeneratedEdmModel
@@ -5092,18 +5290,10 @@ namespace Keebee.AAT.DataAccess.Tests.KeebeeAAT
         <Property Name=""LastName"" Type=""Edm.String"" />
         <Property Name=""Gender"" Type=""Edm.String"" Nullable=""false"" />
         <Property Name=""GameDifficultyLevel"" Type=""Edm.Int32"" Nullable=""false"" />
+        <Property Name=""AllowVideoCapturing"" Type=""Edm.Boolean"" Nullable=""false"" />
         <Property Name=""DateCreated"" Type=""Edm.DateTimeOffset"" Nullable=""false"" />
         <Property Name=""DateUpdated"" Type=""Edm.DateTimeOffset"" Nullable=""false"" />
         <NavigationProperty Name=""MediaFiles"" Type=""Collection(Keebee.AAT.DataAccess.Models.ResidentMediaFile)"" />
-      </EntityType>
-      <EntityType Name=""Caregiver"">
-        <Key>
-          <PropertyRef Name=""Id"" />
-        </Key>
-        <Property Name=""Id"" Type=""Edm.Int32"" Nullable=""false"" />
-        <Property Name=""FirstName"" Type=""Edm.String"" Nullable=""false"" />
-        <Property Name=""LastName"" Type=""Edm.String"" Nullable=""false"" />
-        <Property Name=""Gender"" Type=""Edm.String"" Nullable=""false"" />
       </EntityType>
       <EntityType Name=""User"">
         <Key>
@@ -5112,8 +5302,27 @@ namespace Keebee.AAT.DataAccess.Tests.KeebeeAAT
         <Property Name=""Id"" Type=""Edm.Int32"" Nullable=""false"" />
         <Property Name=""Username"" Type=""Edm.String"" Nullable=""false"" />
         <Property Name=""Password"" Type=""Edm.String"" Nullable=""false"" />
-        <Property Name=""FirstName"" Type=""Edm.String"" Nullable=""false"" />
-        <Property Name=""LastName"" Type=""Edm.String"" Nullable=""false"" />
+      </EntityType>
+      <EntityType Name=""Role"">
+        <Key>
+          <PropertyRef Name=""Id"" />
+        </Key>
+        <Property Name=""Id"" Type=""Edm.Int32"" Nullable=""false"" />
+        <Property Name=""Description"" Type=""Edm.String"" Nullable=""false"" />
+      </EntityType>
+      <EntityType Name=""UserRole"">
+        <Key>
+          <PropertyRef Name=""Id"" />
+        </Key>
+        <Property Name=""Id"" Type=""Edm.Int32"" Nullable=""false"" />
+        <Property Name=""UserId"" Type=""Edm.Int32"" />
+        <Property Name=""RoleId"" Type=""Edm.Int32"" />
+        <NavigationProperty Name=""User"" Type=""Keebee.AAT.DataAccess.Models.User"">
+          <ReferentialConstraint Property=""UserId"" ReferencedProperty=""Id"" />
+        </NavigationProperty>
+        <NavigationProperty Name=""Role"" Type=""Keebee.AAT.DataAccess.Models.Role"">
+          <ReferentialConstraint Property=""RoleId"" ReferencedProperty=""Id"" />
+        </NavigationProperty>
       </EntityType>
     </Schema>
     <Schema Namespace=""KeebeeAAT"" xmlns=""http://docs.oasis-open.org/odata/ns/edm"">
@@ -5162,8 +5371,12 @@ namespace Keebee.AAT.DataAccess.Tests.KeebeeAAT
         <EntitySet Name=""Residents"" EntityType=""Keebee.AAT.DataAccess.Models.Resident"">
           <NavigationPropertyBinding Path=""MediaFiles"" Target=""ResidentMediaFiles"" />
         </EntitySet>
-        <EntitySet Name=""Caregivers"" EntityType=""Keebee.AAT.DataAccess.Models.Caregiver"" />
         <EntitySet Name=""Users"" EntityType=""Keebee.AAT.DataAccess.Models.User"" />
+        <EntitySet Name=""Roles"" EntityType=""Keebee.AAT.DataAccess.Models.Role"" />
+        <EntitySet Name=""UserRoles"" EntityType=""Keebee.AAT.DataAccess.Models.UserRole"">
+          <NavigationPropertyBinding Path=""User"" Target=""Users"" />
+          <NavigationPropertyBinding Path=""Role"" Target=""Roles"" />
+        </EntitySet>
       </EntityContainer>
     </Schema>
   </edmx:DataServices>

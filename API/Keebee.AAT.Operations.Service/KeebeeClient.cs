@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-// Generation date: 2016-10-01 6:48:01 PM
+// Generation date: 2016-10-03 6:12:44 PM
 namespace Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models
 {
     /// <summary>
@@ -3355,6 +3355,7 @@ namespace Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models
         /// <param name="firstName">Initial value of FirstName.</param>
         /// <param name="gender">Initial value of Gender.</param>
         /// <param name="gameDifficultyLevel">Initial value of GameDifficultyLevel.</param>
+        /// <param name="allowVideoCapturing">Initial value of AllowVideoCapturing.</param>
         /// <param name="dateCreated">Initial value of DateCreated.</param>
         /// <param name="dateUpdated">Initial value of DateUpdated.</param>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
@@ -3362,6 +3363,7 @@ namespace Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models
                     string firstName, 
                     string gender, 
                     int gameDifficultyLevel, 
+                    bool allowVideoCapturing, 
                     global::System.DateTimeOffset dateCreated, 
                     global::System.DateTimeOffset dateUpdated)
         {
@@ -3370,6 +3372,7 @@ namespace Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models
             resident.FirstName = firstName;
             resident.Gender = gender;
             resident.GameDifficultyLevel = gameDifficultyLevel;
+            resident.AllowVideoCapturing = allowVideoCapturing;
             resident.DateCreated = dateCreated;
             resident.DateUpdated = dateUpdated;
             return resident;
@@ -3489,6 +3492,29 @@ namespace Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models
         private int _GameDifficultyLevel;
         partial void OnGameDifficultyLevelChanging(int value);
         partial void OnGameDifficultyLevelChanged();
+        /// <summary>
+        /// There are no comments for Property AllowVideoCapturing in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        [global::Microsoft.OData.Client.OriginalNameAttribute("AllowVideoCapturing")]
+        public bool AllowVideoCapturing
+        {
+            get
+            {
+                return this._AllowVideoCapturing;
+            }
+            set
+            {
+                this.OnAllowVideoCapturingChanging(value);
+                this._AllowVideoCapturing = value;
+                this.OnAllowVideoCapturingChanged();
+                this.OnPropertyChanged("AllowVideoCapturing");
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private bool _AllowVideoCapturing;
+        partial void OnAllowVideoCapturingChanging(bool value);
+        partial void OnAllowVideoCapturingChanged();
         /// <summary>
         /// There are no comments for Property DateCreated in the schema.
         /// </summary>
@@ -5264,6 +5290,7 @@ namespace Keebee.AAT.Operations.Service.KeebeeAAT
         <Property Name=""LastName"" Type=""Edm.String"" />
         <Property Name=""Gender"" Type=""Edm.String"" Nullable=""false"" />
         <Property Name=""GameDifficultyLevel"" Type=""Edm.Int32"" Nullable=""false"" />
+        <Property Name=""AllowVideoCapturing"" Type=""Edm.Boolean"" Nullable=""false"" />
         <Property Name=""DateCreated"" Type=""Edm.DateTimeOffset"" Nullable=""false"" />
         <Property Name=""DateUpdated"" Type=""Edm.DateTimeOffset"" Nullable=""false"" />
         <NavigationProperty Name=""MediaFiles"" Type=""Collection(Keebee.AAT.DataAccess.Models.ResidentMediaFile)"" />

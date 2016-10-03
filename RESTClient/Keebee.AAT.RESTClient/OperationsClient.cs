@@ -79,9 +79,9 @@ namespace Keebee.AAT.RESTClient
         int PostResident(ResidentEdit resident);
         int PostConfigDetail(ConfigDetailEdit configDetail);
         int PostConfig(ConfigEdit config);
-        void PostActivityEventLog(ActivityEventLog activityEventLog);
-        void PostGameEventLog(GameEventLog gameEventLog);
-        void PostRfidEventLog(RfidEventLog rfidEventLog);
+        int PostActivityEventLog(ActivityEventLog activityEventLog);
+        int PostGameEventLog(GameEventLog gameEventLog);
+        int PostRfidEventLog(RfidEventLog rfidEventLog);
         int PostActivateConfig(int configId);
         int PostResidentMediaFile(ResidentMediaFileEdit residentMediaFile);
         int PostPublicMediaFile(PublicMediaFileEdit publicMediaFile);
@@ -744,28 +744,28 @@ namespace Keebee.AAT.RESTClient
             return Post(UrlConfigDetails, el);
         }
 
-        public void PostActivityEventLog(ActivityEventLog activityEventLog)
+        public int PostActivityEventLog(ActivityEventLog activityEventLog)
         {
             var serializer = new JavaScriptSerializer();
             var el = serializer.Serialize(activityEventLog);
 
-            Post(UrlActivityEventLogs, el);
+            return Post(UrlActivityEventLogs, el);
         }
 
-        public void PostGameEventLog(GameEventLog gameEventLog)
+        public int PostGameEventLog(GameEventLog gameEventLog)
         {
             var serializer = new JavaScriptSerializer();
             var el = serializer.Serialize(gameEventLog);
 
-            Post(UrlGameEventLogs, el);
+            return Post(UrlGameEventLogs, el);
         }
 
-        public void PostRfidEventLog(RfidEventLog rfidEventLog)
+        public int PostRfidEventLog(RfidEventLog rfidEventLog)
         {
             var serializer = new JavaScriptSerializer();
             var el = serializer.Serialize(rfidEventLog);
 
-            Post(UrlRfidEventLogs, el);
+            return Post(UrlRfidEventLogs, el);
         }
 
         public int PostActivateConfig(int configId)

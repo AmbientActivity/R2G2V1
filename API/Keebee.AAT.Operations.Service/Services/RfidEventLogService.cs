@@ -12,7 +12,7 @@ namespace Keebee.AAT.Operations.Service.Services
         RfidEventLog Get(int id);
         IEnumerable<RfidEventLog> GetForDate(string date);
         IEnumerable<RfidEventLog> GetForResident(int residentId);
-        void Post(RfidEventLog rfidEventLog);
+        int Post(RfidEventLog rfidEventLog);
         void Patch(int id, RfidEventLog rfidEventLog);
         void Delete(int id);
     }
@@ -76,12 +76,14 @@ namespace Keebee.AAT.Operations.Service.Services
             return rfidEventLogs;
         }
 
-        public void Post(RfidEventLog rfidEventLog)
+        public int Post(RfidEventLog rfidEventLog)
         {
             var container = new Container(new Uri(ODataHost.Url));
 
             container.AddToRfidEventLogs(rfidEventLog);
             container.SaveChanges();
+
+            return rfidEventLog.Id;
         }
 
         public void Patch(int id, RfidEventLog rfidEventLog)

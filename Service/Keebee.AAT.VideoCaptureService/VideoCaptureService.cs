@@ -1,22 +1,25 @@
 ﻿using Keebee.AAT.SystemEventLogging;
 using Keebee.AAT.MessageQueuing;
 using Keebee.AAT.Shared;
-//using DirectX.Capture;
 using System;
+using System.Configuration;
 using System.Threading;
 using System.Web.Script.Serialization;
 using System.ServiceProcess;
 using System.Diagnostics;
+using System.Linq;
+using Microsoft.Expression.Encoder.Devices;
+using Microsoft.Expression.Encoder.Live;
 
 namespace Keebee.AAT.VideoCaptureService
 {
-    partial class VideoCaptureService : ServiceBase
+    internal partial class VideoCaptureService : ServiceBase
     {
+        private const int VideoDuration = 120; // in seconds
         // event logger
         private readonly SystemEventLogger _systemEventLogger;
 
-        //private readonly Capture _capture;
-        //private readonly Filters _filters = new Filters();
+        private readonly LiveJob _job;
 
         // display state
         private bool _displayIsActive;
@@ -26,9 +29,6 @@ namespace Keebee.AAT.VideoCaptureService
             InitializeComponent();
 
             _systemEventLogger = new SystemEventLogger(SystemEventLogType.VideoCaptureService);
-
-            //_capture = new Capture(_filters.VideoInputDevices[0], _filters.AudioInputDevices[0]);
-            //_capture.CaptureComplete += OnCaptureComplete;
 
             var q1 = new CustomMessageQueue(new CustomMessageQueueArgs
             {
@@ -43,6 +43,31 @@ namespace Keebee.AAT.VideoCaptureService
                 MessageReceivedCallback = MessageReceivedDisplayVideoCapture
             })
             { SystemEventLogger = _systemEventLogger };
+
+            _job = new LiveJob();
+            InitializeEncoderDevices();
+        }
+
+        private void InitializeEncoderDevices()
+        {
+            var videoDeviceName = ConfigurationManager.AppSettings["VideoDevice"];
+            var audioDeviceName = ConfigurationManager.AppSettings["AudioDevice"];
+            var videoDevice = EncoderDevices.FindDevices(EncoderDeviceType.Video).Single(x => x.Name == videoDeviceName);
+            var audioDevice = EncoderDevices.FindDevices(EncoderDeviceType.Audio).Single(x => x.Name == audioDeviceName);
+            var deviceSource = _job.AddDeviceSource(videoDevice, audioDevice);
+
+            _job.ActivateSource(deviceSource);
+        }
+
+        private void StartCapture()
+        {
+            var fileOut = new FileArchivePublishFormat
+            {
+                OutputFileName = $@"C:\VideoCaptures\Capture_{DateTime.Now:yyyyMMdd_hhmmss}.wmv"
+            };
+
+            _job.PublishFormats.Add(fileOut);
+            _job.StartEncoding();
         }
 
         private void MessageReceivedVideoCapture(object source, MessageEventArgs e)
@@ -52,13 +77,20 @@ namespace Keebee.AAT.VideoCaptureService
                 // do nothing unless the display is active
                 if (!_displayIsActive) return;
 
-                //if (_capture.Stopped)
-                //{
-                //    StartCapture();
-                //    Thread.Sleep(5000);
-                //    StopCapture();
-                //}
+                if (!_job.IsCapturing)
+                {
+                    StartCapture();
 
+                    for (var second = 0; second <= VideoDuration; second++)
+                    {
+                        if (_displayIsActive)
+                            Thread.Sleep(1000);
+                        else break;
+                    }
+
+                    _job.StopEncoding();
+                    _job.PublishFormats.Clear();
+                }
             }
             catch (Exception ex)
             {

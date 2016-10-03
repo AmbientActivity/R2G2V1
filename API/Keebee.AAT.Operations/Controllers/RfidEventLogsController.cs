@@ -128,11 +128,11 @@ namespace Keebee.AAT.Operations.Controllers
 
         // POST: api/RfidEventLogs
         [HttpPost]
-        public void Post([FromBody]string value)
+        public int Post([FromBody]string value)
         {
             var serializer = new JavaScriptSerializer();
             var rfidEventLog = serializer.Deserialize<RfidEventLog>(value);
-            _rfidEventLogService.Post(rfidEventLog);
+            return _rfidEventLogService.Post(rfidEventLog);
         }
 
         // PATCH: api/RfidEventLogs/5

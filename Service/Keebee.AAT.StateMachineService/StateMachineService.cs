@@ -19,7 +19,7 @@ namespace Keebee.AAT.StateMachineService
         // message queue sender
         private readonly CustomMessageQueue _messageQueueResponse;
         private readonly CustomMessageQueue _messageQueueConfigPhidget;
-        //private readonly CustomMessageQueue _messageQueueVideoCapture;
+        private readonly CustomMessageQueue _messageQueueVideoCapture;
 
         // event logger
         private readonly SystemEventLogger _systemEventLogger;
@@ -55,11 +55,11 @@ namespace Keebee.AAT.StateMachineService
             })
             { SystemEventLogger = _systemEventLogger };
 
-            //_messageQueueVideoCapture = new CustomMessageQueue(new CustomMessageQueueArgs
-            //{
-            //    QueueName = MessageQueueType.VideoCapture
-            //})
-            //{ SystemEventLogger = _systemEventLogger };
+            _messageQueueVideoCapture = new CustomMessageQueue(new CustomMessageQueueArgs
+            {
+                QueueName = MessageQueueType.VideoCapture
+            })
+            { SystemEventLogger = _systemEventLogger };
         }
 
         private void InitializeMessageQueueListeners()
@@ -114,8 +114,8 @@ namespace Keebee.AAT.StateMachineService
                 };
 
                 //TODO: for when video capture gets implemented
-                //if (!configDetail.IsSystemReponseType)
-                // _messageQueueVideoCapture.Send("1");
+                if (!configDetail.IsSystemReponseType)
+                    _messageQueueVideoCapture.Send("1");
 
                 var serializer = new JavaScriptSerializer();
                 var responseMessageBody = serializer.Serialize(responseMessage);

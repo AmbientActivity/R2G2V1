@@ -137,11 +137,11 @@ namespace Keebee.AAT.Operations.Controllers
 
         // POST: api/GameEventLog
         [HttpPost]
-        public void Post([FromBody]string value)
+        public int Post([FromBody]string value)
         {
             var serializer = new JavaScriptSerializer();
             var gameEventLog = serializer.Deserialize<GameEventLog>(value);
-            _gameEventLogService.Post(gameEventLog);
+            return _gameEventLogService.Post(gameEventLog);
         }
 
         // PATCH: api/GameEventLog/5

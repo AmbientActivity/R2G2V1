@@ -423,8 +423,12 @@ package
 		}
 		
 		private function RemoveExtension(filename:String):String {
-			var extensionIndex:Number = filename.lastIndexOf( '.' );
-			return filename.substr( 0, extensionIndex );
+			var slashIndex:Number = filename.lastIndexOf( '\\' );
+			var nameWithExtension:String = filename.substr( slashIndex + 1, filename.length );
+			var extensionIndex:Number = nameWithExtension.lastIndexOf( '.' );
+			var nameNoExtension:String = nameWithExtension.substr( 0, extensionIndex );
+			
+			return nameNoExtension;
 		}
 		
 		private function clearArrays():void {
@@ -443,6 +447,7 @@ package
 			var successDesc:String = "NULL";
 			if (success == 0) successDesc = "FALSE";
 			else if (success == 1) successDesc = "TRUE";
+			
 			// comment the following line to test
 			ExternalInterface.call("FlashCall", currentGameTypeId, currentLevel.toString(), successDesc, description, isGameHasExpired);
 		}

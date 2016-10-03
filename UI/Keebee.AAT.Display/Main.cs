@@ -55,7 +55,7 @@ namespace Keebee.AAT.Display
         // message queue sender
         private readonly CustomMessageQueue _messageQueueDisplaySms;
         private readonly CustomMessageQueue _messageQueueDisplayPhidget;
-        //private readonly CustomMessageQueue _messageQueueDisplayVideoCapture;
+        private readonly CustomMessageQueue _messageQueueDisplayVideoCapture;
 
         // message queue listener
         private readonly CustomMessageQueue _messageQueueResponse;
@@ -106,10 +106,10 @@ namespace Keebee.AAT.Display
             });
 
             // display-video-capture message queue sender
-            //_messageQueueDisplayVideoCapture = new CustomMessageQueue(new CustomMessageQueueArgs
-            //{
-            //    QueueName = MessageQueueType.DisplayVideoCapture
-            //});
+            _messageQueueDisplayVideoCapture = new CustomMessageQueue(new CustomMessageQueueArgs
+            {
+                QueueName = MessageQueueType.DisplayVideoCapture
+            });
 
             // response message queue listener
             _messageQueueResponse = new CustomMessageQueue(new CustomMessageQueueArgs
@@ -559,7 +559,7 @@ namespace Keebee.AAT.Display
                 // alert the State Machine Service that the display is no longer active or idle
                 _messageQueueDisplaySms.Send(CreateDisplayMessageBody(false));
                 _messageQueueDisplayPhidget.Send(CreateDisplayMessageBody(false));
-                //_messageQueueDisplayVideoCapture.Send(CreateDisplayMessageBody(false));
+                _messageQueueDisplayVideoCapture.Send(CreateDisplayMessageBody(false));
                 Application.Exit();
             }
         }
@@ -693,7 +693,7 @@ namespace Keebee.AAT.Display
                 // inform the services that the display is now active
                 _messageQueueDisplaySms.Send(CreateDisplayMessageBody(true));
                 _messageQueueDisplayPhidget.Send(CreateDisplayMessageBody(true));
-                //_messageQueueDisplayVideoCapture.Send(CreateDisplayMessageBody(true));
+                _messageQueueDisplayVideoCapture.Send(CreateDisplayMessageBody(true));
 
                 ambient1.Show();
                 ambient1.Play(_ambientPlaylist);

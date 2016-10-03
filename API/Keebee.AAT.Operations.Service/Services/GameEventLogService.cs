@@ -12,7 +12,7 @@ namespace Keebee.AAT.Operations.Service.Services
         GameEventLog Get(int id);
         IEnumerable<GameEventLog> GetForDate(string date);
         IEnumerable<GameEventLog> GetForResident(int residentid);
-        void Post(GameEventLog gameEventLog);
+        int Post(GameEventLog gameEventLog);
         void Patch(int id, GameEventLog gameEventLog);
         void Delete(int id);
     }
@@ -76,12 +76,14 @@ namespace Keebee.AAT.Operations.Service.Services
             return gameEventLogs;
         }
 
-        public void Post(GameEventLog gameEventLog)
+        public int Post(GameEventLog gameEventLog)
         {
             var container = new Container(new Uri(ODataHost.Url));
 
             container.AddToGameEventLogs(gameEventLog);
             container.SaveChanges();
+
+            return gameEventLog.Id;
         }
 
         public void Patch(int id, GameEventLog gameEventLog)

@@ -15,14 +15,24 @@ namespace Keebee.AAT.VideoCaptureService
 {
     internal partial class VideoCaptureService : ServiceBase
     {
-        private const string OutputPath = @"C:\VideoCaptures";
         private readonly Timer _timer;
-        private const int VideoDuration = 120000; // in milliseconds
+
+        // output path
+        private const string OutputPath = @"C:\VideoCaptures";
+
+        // app.config settings
+        private string _videoSourceName;
+        private string _audioSourceName;
+        private int _videoDuration;
+
+        // expression 4 encoder
+        private readonly LiveJob _job = new LiveJob();
+        private LiveDeviceSource _deviceSource;
+        private EncoderDevice _videoDevice;
+        private EncoderDevice _audioDevice;
 
         // event logger
         private readonly SystemEventLogger _systemEventLogger;
-
-        private readonly LiveJob _job;
 
         // display state
         private bool _displayIsActive;
@@ -34,35 +44,32 @@ namespace Keebee.AAT.VideoCaptureService
             _systemEventLogger = new SystemEventLogger(SystemEventLogType.VideoCaptureService);
 
             var q1 = new CustomMessageQueue(new CustomMessageQueueArgs
-            {
-                QueueName = MessageQueueType.VideoCapture,
-                MessageReceivedCallback = MessageReceivedVideoCapture
-            })
-            { SystemEventLogger = _systemEventLogger };
+                {
+                    QueueName = MessageQueueType.VideoCapture,
+                    MessageReceivedCallback = MessageReceivedVideoCapture
+                })
+                {SystemEventLogger = _systemEventLogger};
 
             var q2 = new CustomMessageQueue(new CustomMessageQueueArgs
-            {
-                QueueName = MessageQueueType.DisplayVideoCapture,
-                MessageReceivedCallback = MessageReceivedDisplayVideoCapture
-            })
-            { SystemEventLogger = _systemEventLogger };
+                {
+                    QueueName = MessageQueueType.DisplayVideoCapture,
+                    MessageReceivedCallback = MessageReceivedDisplayVideoCapture
+                })
+                {SystemEventLogger = _systemEventLogger};
 
-            _job = new LiveJob();
             InitializeEncoderDevices();
 
-            _timer = new Timer(VideoDuration);
+            _videoDuration = Convert.ToInt32(ConfigurationManager.AppSettings["VideoDuration"]);
+            _timer = new Timer(_videoDuration);
             _timer.Elapsed += OnTimerElapsed;
         }
 
         private void InitializeEncoderDevices()
         {
-            var videoDeviceName = ConfigurationManager.AppSettings["VideoDevice"];
-            var audioDeviceName = ConfigurationManager.AppSettings["AudioDevice"];
-            var videoDevice = EncoderDevices.FindDevices(EncoderDeviceType.Video).Single(x => x.Name == videoDeviceName);
-            var audioDevice = EncoderDevices.FindDevices(EncoderDeviceType.Audio).Single(x => x.Name == audioDeviceName);
-            var deviceSource = _job.AddDeviceSource(videoDevice, audioDevice);
-
-            _job.ActivateSource(deviceSource);
+            _videoSourceName = ConfigurationManager.AppSettings["VideoDevice"];
+            _audioSourceName = ConfigurationManager.AppSettings["AudioDevice"];
+            _videoDevice = EncoderDevices.FindDevices(EncoderDeviceType.Video).Single(x => x.Name == _videoSourceName);
+            _audioDevice = EncoderDevices.FindDevices(EncoderDeviceType.Audio).Single(x => x.Name == _audioSourceName);
         }
 
         private void StartCapture()
@@ -71,9 +78,11 @@ namespace Keebee.AAT.VideoCaptureService
             {
                 var fileOut = new FileArchivePublishFormat
                 {
-                    OutputFileName = $@"{OutputPath}\{DateTime.Now:yyyyMMdd_hhmmss}.wmv"
+                    OutputFileName = $@"{OutputPath}\Capture_{DateTime.Now:yyyyMMdd_hhmmss}.wmv"
                 };
 
+                _deviceSource = _job.AddDeviceSource(_videoDevice, _audioDevice);
+                _job.ActivateSource(_deviceSource);
                 _job.PublishFormats.Add(fileOut);
                 _job.StartEncoding();
             }
@@ -91,6 +100,7 @@ namespace Keebee.AAT.VideoCaptureService
 
                 _job.StopEncoding();
                 _job.PublishFormats.Clear();
+                _job.RemoveDeviceSource(_deviceSource);
             }
             catch (Exception ex)
             {
@@ -148,6 +158,7 @@ namespace Keebee.AAT.VideoCaptureService
             _systemEventLogger.WriteEntry("In OnStop");
             _timer.Stop();
             _timer.Dispose();
+            _job.Dispose();
         }
     }
 }

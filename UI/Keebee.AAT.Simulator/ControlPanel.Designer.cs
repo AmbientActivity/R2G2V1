@@ -500,10 +500,8 @@
             this.Controls.Add(this.grpInterfaceKit);
             this.Controls.Add(this.grpRFReader);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
-            this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "ControlPanel";
-            this.ShowInTaskbar = false;
             this.Text = "Keebee AAT Simulator";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.ControlPanelClosing);
             this.grpRFReader.ResumeLayout(false);

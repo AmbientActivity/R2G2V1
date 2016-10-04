@@ -13,6 +13,7 @@ using System.Linq;
 using System.Web.Mvc;
 using System;
 using System.IO;
+using System.Net;
 
 namespace Keebee.AAT.Administrator.Controllers
 {
@@ -46,24 +47,13 @@ namespace Keebee.AAT.Administrator.Controllers
             string lastname, 
             string sortcolumn, 
             int? mediaPathTypeId,
-
-            //TODO: for when 'choose from public library' gets implemented
-            //int? mediaSourceTypeId,
-
             string myuploader, 
             int? sortdescending)
         {
             // first time loading
             if (mediaPathTypeId == null) mediaPathTypeId = MediaPathTypeId.Images;
 
-            //TODO: for when 'choose from public library' gets implemented
-            //if (mediaSourceTypeId == null) mediaSourceTypeId = MediaSourceTypeId.Personal;
-
-            var vm = LoadResidentMediaViewModel(id, rfid, firstname, lastname, mediaPathTypeId,
-
-                //TODO: for when 'choose from public library' gets implemented
-                //mediaSourceTypeId, 
-                sortcolumn, sortdescending);
+            var vm = LoadResidentMediaViewModel(id, rfid, firstname, lastname, mediaPathTypeId, sortcolumn, sortdescending);
 
             using (var uploader = new MvcUploader(System.Web.HttpContext.Current))
             {
@@ -81,6 +71,7 @@ namespace Keebee.AAT.Administrator.Controllers
                 // POST:
                 var fileManager = new FileManager { EventLogger = _systemEventLogger };
                 var rules = new ResidentRules {OperationsClient = _opsClient};
+
                 // for multiple files the value is string : guid/guid/guid 
                 foreach (var strguid in myuploader.Split('/'))
                 {
@@ -121,7 +112,7 @@ namespace Keebee.AAT.Administrator.Controllers
         public JsonResult GetDataMedia(int id, int mediaPathTypeId)
         {
             var mediaPathTypes = _opsClient.GetMediaPathTypes();
-            var fileList = GetMediaFiles(id, mediaPathTypeId);
+            var fileList = GetFiles(id);
 
             var vm = new
             {
@@ -131,15 +122,32 @@ namespace Keebee.AAT.Administrator.Controllers
                     x.Id,
                     Description = x.Description.ToUppercaseFirst()
                 })
-                //TODO: for when 'choose from public library' gets implemented
-                //,MediaSourceTypeList = new Collection<object>
-                //{
-                //    new { PublicMediaSource.Id, Description = MediaSourceType.Public },
-                //    new { Id = 1, Description = MediaSourceType.Personal } 
-                //}
             };
 
             return Json(vm, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpGet]
+        [Authorize]
+        public JsonResult GetUploaderHtml(int mediaPathTypeId)
+        {
+            string html;
+            using (var uploader = new MvcUploader(System.Web.HttpContext.Current))
+            {
+                uploader.UploadUrl = Response.ApplyAppPathModifier("~/UploadHandler.ashx");
+                uploader.Name = "myuploader";
+                uploader.AllowedFileExtensions = ResidentRules.GetAllowedExtensions(mediaPathTypeId); ;
+                uploader.MultipleFilesUpload = true;
+                uploader.InsertButtonID = "uploadbutton";
+                html = uploader.Render();
+            }
+
+            var rules = new ResidentRules { OperationsClient = _opsClient };
+            return Json(new
+            {
+                UploaderHtml = html,
+                AddButtonText = $"Upload {rules.GetMediaPathType(mediaPathTypeId).ToUppercaseFirst()}",
+            }, JsonRequestBehavior.AllowGet);
         }
 
         [HttpGet]
@@ -230,7 +238,7 @@ namespace Keebee.AAT.Administrator.Controllers
             {
                 Success = success,
                 ErrorMessage = errormessage,
-                FileList = GetMediaFiles(residentId, mediaPathTypeId)
+                FileList = GetFiles(residentId)
             }, JsonRequestBehavior.AllowGet);
         }
 
@@ -320,10 +328,6 @@ namespace Keebee.AAT.Administrator.Controllers
             string firstname, 
             string lastname, 
             int? mediaPathTypeId,
-
-            //TODO: for when 'choose from public library' gets implemented
-            //int? mediaSourceTypeId,
-
             string sortcolumn, 
             int? sortdescending)
         {
@@ -343,10 +347,7 @@ namespace Keebee.AAT.Administrator.Controllers
                 LastNameSearch = lastname,
                 SortColumn = sortcolumn,
                 SortDescending = sortdescending,
-                SelectedMediaPathType = mediaPathTypeId ?? MediaPathTypeId.Images//,
-
-                //TODO: for when 'choose from public library' gets implemented
-                //SelectedMediaSourceType = mediaSourceTypeId ?? MediaSourceTypeId.Personal
+                SelectedMediaPathType = mediaPathTypeId ?? MediaPathTypeId.Images
             };
 
             return vm;
@@ -364,6 +365,7 @@ namespace Keebee.AAT.Administrator.Controllers
                     LastName = resident.LastName,
                     Gender = resident.Gender,
                     GameDifficultyLevel = resident.GameDifficultyLevel,
+                    AllowVideoCapturing = resident.AllowVideoCapturing,
                     DateCreated = resident.DateCreated,
                     DateUpdated = resident.DateUpdated,
                 }).OrderBy(x => x.Id);
@@ -424,7 +426,7 @@ namespace Keebee.AAT.Administrator.Controllers
             _opsClient.PostResidentMediaFile(mf);
         }
 
-        private IEnumerable<MediaFileViewModel> GetMediaFiles(int id, int mediaPathTypeId)
+        private IEnumerable<MediaFileViewModel> GetFiles(int id)
         {
             var list = new List<MediaFileViewModel>();
             var residentMedia = _opsClient.GetResidentMediaFilesForResident(id);
@@ -432,30 +434,33 @@ namespace Keebee.AAT.Administrator.Controllers
             if (residentMedia == null) return list;
 
             var mediaPaths = residentMedia.MediaFiles.SelectMany(x => x.Paths)
-                .Where(x => x.MediaPathType.Id == mediaPathTypeId)
                 .ToArray();
 
             if (!mediaPaths.Any()) return list;
 
-            var mediaPathType = mediaPaths
-                .Single(x => x.MediaPathType.Id == mediaPathTypeId)
-                .MediaPathType.Description;
-
             var pathRoot = $@"{_mediaPath.ProfileRoot}\{id}";
 
-            list = mediaPaths
-                .SelectMany(x => x.Files)
-                .OrderBy(x => x.Filename)
-                .Select(file => new MediaFileViewModel
+            foreach (var path in mediaPaths)
+            {
+                var files = path.Files.OrderBy(f => f.Filename);
+
+                foreach (var file in files)
                 {
-                    Id = file.Id,
-                    StreamId = file.StreamId,
-                    Filename = file.Filename.Replace($".{file.FileType}", string.Empty),
-                    FileType = file.FileType.ToUpper(),
-                    FileSize = file.FileSize,
-                    Path = $@"{pathRoot}\{mediaPathType}",
-                    IsPublic = file.IsPublic
-                }).ToList();
+                    var item = new MediaFileViewModel
+                    {
+                        Id = file.Id,
+                        StreamId = file.StreamId,
+                        Filename = file.Filename.Replace($".{file.FileType}", string.Empty),
+                        FileType = file.FileType.ToUpper(),
+                        FileSize = file.FileSize,
+                        Path = $@"{pathRoot}\{path.MediaPathType.Description}",
+                        MediaPathTypeId = path.MediaPathType.Id,
+                        IsPublic = file.IsPublic
+                    };
+
+                    list.Add(item);
+                }
+            }
 
             return list;
         }

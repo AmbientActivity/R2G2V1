@@ -63,7 +63,6 @@ function DisableScreen() {
 }
 
 ; (function ($) {
-
     var HIGHLIGHT_ROW_COLOUR = "#e3e8ff";
 
     residents.media = {
@@ -74,10 +73,6 @@ function DisableScreen() {
 
             $.extend(config, values);
 
-            //TODO: for when 'choose from public library' gets implemented
-            //var divUpload = $(".upload-action-container");
-            //var divAddPublic = $(".add-public-action-container");
-
             // buttons
             var cmdDelete = $("#delete");
 
@@ -87,9 +82,6 @@ function DisableScreen() {
             var lists = {
                 FileList: [],
                 MediaPathTypeList: []
-
-                //TODO: for when 'choose from public library' gets implemented
-                //, MediaSourceTypeList: []
             };
 
             loadData();
@@ -122,15 +114,7 @@ function DisableScreen() {
                 self.description = description;
             }
 
-            //TODO: for when 'choose from public library' gets implemented
-            //function MediaSourceType(id, description) {
-            //    var self = this;
-
-            //    self.id = id;
-            //    self.description = description;
-            //}
-
-            function File(id, streamid, filename, filetype, filesize, path, ispublic) {
+            function File(id, streamid, filename, filetype, filesize, path, mediapathtypeid, ispublic) {
                 var self = this;
 
                 self.id = id;
@@ -139,6 +123,7 @@ function DisableScreen() {
                 self.filetype = filetype;
                 self.filesize = filesize;
                 self.path = path;
+                self.mediapathtypeid = mediapathtypeid;
                 self.ispublic = ispublic;
                 self.isselected = false;
             }
@@ -151,12 +136,6 @@ function DisableScreen() {
                 self.files = ko.observableArray([]);
                 self.mediaPathTypes = ko.observableArray([]);
                 self.selectedFile = ko.observable();
-
-                //TODO: for when 'choose from public library' gets implemented
-                //self.mediaSourceTypes = ko.observableArray([]);
-                //self.isLoadingMediaSourceTypes = ko.observable(false);
-                //self.selectedMediaSourceType = ko.observable($("#mediaSourceTypeId").val());
-
                 self.selectedMediaPathType = ko.observable($("#mediaPathTypeId").val());
                 self.filenameSearch = ko.observable("");
                 self.totalFiles = ko.observable(0);
@@ -165,9 +144,6 @@ function DisableScreen() {
 
                 createFileArray(lists.FileList);
                 createMediaPathTypeArray(lists.MediaPathTypeList);
-
-                //TODO: for when 'choose from public library' gets implemented
-                //createMediaSourceTypeArray(lists.MediaSourceTypeList);
 
                 function createFileArray(list) {
                     self.files.removeAll();
@@ -183,16 +159,6 @@ function DisableScreen() {
                     });
                 };
 
-                //TODO: for when 'choose from public library' gets implemented
-                //function createMediaSourceTypeArray(list) {
-                //    self.isLoadingMediaSourceTypes(true);
-                //    self.mediaSourceTypes.removeAll();
-                //    $(list).each(function (index, value) {
-                //        pushMediaSourceType(value);
-                //    });
-                //    self.isLoadingMediaSourceTypes(false);
-                //};
-
                 self.columns = ko.computed(function () {
                     var arr = [];
                     arr.push({ title: "Name", sortable: true, sortKey: "filename", numeric: false });
@@ -205,13 +171,8 @@ function DisableScreen() {
                     self.mediaPathTypes.push(new MediaPathType(value.Id, value.Description));
                 }
 
-                //TODO: for when 'choose from public library' gets implemented
-                //function pushMediaSourceType(value) {
-                //    self.mediaSourceTypes.push(new MediaSourceType(value.Id, value.Description));
-                //}
-
                 function pushFile(value) {
-                    self.files.push(new File(value.Id, value.StreamId, value.Filename, value.FileType, value.FileSize, value.Path, value.IsPublic));
+                    self.files.push(new File(value.Id, value.StreamId, value.Filename, value.FileType, value.FileSize, value.Path, value.MediaPathTypeId, value.IsPublic));
                 }
 
                 self.selectedFile(self.files()[0]);
@@ -260,15 +221,34 @@ function DisableScreen() {
                     });
                 };
 
-                self.filteredFiles = ko.computed(function () {
-                    //$("#mediaSourceTypeId").val(self.selectedMediaSourceType());
+                self.reloadUploaderHtml = function() {
+                    var mediaPathTypeId = self.selectedMediaPathType();
 
+                    $.ajax({
+                        type: "GET",
+                        url: site.url + "Residents/GetUploaderHtml?mediaPathTypeId=" + mediaPathTypeId,
+                        traditional: true,
+                        async: true,
+                        dataType: "json",
+                        success: function(data) {
+                            $("#uploader-html-container").html(data.UploaderHtml);
+                            $("#uploadbutton").text(data.AddButtonText);
+                        }
+                    });
+                };
+
+                self.selectedMediaPathType.subscribe(function (id) {
+                    if (typeof id === "undefined") return;
+                    $("#mediaPathTypeId").val(id);
+                    self.reloadUploaderHtml();
+                });
+
+                self.filteredFiles = ko.computed(function () {
                     return ko.utils.arrayFilter(self.files(), function (f) {
-                        //var ispublic = (self.selectedMediaSourceType() === 0);
                         return (
                             self.filenameSearch().length === 0 ||
-                                f.filename.toLowerCase().indexOf(self.filenameSearch().toLowerCase()) !== -1);
-                        //&& f.ispublic === ispublic;
+                                f.filename.toLowerCase().indexOf(self.filenameSearch().toLowerCase()) !== -1)
+                         && f.mediapathtypeid === self.selectedMediaPathType();;
                     });
                 });
 
@@ -283,7 +263,6 @@ function DisableScreen() {
 
                 self.doPostBack = function () {
                     $("#mediaPathTypeId").val(self.selectedMediaPathType());
-                    //$("#mediaSourceTypeId").val(self.selectedMediaSourceType());
                     document.forms[0].submit();
                 }
 
@@ -509,22 +488,6 @@ function DisableScreen() {
                     else
                         cmdDelete.attr("disabled", "disabled");
                 };
-
-                //TODO: for when 'add from public library' gets implemented
-                //self.enableDetail = ko.computed(function () {
-                //if (self.isLoadingMediaSourceTypes()) return;
-
-                //var ispublic = self.selectedMediaSourceType() === 0;
-
-                //  buttons
-                //if (ispublic) {
-                //    divAddPublic.removeAttr("hidden");
-                //    divUpload.attr("hidden", "hidden");
-                //} else {
-                //    divAddPublic.attr("hidden", "hidden");
-                //   divUpload.removeAttr("hidden");
-                //}
-                //});
             };
 
             //---------------------------------------------- VIEW MODEL (END) -----------------------------------------------------

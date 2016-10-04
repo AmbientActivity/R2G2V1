@@ -423,7 +423,6 @@
     <Content Include="Views\PhidgetConfig\_ConfigEdit.cshtml" />
     <Content Include="Views\Residents\Media.cshtml" />
     <Content Include="UploadHandler.ashx" />
-    <Content Include="Views\Residents\_AddPublicMedia.cshtml" />
     <Content Include="Views\PublicMedia\Index.cshtml" />
     <Content Include="Views\Maintenance\Index.cshtml" />
     <Content Include="Views\Residents\_ImageViewer.cshtml" />

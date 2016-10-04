@@ -137,7 +137,7 @@ namespace Keebee.AAT.BusinessRules
             {
                 case MediaPathTypeId.Images:
                 case MediaPathTypeId.Pictures:
-                    extensions = "*.jpg,*.jpeg,*.png,*.gif";
+                    extensions = "*.jpg,*.png,*.gif";
                     break;
                 case MediaPathTypeId.Videos:
                     extensions = "*.mp4";

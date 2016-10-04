@@ -57,7 +57,7 @@
                 });
             }
 
-            function Resident(id, firstname, lastname, gender, gamedifficultylevel, hasprofile, datecreated, dateupdated) {
+            function Resident(id, firstname, lastname, gender, gamedifficultylevel, allowvideocapturing, hasprofile, datecreated, dateupdated) {
                 var self = this;
 
                 self.id = id;
@@ -65,6 +65,7 @@
                 self.lastname = lastname;
                 self.gender = gender;
                 self.gamedifficultylevel = gamedifficultylevel;
+                self.allowvideocapturing = allowvideocapturing;
                 self.hasprofile = hasprofile;
                 self.datecreated = datecreated;
                 self.dateupdated = dateupdated;
@@ -98,14 +99,15 @@
                     arr.push({ title: "First Name", sortable: true, sortKey: "firstname", numeric: false });
                     arr.push({ title: "Last Name", sortable: true, sortKey: "lastname", numeric: false });
                     arr.push({ title: "Gender", sortable: true, sortKey: "gender", numeric: false });
-                    arr.push({ title: "Game Difficulty", sortable: true, sortKey: "gamedifficultylevel", numeric: true });
+                    arr.push({ title: "Game Level", sortable: true, sortKey: "gamedifficultylevel", numeric: true });
+                    arr.push({ title: "Capturable", sortable: true, sortKey: "allowvideocapturing", numeric: false });
                     arr.push({ title: "Created", sortable: true, sortKey: "datecreated", numeric: true });
                     arr.push({ title: "Updated", sortable: true, sortKey: "dateupdated", numeric: true });
                     return arr;
                 });
 
                 function pushResident(value) {
-                    self.residents.push(new Resident(value.Id, value.FirstName, value.LastName, value.Gender, value.GameDifficultyLevel, value.HasProfile, value.DateCreated, value.DateUpdated));
+                    self.residents.push(new Resident(value.Id, value.FirstName, value.LastName, value.Gender, value.GameDifficultyLevel, value.AllowVideoCapturing, value.HasProfile, value.DateCreated, value.DateUpdated));
                 };
 
                 self.selectedResident(self.residents()[0]);

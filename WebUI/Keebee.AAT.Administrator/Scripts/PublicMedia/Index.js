@@ -64,7 +64,6 @@ function DisableScreen() {
 }
 
 ; (function ($) {
-
     var HIGHLIGHT_ROW_COLOUR = "#e3e8ff";
 
     publicmedia.index = {
@@ -114,7 +113,7 @@ function DisableScreen() {
                 self.description = description;
             }
 
-            function File(id, streamid, filename, filetype, filesize, path, responsetypeid) {
+            function File(id, streamid, filename, filetype, filesize, path, mediapathtypeid, responsetypeid) {
                 var self = this;
 
                 self.id = id;
@@ -123,6 +122,7 @@ function DisableScreen() {
                 self.filetype = filetype;
                 self.filesize = filesize;
                 self.path = path;
+                self.mediapathtypeid = mediapathtypeid;
                 self.responsetypeid = responsetypeid;
                 self.isselected = false;
             }
@@ -136,7 +136,6 @@ function DisableScreen() {
                 self.mediaPathTypes = ko.observableArray([]);
                 self.responseTypes = ko.observableArray([]);
                 self.selectedFile = ko.observable();
-                self.isLoadingResponseTypes = ko.observable(false);
                 self.selectedMediaPathType = ko.observable($("#mediaPathTypeId").val());
                 self.selectedResponseType = ko.observable($("#responseTypeId").val());
                 self.filenameSearch = ko.observable("");
@@ -149,6 +148,7 @@ function DisableScreen() {
                 createResponseTypeArray(lists.ResponseTypeList);
 
                 function createFileArray(list) {
+                    _isLoading = true;
                     self.files.removeAll();
                     $(list).each(function (index, value) {
                         pushFile(value);
@@ -163,12 +163,11 @@ function DisableScreen() {
                 };
 
                 function createResponseTypeArray(list) {
-                    self.isLoadingResponseTypes(true);
+                    _isLoading = true;
                     self.responseTypes.removeAll();
                     $(list).each(function (index, value) {
                         pushResponseType(value);
                     });
-                    self.isLoadingResponseTypes(false);
                 };
 
                 self.columns = ko.computed(function () {
@@ -188,7 +187,7 @@ function DisableScreen() {
                 }
 
                 function pushFile(value) {
-                    self.files.push(new File(value.Id, value.StreamId, value.Filename, value.FileType, value.FileSize, value.Path, value.ResponseTypeId));
+                    self.files.push(new File(value.Id, value.StreamId, value.Filename, value.FileType, value.FileSize, value.Path, value.MediaPathTypeId, value.ResponseTypeId));
                 }
 
                 self.selectedFile(self.files()[0]);
@@ -237,14 +236,42 @@ function DisableScreen() {
                     });
                 };
 
-                self.filteredFiles = ko.computed(function () {
-                    $("#responseTypeId").val(self.selectedResponseType());
+                self.reloadUploaderHtml = function () {
+                    var mediaPathTypeId = self.selectedMediaPathType();
 
+                    $.ajax({
+                        type: "GET",
+                        url: site.url + "PublicMedia/GetUploaderHtml?mediaPathTypeId=" + mediaPathTypeId,
+                        traditional: true,
+                        async: true,
+                        dataType: "json",
+                        success: function (data) {
+                            $("#uploader-html-container").html(data.UploaderHtml);
+                            $("#uploadbutton").text(data.AddButtonText);
+                            lists.ResponseTypeList = data.ResponseTypeList;
+                            createResponseTypeArray(lists.ResponseTypeList);
+                        }
+                    });
+                };
+
+                self.selectedMediaPathType.subscribe(function (id) {
+                    if (typeof id === "undefined") return;
+                    $("#mediaPathTypeId").val(id);
+                    self.reloadUploaderHtml();
+                });
+
+                self.selectedResponseType.subscribe(function (id) {
+                    if (typeof id === "undefined") return;
+                    $("#responseTypeId").val(id);
+                });
+
+                self.filteredFiles = ko.computed(function () {
                     return ko.utils.arrayFilter(self.files(), function (f) {
                         return (
                             self.filenameSearch().length === 0 ||
                             f.filename.toLowerCase().indexOf(self.filenameSearch().toLowerCase()) !== -1) &&
-                            f.responsetypeid === self.selectedResponseType();
+                            f.responsetypeid === self.selectedResponseType() &&
+                            f.mediapathtypeid === self.selectedMediaPathType();
                     });
                 });
 

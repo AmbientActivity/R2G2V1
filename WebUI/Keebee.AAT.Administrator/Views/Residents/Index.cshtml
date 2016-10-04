@@ -64,6 +64,12 @@
                     <td data-bind="text: lastname"></td>
                     <td data-bind="text: gender"></td>
                     <td data-bind="text: gamedifficultylevel"></td>
+                    <!-- ko if: allowvideocapturing -->
+                    <td style="text-align: center"><span class="glyphicon glyphicon-ok"></span></td>
+                    <!-- /ko -->
+                    <!-- ko if: !allowvideocapturing -->
+                    <td></td>
+                    <!-- /ko -->
                     <td data-bind="text: moment(datecreated).format('ll')"></td>
                     <td data-bind="text: moment(dateupdated).format('ll')"></td>
                 </tr>

@@ -19,6 +19,7 @@ namespace Keebee.AAT.Administrator.ViewModels
         public string FileType { get; set; }
         public int FileSize { get; set; }
         public string Path { get; set; }
+        public int MediaPathTypeId { get; set; }
         public bool IsPublic { get; set; }
     }
 
@@ -31,5 +32,6 @@ namespace Keebee.AAT.Administrator.ViewModels
         public string FileType { get; set; }
         public int FileSize { get; set; }
         public string Path { get; set; }
+        public int MediaPathTypeId { get; set; }
     }
 }

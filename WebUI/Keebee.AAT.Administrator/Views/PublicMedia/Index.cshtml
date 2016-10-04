@@ -23,7 +23,6 @@
                 <button id="uploadbutton" type="button" class="btn btn-md btn-success" onclick="return" false;">@Model.AddButtonText</button>
                 <button id="delete" disabled type="button" class="btn btn-md btn-danger" data-bind="click: showDeleteSelectedDialog">Delete Selected</button>
             </div>
-            @Html.Raw(@Model.UploaderHtml)
             <input id="mediaPathTypeId" name="mediaPathTypeId" type="hidden" value="@Model.SelectedMediaPathType" />
             <input id="responseTypeId" name="responseTypeId" type="hidden" value="@Model.SelectedResponseType" />
         </div>
@@ -35,7 +34,7 @@
                 <input id="txtSearchFilename" type="text" class="form-control" placeholder="Name" data-bind="value: filenameSearch, valueUpdate: 'keyup'" />
             </li>
             <li>
-                <select id="ddlMediaPathTypes" class="form-control" data-bind="options: mediaPathTypes, optionsValue: 'id', optionsText: 'description', value: selectedMediaPathType, event: { change: doPostBack }"></select>
+                <select id="ddlMediaPathTypes" class="form-control" data-bind="options: mediaPathTypes, optionsValue: 'id', optionsText: 'description', value: selectedMediaPathType"></select>
             </li>
             <li>
                 <select id="ddlResponseTypes" class="form-control" data-bind="options: responseTypes, optionsValue: 'id', optionsText: 'description', value: selectedResponseType"></select>
@@ -67,17 +66,20 @@
             </thead>
 
             <tbody data-bind="foreach: filesTable">
-                <tr data-bind="attr: { id: 'row_' + id }">
-                    <td><input type="checkbox" data-bind="attr: { id: 'chk_' + id }, checked: isselected, click: $parent.selectFile"/></td>
-                    <!-- ko if: $parent.selectedMediaPathType() === 1 || $parent.selectedMediaPathType() === 5 -->
-                    <td><a href="#" data-bind="click: $parent.showPreview, css: 'glyphicon glyphicon-eye-open'"></a></td>
-                    <!-- /ko -->
-                    <td data-bind="text: filename"></td>
-                    <td data-bind="text: filetype"></td>
-                    <td data-bind="text: filesize"></td>
-                </tr>
+            <tr data-bind="attr: { id: 'row_' + id }">
+                <td><input type="checkbox" data-bind="attr: { id: 'chk_' + id }, checked: isselected, click: $parent.selectFile"/></td>
+                <!-- ko if: $parent.selectedMediaPathType() === 1 || $parent.selectedMediaPathType() === 5 -->
+                <td><a href="#" data-bind="click: $parent.showPreview, css: 'glyphicon glyphicon-eye-open'"></a></td>
+                <!-- /ko -->
+                <td data-bind="text: filename"></td>
+                <td data-bind="text: filetype"></td>
+                <td data-bind="text: filesize"></td>
+            </tr>
             </tbody>
         </table>
     </div>
+</div>
+<div id="uploader-html-container" hidden="hidden">
+    @Html.Raw(@Model.UploaderHtml)
 </div>
 @{Html.EndForm();}

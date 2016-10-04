@@ -25,6 +25,7 @@ namespace Keebee.AAT.Administrator.ViewModels
         public string LastName { get; set; }
         public string Gender { get; set; }
         public int GameDifficultyLevel { get; set; }
+        public bool AllowVideoCapturing { get; set; }
         public bool HasProfile { get; set; }
         public DateTime DateCreated { get; set; }
         public DateTime DateUpdated { get; set; }

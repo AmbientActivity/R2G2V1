@@ -93,7 +93,7 @@ namespace Keebee.AAT.Administrator.Controllers
             var rules = new PublicMediaRules { OperationsClient =  _opsClient };
             var mediaPathTypes = _opsClient.GetMediaPathTypes().Where(x => x.Id != MediaPathTypeId.Pictures);
             var responseTypes = rules.GetValidResponseTypes(mediaPathTypeId);
-            var fileList = GetMediaFiles(mediaPathTypeId);
+            var fileList = GetMediaFiles();
 
             var vm = new
             {
@@ -111,6 +111,35 @@ namespace Keebee.AAT.Administrator.Controllers
             };
 
             return Json(vm, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpGet]
+        [Authorize]
+        public JsonResult GetUploaderHtml(int mediaPathTypeId)
+        {
+            string html;
+            using (var uploader = new MvcUploader(System.Web.HttpContext.Current))
+            {
+                uploader.UploadUrl = Response.ApplyAppPathModifier("~/UploadHandler.ashx");
+                uploader.Name = "myuploader";
+                uploader.AllowedFileExtensions = ResidentRules.GetAllowedExtensions(mediaPathTypeId); ;
+                uploader.MultipleFilesUpload = true;
+                uploader.InsertButtonID = "uploadbutton";
+                html = uploader.Render();
+            }
+
+            var rules = new PublicMediaRules { OperationsClient = _opsClient };
+            var responseTypes = rules.GetValidResponseTypes(mediaPathTypeId);
+            return Json(new
+            {
+                UploaderHtml = html,
+                ResponseTypeList = responseTypes.Select(x => new
+                {
+                    x.Id,
+                    x.Description
+                }),
+                AddButtonText = $"Upload {rules.GetMediaPathType(mediaPathTypeId).ToUppercaseFirst()}",
+            }, JsonRequestBehavior.AllowGet);
         }
 
         [HttpPost]
@@ -161,7 +190,7 @@ namespace Keebee.AAT.Administrator.Controllers
                     {
                         Success = success,
                         ErrorMessage = errormessage,
-                        FileList = GetMediaFiles(mediaPathTypeId)
+                        FileList = GetMediaFiles()
                     }, JsonRequestBehavior.AllowGet);
         }
 
@@ -221,8 +250,7 @@ namespace Keebee.AAT.Administrator.Controllers
             return vm;
         }
 
-
-        private IEnumerable<PublicMediaFileViewModel> GetMediaFiles(int mediaPathTypeId)
+        private IEnumerable<PublicMediaFileViewModel> GetMediaFiles()
         {
             var list = new List<PublicMediaFileViewModel>();
             var publicMedia = _opsClient.GetPublicMediaFiles();
@@ -230,22 +258,19 @@ namespace Keebee.AAT.Administrator.Controllers
             if (publicMedia == null) return list;
 
             var mediaPaths = publicMedia.MediaFiles.SelectMany(x => x.Paths)
-                .Where(x => x.MediaPathType.Id == mediaPathTypeId)
                 .ToArray();
 
             if (!mediaPaths.Any()) return list;
-
-            var mediaPathType = mediaPaths
-                .First(x => x.MediaPathType.Id == mediaPathTypeId)
-                .MediaPathType.Description;
 
             var pathRoot = $@"{_mediaPath.ProfileRoot}\{PublicMediaSource.Id}";
 
             foreach (var media in publicMedia.MediaFiles)
             {
-                foreach (var path in media.Paths.Where(x => x.MediaPathType.Id == mediaPathTypeId))
+                foreach (var path in media.Paths)
                 {
-                    foreach (var file in path.Files.OrderBy(x => x.Filename))
+                    var files = path.Files.OrderBy(f => f.Filename);
+
+                    foreach (var file in files)
                     {
                         var vm = new PublicMediaFileViewModel
                         {
@@ -254,7 +279,8 @@ namespace Keebee.AAT.Administrator.Controllers
                             Filename = file.Filename.Replace($".{file.FileType}", string.Empty),
                             FileType = file.FileType.ToUpper(),
                             FileSize = file.FileSize,
-                            Path = $@"{pathRoot}\{mediaPathType}",
+                            Path = $@"{pathRoot}\{path.MediaPathType.Description}",
+                            MediaPathTypeId = path.MediaPathType.Id,
                             ResponseTypeId = media.ResponseType.Id
                         };
 

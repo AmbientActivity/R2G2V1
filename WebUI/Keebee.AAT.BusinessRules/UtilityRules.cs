@@ -33,9 +33,6 @@ namespace Keebee.AAT.BusinessRules
                     while (StateMachineIsInstalled()) { }
                 }
 
-                service.Start();
-                service.WaitForStatus(ServiceControllerStatus.Running);
-
                 // rfid reader
                 service = new ServiceController(ServiceName.RfidReader);
 
@@ -44,6 +41,12 @@ namespace Keebee.AAT.BusinessRules
 
                 // phidget
                 service = new ServiceController(ServiceName.Phidget);
+
+                service.Start();
+                service.WaitForStatus(ServiceControllerStatus.Running);
+
+                // video
+                service = new ServiceController(ServiceName.VideoCapture);
 
                 service.Start();
                 service.WaitForStatus(ServiceControllerStatus.Running);
@@ -62,11 +65,13 @@ namespace Keebee.AAT.BusinessRules
             var exePathSms = $@"{smsPath}\{ServiceName.StateMachineExe}";
             var exePathPhidget = $@"{phidgetPath}\{ServiceName.PhidgetExe}";
             var exePathRfidReader = $@"{rfidPath}\{ServiceName.RfidReaderExe}";
+            var exePathVideoCapture = $@"{rfidPath}\{ServiceName.VideoCaptureExe}";
 
             try
             {
                 ServiceInstaller.Uninstall(exePathRfidReader);
                 ServiceInstaller.Uninstall(exePathPhidget);
+                ServiceInstaller.Uninstall(exePathVideoCapture);
                 ServiceInstaller.Uninstall(exePathSms);
 
                 while (StateMachineIsInstalled()) { }
@@ -75,6 +80,9 @@ namespace Keebee.AAT.BusinessRules
 
                 if (msg.Length == 0)
                     ServiceInstaller.Install(exePathPhidget);
+
+                if (msg.Length == 0)
+                    ServiceInstaller.Install(exePathVideoCapture);
 
                 if (msg.Length == 0)
                     ServiceInstaller.Install(exePathRfidReader);

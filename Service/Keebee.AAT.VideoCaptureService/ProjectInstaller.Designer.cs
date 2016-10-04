@@ -46,7 +46,7 @@
             this.videoCaptureServiceInstaller.ServiceName = "VideoCaptureService";
             this.videoCaptureServiceInstaller.ServicesDependedOn = new string[] {
         "MSMQ",
-        "MSSQL$SQLEXPRESS"};
+        "StateMachineService"};
             this.videoCaptureServiceInstaller.StartType = System.ServiceProcess.ServiceStartMode.Automatic;
             this.videoCaptureServiceInstaller.AfterInstall += new System.Configuration.Install.InstallEventHandler(this.videoCaptureServiceInstaller_AfterInstall);
             // 

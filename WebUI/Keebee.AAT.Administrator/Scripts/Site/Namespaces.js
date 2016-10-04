@@ -7,6 +7,7 @@
 
 // define global namespaces
 ; (function () {
+    window.shared = {};
     window.home = {};
     window.residents = {};
     window.profiles = {};

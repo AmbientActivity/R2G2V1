@@ -36,8 +36,11 @@ namespace Keebee.AAT.BusinessRules
             if (user.Id == 0)
                 errmsg = "User does not exist";
 
-            if (!VerifyHashPassword(password, user.Password.Trim()))
-                errmsg = "Invalid password";
+            if (errmsg != null)
+            {
+                if (!VerifyHashPassword(password, user.Password.Trim()))
+                    errmsg = "Invalid password";
+            }
 
             return (errmsg == null) ? user.Id : 0;
         }
@@ -53,6 +56,40 @@ namespace Keebee.AAT.BusinessRules
             }
 
             return s.ToString().Substring(0, s.ToString().Length - 1);
+        }
+
+        public string ValidatePasswordChange(string username, string oldPassword, string newPassword, string retypeNewPassword, out int userId)
+        {
+            string errmsg = null;
+            var user = _opsClient.GetUserByUsername(username);
+            var passwordHash = user.Password.Trim();
+
+            userId = user.Id;
+
+            if (userId == 0)
+                errmsg = "User does not exist";
+
+            if (errmsg == null)
+            {
+                if (!VerifyHashPassword(oldPassword, passwordHash))
+                    errmsg = "Invalid old password";
+            }
+
+            if (errmsg == null)
+            {
+                if (newPassword != retypeNewPassword)
+                    errmsg = "New and retyped passwords do not match";
+            }
+            
+            return errmsg;
+        }
+
+        public void ChangePassword(int userId, string password)
+        {
+            var passwordHash = GeneratePasswordHash(password);
+
+            var user = new User {Password = passwordHash};
+            _opsClient.PatchUser(userId, user);
         }
 
         private static bool VerifyHashPassword(string password, string hash)

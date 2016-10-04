@@ -90,6 +90,7 @@ namespace Keebee.AAT.RESTClient
         void PatchResident(int residentId, ResidentEdit resident);
         void PatchConfig(int configId, ConfigEdit configDetail);
         void PatchConfigDetail(int configDetailId, ConfigDetailEdit configDetail);
+        void PatchUser(int userId, User user);
 
         // DELETE
         string DeleteUser(int userId);
@@ -812,6 +813,14 @@ namespace Keebee.AAT.RESTClient
             var el = serializer.Serialize(configDetail);
 
             Patch(string.Format(UrlConfigDetail, configDetailId), el);
+        }
+
+        public void PatchUser(int userId, User user)
+        {
+            var serializer = new JavaScriptSerializer();
+            var el = serializer.Serialize(user);
+
+            Patch(string.Format(UrlUser, userId), el);
         }
 
         // DELETE

@@ -1,14 +1,13 @@
-﻿using System;
+﻿using Keebee.AAT.Administrator.ViewModels;
+using Keebee.AAT.BusinessRules;
+using Keebee.AAT.RESTClient;
+using System;
 using System.Collections.ObjectModel;
 using System.Configuration;
 using System.Web;
-using Keebee.AAT.BusinessRules;
-using Keebee.AAT.RESTClient;
-using Keebee.AAT.BusinessRules.DTO;
-using Keebee.AAT.SystemEventLogging;
 using System.Web.Mvc;
 using System.Web.Security;
-using Keebee.AAT.Administrator.ViewModels;
+
 
 namespace Keebee.AAT.Administrator.Controllers
 {
@@ -65,6 +64,29 @@ namespace Keebee.AAT.Administrator.Controllers
         public PartialViewResult GetChangePasswordView()
         {
             return PartialView("_ChangePassword", new ChangePasswordViewModel());
+        }
+
+        [HttpGet]
+        [Authorize]
+        public JsonResult AttemptToChangePassword(ChangePasswordViewModel vm)
+        {
+            var username = System.Web.HttpContext.Current.User.Identity.Name;
+            int userId;
+
+            var rules = new UserRules { OperationsClient = _opsClient };
+            var errmsg = rules.ValidatePasswordChange(username, vm.OldPassword, vm.NewPassword, vm.RetypedNewPassword, out userId);
+            var success = (userId > 0);
+
+            if (success)
+            {
+                rules.ChangePassword(userId, vm.NewPassword);
+            }
+
+            return Json(new
+            {
+                Success = success,
+                ErrorMessage = errmsg
+            }, JsonRequestBehavior.AllowGet);
         }
 
         private static LoginViewModel LoadLoginViewModel()

@@ -83,7 +83,13 @@ a:hover, a:visited, a:link, a:active {
 .greeting {
     float: right;
     margin-top: 15px;
-    color: #0060ff;
+    list-style: none;
+}
+.greeting ul {
+    list-style: none;
+}
+#menu-login {
+    color: #0066ff;
 }
 
 /* dialogs */

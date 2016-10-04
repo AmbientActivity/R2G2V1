@@ -63,14 +63,15 @@ namespace Keebee.AAT.Administrator.Controllers
             var smsPath = ConfigurationManager.AppSettings["StateMachineServiceLocation"];
             var phidgetPath = ConfigurationManager.AppSettings["PhidgetServiceLocation"];
             var rfidPath = ConfigurationManager.AppSettings["RfidReaderServiceLocation"];
+            var videoCapturePath = ConfigurationManager.AppSettings["VideoCaptureServiceLocation"];
 
             _messageQueueDisplaySms.Send(CreateDisplayMessageBody(false));
             _messageQueueDisplayPhidget.Send(CreateDisplayMessageBody(false));
             _messageQueueDisplayVideoCapture.Send(CreateDisplayMessageBody(false));
 
             // uninstall / reinstall the services
-            var rules = new UtilityRules { EventLogger = _systemEventLogger };
-            var msg = rules.ReinstallServices(smsPath, phidgetPath, rfidPath);
+            var rules = new MaintenanceRules { EventLogger = _systemEventLogger };
+            var msg = rules.ReinstallServices(smsPath, phidgetPath, rfidPath, videoCapturePath);
 
             if (msg.Length != 0) return msg;
 
@@ -99,7 +100,7 @@ namespace Keebee.AAT.Administrator.Controllers
             _messageQueueDisplayPhidget.Send(CreateDisplayMessageBody(false));
             _messageQueueDisplayVideoCapture.Send(CreateDisplayMessageBody(false));
 
-            var rules = new UtilityRules { EventLogger = _systemEventLogger };
+            var rules = new MaintenanceRules { EventLogger = _systemEventLogger };
             var msg = rules.RestartServices();
 
             if (msg.Length != 0) return msg;

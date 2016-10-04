@@ -8,7 +8,7 @@ using System.Linq;
 
 namespace Keebee.AAT.BusinessRules
 {
-    public class UtilityRules
+    public class MaintenanceRules
     {
         private SystemEventLogger _systemEventLogger;
         public SystemEventLogger EventLogger
@@ -60,12 +60,12 @@ namespace Keebee.AAT.BusinessRules
             return string.Empty;
         }
 
-        public string ReinstallServices(string smsPath, string phidgetPath, string rfidPath)
+        public string ReinstallServices(string smsPath, string phidgetPath, string rfidPath, string videoCapturPath)
         {
             var exePathSms = $@"{smsPath}\{ServiceName.StateMachineExe}";
             var exePathPhidget = $@"{phidgetPath}\{ServiceName.PhidgetExe}";
             var exePathRfidReader = $@"{rfidPath}\{ServiceName.RfidReaderExe}";
-            var exePathVideoCapture = $@"{rfidPath}\{ServiceName.VideoCaptureExe}";
+            var exePathVideoCapture = $@"{videoCapturPath}\{ServiceName.VideoCaptureExe}";
 
             try
             {

@@ -12,22 +12,22 @@ if ($profileCount -gt 0) {
 } 
 else {
     Write-Host "Creating MediaFiles view...” -NoNewline
-    $queryFile = $path + "5_CreateMediaFilesView.sql"
+    $queryFile = $path + "6_CreateMediaFilesView.sql"
     Invoke-SqlQuery -File $queryFile -Server $server -Database $database
     Write-Host "done.`n”
 
     Write-Host "Seeding configuration data...” -NoNewline
-    $queryFile = $path + "6_SeedConfigurationData.sql"
+    $queryFile = $path + "7_SeedConfigurationData.sql"
     Invoke-SqlQuery -File $queryFile -Server $server -Database $database
     Write-Host "done.`n”
 
     Write-Host "Seeding sample residents...” -NoNewline
-    $queryFile = $path + "7_SeedSampleResidents.sql"
+    $queryFile = $path + "8_SeedSampleResidents.sql"
     Invoke-SqlQuery -File $queryFile -Server $server -Database $database
     Write-Host "done.`n”
 
     Write-Host "Seeding media file references...” -NoNewline
-    $queryFile = $path + "8_SeedMediaFiles.sql"
+    $queryFile = $path + "9_SeedMediaFiles.sql"
     Invoke-SqlQuery -File $queryFile -Server $server -Database $database
     Write-Host "done.`n”
 

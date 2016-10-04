@@ -22,4 +22,9 @@ $queryFile = $path + "4_CreateKeebeeLogin.sql"
 Invoke-SqlQuery -File $queryFile -Server $server -Database $database
 Write-Host "done.`n”
 
+Write-Host "Creatng webuser login...” -NoNewline
+$queryFile = $path + "5_CreateWebuserLogin.sql"
+Invoke-SqlQuery -File $queryFile -Server $server -Database $database
+Write-Host "done.`n”
+
 Write-Host "Database created successfully!`n”

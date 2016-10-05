@@ -23,8 +23,7 @@ namespace Keebee.AAT.BusinessRules
             try
             {
                 var dateTime = DateTime.Parse(date);
-
-                var folder = dateTime.ToShortDateString().Replace("/", "-");
+                var folder = dateTime.ToString("yyyy-MM-dd");
                 var root = new DirectoryInfo($@"{VideoCaptures.Path}\{folder}");
                 var files = root.EnumerateFiles().Select(f => $@"{f.DirectoryName}\{f.Name}").ToList();
 

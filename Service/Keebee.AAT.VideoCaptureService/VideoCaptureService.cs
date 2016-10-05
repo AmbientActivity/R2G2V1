@@ -18,9 +18,6 @@ namespace Keebee.AAT.VideoCaptureService
     {
         private readonly Timer _timer;
 
-        // output path
-        private const string OutputPath = VideoCaptures.Path;
-
         // app.config settings
         private string _videoSourceName;
         private string _audioSourceName;
@@ -77,7 +74,8 @@ namespace Keebee.AAT.VideoCaptureService
         {
             try
             {
-                var rootFolder = $@"{VideoCaptures.Path}\{DateTime.Now.ToShortDateString()}";
+                var now = DateTime.Now.ToString("yyyy-MM-dd");
+                var rootFolder = $@"{VideoCaptures.Path}\{now}";
                 if (!Directory.Exists(rootFolder))
                     Directory.CreateDirectory(rootFolder);
 

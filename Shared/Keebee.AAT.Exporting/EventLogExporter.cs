@@ -36,8 +36,9 @@ namespace Keebee.AAT.Exporting
         public void ExportAndSave(string date)
         {
             var workbook = GetWorkbook(date);
-
-            var filename = $@"{_mediaPath.ExportEventLogRoot}\EventLog_{date.Replace("/", "_")}.xls";
+            var dateTime = DateTime.Parse(date);
+            var dateString = dateTime.ToString("yyyy-MM-dd");
+            var filename = $@"{_mediaPath.ExportEventLogRoot}\EventLog_{dateString.Replace("-", "_")}.xls";
 
             workbook.Save(filename);
         }

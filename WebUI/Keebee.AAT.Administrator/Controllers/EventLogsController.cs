@@ -37,7 +37,9 @@ namespace Keebee.AAT.Administrator.Controllers
         public FileResult DoExport(string date)
         {
             var exporter = new EventLogExporter();
-            var filename = $"EventLog_{date.Replace("/", "_")}.xls";
+            var dateTime = DateTime.Parse(date);
+            var dateString = dateTime.ToString("yyyy-MM-dd");
+            var filename = $"EventLog_{dateString.Replace("-", "_")}.xls";
             var file = exporter.Export(date);
 
             return File(file, "application/vnd.ms-excel", filename);

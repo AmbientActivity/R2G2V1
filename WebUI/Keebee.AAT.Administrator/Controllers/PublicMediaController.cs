@@ -91,8 +91,11 @@ namespace Keebee.AAT.Administrator.Controllers
         public JsonResult GetData(int mediaPathTypeId)
         {
             var rules = new PublicMediaRules { OperationsClient =  _opsClient };
-            var mediaPathTypes = _opsClient.GetMediaPathTypes().Where(x => x.Id != MediaPathTypeId.Pictures);
-            var responseTypes = rules.GetValidResponseTypes(mediaPathTypeId);
+            var mediaPathTypes = _opsClient.GetMediaPathTypes()
+                .Where(x => x.Id != MediaPathTypeId.Pictures)
+                .OrderBy(p => p.Description);
+            var responseTypes = rules.GetValidResponseTypes(mediaPathTypeId)
+                .OrderBy(r => r.Description);
             var fileList = GetMediaFiles();
 
             var vm = new
@@ -129,7 +132,9 @@ namespace Keebee.AAT.Administrator.Controllers
             }
 
             var rules = new PublicMediaRules { OperationsClient = _opsClient };
-            var responseTypes = rules.GetValidResponseTypes(mediaPathTypeId);
+            var responseTypes = rules.GetValidResponseTypes(mediaPathTypeId)
+                .OrderBy(r => r.Description);
+            ;
             return Json(new
             {
                 UploaderHtml = html,

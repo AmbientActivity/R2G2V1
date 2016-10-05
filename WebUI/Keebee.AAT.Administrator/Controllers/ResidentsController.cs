@@ -110,7 +110,7 @@ namespace Keebee.AAT.Administrator.Controllers
         [Authorize]
         public JsonResult GetDataMedia(int id, int mediaPathTypeId)
         {
-            var mediaPathTypes = _opsClient.GetMediaPathTypes();
+            var mediaPathTypes = _opsClient.GetMediaPathTypes().OrderBy(p => p.Description); ;
             var fileList = GetFiles(id);
 
             var vm = new

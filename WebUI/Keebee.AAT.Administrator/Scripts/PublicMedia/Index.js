@@ -71,7 +71,14 @@ function DisableScreen() {
     var HIGHLIGHT_ROW_COLOUR = "#e3e8ff";
 
     publicmedia.index = {
-        init: function () {
+        init: function (values) {
+
+            var config = {
+                selectedMediaPathTypeId: 0,
+                selectedResponseTypeId: 0
+            };
+
+            $.extend(config, values);
 
             var cmdDelete = $("#delete");
 
@@ -111,8 +118,8 @@ function DisableScreen() {
                 self.files = ko.observableArray([]);
                 self.mediaPathTypes = ko.observableArray([]);
                 self.responseTypes = ko.observableArray([]);
-                self.selectedMediaPathType = ko.observable($("#mediaPathTypeId").val());
-                self.selectedResponseType = ko.observable($("#responseTypeId").val());
+                self.selectedMediaPathType = ko.observable(config.selectedMediaPathTypeId); //ko.observable($("#mediaPathTypeId").val());
+                self.selectedResponseType = ko.observable(config.selectedResponseTypeId); //ko.observable($("#responseTypeId").val());
                 self.filenameSearch = ko.observable("");
                 self.totalFiles = ko.observable(0);
                 self.selectAllIsSelected = ko.observable(false);

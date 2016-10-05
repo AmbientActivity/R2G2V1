@@ -24,7 +24,7 @@
 <script type="text/javascript">
     $(document)
         .ready(function() {
-            residents.media.init({ residentid: '@Model.ResidentId' });
+            residents.media.init({ residentid: @Model.ResidentId, selectedMediaPathTypeId: @Model.SelectedMediaPathType });
         });
 </script>
 
@@ -46,7 +46,7 @@
                 <input id="txtSearchFilename" type="text" class="form-control" placeholder="Name" data-bind="value: filenameSearch, valueUpdate: 'keyup'"/>
             </li>
             <li>
-                <select id="ddlMediaPathTypes" class="form-control" data-bind="options: mediaPathTypes, optionsValue: 'id', optionsText: 'description', value: selectedMediaPathType"></select>
+                <select id="ddlMediaPathTypes" class="form-control select-filter" data-bind="options: mediaPathTypes, optionsValue: 'id', optionsText: 'description', value: selectedMediaPathType"></select>
             </li>
             <li class="pull-right">
                 <label>Total:</label> <span data-bind="text: totalFiles()"></span>

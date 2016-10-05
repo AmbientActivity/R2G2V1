@@ -73,8 +73,9 @@ function DisableScreen() {
     residents.media = {
         init: function (values) {
             var config = {
-                residentid: 0
-            }
+                residentid: 0,
+                selectedMediaPathTypeId: 0
+            };
 
             $.extend(config, values);
 
@@ -116,7 +117,7 @@ function DisableScreen() {
 
                 self.files = ko.observableArray([]);
                 self.mediaPathTypes = ko.observableArray([]);
-                self.selectedMediaPathType = ko.observable($("#mediaPathTypeId").val());
+                self.selectedMediaPathType = ko.observable(config.selectedMediaPathTypeId);
                 self.filenameSearch = ko.observable("");
                 self.totalFiles = ko.observable(0);
                 self.selectAllIsSelected = ko.observable(false);

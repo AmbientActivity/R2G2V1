@@ -56,7 +56,7 @@
                 });
 
                 BootstrapDialog.show({
-                    title: "Login",
+                    title: "R2G2 Login",
                     message: message,
                     onshown: function () {
                         $("#txtPassword").focus();

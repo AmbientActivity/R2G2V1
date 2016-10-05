@@ -99,6 +99,7 @@ namespace Keebee.AAT.VideoCaptureService
         {
             try
             {
+                if (_job == null) return;
                 if (!_job.IsCapturing) return;
 
                 _job.StopEncoding();
@@ -134,7 +135,7 @@ namespace Keebee.AAT.VideoCaptureService
 
                 if (!_displayIsActive)
                 {
-                    _timer.Stop();
+                    _timer?.Stop();
                     StopCapture();
                 }
             }
@@ -161,7 +162,7 @@ namespace Keebee.AAT.VideoCaptureService
             _systemEventLogger.WriteEntry("In OnStop");
             _timer.Stop();
             _timer.Dispose();
-            _job.Dispose();
+            _job?.Dispose();
         }
     }
 }

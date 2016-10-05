@@ -26,4 +26,10 @@ installutil C:\Users\%USERNAME%\Source\Repos\R2G2V1\Service\Keebee.AAT.RfidReade
 echo ---------------------------------------------------
 echo Done.
 
+echo Installing Keep IIS Alive Service...
+echo ---------------------------------------------------
+installutil C:\Users\%USERNAME%\Source\Repos\R2G2V1\Service\Keebee.AAT.KeepIISAliveService\bin\Debug\Keebee.AAT.KeepIISAliveService.exe
+echo ---------------------------------------------------
+echo Done.
+
 pause

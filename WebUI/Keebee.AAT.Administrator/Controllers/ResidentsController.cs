@@ -20,13 +20,12 @@ namespace Keebee.AAT.Administrator.Controllers
     {
         private readonly OperationsClient _opsClient;
         private readonly SystemEventLogger _systemEventLogger;
-
         private readonly MediaSourcePath _mediaPath = new MediaSourcePath();
 
         public ResidentsController()
         {
-            _opsClient = new OperationsClient();
             _systemEventLogger = new SystemEventLogger(SystemEventLogType.AdminInterface);
+            _opsClient = new OperationsClient { SystemEventLogger = _systemEventLogger };
         }
 
         // GET: Residen

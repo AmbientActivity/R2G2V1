@@ -261,6 +261,7 @@
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
     <Content Include="READ_ME.txt" />
+    <Content Include="Scripts\Account\Utilities.js" />
     <Content Include="Scripts\ai.0.22.19-build00125.js" />
     <Content Include="Scripts\ai.0.22.19-build00125.min.js" />
     <Content Include="Content\bootstrap.min.css.map" />
@@ -289,7 +290,6 @@
     <Content Include="Scripts\PhidgetConfig\Index.js" />
     <Content Include="Scripts\EventLogs\Export.js" />
     <Content Include="Scripts\EventLogs\Index.js" />
-    <Content Include="Scripts\Home\Index.js" />
     <Content Include="Scripts\jquery-3.1.0.js" />
     <Content Include="Scripts\jquery-3.1.0.min.js" />
     <Content Include="Scripts\jquery-3.1.0.slim.js" />
@@ -376,6 +376,7 @@
     <Content Include="Scripts\Shared\_LogOnPartial.js" />
     <Content Include="Scripts\Site\Namespaces.js" />
     <Content Include="Scripts\Site\Site.js" />
+    <Content Include="Scripts\VideoCaptures\Index.js" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
@@ -383,12 +384,14 @@
   <ItemGroup>
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\PhidgetConfigController.cs" />
     <Compile Include="Controllers\EventLogsController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\PublicMediaController.cs" />
     <Compile Include="Controllers\ResidentsController.cs" />
     <Compile Include="Controllers\MaintenanceController.cs" />
+    <Compile Include="Controllers\VideoCapturesController.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="FileManagement\FileManager.cs" />
     <Compile Include="Global.asax.cs">
@@ -402,6 +405,7 @@
     <Compile Include="ViewModels\MediaFileViewModel.cs" />
     <Compile Include="ViewModels\PublicMediaViewModel.cs" />
     <Compile Include="ViewModels\ResidentViewModel.cs" />
+    <Compile Include="ViewModels\VideoCaptureVidewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\web.config" />
@@ -427,9 +431,10 @@
     <Content Include="Views\Maintenance\Index.cshtml" />
     <Content Include="Views\Residents\_ImageViewer.cshtml" />
     <Content Include="Views\PublicMedia\_ImageViewer.cshtml" />
-    <Content Include="Views\Home\_Login.cshtml" />
+    <Content Include="Views\Account\_Login.cshtml" />
     <Content Include="Views\Shared\_LogOnPartial.cshtml" />
-    <Content Include="Views\Home\_ChangePassword.cshtml" />
+    <Content Include="Views\Account\_ChangePassword.cshtml" />
+    <Content Include="Views\VideoCaptures\Index.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

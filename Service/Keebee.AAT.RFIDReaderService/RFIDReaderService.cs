@@ -91,7 +91,7 @@ namespace Keebee.AAT.RfidReaderService
                 if (residentId < 0) continue;
 
                 var resident = residentId == 0 
-                    ? new Resident { Id = PublicMediaSource.Id, GameDifficultyLevel = 1} 
+                    ? new Resident { Id = PublicMediaSource.Id, GameDifficultyLevel = 1, AllowVideoCapturing = false } 
                     : _opsClient.GetResident(residentId);
 
                 if (resident == null) continue;

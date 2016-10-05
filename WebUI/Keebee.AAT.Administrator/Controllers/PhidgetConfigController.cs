@@ -3,6 +3,7 @@ using Keebee.AAT.RESTClient;
 using Keebee.AAT.MessageQueuing;
 using Keebee.AAT.BusinessRules;
 using Keebee.AAT.Shared;
+using Keebee.AAT.SystemEventLogging;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
@@ -13,11 +14,13 @@ namespace Keebee.AAT.Administrator.Controllers
     public class PhidgetConfigController : Controller
     {
         private readonly OperationsClient _opsClient;
+        private readonly SystemEventLogger _systemEventLogger;
         private readonly CustomMessageQueue _messageQueueConfigSms;
 
         public PhidgetConfigController()
         {
-            _opsClient = new OperationsClient();
+            _systemEventLogger = new SystemEventLogger(SystemEventLogType.AdminInterface);
+            _opsClient = new OperationsClient { SystemEventLogger = _systemEventLogger };
 
             _messageQueueConfigSms = new CustomMessageQueue(new CustomMessageQueueArgs
             {

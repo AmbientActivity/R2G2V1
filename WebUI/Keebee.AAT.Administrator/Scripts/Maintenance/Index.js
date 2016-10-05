@@ -11,34 +11,12 @@
         init: function() {
             var cmdReinstall = $("#reinstall");
             var cmdRestart = $("#restart");
-
-            cmdReinstall.click(function() {
-                BootstrapDialog.show({
-                    title: "Maintenance Utilities",
-                    message: "Uninstall/Reinstall Keebee AAT Services?",
-                    closable: false,
-                    buttons: [
-                        {
-                            label: "Cancel",
-                            action: function(dialog) {
-                                dialog.close();
-                            }
-                        }, {
-                            label: "OK",
-                            cssClass: "btn-primary",
-                            action: function(dialog) {
-                                dialog.close();
-                                execute("ReinstallServices", "Reinstalling services...", "All services reinstalled successfully");
-                            }
-                        }
-                    ]
-                });
-            });
+            var cmdUninstall = $("#uninstall");
 
             cmdRestart.click(function () {
                 BootstrapDialog.show({
-                    title: "Maintenance Utilities",
-                    message: "Restart Keebee AAT Services?",
+                    title: "Service Utilities",
+                    message: "Restart all R2G2 Windows Services?",
                     closable: false,
                     buttons: [
                         {
@@ -52,6 +30,52 @@
                             action: function (dialog) {
                                 dialog.close();
                                 execute("RestartServices", "Restarting services...", "All services restarted successfully");
+                            }
+                        }
+                    ]
+                });
+            });
+
+            cmdReinstall.click(function() {
+                BootstrapDialog.show({
+                    title: "Service Utilities",
+                    message: "Install or uninstall/reinstall all R2G2 Windows Services?",
+                    closable: false,
+                    buttons: [
+                        {
+                            label: "Cancel",
+                            action: function(dialog) {
+                                dialog.close();
+                            }
+                        }, {
+                            label: "OK",
+                            cssClass: "btn-primary",
+                            action: function(dialog) {
+                                dialog.close();
+                                execute("ReinstallServices", "Installing services...", "All services installed successfully");
+                            }
+                        }
+                    ]
+                });
+            });
+
+            cmdUninstall.click(function () {
+                BootstrapDialog.show({
+                    title: "Service Utilities",
+                    message: "Uninstall all R2G2 Windows Services?",
+                    closable: false,
+                    buttons: [
+                        {
+                            label: "Cancel",
+                            action: function (dialog) {
+                                dialog.close();
+                            }
+                        }, {
+                            label: "OK",
+                            cssClass: "btn-primary",
+                            action: function (dialog) {
+                                dialog.close();
+                                execute("UninstallServices", "Uninstalling services...", "All services uninstalled successfully");
                             }
                         }
                     ]

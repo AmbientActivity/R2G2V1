@@ -20,9 +20,6 @@ namespace Keebee.AAT.BusinessRules
         {
             try
             {
-                var millisec1 = Environment.TickCount;
-                var timeout = TimeSpan.FromMilliseconds(60000 * millisec1);
-
                 // state machine
                 var service = new ServiceController(ServiceName.StateMachine);
 
@@ -57,35 +54,48 @@ namespace Keebee.AAT.BusinessRules
                 return ex.Message;
             }
 
-            return string.Empty;
+            return null;
         }
 
-        public string ReinstallServices(string smsPath, string phidgetPath, string rfidPath, string videoCapturPath)
+        public string ReinstallServices(string smsPath, string phidgetPath, string rfidPath, string videoCapturPath, string keepIISAlivePath)
         {
             var exePathSms = $@"{smsPath}\{ServiceName.StateMachineExe}";
             var exePathPhidget = $@"{phidgetPath}\{ServiceName.PhidgetExe}";
             var exePathRfidReader = $@"{rfidPath}\{ServiceName.RfidReaderExe}";
             var exePathVideoCapture = $@"{videoCapturPath}\{ServiceName.VideoCaptureExe}";
+            var exePathKeepIISAlive = $@"{keepIISAlivePath}\{ServiceName.KeepIISAliveExe}";
 
             try
             {
-                ServiceInstaller.Uninstall(exePathRfidReader);
-                ServiceInstaller.Uninstall(exePathPhidget);
-                ServiceInstaller.Uninstall(exePathVideoCapture);
-                ServiceInstaller.Uninstall(exePathSms);
+                // uninstall
+                var msg = ((ServiceInstaller.Uninstall(exePathKeepIISAlive)
+                        ?? ServiceInstaller.Uninstall(exePathRfidReader))
+                        ?? ServiceInstaller.Uninstall(exePathPhidget))
+                        ?? ServiceInstaller.Uninstall(exePathVideoCapture);
 
-                while (StateMachineIsInstalled()) { }
+                if (msg != null) return msg;
 
-                var msg = ServiceInstaller.Install(exePathSms);
+                msg = ServiceInstaller.Uninstall(exePathSms);
 
-                if (msg.Length == 0)
-                    ServiceInstaller.Install(exePathPhidget);
+                while (StateMachineIsInstalled())
+                {
+                }
 
-                if (msg.Length == 0)
-                    ServiceInstaller.Install(exePathVideoCapture);
+                // install
+                if (msg == null)
+                    msg = ServiceInstaller.Install(exePathSms);
 
-                if (msg.Length == 0)
-                    ServiceInstaller.Install(exePathRfidReader);
+                if (msg == null)
+                    msg = ServiceInstaller.Install(exePathPhidget);
+
+                if (msg == null)
+                    msg = ServiceInstaller.Install(exePathVideoCapture);
+
+                if (msg == null)
+                    msg = ServiceInstaller.Install(exePathRfidReader);
+
+                if (msg == null)
+                    msg = ServiceInstaller.Install(exePathKeepIISAlive);
 
                 return msg;
             }
@@ -93,6 +103,40 @@ namespace Keebee.AAT.BusinessRules
             catch (Exception ex)
             {
                 _systemEventLogger.WriteEntry($"ReinstallServices: {ex.Message}", EventLogEntryType.Error);
+                return ex.Message;
+            }
+        }
+
+        public string UninstallServices(string smsPath, string phidgetPath, string rfidPath, string videoCapturPath, string keepIISAlivePath)
+        {
+            var exePathSms = $@"{smsPath}\{ServiceName.StateMachineExe}";
+            var exePathPhidget = $@"{phidgetPath}\{ServiceName.PhidgetExe}";
+            var exePathRfidReader = $@"{rfidPath}\{ServiceName.RfidReaderExe}";
+            var exePathVideoCapture = $@"{videoCapturPath}\{ServiceName.VideoCaptureExe}";
+            var exePathKeepIISAlive = $@"{keepIISAlivePath}\{ServiceName.KeepIISAliveExe}";
+
+            try
+            {
+                // uninstall
+                var msg = ((ServiceInstaller.Uninstall(exePathKeepIISAlive) 
+                        ?? ServiceInstaller.Uninstall(exePathRfidReader)) 
+                        ?? ServiceInstaller.Uninstall(exePathPhidget)) 
+                        ?? ServiceInstaller.Uninstall(exePathVideoCapture);
+
+                if (msg != null) return msg;
+
+                msg = ServiceInstaller.Uninstall(exePathSms);
+
+                while (StateMachineIsInstalled())
+                {
+                }
+
+                return msg;
+            }
+
+            catch (Exception ex)
+            {
+                _systemEventLogger.WriteEntry($"UninstallServices: {ex.Message}", EventLogEntryType.Error);
                 return ex.Message;
             }
         }
@@ -117,7 +161,8 @@ namespace Keebee.AAT.BusinessRules
                 {
                     return ex.Message;
                 }
-                return string.Empty;
+
+                return null;
             }
 
             public static string Uninstall(string exePath)
@@ -129,9 +174,11 @@ namespace Keebee.AAT.BusinessRules
                 }
                 catch (Exception ex)
                 {
-                    return ex.Message;
+                    return ex.InnerException?.Message != "The specified service does not exist as an installed service" 
+                        ? ex.Message : null;
                 }
-                return string.Empty;
+
+                return null;
             }
         }
     }

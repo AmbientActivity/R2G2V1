@@ -8,6 +8,11 @@ namespace Keebee.AAT.Shared
         public const string AdministratorHome = "http://localhost/Keebee.AAT.Administrator";
     }
 
+    public static class VideoCaptures
+    {
+        public const string Path = @"C:\VideoCaptures";
+    }
+
     public class MediaSourcePath
     {
         private const string SqlServerFilestream = @"sqlexpress\KeebeeAATFilestream\Media";
@@ -23,11 +28,13 @@ namespace Keebee.AAT.Shared
         public const string Phidget = "PhidgetService";
         public const string RfidReader = "RfidReaderService";
         public const string VideoCapture = "VideoCaptureService";
+        public const string KeepIISAlive = "KeepIISAliveService";
 
         public const string StateMachineExe = "Keebee.AAT.StateMachineService.exe";
         public const string PhidgetExe = "Keebee.AAT.PhidgetService.exe";
         public const string RfidReaderExe = "Keebee.AAT.RfidReaderService.exe";
         public const string VideoCaptureExe = "Keebee.AAT.VideoCaptureService.exe";
+        public const string KeepIISAliveExe = "Keebee.AAT.KeepIISAliveService.exe";
     }
 
     public static class PlaylistName

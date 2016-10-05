@@ -18,7 +18,7 @@ namespace Keebee.AAT.VideoCaptureService
         private readonly Timer _timer;
 
         // output path
-        private const string OutputPath = @"C:\VideoCaptures";
+        private const string OutputPath = VideoCaptures.Path;
 
         // app.config settings
         private string _videoSourceName;

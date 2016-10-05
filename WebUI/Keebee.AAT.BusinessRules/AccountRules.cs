@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Keebee.AAT.BusinessRules
 {
-    public class UserRules
+    public class AccountRules
     {
         private OperationsClient _opsClient;
         public OperationsClient OperationsClient

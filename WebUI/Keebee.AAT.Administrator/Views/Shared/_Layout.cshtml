@@ -35,10 +35,11 @@
                         {
                             <li><a href="#" onclick="location.href = '@Url.Action("Index", "Residents")'">Residents</a></li>
                             <li class="dropdown">
-                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Event Logs<b class="caret"></b></a>
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Data Logs<b class="caret"></b></a>
                                 <ul class="dropdown-menu">
-                                    <li>@Html.ActionLink("View", "Index", "EventLogs")</li>
-                                    <li>@Html.ActionLink("Export", "Export", "EventLogs")</li>
+                                    <li>@Html.ActionLink("Event Logs", "Index", "EventLogs")</li>
+                                    <li>@Html.ActionLink("Export Event Log", "Export", "EventLogs")</li>
+                                    <li>@Html.ActionLink("Video Captures", "Index", "VideoCaptures")</li>
                                 </ul>
                             </li>
                         }

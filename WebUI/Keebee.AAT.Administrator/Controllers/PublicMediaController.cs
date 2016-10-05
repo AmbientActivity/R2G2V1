@@ -23,8 +23,8 @@ namespace Keebee.AAT.Administrator.Controllers
 
         public PublicMediaController()
         {
-            _opsClient = new OperationsClient();
             _systemEventLogger = new SystemEventLogger(SystemEventLogType.AdminInterface);
+            _opsClient = new OperationsClient { SystemEventLogger = _systemEventLogger };
         }
 
         // GET: PublicMediaFile

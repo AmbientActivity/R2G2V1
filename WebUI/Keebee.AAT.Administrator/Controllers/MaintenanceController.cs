@@ -64,19 +64,22 @@ namespace Keebee.AAT.Administrator.Controllers
             var phidgetPath = ConfigurationManager.AppSettings["PhidgetServiceLocation"];
             var rfidPath = ConfigurationManager.AppSettings["RfidReaderServiceLocation"];
             var videoCapturePath = ConfigurationManager.AppSettings["VideoCaptureServiceLocation"];
+            var keepIISAlivePath = ConfigurationManager.AppSettings["KeepIISAliveServiceLocation"];
 
+            // make them think the display is inactive (even if it isn't)
             _messageQueueDisplaySms.Send(CreateDisplayMessageBody(false));
             _messageQueueDisplayPhidget.Send(CreateDisplayMessageBody(false));
             _messageQueueDisplayVideoCapture.Send(CreateDisplayMessageBody(false));
 
             // uninstall / reinstall the services
             var rules = new MaintenanceRules { EventLogger = _systemEventLogger };
-            var msg = rules.ReinstallServices(smsPath, phidgetPath, rfidPath, videoCapturePath);
+            var msg = rules.ReinstallServices(smsPath, phidgetPath, rfidPath, videoCapturePath, keepIISAlivePath);
 
-            if (msg.Length != 0) return msg;
+            if (msg == null) return null;
 
             if (DisplayIsActive())
             {
+                // alert them that the display is active (if it is)
                 _messageQueueDisplaySms.Send(CreateDisplayMessageBody(true));
                 _messageQueueDisplayPhidget.Send(CreateDisplayMessageBody(true));
                 _messageQueueDisplayVideoCapture.Send(CreateDisplayMessageBody(true));
@@ -94,6 +97,27 @@ namespace Keebee.AAT.Administrator.Controllers
         }
 
         [Authorize]
+        public string UninstallServices()
+        {
+            var smsPath = ConfigurationManager.AppSettings["StateMachineServiceLocation"];
+            var phidgetPath = ConfigurationManager.AppSettings["PhidgetServiceLocation"];
+            var rfidPath = ConfigurationManager.AppSettings["RfidReaderServiceLocation"];
+            var videoCapturePath = ConfigurationManager.AppSettings["VideoCaptureServiceLocation"];
+            var keepIISAlivePath = ConfigurationManager.AppSettings["KeepIISAliveServiceLocation"];
+
+            // make them think the display is inactive (even if it isn't)
+            _messageQueueDisplaySms.Send(CreateDisplayMessageBody(false));
+            _messageQueueDisplayPhidget.Send(CreateDisplayMessageBody(false));
+            _messageQueueDisplayVideoCapture.Send(CreateDisplayMessageBody(false));
+
+            // uninstall the services
+            var rules = new MaintenanceRules { EventLogger = _systemEventLogger };
+            var msg = rules.UninstallServices(smsPath, phidgetPath, rfidPath, videoCapturePath, keepIISAlivePath);
+
+            return msg;
+        }
+
+        [Authorize]
         public string RestartServices()
         {
             _messageQueueDisplaySms.Send(CreateDisplayMessageBody(false));
@@ -103,7 +127,7 @@ namespace Keebee.AAT.Administrator.Controllers
             var rules = new MaintenanceRules { EventLogger = _systemEventLogger };
             var msg = rules.RestartServices();
 
-            if (msg.Length != 0) return msg;
+            if (msg == null) return null;
 
             if (DisplayIsActive())
             {

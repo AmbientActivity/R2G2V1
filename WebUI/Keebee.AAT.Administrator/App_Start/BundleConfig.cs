@@ -44,12 +44,12 @@ namespace Keebee.AAT.Administrator
             customScriptBundle.Include(
                 "~/Scripts/Site/Namespaces.js",
                 "~/Scripts/Site/Site.js",
-                "~/Scripts/Shared/_LogOnPartial.js",
-                "~/Scripts/Home/Index.js",
+                "~/Scripts/Account/Utilities.js",
                 "~/Scripts/Residents/Index.js",
                 "~/Scripts/Residents/Media.js",
                 "~/Scripts/EventLogs/Index.js",
                 "~/Scripts/EventLogs/Export.js",
+                "~/Scripts/VideoCaptures/Index.js",
                 "~/Scripts/PhidgetConfig/Index.js",
                 "~/Scripts/PublicMedia/Index.js",
                 "~/Scripts/Maintenance/Index.js");

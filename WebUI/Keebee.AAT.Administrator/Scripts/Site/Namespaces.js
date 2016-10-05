@@ -7,11 +7,11 @@
 
 // define global namespaces
 ; (function () {
-    window.shared = {};
-    window.home = {};
+    window.account = {};
     window.residents = {};
     window.profiles = {};
     window.eventlogs = {};
+    window.videocaptures = {};
     window.mediafiles = {};
     window.phidgetconfig = {};
     window.publicmedia = {};

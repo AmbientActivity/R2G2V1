@@ -1,0 +1,47 @@
+﻿
+
+@{
+    ViewBag.Title = "Video Capture Manager";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h3>Video Capture Manager</h3>
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        videocaptures.index.init();
+    });
+</script>
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <ul class="nav nav-pills">
+            <li>
+                <input id="txtSearchFilename" type="text" class="form-control" placeholder="Name" data-bind="value: filenameSearch, valueUpdate: 'keyup'" />
+            </li>
+            <li class="pull-right">
+                <label>Total:</label> <span data-bind="text: totalVideoCaptures()"></span>
+            </li>
+        </ul>
+    </div>
+    <div class="panel-body">
+        <table class="table table-striped table-bordered table-hover" id="tblVideoCapture">
+            <thead>
+                <tr>
+                    <!-- ko foreach: columns -->
+                    <th data-bind="click: $parent.sort, attr: { id: 'videocapture-col-' + sortKey } "><a href="#" data-bind="text: title"></a></th>
+                    <!-- /ko -->
+                </tr>
+            </thead>
+
+            <tbody data-bind="foreach: videoCapturesTable">
+                <tr data-bind="click: $parent.highlightRow, attr: {id: 'row_' +  filename}">
+                    <td><a href="#" data-bind="text: filename, click: download"></a></td>
+                    <td data-bind="text: path"></td>
+                    <td data-bind="text: filesize"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+

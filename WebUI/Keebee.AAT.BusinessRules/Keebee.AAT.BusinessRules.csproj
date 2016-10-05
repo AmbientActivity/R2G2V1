@@ -53,8 +53,9 @@
     <Compile Include="PublicMediaRules.cs" />
     <Compile Include="ResidentRules.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="UserRules.cs" />
+    <Compile Include="AccountRules.cs" />
     <Compile Include="MaintenanceRules.cs" />
+    <Compile Include="VideoCaptureRules.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\RESTClient\Keebee.AAT.RESTClient\Keebee.AAT.RESTClient.csproj">

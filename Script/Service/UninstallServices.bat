@@ -20,6 +20,12 @@ installutil /u C:\Users\%USERNAME%\Source\Repos\R2G2V1\Service\Keebee.AAT.VideoC
 echo ---------------------------------------------------
 echo Done.
 
+echo Uninstalling Keep IIS Alive Service...
+echo ---------------------------------------------------
+installutil /u C:\Users\%USERNAME%\Source\Repos\R2G2V1\Service\Keebee.AAT.KeepIISAliveService\bin\Debug\Keebee.AAT.KeepIISAliveService.exe
+echo ---------------------------------------------------
+echo Done.
+
 echo Uninstalling State Machine Service...
 echo ---------------------------------------------------
 installutil /u C:\Users\%USERNAME%\Source\Repos\R2G2V1\Service\Keebee.AAT.StateMachineService\bin\Debug\Keebee.AAT.StateMachineService.exe

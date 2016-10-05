@@ -241,11 +241,6 @@ function DisableScreen() {
 
                 // ------------------
 
-                self.doPostBack = function () {
-                    $("#mediaPathTypeId").val(self.selectedMediaPathType());
-                    document.forms[0].submit();
-                }
-
                 self.showDeleteSelectedDialog = function (row) {
                     self.showSelectedFileDeleteDialog(row);
                 };
@@ -303,18 +298,6 @@ function DisableScreen() {
                             }
                         ]
                     });
-                };
-
-                self.getFile = function (id) {
-                    var file = null;
-
-                    ko.utils.arrayForEach(self.files(), function (item) {
-                        if (item.id === id) {
-                            file = item;
-                        }
-                    });
-
-                    return file;
                 };
 
                 self.selectAllRows = function () {

@@ -118,8 +118,8 @@ function DisableScreen() {
                 self.files = ko.observableArray([]);
                 self.mediaPathTypes = ko.observableArray([]);
                 self.responseTypes = ko.observableArray([]);
-                self.selectedMediaPathType = ko.observable(config.selectedMediaPathTypeId); //ko.observable($("#mediaPathTypeId").val());
-                self.selectedResponseType = ko.observable(config.selectedResponseTypeId); //ko.observable($("#responseTypeId").val());
+                self.selectedMediaPathType = ko.observable(config.selectedMediaPathTypeId);
+                self.selectedResponseType = ko.observable(config.selectedResponseTypeId);
                 self.filenameSearch = ko.observable("");
                 self.totalFiles = ko.observable(0);
                 self.selectAllIsSelected = ko.observable(false);
@@ -162,9 +162,9 @@ function DisableScreen() {
 
                 self.columns = ko.computed(function () {
                     var arr = [];
-                    arr.push({ title: "Name", sortable: true, sortKey: "filename", numeric: false });
-                    arr.push({ title: "Type", sortable: true, sortKey: "filetype", numeric: false });
-                    arr.push({ title: "Size", sortable: true, sortKey: "filesize", numeric: true });
+                    arr.push({ title: "Name", sortable: true, sortKey: "filename", numeric: false, cssClass: "" });
+                    arr.push({ title: "Type", sortable: true, sortKey: "filetype", numeric: false, cssClass: "col-filetype" });
+                    arr.push({ title: "Size", sortable: true, sortKey: "filesize", numeric: true, cssClass: "col-filesize" });
                     return arr;
                 });
 

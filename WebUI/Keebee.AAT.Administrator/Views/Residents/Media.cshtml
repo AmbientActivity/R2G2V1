@@ -65,10 +65,10 @@
 
                 <!-- ko foreach: columns -->
                 <!-- ko if: !sortable -->
-                <th class="col-file" data-bind="text: title"></th>
+                <th data-bind="text: title"></th>
                 <!-- /ko -->
                 <!-- ko if: sortable -->
-                <th data-bind="click: $parent.sort, attr: { id: 'file-col-' + sortKey } "><a href="#" data-bind="text: title"></a></th>
+                <th data-bind="click: $parent.sort, attr: { id: 'file-col-' + sortKey }, css: cssClass"><a href="#" data-bind="text: title"></a></th>
                 <!-- /ko -->
                 <!-- /ko -->
             </tr>

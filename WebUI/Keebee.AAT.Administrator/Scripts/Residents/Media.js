@@ -151,9 +151,9 @@ function DisableScreen() {
 
                 self.columns = ko.computed(function () {
                     var arr = [];
-                    arr.push({ title: "Name", sortable: true, sortKey: "filename", numeric: false });
-                    arr.push({ title: "Type", sortable: true, sortKey: "filetype", numeric: false });
-                    arr.push({ title: "Size", sortable: true, sortKey: "filesize", numeric: true });
+                    arr.push({ title: "Name", sortable: true, sortKey: "filename", numeric: false, cssClass: "" });
+                    arr.push({ title: "Type", sortable: true, sortKey: "filetype", numeric: false, cssClass: "col-filetype" });
+                    arr.push({ title: "Size", sortable: true, sortKey: "filesize", numeric: true, cssClass: "col-filesize" });
                     return arr;
                 });
 

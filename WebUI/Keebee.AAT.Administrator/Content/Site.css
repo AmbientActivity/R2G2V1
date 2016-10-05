@@ -134,7 +134,7 @@ a:hover, a:visited, a:link, a:active {
     margin: 0 0 5px 3px;
 }
 
-/* confgurations */
+/* phidget confguration */
 .config-container {
     width: 780px;
     margin-bottom: 10px;
@@ -155,14 +155,16 @@ a:hover, a:visited, a:link, a:active {
     color: #419641;
 }
 
-/* tables */
+/* tables/panels */
 .record-total {
     margin-top: 8px;
 }
-.col-profile {
-    width: 30px;
+.col-filetype {
+    width: 50px;
 }
-
+.col-filesize {
+    width: 85px;
+}
 /* bootstrap glyphicons*/
 .col-glyphicon {
     width: 20px;

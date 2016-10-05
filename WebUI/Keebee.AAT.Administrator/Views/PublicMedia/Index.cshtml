@@ -16,6 +16,9 @@
 </script>
 
 @{Html.BeginForm();}
+<div id="uploader-html-container" hidden="hidden">
+    @Html.Raw(@Model.UploaderHtml)
+</div>
 <div class="panel panel-default">
     <div class="panel-heading">
         <div class="add-button-container">
@@ -78,8 +81,5 @@
             </tbody>
         </table>
     </div>
-</div>
-<div id="uploader-html-container" hidden="hidden">
-    @Html.Raw(@Model.UploaderHtml)
 </div>
 @{Html.EndForm();}

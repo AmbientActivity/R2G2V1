@@ -8,7 +8,6 @@
 <h3>Manage media for <i><b>@Model.FullName</b></i></h3>
 
 <div class="pull-right back-to-residents-container">
-    <span id="lblGoBackDisabled" class="link-back-to-residents-disabled" hidden>Back To Residents</span>
     <a id="lnkGoBack" class="link-back-to-residents" href="#" onclick="location.href =
     '@Url.Action("Index", "Residents",
          new
@@ -28,17 +27,20 @@
             residents.media.init({ residentid: '@Model.ResidentId' });
         });
 </script>
+
 @{Html.BeginForm();}
+<div id="uploader-html-container" hidden="hidden">
+    @Html.Raw(@Model.UploaderHtml)
+</div>
 <div class="panel panel-default">
     <div class="panel-heading">
         <div class="add-button-container">
-            <div class="upload-action-container" hidden>
+            <div class="upload-action-container">
                 <button id="uploadbutton" type="button" class="btn btn-md btn-success" onclick="return" false;">@Model.AddButtonText</button>
-                <button id="delete" disabled type="button" class="btn btn-md btn-danger" data-bind="click: showDeleteSelectedDialog">Delete Selected</button>
+                <button id="delete" type="button" class="btn btn-md btn-danger" disabled data-bind="click: showDeleteSelectedDialog">Delete Selected</button>
             </div>
             <input id="mediaPathTypeId" name="mediaPathTypeId" type="hidden" value="@Model.SelectedMediaPathType"/>
         </div>
-
         <ul class="nav nav-pills">
             <li>
                 <input id="txtSearchFilename" type="text" class="form-control" placeholder="Name" data-bind="value: filenameSearch, valueUpdate: 'keyup'"/>
@@ -85,8 +87,5 @@
             </tbody>
         </table>
     </div>
-</div>
-<div id="uploader-html-container" hidden="hidden">
-    @Html.Raw(@Model.UploaderHtml)
 </div>
 @{Html.EndForm();}

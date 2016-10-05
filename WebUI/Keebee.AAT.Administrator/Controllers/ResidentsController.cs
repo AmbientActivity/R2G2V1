@@ -13,7 +13,6 @@ using System.Linq;
 using System.Web.Mvc;
 using System;
 using System.IO;
-using System.Net;
 
 namespace Keebee.AAT.Administrator.Controllers
 {
@@ -419,8 +418,7 @@ namespace Keebee.AAT.Administrator.Controllers
                 StreamId = streamId,
                 ResidentId = residentId,
                 ResponseTypeId = responseTypeId,
-                MediaPathTypeId = mediaPathTypeId,
-                IsPublic = false
+                MediaPathTypeId = mediaPathTypeId
             };
 
             _opsClient.PostResidentMediaFile(mf);
@@ -455,7 +453,6 @@ namespace Keebee.AAT.Administrator.Controllers
                         FileSize = file.FileSize,
                         Path = $@"{pathRoot}\{path.MediaPathType.Description}",
                         MediaPathTypeId = path.MediaPathType.Id,
-                        IsPublic = file.IsPublic
                     };
 
                     list.Add(item);

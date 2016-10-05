@@ -7,8 +7,8 @@
 function CuteWebUI_AjaxUploader_OnPostback() {
     BootstrapDialog.show({
         type: BootstrapDialog.TYPE_INFO,
-        title: "Resident Media",
-        message: "Saving...",
+        title: "Saving Media",
+        message: "Ome moment...",
         closable: false
     });
     document.forms[0].submit();
@@ -45,21 +45,26 @@ function CuteWebUI_AjaxUploader_OnSelect() {
 }
 
 function EnableScreen() {
+    $("#uploader-html-container").attr("hidden", "hidden");
     $("#lnkGoBack").removeAttr("hidden");
     $("#lblGoBackDisabled").attr("hidden", "hidden");
     $("#txtSearchFilename").removeAttr("disabled");
     $("#uploadbutton").removeAttr("disabled");
     $("select").removeAttr("disabled");
     $("#main-menu").removeAttr("hidden");
+    $("#menu-login").removeAttr("hidden");
 }
 
 function DisableScreen() {
+    $("#uploader-html-container").removeAttr("hidden");
     $("#lnkGoBack").attr("hidden", "hidden");
     $("#lblGoBackDisabled").removeAttr("hidden");
     $("#txtSearchFilename").attr("disabled", "disabled");
     $("#uploadbutton").attr("disabled", "disabled");
+    $("#delete").attr("hidden", "hidden");
     $("select").attr("disabled", "disabled");
     $("#main-menu").attr("hidden", "hidden");
+    $("#menu-login").attr("hidden", "hidden");
 }
 
 ; (function ($) {
@@ -88,9 +93,6 @@ function DisableScreen() {
 
             ko.applyBindings(new FileViewModel());
 
-            // hidden in html because it caused a green square to appear below the buttons during page load
-            $(".upload-action-container").removeAttr("hidden");
-
             function loadData() {
                 var mediaPathTypeId = $("#mediaPathTypeId").val();
 
@@ -107,27 +109,6 @@ function DisableScreen() {
                 });
             }
 
-            function MediaPathType(id, description) {
-                var self = this;
-
-                self.id = id;
-                self.description = description;
-            }
-
-            function File(id, streamid, filename, filetype, filesize, path, mediapathtypeid, ispublic) {
-                var self = this;
-
-                self.id = id;
-                self.streamid = streamid;
-                self.filename = filename;
-                self.filetype = filetype;
-                self.filesize = filesize;
-                self.path = path;
-                self.mediapathtypeid = mediapathtypeid;
-                self.ispublic = ispublic;
-                self.isselected = false;
-            }
-
             function FileViewModel() {
                 var tblFile = $("#tblFile");
 
@@ -135,7 +116,6 @@ function DisableScreen() {
 
                 self.files = ko.observableArray([]);
                 self.mediaPathTypes = ko.observableArray([]);
-                self.selectedFile = ko.observable();
                 self.selectedMediaPathType = ko.observable($("#mediaPathTypeId").val());
                 self.filenameSearch = ko.observable("");
                 self.totalFiles = ko.observable(0);
@@ -148,14 +128,23 @@ function DisableScreen() {
                 function createFileArray(list) {
                     self.files.removeAll();
                     $(list).each(function (index, value) {
-                        pushFile(value);
+                        self.files.push({
+                            id: value.Id,
+                            streamid: value.StreamId,
+                            filename: value.Filename,
+                            filetype: value.FileType,
+                            filesize: value.FileSize,
+                            path: value.Path,
+                            mediapathtypeid: value.MediaPathTypeId,
+                            isselected: false
+                        });
                     });
                 };
 
                 function createMediaPathTypeArray(list) {
                     self.mediaPathTypes.removeAll();
                     $(list).each(function (index, value) {
-                        pushMediaPathType(value);
+                        self.mediaPathTypes.push({ id: value.Id, description: value.Description });
                     });
                 };
 
@@ -166,16 +155,6 @@ function DisableScreen() {
                     arr.push({ title: "Size", sortable: true, sortKey: "filesize", numeric: true });
                     return arr;
                 });
-
-                function pushMediaPathType(value) {
-                    self.mediaPathTypes.push(new MediaPathType(value.Id, value.Description));
-                }
-
-                function pushFile(value) {
-                    self.files.push(new File(value.Id, value.StreamId, value.Filename, value.FileType, value.FileSize, value.Path, value.MediaPathTypeId, value.IsPublic));
-                }
-
-                self.selectedFile(self.files()[0]);
 
                 self.sort = function (header) {
                     var afterSave = typeof header.afterSave != "undefined" ? header.afterSave : false;
@@ -340,7 +319,7 @@ function DisableScreen() {
                 self.selectAllRows = function () {
                     self.selectedIds([]);
 
-                    $.each(self.files(), function (item, value) {
+                    $.each(self.filteredFiles(), function (item, value) {
 
                         if (self.selectAllIsSelected()) 
                             self.selectedIds().push(value.id);
@@ -400,8 +379,8 @@ function DisableScreen() {
 
                     BootstrapDialog.show({
                         type: BootstrapDialog.TYPE_INFO,
-                        title: "Resident Media",
-                        message: "Deleting files...",
+                        title: "Delete Files",
+                        message: "One moment...",
                         closable: false,
                         onshown: function(dialog) {
 

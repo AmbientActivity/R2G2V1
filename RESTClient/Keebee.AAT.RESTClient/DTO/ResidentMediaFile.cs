@@ -35,6 +35,5 @@ namespace Keebee.AAT.RESTClient
         public int ResidentId { get; set; }
         public int MediaPathTypeId { get; set; }
         public int ResponseTypeId { get; set; }
-        public bool IsPublic { get; set; }
     }
 }

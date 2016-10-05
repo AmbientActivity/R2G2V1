@@ -8,8 +8,8 @@
 function CuteWebUI_AjaxUploader_OnPostback() {
     BootstrapDialog.show({
         type: BootstrapDialog.TYPE_INFO,
-        title: "Public Library",
-        message: "Saving...",
+        title: "Saving Media",
+        message: "One moment...",
         closable: false
     });
     document.forms[0].submit();
@@ -46,21 +46,25 @@ function CuteWebUI_AjaxUploader_OnSelect() {
 }
 
 function EnableScreen() {
+    $("#uploader-html-container").attr("hidden", "hidden");
     $("#lnkGoBack").removeAttr("hidden");
     $("#lblGoBackDisabled").attr("hidden", "hidden");
     $("#txtSearchFilename").removeAttr("disabled");
     $("#uploadbutton").removeAttr("disabled");
     $("select").removeAttr("disabled");
     $("#main-menu").removeAttr("hidden");
+    $("#menu-login").removeAttr("hidden");
 }
 
 function DisableScreen() {
+    $("#uploader-html-container").removeAttr("hidden");
     $("#lnkGoBack").attr("hidden", "hidden");
     $("#lblGoBackDisabled").removeAttr("hidden");
     $("#txtSearchFilename").attr("disabled", "disabled");
     $("#uploadbutton").attr("disabled", "disabled");
     $("select").attr("disabled", "disabled");
     $("#main-menu").attr("hidden", "hidden");
+    $("#menu-login").attr("hidden", "hidden");
 }
 
 ; (function ($) {
@@ -99,34 +103,6 @@ function DisableScreen() {
                 });
             }
 
-            function MediaPathType(id, description) {
-                var self = this;
-
-                self.id = id;
-                self.description = description;
-            }
-
-            function ResponseType(id, description) {
-                var self = this;
-
-                self.id = id;
-                self.description = description;
-            }
-
-            function File(id, streamid, filename, filetype, filesize, path, mediapathtypeid, responsetypeid) {
-                var self = this;
-
-                self.id = id;
-                self.streamid = streamid;
-                self.filename = filename;
-                self.filetype = filetype;
-                self.filesize = filesize;
-                self.path = path;
-                self.mediapathtypeid = mediapathtypeid;
-                self.responsetypeid = responsetypeid;
-                self.isselected = false;
-            }
-
             function FileViewModel() {
                 var tblFile = $("#tblFile");
 
@@ -135,7 +111,6 @@ function DisableScreen() {
                 self.files = ko.observableArray([]);
                 self.mediaPathTypes = ko.observableArray([]);
                 self.responseTypes = ko.observableArray([]);
-                self.selectedFile = ko.observable();
                 self.selectedMediaPathType = ko.observable($("#mediaPathTypeId").val());
                 self.selectedResponseType = ko.observable($("#responseTypeId").val());
                 self.filenameSearch = ko.observable("");
@@ -148,25 +123,33 @@ function DisableScreen() {
                 createResponseTypeArray(lists.ResponseTypeList);
 
                 function createFileArray(list) {
-                    _isLoading = true;
                     self.files.removeAll();
                     $(list).each(function (index, value) {
-                        pushFile(value);
+                        self.files.push({ 
+                            id: value.Id,
+                            streamid: value.StreamId,
+                            filename: value.Filename,
+                            filetype: value.FileType,
+                            filesize: value.FileSize,
+                            path: value.Path,
+                            mediapathtypeid: value.MediaPathTypeId,
+                            responsetypeid: value.ResponseTypeId,
+                            isselected: false
+                        });
                     });
                 };
 
                 function createMediaPathTypeArray(list) {
                     self.mediaPathTypes.removeAll();
                     $(list).each(function (index, value) {
-                        pushMediaPathType(value);
+                        self.mediaPathTypes.push({ id: value.Id, description: value.Description });
                     });
                 };
 
                 function createResponseTypeArray(list) {
-                    _isLoading = true;
                     self.responseTypes.removeAll();
                     $(list).each(function (index, value) {
-                        pushResponseType(value);
+                        self.responseTypes.push({ id: value.Id, description: value.Description });
                     });
                 };
 
@@ -177,20 +160,6 @@ function DisableScreen() {
                     arr.push({ title: "Size", sortable: true, sortKey: "filesize", numeric: true });
                     return arr;
                 });
-
-                function pushMediaPathType(value) {
-                    self.mediaPathTypes.push(new MediaPathType(value.Id, value.Description));
-                }
-
-                function pushResponseType(value) {
-                    self.responseTypes.push(new ResponseType(value.Id, value.Description));
-                }
-
-                function pushFile(value) {
-                    self.files.push(new File(value.Id, value.StreamId, value.Filename, value.FileType, value.FileSize, value.Path, value.MediaPathTypeId, value.ResponseTypeId));
-                }
-
-                self.selectedFile(self.files()[0]);
 
                 self.sort = function (header) {
                     var afterSave = typeof header.afterSave != "undefined" ? header.afterSave : false;
@@ -431,8 +400,8 @@ function DisableScreen() {
 
                     BootstrapDialog.show({
                         type: BootstrapDialog.TYPE_INFO,
-                        title: "Public Library",
-                        message: "Deleting files from public library...",
+                        title: "Delete Files",
+                        message: "One moment...",
                         closable: false,
                         onshown: function(dialog) {
 

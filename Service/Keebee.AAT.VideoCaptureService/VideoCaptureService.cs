@@ -6,6 +6,7 @@ using System.Configuration;
 using System.Web.Script.Serialization;
 using System.ServiceProcess;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Timers;
 using Microsoft.Expression.Encoder.Devices;
@@ -76,9 +77,13 @@ namespace Keebee.AAT.VideoCaptureService
         {
             try
             {
+                var rootFolder = $@"{VideoCaptures.Path}\{DateTime.Now.ToShortDateString()}";
+                if (!Directory.Exists(rootFolder))
+                    Directory.CreateDirectory(rootFolder);
+
                 var fileOut = new FileArchivePublishFormat
                 {
-                    OutputFileName = $@"{OutputPath}\Capture_{DateTime.Now:yyyyMMdd_hhmmss}.wmv"
+                    OutputFileName = $@"{rootFolder}\Capture_{DateTime.Now:yyyyMMdd_hhmmss}.wmv"
                 };
 
                 _deviceSource = _job.AddDeviceSource(_videoDevice, _audioDevice);

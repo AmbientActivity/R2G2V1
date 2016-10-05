@@ -194,7 +194,7 @@ namespace Keebee.AAT.StateMachineService
                 {
                     Id = PublicMediaSource.Id,
                     GameDifficultyLevel = 1,
-                    AllowVideoCapturing = false
+                    AllowVideoCapturing = true
                 };
 
                 LoadConfig();

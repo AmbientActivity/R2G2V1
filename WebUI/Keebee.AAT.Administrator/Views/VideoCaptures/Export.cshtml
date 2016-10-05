@@ -1,0 +1,39 @@
+﻿
+@{
+    ViewBag.Title = "Video Capture Export";
+}
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        eventlogs.export.init();
+    });
+</script>
+
+@using (Html.BeginForm())
+{
+    <div class="container-fluid">
+        <div>
+            <h3>Video Capture Exporter</h3>
+            <span>Zips all video captures for the day selected and exports them.</span>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <a id="export" class="btn btn-primary btn-lg">Export</a>
+            </div>
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-sm-3">
+                        <div class="label label-default">For Date</div>
+                        <div class="input-group date" data-provide="datepicker">
+                            <input id="export-date" type="text" class="form-control">
+                            <div class="input-group-addon">
+                                <span class="glyphicon glyphicon-th"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+

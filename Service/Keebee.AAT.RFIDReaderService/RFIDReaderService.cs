@@ -44,7 +44,7 @@ namespace Keebee.AAT.RfidReaderService
         {
             InitializeComponent();
             _systemEventLogger = new SystemEventLogger(SystemEventLogType.RfidReaderService);
-            _opsClient = new OperationsClient { SystemEventLogger = _systemEventLogger };
+            _opsClient = new OperationsClient();
 
             // message queue sender
             _messageQueueRfid = new CustomMessageQueue(new CustomMessageQueueArgs
@@ -251,7 +251,6 @@ namespace Keebee.AAT.RfidReaderService
 
         protected override void OnStop()
         {
-            _readTagThread.Abort();
             _systemEventLogger.WriteEntry("In OnStop");
         }
     }

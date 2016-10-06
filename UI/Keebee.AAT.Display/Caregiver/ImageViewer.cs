@@ -114,7 +114,5 @@ namespace Keebee.AAT.Display.Caregiver
         }
 
         #endregion
-
-
     }
 }

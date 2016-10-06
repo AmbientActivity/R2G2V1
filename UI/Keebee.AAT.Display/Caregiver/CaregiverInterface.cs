@@ -544,7 +544,7 @@ namespace Keebee.AAT.Display.Caregiver
 
         #region file queries
 
-        // get filenames with full path for the thumbnails
+        // get filenames with full path for (for usage)
         private string[] GetFilePaths(int mediaPathTypeId, int? responseTypeId = null, Guid? streamId = null)
         {
             string[] files = null;
@@ -561,19 +561,6 @@ namespace Keebee.AAT.Display.Caregiver
                     .ToArray();
 
                 if (!paths.Any()) return new string[0];
-                // {
-                //    if (responseTypeId == ResponseTypeId.MatchingGame)
-                //    {
-                //        paths = _publicMediaFiles
-                //            .Where(x => x.ResponseType.Id == responseTypeId)
-                //            .SelectMany(x => x.Paths)
-                //            .Where(x => x.MediaPathType.Id == mediaPathTypeId)
-                //            .ToArray();
-
-                //        pathRoot = $@"{_mediaPath.ProfileRoot}\{PublicMediaSource.Id}";
-                //    }
-                //    else return new string[0];
-                //}
 
                 // get the path type
                 var mediaPath = paths.Single(x => x.MediaPathType.Id == mediaPathTypeId);
@@ -583,16 +570,27 @@ namespace Keebee.AAT.Display.Caregiver
 
                 if (streamId != null)
                 {
+                    // organize the files so that the selected appears first in the list
+                    // but keep the files sorted by filename
                     var selectedFile = mediaPath.Files
                         .Single(f => f.StreamId == streamId).Filename;
 
-                    files = new[] {$@"{pathRoot}\{mediaPathType}\{selectedFile}"}
+                    var filesAfterSelected = new[] {$@"{pathRoot}\{mediaPathType}\{selectedFile}"}
                                 .Union(mediaPath.Files
-                                .Where(f => f.StreamId != streamId)
                                 .Where(f => f.IsPublic == false || isPublic)
                                 .OrderBy(f => f.Filename)
+                                .SkipWhile(x => x.Filename != selectedFile)
                                 .Select(f => $@"{pathRoot}\{mediaPathType}\{f.Filename}"))
                                 .ToArray();
+
+                    var filesBeforeSelected = mediaPath.Files
+                            .Where(f => f.IsPublic == false || isPublic)
+                            .OrderBy(f => f.Filename)
+                            .Select(f => $@"{pathRoot}\{mediaPathType}\{f.Filename}")
+                            .Except(filesAfterSelected)
+                            .ToArray();
+
+                    files = filesAfterSelected.Concat(filesBeforeSelected).ToArray();
                 }
                 else
                 {
@@ -609,7 +607,7 @@ namespace Keebee.AAT.Display.Caregiver
             return files;
         }
 
-        // get files with no extensions or path
+        // get files with no extensions or path (for display)
         private IEnumerable<MediaFile> GetMediaFiles(int mediaPathTypeId, int? responseTypeId = null)
         {
             IEnumerable<MediaFile> files = null;

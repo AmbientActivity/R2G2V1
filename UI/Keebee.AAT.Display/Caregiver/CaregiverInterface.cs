@@ -571,7 +571,6 @@ namespace Keebee.AAT.Display.Caregiver
                 if (streamId != null)
                 {
                     // organize the files so that the selected appears first in the list
-                    // but keep the files sorted by filename
                     var selectedFile = mediaPath.Files
                         .Single(f => f.StreamId == streamId).Filename;
 
@@ -579,7 +578,7 @@ namespace Keebee.AAT.Display.Caregiver
                                 .Union(mediaPath.Files
                                 .Where(f => f.IsPublic == false || isPublic)
                                 .OrderBy(f => f.Filename)
-                                .SkipWhile(x => x.Filename != selectedFile)
+                                .SkipWhile(f => f.Filename != selectedFile)
                                 .Select(f => $@"{pathRoot}\{mediaPathType}\{f.Filename}"))
                                 .ToArray();
 
@@ -596,6 +595,7 @@ namespace Keebee.AAT.Display.Caregiver
                 {
                     files = mediaPath.Files
                         .Where(f => f.IsPublic == false || isPublic)
+                        .OrderBy(f => f.Filename)
                         .Select(f => $@"{pathRoot}\{mediaPathType}\{f.Filename}").ToArray();
                 }
             }

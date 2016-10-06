@@ -48,9 +48,10 @@ namespace Keebee.AAT.RfidReaderService
 
             // message queue sender
             _messageQueueRfid = new CustomMessageQueue(new CustomMessageQueueArgs
-                                                       {
-                                                           QueueName = MessageQueueType.Rfid
-                                                       }) { SystemEventLogger = _systemEventLogger };
+            {
+                QueueName = MessageQueueType.Rfid
+            })
+            { SystemEventLogger = _systemEventLogger };
 #if DEBUG
             _messageQueueRfidMonitor = new CustomMessageQueue(new CustomMessageQueueArgs
             {
@@ -85,27 +86,37 @@ namespace Keebee.AAT.RfidReaderService
 
         private void ReadTag()
         {
-            while (true)
+            try
             {
-                var residentId = GetResidentId();
-                if (residentId < 0) continue;
+                while (true)
+                {
+                    var residentId = GetResidentId();
+                    if (residentId < 0) continue;
 
-                var resident = residentId == 0 
-                    ? new Resident { Id = PublicMediaSource.Id, GameDifficultyLevel = 1, AllowVideoCapturing = false } 
-                    : _opsClient.GetResident(residentId);
+                    var resident = residentId == 0
+                        ? new Resident { Id = PublicMediaSource.Id, GameDifficultyLevel = 1, AllowVideoCapturing = false }
+                        : _opsClient.GetResident(residentId);
 
-                if (resident == null) continue;
+                    if (resident == null) continue;
 #if DEBUG
-                if (_readerMonitorIsActive)
-                    _messageQueueRfidMonitor.Send(CreateMessageBody(true, 1, residentId));
+                    if (_readerMonitorIsActive)
+                        _messageQueueRfidMonitor.Send(CreateMessageBody(true, 1, residentId));
 #endif
-                _messageQueueRfid.Send(CreateMessageBodyFromResident(resident));
+                    _messageQueueRfid.Send(CreateMessageBodyFromResident(resident));
+                }
+            }
+            catch (ThreadAbortException)
+            {
+                // do nothing
+            }
+            catch (Exception ex)
+            {
+                _systemEventLogger.WriteEntry($"ReadTag: {ex.Message}", EventLogEntryType.Error);
             }
         }
 
         private int GetResidentId()
         {
-            
             var idArray = new int[MaxReads];
 
             for (var i = 0; i < MaxReads; i++)
@@ -128,7 +139,7 @@ namespace Keebee.AAT.RfidReaderService
             }
 
             if (!idArray.Any(x => x > 0)) return 0;
- 
+
             var nonZeroArray = idArray.Where(x => x > 0).ToArray();
 
             var nextId = nonZeroArray
@@ -162,11 +173,11 @@ namespace Keebee.AAT.RfidReaderService
                 var tag = new Tag { Type = TagType.AUTO_DETECT };
 
                 var request = new STPv3Request
-                                       {
-                                           Command = STPv3Commands.SELECT_TAG,
-                                           Tag = tag,
-                                           Inventory = true
-                                       };
+                {
+                    Command = STPv3Commands.SELECT_TAG,
+                    Tag = tag,
+                    Inventory = true
+                };
                 request.Issue(_device);
 
                 STPv3Response response;
@@ -181,17 +192,19 @@ namespace Keebee.AAT.RfidReaderService
                         int parsedInt;
                         var isValid = int.TryParse(hex, out parsedInt);
 
-                        residentId = isValid 
-                            ? parsedInt 
+                        residentId = isValid
+                            ? parsedInt
                             : 0;
                     }
                 }
             }
-
+            catch (ThreadAbortException)
+            {
+                // do nothing
+            }
             catch (Exception ex)
             {
-                if (ex.Message != "Thread was being aborted.")
-                    _systemEventLogger.WriteEntry($"Read: {ex.Message}", EventLogEntryType.Error);
+                _systemEventLogger.WriteEntry($"Read: {ex.Message}", EventLogEntryType.Error);
             }
 
             return residentId;
@@ -215,7 +228,7 @@ namespace Keebee.AAT.RfidReaderService
 #if DEBUG
         private static string CreateMessageBody(bool isFinal, int readCount, int residentId)
         {
-            var message = new RfidMonitorMessage {IsFinal = isFinal, ReadCount = readCount, ResidentId = residentId};
+            var message = new RfidMonitorMessage { IsFinal = isFinal, ReadCount = readCount, ResidentId = residentId };
 
             var serializer = new JavaScriptSerializer();
             var messageBody = serializer.Serialize(message);

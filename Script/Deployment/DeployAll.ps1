@@ -8,8 +8,8 @@ $keepIISAlivePath = "Services\KeepIISAliveService\"
 $dataPath = "Web\Data\"
 $apiPath = "Web\API\"
 $administratorPath = "Web\Administrator\"
-$displayReleasePath = "UI\Display\Release\"
-$displayDebugPath = "UI\Display\Debug\"
+$displayReleasePath = "UI\Display\"
+$displayDebugPath = "UI\Display\"
 $simulatorPath = "UI\Simulator\"
 $scriptDatabasePath = "Scripts\Database\"
 $scriptEventLogPath = "Scripts\EventLogSource\"
@@ -88,7 +88,7 @@ Write-Host -foregroundcolor green "Done.”
 
 # display
 Write-Host -foregroundcolor green "`nDeploying Display...”
-$path = $destPath + $displayReleasePath + $versionPath
+$path = $destPath + $displayReleasePath + $versionPath + "Release\"
 If(test-path $path)
 {
     Remove-Item $path -recurse -Force
@@ -96,7 +96,7 @@ If(test-path $path)
 New-Item -ItemType Directory -Force -Path $path
 Copy-Item C:\Users\$env:USERNAME\Source\Repos\R2G2V1\UI\Keebee.AAT.Display\bin\Release\* $path -recurse -Force
 
-$path = $destPath + $displayDebugPath + $versionPath
+$path = $destPath + $displayDebugPath + $versionPath + "Debug\"
 If(test-path $path)
 {
     Remove-Item $path -recurse -Force

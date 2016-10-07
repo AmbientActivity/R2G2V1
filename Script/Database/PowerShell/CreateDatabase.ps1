@@ -1,6 +1,6 @@
 ﻿$server = $env:COMPUTERNAME + "\SQLEXPRESS"
 $database = "KeebeeAAT"
-$path = "C:\Users\" + $env:USERNAME + "\Source\Repos\R2G2V1\Script\Database\SQL Server\"
+$path = "C:\Deployments\Scripts\Database\SQL Server\"
 
 Write-Host "Enabling Filestream...” -NoNewline
 $queryFile = $path + "1_EnableFilestream.sql"

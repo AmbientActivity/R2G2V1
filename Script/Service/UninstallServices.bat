@@ -4,31 +4,31 @@ cd C:\Windows\Microsoft.NET\Framework\v4.0.30319
 
 echo Uninstalling RFID Reader Service...
 echo ---------------------------------------------------
-installutil /u C:\Users\%USERNAME%\Source\Repos\R2G2V1\Service\Keebee.AAT.RfidReaderService\bin\Debug\Keebee.AAT.RfidReaderService.exe
+installutil /u C:\Deployments\Services\RfidReaderService\1.0.0.0\Keebee.AAT.RfidReaderService.exe
 echo ---------------------------------------------------
 echo Done.
 
 echo Uninstalling Phidget Service...
 echo ---------------------------------------------------
-installutil /u C:\Users\%USERNAME%\Source\Repos\R2G2V1\Service\Keebee.AAT.PhidgetService\bin\Debug\Keebee.AAT.PhidgetService.exe
+installutil /u C:\Deployments\Services\PhidgetService\1.0.0.0\Keebee.AAT.PhidgetService.exe
 echo ---------------------------------------------------
 echo Done.
 
-echo Uninstalling Video Capture Service...
-echo ---------------------------------------------------
-installutil /u C:\Users\%USERNAME%\Source\Repos\R2G2V1\Service\Keebee.AAT.VideoCaptureService\bin\Debug\Keebee.AAT.VideoCaptureService.exe
-echo ---------------------------------------------------
-echo Done.
+REM echo Uninstalling Video Capture Service...
+REM echo ---------------------------------------------------
+REM installutil /u C:\Deployments\Services\VideoCaptureService\1.0.0.0\Keebee.AAT.VideoCaptureService.exe
+REM echo ---------------------------------------------------
+REM echo Done.
 
 echo Uninstalling Keep IIS Alive Service...
 echo ---------------------------------------------------
-installutil /u C:\Users\%USERNAME%\Source\Repos\R2G2V1\Service\Keebee.AAT.KeepIISAliveService\bin\Debug\Keebee.AAT.KeepIISAliveService.exe
+installutil /u C:\Deployments\Services\KeepIISAliveService\1.0.0.0\Keebee.AAT.KeepIISAliveService.exe
 echo ---------------------------------------------------
 echo Done.
 
 echo Uninstalling State Machine Service...
 echo ---------------------------------------------------
-installutil /u C:\Users\%USERNAME%\Source\Repos\R2G2V1\Service\Keebee.AAT.StateMachineService\bin\Debug\Keebee.AAT.StateMachineService.exe
+installutil /u C:\Deployments\Services\StateMachineService\1.0.0.0\Keebee.AAT.StateMachineService.exe
 echo ---------------------------------------------------
 echo Done.
 

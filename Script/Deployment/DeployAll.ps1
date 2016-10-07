@@ -8,7 +8,9 @@ $keepIISAlivePath = "Services\KeepIISAliveService\"
 $dataPath = "Web\Data\"
 $apiPath = "Web\API\"
 $administratorPath = "Web\Administrator\"
-$displayPath = "UI\Display\"
+$displayReleasePath = "UI\Display\Release\"
+$displayDebugPath = "UI\Display\Debug\"
+$simulatorPath = "UI\Simulator\"
 $scriptDatabasePath = "Scripts\Database\"
 $scriptEventLogPath = "Scripts\EventLogSource\"
 $scriptMessageQueuePath = "Scripts\MessageQueue\"
@@ -86,15 +88,34 @@ Write-Host -foregroundcolor green "Done.”
 
 # display
 Write-Host -foregroundcolor green "`nDeploying Display...”
-$path = $destPath + $displayPath + $versionPath
+$path = $destPath + $displayReleasePath + $versionPath
 If(test-path $path)
 {
     Remove-Item $path -recurse -Force
 }
 New-Item -ItemType Directory -Force -Path $path
 Copy-Item C:\Users\$env:USERNAME\Source\Repos\R2G2V1\UI\Keebee.AAT.Display\bin\Release\* $path -recurse -Force
+
+$path = $destPath + $displayDebugPath + $versionPath
+If(test-path $path)
+{
+    Remove-Item $path -recurse -Force
+}
+New-Item -ItemType Directory -Force -Path $path
+Copy-Item C:\Users\$env:USERNAME\Source\Repos\R2G2V1\UI\Keebee.AAT.Display\bin\Debug\* $path -recurse -Force
+
 Write-Host -foregroundcolor green "Done.”
 
+# simulator
+Write-Host -foregroundcolor green "`nDeploying Simulator...”
+$path = $destPath + $simulatorPath + $versionPath
+If(test-path $path)
+{
+    Remove-Item $path -recurse -Force
+}
+New-Item -ItemType Directory -Force -Path $path
+Copy-Item C:\Users\$env:USERNAME\Source\Repos\R2G2V1\UI\Keebee.AAT.Simulator\bin\Release\* $path -recurse -Force
+Write-Host -foregroundcolor green "Done.”
 
 # data access
 Write-Host -foregroundcolor green "`nDeploying Data Access...”

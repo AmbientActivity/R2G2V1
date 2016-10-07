@@ -13,6 +13,9 @@ $scriptDatabasePath = "Scripts\Database\"
 $scriptEventLogPath = "Scripts\EventLogSource\"
 $scriptMessageQueuePath = "Scripts\MessageQueue\"
 
+$publicLibrary = "PublicLibrary"
+$publicLibrarySource = "\\" + $env:COMPUTERNAME + "\SQLEXPRESS\KeebeeAATFilestream\Media\Profiles\0\*"
+
 # restart IIS
 Write-Host "IIS Restart”
 Write-Host "-----------”
@@ -153,5 +156,16 @@ If(test-path $path)
 New-Item -ItemType Directory -Force -Path $path
 Copy-Item C:\Users\$env:USERNAME\Source\Repos\R2G2V1\Script\MessageQueue\CreateMessageQueues.ps1 $path -recurse -Force
 Write-Host -foregroundcolor green "Done.”
+
+
+# public library media
+Write-Host -foregroundcolor green "`nDeploying Public Library...”
+$path = $destPath + $publicLibrary
+If(test-path $path)
+{
+    Remove-Item $path -recurse -Force
+}
+New-Item -ItemType Directory -Force -Path $path
+Copy-Item $publicLibrarySource $path -recurse -Force
 
 Write-Host -foregroundcolor green "`nR2G2 has successfully been deployed.`n”

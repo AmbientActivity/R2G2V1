@@ -22,7 +22,7 @@ else {
     Write-Host "done.`n”
 
     Write-Host "Seeding public library...” -NoNewline
-    $queryFile = $path + "9_SeedPublicLibrary.sql"
+    $queryFile = $path + "8_SeedPublicLibrary.sql"
     Invoke-SqlQuery -File $queryFile -Server $server -Database $database
     Write-Host "done.`n”
 

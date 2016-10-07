@@ -12,6 +12,7 @@ $displayPath = "UI\Display\"
 $scriptDatabasePath = "Scripts\Database\"
 $scriptEventLogPath = "Scripts\EventLogSource\"
 $scriptMessageQueuePath = "Scripts\MessageQueue\"
+$scriptServicePath = "Scripts\Service\"
 
 $publicLibrary = "PublicLibrary"
 $publicLibrarySource = "\\" + $env:COMPUTERNAME + "\SQLEXPRESS\KeebeeAATFilestream\Media\Profiles\0\*"
@@ -155,6 +156,15 @@ If(test-path $path)
 }
 New-Item -ItemType Directory -Force -Path $path
 Copy-Item C:\Users\$env:USERNAME\Source\Repos\R2G2V1\Script\MessageQueue\CreateMessageQueues.ps1 $path -recurse -Force
+
+$path = $destPath + $scriptServicePath
+If(test-path $path)
+{
+    Remove-Item $path -recurse -Force
+}
+New-Item -ItemType Directory -Force -Path $path
+Copy-Item C:\Users\$env:USERNAME\Source\Repos\R2G2V1\Script\Service\* $path -recurse -Force
+
 Write-Host -foregroundcolor green "Done.”
 
 

@@ -21,8 +21,13 @@ else {
     Invoke-SqlQuery -File $queryFile -Server $server -Database $database
     Write-Host "done.`n”
 
-    Write-Host "Seeding public library...” -NoNewline
-    $queryFile = $path + "9_SeedPublicLibrary.sql"
+    Write-Host "Seeding sample residents...” -NoNewline
+    $queryFile = $path + "8_SeedSampleResidents.sql"
+    Invoke-SqlQuery -File $queryFile -Server $server -Database $database
+    Write-Host "done.`n”
+
+    Write-Host "Seeding media file references...” -NoNewline
+    $queryFile = $path + "9_SeedMediaFiles.sql"
     Invoke-SqlQuery -File $queryFile -Server $server -Database $database
     Write-Host "done.`n”
 

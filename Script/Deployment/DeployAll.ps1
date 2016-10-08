@@ -16,7 +16,8 @@ $scriptEventLogPath = "Scripts\EventLogSource\"
 $scriptMessageQueuePath = "Scripts\MessageQueue\"
 $scriptServicePath = "Scripts\Service\"
 
-$publicLibrary = "PublicLibrary"
+$profilesPath = "Media\Profiles\0\"
+$exportsPath = "Media\Exports\EventLog\"
 $publicLibrarySource = "\\" + $env:COMPUTERNAME + "\SQLEXPRESS\KeebeeAATFilestream\Media\Profiles\0\*"
 
 # restart IIS
@@ -189,9 +190,17 @@ Copy-Item C:\Users\$env:USERNAME\Source\Repos\R2G2V1\Script\Service\* $path -rec
 Write-Host -foregroundcolor green "Done.”
 
 
-# public library media
-Write-Host -foregroundcolor green "`nDeploying Public Library...”
-$path = $destPath + $publicLibrary
+# media
+Write-Host -foregroundcolor green "`nDeploying media...”
+
+$path = $destPath + $exportsPath
+If(test-path $path)
+{
+    Remove-Item $path -recurse -Force
+}
+New-Item -ItemType Directory -Force -Path $path
+
+$path = $destPath + $profilesPath
 If(test-path $path)
 {
     Remove-Item $path -recurse -Force

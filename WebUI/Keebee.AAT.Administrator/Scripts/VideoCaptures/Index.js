@@ -43,7 +43,7 @@
                 self.filesize = filesize;
 
                 self.download = function (row) {
-                    window.location = "VideoCaptures/Download?filename=" + row.filename;
+                    window.location = "VideoCaptures/Download?path=" + row.path + "&filename=" + row.filename;
                 };
             }
 
@@ -68,9 +68,9 @@
 
                 self.columns = ko.computed(function () {
                     var arr = [];
-                    arr.push({ title: "Name", sortable: true, sortKey: "filename" });
-                    arr.push({ title: "Path", sortable: true, sortKey: "path" });
-                    arr.push({ title: "Size", sortable: true, sortKey: "filesize" });
+                    arr.push({ title: "Name", sortable: true, sortKey: "filename", numeric: false, cssClass: "" });
+                    arr.push({ title: "Path", sortable: true, sortKey: "path", numeric: false, cssClass: "" });
+                    arr.push({ title: "Size", sortable: true, sortKey: "filesize", numeric: true, cssClass: "col-filesize" });
                     return arr;
                 });
 

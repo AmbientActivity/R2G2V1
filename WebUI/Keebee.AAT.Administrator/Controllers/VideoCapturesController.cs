@@ -56,11 +56,11 @@ namespace Keebee.AAT.Administrator.Controllers
 
         [HttpGet]
         [Authorize]
-        public FileResult Download(string filename)
+        public FileResult Download(string path, string filename)
         {
-            var file = System.IO.File.ReadAllBytes($@"{VideoCaptures.Path}/{filename}");
+            var file = System.IO.File.ReadAllBytes($@"{path}\{filename}");
 
-            return File(file, "video/x-ms-wmv", filename);
+            return File(file, "video/mp4", filename);
         }
 
         private static IEnumerable<VideoCaptureViewModel> GetVideoCaptureList()

@@ -1,16 +1,17 @@
 ﻿using Keebee.AAT.SystemEventLogging;
 using Keebee.AAT.MessageQueuing;
 using Keebee.AAT.Shared;
+using Windows.Media.Capture;
+using Windows.Media.MediaProperties;
+using Windows.Storage;
 using System;
 using System.Configuration;
 using System.Web.Script.Serialization;
 using System.ServiceProcess;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Timers;
-using Microsoft.Expression.Encoder.Devices;
-using Microsoft.Expression.Encoder.Live;
+
 
 namespace Keebee.AAT.VideoCaptureService
 {
@@ -19,15 +20,12 @@ namespace Keebee.AAT.VideoCaptureService
         private readonly Timer _timer;
 
         // app.config settings
-        private string _videoSourceName;
-        private string _audioSourceName;
         private int _videoDuration;
+        private VideoEncodingQuality _encodingQuality;
 
-        // expression 4 encoder
-        private readonly LiveJob _job = new LiveJob();
-        private LiveDeviceSource _deviceSource;
-        private EncoderDevice _videoDevice;
-        private EncoderDevice _audioDevice;
+        // media capture
+        private MediaCapture _capture;
+        private bool _isRecording;
 
         // event logger
         private readonly SystemEventLogger _systemEventLogger;
@@ -55,39 +53,71 @@ namespace Keebee.AAT.VideoCaptureService
                 })
                 {SystemEventLogger = _systemEventLogger};
 
-            InitializeEncoderDevices();
+            InitializeMediaCapture();
 
             _videoDuration = Convert.ToInt32(ConfigurationManager.AppSettings["VideoDuration"]);
+            _encodingQuality = (VideoEncodingQuality)Convert.ToInt32(ConfigurationManager.AppSettings["VideoEncodingQuality"]);
+
             _timer = new Timer(_videoDuration);
             _timer.Elapsed += OnTimerElapsed;
         }
 
-        private void InitializeEncoderDevices()
+        private async void InitializeMediaCapture()
         {
-            _videoSourceName = ConfigurationManager.AppSettings["VideoDevice"];
-            _audioSourceName = ConfigurationManager.AppSettings["AudioDevice"];
-            _videoDevice = EncoderDevices.FindDevices(EncoderDeviceType.Video).Single(x => x.Name == _videoSourceName);
-            _audioDevice = EncoderDevices.FindDevices(EncoderDeviceType.Audio).Single(x => x.Name == _audioSourceName);
+            _capture = new MediaCapture();
+
+            try
+            {
+                _systemEventLogger.WriteEntry("Starting device");
+                _capture = new MediaCapture();
+
+                await _capture.InitializeAsync();
+
+                if (_capture.MediaCaptureSettings.VideoDeviceId != string.Empty 
+                    && _capture.MediaCaptureSettings.AudioDeviceId != string.Empty)
+                {
+                    _systemEventLogger.WriteEntry("Device initialized successfully");
+
+                    _capture.RecordLimitationExceeded += RecordLimitationExceeded;
+                    _capture.Failed += Failed;
+                }
+                else
+                {
+                    _systemEventLogger.WriteEntry("No VideoDevice/AudioDevice Found", EventLogEntryType.Warning);
+                }
+            }
+            catch (Exception ex)
+            {
+                _systemEventLogger.WriteEntry($"InitializeEncoderDevices: {ex.Message}", EventLogEntryType.Error);
+                _capture = null;
+            }
         }
 
-        private void StartCapture()
+        private async void StartCapture()
         {
             try
             {
+                if (_capture == null) return;
+
+                _systemEventLogger.WriteEntry("Starting capture");
+
                 var now = DateTime.Now.ToString("yyyy-MM-dd");
                 var rootFolder = $@"{VideoCaptures.Path}\{now}";
                 if (!Directory.Exists(rootFolder))
                     Directory.CreateDirectory(rootFolder);
 
-                var fileOut = new FileArchivePublishFormat
-                {
-                    OutputFileName = $@"{rootFolder}\Capture_{DateTime.Now:yyyyMMdd_hhmmss}.wmv"
-                };
+                var filename = $"Capture_{DateTime.Now:yyyyMMdd_hhmmss}.mp4";
+                var storageFolder = await StorageFolder.GetFolderFromPathAsync(rootFolder);
+                var recordStorageFile = await storageFolder.CreateFileAsync(filename);
 
-                _deviceSource = _job.AddDeviceSource(_videoDevice, _audioDevice);
-                _job.ActivateSource(_deviceSource);
-                _job.PublishFormats.Add(fileOut);
-                _job.StartEncoding();
+                _systemEventLogger.WriteEntry("Storage file created successfully");
+
+                var recordProfile = MediaEncodingProfile.CreateMp4(_encodingQuality);
+
+                await _capture.StartRecordToStorageFileAsync(recordProfile, recordStorageFile);
+                _isRecording = true;
+
+                _systemEventLogger.WriteEntry("Capture started successfully");
             }
             catch (Exception ex)
             {
@@ -95,16 +125,20 @@ namespace Keebee.AAT.VideoCaptureService
             }
         }
 
-        private void StopCapture()
+        private async void StopCapture()
         {
             try
             {
-                if (_job == null) return;
-                if (!_job.IsCapturing) return;
+                if (_capture == null) return;
+                if (!_isRecording) return;
 
-                _job.StopEncoding();
-                _job.PublishFormats.Clear();
-                _job.RemoveDeviceSource(_deviceSource);
+                _systemEventLogger.WriteEntry("Stopping capture");
+
+                await _capture.StopRecordAsync();
+
+                _isRecording = false;
+
+                _systemEventLogger.WriteEntry("Capture stopped successfully");
             }
             catch (Exception ex)
             {
@@ -120,7 +154,7 @@ namespace Keebee.AAT.VideoCaptureService
 
         private void MessageReceivedVideoCapture(object source, MessageEventArgs e)
         {
-            if (!_displayIsActive || _job.IsCapturing) return;
+            if (!_displayIsActive || _isRecording) return;
 
             StartCapture();
             _timer.Start();
@@ -152,6 +186,26 @@ namespace Keebee.AAT.VideoCaptureService
             return display;
         }
 
+        private async void RecordLimitationExceeded(MediaCapture currentCaptureObject)
+        {
+            _systemEventLogger.WriteEntry("RecordLimitationExceeded", EventLogEntryType.Warning);
+
+            if (_capture == null) return;
+            if (_isRecording)
+            {
+                await _capture.StopRecordAsync();
+            }
+        }
+
+        private void Failed(object sender, MediaCaptureFailedEventArgs e)
+        {
+            _systemEventLogger.WriteEntry("Failed", EventLogEntryType.Error);
+            if (_isRecording)
+            {
+                StopCapture();
+            }
+        }
+
         protected override void OnStart(string[] args)
         {
             _systemEventLogger.WriteEntry("In OnStart");
@@ -162,7 +216,6 @@ namespace Keebee.AAT.VideoCaptureService
             _systemEventLogger.WriteEntry("In OnStop");
             _timer.Stop();
             _timer.Dispose();
-            _job?.Dispose();
         }
     }
 }

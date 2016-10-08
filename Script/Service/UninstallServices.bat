@@ -14,11 +14,11 @@ installutil /u C:\Deployments\Services\PhidgetService\1.0.0.0\Keebee.AAT.Phidget
 echo ---------------------------------------------------
 echo Done.
 
-REM echo Uninstalling Video Capture Service...
-REM echo ---------------------------------------------------
-REM installutil /u C:\Deployments\Services\VideoCaptureService\1.0.0.0\Keebee.AAT.VideoCaptureService.exe
-REM echo ---------------------------------------------------
-REM echo Done.
+echo Uninstalling Video Capture Service...
+echo ---------------------------------------------------
+installutil /u C:\Deployments\Services\VideoCaptureService\1.0.0.0\Keebee.AAT.VideoCaptureService.exe
+echo ---------------------------------------------------
+echo Done.
 
 echo Uninstalling Keep IIS Alive Service...
 echo ---------------------------------------------------

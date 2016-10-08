@@ -115,7 +115,7 @@ namespace Keebee.AAT.StateMachineService
 
                 if (!configDetail.IsSystemReponseType)
                 {
-                    if (_activeResident.AllowVideoCapturing)
+                    //if (_activeResident.AllowVideoCapturing)
                         // send a signal to the video capture service to start recording
                         _messageQueueVideoCapture.Send("1");
                 }

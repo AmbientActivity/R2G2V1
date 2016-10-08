@@ -14,11 +14,11 @@ installutil C:\Deployments\Services\PhidgetService\1.0.0.0\Keebee.AAT.PhidgetSer
 echo ---------------------------------------------------
 echo Done.
 
-REM echo Installing Video Capture Service...
-REM echo ---------------------------------------------------
-REM installutil C:\Deployments\Services\VideoCaptureService\1.0.0.0\Keebee.AAT.VideoCaptureService.exe
-REM echo ---------------------------------------------------
-REM echo Done.
+echo Installing Video Capture Service...
+echo ---------------------------------------------------
+installutil C:\Deployments\Services\VideoCaptureService\1.0.0.0\Keebee.AAT.VideoCaptureService.exe
+echo ---------------------------------------------------
+echo Done.
 
 echo Installing Rfid Reader Service...
 echo ---------------------------------------------------

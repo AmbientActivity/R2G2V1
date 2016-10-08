@@ -194,3 +194,5 @@ ModelManifest.xml
 .BridgeCache
 .BridgeCacheT
 .DS_Store
+/Script/Service/InstallVideoCaptureService.bat
+/Script/Service/UninstallVideoCaptureService.bat

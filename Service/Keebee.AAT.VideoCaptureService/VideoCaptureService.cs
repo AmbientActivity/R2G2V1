@@ -20,8 +20,8 @@ namespace Keebee.AAT.VideoCaptureService
         private readonly Timer _timer;
 
         // app.config settings
-        private int _videoDuration;
-        private VideoEncodingQuality _encodingQuality;
+        private readonly int _videoDuration;
+        private readonly VideoEncodingQuality _encodingQuality;
 
         // media capture
         private MediaCapture _capture;

@@ -68,18 +68,19 @@ namespace Keebee.AAT.BusinessRules
             try
             {
                 // uninstall
-                var msg = ((ServiceInstaller.Uninstall(exePathKeepIISAlive)
-                        ?? ServiceInstaller.Uninstall(exePathRfidReader))
-                        ?? ServiceInstaller.Uninstall(exePathPhidget))
-                        ?? ServiceInstaller.Uninstall(exePathVideoCapture);
+                var msg = ServiceInstaller.Uninstall(exePathKeepIISAlive)
+                          ?? ServiceInstaller.Uninstall(exePathRfidReader)
+                          ?? ServiceInstaller.Uninstall(exePathPhidget)
+                          ?? ServiceInstaller.Uninstall(exePathVideoCapture);
 
                 if (msg != null) return msg;
 
                 msg = ServiceInstaller.Uninstall(exePathSms);
 
-                while (StateMachineIsInstalled())
-                {
-                }
+                // wait for these to completely uninstall
+                while (StateMachineIsInstalled()) { }
+
+                while (KeepIISAliveIsInstalled()) { }
 
                 // install
                 if (msg == null)
@@ -127,9 +128,8 @@ namespace Keebee.AAT.BusinessRules
 
                 msg = ServiceInstaller.Uninstall(exePathSms);
 
-                while (StateMachineIsInstalled())
-                {
-                }
+                while (StateMachineIsInstalled()) { }
+                while (KeepIISAliveIsInstalled()) { }
 
                 return msg;
             }
@@ -147,6 +147,12 @@ namespace Keebee.AAT.BusinessRules
             return (processes.Any());
         }
 
+        private static bool KeepIISAliveIsInstalled()
+        {
+            var processes = Process.GetProcessesByName("Keebee.AAT.KeebIISAlive");
+            return (processes.Any());
+        }
+
         private static class ServiceInstaller
         {
 
@@ -159,7 +165,7 @@ namespace Keebee.AAT.BusinessRules
                 }
                 catch (Exception ex)
                 {
-                    return ex.Message;
+                    return ex.InnerException?.Message ?? ex.Message;
                 }
 
                 return null;
@@ -174,8 +180,7 @@ namespace Keebee.AAT.BusinessRules
                 }
                 catch (Exception ex)
                 {
-                    return ex.InnerException?.Message != "The specified service does not exist as an installed service" 
-                        ? ex.Message : null;
+                    return ex.InnerException?.Message ?? ex.Message;
                 }
 
                 return null;

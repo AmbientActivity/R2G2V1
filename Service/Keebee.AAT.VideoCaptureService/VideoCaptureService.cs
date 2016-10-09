@@ -64,8 +64,6 @@ namespace Keebee.AAT.VideoCaptureService
 
         private async void InitializeMediaCapture()
         {
-            _capture = new MediaCapture();
-
             try
             {
                 _systemEventLogger.WriteEntry("Starting device");
@@ -84,6 +82,7 @@ namespace Keebee.AAT.VideoCaptureService
                 else
                 {
                     _systemEventLogger.WriteEntry("No VideoDevice/AudioDevice Found", EventLogEntryType.Warning);
+                    _capture = null;
                 }
             }
             catch (Exception ex)

@@ -1,0 +1,9 @@
+USE [master]
+
+---- Drop Database ----
+DECLARE @databaseName AS VARCHAR(20) = N'KeebeeAAT'
+IF db_id(@databaseName) IS NOT NULL
+BEGIN
+	ALTER DATABASE [KeebeeAAT] SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
+	DROP DATABASE [KeebeeAAT]
+END

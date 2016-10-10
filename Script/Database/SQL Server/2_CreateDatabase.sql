@@ -1,4 +1,6 @@
 ---- Create Database ----
+RECONFIGURE
+GO
 
 CREATE DATABASE KeebeeAAT
 ON PRIMARY

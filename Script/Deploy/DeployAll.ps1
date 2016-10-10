@@ -53,7 +53,6 @@ If (Get-Service $svcName -ErrorAction SilentlyContinue)
 {
     
     Uninstall-Service -Name $svcName
-    while((Get-Service $svcName -ErrorAction SilentlyContinue)) {}
 }
 Write-Host "done.”
 
@@ -62,7 +61,6 @@ $svcName = "RfidReaderService"
 If (Get-Service $svcName -ErrorAction SilentlyContinue)
 {
     Uninstall-Service -Name $svcName
-    while((Get-Service $svcName -ErrorAction SilentlyContinue)) {}
 }
 Write-Host "done.”
 
@@ -71,7 +69,6 @@ $svcName = "VideoCaptureService"
 If (Get-Service $svcName -ErrorAction SilentlyContinue)
 {
     Uninstall-Service -Name $svcName
-    while((Get-Service $svcName -ErrorAction SilentlyContinue)) {}
 }
 Write-Host "done.”
 
@@ -80,7 +77,6 @@ $svcName = "StateMachineService"
 If (Get-Service $svcName -ErrorAction SilentlyContinue)
 {
     Uninstall-Service -Name $svcName
-    while((Get-Service $svcName -ErrorAction SilentlyContinue)) {}
 }
 Write-Host "done.”
 
@@ -89,7 +85,6 @@ $svcName = "KeepIISAliveService"
 If (Get-Service $svcName -ErrorAction SilentlyContinue)
 {
     Uninstall-Service -Name $svcName
-    while((Get-Service $svcName -ErrorAction SilentlyContinue)) {}
 }
 Write-Host "done.”
 
@@ -135,9 +130,157 @@ If(!(test-path $destPath))
     New-Item -ItemType Directory -Force -Path $destPath
 }
 
+# -------------------- UI --------------------
+# display
+Write-Host "`nDeploying UI Components...” -NoNewline
+$path = $destPath + $displayReleasePath + $versionPath + "Release\"
+If(test-path $path)
+{
+    Remove-Item $path -recurse -Force
+}
+New-Item -ItemType Directory -Force -Path $path | Out-Null
+Copy-Item C:\Users\$env:USERNAME\Source\Repos\R2G2V1\UI\Keebee.AAT.Display\bin\Release\* $path -recurse -Force
+
+$path = $destPath + $displayDebugPath + $versionPath + "Debug\"
+If(test-path $path)
+{
+    Remove-Item $path -recurse -Force
+}
+New-Item -ItemType Directory -Force -Path $path | Out-Null
+Copy-Item C:\Users\$env:USERNAME\Source\Repos\R2G2V1\UI\Keebee.AAT.Display\bin\Debug\* $path -recurse -Force
+
+# simulator
+$path = $destPath + $simulatorPath + $versionPath
+If(test-path $path)
+{
+    Remove-Item $path -recurse -Force
+}
+New-Item -ItemType Directory -Force -Path $path | Out-Null
+Copy-Item C:\Users\$env:USERNAME\Source\Repos\R2G2V1\UI\Keebee.AAT.Simulator\bin\Release\* $path -recurse -Force
+Write-Host "done.”
+
+
+# -------------------- WEB --------------------
+# data access
+Write-Host "Deploying Web Components...” -NoNewline
+$path = $destPath + $dataPath + $versionPath
+If(test-path $path)
+{
+    Remove-Item $path -recurse -Force
+}
+New-Item -ItemType Directory -Force -Path $path | Out-Null
+Copy-Item C:\Users\$env:USERNAME\Source\Repos\R2G2V1\Data\Keebee.AAT.DataAccess\* $path -recurse -Force
+
+# api
+$path = $destPath + $apiPath + $versionPath
+If(test-path $path)
+{
+    Remove-Item $path -recurse -Force
+}
+New-Item -ItemType Directory -Force -Path $path | Out-Null
+Copy-Item C:\Users\$env:USERNAME\Source\Repos\R2G2V1\API\Keebee.AAT.Operations\* $path -recurse -Force
+
+# administrator
+$path = $destPath + $administratorPath + $versionPath
+If(test-path $path)
+{
+    Remove-Item $path -recurse -Force
+}
+New-Item -ItemType Directory -Force -Path $path | Out-Null
+Copy-Item C:\Users\$env:USERNAME\Source\Repos\R2G2V1\WebUI\Keebee.AAT.Administrator\* $path -recurse -Force
+Write-Host "done.”
+
+
+# -------------------- MEDIA --------------------
+# export folder
+Write-Host "Deploying Media...” -NoNewline
+$path = $destPath + $exportsPath
+If(test-path $path)
+{
+    Remove-Item $path -recurse -Force
+}
+New-Item -ItemType Directory -Force -Path $path | Out-Null
+
+# public library
+$path = $destPath + $profilesPath
+If(test-path $path)
+{
+    Remove-Item $path -recurse -Force
+}
+New-Item -ItemType Directory -Force -Path $path | Out-Null
+Copy-Item $publicLibrarySource $path -recurse -Force
+Write-Host "done.”
+
+# -------------------- SCHEDULED TASKS --------------------
+
+# scheduled tasks root
+$path = $destPath + $scheduledTasksPath
+If(test-path $path)
+{
+    Remove-Item $path -recurse -Force
+}
+New-Item -ItemType Directory -Force -Path $path | Out-Null
+
+# event log exporter
+Write-Host "Deploying Scheduled Tasks...” -NoNewline
+$path = $destPath + $scheduledTasksPath + $eventLogExportPath + $versionPath
+If(test-path $path)
+{
+    Remove-Item $path -recurse -Force
+}
+New-Item -ItemType Directory -Force -Path $path | Out-Null
+Copy-Item C:\Users\$env:USERNAME\Source\Repos\R2G2V1\ScheduledTasks\Keebee.AAT.EventLogExporter\bin\Release\* $path -recurse -Force
+Write-Host "done.”
+
+
+# -------------------- SCRIPTS --------------------
+# scripts
+Write-Host "Deploying Startup Scripts...” -NoNewline
+$path = $destPath + $scriptDatabasePath
+If(test-path $path)
+{
+    Remove-Item $path -recurse -Force
+}
+New-Item -ItemType Directory -Force -Path $path | Out-Null
+Copy-Item C:\Users\$env:USERNAME\Source\Repos\R2G2V1\Script\Database\* $path -recurse -Force
+
+$path = $destPath + $scriptEventLogPath
+If(!(test-path $path))
+{
+    New-Item -ItemType Directory -Force -Path $path | Out-Null
+}
+Copy-Item C:\Users\$env:USERNAME\Source\Repos\R2G2V1\Script\EventLogSource\* $path -recurse -Force
+
+$path = $destPath + $scriptMessageQueuePath
+If(test-path $path)
+{
+    Remove-Item $path -recurse -Force
+}
+New-Item -ItemType Directory -Force -Path $path | Out-Null
+Copy-Item C:\Users\$env:USERNAME\Source\Repos\R2G2V1\Script\MessageQueue\CreateMessageQueues.ps1 $path -recurse -Force
+
+$path = $destPath + $scriptServicePath
+If(test-path $path)
+{
+    Remove-Item $path -recurse -Force
+}
+New-Item -ItemType Directory -Force -Path $path | Out-Null
+Copy-Item C:\Users\$env:USERNAME\Source\Repos\R2G2V1\Script\Service\* $path -recurse -Force
+
+Write-Host "done.”
+
+
 # -------------------- SERVICES --------------------
+
+# wait until they are done unstalling
+while((Get-Service $svcName -ErrorAction SilentlyContinue)) {}
+while((Get-Service $svcName -ErrorAction SilentlyContinue)) {}
+while((Get-Service $svcName -ErrorAction SilentlyContinue)) {}
+while((Get-Service $svcName -ErrorAction SilentlyContinue)) {}
+while((Get-Service $svcName -ErrorAction SilentlyContinue)) {}
+
 # state machine service
-Write-Host "`nDeploying Services...” -NoNewline
+Write-Host "Deploying Services...” -NoNewline
 $path = $destPath + $stateMachinePath + $versionPath
 If(test-path $path)
 {
@@ -182,224 +325,5 @@ If(test-path $path)
 New-Item -ItemType Directory -Force -Path $path | Out-Null
 Copy-Item C:\Users\$env:USERNAME\Source\Repos\R2G2V1\Service\Keebee.AAT.KeepIISAliveService\bin\Release\* $path -recurse -Force
 Write-Host "done.”
-
-
-# -------------------- UI --------------------
-# display
-Write-Host "Deploying UI Components...” -NoNewline
-$path = $destPath + $displayReleasePath + $versionPath + "Release\"
-If(test-path $path)
-{
-    Remove-Item $path -recurse -Force
-}
-New-Item -ItemType Directory -Force -Path $path | Out-Null
-Copy-Item C:\Users\$env:USERNAME\Source\Repos\R2G2V1\UI\Keebee.AAT.Display\bin\Release\* $path -recurse -Force
-
-$path = $destPath + $displayDebugPath + $versionPath + "Debug\"
-If(test-path $path)
-{
-    Remove-Item $path -recurse -Force
-}
-New-Item -ItemType Directory -Force -Path $path | Out-Null
-Copy-Item C:\Users\$env:USERNAME\Source\Repos\R2G2V1\UI\Keebee.AAT.Display\bin\Debug\* $path -recurse -Force
-
-# simulator
-$path = $destPath + $simulatorPath + $versionPath
-If(test-path $path)
-{
-    Remove-Item $path -recurse -Force
-}
-New-Item -ItemType Directory -Force -Path $path | Out-Null
-Copy-Item C:\Users\$env:USERNAME\Source\Repos\R2G2V1\UI\Keebee.AAT.Simulator\bin\Release\* $path -recurse -Force
-Write-Host "done.”
-
-
-# -------------------- SCHEDULED TASKS --------------------
-
-# scheduled tasks root
-$path = $destPath + $scheduledTasksPath
-If(test-path $path)
-{
-    Remove-Item $path -recurse -Force
-}
-New-Item -ItemType Directory -Force -Path $path | Out-Null
-
-# event log exporter
-Write-Host "Deploying Scheduled Tasks...” -NoNewline
-$path = $destPath + $scheduledTasksPath + $eventLogExportPath + $versionPath
-If(test-path $path)
-{
-    Remove-Item $path -recurse -Force
-}
-New-Item -ItemType Directory -Force -Path $path | Out-Null
-Copy-Item C:\Users\$env:USERNAME\Source\Repos\R2G2V1\ScheduledTasks\Keebee.AAT.EventLogExporter\bin\Release\* $path -recurse -Force
-Write-Host "done.”
-
-
-# -------------------- WEB --------------------
-# data access
-Write-Host "Deploying Web Components...” -NoNewline
-$path = $destPath + $dataPath + $versionPath
-If(test-path $path)
-{
-    Remove-Item $path -recurse -Force
-}
-New-Item -ItemType Directory -Force -Path $path | Out-Null
-Copy-Item C:\Users\$env:USERNAME\Source\Repos\R2G2V1\Data\Keebee.AAT.DataAccess\* $path -recurse -Force
-
-# api
-$path = $destPath + $apiPath + $versionPath
-If(test-path $path)
-{
-    Remove-Item $path -recurse -Force
-}
-New-Item -ItemType Directory -Force -Path $path | Out-Null
-Copy-Item C:\Users\$env:USERNAME\Source\Repos\R2G2V1\API\Keebee.AAT.Operations\* $path -recurse -Force
-
-# administrator
-$path = $destPath + $administratorPath + $versionPath
-If(test-path $path)
-{
-    Remove-Item $path -recurse -Force
-}
-New-Item -ItemType Directory -Force -Path $path | Out-Null
-Copy-Item C:\Users\$env:USERNAME\Source\Repos\R2G2V1\WebUI\Keebee.AAT.Administrator\* $path -recurse -Force
-Write-Host "done.”
-
-
-# -------------------- SCRIPTS --------------------
-# scripts
-Write-Host "Deploying Startup Scripts...” -NoNewline
-$path = $destPath + $scriptDatabasePath
-If(test-path $path)
-{
-    Remove-Item $path -recurse -Force
-}
-New-Item -ItemType Directory -Force -Path $path | Out-Null
-Copy-Item C:\Users\$env:USERNAME\Source\Repos\R2G2V1\Script\Database\* $path -recurse -Force
-
-$path = $destPath + $scriptEventLogPath
-If(!(test-path $path))
-{
-    New-Item -ItemType Directory -Force -Path $path | Out-Null
-}
-Copy-Item C:\Users\$env:USERNAME\Source\Repos\R2G2V1\Script\EventLogSource\* $path -recurse -Force
-
-$path = $destPath + $scriptMessageQueuePath
-If(test-path $path)
-{
-    Remove-Item $path -recurse -Force
-}
-New-Item -ItemType Directory -Force -Path $path | Out-Null
-Copy-Item C:\Users\$env:USERNAME\Source\Repos\R2G2V1\Script\MessageQueue\CreateMessageQueues.ps1 $path -recurse -Force
-
-$path = $destPath + $scriptServicePath
-If(test-path $path)
-{
-    Remove-Item $path -recurse -Force
-}
-New-Item -ItemType Directory -Force -Path $path | Out-Null
-Copy-Item C:\Users\$env:USERNAME\Source\Repos\R2G2V1\Script\Service\* $path -recurse -Force
-
-Write-Host "done.”
-
-
-# -------------------- MEDIA --------------------
-# export folder
-Write-Host "Deploying Media...” -NoNewline
-$path = $destPath + $exportsPath
-If(test-path $path)
-{
-    Remove-Item $path -recurse -Force
-}
-New-Item -ItemType Directory -Force -Path $path | Out-Null
-
-# public library
-$path = $destPath + $profilesPath
-If(test-path $path)
-{
-    Remove-Item $path -recurse -Force
-}
-New-Item -ItemType Directory -Force -Path $path | Out-Null
-Copy-Item $publicLibrarySource $path -recurse -Force
-Write-Host "done.”
-
-if ($false)
-{
-# start all services
-Write-Host "`n`n-----------------”
-Write-Host "Restart Services”
-Write-Host "-----------------`n”
-
-$svcName = "KeepIISAliveService"
-if (Get-Service $svcName -ErrorAction SilentlyContinue)
-{
-    Write-Host "Restarting Keep IIS Alive Service...” -NoNewline
-    $svc = Get-Service $svcName
-    Start-Service $svc
-
-    while($svc.status -ne 'Running')
-    {
-       Start-Sleep -Seconds 1
-    }
-    Write-Host "done.”
-}
-
-$svcName = "StateMachineService"
-if (Get-Service $svcName -ErrorAction SilentlyContinue)
-{
-    Write-Host "Restarting State Machine Service...” -NoNewline
-    $svc = Get-Service $svcName
-    Start-Service $svc
-
-    while($svc.status -ne 'Running')
-    {
-       Start-Sleep -Seconds 1
-    }
-    Write-Host "done.”
-}
-
-$svcName = "PhidgetService"
-if (Get-Service $svcName -ErrorAction SilentlyContinue)
-{
-    Write-Host "Restarting Phidget Service...” -NoNewline
-    $svc = Get-Service $svcName
-    Start-Service $svc
-
-    while($svc.status -ne 'Running')
-    {
-       Start-Sleep -Seconds 1
-    }
-    Write-Host "done.”
-}
-
-$svcName = "RfidReaderService"
-if (Get-Service $svcName -ErrorAction SilentlyContinue)
-{
-    Write-Host "Restarting RFID Reader Service...” -NoNewline
-    $svc = Get-Service $svcName
-    Start-Service $svc
-
-    while($svc.status -ne 'Running')
-    {
-       Start-Sleep -Seconds 1
-    }
-    Write-Host "done.”
-}
-
-$svcName = "VideoCaptureService"
-if (Get-Service $svcName -ErrorAction SilentlyContinue)
-{
-    Write-Host "Restarting Video Capture Service...” -NoNewline
-    $svc = Get-Service $svcName
-    Start-Service $svc
-
-    while($svc.status -ne 'Running')
-    {
-       Start-Sleep -Seconds 1
-    }
-    Write-Host "done.”
-}
-}
 
 Write-Host -foregroundcolor green "`nR2G2 successfully deployed.`n”

@@ -112,12 +112,6 @@ If (!$buildResult)
     exit
 }
 
-# restart IIS
-Write-Host "`n`n-----------”
-Write-Host "Restart IIS”
-Write-Host "-----------”
-invoke-command -scriptblock {iisreset}
-
 # delpoy components
 Write-Host "`n`n-----------------”
 Write-Host "Deploy Components”

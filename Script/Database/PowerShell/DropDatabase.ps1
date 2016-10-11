@@ -19,12 +19,12 @@ else {
         invoke-command -scriptblock {iisreset}
 
         Write-Host "`nDropping users...” -NoNewline
-        $queryFile = $path + "DropUsers.sql"
+        $queryFile = $path + "XXX_DropUsers.sql"
         Invoke-SqlQuery -File $queryFile -Server $server -Database "KeebeeAAT"
         Write-Host "done.”
 
         Write-Host "`nDropping database...” -NoNewline
-        $queryFile = $path + "DropDatabase.sql"
+        $queryFile = $path + "XXX_DropDatabase.sql"
         Invoke-SqlQuery -File $queryFile -Server $server -Database "master"
         Write-Host "done.`n”
 
@@ -32,6 +32,6 @@ else {
     }
     Catch
     {
-        Write-Host -ForegroundColor red "One or more errors occurred.`n”
+        Write-Host -ForegroundColor red $_.Exception.Message
     }
 }

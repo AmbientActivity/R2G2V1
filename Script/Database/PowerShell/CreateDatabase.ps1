@@ -14,27 +14,27 @@ else {
     Try
     {
         Write-Host "`nEnabling Filestream...” -NoNewline
-        $queryFile = $path + "1_EnableFilestream.sql"
+        $queryFile = $path + "EnableFilestream.sql"
         Invoke-SqlQuery -File $queryFile -Server $server -Database "master"
         Write-Host "done.`n”
 
         Write-Host "Creating database...” -NoNewline
-        $queryFile = $path + "2_CreateDatabase.sql"
+        $queryFile = $path + "CreateDatabase.sql"
         Invoke-SqlQuery -File $queryFile -Server $server -Database "master"
         Write-Host "done.`n”
 
         Write-Host "Creating File Table...” -NoNewline
-        $queryFile = $path + "3_CreateMediaFileTable.sql"
+        $queryFile = $path + "CreateMediaFileTable.sql"
         Invoke-SqlQuery -File $queryFile -Server $server -Database $database
         Write-Host "done.`n”
 
         Write-Host "Creatng keebee login...” -NoNewline
-        $queryFile = $path + "4_CreateKeebeeLogin.sql"
+        $queryFile = $path + "CreateKeebeeLogin.sql"
         Invoke-SqlQuery -File $queryFile -Server $server -Database $database
         Write-Host "done.`n”
 
         Write-Host "Creatng webuser user...” -NoNewline
-        $queryFile = $path + "5_CreateWebuserUser.sql"
+        $queryFile = $path + "CreateWebuserUser.sql"
         Invoke-SqlQuery -File $queryFile -Server $server -Database $database
         Write-Host "done.`n”
 
@@ -42,6 +42,6 @@ else {
     }
     Catch
     {
-        Write-Host -ForegroundColor red "One or more errors occurred.`n”
+        Write-Host -ForegroundColor red $_.Exception.Message
     }
 }

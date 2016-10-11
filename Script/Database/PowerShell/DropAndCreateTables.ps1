@@ -14,22 +14,28 @@ if ($databaseCount -eq 0) {
 else {
     Try
     {
-        Write-Host "Dropping tables...” -NoNewline
-        $queryFile = $path + "DropTables.sql"
-        Invoke-SqlQuery -File $queryFile -Server $server -Database $database
-        Write-Host "done.`n”
+        $query = Invoke-SqlQuery -Query "SELECT ISNULL(OBJECT_ID('Configs', 'U'), 0) AS CONFIG_ID" -Server $server -Database $database
+        $configId = $query.CONFIG_ID
+
+        If ($configId -gt 0)
+        {
+            Write-Host "Dropping tables...” -NoNewline
+            $queryFile = $path + "DropTables.sql"
+            Invoke-SqlQuery -File $queryFile -Server $server -Database $database
+            Write-Host "done.`n”
+        }
 
         # restart IIS
         Write-Host "IIS Restart”
         Write-Host "-----------”
         invoke-command -scriptblock {iisreset}
 
-        Write-Host "`nIn a moment your browser will open and create the tables...”
+        Write-Host "`nIn a moment your browser will open and create the tables...`n”
         Start-Sleep -s 3
         Start $url
     }
     Catch
     {
-        Write-Host -ForegroundColor red "`nOne or more errors occurred.`n"
+        Write-Host -ForegroundColor red $_.Exception.Message
     }
 }

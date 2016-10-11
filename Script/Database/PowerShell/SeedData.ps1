@@ -44,17 +44,17 @@ else
             Write-Host "done.`n”
 
             Write-Host "Creating MediaFiles view...” -NoNewline
-            $queryFile = $path + "6_CreateMediaFilesView.sql"
+            $queryFile = $path + "CreateMediaFilesView.sql"
             Invoke-SqlQuery -File $queryFile -Server $server -Database $database
             Write-Host "done.`n”
 
             Write-Host "Seeding configuration data...” -NoNewline
-            $queryFile = $path + "7_SeedConfigurationData.sql"
+            $queryFile = $path + "SeedConfigurationData.sql"
             Invoke-SqlQuery -File $queryFile -Server $server -Database $database
             Write-Host "done.`n”
 
             Write-Host "Seeding public library...” -NoNewline
-            $queryFile = $path + "8_SeedPublicLibrary.sql"
+            $queryFile = $path + "SeedPublicLibrary.sql"
             Invoke-SqlQuery -File $queryFile -Server $server -Database $database
             Write-Host "done.`n”
 
@@ -63,6 +63,6 @@ else
     }
     Catch
     {
-        Write-Host -ForegroundColor red "`nOne or more errors occurred.`n"
+        Write-Host -ForegroundColor red $_.Exception.Message
     }
 }

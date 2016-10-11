@@ -96,8 +96,7 @@ Try
     Write-Host "Build Solution”
     Write-Host "--------------`n”
 
-    Get-Module R2G2Build | Out-Null
-    Get-Module R2G2Build | Out-Null
+    Get-Module Build-VisualStudioSolution | Out-Null
 
     # build debug
     $buildResult = Build-VisualStudioSolution -SourceCodePath $sourceCode -SolutionFile $solutionFile -BuildLogFile "R2G2BuildDebug.log" -Configuration "Debug" -CleanFirst;

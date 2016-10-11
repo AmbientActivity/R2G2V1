@@ -19,12 +19,12 @@ else {
         invoke-command -scriptblock {iisreset}
 
         Write-Host "`nDropping users...” -NoNewline
-        $queryFile = $path + "XXX_DropUsers.sql"
+        $queryFile = $path + "DropUsers.sql"
         Invoke-SqlQuery -File $queryFile -Server $server -Database "KeebeeAAT"
         Write-Host "done.”
 
         Write-Host "`nDropping database...” -NoNewline
-        $queryFile = $path + "XXX_DropDatabase.sql"
+        $queryFile = $path + "DropDatabase.sql"
         Invoke-SqlQuery -File $queryFile -Server $server -Database "master"
         Write-Host "done.`n”
 

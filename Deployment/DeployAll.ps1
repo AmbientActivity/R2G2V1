@@ -43,12 +43,6 @@ Try
 {
     Write-Host -foregroundcolor yellow "`nDeploying R2G2...”
 
-    # restart IIS
-    Write-Host "`n-----------”
-    Write-Host "IIS Restart”
-    Write-Host "-----------”
-    invoke-command -scriptblock {iisreset}
-
     # stop all services
     Write-Host "`n------------------”
     Write-Host "Uninstall Services”

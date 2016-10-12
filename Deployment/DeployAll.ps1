@@ -98,20 +98,20 @@ Try
     Get-Module Build-VisualStudioSolution | Out-Null
 
     # build debug
-    #$buildResult = Build-VisualStudioSolution -SourceCodePath $sourceCode -SolutionFile $solutionFile -BuildLogFile "R2G2BuildDebug.log" -Configuration "Debug" -CleanFirst;
+    $buildResult = Build-VisualStudioSolution -SourceCodePath $sourceCode -SolutionFile $solutionFile -BuildLogFile "R2G2BuildDebug.log" -Configuration "Debug" -CleanFirst;
 
-    #If (!$buildResult)
-    #{
-    #    exit
-    #}
+    If (!$buildResult)
+    {
+        exit
+    }
 
     # build release
-    #$buildResult = Build-VisualStudioSolution -SourceCodePath $sourceCode -SolutionFile $solutionFile -BuildLogFile "R2G2BuildRelease.log" -Configuration "Release" -CleanFirst;
+    $buildResult = Build-VisualStudioSolution -SourceCodePath $sourceCode -SolutionFile $solutionFile -BuildLogFile "R2G2BuildRelease.log" -Configuration "Release" -CleanFirst;
 
-    #If (!$buildResult)
-    #{
-    #    exit
-    #}
+    If (!$buildResult)
+    {
+        exit
+    }
 
     # delpoy components
     Write-Host "`n`n-----------------”

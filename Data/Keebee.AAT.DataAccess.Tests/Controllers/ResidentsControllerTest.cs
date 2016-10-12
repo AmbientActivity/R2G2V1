@@ -25,15 +25,14 @@ namespace Keebee.AAT.DataAccess.Tests.Controllers
         {
             // Arrange
             const int residentId = 1;
-            const int expectedProfileId = 2;
 
             // Act
-            var profile = _container.Residents.ByKey(residentId)
+            var resident = _container.Residents.ByKey(residentId)
                 .GetValue();
 
             // Assert
-            Assert.IsNotNull(profile);
-            Assert.AreEqual(profile.Id, expectedProfileId);
+            Assert.IsNotNull(resident);
+            Assert.AreEqual(resident.Id, residentId);
         }
 
         [TestMethod]

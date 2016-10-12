@@ -3,6 +3,7 @@ using Keebee.AAT.Operations.Service.KeebeeAAT;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 
 namespace Keebee.AAT.Operations.Service.Services
 {
@@ -59,11 +60,20 @@ namespace Keebee.AAT.Operations.Service.Services
 
         public Config GetByDescription(string description)
         {
-            var container = new Container(new Uri(ODataHost.Url));
+            Config config = null;
 
-            var config = container.Configs
-                .AddQueryOption("$filter", $"Description eq '{description}'")
-                .Single();
+            try
+            {
+                var container = new Container(new Uri(ODataHost.Url));
+
+                config = container.Configs
+                    .AddQueryOption("$filter", $"Description eq '{description}'")
+                    .Single();
+            }
+            catch
+            { 
+                // do nothing 
+            }
 
             return config;
         }

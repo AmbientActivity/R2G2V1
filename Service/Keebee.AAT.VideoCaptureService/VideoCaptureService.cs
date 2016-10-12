@@ -108,15 +108,17 @@ namespace Keebee.AAT.VideoCaptureService
                 var filename = $"Capture_{DateTime.Now:yyyyMMdd_hhmmss}.mp4";
                 var storageFolder = await StorageFolder.GetFolderFromPathAsync(rootFolder);
                 var recordStorageFile = await storageFolder.CreateFileAsync(filename);
-
+#if DEBUG
                 _systemEventLogger.WriteEntry("Storage file created successfully");
-
+#endif
                 var recordProfile = MediaEncodingProfile.CreateMp4(_encodingQuality);
 
                 await _capture.StartRecordToStorageFileAsync(recordProfile, recordStorageFile);
-                _isRecording = true;
 
+                _isRecording = true;
+#if DEBUG
                 _systemEventLogger.WriteEntry("Capture started successfully");
+#endif
             }
             catch (Exception ex)
             {

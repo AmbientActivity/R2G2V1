@@ -50,13 +50,15 @@ namespace Keebee.AAT.BusinessRules
             var availableResponseTypes = _opsClient.GetResponseTypes();
             var allPhidgetTypes = _opsClient.GetPhidgetTypes().ToArray();
             var availablePhidgetStyleTypes = _opsClient.GetPhidgetStyleTypes().ToArray();
-            var configDetail = _opsClient.GetConfigDetail(id);
+            ConfigDetail configDetail = null;
 
             IEnumerable<int> usedPhidgetIds;
             IEnumerable<PhidgetType> availablePhidgetTypes;
             // edit mode
             if (id > 0)
             {
+                configDetail = _opsClient.GetConfigDetail(id);
+
                 // get all unused phidgets plus the one being edited
                 usedPhidgetIds = _opsClient.GetConfigWithDetails(configDetail.ConfigId)
                     .ConfigDetails

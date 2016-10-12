@@ -146,6 +146,8 @@ namespace Keebee.AAT.PhidgetService
 
         private void SensorChange(object sender, SensorChangeEventArgs e)
         {
+            if (_activeConfig == null) return;
+
             try
             {
 #if DEBUG

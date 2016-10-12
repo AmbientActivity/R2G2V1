@@ -23,12 +23,11 @@ $simulatorPath = "UI\Simulator\"
 $scheduledTasksPath = "ScheduledTasks\"
 $eventLogExportPath = "EventLogExporter\"
 
-# scripts
-$scriptRoot = "Scripts\"
-$scriptDatabasePath = "Scripts\Database\"
-$scriptEventLogPath = "Scripts\EventLogSource\"
-$scriptMessageQueuePath = "Scripts\MessageQueue\"
-$scriptServicePath = "Scripts\Service\"
+# install
+$installRoot = "Install\"
+$installDatabasePath = "Install\Database\"
+$installPowerShellPath = "Install\PowerShell\"
+$installUtilityPath = "Install\Utility\"
 
 # media
 $profilesPath = "Media\Profiles\0\"
@@ -99,20 +98,20 @@ Try
     Get-Module Build-VisualStudioSolution | Out-Null
 
     # build debug
-    $buildResult = Build-VisualStudioSolution -SourceCodePath $sourceCode -SolutionFile $solutionFile -BuildLogFile "R2G2BuildDebug.log" -Configuration "Debug" -CleanFirst;
+    #$buildResult = Build-VisualStudioSolution -SourceCodePath $sourceCode -SolutionFile $solutionFile -BuildLogFile "R2G2BuildDebug.log" -Configuration "Debug" -CleanFirst;
 
-    If (!$buildResult)
-    {
-        exit
-    }
+    #If (!$buildResult)
+    #{
+    #    exit
+    #}
 
     # build release
-    $buildResult = Build-VisualStudioSolution -SourceCodePath $sourceCode -SolutionFile $solutionFile -BuildLogFile "R2G2BuildRelease.log" -Configuration "Release" -CleanFirst;
+    #$buildResult = Build-VisualStudioSolution -SourceCodePath $sourceCode -SolutionFile $solutionFile -BuildLogFile "R2G2BuildRelease.log" -Configuration "Release" -CleanFirst;
 
-    If (!$buildResult)
-    {
-        exit
-    }
+    #If (!$buildResult)
+    #{
+    #    exit
+    #}
 
     # delpoy components
     Write-Host "`n`n-----------------”
@@ -229,47 +228,39 @@ Try
     Write-Host "done.”
 
 
-    # -------------------- SCRIPTS --------------------
-    # scripts
-    Write-Host "Deploying Startup Scripts...” -NoNewline
-    $path = $destPath + $scriptRoot
+    # -------------------- INSTALL SCRIPTS --------------------
+    # install
+    Write-Host "Deploying Install Scripts...” -NoNewline
+    $path = $destPath + $installRoot
     If(test-path $path)
     {
         Remove-Item $path -recurse -Force
     }
     New-Item -ItemType Directory -Force -Path $path | Out-Null
-    Copy-Item C:\Users\$env:USERNAME\Source\Repos\R2G2V1\Script\* $path -recurse -Force
+    Copy-Item C:\Users\$env:USERNAME\Source\Repos\R2G2V1\InstallScripts\* $path -recurse -Force
 
-    $path = $destPath + $scriptDatabasePath
+    $path = $destPath + $installDatabasePath
     If(test-path $path)
     {
         Remove-Item $path -recurse -Force
     }
     New-Item -ItemType Directory -Force -Path $path | Out-Null
-    Copy-Item C:\Users\$env:USERNAME\Source\Repos\R2G2V1\Script\Database\* $path -recurse -Force
+    Copy-Item C:\Users\$env:USERNAME\Source\Repos\R2G2V1\InstallScripts\Database\* $path -recurse -Force
 
-    $path = $destPath + $scriptEventLogPath
+    $path = $destPath + $installPowerShellPath
     If(!(test-path $path))
     {
         New-Item -ItemType Directory -Force -Path $path | Out-Null
     }
-    Copy-Item C:\Users\$env:USERNAME\Source\Repos\R2G2V1\Script\EventLogSource\* $path -recurse -Force
+    Copy-Item C:\Users\$env:USERNAME\Source\Repos\R2G2V1\InstallScripts\PowerShell\* $path -recurse -Force
 
-    $path = $destPath + $scriptMessageQueuePath
+    $path = $destPath + $installUtilityPath
     If(test-path $path)
     {
         Remove-Item $path -recurse -Force
     }
     New-Item -ItemType Directory -Force -Path $path | Out-Null
-    Copy-Item C:\Users\$env:USERNAME\Source\Repos\R2G2V1\Script\MessageQueue\CreateMessageQueues.ps1 $path -recurse -Force
-
-    $path = $destPath + $scriptServicePath
-    If(test-path $path)
-    {
-        Remove-Item $path -recurse -Force
-    }
-    New-Item -ItemType Directory -Force -Path $path | Out-Null
-    Copy-Item C:\Users\$env:USERNAME\Source\Repos\R2G2V1\Script\Service\* $path -recurse -Force
+    Copy-Item C:\Users\$env:USERNAME\Source\Repos\R2G2V1\InstallScripts\Utility\* $path -recurse -Force
 
     Write-Host "done.”
 

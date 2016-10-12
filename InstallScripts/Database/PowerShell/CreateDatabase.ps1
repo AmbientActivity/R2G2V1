@@ -1,6 +1,16 @@
 ﻿$server = $env:COMPUTERNAME + "\SQLEXPRESS"
 $database = "KeebeeAAT"
-$path = "C:\Deployments\Scripts\Database\SQL Server\"
+$path = "C:\Deployments\Install\Database\SQL Server\"
+
+# register InvokeSqlQuery powershell module
+$invokeSqlQueryPath = "C:\Windows\System32\WindowsPowerShell\v1.0\Modules\InvokeSqlQuery\"
+If(!(test-path $invokeSqlQueryPath))
+{
+    Write-Host "`nRegistering Module InvokeSqlQuery...” -NoNewline
+    New-Item -ItemType Directory -Force -Path $invokeSqlQueryPath | Out-Null
+    Copy-Item C:\Deployments\Install\Database\PowerShell\InvokeSqlQuery\*.ps* $invokeSqlQueryPath -recurse -Force
+    Write-Host "done.”
+}
 
 # check if the database already exists
 $query = Invoke-SqlQuery -Query "SELECT COUNT(*) AS DatabaseCount FROM master.sys.databases WHERE name = N'$database'" -Server $server -Database "master"

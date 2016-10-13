@@ -71,6 +71,7 @@
                         }, {
                             label: "OK",
                             cssClass: "btn-primary",
+                            hotkey: 13,  // enter
                             action: function (dialog) {
                                 $("body").css("cursor", "wait");
                                 var result = attemptToLogin();

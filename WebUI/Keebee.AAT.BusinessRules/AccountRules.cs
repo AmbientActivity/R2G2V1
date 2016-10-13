@@ -36,7 +36,7 @@ namespace Keebee.AAT.BusinessRules
             if (user.Id == 0)
                 errmsg = "User does not exist";
 
-            if (errmsg != null)
+            if (errmsg == null)
             {
                 if (!VerifyHashPassword(password, user.Password.Trim()))
                     errmsg = "Invalid password";

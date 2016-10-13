@@ -1,6 +1,6 @@
 ﻿@model Keebee.AAT.Administrator.ViewModels.LoginViewModel
 <div class="label label-default">Username</div>
-@Html.DropDownList("ddlUsernames", @Model.Usernames, new { @class = "form-control" })
+@Html.DropDownList("ddlUsernames", @Model.Usernames, new { @class = "form-control", @onchange="$('#txtPassword').focus(); $('#validation-container').html('');" })
 <div class="label label-default">Password</div>
 <input type="password" id="txtPassword" class="form-control has-error" value="@Model.Password" maxlength="50" />
 <div class="validation-container" id="validation-container"></div>

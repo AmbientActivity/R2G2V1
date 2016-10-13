@@ -69,6 +69,7 @@ namespace Keebee.AAT.Administrator.Controllers
                     var mediaPathType = rules.GetMediaPathType(mediaPathTypeId);
                     var filePath = $@"{_mediaPath.ProfileRoot}\{PublicMediaSource.Id}\{mediaPathType}\{file.FileName}";
 
+                    // might already exist in another response type, in which case don't delete it
                     if (rules.IsRemovable(filePath, (int)mediaPathTypeId, (int)responseTypeId))
                     {
                         fileManager.DeleteFile(filePath);
@@ -79,7 +80,9 @@ namespace Keebee.AAT.Administrator.Controllers
                         file.MoveTo(filePath);
                     }
 
-                    AddPublicMediaFile(file.FileName, (int)responseTypeId, (int)mediaPathTypeId, mediaPathType);
+                    // don't add it to the same response type twice
+                    if (rules.CanAdd((int)responseTypeId, file.FileName))
+                        AddPublicMediaFile(file.FileName, (int)responseTypeId, (int)mediaPathTypeId, mediaPathType);
                 }
             }
 
@@ -156,7 +159,7 @@ namespace Keebee.AAT.Administrator.Controllers
 
             try
             {
-                var rules = new PublicMediaRules {OperationsClient = _opsClient};
+                var rules = new PublicMediaRules { OperationsClient = _opsClient };
 
                 errormessage = rules.CanDeleteMultiple(ids.Length, mediaPathTypeId, responseTypeId);
                 if (errormessage.Length > 0)
@@ -243,7 +246,7 @@ namespace Keebee.AAT.Administrator.Controllers
                 int? mediaPathTypeId,
                 int? responseTypeId)
         {
-            var rules = new PublicMediaRules {OperationsClient = _opsClient};
+            var rules = new PublicMediaRules { OperationsClient = _opsClient };
             var vm = new PublicMediaViewModel
             {
                 Title = PublicMediaSource.Description,

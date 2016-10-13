@@ -13,6 +13,7 @@ namespace Keebee.AAT.Operations.Service.Services
         IEnumerable<PublicMediaFile> GetForResponseType(int responseTypdId);
         IEnumerable<PublicMediaFile> GetForMediaPathType(int mediaPathTypdId);
         IEnumerable<PublicMediaFile> GetForStreamId(Guid streamId);
+        PublicMediaFile GetForResponseTypeFilename(int responseTypdId, string filename);
         void Post(PublicMediaFile publicMediaFile);
         void Patch(int id, PublicMediaFile publicMediaFile);
         void Delete(int id);
@@ -75,6 +76,17 @@ namespace Keebee.AAT.Operations.Service.Services
                 .AsEnumerable();
 
             return media;
+        }
+
+        public PublicMediaFile GetForResponseTypeFilename(int responseTypdId, string filename)
+        {
+            var container = new Container(new Uri(ODataHost.Url));
+
+            var media = container.PublicMediaFiles
+                .AddQueryOption("$filter", $"ResponseTypeId eq {responseTypdId} and MediaFile/Filename eq '{filename}'")
+                .ToList();
+
+            return media.Any() ? media.Single() : null;
         }
 
         public void Post(PublicMediaFile publicMediaFile)

@@ -65,7 +65,15 @@ namespace Keebee.AAT.BusinessRules
             var paths = publicMedia.MediaFiles.Select(x => x.ResponseType)
                 .Where(x => x.Id != responseTypeId);
 
-            return (paths.Count() == 1);
+            return (paths.Count() <= 1);
+        }
+
+        // don't add it to the same response type more than once
+        public bool CanAdd(int responseTypeId, string filename)
+        {
+            var publicMediaFile = _opsClient.GetPublicMediaFileForResponseTypeFilename(responseTypeId, filename);
+
+            return (publicMediaFile.Id == 0);
         }
 
         // when doing a bulk delete, ensure there is at least one media file remaining per response type

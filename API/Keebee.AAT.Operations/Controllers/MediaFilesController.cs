@@ -187,7 +187,7 @@ namespace Keebee.AAT.Operations.Controllers
                 media = _mediaFileService.GetSingleFromPath(path, filename);
             });
 
-            if (media == null) return new DynamicJsonObject(new ExpandoObject());
+            if (media == null) return null;
 
             dynamic exObj = new ExpandoObject();
 

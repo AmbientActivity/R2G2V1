@@ -258,6 +258,28 @@ namespace Keebee.AAT.Operations.Controllers
             return new DynamicJsonObject(exObj);
         }
 
+
+        // GET: api/PublicMediaFiles?responseTypeId=1&filename=photo.jpg
+        [HttpGet]
+        public async Task<DynamicJsonObject> GetForResponseTypeFilename(int responseTypeId, string filename)
+        {
+            PublicMediaFile mediaFile = null;
+
+            await Task.Run(() =>
+            {
+                mediaFile = _publicMediaFileService.GetForResponseTypeFilename(responseTypeId, filename);
+            });
+
+            if (mediaFile == null) return new DynamicJsonObject(new ExpandoObject());
+
+            dynamic exObj = new ExpandoObject();
+
+            exObj.Id = mediaFile.Id;
+            exObj.StreamId = mediaFile.StreamId;
+
+            return new DynamicJsonObject(exObj);
+        }
+
         // POST: api/PublicMediaFiles
         [HttpPost]
         public void Post([FromBody]string value)

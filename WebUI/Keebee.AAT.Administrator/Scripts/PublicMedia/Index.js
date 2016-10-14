@@ -121,6 +121,7 @@ function DisableScreen() {
                 self.selectedMediaPathType = ko.observable(config.selectedMediaPathTypeId);
                 self.selectedResponseType = ko.observable(config.selectedResponseTypeId);
                 self.filenameSearch = ko.observable("");
+                self.totalFilteredFiles = ko.observable(0);
                 self.totalFiles = ko.observable(0);
                 self.selectAllIsSelected = ko.observable(false);
                 self.selectedIds = ko.observable([]);
@@ -251,9 +252,17 @@ function DisableScreen() {
                     });
                 });
 
+                self.filteredFilesBySelection = ko.computed(function () {
+                    return ko.utils.arrayFilter(self.files(), function (f) {
+                        return (
+                            f.responsetypeid === self.selectedResponseType() &&
+                            f.mediapathtypeid === self.selectedMediaPathType());
+                    });
+                });
+
                 self.filesTable = ko.computed(function () {
                     var filteredFiles = self.filteredFiles();
-                    self.totalFiles(filteredFiles.length);
+                    self.totalFilteredFiles(filteredFiles.length);
 
                     return filteredFiles;
                 });
@@ -474,7 +483,7 @@ function DisableScreen() {
 
                     cmdDelete.attr("disabled", "disabled");
                     if (selected.length > 0) {
-                        if (selected.length < self.totalFiles()) {
+                        if (selected.length < self.filteredFilesBySelection().length) {
                             cmdDelete.removeAttr("disabled");
                         }
                     }

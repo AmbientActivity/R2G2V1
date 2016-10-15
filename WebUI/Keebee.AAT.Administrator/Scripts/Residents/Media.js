@@ -429,7 +429,7 @@ function DisableScreen() {
 
                     BootstrapDialog.show({
                         type: BootstrapDialog.TYPE_INFO,
-                        title: "Image Viewer",
+                        title: "Image Viewer - " + row.filename + "." + row.filetype.toLowerCase(),
                         message: message,
                         closable: false,
                         onshown: function() { $("body").css("cursor", "default"); },

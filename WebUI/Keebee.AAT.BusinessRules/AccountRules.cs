@@ -38,6 +38,12 @@ namespace Keebee.AAT.BusinessRules
 
             if (errmsg == null)
             {
+                if (password == null)
+                    errmsg = "Password is required";
+            }
+
+            if (errmsg == null)
+            {
                 if (!VerifyHashPassword(password, user.Password.Trim()))
                     errmsg = "Invalid password";
             }

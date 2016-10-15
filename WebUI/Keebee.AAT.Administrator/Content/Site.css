@@ -184,5 +184,8 @@ a:hover, a:visited, a:link, a:active {
 .button-text {
     color: #fff;
 }
+.upload-media-button {
+    width: 125px;
+}
 
 

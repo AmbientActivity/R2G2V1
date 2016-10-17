@@ -346,7 +346,7 @@ Try
     Write-Host "done.”
 
     # documentation
-    Write-Host "`nDeploying setup documentation...” -NoNewline
+    Write-Host "Deploying setup documentation...” -NoNewline
     $path = $destPath + $documentationPath
     If(test-path $path)
     {

@@ -1,3 +1,3 @@
 @ECHO OFF
-PowerShell -NoProfile -ExecutionPolicy Unrestricted -Command "& 'C:\Deployments\Scripts\Windows\CreateEventLogSources.ps1'"
+PowerShell -NoProfile -ExecutionPolicy Unrestricted -Command "& 'C:\Deployments\Install\PowerShell\CreateEventLogSources.ps1'"
 PAUSE

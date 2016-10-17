@@ -1,2 +1,2 @@
 @ECHO OFF
-PowerShell -NoProfile -ExecutionPolicy Unrestricted -Command "& 'C:\Deployments\Scripts\Database\PowerShell\DropAndCreateTables.ps1'"
+PowerShell -NoProfile -ExecutionPolicy Unrestricted -Command "& 'C:\Deployments\Install\Database\PowerShell\DropAndCreateTables.ps1'"

@@ -1,3 +1,3 @@
 @ECHO OFF
-PowerShell -NoProfile -ExecutionPolicy Unrestricted -Command "& 'C:\Deployments\Scripts\Windows\CreateMessageQueues.ps1'"
+PowerShell -NoProfile -ExecutionPolicy Unrestricted -Command "& 'C:\Deployments\Install\PowerShell\CreateMessageQueues.ps1'"
 PAUSE

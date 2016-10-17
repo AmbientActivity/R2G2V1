@@ -14,7 +14,7 @@
     $newUser.Description  ='Test webuser account'
     $newUser.SetInfo()
 
-    Write-Host "done."
+    Write-Host "done.`n"
 }
 Catch
 {

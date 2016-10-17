@@ -1,6 +1,6 @@
 ﻿$server = $env:COMPUTERNAME + "\SQLEXPRESS"
 $database = "KeebeeAAT"
-$path = "C:\Deployments\Scripts\Database\SQL Server\"
+$path = "C:\Deployments\Install\Database\SQL Server\"
 
 # check if the database already exists
 $query = Invoke-SqlQuery -Query "SELECT COUNT(*) AS DatabaseCount FROM master.sys.databases WHERE name = N'$database'" -Server $server -Database "master"

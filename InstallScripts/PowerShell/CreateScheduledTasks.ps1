@@ -28,7 +28,7 @@
 
     $rootFolder.RegisterTaskDefinition("$TaskName", $TaskDefinition, 6, "System", $null, 5) | Out-Null
 
-    Write-Host "done."
+    Write-Host "done.`n"
 }
 Catch
 {

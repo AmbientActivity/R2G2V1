@@ -34,6 +34,9 @@ $profilesPath = "Media\Profiles\0\"
 $exportsPath = "Media\Exports\EventLog\"
 $publicLibrarySource = "\\" + $env:COMPUTERNAME + "\SQLEXPRESS\KeebeeAATFilestream\Media\Profiles\0\*"
 
+# documentation paths
+$documentationPath = "Install\Documentation\"
+
 # source code
 $sourceCode = "C:\Users\" + $env:USERNAME + "\Source\Repos\R2G2V1\"
 $solutionFile = "Keebee.AAT.sln"
@@ -46,6 +49,16 @@ Try
     Write-Host "`n------------------”
     Write-Host "Uninstall Services”
     Write-Host "------------------`n”
+
+    # register ServiceUtilities powershell module
+    $path = "C:\Users\" + $env:USERNAME + "\Documents\WindowsPowerShell\Modules\ServiceUtilities\"
+    If(!(test-path $path))
+    {
+        Write-Host "Registering Module ServiceUtilities...” -NoNewline
+        New-Item -ItemType Directory -Force -Path $path | Out-Null
+        Copy-Item C:\Users\$env:USERNAME\Source\Repos\R2G2V1\Deployment\Modules\ServiceUtilities\* $path -recurse -Force
+        Write-Host "done.`n”
+    }
 
     Get-Module SeriveUtilities | Out-Null
 
@@ -90,12 +103,23 @@ Try
     }
     Write-Host "done.”
 
+
     # build the solution
     Write-Host "`n`n--------------”
     Write-Host "Build Solution”
     Write-Host "--------------`n”
 
-    Get-Module Build-VisualStudioSolution | Out-Null
+    # register Build-VisualStudioSolution powershell module
+    $path = "C:\Users\" + $env:USERNAME + "\Documents\WindowsPowerShell\Modules\Build-VisualStudioSolution\"
+    If(!(test-path $path))
+    {
+        Write-Host "Registering Module Build-VisualStudioSolution...” -NoNewline
+        New-Item -ItemType Directory -Force -Path $path | Out-Null
+        Copy-Item C:\Users\$env:USERNAME\Source\Repos\R2G2V1\Deployment\Modules\Build-VisualStudioSolution\* $path -recurse -Force
+        Write-Host "done.`n”
+    }
+
+    Get-Module Build-VisualStudioSolution
 
     # build debug
     $buildResult = Build-VisualStudioSolution -SourceCodePath $sourceCode -SolutionFile $solutionFile -BuildLogFile "R2G2BuildDebug.log" -Configuration "Debug" -CleanFirst;
@@ -319,6 +343,17 @@ Try
     }
     New-Item -ItemType Directory -Force -Path $path | Out-Null
     Copy-Item C:\Users\$env:USERNAME\Source\Repos\R2G2V1\Service\Keebee.AAT.KeepIISAliveService\bin\Release\* $path -recurse -Force
+    Write-Host "done.”
+
+    # documentation
+    Write-Host "`nDeploying setup documentation...” -NoNewline
+    $path = $destPath + $documentationPath
+    If(test-path $path)
+    {
+        Remove-Item $path -recurse -Force
+    }
+    New-Item -ItemType Directory -Force -Path $path | Out-Null
+    Copy-Item C:\Users\$env:USERNAME\Source\Repos\R2G2V1\Documentation\Setup\PostWindowsInstallationSetup.docx $path -recurse -Force
     Write-Host "done.”
 
     Write-Host -foregroundcolor green "`nR2G2 successfully deployed.`n”

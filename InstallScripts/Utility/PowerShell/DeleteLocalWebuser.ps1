@@ -6,7 +6,7 @@
   $ADSIComp = [adsi]"WinNT://$computername"
   $ADSIComp.Delete('User','webuser') 
 
-  Write-Host "done." 
+  Write-Host "done.`n" 
 }
 Catch
 {

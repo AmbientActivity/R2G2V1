@@ -1,6 +1,6 @@
 ﻿$server = $env:COMPUTERNAME + "\SQLEXPRESS"
 $database = "KeebeeAAT"
-$path = "C:\Deployments\Scripts\Database\SQL Server\"
+$path = "C:\Deployments\Install\Database\SQL Server\"
 
 
 # check if the database exists

@@ -1,3 +1,3 @@
 @ECHO OFF
-PowerShell -NoProfile -ExecutionPolicy Unrestricted -Command "& 'C:\Deployments\Scripts\Windows\CreateScheduledTasks.ps1'"
+PowerShell -NoProfile -ExecutionPolicy Unrestricted -Command "& 'C:\Deployments\Install\PowerShell\CreateScheduledTasks.ps1'"
 PAUSE

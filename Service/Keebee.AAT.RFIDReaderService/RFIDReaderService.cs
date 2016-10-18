@@ -81,6 +81,7 @@ namespace Keebee.AAT.RfidReaderService
             {
                 _device = devices[0];
                 _device.Open();
+                _systemEventLogger.WriteEntry("RFID device initialized");
             }
         }
 
@@ -117,47 +118,56 @@ namespace Keebee.AAT.RfidReaderService
 
         private int GetResidentId()
         {
-            var idArray = new int[MaxReads];
+            int nextId = -1;
 
-            for (var i = 0; i < MaxReads; i++)
+            try
             {
-                var id = Read();
-                if (id >= 0)
-                    idArray[i] = id;
+                var idArray = new int[MaxReads];
+
+                for (var i = 0; i < MaxReads; i++)
+                {
+                    var id = Read();
+                    if (id >= 0)
+                        idArray[i] = id;
 #if DEBUG
                 if (_readerMonitorIsActive)
                     _messageQueueRfidMonitor.Send(CreateMessageBody(false, i + 1, idArray[i]));
 #endif
-                try
-                {
-                    Thread.Sleep(ReadInterval);
+                    try
+                    {
+                        Thread.Sleep(ReadInterval);
+                    }
+                    catch (ThreadAbortException)
+                    {
+                        break;
+                    }
                 }
-                catch (ThreadAbortException)
+
+                if (!idArray.Any(x => x > 0)) return 0;
+
+                var nonZeroArray = idArray.Where(x => x > 0).ToArray();
+
+                nextId = nonZeroArray
+                    .GroupBy(x => x)
+                    .OrderByDescending(x => x.Count())
+                    .First().Key;
+
+                var distinctIds = nonZeroArray.Distinct();
+
+                var maxCount = nonZeroArray
+                    .Select(x => x)
+                    .Count(x => x == nextId);
+
+                if (distinctIds.Any(id => nonZeroArray.Select(x => x)
+                                              .Where(x => x != nextId)
+                                              .Count(x => x == id) == maxCount))
                 {
-                    break;
+                    return -1; // there's a tie - do nothing
                 }
             }
-
-            if (!idArray.Any(x => x > 0)) return 0;
-
-            var nonZeroArray = idArray.Where(x => x > 0).ToArray();
-
-            var nextId = nonZeroArray
-                .GroupBy(x => x)
-                .OrderByDescending(x => x.Count())
-                .First().Key;
-
-            var distinctIds = nonZeroArray.Distinct();
-
-            var maxCount = nonZeroArray
-                .Select(x => x)
-                .Count(x => x == nextId);
-
-            if (distinctIds.Any(id => nonZeroArray.Select(x => x)
-                .Where(x => x != nextId)
-                .Count(x => x == id) == maxCount))
+            catch (Exception ex)
             {
-                return -1;   // there's a tie - do nothing
+                _systemEventLogger.WriteEntry($"GetResidentId: {ex.Message}", EventLogEntryType.Error);
             }
 
             return nextId;

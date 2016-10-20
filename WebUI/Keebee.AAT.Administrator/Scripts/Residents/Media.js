@@ -270,13 +270,7 @@ function DisableScreen() {
                                 cssClass: "btn-danger",
                                 action: function (dialog) {
                                     dialog.close();
-                                    var result = self.deleteSelected();
-                                    lists.FileList = result.FileList;
-                                    createFileArray(lists.FileList);
-                                    self.sort({ afterSave: true });
-                                    self.enableDetail();
-                                    
-                                    $("body").css("cursor", "default");
+                                    self.deleteSelected();
                                 }
                             }
                         ]
@@ -388,18 +382,20 @@ function DisableScreen() {
                                         createFileArray(lists.FileList);
                                         self.sort({ afterSave: true });
                                         self.enableDetail();
+                                        self.selectedIds([]);
                                     } else {
+                                        $("body").css("cursor", "default");
                                         BootstrapDialog.show({
                                             type: BootstrapDialog.TYPE_DANGER,
                                             title: "Delete Error",
                                             message: data.ErrorMessage
                                         });
                                     }
-
                                 },
                                 error: function(data) {
                                     dialog.close();
                                     $("body").css("cursor", "default");
+                                    self.selectedIds([]);
                                     BootstrapDialog.show({
                                         type: BootstrapDialog.TYPE_DANGER,
                                         title: "Delete Error",

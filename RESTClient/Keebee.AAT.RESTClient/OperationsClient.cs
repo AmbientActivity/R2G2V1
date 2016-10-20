@@ -846,6 +846,11 @@ namespace Keebee.AAT.RESTClient
             return Delete(string.Format(UrlResident, residentId));
         }
 
+        public string DeleteResidentMediaFile(int mediaFileId)
+        {
+            return Delete(string.Format(UrlResidentMediaFile, mediaFileId));
+        }
+
         public void DeleteConfig(int configId)
         {
             Delete(string.Format(UrlConfig, configId));

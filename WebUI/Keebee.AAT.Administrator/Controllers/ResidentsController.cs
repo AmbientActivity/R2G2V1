@@ -221,6 +221,7 @@ namespace Keebee.AAT.Administrator.Controllers
                     var file = rules.GetMediaFile(id);
                     if (file == null) continue;
 
+                    rules.DeleteResidentMediaFile(id);
                     var fileManager = new FileManager { EventLogger = _systemEventLogger };
                     fileManager.DeleteFile($@"{file.Path}\{file.Filename}");
                 }

@@ -170,20 +170,18 @@ namespace Keebee.AAT.Administrator.Controllers
                     var file = rules.GetMediaFile(id);
                     if (file == null) continue;
 
+                    var isMultipleResponseTypes = rules.IsMultipleReponseTypes(id);
+
+                    // delete the link
+                    errormessage = rules.DeletePublicMediaFile(id);
+                    if (errormessage.Length > 0)
+                        throw new Exception(errormessage);
+
                     // if the file is used in multiple response types
-                    if (rules.IsMultipleReponseTypes(id))
-                    {
-                        // delete the link only
-                        errormessage = rules.DeletePublicMediaFile(id);
-                        if (errormessage.Length > 0)
-                            throw new Exception(errormessage);
-                    }
-                    else
-                    {
-                        // otherwise delete the file (link will get deleted automatically)
-                        var fileManager = new FileManager {EventLogger = _systemEventLogger};
-                        fileManager.DeleteFile($@"{file.Path}\{file.Filename}");
-                    }
+                    if (isMultipleResponseTypes) continue;
+
+                    var fileManager = new FileManager {EventLogger = _systemEventLogger};
+                    fileManager.DeleteFile($@"{file.Path}\{file.Filename}");
                 }
 
                 success = true;

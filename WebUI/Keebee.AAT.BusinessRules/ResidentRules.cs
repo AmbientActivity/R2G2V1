@@ -192,5 +192,10 @@ namespace Keebee.AAT.BusinessRules
 
             return file;
         }
+
+        public string DeleteResidentMediaFile(int id)
+        {
+            return _opsClient.DeleteResidentMediaFile(id);
+        }
     }
 }

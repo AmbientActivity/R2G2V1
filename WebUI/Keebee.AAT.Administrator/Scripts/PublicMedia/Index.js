@@ -312,7 +312,6 @@ function DisableScreen() {
                                 action: function (dialog) {
                                     self.deleteSelected();
                                     dialog.close();
-                                    $("body").css("cursor", "default");
                                 }
                             }
                         ]
@@ -416,25 +415,27 @@ function DisableScreen() {
                                 },
                                 dataType: "json",
                                 success: function(data) {
-                                    $("body").css("cursor", "default");
                                     dialog.close();
+                                    $("body").css("cursor", "default");
                                     if (data.Success) {
                                         lists.FileList = data.FileList;
                                         createFileArray(lists.FileList);
                                         self.sort({ afterSave: true });
                                         self.enableDetail();
+                                        self.selectedIds([]);
                                     } else {
+                                        $("body").css("cursor", "default");
                                         BootstrapDialog.show({
                                             type: BootstrapDialog.TYPE_DANGER,
                                             title: "Delete Error",
                                             message: data.ErrorMessage
                                         });
                                     }
-
                                 },
                                 error: function(data) {
-                                    $("body").css("cursor", "default");
                                     dialog.close();
+                                    $("body").css("cursor", "default");
+                                    self.selectedIds([]);
                                     BootstrapDialog.show({
                                         type: BootstrapDialog.TYPE_DANGER,
                                         title: "Delete Error",

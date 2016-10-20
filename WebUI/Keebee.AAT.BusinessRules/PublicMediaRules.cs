@@ -1,5 +1,4 @@
-﻿using System;
-using Keebee.AAT.RESTClient;
+﻿using Keebee.AAT.RESTClient;
 using Keebee.AAT.Shared;
 using System.Collections.Generic;
 using System.Linq;

@@ -75,13 +75,13 @@ namespace Keebee.AAT.RfidReaderService
             Device[] devices = USBDeviceFactory.Enumerate();
             if (devices.Length == 0)
             {
-                _systemEventLogger.WriteEntry("No USB devices found", EventLogEntryType.Warning);
+                _systemEventLogger.WriteEntry("No RFID Reader devices found", EventLogEntryType.Warning);
             }
             else
             {
                 _device = devices[0];
                 _device.Open();
-                _systemEventLogger.WriteEntry("RFID device initialized");
+                _systemEventLogger.WriteEntry("Device initialized successfully");
             }
         }
 

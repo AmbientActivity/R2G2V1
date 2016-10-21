@@ -299,6 +299,7 @@ namespace Keebee.AAT.StateMachineService
             try
             {
                 if (!_displayIsActive) return;
+                if (_activeConfig == null) return;
                 if (!_activeConfig.IsActiveEventLog) return;
 
                 var rfidEventLogger = new RfidEventLogger()
@@ -310,7 +311,7 @@ namespace Keebee.AAT.StateMachineService
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"RfidReaderService.LogRfidEvent: {ex.Message}", EventLogEntryType.Error);
+                _systemEventLogger.WriteEntry($"LogRfidEvent: {ex.Message}", EventLogEntryType.Error);
             }
         }
     }

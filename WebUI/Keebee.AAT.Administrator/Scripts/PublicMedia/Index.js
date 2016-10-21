@@ -122,7 +122,6 @@ function DisableScreen() {
                 self.selectedResponseType = ko.observable(config.selectedResponseTypeId);
                 self.filenameSearch = ko.observable("");
                 self.totalFilteredFiles = ko.observable(0);
-                self.totalFiles = ko.observable(0);
                 self.selectAllIsSelected = ko.observable(false);
                 self.selectedIds = ko.observable([]);
 

@@ -970,6 +970,7 @@ namespace Keebee.AAT.Display.Caregiver
         {
             CancelBackgroundWorkers(true);
             StopMusic();
+            axWindowsMediaPlayer1.ClearPlaylist(PlaylistCaregiver);
             RaiseCaregiverCompleteEvent();
         }
 

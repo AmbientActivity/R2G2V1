@@ -22,6 +22,13 @@ namespace Keebee.AAT.Display.Extensions
             return playlist;
         }
 
+        public static void ClearPlaylist(this AxWindowsMediaPlayer player, string playlistName)
+        {
+            var playlist = InitializePlaylist(player, playlistName);
+
+            playlist.clear();
+        }
+
         public static int CurrentIndex(this AxWindowsMediaPlayer player, IWMPPlaylist playlist)
         {
             var index = 0;

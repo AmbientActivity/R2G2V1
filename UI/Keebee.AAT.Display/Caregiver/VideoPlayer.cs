@@ -104,6 +104,7 @@ namespace Keebee.AAT.Display.Caregiver
         private void CloseButtonClick(object sender, EventArgs e)
         {
             axWindowsMediaPlayer1.Ctlcontrols.stop();
+            axWindowsMediaPlayer1.ClearPlaylist(PlaylistCaregiver);
             Close();
         }
     }

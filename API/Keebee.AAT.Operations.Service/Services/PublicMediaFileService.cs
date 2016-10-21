@@ -83,7 +83,7 @@ namespace Keebee.AAT.Operations.Service.Services
             var container = new Container(new Uri(ODataHost.Url));
 
             var media = container.PublicMediaFiles
-                .AddQueryOption("$filter", $"ResponseTypeId eq {responseTypdId} and MediaFile/Filename eq '{filename}'")
+                .AddQueryOption("$filter", $"ResponseTypeId eq {responseTypdId} and MediaFile/Filename eq '{filename.Replace("'", "''")}'")
                 .ToList();
 
             return media.Any() ? media.Single() : null;

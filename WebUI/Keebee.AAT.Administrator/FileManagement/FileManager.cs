@@ -82,7 +82,7 @@ namespace Keebee.AAT.Administrator.FileManagement
 
         public Guid GetStreamId(string path, string filename)
         {
-            var file = _opsClient.GetMediaFileFromPath(path, filename);
+            var file = _opsClient.GetMediaFileFromPath(path, filename.Replace("&", "%26"));
             return file.StreamId;
         }
     }

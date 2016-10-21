@@ -66,7 +66,7 @@ namespace Keebee.AAT.Operations.Service.Services
 
             var media = container.MediaFiles
                 .AddQueryOption("$filter", $@"indexof(Path, '{path}') gt 0 " +
-                    $"and Filename eq '{filename.Replace("'", "''")}'")
+                    $"and Filename eq '{filename.Replace("'", "''").Replace("&", "%26")}'")
                     .ToList();
 
             return media.Any() ? media.Single() : null;

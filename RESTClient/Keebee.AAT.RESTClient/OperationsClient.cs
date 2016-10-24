@@ -44,6 +44,7 @@ namespace Keebee.AAT.RESTClient
         Resident GetResidentWithMedia(int residentId);
         Resident GetResidentByNameGender(string firstName, string lastName, string gender);
         bool ResidentExists(int residentId);
+        ActiveResident GetActiveResident();
 
         // media
         MediaFileSingle GetMediaFile(Guid streamId);
@@ -89,6 +90,7 @@ namespace Keebee.AAT.RESTClient
 
         // PATCH
         void PatchResident(int residentId, ResidentEdit resident);
+        void PatchActiveResident(ActiveResidentEdit resident);
         void PatchConfig(int configId, ConfigEdit configDetail);
         void PatchConfigDetail(int configDetailId, ConfigDetailEdit configDetail);
         void PatchUser(int userId, User user);
@@ -143,6 +145,7 @@ namespace Keebee.AAT.RESTClient
         private const string UrlResident = "residents/{0}";
         private const string UrlResidentByNameGender = "residents?firstName={0}&lastName={1}&gender={2}";
         private const string UrlResidentWithMedia = "residents/{0}/media";
+        private const string UrlActiveResident = "activeresidents/{0}";
 
         // media files
         private const string UrlMediaFile = "mediafiles/{0}";
@@ -443,6 +446,17 @@ namespace Keebee.AAT.RESTClient
         public bool ResidentExists(int residentId)
         {
             return Exists(string.Format(UrlResident, residentId));
+        }
+
+        public ActiveResident GetActiveResident()
+        {
+            var data = Get(string.Format(UrlActiveResident, 1));
+            if (data == null) return null;
+
+            var serializer = new JavaScriptSerializer();
+            var resident = serializer.Deserialize<ActiveResident>(data);
+
+            return resident;
         }
 
         // event log
@@ -833,6 +847,14 @@ namespace Keebee.AAT.RESTClient
             var el = serializer.Serialize(user);
 
             Patch(string.Format(UrlUser, userId), el);
+        }
+
+        public void PatchActiveResident(ActiveResidentEdit resident)
+        {
+            var serializer = new JavaScriptSerializer();
+            var el = serializer.Serialize(resident);
+
+            Patch(string.Format(UrlActiveResident, 1), el);
         }
 
         // DELETE

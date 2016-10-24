@@ -93,7 +93,7 @@ namespace Keebee.AAT.Operations.Service.Services
             var el = container.RfidEventLogs.Where(e => e.Id == id).SingleOrDefault();
             if (el == null) return;
 
-            if (el.ResidentId != null)
+            if (rfidEventLog.ResidentId != null)
                 el.ResidentId = rfidEventLog.ResidentId;
 
             container.UpdateObject(el);

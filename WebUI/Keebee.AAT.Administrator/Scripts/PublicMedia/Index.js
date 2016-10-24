@@ -361,13 +361,22 @@ function DisableScreen() {
                     if (row.isselected)
                         self.selectedIds().push(row.id);
                     else
-                        self.selectedIds().pop(row.id);
+                        self.removeSelectedId(row.id);
 
                     self.highlightSelectedRows();
                     self.enableDetail();
+                    self.clearSelectAll();
 
                     return true;
                 };
+
+                self.removeSelectedId = function (id) {
+                    for (var i = self.selectedIds().length - 1; i >= 0; i--) {
+                        if (self.selectedIds()[i] === id) {
+                            self.selectedIds().splice(i, 1);
+                        }
+                    }
+                }
 
                 self.highlightSelectedRows = function () {
                     var rows = tblFile.find("tr:gt(0)");
@@ -422,8 +431,13 @@ function DisableScreen() {
                                         self.sort({ afterSave: true });
                                         self.enableDetail();
                                         self.selectedIds([]);
+                                        self.clearSelectAll();
                                     } else {
                                         $("body").css("cursor", "default");
+                                        self.enableDetail();
+                                        self.selectedIds([]);
+                                        self.clearSelectAll();
+
                                         BootstrapDialog.show({
                                             type: BootstrapDialog.TYPE_DANGER,
                                             title: "Delete Error",
@@ -434,7 +448,10 @@ function DisableScreen() {
                                 error: function(data) {
                                     dialog.close();
                                     $("body").css("cursor", "default");
+                                    self.enableDetail();
                                     self.selectedIds([]);
+                                    self.clearSelectAll();
+
                                     BootstrapDialog.show({
                                         type: BootstrapDialog.TYPE_DANGER,
                                         title: "Delete Error",
@@ -487,6 +504,11 @@ function DisableScreen() {
                             cmdDelete.removeAttr("disabled");
                         }
                     }
+                };
+
+                self.clearSelectAll = function () {
+                    self.selectAllIsSelected(false);
+                    $("#chk_all").prop("checked", false);
                 };
             };
 

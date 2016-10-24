@@ -2,6 +2,7 @@ USE [KeebeeAAT]
 
 IF OBJECT_ID('__MigrationHistory', 'U') IS NOT NULL DROP TABLE __MigrationHistory
 IF OBJECT_ID('ActivityEventLogs', 'U') IS NOT NULL DROP TABLE ActivityEventLogs
+IF OBJECT_ID('ActiveResidents', 'U') IS NOT NULL DROP TABLE ActiveResidents
 IF OBJECT_ID('GameEventLogs', 'U') IS NOT NULL DROP TABLE GameEventLogs
 IF OBJECT_ID('RfidEventLogs', 'U') IS NOT NULL DROP TABLE RfidEventLogs
 IF OBJECT_ID('GameTypes', 'U') IS NOT NULL DROP TABLE GameTypes

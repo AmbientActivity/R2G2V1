@@ -165,11 +165,13 @@ namespace Keebee.AAT.StateMachineService
                 {
                     if (_activeResident?.Id == resident.Id) return;
                     LogRfidEvent(resident.Id, "New active resident");
+                    SetActiveResident(_displayIsActive ? resident.Id : (int?)null);
                 }
                 else
                 {
                     if (_activeResident?.Id == PublicMediaSource.Id) return;
                     LogRfidEvent(PublicMediaSource.Id, "Active resident is public");
+                    SetActiveResident(null);
                 }
 
                 _activeResident = resident;
@@ -188,7 +190,11 @@ namespace Keebee.AAT.StateMachineService
                 var displayMessage = GetDisplayStateFromMessageBody(e.MessageBody);
                 _displayIsActive = displayMessage.IsActive;
 
-                if (!_displayIsActive) return;
+                if (!_displayIsActive)
+                {
+                    SetActiveResident(null);
+                    return;
+                }
 
                 _activeResident = new ResidentMessage
                 {
@@ -312,6 +318,19 @@ namespace Keebee.AAT.StateMachineService
             catch (Exception ex)
             {
                 _systemEventLogger.WriteEntry($"LogRfidEvent: {ex.Message}", EventLogEntryType.Error);
+            }
+        }
+
+        private void SetActiveResident(int? residentId)
+        {
+            try
+            {
+                var resident = new ActiveResidentEdit { ResidentId = residentId };
+                _opsClient.PatchActiveResident(resident);
+            }
+            catch (Exception ex)
+            {
+                _systemEventLogger?.WriteEntry($"SetActiveResident: {ex.Message}", EventLogEntryType.Error);
             }
         }
     }

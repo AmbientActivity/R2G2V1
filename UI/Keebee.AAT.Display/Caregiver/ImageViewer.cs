@@ -41,6 +41,8 @@ namespace Keebee.AAT.Display.Caregiver
             InitializeComponent();
             ConfigureComponents();
             InitializeStartupPosition();
+
+            slideViewerFlash1.SlideShowCompleteEvent += SlideShowComplete;
         }
 
         private void ConfigureComponents()
@@ -70,7 +72,7 @@ namespace Keebee.AAT.Display.Caregiver
 #endif
         }
 
-        #region even handlers
+        #region event handlers
 
         private void PreviousButtonClick(object sender, EventArgs e)
         {
@@ -111,6 +113,11 @@ namespace Keebee.AAT.Display.Caregiver
         private void ImageViewerFormClosing(object sender, FormClosingEventArgs e)
         {
             slideViewerFlash1.Stop();
+        }
+
+        private void SlideShowComplete(object sender, EventArgs e)
+        {
+            Close();
         }
 
         #endregion

@@ -47,6 +47,8 @@ namespace Keebee.AAT.DataAccess.Models
 
         public DbSet<Resident> Residents { get; set; }
 
+        public DbSet<ActiveResident> ActiveResidents { get; set; }
+
         public DbSet<User> Users { get; set; }
 
         public DbSet<Role> Roles { get; set; }

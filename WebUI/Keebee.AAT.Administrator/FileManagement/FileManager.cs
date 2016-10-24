@@ -25,7 +25,7 @@ namespace Keebee.AAT.Administrator.FileManagement
             _opsClient = new OperationsClient();
         }
 
-        public void DeleteFile(string path)
+        public string DeleteFile(string path)
         {
             try
             {
@@ -36,8 +36,10 @@ namespace Keebee.AAT.Administrator.FileManagement
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"FileManagement.DeleteFile :{ex.Message}", EventLogEntryType.Error);
+                //_systemEventLogger.WriteEntry($"FileManagement.DeleteFile :{ex.Message}", EventLogEntryType.Error);
+                return ex.Message;
             }
+            return string.Empty;
         }
 
         public void CreateFolders(int residentId)

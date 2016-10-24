@@ -67,6 +67,10 @@
       <Project>{a1f90f14-bc01-4ef8-9b3e-a7fe4b1b7f9f}</Project>
       <Name>Keebee.AAT.RESTClient</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Shared\Keebee.AAT.MessageQueuing\Keebee.AAT.MessageQueuing.csproj">
+      <Project>{84a25d9a-4747-4b69-9c79-5c23210530d2}</Project>
+      <Name>Keebee.AAT.MessageQueuing</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Shared\Keebee.AAT.Shared\Keebee.AAT.Shared.csproj">
       <Project>{3cb12af2-7655-46f6-9969-990730f73964}</Project>
       <Name>Keebee.AAT.Shared</Name>

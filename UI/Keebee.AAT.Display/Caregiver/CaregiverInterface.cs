@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using WMPLib;
@@ -20,20 +21,6 @@ namespace Keebee.AAT.Display.Caregiver
     {
         // event handler
         public event EventHandler CaregiverCompleteEvent;
-
-        // delegate
-        private delegate void RaiseCaregiverCompleteEventDelegate();
-
-        // background workers
-        private BackgroundWorker _bgwImageThumbnails;
-        private BackgroundWorker _bgwPictureThumbnails;
-        private BackgroundWorker _bgwVideoThumbnails;
-
-        // image lists
-        private ImageList _imageListImages;
-        private ImageList _imageListPictures;
-        private ImageList _imageListVideos;
-        private readonly ImageList _imageListMusic;
 
         private SystemEventLogger _systemEventLogger;
         public SystemEventLogger EventLogger
@@ -53,8 +40,6 @@ namespace Keebee.AAT.Display.Caregiver
             set { _publicMediaFiles = value; }
         }
 
-        private IEnumerable<MediaResponseType> _mediaFiles;
-
         private Config _config;
         public Config Config
         {
@@ -69,12 +54,31 @@ namespace Keebee.AAT.Display.Caregiver
             GameDifficultyLevel = 1
         };
 
+        #region local variables
+
+        // delegate
+        private delegate void RaiseCaregiverCompleteEventDelegate();
+
+        // background workers
+        private BackgroundWorker _bgwImageThumbnails;
+        private BackgroundWorker _bgwPictureThumbnails;
+        private BackgroundWorker _bgwVideoThumbnails;
+
+        // image lists
+        private ImageList _imageListImages;
+        private ImageList _imageListPictures;
+        private ImageList _imageListVideos;
+        private readonly ImageList _imageListMusic;
+
+        private IEnumerable<MediaResponseType> _mediaFiles;
+
         // media path
         private readonly MediaSourcePath _mediaPath = new MediaSourcePath();
 
         // playlist
         private const string PlaylistCaregiver = PlaylistName.Caregiver;
         private IWMPPlaylist _playlist;
+        private int _totalSongs;
 
         // current values
         private Resident _currentResident;
@@ -89,8 +93,9 @@ namespace Keebee.AAT.Display.Caregiver
         private const int ImageIndexPause = 2;
 
         // list view column indices
-        private const int ListViewMediaColumnStreamId = 2;
         private const int ListViewMusicColumnStatus = 1;
+        private const int ListViewMusicColumnName = 2;
+        private const int ListViewMediaColumnStreamId = 2;
 
         private const int ListViewIActivitiesColumnDifficultyLevel = 1;
         private const int ListViewIActivitiesColumnName = 2;
@@ -140,6 +145,7 @@ namespace Keebee.AAT.Display.Caregiver
 
         // to prevent background workers from lingering
         private bool _formIsClosing;
+        #endregion
 
         public CaregiverInterface()
         {
@@ -419,8 +425,10 @@ namespace Keebee.AAT.Display.Caregiver
             {
                 lvMusic.Items.Clear();
 
-                var files = GetMediaFiles(MediaPathTypeId.Music, ResponseTypeId.Radio);
+                var files = GetMediaFiles(MediaPathTypeId.Music, ResponseTypeId.Radio).ToArray();
                 var rowIndex = 0;
+                _totalSongs = files.Count();
+
                 foreach (var f in files)
                 {
                     lvMusic.Items.Add(new ListViewItem(new[]
@@ -663,14 +671,22 @@ namespace Keebee.AAT.Display.Caregiver
             {
                 var videos = GetFilePaths(MediaPathTypeId.Videos, ResponseTypeId.Television, selectedStreamId);
 
-                var videoPlayer = new VideoPlayer
+                if (File.Exists(videos[0]))
                 {
-                    EventLogger = _systemEventLogger,
-                    Videos = videos
-                };
+                    var videoPlayer = new VideoPlayer
+                    {
+                        EventLogger = _systemEventLogger,
+                        Videos = videos
+                    };
 
-                StopMusic();
-                videoPlayer.ShowDialog();
+                    StopMusic();
+                    videoPlayer.ShowDialog();
+                }
+                else
+                {
+                    var messageBox = new MessageBoxCustom { MessageText = "This video is no longer available" };
+                    messageBox.ShowDialog();
+                }
             }
             catch (Exception ex)
             {
@@ -717,14 +733,22 @@ namespace Keebee.AAT.Display.Caregiver
             {
                 var images = GetFilePaths(mediaTypeId, responseTypdId, selectedStreamId);
 
-                var imageViewer = new ImageViewer
+                if (File.Exists(images[0]))
                 {
-                    EventLogger = _systemEventLogger,
-                    Images = images
-                };
+                    var imageViewer = new ImageViewer
+                    {
+                        EventLogger = _systemEventLogger,
+                        Images = images
+                    };
 
-                StopMusic();
-                imageViewer.ShowDialog();
+                    StopMusic();
+                    imageViewer.ShowDialog();
+                }
+                else
+                {
+                    var messageBox = new MessageBoxCustom { MessageText = "This image is no longer available" };
+                    messageBox.ShowDialog();
+                }
             }
             catch (Exception ex)
             {
@@ -790,7 +814,6 @@ namespace Keebee.AAT.Display.Caregiver
             try
             {
                 var selectedStreamId = new Guid(lvVideos.SelectedItems[0].SubItems[ListViewMediaColumnStreamId].Text);
-                var residentId = Convert.ToInt32(cboResident.SelectedValue.ToString());
 
                 PlayVideos(selectedStreamId);
             }
@@ -805,26 +828,33 @@ namespace Keebee.AAT.Display.Caregiver
             try
             {
                 var selectedIndex = lvMusic.SelectedIndices[0];
-
-                if (_currentMusicIndex == selectedIndex)
+                if (File.Exists(_playlist.Item[selectedIndex].sourceURL))
                 {
-                    if (axWindowsMediaPlayer1.playState == WMPPlayState.wmppsPlaying)
+                    if (_currentMusicIndex == selectedIndex)
                     {
-                        axWindowsMediaPlayer1.Ctlcontrols.pause();
-                        lvMusic.Items[_currentMusicIndex].ImageIndex = ImageIndexPlayActive;
-                        lvMusic.Items[_currentMusicIndex].SubItems[ListViewMusicColumnStatus].Text = "Paused";
+                        if (axWindowsMediaPlayer1.playState == WMPPlayState.wmppsPlaying)
+                        {
+                            axWindowsMediaPlayer1.Ctlcontrols.pause();
+                            lvMusic.Items[_currentMusicIndex].ImageIndex = ImageIndexPlayActive;
+                            lvMusic.Items[_currentMusicIndex].SubItems[ListViewMusicColumnStatus].Text = "Paused";
+                        }
+                        else
+                        {
+                            axWindowsMediaPlayer1.Ctlcontrols.play();
+                            lvMusic.Items[_currentMusicIndex].ImageIndex = ImageIndexPause;
+                            lvMusic.Items[_currentMusicIndex].SubItems[ListViewMusicColumnStatus].Text = "Playing...";
+                        }
                     }
                     else
                     {
-                        axWindowsMediaPlayer1.Ctlcontrols.play();
-                        lvMusic.Items[_currentMusicIndex].ImageIndex = ImageIndexPause;
-                        lvMusic.Items[_currentMusicIndex].SubItems[ListViewMusicColumnStatus].Text = "Playing...";
+                        StopMusic();
+                        PlaySong(selectedIndex);
                     }
                 }
                 else
                 {
-                    StopMusic();
-                    PlaySong(selectedIndex);
+                    var messageBox = new MessageBoxCustom { MessageText = "This song is no longer available" };
+                    messageBox.ShowDialog();
                 }
 
                 // remove focus from the selected item in the ListView
@@ -903,9 +933,28 @@ namespace Keebee.AAT.Display.Caregiver
                         lvMusic.Items[_currentMusicIndex].ImageIndex = ImageIndexPause;
                         lvMusic.Items[_currentMusicIndex].Selected = true;
                         break;
+
                     case (int)WMPPlayState.wmppsMediaEnded:
                         lvMusic.Items[_currentMusicIndex].SubItems[ListViewMusicColumnStatus].Text = string.Empty;
                         lvMusic.Items[_currentMusicIndex].ImageIndex = ImageIndexPlay;
+                        break;
+
+                    case (int)WMPPlayState.wmppsTransitioning:
+                        if (axWindowsMediaPlayer1.currentMedia != null)
+                        {
+                            if (!File.Exists(axWindowsMediaPlayer1.currentMedia.sourceURL))
+                            {
+                                // song was not found - get the name of it
+                                var name = lvMusic.Items[_totalSongs - 1].SubItems[ListViewMusicColumnName].Text;
+
+                                // if it is not the last song then go to the next one
+                                if (axWindowsMediaPlayer1.currentMedia.name != name)
+                                    axWindowsMediaPlayer1.Ctlcontrols.next();
+                                else
+                                    // otherwise stop the player
+                                    axWindowsMediaPlayer1.Ctlcontrols.stop();
+                            }
+                        }
                         break;
                 }
             }

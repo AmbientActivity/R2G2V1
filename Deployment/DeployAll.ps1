@@ -109,6 +109,8 @@ Try
     Write-Host "Build Solution”
     Write-Host "--------------`n”
 
+    Write-Host "Temporarily removed...`n” -NoNewline
+
     # register Build-VisualStudioSolution powershell module
     $path = "C:\Users\" + $env:USERNAME + "\Documents\WindowsPowerShell\Modules\Build-VisualStudioSolution\"
     If(!(test-path $path))
@@ -122,20 +124,20 @@ Try
     Get-Module Build-VisualStudioSolution
 
     # build debug
-    $buildResult = Build-VisualStudioSolution -SourceCodePath $sourceCode -SolutionFile $solutionFile -BuildLogFile "R2G2BuildDebug.log" -Configuration "Debug" -CleanFirst;
+    #$buildResult = Build-VisualStudioSolution -SourceCodePath $sourceCode -SolutionFile $solutionFile -BuildLogFile "R2G2BuildDebug.log" -Configuration "Debug" -CleanFirst;
 
-    If (!$buildResult)
-    {
-        exit
-    }
+    #If (!$buildResult)
+    #{
+    #    exit
+    #}
 
     # build release
-    $buildResult = Build-VisualStudioSolution -SourceCodePath $sourceCode -SolutionFile $solutionFile -BuildLogFile "R2G2BuildRelease.log" -Configuration "Release" -CleanFirst;
+    #$buildResult = Build-VisualStudioSolution -SourceCodePath $sourceCode -SolutionFile $solutionFile -BuildLogFile "R2G2BuildRelease.log" -Configuration "Release" -CleanFirst;
 
-    If (!$buildResult)
-    {
-        exit
-    }
+    #If (!$buildResult)
+    #{
+    #    exit
+    #}
 
     # delpoy components
     Write-Host "`n`n-----------------”

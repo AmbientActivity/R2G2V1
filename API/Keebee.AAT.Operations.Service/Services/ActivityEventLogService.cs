@@ -119,10 +119,10 @@ namespace Keebee.AAT.Operations.Service.Services
             var el = container.ActivityEventLogs.Where(e => e.Id == id).SingleOrDefault();
             if (el == null) return;
 
-            if (el.ResidentId != null)
+            if (activityEventLog.ResidentId != null)
                 el.ResidentId = activityEventLog.ResidentId;
 
-            if (el.ConfigDetailId > 0)
+            if (activityEventLog.ConfigDetailId > 0)
                 el.ConfigDetailId = activityEventLog.ConfigDetailId;
 
             container.UpdateObject(el);

@@ -13,6 +13,7 @@ namespace Keebee.AAT.Administrator.Controllers
 {
     public class MaintenanceController : Controller
     {
+        private readonly OperationsClient _opsClient;
         private readonly SystemEventLogger _systemEventLogger;
 
         // message queue sender
@@ -20,9 +21,12 @@ namespace Keebee.AAT.Administrator.Controllers
         private readonly CustomMessageQueue _messageQueueDisplaySms;
         private readonly CustomMessageQueue _messageQueueDisplayPhidget;
         private readonly CustomMessageQueue _messageQueueDisplayVideoCapture;
+        private readonly CustomMessageQueue _messageQueuePhidget;
 
         public MaintenanceController()
         {
+            _opsClient = new OperationsClient { SystemEventLogger = _systemEventLogger };
+
             _systemEventLogger = new SystemEventLogger(SystemEventLogType.AdminInterface);
 
             // config-sms message queue sender
@@ -47,6 +51,12 @@ namespace Keebee.AAT.Administrator.Controllers
             _messageQueueDisplayVideoCapture = new CustomMessageQueue(new CustomMessageQueueArgs
             {
                 QueueName = MessageQueueType.DisplayVideoCapture
+            });
+
+            // phidget message queue sender
+            _messageQueuePhidget = new CustomMessageQueue(new CustomMessageQueueArgs
+            {
+                QueueName = MessageQueueType.Phidget
             });
         }
 
@@ -146,6 +156,13 @@ namespace Keebee.AAT.Administrator.Controllers
             }
 
             return msg;
+        }
+
+        [Authorize]
+        public void KillDisplay()
+        {
+            var rules = new MaintenanceRules { OperationsClient = _opsClient, MsssageQueuePhidget = _messageQueuePhidget };
+            rules.KillDisplay();
         }
 
         private static bool DisplayIsActive()

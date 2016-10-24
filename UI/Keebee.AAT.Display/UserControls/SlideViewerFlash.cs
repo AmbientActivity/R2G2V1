@@ -28,12 +28,13 @@ namespace Keebee.AAT.Display.UserControls
         private delegate void RaiseSlideShowCompleteEventDelegate();
 
         // slide show
-        private string[] _images;
+        private List<string> _images;
 
         private int _currentImageIndex;
         private int _totalImages;
 
         private bool _isFinite;
+        private bool _isComplete;
 
         public SlideViewerFlash()
         {
@@ -66,6 +67,7 @@ namespace Keebee.AAT.Display.UserControls
 
                     if (autoStart) timer1.Start();
                     _isFinite = isFinite;
+
                 }
             }
             catch (Exception ex)
@@ -110,7 +112,7 @@ namespace Keebee.AAT.Display.UserControls
             axShockwaveFlash1.CallFunction("<invoke name=\"stopImage\"></invoke>");
         }
 
-        private string[] GetValidatedFiles(IEnumerable<string> files)
+        private List<string> GetValidatedFiles(IEnumerable<string> files)
         {
             var validFiles = new Collection<string>();
 
@@ -133,7 +135,7 @@ namespace Keebee.AAT.Display.UserControls
                 _systemEventLogger.WriteEntry($"SlideViewerFlash.GetValidatedFiles: {ex.Message}", EventLogEntryType.Error);
             }
 
-            return validFiles.ToArray();
+            return validFiles.ToList();
         }
 
         private void InitializeFlash()
@@ -160,6 +162,7 @@ namespace Keebee.AAT.Display.UserControls
 
                 axShockwaveFlash1.CallFunction(
                     $"<invoke name=\"showImage\"><arguments><string>{xml}</string></arguments></invoke>");
+
             }
             catch (Exception ex)
             {
@@ -192,18 +195,50 @@ namespace Keebee.AAT.Display.UserControls
 
         private void OnImageHidden()
         {
+            ValidateNextImage();
+
             if (_isFinite)
             {
-                if (_currentImageIndex == _totalImages)
+                if (_isComplete)
                     RaiseSlideShowCompleteEvent();
                 else
                     DisplayImage();
             }
             else
             {
-                if (_currentImageIndex == _totalImages)
+                if (_isComplete)
+                {
+                    // if ALL the images were deleted in mid-air, exit
+                    if (!_images.Any())
+                        RaiseSlideShowCompleteEvent();
+                    else
+                    {
+                        if (!File.Exists(_images[0])) 
+                            RaiseSlideShowCompleteEvent();
+                    }
                     _currentImageIndex = 0;
+                    _isComplete = false;
+                }
+
                 DisplayImage();
+            }
+        }
+
+        private void ValidateNextImage()
+        {
+            while (true)
+            {
+                _isComplete = (_currentImageIndex >= _totalImages);
+                if (_isComplete) break;
+
+                var exists = File.Exists(_images[_currentImageIndex]);
+
+                if (!exists)
+                {
+                    _images.RemoveAt(_currentImageIndex);
+                    _totalImages = _images.Count;
+                }
+                else break;
             }
         }
 

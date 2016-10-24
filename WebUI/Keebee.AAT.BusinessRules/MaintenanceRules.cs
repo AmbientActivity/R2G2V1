@@ -1,5 +1,7 @@
 ﻿using Keebee.AAT.SystemEventLogging;
 using Keebee.AAT.Shared;
+using Keebee.AAT.RESTClient;
+using Keebee.AAT.MessageQueuing;
 using System;
 using System.Configuration.Install;
 using System.Diagnostics;
@@ -10,6 +12,18 @@ namespace Keebee.AAT.BusinessRules
 {
     public class MaintenanceRules
     {
+        private OperationsClient _opsClient;
+        public OperationsClient OperationsClient
+        {
+            set { _opsClient = value; }
+        }
+
+        private CustomMessageQueue _messageQueuePhidget;
+        public CustomMessageQueue MsssageQueuePhidget
+        {
+            set { _messageQueuePhidget = value; }
+        }
+
         private SystemEventLogger _systemEventLogger;
         public SystemEventLogger EventLogger
         {
@@ -55,6 +69,18 @@ namespace Keebee.AAT.BusinessRules
             }
 
             return null;
+        }
+
+        public void KillDisplay()
+        {
+            var configDetails = _opsClient.GetActiveConfigDetails().ConfigDetails;
+            var killDetails = configDetails.Where(c => c.ResponseType.Id == ResponseTypeId.KillDisplay);
+
+            if (killDetails.Any())
+            {
+                var sensorId = killDetails.First().PhidgetType.Id - 1;
+                _messageQueuePhidget.Send(string.Format("{0}\"SensorId\":{1},\"SensorValue\":{2}{3}", "{", sensorId, 999, "}"));
+            }
         }
 
         public string ReinstallServices(string smsPath, string phidgetPath, string rfidPath, string videoCapturPath, string keepIISAlivePath)

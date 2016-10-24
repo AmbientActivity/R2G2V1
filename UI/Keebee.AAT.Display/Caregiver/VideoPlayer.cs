@@ -59,7 +59,7 @@ namespace Keebee.AAT.Display.Caregiver
             axWindowsMediaPlayer1.Dock = DockStyle.Fill;
             axWindowsMediaPlayer1.uiMode = "full";
             axWindowsMediaPlayer1.settings.setMode("loop", false);
-            axWindowsMediaPlayer1.settings.volume = 100;
+            axWindowsMediaPlayer1.settings.volume = 70;
         }
 
         private void Play()
@@ -86,12 +86,16 @@ namespace Keebee.AAT.Display.Caregiver
                 case (int)WMPPlayState.wmppsPlaying:
                     _currentPlaylistItem = axWindowsMediaPlayer1.currentMedia.name;
                     break;
-                case (int)WMPPlayState.wmppsMediaEnded:
 
+                case (int)WMPPlayState.wmppsMediaEnded:
                     if (_currentPlaylistItem == _lastPlaylistItem)
                     {
                         Close();
                     }
+                    break;
+
+                case (int)WMPPlayState.wmppsReady:  // means the video was not found
+                    Close();
                     break;
             }
         }

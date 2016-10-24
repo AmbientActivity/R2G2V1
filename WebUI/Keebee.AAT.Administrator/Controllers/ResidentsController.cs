@@ -83,10 +83,13 @@ namespace Keebee.AAT.Administrator.Controllers
                     var filePath = $@"{_mediaPath.ProfileRoot}\{id}\{mediaPathType}\{file.FileName}";
 
                     // delete it if it already exists
-                    fileManager.DeleteFile(filePath);
-                    file.MoveTo(filePath);
+                    var msg = fileManager.DeleteFile(filePath);
 
-                    AddResidentMediaFile(id, file.FileName, (int)mediaPathTypeId, mediaPathType);   
+                    if (msg.Length == 0)
+                    {
+                        file.MoveTo(filePath);
+                        AddResidentMediaFile(id, file.FileName, (int) mediaPathTypeId, mediaPathType);
+                    }
                 }
             }
 
@@ -189,19 +192,39 @@ namespace Keebee.AAT.Administrator.Controllers
         [Authorize]
         public JsonResult Delete(int id)
         {
-            var rules = new ResidentRules {OperationsClient = _opsClient};
-            var result = rules.DeleteResident(id);
+            string errormessage;
+            bool success;
 
-            if (result.Length == 0)
+            try
             {
-                var fileManager = new FileManager { EventLogger = _systemEventLogger };
-                fileManager.DeleteFolders(id);
+                var activeResident = _opsClient.GetActiveResident();
+                if (activeResident.Resident.Id == id)
+                {
+                    errormessage = "The resident is currently engaging with R2G2 and cannot be deleted at this time.";
+                }
+                else
+                {
+                    var rules = new ResidentRules {OperationsClient = _opsClient};
+                    errormessage = rules.DeleteResident(id);
+
+                    if (errormessage.Length == 0)
+                    {
+                        var fileManager = new FileManager {EventLogger = _systemEventLogger};
+                        fileManager.DeleteFolders(id);
+                    }
+                }
+                success = (errormessage.Length == 0);
+            }
+            catch (Exception ex)
+            {
+                success = false;
+                errormessage = ex.Message;
             }
 
             return Json(new
             {
-                Success = (result.Length == 0),
-                ErrorMessage = result,
+                Success = success,
+                ErrorMessage = errormessage,
                 ResidentList = GetResidentList(),
             }, JsonRequestBehavior.AllowGet);
         }
@@ -215,17 +238,32 @@ namespace Keebee.AAT.Administrator.Controllers
 
             try
             {
-                var rules = new ResidentRules {OperationsClient = _opsClient};
-                foreach (var id in ids)
+                var activeResident = _opsClient.GetActiveResident();
+                if (activeResident.Resident.Id == residentId)
                 {
-                    var file = rules.GetMediaFile(id);
-                    if (file == null) continue;
-
-                    rules.DeleteResidentMediaFile(id);
-                    var fileManager = new FileManager { EventLogger = _systemEventLogger };
-                    fileManager.DeleteFile($@"{file.Path}\{file.Filename}");
+                    errormessage = "The resident is currently engaging with R2G2. Media cannot be deleted at this time.";
                 }
-                success = true;
+                else
+                {
+                    if (ids.Length > 0)
+                    {
+                        var rules = new ResidentRules {OperationsClient = _opsClient};
+                        foreach (var id in ids)
+                        {
+                            var file = rules.GetMediaFile(id);
+                            if (file == null) continue;
+
+                            var fileManager = new FileManager {EventLogger = _systemEventLogger};
+                            errormessage = fileManager.DeleteFile($@"{file.Path}\{file.Filename}");
+
+                            if (errormessage.Length == 0)
+                                rules.DeleteResidentMediaFile(id);
+                            else
+                                break;
+                        }
+                    }
+                }
+                success = (errormessage.Length == 0);
             }
             catch (Exception ex)
             {

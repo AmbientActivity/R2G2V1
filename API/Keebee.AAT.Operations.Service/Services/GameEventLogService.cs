@@ -93,13 +93,13 @@ namespace Keebee.AAT.Operations.Service.Services
             var el = container.GameEventLogs.Where(e => e.Id == id).SingleOrDefault();
             if (el == null) return;
 
-            if (el.ResidentId != null)
+            if (gameEventLog.ResidentId != null)
                 el.ResidentId = gameEventLog.ResidentId;
 
-            if (el.GameTypeId != null)
+            if (gameEventLog.GameTypeId != null)
                 el.GameTypeId = gameEventLog.GameTypeId;
 
-            if (el.Description != null)
+            if (gameEventLog.Description != null)
                 el.Description = gameEventLog.Description;
 
             container.UpdateObject(el);

@@ -3,6 +3,7 @@ using Keebee.AAT.SystemEventLogging;
 using Keebee.AAT.Display.Extensions;
 using System;
 using System.Diagnostics;
+using System.IO;
 using System.Windows.Forms;
 using WMPLib;
 
@@ -38,7 +39,10 @@ namespace Keebee.AAT.Display.UserControls
         private string _currentPlaylistItem;
         private string _lastPlaylistItem;
         private int _maxIndex;
-
+        private bool _isPlaylistComplete;
+        private bool _isNewPlaylist;
+        private bool _isPlayPrevious;
+        
         private IWMPPlaylist _playlist;
 
         public MediaPlayer()
@@ -53,6 +57,9 @@ namespace Keebee.AAT.Display.UserControls
         {
             try
             {
+                _isNewPlaylist = true;
+                _isPlaylistComplete = false;
+
                 _maxIndex = files.Length - 1;
                 _isActiveEventLog = isActiveEventLog;
 
@@ -74,6 +81,7 @@ namespace Keebee.AAT.Display.UserControls
             {
                 if (_maxIndex == 0) return;
 
+                _isPlayPrevious = false;
                 axWindowsMediaPlayer1.Ctlcontrols.next();
             }
             catch (Exception ex)
@@ -88,6 +96,7 @@ namespace Keebee.AAT.Display.UserControls
             {
                 if (_maxIndex == 0) return;
 
+                _isPlayPrevious = true;
                 axWindowsMediaPlayer1.Ctlcontrols.previous();
             }
             catch (Exception ex)
@@ -105,7 +114,7 @@ namespace Keebee.AAT.Display.UserControls
         {
             axWindowsMediaPlayer1.stretchToFit = true;
             axWindowsMediaPlayer1.Dock = DockStyle.Fill;
-            axWindowsMediaPlayer1.settings.volume = 100;
+            axWindowsMediaPlayer1.settings.volume = 70;
 
             pictureBox1.Dock = DockStyle.Fill;
             pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
@@ -195,15 +204,45 @@ namespace Keebee.AAT.Display.UserControls
             {
                 case (int)WMPPlayState.wmppsPlaying:
                     _currentPlaylistItem = axWindowsMediaPlayer1.currentMedia.name;
+                    _isNewPlaylist = false;
 
                     if (_isActiveEventLog)
                         RaiseLogVideoActivityEventEvent(axWindowsMediaPlayer1.currentMedia.name);
                     break;
+
                 case (int)WMPPlayState.wmppsMediaEnded:
                     
                     if (_currentPlaylistItem == _lastPlaylistItem)
                     {
                         RaiseMediaCompleteEvent();
+                        _isPlaylistComplete = true;
+                    }
+                    break;
+
+                case (int)WMPPlayState.wmppsTransitioning:
+                    if (_isPlaylistComplete) return;
+
+                    if (axWindowsMediaPlayer1.currentMedia != null)
+                    {
+                        if (!File.Exists(axWindowsMediaPlayer1.currentMedia.sourceURL))
+                        {
+                            if (_isPlayPrevious)
+                                axWindowsMediaPlayer1.Ctlcontrols.previous();
+                            else
+                                axWindowsMediaPlayer1.Ctlcontrols.next();
+
+                            _playlist.removeItem(axWindowsMediaPlayer1.currentMedia);
+                            _maxIndex--;
+                            _lastPlaylistItem = _playlist.Item[_maxIndex].name;
+                        }
+                    }
+                    break;
+
+                case (int)WMPPlayState.wmppsReady:
+                    // if a video was not found the player needs to be jump-started
+                    if (!_isPlaylistComplete && !_isNewPlaylist)
+                    {
+                        axWindowsMediaPlayer1.Ctlcontrols.play();
                     }
                     break;
             }

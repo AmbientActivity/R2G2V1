@@ -54,7 +54,7 @@ namespace Keebee.AAT.Display.UserControls
             axWindowsMediaPlayer1.Dock = DockStyle.Fill;
             axWindowsMediaPlayer1.uiMode = "none";
             axWindowsMediaPlayer1.settings.setMode("loop", true);
-            axWindowsMediaPlayer1.settings.volume = 100;
+            axWindowsMediaPlayer1.settings.volume = 70;
         }
 
         private void PlayAmbient()

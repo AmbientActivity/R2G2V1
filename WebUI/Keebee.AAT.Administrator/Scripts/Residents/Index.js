@@ -99,7 +99,7 @@
                     arr.push({ title: "First Name", sortable: true, sortKey: "firstname", numeric: false });
                     arr.push({ title: "Last Name", sortable: true, sortKey: "lastname", numeric: false });
                     arr.push({ title: "Gender", sortable: true, sortKey: "gender", numeric: false });
-                    arr.push({ title: "Game Level", sortable: true, sortKey: "gamedifficultylevel", numeric: true });
+                    arr.push({ title: "Level", sortable: true, sortKey: "gamedifficultylevel", numeric: true });
                     arr.push({ title: "Capturable", sortable: true, sortKey: "allowvideocapturing", numeric: false });
                     arr.push({ title: "Created", sortable: true, sortKey: "datecreated", numeric: true });
                     arr.push({ title: "Updated", sortable: true, sortKey: "dateupdated", numeric: true });

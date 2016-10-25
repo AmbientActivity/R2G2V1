@@ -8,11 +8,12 @@
 ; (function ($) {
 
     maintenance.index = {
-        init: function() {
+        init: function () {
+            var cmdUninstall = $("#uninstall");
             var cmdReinstall = $("#reinstall");
             var cmdRestart = $("#restart");
             var cmdKillDisplay = $("#kill-display");
-            var cmdUninstall = $("#uninstall");
+            var cmdClearServiceLogs = $("#clear-service-logs");
 
             cmdRestart.click(function () {
                 BootstrapDialog.show({
@@ -54,6 +55,29 @@
                             action: function (dialog) {
                                 dialog.close();
                                 killDisplay();
+                            }
+                        }
+                    ]
+                });
+            });
+
+            cmdClearServiceLogs.click(function() {
+                BootstrapDialog.show({
+                    title: "Clear Service Logs",
+                    message: "Clear all R2G2 Service logs?",
+                    closable: false,
+                    buttons: [
+                        {
+                            label: "Cancel",
+                            action: function (dialog) {
+                                dialog.close();
+                            }
+                        }, {
+                            label: "OK",
+                            cssClass: "btn-primary",
+                            action: function (dialog) {
+                                dialog.close();
+                                clearServiceLogs();
                             }
                         }
                     ]
@@ -199,6 +223,34 @@
                                 }]
                             });
                        }
+                });
+            }
+
+            function clearServiceLogs() {
+                $.ajax({
+                    type: "GET",
+                    async: true,
+                    traditional: true,
+                    url: site.url + "Maintenance/ClearServiceLogs",
+                    success: function(data) {
+                        $("body").css("cursor", "default");
+
+                        if (data.length === 0)
+                            BootstrapDialog.show({
+                                title: "Success",
+                                closable: false,
+                                type: BootstrapDialog.TYPE_SUCCESS,
+                                message: "R2G2 Service Logs have been cleared",
+                                buttons: [
+                                    {
+                                        label: "Close",
+                                        action: function(dialog) {
+                                            dialog.close();
+                                        }
+                                    }
+                                ]
+                            });
+                    }
                 });
             }
         }

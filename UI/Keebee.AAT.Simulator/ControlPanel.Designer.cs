@@ -229,11 +229,11 @@
             // lblResident
             // 
             this.lblResident.AutoSize = true;
-            this.lblResident.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblResident.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblResident.ForeColor = System.Drawing.Color.Blue;
-            this.lblResident.Location = new System.Drawing.Point(78, 11);
+            this.lblResident.Location = new System.Drawing.Point(78, 15);
             this.lblResident.Name = "lblResident";
-            this.lblResident.Size = new System.Drawing.Size(131, 24);
+            this.lblResident.Size = new System.Drawing.Size(110, 20);
             this.lblResident.TabIndex = 22;
             this.lblResident.Text = "Public Media";
             // 

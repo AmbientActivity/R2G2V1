@@ -7,6 +7,7 @@ namespace Keebee.AAT.Shared
         public int Id { get; set; }
         public string Description { get; set; }
         public bool IsActiveEventLog { get; set; }
+        public bool IsDisplayActive { get; set; }
         public IEnumerable<ConfigDetailMessage> ConfigDetails { get; set; }
     }
 

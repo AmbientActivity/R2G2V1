@@ -51,6 +51,11 @@ namespace Keebee.AAT.SystemEventLogging
             _eventLog.WriteEntry(message, type, EventId++);
         }
 
+        public void Clear()
+        {
+            _eventLog.Clear();
+        }
+
         private static string EventLogLiteral(SystemEventLogType queueName)
         {
             var literal = string.Empty;
@@ -127,5 +132,6 @@ namespace Keebee.AAT.SystemEventLogging
 
             return nextEventId;
         }
+
     }
 }

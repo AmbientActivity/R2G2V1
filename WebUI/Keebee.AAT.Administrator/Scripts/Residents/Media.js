@@ -396,8 +396,6 @@ function DisableScreen() {
                                     } else {
                                         $("body").css("cursor", "default");
                                         self.enableDetail();
-                                        //self.selectedIds([]);
-                                        //self.clearSelectAll();
 
                                         BootstrapDialog.show({
                                             type: BootstrapDialog.TYPE_DANGER,
@@ -410,8 +408,6 @@ function DisableScreen() {
                                     dialog.close();
                                     $("body").css("cursor", "default");
                                     self.enableDetail();
-                                    //self.selectedIds([]);
-                                    //self.clearSelectAll();
 
                                     BootstrapDialog.show({
                                         type: BootstrapDialog.TYPE_DANGER,

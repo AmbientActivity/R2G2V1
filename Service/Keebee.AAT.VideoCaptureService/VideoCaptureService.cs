@@ -155,10 +155,18 @@ namespace Keebee.AAT.VideoCaptureService
 
         private void MessageReceivedVideoCapture(object source, MessageEventArgs e)
         {
-            if (!_displayIsActive || _isRecording) return;
+            if (e.MessageBody == "1")
+            {
+                if (!_displayIsActive || _isRecording) return;
 
-            StartCapture();
-            _timer.Start();
+                StartCapture();
+                _timer.Start();
+            }
+            else
+            {
+                _timer.Stop();
+                StopCapture();
+            }
         }
 
         private void MessageReceivedDisplayVideoCapture(object source, MessageEventArgs e)

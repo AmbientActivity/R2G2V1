@@ -159,7 +159,7 @@ a:hover, a:visited, a:link, a:active {
 
 /* maintenance screen */
 .maintenance-button {
-    width: 129px;
+    width: 146px;
 }
 
 /* tables/panels */
@@ -172,7 +172,6 @@ a:hover, a:visited, a:link, a:active {
 .col-filesize {
     width: 85px;
 }
-
 
 /* bootstrap glyphicons*/
 .col-glyphicon {

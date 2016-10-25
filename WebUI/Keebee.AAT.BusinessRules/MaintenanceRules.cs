@@ -19,7 +19,7 @@ namespace Keebee.AAT.BusinessRules
         }
 
         private CustomMessageQueue _messageQueuePhidget;
-        public CustomMessageQueue MsssageQueuePhidget
+        public CustomMessageQueue MessageQueuePhidget
         {
             set { _messageQueuePhidget = value; }
         }
@@ -71,16 +71,59 @@ namespace Keebee.AAT.BusinessRules
             return null;
         }
 
-        public void KillDisplay()
+        public string KillDisplay()
         {
-            var configDetails = _opsClient.GetActiveConfigDetails().ConfigDetails;
-            var killDetails = configDetails.Where(c => c.ResponseType.Id == ResponseTypeId.KillDisplay);
+            var errormessage = string.Empty;
 
-            if (killDetails.Any())
+            try
             {
-                var sensorId = killDetails.First().PhidgetType.Id - 1;
-                _messageQueuePhidget.Send(string.Format("{0}\"SensorId\":{1},\"SensorValue\":{2}{3}", "{", sensorId, 999, "}"));
+                var configDetails = _opsClient.GetActiveConfigDetails().ConfigDetails;
+                var killDetails = configDetails.Where(c => c.ResponseType.Id == ResponseTypeId.KillDisplay);
+
+                if (killDetails.Any())
+                {
+                    var sensorId = killDetails.First().PhidgetType.Id - 1;
+                    _messageQueuePhidget.Send(string.Format("{0}\"SensorId\":{1},\"SensorValue\":{2}{3}", "{", sensorId,
+                        999, "}"));
+                }
             }
+            catch (Exception ex)
+            {
+                errormessage = ex.Message;
+                _systemEventLogger.WriteEntry($"KillDisplay: {errormessage}", EventLogEntryType.Error);
+            }
+
+            return errormessage;
+        }
+
+        public string ClearServiceLogs()
+        {
+            var errormessage = string.Empty;
+
+            try
+            {
+                var eventLog = new SystemEventLogger(SystemEventLogType.KeepIISAliveService);
+                eventLog.Clear();
+
+                eventLog = new SystemEventLogger(SystemEventLogType.StateMachineService);
+                eventLog.Clear();
+
+                eventLog = new SystemEventLogger(SystemEventLogType.PhidgetService);
+                eventLog.Clear();
+
+                eventLog = new SystemEventLogger(SystemEventLogType.RfidReaderService);
+                eventLog.Clear();
+
+                eventLog = new SystemEventLogger(SystemEventLogType.VideoCaptureService);
+                eventLog.Clear();
+            }
+            catch (Exception ex)
+            {
+                errormessage = ex.Message;
+                _systemEventLogger.WriteEntry($"ClearEventLogs: {errormessage}", EventLogEntryType.Error);
+            }
+
+            return errormessage;
         }
 
         public string ReinstallServices(string smsPath, string phidgetPath, string rfidPath, string videoCapturPath, string keepIISAlivePath)

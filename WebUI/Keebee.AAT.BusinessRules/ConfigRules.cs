@@ -2,6 +2,7 @@
 using Keebee.AAT.BusinessRules.DTO;
 using Keebee.AAT.Shared;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Web.Script.Serialization;
 
@@ -98,6 +99,7 @@ namespace Keebee.AAT.BusinessRules
                 Id = config.Id,
                 Description = config.Description,
                 IsActiveEventLog = config.IsActiveEventLog,
+                IsDisplayActive = IsProcessRunning(ApplicationName.DisplayApp),
                 ConfigDetails = config.ConfigDetails
                     .Select(x => new
                         ConfigDetailMessage
@@ -115,6 +117,11 @@ namespace Keebee.AAT.BusinessRules
             var messageBody = serializer.Serialize(configMessage);
 
             return messageBody;
+        }
+
+        private static bool IsProcessRunning(string processName)
+        {
+            return Process.GetProcessesByName(processName).Any();
         }
     }
 }

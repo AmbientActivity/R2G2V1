@@ -159,10 +159,23 @@ namespace Keebee.AAT.Administrator.Controllers
         }
 
         [Authorize]
-        public void KillDisplay()
+        public string KillDisplay()
         {
-            var rules = new MaintenanceRules { OperationsClient = _opsClient, MsssageQueuePhidget = _messageQueuePhidget };
-            rules.KillDisplay();
+            var rules = new MaintenanceRules
+            {
+                OperationsClient = _opsClient,
+                MessageQueuePhidget = _messageQueuePhidget,
+                EventLogger = _systemEventLogger
+            };
+
+            return rules.KillDisplay();
+        }
+
+        [Authorize]
+        public string ClearServiceLogs()
+        {
+            var rules = new MaintenanceRules { EventLogger = _systemEventLogger };
+            return rules.ClearServiceLogs();
         }
 
         private static bool DisplayIsActive()

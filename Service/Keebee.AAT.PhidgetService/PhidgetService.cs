@@ -64,7 +64,7 @@ namespace Keebee.AAT.PhidgetService
         private ConfigMessage _activeConfig;
 
         // display state
-        private bool _displayIsActive;
+        private bool _isDisplayActive;
 
         public PhidgetService()
         {
@@ -157,7 +157,7 @@ namespace Keebee.AAT.PhidgetService
                     _messageQueuePhidgetMonitor.Send(message);
                 }
 #endif
-                if (!_displayIsActive) return;
+                if (!_isDisplayActive) return;
 
                 int sensorId;
                 int sensorValue = e.Value;
@@ -248,7 +248,10 @@ namespace Keebee.AAT.PhidgetService
             try
             {
                 _activeConfig = GetConfigFromMessageBody(e.MessageBody);
+                _isDisplayActive = _activeConfig.IsDisplayActive;
+
                 _systemEventLogger.WriteEntry($"The configuration '{_activeConfig.Description}' has been activated");
+                
             }
             catch (Exception ex)
             {
@@ -261,9 +264,9 @@ namespace Keebee.AAT.PhidgetService
             try
             {
                 var displayMessage = GetDisplayStateFromMessageBody(e.MessageBody);
-                _displayIsActive = displayMessage.IsActive;
+                _isDisplayActive = displayMessage.IsActive;
 
-                if (!_displayIsActive) return;
+                if (!_isDisplayActive) return;
 
                 LoadConfig();
             }

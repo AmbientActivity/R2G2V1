@@ -110,7 +110,7 @@
                 };
 
                 function initializeScreen() {
-                    cmdActivate.attr("disabled", "disabled");
+                    //cmdActivate.attr("disabled", "disabled");
                     cmdDelete.attr("disabled", "disabled");
                 }
 
@@ -651,11 +651,11 @@
                     }).length;
 
                     // activate  button
-                    if (self.activeConfig() === configId || detailCount === 0) {
-                        cmdActivate.attr("disabled", "disabled");
-                    } else {
-                        cmdActivate.removeAttr("disabled");
-                    }
+                    //if (self.activeConfig() === configId || detailCount === 0) {
+                    //    cmdActivate.attr("disabled", "disabled");
+                    //} else {
+                    //    cmdActivate.removeAttr("disabled");
+                    //}
 
                     // delete button
                     if (!self.canDeleteConfig(configId))

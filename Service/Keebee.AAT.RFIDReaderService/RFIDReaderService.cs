@@ -165,6 +165,10 @@ namespace Keebee.AAT.RfidReaderService
                     return -1; // there's a tie - do nothing
                 }
             }
+            catch (ThreadAbortException)
+            {
+                // do nothing
+            }
             catch (Exception ex)
             {
                 _systemEventLogger.WriteEntry($"GetResidentId: {ex.Message}", EventLogEntryType.Error);
@@ -262,6 +266,7 @@ namespace Keebee.AAT.RfidReaderService
         protected override void OnStop()
         {
             _systemEventLogger.WriteEntry("In OnStop");
+            _readTagThread.Abort();
         }
     }
 }

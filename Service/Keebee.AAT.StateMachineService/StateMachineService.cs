@@ -31,7 +31,7 @@ namespace Keebee.AAT.StateMachineService
         private ResidentMessage _activeResident;
 
         // display state
-        private bool _displayIsActive;
+        private bool _isDisplayActive;
 
         public StateMachineService()
         {
@@ -137,7 +137,7 @@ namespace Keebee.AAT.StateMachineService
             try
             {
                 // do nothing unless the display is active
-                if (!_displayIsActive) return;
+                if (!_isDisplayActive) return;
 
                 var phidget = GetPhidgetFromMessageBody(e.MessageBody);
                 if (phidget == null) return;
@@ -165,7 +165,7 @@ namespace Keebee.AAT.StateMachineService
                 {
                     if (_activeResident?.Id == resident.Id) return;
                     LogRfidEvent(resident.Id, "New active resident");
-                    SetActiveResident(_displayIsActive ? resident.Id : (int?)null);
+                    SetActiveResident(_isDisplayActive ? resident.Id : (int?)null);
                 }
                 else
                 {
@@ -175,6 +175,11 @@ namespace Keebee.AAT.StateMachineService
                 }
 
                 _activeResident = resident;
+                if (_activeResident == null) return;
+
+                if (!_activeResident.AllowVideoCapturing)
+                    // send a signal to the video capture service to stop recording
+                    _messageQueueVideoCapture.Send("0");
             }
 
             catch (Exception ex)
@@ -182,15 +187,15 @@ namespace Keebee.AAT.StateMachineService
                 _systemEventLogger.WriteEntry($"MessageReceivedRfid{Environment.NewLine}{ex.Message}", EventLogEntryType.Error);
             }
         }
-
+         
         private void MessageReceivedDisplaySms(object source, MessageEventArgs e)
         {
             try
             {
                 var displayMessage = GetDisplayStateFromMessageBody(e.MessageBody);
-                _displayIsActive = displayMessage.IsActive;
+                _isDisplayActive = displayMessage.IsActive;
 
-                if (!_displayIsActive)
+                if (!_isDisplayActive)
                 {
                     SetActiveResident(null);
                     return;
@@ -216,6 +221,9 @@ namespace Keebee.AAT.StateMachineService
             try
             {
                 _activeConfig = GetConfigFromMessageBody(e.MessageBody);
+                _isDisplayActive = _activeConfig.IsDisplayActive;
+
+                if (!_isDisplayActive) return;
                 _systemEventLogger.WriteEntry($"The configuration '{_activeConfig.Description}' has been activated");
                 _messageQueueConfigPhidget.Send(e.MessageBody);
             }
@@ -304,7 +312,7 @@ namespace Keebee.AAT.StateMachineService
         {
             try
             {
-                if (!_displayIsActive) return;
+                if (!_isDisplayActive) return;
                 if (_activeConfig == null) return;
                 if (!_activeConfig.IsActiveEventLog) return;
 

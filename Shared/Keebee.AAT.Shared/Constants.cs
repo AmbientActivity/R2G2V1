@@ -2,6 +2,11 @@
 
 namespace Keebee.AAT.Shared
 {
+    public static class ApplicationName
+    {
+        public const string DisplayApp = "Keebee.AAT.Display";
+    }
+
     public static class KeepAliveUrl
     {
         public const string OperationsApi = "http://localhost/Keebee.AAT.Operations/api/status";

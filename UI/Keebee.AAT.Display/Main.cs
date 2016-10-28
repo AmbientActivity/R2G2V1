@@ -51,6 +51,8 @@ namespace Keebee.AAT.Display
         private delegate void PlayMatchingGameDelegate();
         private delegate void ShowCaregiverDelegate();
         private delegate void KillDisplayDelegate();
+        private delegate void ShowOffScreenDelegate();
+        private delegate void ShowVolumeControlDelegate();
 
         // message queue sender
         private readonly CustomMessageQueue _messageQueueDisplaySms;
@@ -166,6 +168,9 @@ namespace Keebee.AAT.Display
 
             matchingGame1.Dock = DockStyle.Fill;
             matchingGame1.Hide();
+
+            offScreen1.Dock = DockStyle.Fill;
+            offScreen1.Hide();
         }
 
         private void SetPostLoadProperties()
@@ -221,6 +226,12 @@ namespace Keebee.AAT.Display
                     case ResponseTypeId.Ambient:
                         ResumeAmbient();
                         break;
+                    case ResponseTypeId.VolumeControl:
+                        ShowVolumeControl();
+                        break;
+                    case ResponseTypeId.OffScreen:
+                        ShowOffScreen();
+                        break;
                 }
 
                 // save the current sensor values
@@ -273,6 +284,9 @@ namespace Keebee.AAT.Display
                     case ResponseTypeId.Ambient:
                         ambient1.Hide();
                         ambient1.Pause();
+                        break;
+                    case ResponseTypeId.OffScreen:
+                        offScreen1.Hide();
                         break;
                 }
             }
@@ -512,6 +526,37 @@ namespace Keebee.AAT.Display
                 ambient1.Resume();
 
                 _currentResponseTypeId = ResponseTypeId.Ambient;
+            }
+        }
+
+        private void ShowVolumeControl()
+        {
+            if (InvokeRequired)
+            {
+                Invoke(new ShowVolumeControlDelegate(ShowVolumeControl));
+            }
+            else
+            {
+                StopCurrentResponse();
+                ambient1.Show();
+                ambient1.Resume();
+
+                _currentResponseTypeId = ResponseTypeId.VolumeControl;
+            }
+        }
+
+        private void ShowOffScreen()
+        {
+            if (InvokeRequired)
+            {
+                Invoke(new ShowOffScreenDelegate(ShowOffScreen));
+            }
+            else
+            {
+                StopCurrentResponse();
+                offScreen1.Show();
+
+                _currentResponseTypeId = ResponseTypeId.OffScreen;
             }
         }
 

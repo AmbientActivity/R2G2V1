@@ -161,6 +161,12 @@
     <Compile Include="Caregiver\CustomControls\RepeatButton.Designer.cs">
       <DependentUpon>RepeatButton.cs</DependentUpon>
     </Compile>
+    <Compile Include="UserControls\OffScreen.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UserControls\OffScreen.Designer.cs">
+      <DependentUpon>OffScreen.cs</DependentUpon>
+    </Compile>
     <Compile Include="UserControls\SlideViewerFlash.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -222,6 +228,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Caregiver\CustomControls\RepeatButton.resx">
       <DependentUpon>RepeatButton.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UserControls\OffScreen.resx">
+      <DependentUpon>OffScreen.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UserControls\SlideViewerFlash.resx">
       <DependentUpon>SlideViewerFlash.cs</DependentUpon>

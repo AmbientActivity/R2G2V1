@@ -156,5 +156,7 @@ namespace Keebee.AAT.Shared
         public const int Television = 6;
         public const int Caregiver = 7;
         public const int Ambient = 8;
+        public const int OffScreen = 9;
+        public const int VolumeControl = 10;
     }
 }

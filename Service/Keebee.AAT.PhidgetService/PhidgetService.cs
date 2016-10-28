@@ -59,6 +59,7 @@ namespace Keebee.AAT.PhidgetService
         private const int StepTolerance = 10;
         private const int DefaultTouchSensorThreshold = 990;
         private readonly int _sensorThreshold;
+        private RotationSensorStep _currentInputStep = RotationSensorStep.Value5;
 
         // active config
         private ConfigMessage _activeConfig;
@@ -179,7 +180,7 @@ namespace Keebee.AAT.PhidgetService
                     case PhidgetStyleTypeIdId.MultiTurn:
                     case PhidgetStyleTypeIdId.StopTurn:
                     case PhidgetStyleTypeIdId.Slider:
-                        var stepValue = GetStepValue(sensorValue);
+                        var stepValue = GetSensorStepValue(sensorValue);
                         if (stepValue > 0)
                             _messageQueuePhidget.Send(CreateMessageBodyFromSensor(sensorId, stepValue));
                         break;
@@ -191,32 +192,7 @@ namespace Keebee.AAT.PhidgetService
             }
         }
 
-        private void InputChange(object sender, InputChangeEventArgs e)
-        {
-            try
-            {
-                if (!e.Value) return;
-
-                if (e.Index < 0 || e.Index > 7)
-                    throw new Exception($"Invalid InputId: {e.Index}");
-
-                int sensorId;
-                var isValid = int.TryParse(Convert.ToString(e.Index), out sensorId);
-                if (!isValid) return;
-
-                // input0 => sensor8
-                // input1 => sensor9
-                // etc
-                _messageQueuePhidget.Send(CreateMessageBodyFromSensor(sensorId + 8, 999));
-
-            }
-            catch (Exception ex)
-            {
-                _systemEventLogger.WriteEntry($"InputChange: {ex.Message}", EventLogEntryType.Error);
-            }
-        }
-
-        private static int GetStepValue(int val)
+        private static int GetSensorStepValue(int val)
         {
             var returnValue = -1;
 
@@ -232,6 +208,48 @@ namespace Keebee.AAT.PhidgetService
                 return (int)RotationSensorStep.Value5;
 
             return returnValue;
+        }
+
+        private void InputChange(object sender, InputChangeEventArgs e)
+        {
+            try
+            {
+                if (e.Index < 0 || e.Index > 7)
+                    throw new Exception($"Invalid InputId: {e.Index}");
+
+                int sensorId;
+                var isValid = int.TryParse(Convert.ToString(e.Index), out sensorId);
+                if (!isValid) return;
+
+                // input0 => sensor8
+                // input1 => sensor9
+                // etc
+                SetInputStepValue();
+                _messageQueuePhidget.Send(CreateMessageBodyFromSensor(sensorId + 8, (int)_currentInputStep));
+
+            }
+            catch (Exception ex)
+            {
+                _systemEventLogger.WriteEntry($"InputChange: {ex.Message}", EventLogEntryType.Error);
+            }
+        }
+
+        private void SetInputStepValue()
+        {
+            if (_currentInputStep == RotationSensorStep.Value1)
+                _currentInputStep = RotationSensorStep.Value2;
+
+            else if (_currentInputStep == RotationSensorStep.Value2)
+                _currentInputStep = RotationSensorStep.Value3;
+
+            else if (_currentInputStep == RotationSensorStep.Value3)
+                _currentInputStep = RotationSensorStep.Value4;
+
+            else if (_currentInputStep == RotationSensorStep.Value4)
+                _currentInputStep = RotationSensorStep.Value5;
+
+            else if (_currentInputStep == RotationSensorStep.Value5)
+                _currentInputStep = RotationSensorStep.Value1;
         }
 
         private static string CreateMessageBodyFromSensor(int sensorId, int sensorValue)

@@ -204,8 +204,8 @@ namespace Keebee.AAT.Display
             if (!isSystem)
                 if (!ShouldExecute(responseTypeId)) return;
 
-            if (_currentResponseTypeId == ResponseTypeId.Caregiver ||
-                _currentResponseTypeId == ResponseTypeId.VolumeControl) return;
+            if ((_currentResponseTypeId == ResponseTypeId.Caregiver && responseTypeId != ResponseTypeId.VolumeControl)  
+                || _currentResponseTypeId == ResponseTypeId.VolumeControl) return;
 
             try
             {

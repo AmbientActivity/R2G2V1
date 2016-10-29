@@ -273,6 +273,7 @@ namespace Keebee.AAT.Display
                 switch (_currentResponseTypeId)
                 {
                     case ResponseTypeId.SlidShow:
+                        mediaPlayer1.Stop();
                         slideViewerFlash1.Hide();
                         slideViewerFlash1.Stop();
                         break;
@@ -402,7 +403,7 @@ namespace Keebee.AAT.Display
                     StopCurrentResponse();
 
                     mediaPlayer1.Show();
-                    mediaPlayer1.Play(responseTypeId, mediaFiles, _currentIsActiveEventLog);
+                    mediaPlayer1.Play(responseTypeId, mediaFiles, _currentIsActiveEventLog, false);
 
                     _currentResponseTypeId = responseTypeId;  // radio or television
                 }
@@ -472,11 +473,13 @@ namespace Keebee.AAT.Display
 
                 var music = GetFilesForResponseType(ResponseTypeId.Radio, MediaPathTypeId.Music);
 
+                mediaPlayer1.Play(ResponseTypeId.Radio, music, false, true);
+
                 images.Shuffle();
                 StopCurrentResponse();
 
                 slideViewerFlash1.Show();
-                slideViewerFlash1.Play(images, music, true, true);
+                slideViewerFlash1.Play(images, true, true);
 
                 if (_currentIsActiveEventLog)
                     _activityEventLogger.Add(_activeConfigDetail.ConfigId, _activeConfigDetail.Id, _activeResident.Id);
@@ -659,6 +662,7 @@ namespace Keebee.AAT.Display
             try
             {
                 slideViewerFlash1.Hide();
+                mediaPlayer1.Stop();
                 ResumeAmbient();
             }
             catch (Exception ex)

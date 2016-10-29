@@ -53,7 +53,7 @@ namespace Keebee.AAT.Display.UserControls
             axWindowsMediaPlayer1.PlayStateChange += PlayStateChange;
         }
 
-        public void Play(int responseTypeId, string[] files, bool isActiveEventLog)
+        public void Play(int responseTypeId, string[] files, bool isActiveEventLog, bool isLoop)
         {
             try
             {
@@ -66,7 +66,7 @@ namespace Keebee.AAT.Display.UserControls
                 if (files.Length > 1) 
                     files.Shuffle();
 
-                ConfigureMediaPlayer(responseTypeId); 
+                ConfigureMediaPlayer(responseTypeId, isLoop); 
                 PlayMedia(files);
             }
             catch (Exception ex)
@@ -120,7 +120,7 @@ namespace Keebee.AAT.Display.UserControls
             pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
         }
 
-        private void ConfigureMediaPlayer(int responseTypeId)
+        private void ConfigureMediaPlayer(int responseTypeId, bool isLoop)
         {
 #if DEBUG
             pictureBox1.Hide();
@@ -140,7 +140,7 @@ namespace Keebee.AAT.Display.UserControls
 
             }
 #endif
-            axWindowsMediaPlayer1.settings.setMode("loop", false);
+            axWindowsMediaPlayer1.settings.setMode("loop", isLoop);
         }
 
         private void PlayMedia(string[] files)

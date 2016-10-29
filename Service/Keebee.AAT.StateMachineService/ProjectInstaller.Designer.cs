@@ -46,7 +46,8 @@
             this.stateMachineServiceInstaller.ServiceName = "StateMachineService";
             this.stateMachineServiceInstaller.ServicesDependedOn = new string[] {
         "MSMQ",
-        "MSSQL$SQLEXPRESS"};
+        "MSSQL$SQLEXPRESS",
+        "W3SVC"};
             this.stateMachineServiceInstaller.StartType = System.ServiceProcess.ServiceStartMode.Automatic;
             this.stateMachineServiceInstaller.AfterInstall += new System.Configuration.Install.InstallEventHandler(this.stateMachineServiceInstaller_AfterInstall);
             // 

@@ -1,4 +1,6 @@
 ﻿using Keebee.AAT.SystemEventLogging;
+using Keebee.AAT.Display.Extensions;
+using Keebee.AAT.Shared;
 using AxShockwaveFlashObjects;
 using System;
 using System.Text;
@@ -9,6 +11,7 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
+using WMPLib;
 
 namespace Keebee.AAT.Display.UserControls
 {
@@ -26,15 +29,23 @@ namespace Keebee.AAT.Display.UserControls
 
         // delegate
         private delegate void RaiseSlideShowCompleteEventDelegate();
+        private delegate void PlayMusicDelegate(string[] files);
 
         // slide show
         private List<string> _images;
-
         private int _currentImageIndex;
         private int _totalImages;
-
         private bool _isFinite;
         private bool _isComplete;
+
+        // media player
+        private const string PlaylistProfile = PlaylistName.Profile;
+        private IWMPPlaylist _playlist;
+        private string _currentPlaylistItem;
+        private string _lastPlaylistItem;
+        private int _maxPlaylistIndex;
+        private bool _isPlaylistComplete;
+        private bool _isNewPlaylist;
 
         public SlideViewerFlash()
         {
@@ -45,11 +56,14 @@ namespace Keebee.AAT.Display.UserControls
         private void ConfigureComponents()
         {
             axShockwaveFlash1.Dock = DockStyle.Fill;
-
             timer1.Interval = Interval;
-        }   
+            axWindowsMediaPlayer1.Visible = false;
+            axWindowsMediaPlayer1.uiMode = "invisible";
+            axWindowsMediaPlayer1.settings.setMode("loop", true);
+            axWindowsMediaPlayer1.PlayStateChange += PlayStateChange;
+        }
 
-        public void Play(string[] files, bool autoStart, bool isFinite)
+        public void Play(string[] files, string[] music, bool autoStart, bool isFinite)
         {
             try
             {
@@ -58,6 +72,7 @@ namespace Keebee.AAT.Display.UserControls
 
                 if (validFiles.Any())
                 {
+                    // slide show
                     _totalImages = validFiles.Count();
                     _currentImageIndex = 0;
                     _images = validFiles;
@@ -67,8 +82,21 @@ namespace Keebee.AAT.Display.UserControls
 
                     if (autoStart) timer1.Start();
                     _isFinite = isFinite;
-
                 }
+
+                if (music == null) return;
+                if (!music.Any()) return;
+
+                // background music
+                _isNewPlaylist = true;
+                _isPlaylistComplete = false;
+
+                _maxPlaylistIndex = music.Length - 1;
+
+                if (music.Length > 1)
+                    music.Shuffle();
+
+                PlayMusic(music);
             }
             catch (Exception ex)
             {
@@ -108,6 +136,7 @@ namespace Keebee.AAT.Display.UserControls
 
         public void Stop()
         {
+            axWindowsMediaPlayer1.Ctlcontrols.stop();
             timer1.Dispose();
             axShockwaveFlash1.CallFunction("<invoke name=\"stopImage\"></invoke>");
         }
@@ -267,6 +296,75 @@ namespace Keebee.AAT.Display.UserControls
         {
             _currentImageIndex++;
             HideImage();
+        }
+
+        // media player
+
+        private void PlayMusic(string[] files)
+        {
+            if (InvokeRequired)
+            {
+                Invoke(new PlayMusicDelegate(PlayMusic), new object[] {files});
+            }
+            else
+            {
+                try
+                {
+                    _playlist = axWindowsMediaPlayer1.LoadPlaylist(PlaylistProfile, files);
+                    _lastPlaylistItem = _playlist.Item[_maxPlaylistIndex].name;
+                    _currentPlaylistItem = _playlist.Item[0].name;
+
+                    axWindowsMediaPlayer1.currentPlaylist = _playlist;
+                }
+                catch (Exception ex)
+                {
+                    _systemEventLogger.WriteEntry($"SlideViewerFlash.PlayMusic: {ex.Message}", EventLogEntryType.Error);
+                }
+            }
+        }
+
+        private void PlayStateChange(object sender, AxWMPLib._WMPOCXEvents_PlayStateChangeEvent e)
+        {
+            switch (e.newState)
+            {
+                case (int)WMPPlayState.wmppsPlaying:
+                    _currentPlaylistItem = axWindowsMediaPlayer1.currentMedia.name;
+                    _isNewPlaylist = false;
+
+                    break;
+
+                case (int)WMPPlayState.wmppsMediaEnded:
+
+                    if (_currentPlaylistItem == _lastPlaylistItem)
+                    {
+                        _isPlaylistComplete = true;
+                    }
+                    break;
+
+                case (int)WMPPlayState.wmppsTransitioning:
+                    if (_isPlaylistComplete) return;
+
+                    if (axWindowsMediaPlayer1.currentMedia != null)
+                    {
+                        if (!File.Exists(axWindowsMediaPlayer1.currentMedia.sourceURL))
+                        {
+                             axWindowsMediaPlayer1.Ctlcontrols.next();
+
+                            _playlist.removeItem(axWindowsMediaPlayer1.currentMedia);
+                            _maxPlaylistIndex--;
+                            _lastPlaylistItem = _playlist.Item[_maxPlaylistIndex].name;
+                        }
+                    }
+                    break;
+
+                case (int)WMPPlayState.wmppsReady:
+                    // if a video was not found the player needs to be jump-started
+                    if (!_isPlaylistComplete && !_isNewPlaylist)
+                    {
+                        axWindowsMediaPlayer1.Ctlcontrols.play();
+                    }
+                    break;
+            }
         }
     }
 }

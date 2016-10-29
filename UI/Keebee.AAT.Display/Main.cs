@@ -470,11 +470,13 @@ namespace Keebee.AAT.Display
                 var images = GetFilesForResponseType(ResponseTypeId.SlidShow, MediaPathTypeId.Images);
                 if (!images.Any()) return;
 
+                var music = GetFilesForResponseType(ResponseTypeId.Radio, MediaPathTypeId.Music);
+
                 images.Shuffle();
                 StopCurrentResponse();
 
                 slideViewerFlash1.Show();
-                slideViewerFlash1.Play(images, true, true);
+                slideViewerFlash1.Play(images, music, true, true);
 
                 if (_currentIsActiveEventLog)
                     _activityEventLogger.Add(_activeConfigDetail.ConfigId, _activeConfigDetail.Id, _activeResident.Id);

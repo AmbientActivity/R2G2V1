@@ -88,13 +88,13 @@ namespace Keebee.AAT.Display.Caregiver
 
         private void VolumeUpButtonMouseDown(object sender, MouseEventArgs e)
         {
-            AudioManager.StepMasterVolume(2);
+            AudioManager.StepMasterVolume(5);
             pbCurrentVolume.SetProgressNoAnimation(Convert.ToInt32(AudioManager.GetMasterVolume()));
         }
 
         private void VolumeDownButtonMouseDown(object sender, MouseEventArgs e)
         {
-            AudioManager.StepMasterVolume(-2);
+            AudioManager.StepMasterVolume(-5);
             pbCurrentVolume.SetProgressNoAnimation(Convert.ToInt32(AudioManager.GetMasterVolume()));
         }
 

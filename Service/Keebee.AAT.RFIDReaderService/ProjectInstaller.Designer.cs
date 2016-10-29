@@ -49,7 +49,8 @@
             this.rfidReaderServiceInstaller.ServicesDependedOn = new string[] {
         "MSMQ",
         "MSSQL$SQLEXPRESS",
-        "StateMachineService"};
+        "StateMachineService",
+        "W3SVC"};
             this.rfidReaderServiceInstaller.StartType = System.ServiceProcess.ServiceStartMode.Automatic;
             // 
             // ProjectInstaller

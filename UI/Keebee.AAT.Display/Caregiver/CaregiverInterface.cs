@@ -741,7 +741,6 @@ namespace Keebee.AAT.Display.Caregiver
                         Images = images
                     };
 
-                    StopMusic();
                     imageViewer.ShowDialog();
                 }
                 else

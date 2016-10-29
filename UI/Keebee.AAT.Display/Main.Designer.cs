@@ -76,7 +76,7 @@ namespace Keebee.AAT.Display
             // offScreen1
             // 
             this.offScreen1.BackColor = System.Drawing.SystemColors.ActiveCaptionText;
-            this.offScreen1.Location = new System.Drawing.Point(358, 151);
+            this.offScreen1.Location = new System.Drawing.Point(358, 140);
             this.offScreen1.Name = "offScreen1";
             this.offScreen1.Size = new System.Drawing.Size(64, 48);
             this.offScreen1.TabIndex = 9;

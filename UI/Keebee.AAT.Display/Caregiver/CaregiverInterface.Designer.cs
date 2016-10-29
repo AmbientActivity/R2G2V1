@@ -303,6 +303,7 @@ namespace Keebee.AAT.Display.Caregiver
             // btnVolume
             // 
             this.btnVolume.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnVolume.Enabled = false;
             this.btnVolume.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnVolume.Image = ((System.Drawing.Image)(resources.GetObject("btnVolume.Image")));
             this.btnVolume.Location = new System.Drawing.Point(548, 3);
@@ -310,6 +311,7 @@ namespace Keebee.AAT.Display.Caregiver
             this.btnVolume.Size = new System.Drawing.Size(70, 64);
             this.btnVolume.TabIndex = 0;
             this.btnVolume.UseVisualStyleBackColor = true;
+            this.btnVolume.Visible = false;
             this.btnVolume.Click += new System.EventHandler(this.VolumeAdjusterButtonClick);
             // 
             // CaregiverInterface

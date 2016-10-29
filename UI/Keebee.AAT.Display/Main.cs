@@ -5,6 +5,7 @@ using Keebee.AAT.SystemEventLogging;
 using Keebee.AAT.Display.UserControls;
 using Keebee.AAT.Display.Caregiver;
 using Keebee.AAT.Display.Helpers;
+using Keebee.AAT.Display.Volume;
 using System.Web.Script.Serialization;
 using System.Diagnostics;
 using System.Drawing;
@@ -90,10 +91,14 @@ namespace Keebee.AAT.Display
         // media path
         private readonly MediaSourcePath _mediaPath = new MediaSourcePath();
 
+        // opacity layer (for volume control or any other modal dialogs)
+        private readonly OpaqueLayer _opaqueLayer;
+
         public Main()
         {
             InitializeComponent();
             ConfigureUserControls();
+            _opaqueLayer = new OpaqueLayer { Dock = DockStyle.Fill };
 
             // display-sms message queue sender
             _messageQueueDisplaySms = new CustomMessageQueue(new CustomMessageQueueArgs
@@ -179,7 +184,6 @@ namespace Keebee.AAT.Display
             _opsClient.SystemEventLogger = _systemEventLogger;
             _messageQueueDisplaySms.SystemEventLogger = _systemEventLogger;
             _messageQueueDisplayPhidget.SystemEventLogger = _systemEventLogger;
-            //_messageQueueDisplayVideoCapture.SystemEventLogger = _systemEventLogger;
             _messageQueueResponse.SystemEventLogger = _systemEventLogger;
 
             _gameEventLogger.OperationsClient = _opsClient;
@@ -200,7 +204,8 @@ namespace Keebee.AAT.Display
             if (!isSystem)
                 if (!ShouldExecute(responseTypeId)) return;
 
-            if (_currentResponseTypeId == ResponseTypeId.Caregiver) return;
+            if (_currentResponseTypeId == ResponseTypeId.Caregiver ||
+                _currentResponseTypeId == ResponseTypeId.VolumeControl) return;
 
             try
             {
@@ -537,11 +542,10 @@ namespace Keebee.AAT.Display
             }
             else
             {
-                StopCurrentResponse();
-                ambient1.Show();
-                ambient1.Resume();
-
-                _currentResponseTypeId = ResponseTypeId.VolumeControl;
+                _opaqueLayer.Show();
+                var volumeControl = new VolumeControl();
+                volumeControl.VolumeControlClosedEvent += VolumentControlClosed;
+                volumeControl.ShowDialog();
             }
         }
 
@@ -673,6 +677,11 @@ namespace Keebee.AAT.Display
             {
                 _systemEventLogger.WriteEntry($"Main.MediaPlayerComplete: {ex.Message}", EventLogEntryType.Error);
             }
+        }
+
+        private void VolumentControlClosed(object sender, EventArgs e)
+        {
+            _opaqueLayer.Hide();
         }
 
         private void LogGameEvent(object sender, EventArgs e)

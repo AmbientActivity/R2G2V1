@@ -42,7 +42,7 @@ namespace Keebee.AAT.Display.UserControls
         private bool _isPlaylistComplete;
         private bool _isNewPlaylist;
         private bool _isPlayPrevious;
-        
+        private bool _isLoop;
         private IWMPPlaylist _playlist;
 
         public MediaPlayer()
@@ -59,6 +59,7 @@ namespace Keebee.AAT.Display.UserControls
             {
                 _isNewPlaylist = true;
                 _isPlaylistComplete = false;
+                _isLoop = isLoop;
 
                 _maxIndex = files.Length - 1;
                 _isActiveEventLog = isActiveEventLog;
@@ -66,7 +67,7 @@ namespace Keebee.AAT.Display.UserControls
                 if (files.Length > 1) 
                     files.Shuffle();
 
-                ConfigureMediaPlayer(responseTypeId, isLoop); 
+                ConfigureMediaPlayer(responseTypeId); 
                 PlayMedia(files);
             }
             catch (Exception ex)
@@ -120,7 +121,7 @@ namespace Keebee.AAT.Display.UserControls
             pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
         }
 
-        private void ConfigureMediaPlayer(int responseTypeId, bool isLoop)
+        private void ConfigureMediaPlayer(int responseTypeId)
         {
 #if DEBUG
             pictureBox1.Hide();
@@ -140,7 +141,7 @@ namespace Keebee.AAT.Display.UserControls
 
             }
 #endif
-            axWindowsMediaPlayer1.settings.setMode("loop", isLoop);
+            axWindowsMediaPlayer1.settings.setMode("loop", _isLoop);
         }
 
         private void PlayMedia(string[] files)
@@ -211,7 +212,9 @@ namespace Keebee.AAT.Display.UserControls
                     break;
 
                 case (int)WMPPlayState.wmppsMediaEnded:
-                    
+
+                    if (_isLoop) return;
+
                     if (_currentPlaylistItem == _lastPlaylistItem)
                     {
                         RaiseMediaCompleteEvent();

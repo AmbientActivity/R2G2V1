@@ -7,6 +7,9 @@ namespace Keebee.AAT.Display.Volume
 {
     public partial class VolumeControl : Form
     {
+        // constants
+        private const int VolumeIncrement = 3;
+
         // event handler
         public event EventHandler VolumeControlClosedEvent;
 
@@ -28,14 +31,14 @@ namespace Keebee.AAT.Display.Volume
         private void ButtonUpClick(object sender, EventArgs e)
         {
             ResetTimer();
-            AudioManager.StepMasterVolume(5);
+            AudioManager.StepMasterVolume(VolumeIncrement);
             pbCurrentVolume.SetProgressNoAnimation(Convert.ToInt32(AudioManager.GetMasterVolume()));
         }
 
         private void ButtonDownClick(object sender, EventArgs e)
         {
             ResetTimer();
-            AudioManager.StepMasterVolume(-5);
+            AudioManager.StepMasterVolume(VolumeIncrement * -1);
             pbCurrentVolume.SetProgressNoAnimation(Convert.ToInt32(AudioManager.GetMasterVolume()));
         }
 

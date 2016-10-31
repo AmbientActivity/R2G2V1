@@ -26,8 +26,7 @@ namespace Keebee.AAT.Display.Caregiver
         private const int TableLayoutPanelColFiveidth = 70;
 
         private const int AutoModeLabeMarginTop = 30;
-#endif
-#if !DEBUG
+#elif !DEBUG
         private const int AutoModeLabelFontSize = 16;
 
         private const int TableLayoutPanelColTwoWidth = 150;

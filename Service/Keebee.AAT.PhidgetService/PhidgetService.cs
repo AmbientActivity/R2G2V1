@@ -51,6 +51,7 @@ namespace Keebee.AAT.PhidgetService
 
         // message queue sender
         private readonly CustomMessageQueue _messageQueuePhidget;
+        private readonly CustomMessageQueue _messageQueuePhidgetContinuous;
 
         // event logger
         private readonly SystemEventLogger _systemEventLogger;
@@ -83,6 +84,12 @@ namespace Keebee.AAT.PhidgetService
             _messageQueuePhidget = new CustomMessageQueue(new CustomMessageQueueArgs
             {
                 QueueName = MessageQueueType.Phidget
+            })
+            { SystemEventLogger = _systemEventLogger };
+
+            _messageQueuePhidgetContinuous = new CustomMessageQueue(new CustomMessageQueueArgs
+            {
+                QueueName = MessageQueueType.PhidgetContinuous
             })
             { SystemEventLogger = _systemEventLogger };
 
@@ -180,6 +187,7 @@ namespace Keebee.AAT.PhidgetService
                     case PhidgetStyleTypeIdId.MultiTurn:
                     case PhidgetStyleTypeIdId.StopTurn:
                     case PhidgetStyleTypeIdId.Slider:
+                        _messageQueuePhidgetContinuous.Send($"{e.Value}");
                         var stepValue = GetSensorStepValue(sensorValue);
                         if (stepValue > 0)
                             _messageQueuePhidget.Send(CreateMessageBodyFromSensor(sensorId, stepValue));

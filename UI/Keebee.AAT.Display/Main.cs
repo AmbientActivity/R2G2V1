@@ -122,7 +122,7 @@ namespace Keebee.AAT.Display
             _messageQueueResponse = new CustomMessageQueue(new CustomMessageQueueArgs
             {
                 QueueName = MessageQueueType.Response,
-                MessageReceivedCallback = MessageReceived
+                MessageReceivedCallback = MessageReceivedResponse
             });
 
             // custom event loggers
@@ -634,7 +634,7 @@ namespace Keebee.AAT.Display
 
         #region event handlers
 
-        private void MessageReceived(object source, MessageEventArgs e)
+        private void MessageReceivedResponse(object source, MessageEventArgs e)
         {
             try
             {
@@ -653,7 +653,7 @@ namespace Keebee.AAT.Display
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"Main.MessageReceived: {ex.Message}", EventLogEntryType.Error);
+                _systemEventLogger.WriteEntry($"Main.MessageReceivedResponse: {ex.Message}", EventLogEntryType.Error);
             }
         }
 

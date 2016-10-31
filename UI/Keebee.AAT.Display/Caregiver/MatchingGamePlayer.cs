@@ -63,8 +63,7 @@ namespace Keebee.AAT.Display.Caregiver
 
 #if DEBUG
         private const int ActivityNameLabelFontSize = 24;
-#endif
-#if !DEBUG
+#elif !DEBUG
         private const int ActivityNameLabelFontSize = 30;
 #endif
 

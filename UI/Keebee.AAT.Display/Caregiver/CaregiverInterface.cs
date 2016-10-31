@@ -121,8 +121,7 @@ namespace Keebee.AAT.Display.Caregiver
 
         private const int TabPageFontSize = 10;
         private const int TabFontSize = 10;
-#endif
-#if !DEBUG
+#elif !DEBUG
         private const int ThumbnailDimensions = 64;
         private const int ListViewMusicColWidthStatus = 150;
         private const int ListViewMusicColWidthName = 1659;
@@ -152,8 +151,7 @@ namespace Keebee.AAT.Display.Caregiver
             InitializeComponent();
 #if DEBUG
             _imageListMusic = imageListMusicDebug;
-#endif
-#if !DEBUG
+#elif !DEBUG
             _imageListMusic = imageListMusic;
 #endif
             ConfigureControls();

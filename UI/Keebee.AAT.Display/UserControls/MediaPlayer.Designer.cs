@@ -32,10 +32,8 @@
             this.axWindowsMediaPlayer1 = new AxWMPLib.AxWindowsMediaPlayer();
             this.pbRadioPanel = new System.Windows.Forms.PictureBox();
             this.lblDial = new System.Windows.Forms.Label();
-            this.pbTestPattern = new System.Windows.Forms.PictureBox();
             ((System.ComponentModel.ISupportInitialize)(this.axWindowsMediaPlayer1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbRadioPanel)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pbTestPattern)).BeginInit();
             this.SuspendLayout();
             // 
             // axWindowsMediaPlayer1
@@ -69,23 +67,11 @@
             this.lblDial.Text = " ";
             this.lblDial.Visible = false;
             // 
-            // pbTestPattern
-            // 
-            this.pbTestPattern.BackgroundImage = global::Keebee.AAT.Display.Properties.Resources.tv_test_pattern;
-            this.pbTestPattern.InitialImage = ((System.Drawing.Image)(resources.GetObject("pbTestPattern.InitialImage")));
-            this.pbTestPattern.Location = new System.Drawing.Point(132, 76);
-            this.pbTestPattern.Name = "pbTestPattern";
-            this.pbTestPattern.Size = new System.Drawing.Size(115, 60);
-            this.pbTestPattern.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.pbTestPattern.TabIndex = 3;
-            this.pbTestPattern.TabStop = false;
-            // 
             // MediaPlayer
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ActiveCaptionText;
-            this.Controls.Add(this.pbTestPattern);
             this.Controls.Add(this.lblDial);
             this.Controls.Add(this.pbRadioPanel);
             this.Controls.Add(this.axWindowsMediaPlayer1);
@@ -93,7 +79,6 @@
             this.Size = new System.Drawing.Size(360, 211);
             ((System.ComponentModel.ISupportInitialize)(this.axWindowsMediaPlayer1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbRadioPanel)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pbTestPattern)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -103,6 +88,5 @@
         private AxWMPLib.AxWindowsMediaPlayer axWindowsMediaPlayer1;
         private System.Windows.Forms.PictureBox pbRadioPanel;
         private System.Windows.Forms.Label lblDial;
-        private System.Windows.Forms.PictureBox pbTestPattern;
     }
 }

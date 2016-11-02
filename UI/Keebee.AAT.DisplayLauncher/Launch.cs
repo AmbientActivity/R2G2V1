@@ -47,7 +47,7 @@ namespace Keebee.AAT.DisplayLauncher
             }
             else
             {
-                lblMessage.Text = $"R2G2 will launch in {_secondsRemaining} seconds...";
+                lblMessage.Text = $"AAT System will launch in {_secondsRemaining} seconds...";
             }
         }
     }

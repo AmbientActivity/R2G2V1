@@ -132,6 +132,7 @@ namespace Keebee.AAT.Display
             // response complete event handlers
             slideViewerFlash1.SlideShowCompleteEvent += SlideShowComplete;
             mediaPlayer1.MediaPlayerCompleteEvent += MediaPlayerComplete;
+            offScreen1.OffScreenCompleteEvent += OffScreenComplete;
             matchingGame1.MatchingGameTimeoutExpiredEvent += MatchingGameTimeoutExpired;
             matchingGame1.LogGameEventEvent += LogGameEvent;
             mediaPlayer1.LogVideoActivityEventEvent += LogVideoActivityEvent;
@@ -264,9 +265,10 @@ namespace Keebee.AAT.Display
             // if it is a new activity/response type then execute it
             if (_isNewResponse) return true;
 
-            // if it is a media player or caregiver response type then execute it
+            // if it is a' media player' or 'off screen' response type then execute it
             return (responseTypeId == ResponseTypeId.Television)
-                || (responseTypeId == ResponseTypeId.Radio);
+                || (responseTypeId == ResponseTypeId.Radio)
+                || (responseTypeId == ResponseTypeId.OffScreen);
         }
 
         private void StopCurrentResponse(int newResponseTypeid = -1)
@@ -302,6 +304,7 @@ namespace Keebee.AAT.Display
                         break;
                     case ResponseTypeId.OffScreen:
                         offScreen1.Hide();
+                        offScreen1.Stop();
                         break;
                 }
             }
@@ -568,10 +571,19 @@ namespace Keebee.AAT.Display
             }
             else
             {
-                StopCurrentResponse();
-                offScreen1.Show();
-
-                _currentResponseTypeId = ResponseTypeId.OffScreen;
+                if (_currentResponseTypeId != ResponseTypeId.OffScreen)
+                {
+                    StopCurrentResponse();
+                    offScreen1.Show();
+                    offScreen1.Play();
+                    _currentResponseTypeId = ResponseTypeId.OffScreen;
+                }
+                else
+                {
+                    offScreen1.Hide();
+                    offScreen1.Stop();
+                    ResumeAmbient();
+                }
             }
         }
 
@@ -682,6 +694,20 @@ namespace Keebee.AAT.Display
             try
             {
                 mediaPlayer1.Hide();
+                ResumeAmbient();
+                _isNewResponse = true;
+            }
+            catch (Exception ex)
+            {
+                _systemEventLogger.WriteEntry($"Main.MediaPlayerComplete: {ex.Message}", EventLogEntryType.Error);
+            }
+        }
+
+        private void OffScreenComplete(object sender, EventArgs e)
+        {
+            try
+            {
+                offScreen1.Hide();
                 ResumeAmbient();
                 _isNewResponse = true;
             }

@@ -71,7 +71,11 @@ namespace Keebee.AAT.PhidgetService
 
         // current values
         private int _currentRadioSensorValue;
-        private int _currentTelevisionSensorValue;
+
+        //TODO:  might decide to to show a Test Pattern between stations
+        //private int _currentTelevisionSensorValue;
+
+        private readonly InterfaceKit _interfaceKit;
 
         public PhidgetService()
         {
@@ -81,9 +85,9 @@ namespace Keebee.AAT.PhidgetService
             _opsClient = new OperationsClient { SystemEventLogger = _systemEventLogger };
             _sensorThreshold = ValidateSensorThreshold(ConfigurationManager.AppSettings["TouchSensorThreshold"]);
 
-            var interfaceKit = new InterfaceKit();
-            interfaceKit.SensorChange += SensorChange;
-            interfaceKit.InputChange += InputChange;
+            _interfaceKit = new InterfaceKit();
+            _interfaceKit.SensorChange += SensorChange;
+            _interfaceKit.InputChange += InputChange;
 
             // message queue senders
             _messageQueuePhidget = new CustomMessageQueue(new CustomMessageQueueArgs
@@ -114,7 +118,7 @@ namespace Keebee.AAT.PhidgetService
             InitializeMessageQueueListeners();
 
             // open the phidget using the command line arguments
-            openCmdLine(interfaceKit);
+            openCmdLine(_interfaceKit);
         }
 
         private void InitializeMessageQueueListeners()
@@ -211,13 +215,14 @@ namespace Keebee.AAT.PhidgetService
                                         _currentRadioSensorValue = stepValue;
                                     }
                                     break;
-                                case ResponseTypeId.Television:
-                                    if (_currentTelevisionSensorValue != stepValue)
-                                    {
-                                        _messageQueuePhidget.Send(CreateMessageBodyFromSensor(sensorId, stepValue));
-                                        _currentTelevisionSensorValue = stepValue;
-                                    }
-                                    break;
+                                //TODO:  might decide to to show a Test Pattern between stations
+                                //case ResponseTypeId.Television:
+                                //    if (_currentTelevisionSensorValue != stepValue)
+                                //    {
+                                //        _messageQueuePhidget.Send(CreateMessageBodyFromSensor(sensorId, stepValue));
+                                //        _currentTelevisionSensorValue = stepValue;
+                                //    }
+                                //    break;
                                 default:
                                     _messageQueuePhidget.Send(CreateMessageBodyFromSensor(sensorId, stepValue));
                                     break;
@@ -246,17 +251,20 @@ namespace Keebee.AAT.PhidgetService
 
         private void InputChange(object sender, InputChangeEventArgs e)
         {
+            if (_activeConfig == null) return;
+            if (!_isDisplayActive) return;
+
             // PhidgetTypeId = InputId + 9 (offset by 8 SensorIds, InputId is base 0)
             try
             {
                 if (e.Index < 0 || e.Index > 7)
                     throw new Exception($"Invalid InputId: {e.Index}");
 
-                if (!_isDisplayActive) return;
-
                 int sensorId;
                 var isValid = int.TryParse(Convert.ToString(e.Index), out sensorId);
                 if (!isValid) return;
+
+                _interfaceKit.outputs[e.Index] = e.Value;
 
                 if (_activeConfig.ConfigDetails.All(cd => cd.PhidgetTypeId != sensorId + 9))
                     return;
@@ -275,7 +283,6 @@ namespace Keebee.AAT.PhidgetService
                         _messageQueuePhidgetContinuousTelevision.Send($"{(int)_currentInputStep}");
                         break;
                 }
-
             }
             catch (Exception ex)
             {

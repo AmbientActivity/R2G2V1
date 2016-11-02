@@ -39,7 +39,9 @@ namespace Keebee.AAT.Display.UserControls
         private delegate void PlayMediaDelegate(string[] files);
         private delegate void RaiseMediaCompleteEventDelegate();
         private delegate void UpdateDialDelegate(int value);
-        private delegate void ShowTestPatternDelegate(bool isVisible);
+
+        //TODO:  might decide to to show a Test Pattern between stations
+        //private delegate void ShowTestPatternDelegate(bool isVisible);
 
         private string _currentPlaylistItem;
         private string _lastPlaylistItem;
@@ -57,8 +59,9 @@ namespace Keebee.AAT.Display.UserControls
 
         private int _responseTypeId;
 
-        private readonly Timer _televisionTestScreenTimer;
-        private int _televisionTestScreenTimerInterval = 120000;  // 1 minute
+        //TODO: might decide to to show a Test Pattern between stations
+        //private readonly Timer _televisionTestScreenTimer;
+        //private int _televisionTestScreenTimerInterval = 60000;  // 1 minute
 
         public MediaPlayer()
         {
@@ -71,16 +74,17 @@ namespace Keebee.AAT.Display.UserControls
                 MessageReceivedCallback = MessageReceivedPhidgetContinuousRadio
             });
 
-            var q2 = new CustomMessageQueue(new CustomMessageQueueArgs
-            {
-                QueueName = MessageQueueType.PhidgetContinuousTelevision,
-                MessageReceivedCallback = MessageReceivedPhidgetContinuousTelevision
-            });
+            //TODO: in case want to to show a Test Pattern between stations
+            //var q2 = new CustomMessageQueue(new CustomMessageQueueArgs
+            //{
+            //    QueueName = MessageQueueType.PhidgetContinuousTelevision,
+            //    MessageReceivedCallback = MessageReceivedPhidgetContinuousTelevision
+            //});
+
+            //_televisionTestScreenTimer = new Timer { Interval = _televisionTestScreenTimerInterval };
+            //_televisionTestScreenTimer.Tick += TimerTick;
 
             axWindowsMediaPlayer1.PlayStateChange += PlayStateChange;
-
-            _televisionTestScreenTimer = new Timer { Interval = _televisionTestScreenTimerInterval };
-            _televisionTestScreenTimer.Tick += TimerTick;
         }
 
         public void Play(int responseTypeId, string[] files, bool isActiveEventLog, bool isLoop)
@@ -140,11 +144,11 @@ namespace Keebee.AAT.Display.UserControls
 
         public void Stop()
         {
-            _televisionTestScreenTimer.Stop();
+            //_televisionTestScreenTimer.Stop();
             axWindowsMediaPlayer1.settings.mute = false;
             axWindowsMediaPlayer1.Ctlcontrols.stop();
             pbRadioPanel.Hide();
-            pbTestPattern.Hide();
+            //pbTestPattern.Hide();
         }
 
         private void ConfigureComponents()
@@ -156,18 +160,18 @@ namespace Keebee.AAT.Display.UserControls
             pbRadioPanel.Dock = DockStyle.Fill;
             pbRadioPanel.SizeMode = PictureBoxSizeMode.StretchImage;
 
-            pbTestPattern.Dock = DockStyle.Fill;
-            pbTestPattern.Hide();
+            //pbTestPattern.Dock = DockStyle.Fill;
+            //pbTestPattern.Hide();
 
             lblDial.Hide();
 #if DEBUG
-            pbTestPattern.Image = Resources.tv_test_pattern_debug;
+            //pbTestPattern.Image = Resources.tv_test_pattern_debug;
             lblDial.Width = 5;
             lblDial.Height = SystemInformation.PrimaryMonitorSize.Height / 3;
             _maxDial = (SystemInformation.PrimaryMonitorSize.Width/3) - 30;
             _minDial = 120;
 #elif !DEBUG
-            pbTestPattern.Image = Resources.tv_test_pattern;
+            //pbTestPattern.Image = Resources.tv_test_pattern;
             lblDial.Width = 8;
             lblDial.Height = SystemInformation.PrimaryMonitorSize.Height;
             _maxDial = (SystemInformation.PrimaryMonitorSize.Width) - 30;
@@ -204,11 +208,11 @@ namespace Keebee.AAT.Display.UserControls
                 case ResponseTypeId.Radio:
                     lblDial.Show();
                     pbRadioPanel.Show();
-                    pbTestPattern.Hide();
+                    //pbTestPattern.Hide();
                     break;
                 case ResponseTypeId.Television:
                 case ResponseTypeId.Cats:
-                    pbTestPattern.Hide();
+                    //pbTestPattern.Hide();
                     pbRadioPanel.Hide();
                     lblDial.Hide();
                     break;
@@ -345,30 +349,6 @@ namespace Keebee.AAT.Display.UserControls
             }
         }
 
-        private void MessageReceivedPhidgetContinuousTelevision(object source, MessageEventArgs e)
-        {
-            if (_responseTypeId != ResponseTypeId.Television)
-                return;
-
-            try
-            {
-                int value;
-                var isValid = int.TryParse(e.MessageBody, out value);
-                if (!isValid) return;
-
-                var isBetweenStations = PhidgetUtil.GetSensorStepValue(value) < 0;
-
-                if (axWindowsMediaPlayer1.settings.mute != isBetweenStations)
-                    axWindowsMediaPlayer1.settings.mute = isBetweenStations;
-
-                ShowTestPattern(isBetweenStations);
-            }
-            catch (Exception ex)
-            {
-                _systemEventLogger.WriteEntry($"MediaPlayer.MessageReceivedPhidgetContinuousTelevision: {ex.Message}", EventLogEntryType.Error);
-            }
-        }
-
         private void UpdateDial(int value)
         {
             if (InvokeRequired)
@@ -381,31 +361,57 @@ namespace Keebee.AAT.Display.UserControls
             }
         }
 
-        private void ShowTestPattern(bool isVisible)
-        {
-            if (InvokeRequired)
-            {
-                Invoke(new ShowTestPatternDelegate(ShowTestPattern), isVisible);
-            }
-            else
-            {
-                if (isVisible)
-                {
-                    _televisionTestScreenTimer.Start();
-                    pbTestPattern.Show();
-                    
-                }
-                else
-                {
-                    _televisionTestScreenTimer.Stop();
-                    pbTestPattern.Hide();
-                }
-            }
-        }
+        //TODO:  might decide to to show a Test Pattern between stations
 
-        private void TimerTick(object sender, EventArgs e)
-        {
-            RaiseMediaCompleteEvent();
-        }
+        //private void MessageReceivedPhidgetContinuousTelevision(object source, MessageEventArgs e)
+        //{
+        //    if (_responseTypeId != ResponseTypeId.Television)
+        //        return;
+
+        //    try
+        //    {
+        //        int value;
+        //        var isValid = int.TryParse(e.MessageBody, out value);
+        //        if (!isValid) return;
+
+        //        var isBetweenStations = PhidgetUtil.GetSensorStepValue(value) < 0;
+
+        //        if (axWindowsMediaPlayer1.settings.mute != isBetweenStations)
+        //            axWindowsMediaPlayer1.settings.mute = isBetweenStations;
+
+        //        ShowTestPattern(isBetweenStations);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _systemEventLogger.WriteEntry($"MediaPlayer.MessageReceivedPhidgetContinuousTelevision: {ex.Message}", EventLogEntryType.Error);
+        //    }
+        //}
+
+        //private void ShowTestPattern(bool isVisible)
+        //{
+        //    if (InvokeRequired)
+        //    {
+        //        Invoke(new ShowTestPatternDelegate(ShowTestPattern), isVisible);
+        //    }
+        //    else
+        //    {
+        //        if (isVisible)
+        //        {
+        //            _televisionTestScreenTimer.Start();
+        //            pbTestPattern.Show();
+
+        //        }
+        //        else
+        //        {
+        //            _televisionTestScreenTimer.Stop();
+        //            pbTestPattern.Hide();
+        //        }
+        //    }
+        //}
+
+        //private void TimerTick(object sender, EventArgs e)
+        //{
+        //    RaiseMediaCompleteEvent();
+        //}
     }
 }

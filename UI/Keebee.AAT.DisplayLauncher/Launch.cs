@@ -10,7 +10,7 @@ namespace Keebee.AAT.DisplayLauncher
         private delegate void UpdateMessageDelegate();
 
         private int _secondsRemaining;
-        private string _exePath;
+        private readonly string _exePath;
 
         public Launch()
         {
@@ -47,7 +47,7 @@ namespace Keebee.AAT.DisplayLauncher
             }
             else
             {
-                lblMessage.Text = $"Display will launch in {_secondsRemaining} seconds...";
+                lblMessage.Text = $"R2G2 will launch in {_secondsRemaining} seconds...";
             }
         }
     }

@@ -315,28 +315,7 @@
     </COMReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Images\ZenithRadio.jpg" />
-  </ItemGroup>
-  <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Images\PhilettaRadio.jpg" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Images\PYERadio.jpg" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Images\GERadio.jpg" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Images\PhilcoRadio.jpg" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Images\ZenithRadio2.jpg" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Images\PhilcoRadio2.jpg" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\RESTClient\Keebee.AAT.RESTClient\Keebee.AAT.RESTClient.csproj">
@@ -367,6 +346,10 @@
     <Content Include="Caregiver\Icons\playactive.ico" />
     <Content Include="Caregiver\Icons\play_active.png" />
     <Content Include="Caregiver\Icons\speaker.ico" />
+    <Content Include="Images\radio-panel.jpg" />
+    <Content Include="Images\tv-test-pattern-debug.jpg" />
+    <Content Include="Images\tv-test-pattern.jpg" />
+    <Content Include="Images\zenith-radio.jpg" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

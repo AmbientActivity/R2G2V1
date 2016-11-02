@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
+using Keebee.AAT.Display.Properties;
 using Keebee.AAT.MessageQueuing;
 using WMPLib;
 
@@ -38,6 +39,7 @@ namespace Keebee.AAT.Display.UserControls
         private delegate void PlayMediaDelegate(string[] files);
         private delegate void RaiseMediaCompleteEventDelegate();
         private delegate void UpdateDialDelegate(int value);
+        private delegate void ShowTestPatternDelegate(bool isVisible);
 
         private string _currentPlaylistItem;
         private string _lastPlaylistItem;
@@ -55,6 +57,9 @@ namespace Keebee.AAT.Display.UserControls
 
         private int _responseTypeId;
 
+        private readonly Timer _televisionTestScreenTimer;
+        private int _televisionTestScreenTimerInterval = 120000;  // 1 minute
+
         public MediaPlayer()
         {
             InitializeComponent();
@@ -62,11 +67,20 @@ namespace Keebee.AAT.Display.UserControls
 
             var q = new CustomMessageQueue(new CustomMessageQueueArgs
             {
-                QueueName = MessageQueueType.PhidgetContinuous,
-                MessageReceivedCallback = MessageReceivedPhidgetContinuous
+                QueueName = MessageQueueType.PhidgetContinuousRadio,
+                MessageReceivedCallback = MessageReceivedPhidgetContinuousRadio
+            });
+
+            var q2 = new CustomMessageQueue(new CustomMessageQueueArgs
+            {
+                QueueName = MessageQueueType.PhidgetContinuousTelevision,
+                MessageReceivedCallback = MessageReceivedPhidgetContinuousTelevision
             });
 
             axWindowsMediaPlayer1.PlayStateChange += PlayStateChange;
+
+            _televisionTestScreenTimer = new Timer { Interval = _televisionTestScreenTimerInterval };
+            _televisionTestScreenTimer.Tick += TimerTick;
         }
 
         public void Play(int responseTypeId, string[] files, bool isActiveEventLog, bool isLoop)
@@ -80,10 +94,12 @@ namespace Keebee.AAT.Display.UserControls
                 _maxIndex = files.Length - 1;
                 _isActiveEventLog = isActiveEventLog;
 
+                ShowHideResponseControls();
+                ConfigureMediaPlayer();
+
                 if (files.Length > 1) 
                     files.Shuffle();
 
-                ConfigureMediaPlayer(responseTypeId); 
                 PlayMedia(files);
             }
             catch (Exception ex)
@@ -124,25 +140,34 @@ namespace Keebee.AAT.Display.UserControls
 
         public void Stop()
         {
+            _televisionTestScreenTimer.Stop();
+            axWindowsMediaPlayer1.settings.mute = false;
             axWindowsMediaPlayer1.Ctlcontrols.stop();
+            pbRadioPanel.Hide();
+            pbTestPattern.Hide();
         }
 
         private void ConfigureComponents()
         {
             axWindowsMediaPlayer1.stretchToFit = true;
             axWindowsMediaPlayer1.Dock = DockStyle.Fill;
-            axWindowsMediaPlayer1.settings.volume = 70;
 
-            pictureBox1.Dock = DockStyle.Fill;
-            pictureBox1.SizeMode = PictureBoxSizeMode.StretchImage;
+            pbRadioPanel.Image = Resources.radio_panel;
+            pbRadioPanel.Dock = DockStyle.Fill;
+            pbRadioPanel.SizeMode = PictureBoxSizeMode.StretchImage;
 
-            lblDial.Location = new Point(0, 0);
+            pbTestPattern.Dock = DockStyle.Fill;
+            pbTestPattern.Hide();
+
+            lblDial.Hide();
 #if DEBUG
+            pbTestPattern.Image = Resources.tv_test_pattern_debug;
             lblDial.Width = 5;
             lblDial.Height = SystemInformation.PrimaryMonitorSize.Height / 3;
             _maxDial = (SystemInformation.PrimaryMonitorSize.Width/3) - 30;
             _minDial = 120;
 #elif !DEBUG
+            pbTestPattern.Image = Resources.tv_test_pattern;
             lblDial.Width = 8;
             lblDial.Height = SystemInformation.PrimaryMonitorSize.Height;
             _maxDial = (SystemInformation.PrimaryMonitorSize.Width) - 30;
@@ -152,40 +177,42 @@ namespace Keebee.AAT.Display.UserControls
             _divisorDial = (double)1000 / _rangeDial;
         }
 
-        private void ConfigureMediaPlayer(int responseTypeId)
+        private void ConfigureMediaPlayer()
         {
+            if (_responseTypeId == ResponseTypeId.Radio)
+            {
+                axWindowsMediaPlayer1.uiMode = "invisible";
+            }
+            else
+            {
 #if DEBUG
-            switch (responseTypeId)
-            {
-                case ResponseTypeId.Radio:
-                    pictureBox1.Show();
-                    axWindowsMediaPlayer1.uiMode = "invisible";
-                    lblDial.Show();
-                    break;
-                case ResponseTypeId.Television:
-                case ResponseTypeId.Cats:
-                    pictureBox1.Hide();
-                    axWindowsMediaPlayer1.uiMode = "full";
-                    lblDial.Hide();
-                    break;
-            }
+                axWindowsMediaPlayer1.uiMode = "full";
 #elif !DEBUG
-            switch (responseTypeId)
+                axWindowsMediaPlayer1.uiMode = "none";
+#endif
+            }
+
+            axWindowsMediaPlayer1.settings.volume = 70;
+            axWindowsMediaPlayer1.settings.mute = false;
+            axWindowsMediaPlayer1.settings.setMode("loop", _isLoop);
+        }
+
+        private void ShowHideResponseControls()
+        {
+            switch (_responseTypeId)
             {
                 case ResponseTypeId.Radio:
-                    pictureBox1.Show();
-                    axWindowsMediaPlayer1.uiMode = "invisible";
                     lblDial.Show();
+                    pbRadioPanel.Show();
+                    pbTestPattern.Hide();
                     break;
                 case ResponseTypeId.Television:
                 case ResponseTypeId.Cats:
-                    pictureBox1.Hide();
-                    axWindowsMediaPlayer1.uiMode = "none";
+                    pbTestPattern.Hide();
+                    pbRadioPanel.Hide();
                     lblDial.Hide();
                     break;
             }
-#endif
-            axWindowsMediaPlayer1.settings.setMode("loop", _isLoop);
         }
 
         private void PlayMedia(string[] files)
@@ -198,6 +225,9 @@ namespace Keebee.AAT.Display.UserControls
             {
                 try
                 {
+                    if (axWindowsMediaPlayer1.playState == WMPPlayState.wmppsPlaying)
+                        axWindowsMediaPlayer1.Ctlcontrols.stop();
+
                     _playlist = axWindowsMediaPlayer1.LoadPlaylist(PlaylistProfile, files);
                     _lastPlaylistItem = _playlist.Item[_maxIndex].name;
                     _currentPlaylistItem = _playlist.Item[0].name;
@@ -253,6 +283,7 @@ namespace Keebee.AAT.Display.UserControls
 
                     if (_isActiveEventLog)
                         RaiseLogVideoActivityEventEvent(axWindowsMediaPlayer1.currentMedia.name);
+
                     break;
 
                 case (int)WMPPlayState.wmppsMediaEnded:
@@ -295,21 +326,46 @@ namespace Keebee.AAT.Display.UserControls
             }
         }
 
-        private void MessageReceivedPhidgetContinuous(object source, MessageEventArgs e)
+        private void MessageReceivedPhidgetContinuousRadio(object source, MessageEventArgs e)
         {
-            if (_responseTypeId != ResponseTypeId.Radio) return;
+            if (_responseTypeId != ResponseTypeId.Radio)
+                return;
 
             try
             {
                 int value;
                 var isValid = int.TryParse(e.MessageBody, out value);
+                if (!isValid) return;
 
-                if (isValid)
-                    UpdateDial(value);
+                UpdateDial(value);
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"MediaPlayer.MessageReceivedPhidgetContinuous: {ex.Message}", EventLogEntryType.Error);
+                _systemEventLogger.WriteEntry($"MediaPlayer.MessageReceivedPhidgetContinuousRadio: {ex.Message}", EventLogEntryType.Error);
+            }
+        }
+
+        private void MessageReceivedPhidgetContinuousTelevision(object source, MessageEventArgs e)
+        {
+            if (_responseTypeId != ResponseTypeId.Television)
+                return;
+
+            try
+            {
+                int value;
+                var isValid = int.TryParse(e.MessageBody, out value);
+                if (!isValid) return;
+
+                var isBetweenStations = PhidgetUtil.GetSensorStepValue(value) < 0;
+
+                if (axWindowsMediaPlayer1.settings.mute != isBetweenStations)
+                    axWindowsMediaPlayer1.settings.mute = isBetweenStations;
+
+                ShowTestPattern(isBetweenStations);
+            }
+            catch (Exception ex)
+            {
+                _systemEventLogger.WriteEntry($"MediaPlayer.MessageReceivedPhidgetContinuousTelevision: {ex.Message}", EventLogEntryType.Error);
             }
         }
 
@@ -323,6 +379,33 @@ namespace Keebee.AAT.Display.UserControls
             {
                 lblDial.Left = (int)(value / _divisorDial) + _minDial;
             }
+        }
+
+        private void ShowTestPattern(bool isVisible)
+        {
+            if (InvokeRequired)
+            {
+                Invoke(new ShowTestPatternDelegate(ShowTestPattern), isVisible);
+            }
+            else
+            {
+                if (isVisible)
+                {
+                    _televisionTestScreenTimer.Start();
+                    pbTestPattern.Show();
+                    
+                }
+                else
+                {
+                    _televisionTestScreenTimer.Stop();
+                    pbTestPattern.Hide();
+                }
+            }
+        }
+
+        private void TimerTick(object sender, EventArgs e)
+        {
+            RaiseMediaCompleteEvent();
         }
     }
 }

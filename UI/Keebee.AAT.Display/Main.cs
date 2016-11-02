@@ -64,8 +64,8 @@ namespace Keebee.AAT.Display
         private readonly CustomMessageQueue _messageQueueResponse;
 
         // current sensor values
-        private int _currentTelevisionSensorValue;
         private int _currentRadioSensorValue;
+        private int _currentTelevisionSensorValue;
         private int _currentResponseTypeId;
 
         // active event logging
@@ -176,6 +176,9 @@ namespace Keebee.AAT.Display
 
             offScreen1.Dock = DockStyle.Fill;
             offScreen1.Hide();
+
+            musicPlayer1.Hide();
+            musicPlayer1.Dock = DockStyle.None;
         }
 
         private void SetPostLoadProperties()
@@ -266,16 +269,16 @@ namespace Keebee.AAT.Display
                 || (responseTypeId == ResponseTypeId.Radio);
         }
 
-        private void StopCurrentResponse()
+        private void StopCurrentResponse(int newResponseTypeid = -1)
         {
             try
             {
                 switch (_currentResponseTypeId)
                 {
                     case ResponseTypeId.SlidShow:
-                        mediaPlayer1.Stop();
                         slideViewerFlash1.Hide();
                         slideViewerFlash1.Stop();
+                        musicPlayer1.Stop();
                         break;
                     case ResponseTypeId.MatchingGame:
                         matchingGame1.Hide();
@@ -284,6 +287,12 @@ namespace Keebee.AAT.Display
                     case ResponseTypeId.Radio:
                     case ResponseTypeId.Television:
                     case ResponseTypeId.Cats:
+                        if (newResponseTypeid != ResponseTypeId.Radio &&
+                            newResponseTypeid != ResponseTypeId.Television &&
+                            newResponseTypeid != ResponseTypeId.Cats)
+                        {
+                            mediaPlayer1.Hide();
+                        }
                         mediaPlayer1.Hide();
                         mediaPlayer1.Stop();
                         break;
@@ -389,8 +398,6 @@ namespace Keebee.AAT.Display
                             mediaPathTypeId = MediaPathTypeId.Music;
                             break;
                         case ResponseTypeId.Television:
-                            mediaPathTypeId = MediaPathTypeId.Videos;
-                            break;
                         case ResponseTypeId.Cats:
                             mediaPathTypeId = MediaPathTypeId.Videos;
                             break;
@@ -400,7 +407,7 @@ namespace Keebee.AAT.Display
                     if (!mediaFiles.Any()) return;
 
                     mediaFiles.Shuffle();
-                    StopCurrentResponse();
+                    StopCurrentResponse(responseTypeId);
 
                     mediaPlayer1.Show();
                     mediaPlayer1.Play(responseTypeId, mediaFiles, _currentIsActiveEventLog, false);
@@ -472,8 +479,7 @@ namespace Keebee.AAT.Display
                 if (!images.Any()) return;
 
                 var music = GetFilesForResponseType(ResponseTypeId.Radio, MediaPathTypeId.Music);
-
-                mediaPlayer1.Play(ResponseTypeId.Radio, music, false, true);
+                musicPlayer1.Play(music);
 
                 images.Shuffle();
                 StopCurrentResponse();
@@ -662,7 +668,7 @@ namespace Keebee.AAT.Display
             try
             {
                 slideViewerFlash1.Hide();
-                mediaPlayer1.Stop();
+                musicPlayer1.Stop();
                 ResumeAmbient();
             }
             catch (Exception ex)
@@ -727,7 +733,7 @@ namespace Keebee.AAT.Display
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"Main.LogGameEvent: {ex.Message}", EventLogEntryType.Error);
+                _systemEventLogger.WriteEntry($"Main.LogVideoActivityEvent: {ex.Message}", EventLogEntryType.Error);
             }
         }
 
@@ -762,6 +768,16 @@ namespace Keebee.AAT.Display
             {
                 _systemEventLogger.WriteEntry($"Main.MainShown: {ex.Message}", EventLogEntryType.Error);
             }
+        }
+
+        private void MainFormClosing(object sender, FormClosingEventArgs e)
+        {
+            ambient1.Dock = DockStyle.None;
+            slideViewerFlash1.Dock = DockStyle.None;
+            matchingGame1.Dock = DockStyle.None;
+            mediaPlayer1.Dock = DockStyle.None;
+            offScreen1.Dock = DockStyle.None;
+            musicPlayer1.Dock = DockStyle.None;
         }
 
         #endregion

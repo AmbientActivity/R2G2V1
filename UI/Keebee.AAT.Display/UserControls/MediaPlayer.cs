@@ -87,7 +87,7 @@ namespace Keebee.AAT.Display.UserControls
             axWindowsMediaPlayer1.PlayStateChange += PlayStateChange;
         }
 
-        public void Play(int responseTypeId, string[] files, bool isActiveEventLog, bool isLoop)
+        public void Play(int responseTypeId, int responseValue, string[] files, bool isActiveEventLog, bool isLoop)
         {
             try
             {
@@ -100,6 +100,7 @@ namespace Keebee.AAT.Display.UserControls
 
                 ShowHideResponseControls();
                 ConfigureMediaPlayer();
+                UpdateDial(responseValue);
 
                 if (files.Length > 1) 
                     files.Shuffle();

@@ -453,7 +453,7 @@ namespace Keebee.AAT.Display
                     StopCurrentResponse(responseTypeId);
 
                     mediaPlayer1.Show();
-                    mediaPlayer1.Play(responseTypeId, mediaFiles, _currentIsActiveEventLog, false);
+                    mediaPlayer1.Play(responseTypeId, responseValue, mediaFiles, _currentIsActiveEventLog, false);
 
                     _currentResponseTypeId = responseTypeId;  // radio or television
                 }

@@ -110,7 +110,10 @@ namespace Keebee.AAT.StateMachineService
                     SensorValue = sensorValue,
                     ConfigDetail = configDetail,
                     Resident = _activeResident,
-                    IsActiveEventLog = _activeConfig.IsActiveEventLog
+                    IsActiveEventLog = _activeConfig.IsActiveEventLog,
+                    ResponseTypeIds = _activeConfig.ConfigDetails
+                        .Select(c => c.ResponseTypeId)
+                        .Distinct().ToArray()
                 };
 
                 if (!configDetail.IsSystemReponseType)

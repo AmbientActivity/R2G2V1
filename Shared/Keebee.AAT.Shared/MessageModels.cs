@@ -35,6 +35,7 @@ namespace Keebee.AAT.Shared
         public bool IsActiveEventLog { get; set; }
         public ResidentMessage Resident { get; set; }
         public ConfigDetailMessage ConfigDetail { get; set; }
+        public int[] ResponseTypeIds { get; set; }
     }
 
     public class DisplayMessage

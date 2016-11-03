@@ -74,6 +74,9 @@ namespace Keebee.AAT.Display
         // active activity/response
         private ConfigDetailMessage _activeConfigDetail;
 
+        // list of all active response type ids
+        private int[] _activeResponseTypeIds;
+
         // active profile
         private ResidentMessage _activeResident;
 
@@ -384,6 +387,41 @@ namespace Keebee.AAT.Display
             return fileList.Any() ? fileList : new string[0];
         }
 
+        private void ExecuteRandom(IEnumerable<int> responseTypeIds)
+        {
+            var activeIds = responseTypeIds.Where(x => _activeResponseTypeIds.Contains(x)).ToArray();
+
+            if (!activeIds.Any())
+            {
+                ResumeAmbient();
+            }
+            else
+            {
+                var r = new Random();
+                var id = r.Next(activeIds.Length);
+                var responseTypeId = activeIds[id];
+
+                switch (responseTypeId)
+                {
+                    case ResponseTypeId.MatchingGame:
+                        PlayMatchingGame();
+                        break;
+                    case ResponseTypeId.SlidShow:
+                        PlaySlideShow();
+                        break;
+                    case ResponseTypeId.Radio:
+                        PlayMedia(ResponseTypeId.Radio, _currentRadioSensorValue);
+                        break;
+                    case ResponseTypeId.Television:
+                        PlayMedia(ResponseTypeId.Television, _currentTelevisionSensorValue);
+                        break;
+                    case ResponseTypeId.Cats:
+                        PlayMedia(ResponseTypeId.Cats, 0);
+                        break;
+                }
+            }
+        }
+
         #region callback
 
         private void PlayMedia(int responseTypeId, int responseValue)
@@ -589,30 +627,13 @@ namespace Keebee.AAT.Display
                 {
                     offScreen1.Hide();
                     offScreen1.Stop();
-                    // show a random reponse type
-                    var responseTypeId =
-                        GetRandomResponseTypeId(new [] {
-                            ResponseTypeId.MatchingGame,
-                            ResponseTypeId.SlidShow});
 
-                    switch (responseTypeId)
-                    {
-                        case ResponseTypeId.MatchingGame:
-                            PlayMatchingGame();
-                            break;
-                        case ResponseTypeId.SlidShow:
-                            PlaySlideShow();
-                            break;
-                    }
+                    // randomly execute one of the following reponse types
+                    ExecuteRandom(new [] {
+                        ResponseTypeId.MatchingGame,
+                        ResponseTypeId.SlidShow});
                 }
             }
-        }
-
-        private static int GetRandomResponseTypeId(IReadOnlyList<int> responseTypeIds)
-        {
-            var r = new Random();
-            var id = r.Next(responseTypeIds.Count);
-            return responseTypeIds[id];
         }
 
         private void ShowCaregiver()
@@ -694,6 +715,7 @@ namespace Keebee.AAT.Display
                 _activeResident = response.Resident;
                 _activeConfigDetail = response.ConfigDetail;
                 _currentIsActiveEventLog = response.IsActiveEventLog;
+                _activeResponseTypeIds = response.ResponseTypeIds;
 
                 ExecuteResponse(response.ConfigDetail.ResponseTypeId, response.SensorValue, response.IsSystem);
             }

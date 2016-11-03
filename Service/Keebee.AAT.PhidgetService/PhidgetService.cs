@@ -52,7 +52,6 @@ namespace Keebee.AAT.PhidgetService
         // message queue sender
         private readonly CustomMessageQueue _messageQueuePhidget;
         private readonly CustomMessageQueue _messageQueuePhidgetContinuousRadio;
-        private readonly CustomMessageQueue _messageQueuePhidgetContinuousTelevision;
 
         // event logger
         private readonly SystemEventLogger _systemEventLogger;

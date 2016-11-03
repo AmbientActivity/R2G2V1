@@ -556,10 +556,12 @@ namespace Keebee.AAT.Display
             }
             else
             {
-                _opaqueLayer.Show();
                 var volumeControl = new VolumeControl();
+                if (volumeControl.IsOpen()) return;
+
+                _opaqueLayer.Show();
                 volumeControl.VolumeControlClosedEvent += VolumentControlClosed;
-                volumeControl.ShowDialog();
+                volumeControl.Show();
             }
         }
 

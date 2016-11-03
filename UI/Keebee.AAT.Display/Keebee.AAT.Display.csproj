@@ -102,6 +102,7 @@
     <Compile Include="Caregiver\CaregiverInterface.Designer.cs">
       <DependentUpon>CaregiverInterface.cs</DependentUpon>
     </Compile>
+    <Compile Include="Extensions\FormExtensions.cs" />
     <Compile Include="Extensions\ListExtensions.cs" />
     <Compile Include="Extensions\MediaPlayerExtensions.cs">
       <SubType>Code</SubType>

@@ -71,6 +71,12 @@ namespace Keebee.AAT.PhidgetService
         // current values
         private int _currentRadioSensorValue;
 
+        // these are used at startup to prevent events from firing when the IK is first attaching to sensors and inputs
+        private int _currentSensor;
+        private int _currentInput;
+        private int _totalSensors;
+        private int _totalInputs;
+
         //TODO:  might decide to to show a Test Pattern between stations
         //private int _currentTelevisionSensorValue;
 
@@ -87,6 +93,7 @@ namespace Keebee.AAT.PhidgetService
             _interfaceKit = new InterfaceKit();
             _interfaceKit.SensorChange += SensorChange;
             _interfaceKit.InputChange += InputChange;
+            _interfaceKit.Attach += Attach;
 
             // message queue senders
             _messageQueuePhidget = new CustomMessageQueue(new CustomMessageQueueArgs
@@ -160,8 +167,21 @@ namespace Keebee.AAT.PhidgetService
             return DefaultTouchSensorThreshold;
         }
 
+        private void Attach(object sender, AttachEventArgs e)
+        {
+            _totalSensors = _interfaceKit.sensors.Count;
+            _totalInputs = _interfaceKit.inputs.Count;
+        }
+
         private void SensorChange(object sender, SensorChangeEventArgs e)
         {
+            // if the interface kit is still attaching, exit  
+            if (_currentSensor != _totalSensors)
+            {
+                _currentSensor++;
+                return;
+            }
+
             // PhidgetTypeId = SensorId + 1 (SensorId is base 0)
             if (_activeConfig == null) return;
 
@@ -240,6 +260,13 @@ namespace Keebee.AAT.PhidgetService
 
         private void InputChange(object sender, InputChangeEventArgs e)
         {
+            // if the interface kit is still attaching, exit  
+            if (_currentInput != _totalInputs)
+            {
+                _currentInput++;
+                return;
+            }
+
             if (_activeConfig == null) return;
             if (!_isDisplayActive) return;
 

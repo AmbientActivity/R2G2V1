@@ -61,7 +61,7 @@ namespace Keebee.AAT.PhidgetService
         //private const int StepTolerance = 10;
         private const int DefaultTouchSensorThreshold = 990;
         private readonly int _sensorThreshold;
-        private RotationSensorStep _currentInputStep = RotationSensorStep.Value5;
+        private RotationSensorStep _currentDiscreteStepValue = RotationSensorStep.Value5;
 
         // active config
         private ConfigMessage _activeConfig;
@@ -99,12 +99,6 @@ namespace Keebee.AAT.PhidgetService
             _messageQueuePhidgetContinuousRadio = new CustomMessageQueue(new CustomMessageQueueArgs
             {
                 QueueName = MessageQueueType.PhidgetContinuousRadio
-            })
-            { SystemEventLogger = _systemEventLogger };
-
-            _messageQueuePhidgetContinuousTelevision = new CustomMessageQueue(new CustomMessageQueueArgs
-            {
-                QueueName = MessageQueueType.PhidgetContinuousTelevision
             })
             { SystemEventLogger = _systemEventLogger };
 
@@ -198,47 +192,43 @@ namespace Keebee.AAT.PhidgetService
                 {
                     case PhidgetStyleTypeIdId.Touch:
                         if (sensorValue >= _sensorThreshold)
-                            _messageQueuePhidget.Send(CreateMessageBodyFromSensor(sensorId, sensorValue));
+                        {
+                            if (configDetail.ResponseTypeId != ResponseTypeId.Radio)
+                            {
+                                _messageQueuePhidget.Send(CreateMessageBodyFromSensor(sensorId, sensorValue));
+                            }
+                            else
+                            {
+                                SetDiscreteStepValue();
+                                _messageQueuePhidget.Send(CreateMessageBodyFromSensor(sensorId, (int)_currentDiscreteStepValue));
+                                _messageQueuePhidgetContinuousRadio.Send($"{(int)_currentDiscreteStepValue}");
+                            }
+                        }
                         break;
                     case PhidgetStyleTypeIdId.MultiTurn:
                     case PhidgetStyleTypeIdId.StopTurn:
                     case PhidgetStyleTypeIdId.Slider:
+                        // send step value
                         var stepValue = PhidgetUtil.GetSensorStepValue(sensorValue);
                         if (stepValue > 0)
                         {
-                            switch (configDetail.ResponseTypeId)
+                            if (configDetail.ResponseTypeId != ResponseTypeId.Radio)
                             {
-                                case ResponseTypeId.Radio:
-                                    if (_currentRadioSensorValue != stepValue)
-                                    {
-                                        _messageQueuePhidget.Send(CreateMessageBodyFromSensor(sensorId, stepValue));
-                                        _currentRadioSensorValue = stepValue;
-                                    }
-                                    break;
-                                //TODO:  might decide to to show a Test Pattern between stations
-                                //case ResponseTypeId.Television:
-                                //    if (_currentTelevisionSensorValue != stepValue)
-                                //    {
-                                //        _messageQueuePhidget.Send(CreateMessageBodyFromSensor(sensorId, stepValue));
-                                //        _currentTelevisionSensorValue = stepValue;
-                                //    }
-                                //    break;
-                                default:
-                                    _messageQueuePhidget.Send(CreateMessageBodyFromSensor(sensorId, stepValue));
-                                    break;
+                                _messageQueuePhidget.Send(CreateMessageBodyFromSensor(sensorId, stepValue));
                             }
-
+                            else
+                            {
+                                if (_currentRadioSensorValue != stepValue)
+                                {
+                                    _messageQueuePhidget.Send(CreateMessageBodyFromSensor(sensorId, stepValue));
+                                    _currentRadioSensorValue = stepValue;
+                                }
+                            }
                         }
 
-                        switch (configDetail.ResponseTypeId)
-                        {
-                            case ResponseTypeId.Radio:
-                                _messageQueuePhidgetContinuousRadio.Send($"{e.Value}");
-                                break;
-                            case ResponseTypeId.Television:
-                                _messageQueuePhidgetContinuousTelevision.Send($"{e.Value}");
-                                break;
-                        }
+                        // send continuous value
+                        if (configDetail.ResponseTypeId == ResponseTypeId.Radio)
+                            _messageQueuePhidgetContinuousRadio.Send($"{e.Value}");
 
                         break;
                 }
@@ -264,6 +254,7 @@ namespace Keebee.AAT.PhidgetService
                 var isValid = int.TryParse(Convert.ToString(e.Index), out sensorId);
                 if (!isValid) return;
 
+                // for the LED's
                 _interfaceKit.outputs[e.Index] = e.Value;
 
                 if (_activeConfig.ConfigDetails.All(cd => cd.PhidgetTypeId != sensorId + 9))
@@ -271,18 +262,12 @@ namespace Keebee.AAT.PhidgetService
 
                 var configDetail = _activeConfig.ConfigDetails.Single(cd => cd.PhidgetTypeId == sensorId + 9);
 
-                SetInputStepValue();
-                _messageQueuePhidget.Send(CreateMessageBodyFromSensor(sensorId + 8, (int)_currentInputStep));
+                SetDiscreteStepValue();
+                _messageQueuePhidget.Send(CreateMessageBodyFromSensor(sensorId + 8, (int)_currentDiscreteStepValue));
 
-                switch (configDetail.ResponseTypeId)
-                {
-                    case ResponseTypeId.Radio:
-                        _messageQueuePhidgetContinuousRadio.Send($"{(int)_currentInputStep}");
-                        break;
-                    case ResponseTypeId.Television:
-                        _messageQueuePhidgetContinuousTelevision.Send($"{(int)_currentInputStep}");
-                        break;
-                }
+                if (configDetail.ResponseTypeId == ResponseTypeId.Radio)
+                    _messageQueuePhidgetContinuousRadio.Send($"{(int)_currentDiscreteStepValue}");
+
             }
             catch (Exception ex)
             {
@@ -290,22 +275,23 @@ namespace Keebee.AAT.PhidgetService
             }
         }
 
-        private void SetInputStepValue()
+        // set discrete values for when inputs or touch sensors are used to navigate through a playlist
+        private void SetDiscreteStepValue()
         {
-            if (_currentInputStep == RotationSensorStep.Value1)
-                _currentInputStep = RotationSensorStep.Value2;
+            if (_currentDiscreteStepValue == RotationSensorStep.Value1)
+                _currentDiscreteStepValue = RotationSensorStep.Value2;
 
-            else if (_currentInputStep == RotationSensorStep.Value2)
-                _currentInputStep = RotationSensorStep.Value3;
+            else if (_currentDiscreteStepValue == RotationSensorStep.Value2)
+                _currentDiscreteStepValue = RotationSensorStep.Value3;
 
-            else if (_currentInputStep == RotationSensorStep.Value3)
-                _currentInputStep = RotationSensorStep.Value4;
+            else if (_currentDiscreteStepValue == RotationSensorStep.Value3)
+                _currentDiscreteStepValue = RotationSensorStep.Value4;
 
-            else if (_currentInputStep == RotationSensorStep.Value4)
-                _currentInputStep = RotationSensorStep.Value5;
+            else if (_currentDiscreteStepValue == RotationSensorStep.Value4)
+                _currentDiscreteStepValue = RotationSensorStep.Value5;
 
-            else if (_currentInputStep == RotationSensorStep.Value5)
-                _currentInputStep = RotationSensorStep.Value1;
+            else if (_currentDiscreteStepValue == RotationSensorStep.Value5)
+                _currentDiscreteStepValue = RotationSensorStep.Value1;
         }
 
         private static string CreateMessageBodyFromSensor(int sensorId, int sensorValue)

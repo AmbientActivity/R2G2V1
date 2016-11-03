@@ -39,7 +39,7 @@
             this.lblLoadingMedia.Name = "lblLoadingMedia";
             this.lblLoadingMedia.Size = new System.Drawing.Size(406, 103);
             this.lblLoadingMedia.TabIndex = 0;
-            this.lblLoadingMedia.Text = "Loading media.   Please wait...";
+            this.lblLoadingMedia.Text = "Initializing AAT System...";
             this.lblLoadingMedia.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // Splash
@@ -53,8 +53,8 @@
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "Splash";
-            this.ShowInTaskbar = false;
             this.ShowIcon = false;
+            this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.Text = "Splash";
             this.TopMost = true;

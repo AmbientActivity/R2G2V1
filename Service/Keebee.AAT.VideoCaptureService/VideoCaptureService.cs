@@ -162,11 +162,13 @@ namespace Keebee.AAT.VideoCaptureService
                 StartCapture();
                 _timer.Start();
             }
-            else
-            {
-                _timer.Stop();
-                StopCapture();
-            }
+            // TODO: should it stop recording if a new resident becomes active
+            // TODO: who has not agreed to be captured?
+            //else
+            //{
+            //    _timer.Stop();
+            //    StopCapture();
+            //}
         }
 
         private void MessageReceivedDisplayVideoCapture(object source, MessageEventArgs e)

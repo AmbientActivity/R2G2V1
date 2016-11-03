@@ -177,9 +177,10 @@ namespace Keebee.AAT.StateMachineService
                 _activeResident = resident;
                 if (_activeResident == null) return;
 
-                if (!_activeResident.AllowVideoCapturing)
-                    // send a signal to the video capture service to stop recording
-                    _messageQueueVideoCapture.Send("0");
+                // TODO: should it stop recording if a new resident becomes active
+                // TODO: who has not agreed to be captured?
+                //if (!_activeResident.AllowVideoCapturing)
+                //    _messageQueueVideoCapture.Send("0");
             }
 
             catch (Exception ex)

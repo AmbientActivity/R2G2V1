@@ -106,7 +106,7 @@ namespace Keebee.AAT.Display.Caregiver
         private void ImageViewerShown(object sender, EventArgs e)
         {
             slideViewerFlash1.SystemEventLogger = _systemEventLogger;
-            slideViewerFlash1.Play(_images, false, false);
+            slideViewerFlash1.Play(_images, autoStart: false);
         }
 
         private void ImageViewerFormClosing(object sender, FormClosingEventArgs e)

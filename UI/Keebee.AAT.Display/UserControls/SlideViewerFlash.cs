@@ -11,7 +11,6 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
-using WMPLib;
 
 namespace Keebee.AAT.Display.UserControls
 {
@@ -29,13 +28,11 @@ namespace Keebee.AAT.Display.UserControls
 
         // delegate
         private delegate void RaiseSlideShowCompleteEventDelegate();
-        private delegate void PlayMusicDelegate(string[] files);
 
         // slide show
         private List<string> _images;
         private int _currentImageIndex;
         private int _totalImages;
-        private bool _isFinite;
         private bool _isComplete;
 
         public SlideViewerFlash()
@@ -50,7 +47,7 @@ namespace Keebee.AAT.Display.UserControls
             timer1.Interval = Interval;
         }
 
-        public void Play(string[] files, bool autoStart, bool isFinite)
+        public void Play(string[] files, bool autoStart)
         {
             try
             {
@@ -67,7 +64,6 @@ namespace Keebee.AAT.Display.UserControls
                     DisplayImage();
 
                     if (autoStart) timer1.Start();
-                    _isFinite = isFinite;
                 }
             }
             catch (Exception ex)
@@ -80,7 +76,7 @@ namespace Keebee.AAT.Display.UserControls
         {
             _currentImageIndex--;
 
-            if (_currentImageIndex < 0 && !_isFinite)
+            if (_currentImageIndex < 0)
                 _currentImageIndex = _totalImages - 1;
 
             HideImage();
@@ -90,7 +86,7 @@ namespace Keebee.AAT.Display.UserControls
         {
             _currentImageIndex++;
 
-            if (_currentImageIndex >= _totalImages && !_isFinite)
+            if (_currentImageIndex >= _totalImages)
                 _currentImageIndex = 0;
 
             HideImage();
@@ -197,31 +193,21 @@ namespace Keebee.AAT.Display.UserControls
         {
             ValidateNextImage();
 
-            if (_isFinite)
+            if (_isComplete)
             {
-                if (_isComplete)
+                // if ALL the images were deleted in mid-air, exit
+                if (!_images.Any())
                     RaiseSlideShowCompleteEvent();
                 else
-                    DisplayImage();
-            }
-            else
-            {
-                if (_isComplete)
                 {
-                    // if ALL the images were deleted in mid-air, exit
-                    if (!_images.Any())
+                    if (!File.Exists(_images[0])) 
                         RaiseSlideShowCompleteEvent();
-                    else
-                    {
-                        if (!File.Exists(_images[0])) 
-                            RaiseSlideShowCompleteEvent();
-                    }
-                    _currentImageIndex = 0;
-                    _isComplete = false;
                 }
-
-                DisplayImage();
+                _currentImageIndex = 0;
+                _isComplete = false;
             }
+
+            DisplayImage();
         }
 
         private void ValidateNextImage()

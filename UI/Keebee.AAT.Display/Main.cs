@@ -131,6 +131,7 @@ namespace Keebee.AAT.Display
 
             // response complete event handlers
             slideViewerFlash1.SlideShowCompleteEvent += SlideShowComplete;
+            musicPlayer1.MusicPlayerCompleteEvent += MusicComplete;
             mediaPlayer1.MediaPlayerCompleteEvent += MediaPlayerComplete;
             offScreen1.OffScreenCompleteEvent += OffScreenComplete;
             matchingGame1.MatchingGameTimeoutExpiredEvent += MatchingGameTimeoutExpired;
@@ -482,13 +483,16 @@ namespace Keebee.AAT.Display
                 if (!images.Any()) return;
 
                 var music = GetFilesForResponseType(ResponseTypeId.Radio, MediaPathTypeId.Music);
-                musicPlayer1.Play(music);
+                if (!music.Any()) return;
+
+                music.Shuffle();
+                musicPlayer1.Play(new [] {music.First() } );
 
                 images.Shuffle();
                 StopCurrentResponse();
 
                 slideViewerFlash1.Show();
-                slideViewerFlash1.Play(images, true, true);
+                slideViewerFlash1.Play(images, autoStart: true);
 
                 if (_currentIsActiveEventLog)
                     _activityEventLogger.Add(_activeConfigDetail.ConfigId, _activeConfigDetail.Id, _activeResident.Id);
@@ -584,9 +588,30 @@ namespace Keebee.AAT.Display
                 {
                     offScreen1.Hide();
                     offScreen1.Stop();
-                    ResumeAmbient();
+                    // show a random reponse type
+                    var responseTypeId =
+                        GetRandomResponseTypeId(new [] {
+                            ResponseTypeId.MatchingGame,
+                            ResponseTypeId.SlidShow});
+
+                    switch (responseTypeId)
+                    {
+                        case ResponseTypeId.MatchingGame:
+                            PlayMatchingGame();
+                            break;
+                        case ResponseTypeId.SlidShow:
+                            PlaySlideShow();
+                            break;
+                    }
                 }
             }
+        }
+
+        private static int GetRandomResponseTypeId(IReadOnlyList<int> responseTypeIds)
+        {
+            var r = new Random();
+            var id = r.Next(responseTypeIds.Count);
+            return responseTypeIds[id];
         }
 
         private void ShowCaregiver()
@@ -674,6 +699,20 @@ namespace Keebee.AAT.Display
             catch (Exception ex)
             {
                 _systemEventLogger.WriteEntry($"Main.MessageReceivedResponse: {ex.Message}", EventLogEntryType.Error);
+            }
+        }
+
+        private void MusicComplete(object sender, EventArgs e)
+        {
+            try
+            {
+                slideViewerFlash1.Hide();
+                musicPlayer1.Stop();
+                ResumeAmbient();
+            }
+            catch (Exception ex)
+            {
+                _systemEventLogger.WriteEntry($"Main.MusicComplete: {ex.Message}", EventLogEntryType.Error);
             }
         }
 

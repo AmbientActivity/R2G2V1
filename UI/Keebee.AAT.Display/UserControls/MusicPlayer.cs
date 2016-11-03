@@ -3,11 +3,8 @@ using Keebee.AAT.SystemEventLogging;
 using Keebee.AAT.Display.Extensions;
 using System;
 using System.Diagnostics;
-using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
-using Keebee.AAT.Display.Properties;
-using Keebee.AAT.MessageQueuing;
 using WMPLib;
 
 namespace Keebee.AAT.Display.UserControls
@@ -22,8 +19,12 @@ namespace Keebee.AAT.Display.UserControls
             set { _systemEventLogger = value; }
         }
 
+        // event handler
+        public event EventHandler MusicPlayerCompleteEvent;
+
         // delegate
         private delegate void PlayMediaDelegate(string[] files);
+        private delegate void RaiseMusicCompleteEventDelegate();
 
         private string _currentPlaylistItem;
         private string _lastPlaylistItem;
@@ -98,6 +99,20 @@ namespace Keebee.AAT.Display.UserControls
             }
         }
 
+        private void RaiseMusicCompleteEvent()
+        {
+            if (IsDisposed) return;
+
+            if (InvokeRequired)
+            {
+                Invoke(new RaiseMusicCompleteEventDelegate(RaiseMusicCompleteEvent));
+            }
+            else
+            {
+                MusicPlayerCompleteEvent?.Invoke(new object(), new EventArgs());
+            }
+        }
+
         private void PlayStateChange(object sender, AxWMPLib._WMPOCXEvents_PlayStateChangeEvent e)
         {
             switch (e.newState)
@@ -110,8 +125,10 @@ namespace Keebee.AAT.Display.UserControls
 
                 case (int)WMPPlayState.wmppsMediaEnded:
                     if (_currentPlaylistItem == _lastPlaylistItem)
+                    {
                         _isPlaylistComplete = true;
-
+                        RaiseMusicCompleteEvent();
+                    }
                     break;
 
                 case (int)WMPPlayState.wmppsTransitioning:

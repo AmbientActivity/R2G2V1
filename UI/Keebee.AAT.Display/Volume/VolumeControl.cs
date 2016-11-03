@@ -1,6 +1,7 @@
 ﻿using Keebee.AAT.Display.Extensions;
 using Keebee.AAT.Display.Helpers;
 using System;
+using System.Drawing;
 using System.Windows.Forms;
 
 namespace Keebee.AAT.Display.Volume
@@ -26,6 +27,21 @@ namespace Keebee.AAT.Display.Volume
             _timer = new Timer { Interval = 5000 };
             _timer.Tick += TimerTick;
             _timer.Start();
+            InitializeStartupPosition();
+        }
+
+        private void InitializeStartupPosition()
+        {
+            ShowInTaskbar = false;
+            StartPosition = FormStartPosition.Manual;
+#if DEBUG
+            var w = SystemInformation.PrimaryMonitorSize.Width / 3;
+            var h = SystemInformation.PrimaryMonitorSize.Height / 3;
+#elif !DEBUG
+            var w = SystemInformation.PrimaryMonitorSize.Width;
+            var h = SystemInformation.PrimaryMonitorSize.Height;
+#endif
+            Location = new Point(w / 2 - Width / 2, h / 2 - Height / 2);
         }
 
         private void ButtonUpClick(object sender, EventArgs e)

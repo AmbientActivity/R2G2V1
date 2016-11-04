@@ -267,21 +267,21 @@ namespace Keebee.AAT.PhidgetService
                 return;
             }
 
-            if (_activeConfig == null) return;
-            if (!_isDisplayActive) return;
-
             // PhidgetTypeId = InputId + 9 (offset by 8 SensorIds, InputId is base 0)
             try
             {
                 if (e.Index < 0 || e.Index > 7)
                     throw new Exception($"Invalid InputId: {e.Index}");
 
+                // for the LED's
+                _interfaceKit.outputs[e.Index] = e.Value;
+
+                if (_activeConfig == null) return;
+                if (!_isDisplayActive) return;
+
                 int sensorId;
                 var isValid = int.TryParse(Convert.ToString(e.Index), out sensorId);
                 if (!isValid) return;
-
-                // for the LED's
-                _interfaceKit.outputs[e.Index] = e.Value;
 
                 if (_activeConfig.ConfigDetails.All(cd => cd.PhidgetTypeId != sensorId + 9))
                     return;

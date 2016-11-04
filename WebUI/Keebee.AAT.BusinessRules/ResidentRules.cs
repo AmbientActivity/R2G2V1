@@ -169,7 +169,7 @@ namespace Keebee.AAT.BusinessRules
             {
                 case MediaPathTypeId.Images:
                 case MediaPathTypeId.Pictures:
-                    responseTypeId = ResponseTypeId.SlidShow;
+                    responseTypeId = ResponseTypeId.SlideShow;
                     break;
                 case MediaPathTypeId.Videos:
                     responseTypeId = ResponseTypeId.Television;

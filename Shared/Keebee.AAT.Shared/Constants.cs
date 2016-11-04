@@ -148,7 +148,7 @@ namespace Keebee.AAT.Shared
 
     public static class ResponseTypeId
     {
-        public const int SlidShow = 1;
+        public const int SlideShow = 1;
         public const int MatchingGame = 2;
         public const int Cats = 3;
         public const int KillDisplay = 4;

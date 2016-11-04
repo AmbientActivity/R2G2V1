@@ -20,7 +20,7 @@ namespace Keebee.AAT.BusinessRules
             switch (mediaPathTypeId)
             {
                 case MediaPathTypeId.Images:
-                    return responseTypes.Where(x => x.Id == ResponseTypeId.SlidShow);
+                    return responseTypes.Where(x => x.Id == ResponseTypeId.SlideShow);
 
                 case MediaPathTypeId.Videos:
                     return responseTypes.Where(x => x.Id == ResponseTypeId.Television 

@@ -388,7 +388,7 @@ namespace Keebee.AAT.Display.Caregiver
             {
                 lvImages.Items.Clear();
 
-                var files = GetMediaFiles(MediaPathTypeId.Images, ResponseTypeId.SlidShow).ToArray();
+                var files = GetMediaFiles(MediaPathTypeId.Images, ResponseTypeId.SlideShow).ToArray();
                 
                 var rowIndex = 0;
                 foreach (var f in files)
@@ -405,7 +405,7 @@ namespace Keebee.AAT.Display.Caregiver
                     rowIndex++;
                 }
 
-                _currentImageFiles = GetFilePaths(MediaPathTypeId.Images, ResponseTypeId.SlidShow);
+                _currentImageFiles = GetFilePaths(MediaPathTypeId.Images, ResponseTypeId.SlideShow);
 
                 if (_bgwImageThumbnails.IsBusy) return;
                 lvImages.SmallImageList?.Images.Clear();
@@ -869,7 +869,7 @@ namespace Keebee.AAT.Display.Caregiver
             {
                 var selectedStreamId = new Guid(lvImages.SelectedItems[0].SubItems[ListViewMediaColumnStreamId].Text);
 
-                DisplayImages(MediaPathTypeId.Images, selectedStreamId, ResponseTypeId.SlidShow);
+                DisplayImages(MediaPathTypeId.Images, selectedStreamId, ResponseTypeId.SlideShow);
             }
             catch (Exception ex)
             {

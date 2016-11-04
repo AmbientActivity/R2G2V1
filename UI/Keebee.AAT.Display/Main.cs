@@ -220,7 +220,7 @@ namespace Keebee.AAT.Display
             {
                 switch (responseTypeId)
                 {
-                    case ResponseTypeId.SlidShow:
+                    case ResponseTypeId.SlideShow:
                         PlaySlideShow();
                         break;
                     case ResponseTypeId.MatchingGame:
@@ -282,7 +282,7 @@ namespace Keebee.AAT.Display
             {
                 switch (_currentResponseTypeId)
                 {
-                    case ResponseTypeId.SlidShow:
+                    case ResponseTypeId.SlideShow:
                         slideViewerFlash1.Hide();
                         slideViewerFlash1.Stop();
                         musicPlayer1.Stop();
@@ -406,7 +406,7 @@ namespace Keebee.AAT.Display
                     case ResponseTypeId.MatchingGame:
                         PlayMatchingGame();
                         break;
-                    case ResponseTypeId.SlidShow:
+                    case ResponseTypeId.SlideShow:
                         PlaySlideShow();
                         break;
                     case ResponseTypeId.Radio:
@@ -518,7 +518,7 @@ namespace Keebee.AAT.Display
             }
             else
             {
-                var images = GetFilesForResponseType(ResponseTypeId.SlidShow, MediaPathTypeId.Images);
+                var images = GetFilesForResponseType(ResponseTypeId.SlideShow, MediaPathTypeId.Images);
                 if (!images.Any()) return;
 
                 var music = GetFilesForResponseType(ResponseTypeId.Radio, MediaPathTypeId.Music);
@@ -536,7 +536,7 @@ namespace Keebee.AAT.Display
                 if (_currentIsActiveEventLog)
                     _activityEventLogger.Add(_activeConfigDetail.ConfigId, _activeConfigDetail.Id, _activeResident.Id);
 
-                _currentResponseTypeId = ResponseTypeId.SlidShow;
+                _currentResponseTypeId = ResponseTypeId.SlideShow;
             }
         }
 
@@ -634,7 +634,7 @@ namespace Keebee.AAT.Display
                     // randomly execute one of the following reponse types
                     ExecuteRandom(new [] {
                         ResponseTypeId.MatchingGame,
-                        ResponseTypeId.SlidShow});
+                        ResponseTypeId.SlideShow});
                 }
             }
         }

@@ -518,6 +518,8 @@ namespace Keebee.AAT.Display
             }
             else
             {
+                _systemEventLogger.WriteEntry($"In PlaySlideShow.");
+
                 var images = GetFilesForResponseType(ResponseTypeId.SlideShow, MediaPathTypeId.Images);
                 if (!images.Any()) return;
 
@@ -548,6 +550,8 @@ namespace Keebee.AAT.Display
             }
             else
             {
+                _systemEventLogger.WriteEntry($"In PlayMatchingGame.");
+
                 var shapes = GetFilesForResponseType(ResponseTypeId.MatchingGame, MediaPathTypeId.Shapes);
                 var sounds = GetFilesForResponseType(ResponseTypeId.MatchingGame, MediaPathTypeId.Sounds);
 
@@ -616,9 +620,9 @@ namespace Keebee.AAT.Display
             }
             else
             {
-                // sometimes the music player gets stuck on play (when the switch 'bounces')
-                musicPlayer1.Stop();
-
+                // in case the switch 'bounces'
+                //musicPlayer1.Stop();
+                _systemEventLogger.WriteEntry($"In ShowOffScreen.  ResponseTypeId: {_currentResponseTypeId}");
                 if (_currentResponseTypeId != ResponseTypeId.OffScreen)
                 {
                     StopCurrentResponse();

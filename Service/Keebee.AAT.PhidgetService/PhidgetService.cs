@@ -196,6 +196,8 @@ namespace Keebee.AAT.PhidgetService
 #endif
                 if (!_isDisplayActive) return;
 
+                _systemEventLogger.WriteEntry("In SensorChange.");
+
                 int sensorId;
                 int sensorValue = e.Value;
 
@@ -278,6 +280,8 @@ namespace Keebee.AAT.PhidgetService
 
                 if (_activeConfig == null) return;
                 if (!_isDisplayActive) return;
+
+                _systemEventLogger.WriteEntry("In InputChange.");
 
                 int sensorId;
                 var isValid = int.TryParse(Convert.ToString(e.Index), out sensorId);

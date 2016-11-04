@@ -518,8 +518,6 @@ namespace Keebee.AAT.Display
             }
             else
             {
-                _systemEventLogger.WriteEntry($"In PlaySlideShow.");
-
                 var images = GetFilesForResponseType(ResponseTypeId.SlideShow, MediaPathTypeId.Images);
                 if (!images.Any()) return;
 
@@ -550,8 +548,6 @@ namespace Keebee.AAT.Display
             }
             else
             {
-                _systemEventLogger.WriteEntry($"In PlayMatchingGame.");
-
                 var shapes = GetFilesForResponseType(ResponseTypeId.MatchingGame, MediaPathTypeId.Shapes);
                 var sounds = GetFilesForResponseType(ResponseTypeId.MatchingGame, MediaPathTypeId.Sounds);
 
@@ -620,9 +616,6 @@ namespace Keebee.AAT.Display
             }
             else
             {
-                _systemEventLogger.WriteEntry($"In ShowOffScreen.  ResponseTypeId: {_currentResponseTypeId}");
-                musicPlayer1.Stop();
-
                 if (_currentResponseTypeId != ResponseTypeId.OffScreen)
                 {
                     StopCurrentResponse();

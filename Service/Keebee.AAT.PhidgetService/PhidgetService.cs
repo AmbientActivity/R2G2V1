@@ -182,7 +182,6 @@ namespace Keebee.AAT.PhidgetService
                 return;
             }
 
-            // PhidgetTypeId = SensorId + 1 (SensorId is base 0)
             if (_activeConfig == null) return;
 
             try
@@ -196,18 +195,19 @@ namespace Keebee.AAT.PhidgetService
 #endif
                 if (!_isDisplayActive) return;
 
-                _systemEventLogger.WriteEntry("In SensorChange.");
-
                 int sensorId;
                 int sensorValue = e.Value;
 
                 var isValid = int.TryParse(Convert.ToString(e.Index), out sensorId);
                 if (!isValid) return;
 
-                if (_activeConfig.ConfigDetails.All(cd => cd.PhidgetTypeId != sensorId + 1))
+                // PhidgetTypeId = SensorId + 1 (SensorId is base 0)
+                var phidgetTypeId = sensorId + 1;
+
+                if (_activeConfig.ConfigDetails.All(cd => cd.PhidgetTypeId != phidgetTypeId))
                     return;
 
-                var configDetail = _activeConfig.ConfigDetails.Single(cd => cd.PhidgetTypeId == sensorId + 1);
+                var configDetail = _activeConfig.ConfigDetails.Single(cd => cd.PhidgetTypeId == phidgetTypeId);
 
                 switch (configDetail.PhidgetStyleTypeId)
                 {
@@ -260,6 +260,7 @@ namespace Keebee.AAT.PhidgetService
             }
         }
 
+        private DateTime _latestInputHit = DateTime.MinValue;
         private void InputChange(object sender, InputChangeEventArgs e)
         {
             // if the interface kit is still attaching, exit  
@@ -269,7 +270,19 @@ namespace Keebee.AAT.PhidgetService
                 return;
             }
 
-            // PhidgetTypeId = InputId + 9 (offset by 8 SensorIds, InputId is base 0)
+            // debounce the switch - don't allow consecutive events < 500 milliseconds apart
+            if (DateTime.Now - _latestInputHit  < TimeSpan.FromMilliseconds(500))
+            {
+                return;  // too fast
+            }
+
+            _latestInputHit = DateTime.Now;
+
+            ProcessInputChange(e);
+        }
+
+        private void ProcessInputChange(InputChangeEventArgs e)
+        {
             try
             {
                 if (e.Index < 0 || e.Index > 7)
@@ -281,19 +294,20 @@ namespace Keebee.AAT.PhidgetService
                 if (_activeConfig == null) return;
                 if (!_isDisplayActive) return;
 
-                _systemEventLogger.WriteEntry("In InputChange.");
-
-                int sensorId;
-                var isValid = int.TryParse(Convert.ToString(e.Index), out sensorId);
+                int inputId;
+                var isValid = int.TryParse(Convert.ToString(e.Index), out inputId);
                 if (!isValid) return;
 
-                if (_activeConfig.ConfigDetails.All(cd => cd.PhidgetTypeId != sensorId + 9))
+                // PhidgetTypeId = InputId + 9 (offset by 8 SensorIds, InputId is base 0)
+                var phidgetTypeId = inputId + 9;
+
+                if (_activeConfig.ConfigDetails.All(cd => cd.PhidgetTypeId != phidgetTypeId))
                     return;
 
-                var configDetail = _activeConfig.ConfigDetails.Single(cd => cd.PhidgetTypeId == sensorId + 9);
+                var configDetail = _activeConfig.ConfigDetails.Single(cd => cd.PhidgetTypeId == phidgetTypeId);
 
                 SetDiscreteStepValue();
-                _messageQueuePhidget.Send(CreateMessageBodyFromSensor(sensorId + 8, (int)_currentDiscreteStepValue));
+                _messageQueuePhidget.Send(CreateMessageBodyFromSensor(inputId + 8, (int)_currentDiscreteStepValue));
 
                 if (configDetail.ResponseTypeId == ResponseTypeId.Radio)
                     _messageQueuePhidgetContinuousRadio.Send($"{(int)_currentDiscreteStepValue}");
@@ -301,7 +315,7 @@ namespace Keebee.AAT.PhidgetService
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"InputChange: {ex.Message}", EventLogEntryType.Error);
+                _systemEventLogger.WriteEntry($"ProcessInputChange: {ex.Message}", EventLogEntryType.Error);
             }
         }
 

@@ -173,7 +173,28 @@ namespace Keebee.AAT.PhidgetService
             _totalInputs = _interfaceKit.inputs.Count;
         }
 
+        private DateTime _latestSensorHit = DateTime.MinValue;
         private void SensorChange(object sender, SensorChangeEventArgs e)
+        {
+            // if the interface kit is still attaching, exit  
+            if (_currentSensor != _totalSensors)
+            {
+                _currentSensor++;
+                return;
+            }
+
+            // debounce the switch - don't allow consecutive events < 500 milliseconds apart
+            if (DateTime.Now - _latestSensorHit < TimeSpan.FromMilliseconds(100))
+            {
+                return;  // too fast
+            }
+
+            _latestSensorHit = DateTime.Now;
+
+            ProcessSensorChange(e);
+        }
+
+        private void ProcessSensorChange(SensorChangeEventArgs e)
         {
             // if the interface kit is still attaching, exit  
             if (_currentSensor != _totalSensors)

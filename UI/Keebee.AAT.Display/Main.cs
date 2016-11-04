@@ -620,9 +620,9 @@ namespace Keebee.AAT.Display
             }
             else
             {
-                // in case the switch 'bounces'
-                //musicPlayer1.Stop();
                 _systemEventLogger.WriteEntry($"In ShowOffScreen.  ResponseTypeId: {_currentResponseTypeId}");
+                musicPlayer1.Stop();
+
                 if (_currentResponseTypeId != ResponseTypeId.OffScreen)
                 {
                     StopCurrentResponse();

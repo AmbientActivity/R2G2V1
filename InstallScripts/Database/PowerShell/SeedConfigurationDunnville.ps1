@@ -16,7 +16,7 @@ else
     Try
     {
         Write-Host "Seeding Dunnville configuration...” -NoNewline
-        $queryFile = $path + "SeedDunnvilleConfiguration.sql"
+        $queryFile = $path + "SeedConfigurationDunnville.sql"
         Invoke-SqlQuery -File $queryFile -Server $server -Database $database
         Write-Host "done.`n”
 

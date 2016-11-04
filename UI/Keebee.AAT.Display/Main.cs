@@ -616,6 +616,9 @@ namespace Keebee.AAT.Display
             }
             else
             {
+                // sometimes the music player gets stuck on play (when the switch 'bounces')
+                musicPlayer1.Stop();
+
                 if (_currentResponseTypeId != ResponseTypeId.OffScreen)
                 {
                     StopCurrentResponse();

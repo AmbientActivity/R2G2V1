@@ -20,7 +20,7 @@ else
         Invoke-SqlQuery -File $queryFile -Server $server -Database $database
         Write-Host "done.`n”
 
-        Write-Host "eeding Dunnville configuration seeded successfully!`n”
+        Write-Host "Dunnville configuration seeded successfully!`n”
     }
     Catch
     {

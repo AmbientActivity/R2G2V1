@@ -15,12 +15,12 @@ else
 {
     Try
     {
-        Write-Host "Applying Update 1...” -NoNewline
-        $queryFile = $path + "ApplyUpdate_1.sql"
+        Write-Host "Seeding Development configuration...” -NoNewline
+        $queryFile = $path + "SeedConfigurationDevelopment.sql"
         Invoke-SqlQuery -File $queryFile -Server $server -Database $database
         Write-Host "done.`n”
 
-        Write-Host "Update 1 applied successfully!`n”
+        Write-Host "Development configuration seeded successfully!`n”
     }
     Catch
     {

@@ -40,9 +40,6 @@ namespace Keebee.AAT.Display.UserControls
         private delegate void RaiseMediaCompleteEventDelegate();
         private delegate void UpdateDialDelegate(int value);
 
-        //TODO:  might decide to to show a Test Pattern between stations
-        //private delegate void ShowTestPatternDelegate(bool isVisible);
-
         private string _currentPlaylistItem;
         private string _lastPlaylistItem;
         private int _maxIndex;
@@ -59,10 +56,6 @@ namespace Keebee.AAT.Display.UserControls
 
         private int _responseTypeId;
 
-        //TODO: might decide to to show a Test Pattern between stations
-        //private readonly Timer _televisionTestScreenTimer;
-        //private int _televisionTestScreenTimerInterval = 60000;  // 1 minute
-
         public MediaPlayer()
         {
             InitializeComponent();
@@ -73,16 +66,6 @@ namespace Keebee.AAT.Display.UserControls
                 QueueName = MessageQueueType.PhidgetContinuousRadio,
                 MessageReceivedCallback = MessageReceivedPhidgetContinuousRadio
             });
-
-            //TODO: in case want to to show a Test Pattern between stations
-            //var q2 = new CustomMessageQueue(new CustomMessageQueueArgs
-            //{
-            //    QueueName = MessageQueueType.PhidgetContinuousTelevision,
-            //    MessageReceivedCallback = MessageReceivedPhidgetContinuousTelevision
-            //});
-
-            //_televisionTestScreenTimer = new Timer { Interval = _televisionTestScreenTimerInterval };
-            //_televisionTestScreenTimer.Tick += TimerTick;
 
             axWindowsMediaPlayer1.PlayStateChange += PlayStateChange;
         }
@@ -158,23 +141,18 @@ namespace Keebee.AAT.Display.UserControls
             axWindowsMediaPlayer1.Dock = DockStyle.Fill;
 
             pbRadioPanel.Image = Resources.radio_panel;
-            pbRadioPanel.Dock = DockStyle.Fill;
             pbRadioPanel.SizeMode = PictureBoxSizeMode.StretchImage;
-
-            //pbTestPattern.Dock = DockStyle.Fill;
-            //pbTestPattern.Hide();
-
-            lblDial.Hide();
+            pbRadioPanel.Dock = DockStyle.Fill;
+            pbDial.Hide();
 #if DEBUG
-            //pbTestPattern.Image = Resources.tv_test_pattern_debug;
-            lblDial.Width = 5;
-            lblDial.Height = SystemInformation.PrimaryMonitorSize.Height / 3;
-            _maxDial = (SystemInformation.PrimaryMonitorSize.Width/3) - 30;
+            pbDial.Width = 5;
+            pbDial.Height = SystemInformation.PrimaryMonitorSize.Height / 3;
+            
+            _maxDial = (SystemInformation.PrimaryMonitorSize.Width / 3) - 30;
             _minDial = 120;
 #elif !DEBUG
-            //pbTestPattern.Image = Resources.tv_test_pattern;
-            lblDial.Width = 8;
-            lblDial.Height = SystemInformation.PrimaryMonitorSize.Height;
+            pbDial.Width = 8;
+            pbDial.Height = SystemInformation.PrimaryMonitorSize.Height;
             _maxDial = (SystemInformation.PrimaryMonitorSize.Width) - 30;
             _minDial = 300;
 #endif
@@ -207,15 +185,13 @@ namespace Keebee.AAT.Display.UserControls
             switch (_responseTypeId)
             {
                 case ResponseTypeId.Radio:
-                    lblDial.Show();
+                    pbDial.Show();
                     pbRadioPanel.Show();
-                    //pbTestPattern.Hide();
                     break;
                 case ResponseTypeId.Television:
                 case ResponseTypeId.Cats:
-                    //pbTestPattern.Hide();
                     pbRadioPanel.Hide();
-                    lblDial.Hide();
+                    pbDial.Hide();
                     break;
             }
         }
@@ -358,61 +334,8 @@ namespace Keebee.AAT.Display.UserControls
             }
             else
             {
-                lblDial.Left = (int)(value / _divisorDial) + _minDial;
+                pbDial.Left = (int)(value / _divisorDial) + _minDial;
             }
         }
-
-        //TODO:  might decide to to show a Test Pattern between stations
-
-        //private void MessageReceivedPhidgetContinuousTelevision(object source, MessageEventArgs e)
-        //{
-        //    if (_responseTypeId != ResponseTypeId.Television)
-        //        return;
-
-        //    try
-        //    {
-        //        int value;
-        //        var isValid = int.TryParse(e.MessageBody, out value);
-        //        if (!isValid) return;
-
-        //        var isBetweenStations = PhidgetUtil.GetSensorStepValue(value) < 0;
-
-        //        if (axWindowsMediaPlayer1.settings.mute != isBetweenStations)
-        //            axWindowsMediaPlayer1.settings.mute = isBetweenStations;
-
-        //        ShowTestPattern(isBetweenStations);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        _systemEventLogger.WriteEntry($"MediaPlayer.MessageReceivedPhidgetContinuousTelevision: {ex.Message}", EventLogEntryType.Error);
-        //    }
-        //}
-
-        //private void ShowTestPattern(bool isVisible)
-        //{
-        //    if (InvokeRequired)
-        //    {
-        //        Invoke(new ShowTestPatternDelegate(ShowTestPattern), isVisible);
-        //    }
-        //    else
-        //    {
-        //        if (isVisible)
-        //        {
-        //            _televisionTestScreenTimer.Start();
-        //            pbTestPattern.Show();
-
-        //        }
-        //        else
-        //        {
-        //            _televisionTestScreenTimer.Stop();
-        //            pbTestPattern.Hide();
-        //        }
-        //    }
-        //}
-
-        //private void TimerTick(object sender, EventArgs e)
-        //{
-        //    RaiseMediaCompleteEvent();
-        //}
     }
 }

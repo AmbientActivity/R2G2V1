@@ -182,11 +182,6 @@ namespace Keebee.AAT.PhidgetService
                 return;
             }
 
-            ProcessSensorChange(e);
-        }
-
-        private void ProcessSensorChange(SensorChangeEventArgs e)
-        {
             if (_activeConfig == null) return;
 
             try
@@ -234,17 +229,24 @@ namespace Keebee.AAT.PhidgetService
 
         private void ProcessTouchSensor(ConfigDetailMessage configDetail, int sensorId, int sensorValue)
         {
-            if (sensorValue < _sensorThreshold) return;
+            try
+            {
+                if (sensorValue < _sensorThreshold) return;
 
-            if (configDetail.ResponseTypeId != ResponseTypeId.Radio)
-            {
-                _messageQueuePhidget.Send(CreateMessageBodyFromSensor(sensorId, sensorValue));
+                if (configDetail.ResponseTypeId != ResponseTypeId.Radio)
+                {
+                    _messageQueuePhidget.Send(CreateMessageBodyFromSensor(sensorId, sensorValue));
+                }
+                else
+                {
+                    SetDiscreteStepValue();
+                    _messageQueuePhidget.Send(CreateMessageBodyFromSensor(sensorId, (int) _currentDiscreteStepValue));
+                    _messageQueuePhidgetContinuousRadio.Send($"{(int) _currentDiscreteStepValue}");
+                }
             }
-            else
+            catch (Exception ex)
             {
-                SetDiscreteStepValue();
-                _messageQueuePhidget.Send(CreateMessageBodyFromSensor(sensorId, (int)_currentDiscreteStepValue));
-                _messageQueuePhidgetContinuousRadio.Send($"{(int)_currentDiscreteStepValue}");
+                _systemEventLogger.WriteEntry($"ProcessTouchSensor: {ex.Message}", EventLogEntryType.Error);
             }
         }
 
@@ -252,35 +254,41 @@ namespace Keebee.AAT.PhidgetService
         private DateTime _latestSensorHit = DateTime.MinValue;
         private void ProcessIncrementalSensor(ConfigDetailMessage configDetail, int sensorId, int sensorValue)
         {
-            // debounce - don't allow consecutive events < 75 milliseconds apart
-            if (DateTime.Now - _latestSensorHit < TimeSpan.FromMilliseconds(75))
+            try
             {
-                return;  // too fast
-            }
-
-            _latestSensorHit = DateTime.Now;
-
-            // send step value
-            var stepValue = PhidgetUtil.GetSensorStepValue(sensorValue);
-            if (stepValue > 0)
-            {
-                if (configDetail.ResponseTypeId != ResponseTypeId.Radio)
+                // debounce - don't allow consecutive events < 75 milliseconds apart
+                if (DateTime.Now - _latestSensorHit < TimeSpan.FromMilliseconds(75))
                 {
-                    _messageQueuePhidget.Send(CreateMessageBodyFromSensor(sensorId, stepValue));
+                    _latestSensorHit = DateTime.Now;
+                    return; // too fast
                 }
-                else
+
+                // send step value
+                var stepValue = PhidgetUtil.GetSensorStepValue(sensorValue);
+                if (stepValue > 0)
                 {
-                    if (_currentRadioSensorValue != stepValue)
+                    if (configDetail.ResponseTypeId != ResponseTypeId.Radio)
                     {
                         _messageQueuePhidget.Send(CreateMessageBodyFromSensor(sensorId, stepValue));
-                        _currentRadioSensorValue = stepValue;
+                    }
+                    else
+                    {
+                        if (_currentRadioSensorValue != stepValue)
+                        {
+                            _messageQueuePhidget.Send(CreateMessageBodyFromSensor(sensorId, stepValue));
+                            _currentRadioSensorValue = stepValue;
+                        }
                     }
                 }
-            }
 
-            // send continuous value
-            if (configDetail.ResponseTypeId == ResponseTypeId.Radio)
-                _messageQueuePhidgetContinuousRadio.Send($"{sensorValue}");
+                // send continuous value
+                if (configDetail.ResponseTypeId == ResponseTypeId.Radio)
+                    _messageQueuePhidgetContinuousRadio.Send($"{sensorValue}");
+            }
+            catch (Exception ex)
+            {
+                _systemEventLogger.WriteEntry($"ProcessIncrementalSensor: {ex.Message}", EventLogEntryType.Error);
+            }
         }
 
         // for debouncing
@@ -294,14 +302,13 @@ namespace Keebee.AAT.PhidgetService
                 return;
             }
 
-            // debounce the switch - don't allow consecutive events < 500 milliseconds apart
-            if (DateTime.Now - _latestInputHit  < TimeSpan.FromMilliseconds(500))
+            // debounce the switch - don't allow consecutive events < 300 milliseconds apart
+            if (DateTime.Now - _latestInputHit  < TimeSpan.FromMilliseconds(300))
             {
+                _latestInputHit = DateTime.Now;
                 return;  // too fast
             }
-
             _latestInputHit = DateTime.Now;
-
             ProcessInputChange(e);
         }
 

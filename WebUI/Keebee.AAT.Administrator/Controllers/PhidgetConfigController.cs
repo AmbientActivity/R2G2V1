@@ -167,7 +167,11 @@ namespace Keebee.AAT.Administrator.Controllers
         {
             var configs = _opsClient.GetConfigs().ToArray();
 
-            var list = configs
+            var defaultConfig = configs.Where(x => x.Id == ConfigId.Default).ToArray();
+            var customConfigs = configs.Where(x => x.Id != ConfigId.Default).OrderBy(x => x.Description).ToArray();
+            var allConfigs = defaultConfig.Union(customConfigs);
+
+            var list = allConfigs
                 .Select(config => 
                 {
                     {

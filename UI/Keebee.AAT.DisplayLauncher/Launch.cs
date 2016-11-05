@@ -15,6 +15,7 @@ namespace Keebee.AAT.DisplayLauncher
         public Launch()
         {
             InitializeComponent();
+            ShowInTaskbar = false;
 
             _exePath = ConfigurationManager.AppSettings["ExecutablePath"];
             var waitTime = Convert.ToInt32(ConfigurationManager.AppSettings["WaitTime"]);

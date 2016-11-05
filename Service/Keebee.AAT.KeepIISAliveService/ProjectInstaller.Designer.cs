@@ -41,6 +41,7 @@
             // 
             // keepIISAliveServiceInstaller
             // 
+            this.keepIISAliveServiceInstaller.DelayedAutoStart = true;
             this.keepIISAliveServiceInstaller.Description = "Keeps the Operations API and Administrator Interface alive";
             this.keepIISAliveServiceInstaller.DisplayName = "Keebee AAT Keep IIS Alive Service";
             this.keepIISAliveServiceInstaller.ServiceName = "KeepIISAliveService";

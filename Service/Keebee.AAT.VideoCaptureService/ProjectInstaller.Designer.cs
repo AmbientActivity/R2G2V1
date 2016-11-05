@@ -41,6 +41,7 @@
             // 
             // videoCaptureServiceInstaller
             // 
+            this.videoCaptureServiceInstaller.DelayedAutoStart = true;
             this.videoCaptureServiceInstaller.Description = "Does video capturing of users that interact with R2G2";
             this.videoCaptureServiceInstaller.DisplayName = "Keebee AAT Video Capture Service";
             this.videoCaptureServiceInstaller.ServiceName = "VideoCaptureService";

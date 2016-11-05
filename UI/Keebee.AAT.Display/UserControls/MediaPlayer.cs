@@ -334,15 +334,7 @@ namespace Keebee.AAT.Display.UserControls
             }
             else
             {
-                var currentLeft = pbDial.Left;
-                var newLeft = (int) (value/_divisorDial) + _minDial;
-
-                var multiplier = (currentLeft < newLeft) ? 1 : -1;
-
-                for (var l = currentLeft; l != newLeft; l = l + (1 * multiplier))
-                {
-                    pbDial.Left = l;
-                }
+                pbDial.Left = (int)(value / _divisorDial) + _minDial;
             }
         }
     }

@@ -14,7 +14,7 @@
             // buttons
             var cmdEdit = $("#edit");
             var cmdDelete = $("#delete");
-            var cmdActivate = $("#activate");
+            //var cmdActivate = $("#activate");
 
             // active config
             var activeConfig = {};
@@ -42,7 +42,7 @@
                 });
             }
 
-            function ConfigDetail(id, configid, sortorder, phidgettype, phidgetstyletype, description, responsetype, issystem, canedit) {
+            function ConfigDetail(id, configid, sortorder, phidgettype, phidgetstyletype, description, location, responsetype, issystem, canedit) {
                 var self = this;
 
                 self.id = id;
@@ -51,6 +51,7 @@
                 self.phidgettype = phidgettype;
                 self.phidgetstyletype = phidgetstyletype;
                 self.description = description;
+                self.location = location;
                 self.responsetype = responsetype;
                 self.issystem = issystem;
                 self.canedit = canedit;
@@ -120,6 +121,7 @@
                     arr.push({ title: "Phidget", sortKey: "phidgettype", cssClass: "" });
                     arr.push({ title: "Style", sortKey: "phidgetstyletype", cssClass: "" });
                     arr.push({ title: "Description", sortKey: "description", cssClass: "" });
+                    arr.push({ title: "Location", sortKey: "location", cssClass: "" });
                     arr.push({ title: "Response", sortKey: "responsetype", cssClass: "" });
                     arr.push({ title: "System", sortKey: "issystem", cssClass: "col-issytem" });
                     return arr;
@@ -136,6 +138,7 @@
                         value.PhidgetType,
                         value.PhidgetStyleType,
                         value.Description,
+                        value.Location,
                         value.ResponseType,
                         value.IsSystem,
                         value.CanEdit));
@@ -546,12 +549,13 @@
 
                 self.getConfigDetailFromDialog = function () {
                     var description = $.trim($("#txtDescription").val());
+                    var location = $.trim($("#txtLocation").val());
                     var phidgettypeid = $("#ddlPhidgetTypes").val();
                     var phidgetstyletypeid = $("#ddlPhidgetStyleTypes").val();
                     var responsetypeid = $("#ddlResponseTypes").val();
                     
                     return {
-                        Id: self.selectedConfigDetail().id, Description: description, PhidgetTypeId: phidgettypeid, PhidgetStyleTypeId: phidgetstyletypeid, ResponseTypeId: responsetypeid, IsActive: self.selectedConfig() === self.activeConfig()
+                        Id: self.selectedConfigDetail().id, Description: description, Location: location, PhidgetTypeId: phidgettypeid, PhidgetStyleTypeId: phidgetstyletypeid, ResponseTypeId: responsetypeid, IsActive: self.selectedConfig() === self.activeConfig()
                     };
                 };
 

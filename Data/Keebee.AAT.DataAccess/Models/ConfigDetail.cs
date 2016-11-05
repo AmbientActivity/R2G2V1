@@ -9,6 +9,7 @@ namespace Keebee.AAT.DataAccess.Models
         public int Id { get; set; }
 
         public string Description { get; set; }
+        public string Location { get; set; }
 
         [ForeignKey("Config")]
         public int ConfigId { get; set; }

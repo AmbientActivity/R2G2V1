@@ -27,6 +27,7 @@ namespace Keebee.AAT.Administrator.ViewModels
         public string PhidgetType { get; set; }
         public string PhidgetStyleType { get; set; }
         public string Description { get; set; }
+        public string Location { get; set; }
         public string ResponseType { get; set; }
         public bool IsSystem { get; set; }
         public bool CanEdit { get; set; }
@@ -47,6 +48,7 @@ namespace Keebee.AAT.Administrator.ViewModels
         public int ConfigId { get; set; }
         public bool IsActive { get; set; }
         public string Description { get; set; }
+        public string Location { get; set; }
         public int PhidgetTypeId { get; set; }
         public SelectList PhidgetTypes { get; set; }
         public int PhidgetStyleTypeId { get; set; }

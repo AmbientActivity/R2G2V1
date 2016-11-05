@@ -211,6 +211,7 @@ namespace Keebee.AAT.Administrator.Controllers
                                              PhidgetType = cd.PhidgetType.Description,
                                              PhidgetStyleType = cd.PhidgetStyleType.Description,
                                              Description = cd.Description,
+                                             Location = cd.Location,
                                              ResponseType = cd.ResponseType.Description,
                                              IsSystem = cd.ResponseType.IsSystem,
                                              CanEdit = !activityLogs.Any()
@@ -255,6 +256,7 @@ namespace Keebee.AAT.Administrator.Controllers
             {
                 Id = configDetail?.Id ?? 0,
                 Description = (configDetail != null) ? configDetail.Description : string.Empty,
+                Location = (configDetail != null) ? configDetail.Location : string.Empty,
                 PhidgetTypes = new SelectList(configEdit.PhidgetTypes, "Id", "Description", configDetail?.PhidgetType.Id),
                 PhidgetStyleTypes = new SelectList(configEdit.PhidgetStyleTypes, "Id", "Description", configDetail?.PhidgetStyleType.Id),
                 ResponseTypes = new SelectList(configEdit.ResponseTypes, "Id", "Description", configDetail?.ResponseType.Id)
@@ -294,6 +296,7 @@ namespace Keebee.AAT.Administrator.Controllers
                         {
                             ConfigId = newId,
                             Description = detail.Description,
+                            Location = detail.Location,
                             PhidgetTypeId = detail.PhidgetType.Id,
                             PhidgetStyleTypeId = detail.PhidgetStyleType.Id,
                             ResponseTypeId = detail.ResponseType.Id
@@ -308,6 +311,7 @@ namespace Keebee.AAT.Administrator.Controllers
             var cd = new ConfigDetailEdit
             {
                 Description = configDetail.Description,
+                Location = configDetail.Location,
                 PhidgetTypeId = configDetail.PhidgetTypeId,
                 PhidgetStyleTypeId = configDetail.PhidgetStyleTypeId,
                 ResponseTypeId = configDetail.ResponseTypeId
@@ -325,6 +329,7 @@ namespace Keebee.AAT.Administrator.Controllers
             {
                 ConfigId = configDetail.ConfigId,
                 Description = configDetail.Description,
+                Location = configDetail.Location,
                 PhidgetTypeId = configDetail.PhidgetTypeId,
                 PhidgetStyleTypeId = configDetail.PhidgetStyleTypeId,
                 ResponseTypeId = configDetail.ResponseTypeId

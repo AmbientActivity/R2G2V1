@@ -46,6 +46,7 @@ namespace Keebee.AAT.Operations.Controllers
                         cd.Id,
                         cd.ConfigId,
                         cd.Description,
+                        cd.Location,
                         PhidgetType = new
                         {
                             cd.PhidgetType.Id,
@@ -173,6 +174,7 @@ namespace Keebee.AAT.Operations.Controllers
                     cd.PhidgetStyleType.Description
                 },
                 cd.Description,
+                cd.Location,
                 ResponseType = new
                 {
                     ResponseTypeCategory = new
@@ -224,6 +226,7 @@ namespace Keebee.AAT.Operations.Controllers
                     cd.PhidgetStyleType.Description
                 },
                 cd.Description,
+                cd.Location,
                 ResponseType = new
                 {
                     ResponseTypeCategory = new

@@ -50,6 +50,7 @@ namespace Keebee.AAT.Operations.Controllers
                     cd.PhidgetStyleType.Description,
                 },
                 cd.Description,
+                cd.Location,
                 ResponseType = new
                 {
                     cd.ResponseType.Id,
@@ -89,6 +90,7 @@ namespace Keebee.AAT.Operations.Controllers
                 configDetail.PhidgetStyleType.Description
             };
             exObj.Description = configDetail.Description;
+            exObj.Location = configDetail.Location;
             exObj.ResponseType = new
             {
                 configDetail.ResponseType.Id,

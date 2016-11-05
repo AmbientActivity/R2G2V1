@@ -3,11 +3,8 @@ using Keebee.AAT.SystemEventLogging;
 using Keebee.AAT.Display.Extensions;
 using System;
 using System.Diagnostics;
-using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
-using Keebee.AAT.Display.Properties;
-using Keebee.AAT.MessageQueuing;
 using WMPLib;
 
 namespace Keebee.AAT.Display.UserControls
@@ -38,7 +35,6 @@ namespace Keebee.AAT.Display.UserControls
         // delegate
         private delegate void PlayMediaDelegate(string[] files);
         private delegate void RaiseMediaCompleteEventDelegate();
-        private delegate void UpdateDialDelegate(int value);
 
         private string _currentPlaylistItem;
         private string _lastPlaylistItem;
@@ -49,23 +45,12 @@ namespace Keebee.AAT.Display.UserControls
         private bool _isLoop;
         private IWMPPlaylist _playlist;
 
-        private int _minDial;
-        private int _maxDial;
-        private int _rangeDial;
-        private double _divisorDial;
-
         private int _responseTypeId;
 
         public MediaPlayer()
         {
             InitializeComponent();
             ConfigureComponents();
-
-            var q = new CustomMessageQueue(new CustomMessageQueueArgs
-            {
-                QueueName = MessageQueueType.PhidgetContinuousRadio,
-                MessageReceivedCallback = MessageReceivedPhidgetContinuousRadio
-            });
 
             axWindowsMediaPlayer1.PlayStateChange += PlayStateChange;
         }
@@ -83,7 +68,6 @@ namespace Keebee.AAT.Display.UserControls
 
                 ShowHideResponseControls();
                 ConfigureMediaPlayer();
-                UpdateDial(responseValue);
 
                 if (files.Length > 1) 
                     files.Shuffle();
@@ -128,36 +112,14 @@ namespace Keebee.AAT.Display.UserControls
 
         public void Stop()
         {
-            //_televisionTestScreenTimer.Stop();
             axWindowsMediaPlayer1.settings.mute = false;
             axWindowsMediaPlayer1.Ctlcontrols.stop();
-            pbRadioPanel.Hide();
-            //pbTestPattern.Hide();
         }
 
         private void ConfigureComponents()
         {
             axWindowsMediaPlayer1.stretchToFit = true;
             axWindowsMediaPlayer1.Dock = DockStyle.Fill;
-
-            pbRadioPanel.Image = Resources.radio_panel;
-            pbRadioPanel.SizeMode = PictureBoxSizeMode.StretchImage;
-            pbRadioPanel.Dock = DockStyle.Fill;
-            pbDial.Hide();
-#if DEBUG
-            pbDial.Width = 5;
-            pbDial.Height = SystemInformation.PrimaryMonitorSize.Height / 3;
-            
-            _maxDial = (SystemInformation.PrimaryMonitorSize.Width / 3) - 30;
-            _minDial = 120;
-#elif !DEBUG
-            pbDial.Width = 8;
-            pbDial.Height = SystemInformation.PrimaryMonitorSize.Height;
-            _maxDial = (SystemInformation.PrimaryMonitorSize.Width) - 30;
-            _minDial = 300;
-#endif
-            _rangeDial = _maxDial - _minDial;
-            _divisorDial = (double)1000 / _rangeDial;
         }
 
         private void ConfigureMediaPlayer()
@@ -185,13 +147,13 @@ namespace Keebee.AAT.Display.UserControls
             switch (_responseTypeId)
             {
                 case ResponseTypeId.Radio:
-                    pbDial.Show();
-                    pbRadioPanel.Show();
+                    //pbDial.Show();
+                    //pbRadioPanel.Show();
                     break;
                 case ResponseTypeId.Television:
                 case ResponseTypeId.Cats:
-                    pbRadioPanel.Hide();
-                    pbDial.Hide();
+                    //pbRadioPanel.Hide();
+                    //pbDial.Hide();
                     break;
             }
         }
@@ -304,37 +266,6 @@ namespace Keebee.AAT.Display.UserControls
                         axWindowsMediaPlayer1.Ctlcontrols.play();
                     }
                     break;
-            }
-        }
-
-        private void MessageReceivedPhidgetContinuousRadio(object source, MessageEventArgs e)
-        {
-            if (_responseTypeId != ResponseTypeId.Radio)
-                return;
-
-            try
-            {
-                int value;
-                var isValid = int.TryParse(e.MessageBody, out value);
-                if (!isValid) return;
-
-                UpdateDial(value);
-            }
-            catch (Exception ex)
-            {
-                _systemEventLogger.WriteEntry($"MediaPlayer.MessageReceivedPhidgetContinuousRadio: {ex.Message}", EventLogEntryType.Error);
-            }
-        }
-
-        private void UpdateDial(int value)
-        {
-            if (InvokeRequired)
-            {
-                Invoke(new UpdateDialDelegate(UpdateDial), value);
-            }
-            else
-            {
-                pbDial.Left = (int)(value / _divisorDial) + _minDial;
             }
         }
     }

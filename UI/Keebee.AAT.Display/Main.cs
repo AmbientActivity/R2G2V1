@@ -134,7 +134,6 @@ namespace Keebee.AAT.Display
 
             // response complete event handlers
             slideViewerFlash1.SlideShowCompleteEvent += SlideShowComplete;
-            musicPlayer1.MusicPlayerCompleteEvent += MusicComplete;
             mediaPlayer1.MediaPlayerCompleteEvent += MediaPlayerComplete;
             offScreen1.OffScreenCompleteEvent += OffScreenComplete;
             matchingGame1.MatchingGameTimeoutExpiredEvent += MatchingGameTimeoutExpired;
@@ -173,6 +172,9 @@ namespace Keebee.AAT.Display
             mediaPlayer1.Dock = DockStyle.Fill;
             mediaPlayer1.Hide();
 
+            radioControl1.Dock = DockStyle.Fill;
+            radioControl1.Hide();
+
             slideViewerFlash1.Dock = DockStyle.Fill;
             slideViewerFlash1.Hide();
 
@@ -181,9 +183,6 @@ namespace Keebee.AAT.Display
 
             offScreen1.Dock = DockStyle.Fill;
             offScreen1.Hide();
-
-            musicPlayer1.Hide();
-            musicPlayer1.Dock = DockStyle.None;
         }
 
         private void SetPostLoadProperties()
@@ -285,7 +284,7 @@ namespace Keebee.AAT.Display
                     case ResponseTypeId.SlideShow:
                         slideViewerFlash1.Hide();
                         slideViewerFlash1.Stop();
-                        musicPlayer1.Stop();
+                        mediaPlayer1.Stop();
                         break;
                     case ResponseTypeId.MatchingGame:
                         matchingGame1.Hide();
@@ -294,14 +293,16 @@ namespace Keebee.AAT.Display
                     case ResponseTypeId.Radio:
                     case ResponseTypeId.Television:
                     case ResponseTypeId.Cats:
+                        radioControl1.Hide();
+                        mediaPlayer1.Hide();
                         if (newResponseTypeid != ResponseTypeId.Radio &&
                             newResponseTypeid != ResponseTypeId.Television &&
                             newResponseTypeid != ResponseTypeId.Cats)
-                        {
+
                             mediaPlayer1.Hide();
-                        }
-                        mediaPlayer1.Hide();
-                        mediaPlayer1.Stop();
+                        else
+                            mediaPlayer1.Stop();
+
                         break;
                     case ResponseTypeId.Ambient:
                         ambient1.Hide();
@@ -439,9 +440,11 @@ namespace Keebee.AAT.Display
                     {
                         case ResponseTypeId.Radio:
                             mediaPathTypeId = MediaPathTypeId.Music;
+                            radioControl1.Show();
                             break;
                         case ResponseTypeId.Television:
                         case ResponseTypeId.Cats:
+                            radioControl1.Hide();
                             mediaPathTypeId = MediaPathTypeId.Videos;
                             break;
                     }
@@ -525,7 +528,7 @@ namespace Keebee.AAT.Display
                 if (!music.Any()) return;
 
                 music.Shuffle();
-                musicPlayer1.Play(new [] {music.First() } );
+                mediaPlayer1.Play(ResponseTypeId.Radio, 0, new [] {music.First() }, false, false );
 
                 images.Shuffle();
                 StopCurrentResponse();
@@ -725,26 +728,12 @@ namespace Keebee.AAT.Display
             }
         }
 
-        private void MusicComplete(object sender, EventArgs e)
-        {
-            try
-            {
-                slideViewerFlash1.Hide();
-                musicPlayer1.Stop();
-                ResumeAmbient();
-            }
-            catch (Exception ex)
-            {
-                _systemEventLogger.WriteEntry($"Main.MusicComplete: {ex.Message}", EventLogEntryType.Error);
-            }
-        }
-
         private void SlideShowComplete(object sender, EventArgs e)
         {
             try
             {
                 slideViewerFlash1.Hide();
-                musicPlayer1.Stop();
+                mediaPlayer1.Stop();
                 ResumeAmbient();
             }
             catch (Exception ex)
@@ -866,8 +855,8 @@ namespace Keebee.AAT.Display
             slideViewerFlash1.Dock = DockStyle.None;
             matchingGame1.Dock = DockStyle.None;
             mediaPlayer1.Dock = DockStyle.None;
+            radioControl1.Dock = DockStyle.None;
             offScreen1.Dock = DockStyle.None;
-            musicPlayer1.Dock = DockStyle.None;
         }
 
         #endregion

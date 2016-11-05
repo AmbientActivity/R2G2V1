@@ -35,15 +35,15 @@ namespace Keebee.AAT.Display
             this.mediaPlayer1 = new Keebee.AAT.Display.UserControls.MediaPlayer();
             this.slideViewerFlash1 = new Keebee.AAT.Display.UserControls.SlideViewerFlash();
             this.offScreen1 = new Keebee.AAT.Display.UserControls.OffScreen();
-            this.musicPlayer1 = new Keebee.AAT.Display.UserControls.MusicPlayer();
+            this.radioControl1 = new Keebee.AAT.Display.UserControls.RadioControl();
             this.SuspendLayout();
             // 
             // ambient1
             // 
             this.ambient1.BackColor = System.Drawing.Color.Yellow;
-            this.ambient1.Location = new System.Drawing.Point(147, 76);
+            this.ambient1.Location = new System.Drawing.Point(133, 76);
             this.ambient1.Name = "ambient1";
-            this.ambient1.Size = new System.Drawing.Size(119, 73);
+            this.ambient1.Size = new System.Drawing.Size(116, 62);
             this.ambient1.TabIndex = 5;
             // 
             // matchingGame1
@@ -51,7 +51,7 @@ namespace Keebee.AAT.Display
             this.matchingGame1.BackColor = System.Drawing.Color.Yellow;
             this.matchingGame1.Location = new System.Drawing.Point(0, 0);
             this.matchingGame1.Name = "matchingGame1";
-            this.matchingGame1.Size = new System.Drawing.Size(127, 64);
+            this.matchingGame1.Size = new System.Drawing.Size(116, 62);
             this.matchingGame1.TabIndex = 2;
             // 
             // mediaPlayer1
@@ -59,40 +59,41 @@ namespace Keebee.AAT.Display
             this.mediaPlayer1.BackColor = System.Drawing.Color.Yellow;
             this.mediaPlayer1.Location = new System.Drawing.Point(0, 76);
             this.mediaPlayer1.Name = "mediaPlayer1";
-            this.mediaPlayer1.Size = new System.Drawing.Size(127, 73);
+            this.mediaPlayer1.Size = new System.Drawing.Size(116, 62);
             this.mediaPlayer1.TabIndex = 7;
             // 
             // slideViewerFlash1
             // 
             this.slideViewerFlash1.BackColor = System.Drawing.Color.Yellow;
-            this.slideViewerFlash1.Location = new System.Drawing.Point(147, 0);
+            this.slideViewerFlash1.Location = new System.Drawing.Point(133, 0);
             this.slideViewerFlash1.Name = "slideViewerFlash1";
-            this.slideViewerFlash1.Size = new System.Drawing.Size(113, 64);
+            this.slideViewerFlash1.Size = new System.Drawing.Size(116, 62);
             this.slideViewerFlash1.TabIndex = 8;
             // 
             // offScreen1
             // 
             this.offScreen1.BackColor = System.Drawing.SystemColors.ActiveCaptionText;
-            this.offScreen1.Location = new System.Drawing.Point(272, 76);
+            this.offScreen1.Location = new System.Drawing.Point(265, 77);
             this.offScreen1.Name = "offScreen1";
-            this.offScreen1.Size = new System.Drawing.Size(116, 73);
+            this.offScreen1.Size = new System.Drawing.Size(116, 62);
             this.offScreen1.TabIndex = 9;
             // 
-            // musicPlayer1
+            // radioControl1
             // 
-            this.musicPlayer1.Location = new System.Drawing.Point(272, 0);
-            this.musicPlayer1.Name = "musicPlayer1";
-            this.musicPlayer1.Size = new System.Drawing.Size(115, 63);
-            this.musicPlayer1.TabIndex = 10;
+            this.radioControl1.BackColor = System.Drawing.SystemColors.ActiveCaptionText;
+            this.radioControl1.Location = new System.Drawing.Point(264, 2);
+            this.radioControl1.Name = "radioControl1";
+            this.radioControl1.Size = new System.Drawing.Size(116, 62);
+            this.radioControl1.TabIndex = 11;
             // 
             // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.Yellow;
-            this.ClientSize = new System.Drawing.Size(434, 211);
+            this.ClientSize = new System.Drawing.Size(408, 221);
             this.ControlBox = false;
-            this.Controls.Add(this.musicPlayer1);
+            this.Controls.Add(this.radioControl1);
             this.Controls.Add(this.offScreen1);
             this.Controls.Add(this.slideViewerFlash1);
             this.Controls.Add(this.mediaPlayer1);
@@ -118,7 +119,7 @@ namespace Keebee.AAT.Display
         private MediaPlayer mediaPlayer1;
         private SlideViewerFlash slideViewerFlash1;
         private OffScreen offScreen1;
-        private MusicPlayer musicPlayer1;
+        private RadioControl radioControl1;
     }
 }
 

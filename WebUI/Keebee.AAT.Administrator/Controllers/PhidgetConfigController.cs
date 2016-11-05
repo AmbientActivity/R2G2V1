@@ -212,6 +212,7 @@ namespace Keebee.AAT.Administrator.Controllers
                                              PhidgetStyleType = cd.PhidgetStyleType.Description,
                                              Description = cd.Description,
                                              ResponseType = cd.ResponseType.Description,
+                                             IsSystem = cd.ResponseType.IsSystem,
                                              CanEdit = !activityLogs.Any()
                                          };
                                 return vm;

@@ -42,7 +42,7 @@
                 });
             }
 
-            function ConfigDetail(id, configid, sortorder, phidgettype, phidgetstyletype, description, responsetype, canedit) {
+            function ConfigDetail(id, configid, sortorder, phidgettype, phidgetstyletype, description, responsetype, issystem, canedit) {
                 var self = this;
 
                 self.id = id;
@@ -52,6 +52,7 @@
                 self.phidgetstyletype = phidgetstyletype;
                 self.description = description;
                 self.responsetype = responsetype;
+                self.issystem = issystem;
                 self.canedit = canedit;
             }
 
@@ -116,10 +117,11 @@
 
                 self.columns = ko.computed(function() {
                     var arr = [];
-                    arr.push({ title: "Phidget", sortKey: "phidgettype" });
-                    arr.push({ title: "Style", sortKey: "phidgetstyletype" });
-                    arr.push({ title: "Description", sortKey: "description" });
-                    arr.push({ title: "Response", sortKey: "responsetype" });
+                    arr.push({ title: "Phidget", sortKey: "phidgettype", cssClass: "" });
+                    arr.push({ title: "Style", sortKey: "phidgetstyletype", cssClass: "" });
+                    arr.push({ title: "Description", sortKey: "description", cssClass: "" });
+                    arr.push({ title: "Response", sortKey: "responsetype", cssClass: "" });
+                    arr.push({ title: "System", sortKey: "issystem", cssClass: "col-issytem" });
                     return arr;
                 });
 
@@ -135,6 +137,7 @@
                         value.PhidgetStyleType,
                         value.Description,
                         value.ResponseType,
+                        value.IsSystem,
                         value.CanEdit));
                 };
 

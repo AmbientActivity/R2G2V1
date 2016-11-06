@@ -89,6 +89,15 @@ namespace Keebee.AAT.Display.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {0} {1}.
+        /// </summary>
+        internal static string ResidentName {
+            get {
+                return ResourceManager.GetString("ResidentName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
         internal static System.Drawing.Bitmap tv_test_pattern {

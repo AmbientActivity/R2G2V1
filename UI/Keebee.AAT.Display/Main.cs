@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Linq;
 using Keebee.AAT.Display.Extensions;
+using Keebee.AAT.Display.Properties;
 using WMPLib;
 
 namespace Keebee.AAT.Display
@@ -202,6 +203,8 @@ namespace Keebee.AAT.Display
             mediaPlayer1.SystemEventLogger = _systemEventLogger;
             slideViewerFlash1.SystemEventLogger = _systemEventLogger;
             matchingGame1.SystemEventLogger = _systemEventLogger;
+
+            ambient1.OperationsClient = _opsClient;
         }
 
         #endregion

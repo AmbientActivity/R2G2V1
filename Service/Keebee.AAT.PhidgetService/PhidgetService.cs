@@ -182,8 +182,6 @@ namespace Keebee.AAT.PhidgetService
                 return;
             }
 
-            if (_activeConfig == null) return;
-
             try
             {
 #if DEBUG
@@ -263,6 +261,10 @@ namespace Keebee.AAT.PhidgetService
                     return; // too fast
                 }
 
+                // send continuous value
+                if (configDetail.ResponseTypeId == ResponseTypeId.Radio)
+                    _messageQueuePhidgetContinuousRadio.Send($"{sensorValue}");
+
                 // send step value
                 var stepValue = PhidgetUtil.GetSensorStepValue(sensorValue);
                 if (stepValue > 0)
@@ -280,10 +282,6 @@ namespace Keebee.AAT.PhidgetService
                         }
                     }
                 }
-
-                // send continuous value
-                if (configDetail.ResponseTypeId == ResponseTypeId.Radio)
-                    _messageQueuePhidgetContinuousRadio.Send($"{sensorValue}");
             }
             catch (Exception ex)
             {

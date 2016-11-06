@@ -47,9 +47,9 @@
             // pbDial
             // 
             this.pbDial.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(0)))));
-            this.pbDial.Location = new System.Drawing.Point(233, 34);
+            this.pbDial.Location = new System.Drawing.Point(211, 22);
             this.pbDial.Name = "pbDial";
-            this.pbDial.Size = new System.Drawing.Size(19, 181);
+            this.pbDial.Size = new System.Drawing.Size(10, 92);
             this.pbDial.TabIndex = 7;
             this.pbDial.TabStop = false;
             // 

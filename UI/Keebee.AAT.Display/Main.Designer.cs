@@ -30,13 +30,45 @@ namespace Keebee.AAT.Display
         /// </summary>
         private void InitializeComponent()
         {
+            this.radioControl1 = new Keebee.AAT.Display.UserControls.RadioControl();
+            this.offScreen1 = new Keebee.AAT.Display.UserControls.OffScreen();
+            this.slideViewerFlash1 = new Keebee.AAT.Display.UserControls.SlideViewerFlash();
+            this.mediaPlayer1 = new Keebee.AAT.Display.UserControls.MediaPlayer();
             this.ambient1 = new Keebee.AAT.Display.UserControls.AmbientPlayer();
             this.matchingGame1 = new Keebee.AAT.Display.UserControls.MatchingGame();
-            this.mediaPlayer1 = new Keebee.AAT.Display.UserControls.MediaPlayer();
-            this.slideViewerFlash1 = new Keebee.AAT.Display.UserControls.SlideViewerFlash();
-            this.offScreen1 = new Keebee.AAT.Display.UserControls.OffScreen();
-            this.radioControl1 = new Keebee.AAT.Display.UserControls.RadioControl();
             this.SuspendLayout();
+            // 
+            // radioControl1
+            // 
+            this.radioControl1.BackColor = System.Drawing.SystemColors.ActiveCaptionText;
+            this.radioControl1.Location = new System.Drawing.Point(264, 2);
+            this.radioControl1.Name = "radioControl1";
+            this.radioControl1.Size = new System.Drawing.Size(116, 62);
+            this.radioControl1.TabIndex = 11;
+            // 
+            // offScreen1
+            // 
+            this.offScreen1.BackColor = System.Drawing.SystemColors.ActiveCaptionText;
+            this.offScreen1.Location = new System.Drawing.Point(265, 77);
+            this.offScreen1.Name = "offScreen1";
+            this.offScreen1.Size = new System.Drawing.Size(116, 62);
+            this.offScreen1.TabIndex = 9;
+            // 
+            // slideViewerFlash1
+            // 
+            this.slideViewerFlash1.BackColor = System.Drawing.Color.Yellow;
+            this.slideViewerFlash1.Location = new System.Drawing.Point(133, 0);
+            this.slideViewerFlash1.Name = "slideViewerFlash1";
+            this.slideViewerFlash1.Size = new System.Drawing.Size(116, 62);
+            this.slideViewerFlash1.TabIndex = 8;
+            // 
+            // mediaPlayer1
+            // 
+            this.mediaPlayer1.BackColor = System.Drawing.Color.Yellow;
+            this.mediaPlayer1.Location = new System.Drawing.Point(0, 76);
+            this.mediaPlayer1.Name = "mediaPlayer1";
+            this.mediaPlayer1.Size = new System.Drawing.Size(116, 62);
+            this.mediaPlayer1.TabIndex = 7;
             // 
             // ambient1
             // 
@@ -53,38 +85,6 @@ namespace Keebee.AAT.Display
             this.matchingGame1.Name = "matchingGame1";
             this.matchingGame1.Size = new System.Drawing.Size(116, 62);
             this.matchingGame1.TabIndex = 2;
-            // 
-            // mediaPlayer1
-            // 
-            this.mediaPlayer1.BackColor = System.Drawing.Color.Yellow;
-            this.mediaPlayer1.Location = new System.Drawing.Point(0, 76);
-            this.mediaPlayer1.Name = "mediaPlayer1";
-            this.mediaPlayer1.Size = new System.Drawing.Size(116, 62);
-            this.mediaPlayer1.TabIndex = 7;
-            // 
-            // slideViewerFlash1
-            // 
-            this.slideViewerFlash1.BackColor = System.Drawing.Color.Yellow;
-            this.slideViewerFlash1.Location = new System.Drawing.Point(133, 0);
-            this.slideViewerFlash1.Name = "slideViewerFlash1";
-            this.slideViewerFlash1.Size = new System.Drawing.Size(116, 62);
-            this.slideViewerFlash1.TabIndex = 8;
-            // 
-            // offScreen1
-            // 
-            this.offScreen1.BackColor = System.Drawing.SystemColors.ActiveCaptionText;
-            this.offScreen1.Location = new System.Drawing.Point(265, 77);
-            this.offScreen1.Name = "offScreen1";
-            this.offScreen1.Size = new System.Drawing.Size(116, 62);
-            this.offScreen1.TabIndex = 9;
-            // 
-            // radioControl1
-            // 
-            this.radioControl1.BackColor = System.Drawing.SystemColors.ActiveCaptionText;
-            this.radioControl1.Location = new System.Drawing.Point(264, 2);
-            this.radioControl1.Name = "radioControl1";
-            this.radioControl1.Size = new System.Drawing.Size(116, 62);
-            this.radioControl1.TabIndex = 11;
             // 
             // Main
             // 

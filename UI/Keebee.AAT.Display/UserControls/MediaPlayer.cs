@@ -140,6 +140,8 @@ namespace Keebee.AAT.Display.UserControls
             axWindowsMediaPlayer1.settings.volume = 70;
             axWindowsMediaPlayer1.settings.mute = false;
             axWindowsMediaPlayer1.settings.setMode("loop", _isLoop);
+            axWindowsMediaPlayer1.enableContextMenu = false;
+            axWindowsMediaPlayer1.Ctlenabled = false;
         }
 
         private void ShowHideResponseControls()

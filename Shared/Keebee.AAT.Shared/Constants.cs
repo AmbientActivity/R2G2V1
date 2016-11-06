@@ -159,4 +159,9 @@ namespace Keebee.AAT.Shared
         public const int OffScreen = 9;
         public const int VolumeControl = 10;
     }
+
+    public static class MediaPlayerControl
+    {
+        public static int DefaultVolume = 70;
+    }
 }

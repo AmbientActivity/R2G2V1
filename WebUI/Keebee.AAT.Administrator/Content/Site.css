@@ -106,7 +106,29 @@ a:hover, a:visited, a:link, a:active {
     width: 470px;
 }
 
+/* video capture */
+    #tblVideoCapture > tbody > tr > th, #tblVideoCapture > tbody > tr > td {
+    font-size: 13px;
+    padding: 8px 5px 5px 8px;
+}
+
+/* event logs */
+    #tblEventLog > tbody > tr > th, #tblEventLog > tbody > tr > td {
+    font-size: 13px;
+    padding: 8px 5px 5px 8px;
+}
+
+/* media files */
+#tblFile > tbody > tr > th, #tblFile > tbody > tr > td {
+    font-size: 13px;
+    padding: 8px 5px 5px 8px;
+}
+
 /* residents */
+#tblResident > tbody > tr > th, #tblResident > tbody > tr > td {
+    font-size: 13px;
+    padding: 8px 5px 5px 8px;
+}
 .resident-edit {
     width: 400px;
 }

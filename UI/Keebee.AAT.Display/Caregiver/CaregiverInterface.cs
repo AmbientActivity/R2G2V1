@@ -111,10 +111,10 @@ namespace Keebee.AAT.Display.Caregiver
 
         private const int LabelMediaSourceFontSize = 10;
         private const int LabelMediaSourceMarginTop = 25;
-        private const int ComboBoxResidentWidth = 375;
+        private const int ComboBoxResidentWidth = 465;
 
         private const int TableLayoutPanelColOneWidth = 100;
-        private const int TableLayoutPanelColTwoWidth = 375;
+        private const int TableLayoutPanelColTwoWidth = 465;
 
         private const int TabPaddingX = 3;
         private const int TabPaddingY = 3;
@@ -130,10 +130,10 @@ namespace Keebee.AAT.Display.Caregiver
 
         private const int LabelMediaSourceFontSize = 20;
         private const int LabelMediaSourceMarginTop = 20;
-        private const int ComboBoxResidentWidth = 900;
+        private const int ComboBoxResidentWidth = 650;
 
         private const int TableLayoutPanelColOneWidth = 200;
-        private const int TableLayoutPanelColTwoWidth = 900;
+        private const int TableLayoutPanelColTwoWidth = 650;
 
         private const int TabPaddingX = 30;
         private const int TabPaddingY = 15;
@@ -192,7 +192,7 @@ namespace Keebee.AAT.Display.Caregiver
             ConfigureTabLayout();
 
             axWindowsMediaPlayer1.Hide();
-            axWindowsMediaPlayer1.settings.volume = 100;
+            axWindowsMediaPlayer1.settings.volume = MediaPlayerControl.DefaultVolume;
         }
 
         private void ConfigureTableLayout()
@@ -962,24 +962,6 @@ namespace Keebee.AAT.Display.Caregiver
         }
 
         // configuration/management
-        private void VolumeAdjusterButtonClick(object sender, EventArgs e)
-        {
-            try
-            {
-                var frmVolumeAdjuster = new VolumeAdjuster
-                {
-                    EventLogger = _systemEventLogger,
-                    OperationsClient = _opsClient,
-                    IsMusicPlaying = axWindowsMediaPlayer1.playState == WMPPlayState.wmppsPlaying
-                };
-                frmVolumeAdjuster.ShowDialog();
-            }
-            catch (Exception ex)
-            {
-                _systemEventLogger.WriteEntry($"Caregiver.VolumeAdjusterButtonClick: {ex.Message}", EventLogEntryType.Error);
-            }
-        }
-
         private void ResidentSelectedIndexChanged(object sender, EventArgs e)
         {
             try

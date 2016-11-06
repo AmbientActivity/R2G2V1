@@ -95,14 +95,14 @@
 
                 self.columns = ko.computed(function () {
                     var arr = [];
-                    arr.push({ title: "RFID", sortable: true, sortKey: "id", numeric: true });
-                    arr.push({ title: "First Name", sortable: true, sortKey: "firstname", numeric: false });
-                    arr.push({ title: "Last Name", sortable: true, sortKey: "lastname", numeric: false });
-                    arr.push({ title: "Gender", sortable: true, sortKey: "gender", numeric: false });
-                    arr.push({ title: "Level", sortable: true, sortKey: "gamedifficultylevel", numeric: true });
-                    arr.push({ title: "Capturable", sortable: true, sortKey: "allowvideocapturing", numeric: false });
-                    arr.push({ title: "Created", sortable: true, sortKey: "datecreated", numeric: true });
-                    arr.push({ title: "Updated", sortable: true, sortKey: "dateupdated", numeric: true });
+                    arr.push({ title: "RFID", sortable: true, sortKey: "id", numeric: true, cssClass: "col-rfid" });
+                    arr.push({ title: "First Name", sortable: true, sortKey: "firstname", numeric: false, cssClass: "col-firstname" });
+                    arr.push({ title: "Last Name", sortable: true, sortKey: "lastname", numeric: false, cssClass: "col-lastname" });
+                    arr.push({ title: "Gender", sortable: true, sortKey: "gender", numeric: false, cssClass: "col-gender" });
+                    arr.push({ title: "Level", sortable: true, sortKey: "gamedifficultylevel", numeric: true, cssClass: "col-level" });
+                    arr.push({ title: "Capturable", sortable: true, sortKey: "allowvideocapturing", numeric: false, cssClass: "col-capturable" });
+                    arr.push({ title: "Created", sortable: true, sortKey: "datecreated", numeric: true, cssClass: "col-date" });
+                    arr.push({ title: "Updated", sortable: true, sortKey: "dateupdated", numeric: true, cssClass: "col-date" });
                     return arr;
                 });
 

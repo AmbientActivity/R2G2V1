@@ -1,6 +1,7 @@
 ﻿using Keebee.AAT.SystemEventLogging;
 using Keebee.AAT.Display.Properties;
 using Keebee.AAT.RESTClient;
+using Keebee.AAT.Shared;
 using System;
 using System.Diagnostics;
 using System.Drawing;
@@ -71,7 +72,7 @@ namespace Keebee.AAT.Display.UserControls
             axWindowsMediaPlayer1.Dock = DockStyle.Fill;
             axWindowsMediaPlayer1.uiMode = "none";
             axWindowsMediaPlayer1.settings.setMode("loop", true);
-            axWindowsMediaPlayer1.settings.volume = 70;
+            axWindowsMediaPlayer1.settings.volume = MediaPlayerControl.DefaultVolume;
             axWindowsMediaPlayer1.enableContextMenu = false;
             axWindowsMediaPlayer1.Ctlenabled = false;
         }

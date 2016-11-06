@@ -297,15 +297,13 @@ namespace Keebee.AAT.Display
                     case ResponseTypeId.Television:
                     case ResponseTypeId.Cats:
                         radioControl1.Hide();
-                        mediaPlayer1.Hide();
+                        mediaPlayer1.Stop();
                         if (newResponseTypeid != ResponseTypeId.Radio &&
                             newResponseTypeid != ResponseTypeId.Television &&
                             newResponseTypeid != ResponseTypeId.Cats)
-
+                        {
                             mediaPlayer1.Hide();
-                        else
-                            mediaPlayer1.Stop();
-
+                        }
                         break;
                     case ResponseTypeId.Ambient:
                         ambient1.Hide();
@@ -443,11 +441,9 @@ namespace Keebee.AAT.Display
                     {
                         case ResponseTypeId.Radio:
                             mediaPathTypeId = MediaPathTypeId.Music;
-                            radioControl1.Show();
                             break;
                         case ResponseTypeId.Television:
                         case ResponseTypeId.Cats:
-                            radioControl1.Hide();
                             mediaPathTypeId = MediaPathTypeId.Videos;
                             break;
                     }
@@ -457,6 +453,9 @@ namespace Keebee.AAT.Display
 
                     mediaFiles.Shuffle();
                     StopCurrentResponse(responseTypeId);
+
+                    if (responseTypeId == ResponseTypeId.Radio)
+                        radioControl1.Show();
 
                     mediaPlayer1.Show();
                     mediaPlayer1.Play(responseTypeId, responseValue, mediaFiles, _currentIsActiveEventLog, false);

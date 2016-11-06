@@ -137,7 +137,7 @@ namespace Keebee.AAT.Display.UserControls
 #endif
             }
 
-            axWindowsMediaPlayer1.settings.volume = 70;
+            axWindowsMediaPlayer1.settings.volume = MediaPlayerControl.DefaultVolume;
             axWindowsMediaPlayer1.settings.mute = false;
             axWindowsMediaPlayer1.settings.setMode("loop", _isLoop);
             axWindowsMediaPlayer1.enableContextMenu = false;

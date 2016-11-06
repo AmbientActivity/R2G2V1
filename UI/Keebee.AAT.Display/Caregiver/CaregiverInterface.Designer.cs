@@ -50,7 +50,6 @@ namespace Keebee.AAT.Display.Caregiver
             this.btnClose = new System.Windows.Forms.Button();
             this.cboResident = new Keebee.AAT.Display.Caregiver.CustomControls.ComboBoxLarge();
             this.lblMediaSource = new System.Windows.Forms.Label();
-            this.btnVolume = new System.Windows.Forms.Button();
             this.tableLayoutPanel1.SuspendLayout();
             this.tbMedia.SuspendLayout();
             this.tabImages.SuspendLayout();
@@ -79,29 +78,27 @@ namespace Keebee.AAT.Display.Caregiver
             // 
             // tableLayoutPanel1
             // 
-            this.tableLayoutPanel1.ColumnCount = 4;
+            this.tableLayoutPanel1.ColumnCount = 3;
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 95F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 446F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 526F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 73F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableLayoutPanel1.Controls.Add(this.tbMedia, 0, 1);
-            this.tableLayoutPanel1.Controls.Add(this.btnClose, 3, 0);
+            this.tableLayoutPanel1.Controls.Add(this.btnClose, 2, 0);
             this.tableLayoutPanel1.Controls.Add(this.cboResident, 1, 0);
             this.tableLayoutPanel1.Controls.Add(this.lblMediaSource, 0, 0);
-            this.tableLayoutPanel1.Controls.Add(this.btnVolume, 2, 0);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 2;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 73F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableLayoutPanel1.Size = new System.Drawing.Size(694, 404);
             this.tableLayoutPanel1.TabIndex = 7;
             // 
             // tbMedia
             // 
-            this.tableLayoutPanel1.SetColumnSpan(this.tbMedia, 4);
+            this.tableLayoutPanel1.SetColumnSpan(this.tbMedia, 3);
             this.tbMedia.Controls.Add(this.tabImages);
             this.tbMedia.Controls.Add(this.tabMusic);
             this.tbMedia.Controls.Add(this.tabVideos);
@@ -285,7 +282,7 @@ namespace Keebee.AAT.Display.Caregiver
             this.cboResident.Margin = new System.Windows.Forms.Padding(3, 15, 3, 3);
             this.cboResident.Name = "cboResident";
             this.cboResident.SelectedValue = null;
-            this.cboResident.Size = new System.Drawing.Size(440, 47);
+            this.cboResident.Size = new System.Drawing.Size(520, 47);
             this.cboResident.TabIndex = 7;
             this.cboResident.SelectedIndexChanged += new System.EventHandler(this.ResidentSelectedIndexChanged);
             // 
@@ -299,20 +296,6 @@ namespace Keebee.AAT.Display.Caregiver
             this.lblMediaSource.Size = new System.Drawing.Size(92, 16);
             this.lblMediaSource.TabIndex = 3;
             this.lblMediaSource.Text = "Media Source";
-            // 
-            // btnVolume
-            // 
-            this.btnVolume.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnVolume.Enabled = false;
-            this.btnVolume.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnVolume.Image = ((System.Drawing.Image)(resources.GetObject("btnVolume.Image")));
-            this.btnVolume.Location = new System.Drawing.Point(548, 3);
-            this.btnVolume.Name = "btnVolume";
-            this.btnVolume.Size = new System.Drawing.Size(70, 64);
-            this.btnVolume.TabIndex = 0;
-            this.btnVolume.UseVisualStyleBackColor = true;
-            this.btnVolume.Visible = false;
-            this.btnVolume.Click += new System.EventHandler(this.VolumeAdjusterButtonClick);
             // 
             // CaregiverInterface
             // 
@@ -360,6 +343,5 @@ namespace Keebee.AAT.Display.Caregiver
         private Button btnClose;
         private CustomControls.ComboBoxLarge cboResident;
         private Label lblMediaSource;
-        private Button btnVolume;
     }
 }

@@ -30,17 +30,10 @@ namespace Keebee.AAT.Display.UserControls
 
         private IWMPPlaylist _playlist;
 
-        // active resident display timer
-        private readonly Timer _residentDisplayTimer;
-
         public AmbientPlayer()
         {
             InitializeComponent();
             ConfigureMediaPlayer();
-            lblActiveResident.Hide();
-
-            _residentDisplayTimer = new Timer { Interval = 3000 };
-            _residentDisplayTimer.Tick += ActiveResidentTimerTick;
         }
 
         public void Play(IWMPPlaylist playlist)
@@ -94,34 +87,6 @@ namespace Keebee.AAT.Display.UserControls
                     _systemEventLogger.WriteEntry($"AmbientPlayer.PlayAmbient: {ex.Message}", EventLogEntryType.Error);
                 }
             }
-        }
-
-        private void ActiveResidentTimerTick(object sender, EventArgs e)
-        {
-            lblActiveResident.Hide();
-        }
-
-        private void axWindowsMediaPlayer1_ClickEvent(object sender, AxWMPLib._WMPOCXEvents_ClickEvent e)
-        {
-#if DEBUG
-            var screenWidth = SystemInformation.PrimaryMonitorSize.Width/3;
-            const int area = 30;
-            lblActiveResident.Font = new Font(FontFamily.GenericSansSerif, 13);
-#elif !DEBUG
-            const int area = 45;
-            var screenWidth = SystemInformation.PrimaryMonitorSize.Width;
-            lblActiveResident.Font = new Font(FontFamily.GenericSansSerif, 17);
-#endif
-            if (e.fX <= screenWidth - area || e.fY >= area) return;
-
-            var activeResident = _opsClient.GetActiveResident();
-            lblActiveResident.Text =
-                string.Format(Resources.ResidentName, activeResident.Resident.FirstName,
-                    activeResident.Resident.LastName).Trim();
-
-            _residentDisplayTimer.Stop();
-            lblActiveResident.Show();
-            _residentDisplayTimer.Start();
         }
     }
 }

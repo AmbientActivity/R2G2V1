@@ -98,11 +98,16 @@ namespace Keebee.AAT.Display
         // opacity layer (for volume control or any other modal dialogs)
         private readonly OpaqueLayer _opaqueLayer;
 
+        // active resident display timer
+        private readonly Timer _residentDisplayTimer;
+
         public Main()
         {
             InitializeComponent();
             ConfigureUserControls();
             _opaqueLayer = new OpaqueLayer { Dock = DockStyle.Fill };
+            _residentDisplayTimer = new Timer { Interval = 3000 };
+            _residentDisplayTimer.Tick += ActiveResidentTimerTick;
 
             // display-sms message queue sender
             _messageQueueDisplaySms = new CustomMessageQueue(new CustomMessageQueueArgs
@@ -184,6 +189,16 @@ namespace Keebee.AAT.Display
 
             offScreen1.Dock = DockStyle.Fill;
             offScreen1.Hide();
+
+#if DEBUG
+            var screenWidth = SystemInformation.PrimaryMonitorSize.Width / 3;
+            lblActiveResident.Font = new Font(FontFamily.GenericSansSerif, 13);
+#elif !DEBUG
+            var screenWidth = SystemInformation.PrimaryMonitorSize.Width;
+            lblActiveResident.Font = new Font(FontFamily.GenericSansSerif, 17);
+#endif
+            lblActiveResident.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            lblActiveResident.Hide();
         }
 
         private void SetPostLoadProperties()
@@ -203,8 +218,6 @@ namespace Keebee.AAT.Display
             mediaPlayer1.SystemEventLogger = _systemEventLogger;
             slideViewerFlash1.SystemEventLogger = _systemEventLogger;
             matchingGame1.SystemEventLogger = _systemEventLogger;
-
-            ambient1.OperationsClient = _opsClient;
         }
 
         #endregion
@@ -424,6 +437,22 @@ namespace Keebee.AAT.Display
             }
         }
 
+        private void DisplayActiveResident()
+        {
+            lblActiveResident.Hide();
+            _residentDisplayTimer.Stop();
+
+            var activeResident = _opsClient.GetActiveResident();
+            lblActiveResident.Text =
+                    string.Format(Resources.ResidentName, activeResident.Resident.FirstName,
+                    activeResident.Resident.LastName).Trim();
+
+            lblActiveResident.Left = Width - lblActiveResident.Width;
+
+            lblActiveResident.Show();
+            _residentDisplayTimer.Start();
+        }
+
         #region callback
 
         private void PlayMedia(int responseTypeId, int responseValue)
@@ -459,6 +488,7 @@ namespace Keebee.AAT.Display
 
                     mediaPlayer1.Show();
                     mediaPlayer1.Play(responseTypeId, responseValue, mediaFiles, _currentIsActiveEventLog, false);
+                    DisplayActiveResident();
 
                     _currentResponseTypeId = responseTypeId;  // radio or television
                 }
@@ -537,6 +567,7 @@ namespace Keebee.AAT.Display
 
                 slideViewerFlash1.Show();
                 slideViewerFlash1.Play(images, autoStart: true);
+                DisplayActiveResident();
 
                 if (_currentIsActiveEventLog)
                     _activityEventLogger.Add(_activeConfigDetail.ConfigId, _activeConfigDetail.Id, _activeResident.Id);
@@ -567,6 +598,7 @@ namespace Keebee.AAT.Display
                 _isMatchingGameTimeoutExpired = false;
 
                 matchingGame1.Show();
+                DisplayActiveResident();
 
                 if (_currentIsActiveEventLog)
                 {
@@ -626,6 +658,8 @@ namespace Keebee.AAT.Display
                     StopCurrentResponse();
                     offScreen1.Show();
                     offScreen1.Play();
+                    DisplayActiveResident();
+
                     _currentResponseTypeId = ResponseTypeId.OffScreen;
                 }
                 else
@@ -637,6 +671,8 @@ namespace Keebee.AAT.Display
                     ExecuteRandom(new [] {
                         ResponseTypeId.MatchingGame,
                         ResponseTypeId.SlideShow});
+
+                    DisplayActiveResident();
                 }
             }
         }
@@ -859,6 +895,11 @@ namespace Keebee.AAT.Display
             mediaPlayer1.Dock = DockStyle.None;
             radioControl1.Dock = DockStyle.None;
             offScreen1.Dock = DockStyle.None;
+        }
+
+        private void ActiveResidentTimerTick(object sender, EventArgs e)
+        {
+            lblActiveResident.Hide();
         }
 
         #endregion

@@ -30,6 +30,7 @@ namespace Keebee.AAT.Display
         /// </summary>
         private void InitializeComponent()
         {
+            this.lblActiveResident = new System.Windows.Forms.Label();
             this.radioControl1 = new Keebee.AAT.Display.UserControls.RadioControl();
             this.offScreen1 = new Keebee.AAT.Display.UserControls.OffScreen();
             this.slideViewerFlash1 = new Keebee.AAT.Display.UserControls.SlideViewerFlash();
@@ -37,6 +38,19 @@ namespace Keebee.AAT.Display
             this.ambient1 = new Keebee.AAT.Display.UserControls.AmbientPlayer();
             this.matchingGame1 = new Keebee.AAT.Display.UserControls.MatchingGame();
             this.SuspendLayout();
+            // 
+            // lblActiveResident
+            // 
+            this.lblActiveResident.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.lblActiveResident.AutoSize = true;
+            this.lblActiveResident.BackColor = System.Drawing.Color.White;
+            this.lblActiveResident.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblActiveResident.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.lblActiveResident.Location = new System.Drawing.Point(321, 191);
+            this.lblActiveResident.Name = "lblActiveResident";
+            this.lblActiveResident.Size = new System.Drawing.Size(88, 31);
+            this.lblActiveResident.TabIndex = 15;
+            this.lblActiveResident.Text = "Public";
             // 
             // radioControl1
             // 
@@ -93,6 +107,7 @@ namespace Keebee.AAT.Display
             this.BackColor = System.Drawing.Color.Yellow;
             this.ClientSize = new System.Drawing.Size(408, 221);
             this.ControlBox = false;
+            this.Controls.Add(this.lblActiveResident);
             this.Controls.Add(this.radioControl1);
             this.Controls.Add(this.offScreen1);
             this.Controls.Add(this.slideViewerFlash1);
@@ -109,6 +124,7 @@ namespace Keebee.AAT.Display
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainFormClosing);
             this.Shown += new System.EventHandler(this.MainShown);
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -120,6 +136,7 @@ namespace Keebee.AAT.Display
         private SlideViewerFlash slideViewerFlash1;
         private OffScreen offScreen1;
         private RadioControl radioControl1;
+        private System.Windows.Forms.Label lblActiveResident;
     }
 }
 

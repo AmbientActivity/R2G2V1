@@ -311,8 +311,7 @@ namespace Keebee.AAT.Display
                     case ResponseTypeId.Cats:
                         radioControl1.Hide();
                         mediaPlayer1.Stop();
-                        if (newResponseTypeid != ResponseTypeId.Radio &&
-                            newResponseTypeid != ResponseTypeId.Television &&
+                        if (newResponseTypeid != ResponseTypeId.Television &&
                             newResponseTypeid != ResponseTypeId.Cats)
                         {
                             mediaPlayer1.Hide();

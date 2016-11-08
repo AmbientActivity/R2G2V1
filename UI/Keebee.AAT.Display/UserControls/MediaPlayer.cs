@@ -36,14 +36,13 @@ namespace Keebee.AAT.Display.UserControls
         private delegate void PlayMediaDelegate(string[] files);
         private delegate void RaiseMediaCompleteEventDelegate();
 
-        private string _currentPlaylistItem;
-        private string _lastPlaylistItem;
         private int _maxIndex;
         private bool _isPlaylistComplete;
         private bool _isNewPlaylist;
         private bool _isPlayPrevious;
         private bool _isLoop;
         private IWMPPlaylist _playlist;
+        private IWMPMedia _lastMedia;
 
         private int _responseTypeId;
 
@@ -174,8 +173,7 @@ namespace Keebee.AAT.Display.UserControls
                         axWindowsMediaPlayer1.Ctlcontrols.stop();
 
                     _playlist = axWindowsMediaPlayer1.LoadPlaylist(PlaylistProfile, files);
-                    _lastPlaylistItem = _playlist.Item[_maxIndex].name;
-                    _currentPlaylistItem = _playlist.Item[0].name;
+                    _lastMedia = _playlist.Item[_maxIndex];
 
                     axWindowsMediaPlayer1.currentPlaylist = _playlist;
                 }
@@ -223,7 +221,6 @@ namespace Keebee.AAT.Display.UserControls
             switch (e.newState)
             {
                 case (int)WMPPlayState.wmppsPlaying:
-                    _currentPlaylistItem = axWindowsMediaPlayer1.currentMedia.name;
                     _isNewPlaylist = false;
 
                     if (_isActiveEventLog)
@@ -235,7 +232,7 @@ namespace Keebee.AAT.Display.UserControls
 
                     if (_isLoop) return;
 
-                    if (_currentPlaylistItem == _lastPlaylistItem)
+                    if (axWindowsMediaPlayer1.currentMedia.isIdentical[_lastMedia])
                     {
                         RaiseMediaCompleteEvent();
                         _isPlaylistComplete = true;
@@ -256,7 +253,7 @@ namespace Keebee.AAT.Display.UserControls
 
                             _playlist.removeItem(axWindowsMediaPlayer1.currentMedia);
                             _maxIndex--;
-                            _lastPlaylistItem = _playlist.Item[_maxIndex].name;
+                            _lastMedia = _playlist.Item[_maxIndex];
                         }
                     }
                     break;

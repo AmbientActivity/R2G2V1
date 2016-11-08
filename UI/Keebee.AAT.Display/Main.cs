@@ -559,14 +559,15 @@ namespace Keebee.AAT.Display
                 var music = GetFilesForResponseType(ResponseTypeId.Radio, MediaPathTypeId.Music);
                 if (!music.Any()) return;
 
-                music.Shuffle();
-                mediaPlayer1.Play(ResponseTypeId.Radio, 0, new [] {music.First() }, false, false );
-
-                images.Shuffle();
                 StopCurrentResponse();
 
+                images.Shuffle();
                 slideViewerFlash1.Show();
                 slideViewerFlash1.Play(images, autoStart: true);
+
+                music.Shuffle();
+                mediaPlayer1.Play(ResponseTypeId.Radio, 0, new[] { music.First() }, false, false);
+
                 DisplayActiveResident();
 
                 if (_currentIsActiveEventLog)

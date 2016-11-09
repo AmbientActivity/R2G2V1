@@ -113,6 +113,7 @@ namespace Keebee.AAT.Display.UserControls
         {
             axWindowsMediaPlayer1.settings.mute = false;
             axWindowsMediaPlayer1.Ctlcontrols.stop();
+            _playlist.clear();
         }
 
         private void ConfigureComponents()
@@ -123,24 +124,18 @@ namespace Keebee.AAT.Display.UserControls
 
         private void ConfigureMediaPlayer()
         {
-            if (_responseTypeId == ResponseTypeId.Radio)
-            {
-                axWindowsMediaPlayer1.uiMode = "invisible";
-            }
-            else
-            {
 #if DEBUG
-                axWindowsMediaPlayer1.uiMode = "full";
+            axWindowsMediaPlayer1.uiMode = "full";
 #elif !DEBUG
-                axWindowsMediaPlayer1.uiMode = "none";
+            axWindowsMediaPlayer1.uiMode = _responseTypeId == ResponseTypeId.Radio 
+                ? "invisible" 
+                : "none";
+            axWindowsMediaPlayer1.Ctlenabled = false;
 #endif
-            }
-
             axWindowsMediaPlayer1.settings.volume = MediaPlayerControl.DefaultVolume;
             axWindowsMediaPlayer1.settings.mute = false;
             axWindowsMediaPlayer1.settings.setMode("loop", _isLoop);
             axWindowsMediaPlayer1.enableContextMenu = false;
-            axWindowsMediaPlayer1.Ctlenabled = false;
         }
 
         private void ShowHideResponseControls()
@@ -194,6 +189,7 @@ namespace Keebee.AAT.Display.UserControls
             }
             else
             {
+                _playlist.clear();
                 MediaPlayerCompleteEvent?.Invoke(new object(), new EventArgs());
             }
         }

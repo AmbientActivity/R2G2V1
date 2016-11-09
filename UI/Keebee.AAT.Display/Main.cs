@@ -481,10 +481,10 @@ namespace Keebee.AAT.Display
 
                     mediaFiles.Shuffle();
                     StopCurrentResponse(responseTypeId);
-
+#if !DEBUG
                     if (responseTypeId == ResponseTypeId.Radio)
                         radioControl1.Show();
-
+#endif
                     mediaPlayer1.Show();
                     mediaPlayer1.Play(responseTypeId, responseValue, mediaFiles, _currentIsActiveEventLog, false);
                     DisplayActiveResident();
@@ -738,7 +738,7 @@ namespace Keebee.AAT.Display
             return displayMessageBody;
         }
 
-        #endregion
+#endregion
 
         #region event handlers
 

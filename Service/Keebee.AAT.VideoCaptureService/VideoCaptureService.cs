@@ -98,8 +98,6 @@ namespace Keebee.AAT.VideoCaptureService
             {
                 if (_capture == null) return;
 
-                _systemEventLogger.WriteEntry("Starting capture");
-
                 var now = DateTime.Now.ToString("yyyy-MM-dd");
                 var rootFolder = $@"{VideoCaptures.Path}\{now}";
                 if (!Directory.Exists(rootFolder))
@@ -108,17 +106,11 @@ namespace Keebee.AAT.VideoCaptureService
                 var filename = $"Capture_{DateTime.Now:yyyyMMdd_hhmmss}.mp4";
                 var storageFolder = await StorageFolder.GetFolderFromPathAsync(rootFolder);
                 var recordStorageFile = await storageFolder.CreateFileAsync(filename);
-#if DEBUG
-                _systemEventLogger.WriteEntry("Storage file created successfully");
-#endif
                 var recordProfile = MediaEncodingProfile.CreateMp4(_encodingQuality);
 
                 await _capture.StartRecordToStorageFileAsync(recordProfile, recordStorageFile);
 
                 _isRecording = true;
-#if DEBUG
-                _systemEventLogger.WriteEntry("Capture started successfully");
-#endif
             }
             catch (Exception ex)
             {
@@ -133,13 +125,9 @@ namespace Keebee.AAT.VideoCaptureService
                 if (_capture == null) return;
                 if (!_isRecording) return;
 
-                _systemEventLogger.WriteEntry("Stopping capture");
-
                 await _capture.StopRecordAsync();
 
                 _isRecording = false;
-
-                _systemEventLogger.WriteEntry("Capture stopped successfully");
             }
             catch (Exception ex)
             {
@@ -155,20 +143,11 @@ namespace Keebee.AAT.VideoCaptureService
 
         private void MessageReceivedVideoCapture(object source, MessageEventArgs e)
         {
-            if (e.MessageBody == "1")
-            {
-                if (!_displayIsActive || _isRecording) return;
+            if (e.MessageBody != "1") return;
+            if (!_displayIsActive || _isRecording) return;
 
-                StartCapture();
-                _timer.Start();
-            }
-            // TODO: should it stop recording if a new resident becomes active
-            // TODO: who has not agreed to be captured?
-            //else
-            //{
-            //    _timer.Stop();
-            //    StopCapture();
-            //}
+            StartCapture();
+            _timer.Start();
         }
 
         private void MessageReceivedDisplayVideoCapture(object source, MessageEventArgs e)

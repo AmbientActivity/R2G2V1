@@ -96,35 +96,5 @@ namespace Keebee.AAT.Display.Properties {
                 return ResourceManager.GetString("ResidentName", resourceCulture);
             }
         }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap tv_test_pattern {
-            get {
-                object obj = ResourceManager.GetObject("tv_test_pattern", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap tv_test_pattern_debug {
-            get {
-                object obj = ResourceManager.GetObject("tv_test_pattern_debug", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap zenith_radio {
-            get {
-                object obj = ResourceManager.GetObject("zenith_radio", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
     }
 }

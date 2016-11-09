@@ -127,15 +127,6 @@
   <data name="radio_panel" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Images\radio-panel.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="tv_test_pattern" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Images\tv-test-pattern.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="tv_test_pattern_debug" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Images\tv-test-pattern-debug.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="zenith_radio" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Images\zenith-radio.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="ResidentName" xml:space="preserve">
     <value>{0} {1}</value>
   </data>

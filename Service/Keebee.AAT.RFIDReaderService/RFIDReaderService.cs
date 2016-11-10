@@ -95,7 +95,7 @@ namespace Keebee.AAT.RfidReaderService
                     if (residentId < 0) continue;
 
                     var resident = residentId == 0
-                        ? new Resident { Id = PublicMediaSource.Id, GameDifficultyLevel = 1, AllowVideoCapturing = false }
+                        ? new Resident { Id = PublicMediaSource.Id, FirstName = PublicMediaSource.Name, GameDifficultyLevel = 1, AllowVideoCapturing = false }
                         : _opsClient.GetResident(residentId);
 
                     if (resident == null) continue;
@@ -229,6 +229,7 @@ namespace Keebee.AAT.RfidReaderService
             var residentMessage = new ResidentMessage
             {
                 Id = resident.Id,
+                Name = $"{resident.FirstName} {resident.LastName}".Trim(),
                 GameDifficultyLevel = resident.GameDifficultyLevel,
                 AllowVideoCapturing = resident.AllowVideoCapturing
             };

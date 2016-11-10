@@ -99,6 +99,7 @@ namespace Keebee.AAT.Shared
     public static class PublicMediaSource
     {
         public const int Id = 0;
+        public const string Name = "Public";
         public const string Description = "Public Library";
     }
 

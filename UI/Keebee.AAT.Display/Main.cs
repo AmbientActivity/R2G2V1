@@ -441,14 +441,10 @@ namespace Keebee.AAT.Display
             lblActiveResident.Hide();
             _residentDisplayTimer.Stop();
 
-            var activeResident = _opsClient.GetActiveResident();
-            lblActiveResident.Text =
-                    string.Format(Resources.ResidentName, activeResident.Resident.FirstName,
-                    activeResident.Resident.LastName).Trim();
-
+            lblActiveResident.Text = _activeResident.Name;
             lblActiveResident.Left = Width - lblActiveResident.Width;
-
             lblActiveResident.Show();
+
             _residentDisplayTimer.Start();
         }
 

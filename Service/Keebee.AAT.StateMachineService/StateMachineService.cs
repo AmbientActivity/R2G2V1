@@ -178,12 +178,6 @@ namespace Keebee.AAT.StateMachineService
                 }
 
                 _activeResident = resident;
-                if (_activeResident == null) return;
-
-                // TODO: should it stop recording if a new resident becomes active
-                // TODO: who has not agreed to be captured?
-                //if (!_activeResident.AllowVideoCapturing)
-                //    _messageQueueVideoCapture.Send("0");
             }
 
             catch (Exception ex)
@@ -208,6 +202,7 @@ namespace Keebee.AAT.StateMachineService
                 _activeResident = new ResidentMessage
                 {
                     Id = PublicMediaSource.Id,
+                    Name = PublicMediaSource.Name,
                     GameDifficultyLevel = 1,
                     AllowVideoCapturing = false
                 };

@@ -87,14 +87,5 @@ namespace Keebee.AAT.Display.Properties {
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to {0} {1}.
-        /// </summary>
-        internal static string ResidentName {
-            get {
-                return ResourceManager.GetString("ResidentName", resourceCulture);
-            }
-        }
     }
 }

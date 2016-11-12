@@ -14,8 +14,7 @@ namespace Keebee.AAT.Display.Caregiver
         private const string PlaylistCaregiver = "caregiver";
 
         private IWMPPlaylist _playlist;
-        private string _currentPlaylistItem;
-        private string _lastPlaylistItem;
+        private IWMPMedia _lastMedia;
         private int _maxIndex;
 
         private SystemEventLogger _systemEventLogger;
@@ -62,7 +61,6 @@ namespace Keebee.AAT.Display.Caregiver
             axWindowsMediaPlayer1.settings.setMode("loop", false);
             axWindowsMediaPlayer1.settings.volume = MediaPlayerControl.DefaultVolume;
             axWindowsMediaPlayer1.enableContextMenu = false;
-            axWindowsMediaPlayer1.Ctlenabled = false;
         }
 
         private void Play()
@@ -71,8 +69,7 @@ namespace Keebee.AAT.Display.Caregiver
             {
                 _maxIndex = _videos.Length - 1;
                 _playlist = axWindowsMediaPlayer1.LoadPlaylist(PlaylistCaregiver, _videos);
-                _lastPlaylistItem = _playlist.Item[_maxIndex].name;
-                _currentPlaylistItem = _playlist.Item[0].name;
+                _lastMedia = _playlist.Item[_maxIndex];
 
                 axWindowsMediaPlayer1.currentPlaylist = _playlist;
             }
@@ -86,12 +83,8 @@ namespace Keebee.AAT.Display.Caregiver
         {
             switch (e.newState)
             {
-                case (int)WMPPlayState.wmppsPlaying:
-                    _currentPlaylistItem = axWindowsMediaPlayer1.currentMedia.name;
-                    break;
-
                 case (int)WMPPlayState.wmppsMediaEnded:
-                    if (_currentPlaylistItem == _lastPlaylistItem)
+                    if (axWindowsMediaPlayer1.currentMedia.isIdentical[_lastMedia])
                     {
                         Close();
                     }

@@ -56,19 +56,30 @@ namespace Keebee.AAT.Display.Caregiver
 
         #region local variables
 
+        // constants
+        private const int TabIndexImagesGeneral = 0;
+        private const int TabIndexMusic = 1;
+        private const int TabIndexRadioShows = 2;
+        private const int TabIndexTVShows = 3;
+        private const int TabIndexActivities = 4;
+        private const int TabIndexHomeMovies = 5;
+        private const int TabIndexImagesPersonal = 6;
+
         // delegate
         private delegate void RaiseCaregiverCompleteEventDelegate();
 
         // background workers
-        private BackgroundWorker _bgwImageThumbnails;
-        private BackgroundWorker _bgwPictureThumbnails;
-        private BackgroundWorker _bgwVideoThumbnails;
+        private BackgroundWorker _bgwImageGeneralThumbnails;
+        private BackgroundWorker _bgwImagePersonalThumbnails;
+        private BackgroundWorker _bgwTVShowThumbnails;
+        private BackgroundWorker _bgwHomeMovieThumbnails;
 
         // image lists
-        private ImageList _imageListImages;
-        private ImageList _imageListPictures;
-        private ImageList _imageListVideos;
-        private readonly ImageList _imageListMusic;
+        private ImageList _imageListImagesGeneral;
+        private ImageList _imageListImagesPersonal;
+        private ImageList _imageListTVShows;
+        private ImageList _imageListHomeMovies;
+        private readonly ImageList _imageListAudio;
 
         private IEnumerable<MediaResponseType> _mediaFiles;
 
@@ -77,15 +88,19 @@ namespace Keebee.AAT.Display.Caregiver
 
         // playlist
         private const string PlaylistCaregiver = PlaylistName.Caregiver;
-        private IWMPPlaylist _playlist;
+        private IWMPPlaylist _musicPlaylist;
+        private IWMPPlaylist _radioShowPlaylist;
         private int _totalSongs;
+        private int _totalRadioShows;
 
         // current values
         private Resident _currentResident;
         private int _currentMusicIndex;
-        private string[] _currentImageFiles;
-        private string[] _currentPictureFiles;
-        private string[] _currentVideoFiles;
+        private int _currentRadioShowIndex;
+        private string[] _currentImageGeneralFiles;
+        private string[] _currentImagePersonalFiles;
+        private string[] _currentTVShowFiles;
+        private string[] _currentHomeMovieFiles;
 
         // image indices
         private const int ImageIndexPlay = 0;
@@ -93,21 +108,19 @@ namespace Keebee.AAT.Display.Caregiver
         private const int ImageIndexPause = 2;
 
         // list view column indices
-        private const int ListViewMusicColumnStatus = 1;
-        private const int ListViewMusicColumnName = 2;
-        private const int ListViewMediaColumnStreamId = 2;
+        private const int ListViewAudioColumnStatus = 1;
+        private const int ListViewColumnStreamId = 2;
 
         private const int ListViewIActivitiesColumnDifficultyLevel = 1;
         private const int ListViewIActivitiesColumnName = 2;
         private const int ListViewIActivitiesColumnId = 3;
 
-        //TODO: find a way to compute these values dynamically
 #if DEBUG
         private const int ThumbnailDimensions = 16;
-        private const int ListViewMusicColWidthStatus = 70;
-        private const int ListViewMusicColWidthName = 507;
+        private const int ListViewAudioColWidthStatus = 70;
+        private const int ListViewAudioColWidthName = 507;
         private const int ListViewMediaColWidthName = 577;
-        private const int ListViewInteractiveResponseColWidthName = 593;
+        private const int ListViewActivitiesColWidthName = 593;
 
         private const int LabelMediaSourceFontSize = 10;
         private const int LabelMediaSourceMarginTop = 25;
@@ -123,10 +136,10 @@ namespace Keebee.AAT.Display.Caregiver
         private const int TabFontSize = 10;
 #elif !DEBUG
         private const int ThumbnailDimensions = 64;
-        private const int ListViewMusicColWidthStatus = 150;
-        private const int ListViewMusicColWidthName = 1659;
-        private const int ListViewMediaColWidthName = 1873;
-        private const int ListViewInteractiveResponseColWidthName = 1873;
+        private const int ListViewAudioColWidthStatus = 150;
+        private const int ListViewAudioColWidthName = 1663;
+        private const int ListViewMediaColWidthName = 1813;
+        private const int ListViewActivitiesColWidthName = 1877;
 
         private const int LabelMediaSourceFontSize = 20;
         private const int LabelMediaSourceMarginTop = 20;
@@ -144,15 +157,16 @@ namespace Keebee.AAT.Display.Caregiver
 
         // to prevent background workers from lingering
         private bool _formIsClosing;
+
         #endregion
 
         public CaregiverInterface()
         {
             InitializeComponent();
 #if DEBUG
-            _imageListMusic = imageListMusicDebug;
+            _imageListAudio = imageListMusicDebug;
 #elif !DEBUG
-            _imageListMusic = imageListMusic;
+            _imageListAudio = imageListMusic;
 #endif
             ConfigureControls();
             ConfigureBackgroundWorkers();
@@ -181,11 +195,13 @@ namespace Keebee.AAT.Display.Caregiver
 
         private void ConfigureControls()
         {
-            ConfigureListViewMedia(lvImages);
+            ConfigureListViewMedia(lvImagesGeneral);
             ConfigureListViewMedia(lvMusic);
-            ConfigureListViewMedia(lvVideos);
-            ConfigureListViewMedia(lvPictures);
-            ConfigureListViewInteractiveResponses();
+            ConfigureListViewMedia(lvRadioShows);
+            ConfigureListViewMedia(lvTVShows);
+            ConfigureListViewMedia(lvHomeMovies);
+            ConfigureListViewMedia(lvImagesPersonal);
+            ConfigureListViewActivities();
 
             ConfigureTableLayout();
             ConfigureDropdown();
@@ -213,11 +229,13 @@ namespace Keebee.AAT.Display.Caregiver
             tbMedia.Font = new Font("Microsoft Sans Serif", TabFontSize);
             tbMedia.Padding = new Point(TabPaddingX, TabPaddingY);
 
-            tbMedia.TabPages[0].Font = new Font("Microsoft Sans Serif", TabPageFontSize);
-            tbMedia.TabPages[1].Font = new Font("Microsoft Sans Serif", TabPageFontSize);
-            tbMedia.TabPages[2].Font = new Font("Microsoft Sans Serif", TabPageFontSize);
-            tbMedia.TabPages[3].Font = new Font("Microsoft Sans Serif", TabPageFontSize);
-            tbMedia.TabPages[4].Font = new Font("Microsoft Sans Serif", TabPageFontSize);
+            tbMedia.TabPages[TabIndexImagesGeneral].Font = new Font("Microsoft Sans Serif", TabPageFontSize);
+            tbMedia.TabPages[TabIndexMusic].Font = new Font("Microsoft Sans Serif", TabPageFontSize);
+            tbMedia.TabPages[TabIndexRadioShows].Font = new Font("Microsoft Sans Serif", TabPageFontSize);
+            tbMedia.TabPages[TabIndexTVShows].Font = new Font("Microsoft Sans Serif", TabPageFontSize);
+            tbMedia.TabPages[TabIndexActivities].Font = new Font("Microsoft Sans Serif", TabPageFontSize);
+            tbMedia.TabPages[TabIndexHomeMovies].Font = new Font("Microsoft Sans Serif", TabPageFontSize);
+            tbMedia.TabPages[TabIndexImagesPersonal].Font = new Font("Microsoft Sans Serif", TabPageFontSize);
         }
 
         private void ConfigureListViewMedia(ListViewLarge lv)
@@ -230,66 +248,85 @@ namespace Keebee.AAT.Display.Caregiver
 
             switch (lv.Name)
             {
+                case "lvImagesGeneral":
+                    _imageListImagesGeneral = new ImageList { ImageSize = new Size(ThumbnailDimensions, ThumbnailDimensions) };
+                    lv.SmallImageList = _imageListImagesGeneral;
+                    lv.Columns.Add("", ThumbnailDimensions);
+                    break;
                 case "lvMusic":
-                    lv.SmallImageList = _imageListMusic;
+                    lv.SmallImageList = _imageListAudio;
                     lv.Columns.Add("", ThumbnailDimensions);
-                    lv.Columns.Add("Status", ListViewMusicColWidthStatus);
+                    lv.Columns.Add("Status", ListViewAudioColWidthStatus);
                     break;
-                case "lvImages":
-                    _imageListImages = new ImageList {ImageSize = new Size(ThumbnailDimensions, ThumbnailDimensions) };
-                    lv.SmallImageList = _imageListImages;
+                case "lvRadioShows":
+                    lv.SmallImageList = _imageListAudio;
+                    lv.Columns.Add("", ThumbnailDimensions);
+                    lv.Columns.Add("Status", ListViewAudioColWidthStatus);
+                    break;
+                case "lvTVShows":
+                    _imageListTVShows = new ImageList { ImageSize = new Size(ThumbnailDimensions, ThumbnailDimensions) };
+                    lv.SmallImageList = _imageListTVShows;
                     lv.Columns.Add("", ThumbnailDimensions);
                     break;
-                case "lvPictures":
-                    _imageListPictures = new ImageList { ImageSize = new Size(ThumbnailDimensions, ThumbnailDimensions) };
-                    lv.SmallImageList = _imageListPictures;
+                case "lvHomeMovies":
+                    _imageListHomeMovies = new ImageList { ImageSize = new Size(ThumbnailDimensions, ThumbnailDimensions) };
+                    lv.SmallImageList = _imageListHomeMovies;
                     lv.Columns.Add("", ThumbnailDimensions);
                     break;
-                case "lvVideos":
-                    _imageListVideos = new ImageList { ImageSize = new Size(ThumbnailDimensions, ThumbnailDimensions) };
-                    lv.SmallImageList = _imageListVideos;
+                case "lvImagesPersonal":
+                    _imageListImagesPersonal = new ImageList { ImageSize = new Size(ThumbnailDimensions, ThumbnailDimensions) };
+                    lv.SmallImageList = _imageListImagesPersonal;
                     lv.Columns.Add("", ThumbnailDimensions);
                     break;
             }
 
-            lv.Columns.Add("Name", lv.Name == "lvMusic" ? ListViewMusicColWidthName : ListViewMediaColWidthName);
+            lv.Columns.Add("Name", lv.Name == "lvMusic" || lv.Name == "lvRadioShows" 
+                ? ListViewAudioColWidthName 
+                : ListViewMediaColWidthName);
+
             lv.Columns.Add("StreamId", 0);
         }
 
-        private void ConfigureListViewInteractiveResponses()
+        private void ConfigureListViewActivities()
         {
-            lvInteractiveResponses.GridLines = true;
-            lvInteractiveResponses.MultiSelect = false;
-            lvInteractiveResponses.FullRowSelect = true;
-            lvInteractiveResponses.HeaderStyle = ColumnHeaderStyle.Nonclickable;
-            lvInteractiveResponses.View = View.Details;
+            lvActivities.GridLines = true;
+            lvActivities.MultiSelect = false;
+            lvActivities.FullRowSelect = true;
+            lvActivities.HeaderStyle = ColumnHeaderStyle.Nonclickable;
+            lvActivities.View = View.Details;
 
-            lvInteractiveResponses.SmallImageList = _imageListMusic;
-            lvInteractiveResponses.Columns.Add("", 0);
-            lvInteractiveResponses.Columns.Add("GameDifficultyLevel", 0);
-            lvInteractiveResponses.Columns.Add("Name", ListViewInteractiveResponseColWidthName);
-            lvInteractiveResponses.Columns.Add("ResponseId", 0);
+            lvActivities.SmallImageList = _imageListAudio;
+            lvActivities.Columns.Add("", 0);
+            lvActivities.Columns.Add("GameDifficultyLevel", 0);
+            lvActivities.Columns.Add("Name", ListViewActivitiesColWidthName);
+            lvActivities.Columns.Add("ResponseId", 0);
         }
 
         private void ConfigureBackgroundWorkers()
         {
-            // image thumbnails
-            _bgwImageThumbnails = new BackgroundWorker { WorkerSupportsCancellation = true, WorkerReportsProgress = true };
-            _bgwImageThumbnails.DoWork += LoadImagesListViewThumbnails;
-            _bgwImageThumbnails.ProgressChanged += UpdateImagesListViewImage;
-            _bgwImageThumbnails.RunWorkerCompleted += LoadImagesListViewThumbnailsCompleted;
+            // image general thumbnails
+            _bgwImageGeneralThumbnails = new BackgroundWorker { WorkerSupportsCancellation = true, WorkerReportsProgress = true };
+            _bgwImageGeneralThumbnails.DoWork += LoadImagesGeneralListViewThumbnails;
+            _bgwImageGeneralThumbnails.ProgressChanged += UpdateImagesGeneralListViewImage;
+            _bgwImageGeneralThumbnails.RunWorkerCompleted += LoadImagesGeneralListViewThumbnailsCompleted;
 
-            // picture thumbnails
-            _bgwPictureThumbnails = new BackgroundWorker { WorkerSupportsCancellation = true, WorkerReportsProgress = true };
-            _bgwPictureThumbnails.DoWork += LoadPicturesListViewThumbnails;
-            _bgwPictureThumbnails.ProgressChanged += UpdatePicturesListViewImage;
-            _bgwPictureThumbnails.RunWorkerCompleted += LoadPicturesListViewThumbnailsCompleted;
+            // image personal thumbnails
+            _bgwImagePersonalThumbnails = new BackgroundWorker { WorkerSupportsCancellation = true, WorkerReportsProgress = true };
+            _bgwImagePersonalThumbnails.DoWork += LoadImagesPersonalListViewThumbnails;
+            _bgwImagePersonalThumbnails.ProgressChanged += UpdateImagesPersonalListViewImage;
+            _bgwImagePersonalThumbnails.RunWorkerCompleted += LoadImagesPersonalListViewThumbnailsCompleted;
 
-            // video thumbnails
-            _bgwVideoThumbnails = new BackgroundWorker { WorkerSupportsCancellation = true, WorkerReportsProgress = true };
-            _bgwVideoThumbnails.DoWork += LoadVideosListViewThumbnails;
-            _bgwVideoThumbnails.ProgressChanged += UpdateVideosListViewImage;
-            _bgwVideoThumbnails.RunWorkerCompleted += LoadVideosListViewThumbnailsCompleted;
+            // tv show thumbnails
+            _bgwTVShowThumbnails = new BackgroundWorker { WorkerSupportsCancellation = true, WorkerReportsProgress = true };
+            _bgwTVShowThumbnails.DoWork += LoadTVShowsListViewThumbnails;
+            _bgwTVShowThumbnails.ProgressChanged += UpdateTVShowsListViewImage;
+            _bgwTVShowThumbnails.RunWorkerCompleted += LoadTVShowsListViewThumbnailsCompleted;
+
+            // home movie thumbnails
+            _bgwHomeMovieThumbnails = new BackgroundWorker { WorkerSupportsCancellation = true, WorkerReportsProgress = true };
+            _bgwHomeMovieThumbnails.DoWork += LoadHomeMoviesListViewThumbnails;
+            _bgwHomeMovieThumbnails.ProgressChanged += UpdateHomeMoviesListViewImage;
+            _bgwHomeMovieThumbnails.RunWorkerCompleted += LoadHomeMoviesListViewThumbnailsCompleted;
         }
 
         #endregion
@@ -347,18 +384,18 @@ namespace Keebee.AAT.Display.Caregiver
             }
         }
 
-        private void LoadListViewVideos()
+        private void LoadListViewTVShows()
         {
             try
             {
-                lvVideos.Items.Clear();
+                lvTVShows.Items.Clear();
 
-                var files = GetMediaFiles(MediaPathTypeId.Videos, ResponseTypeId.Television);
+                var files = GetMediaFiles(MediaPathTypeId.TVShows, ResponseTypeId.Television);
 
                 var rowIndex = 0;
                 foreach (var f in files)
                 {
-                    lvVideos.Items.Add(new ListViewItem(new[]
+                    lvTVShows.Items.Add(new ListViewItem(new[]
                                     {
                                         string.Empty,
                                         f.Filename,
@@ -370,30 +407,30 @@ namespace Keebee.AAT.Display.Caregiver
                     rowIndex++;
                 }
 
-                _currentVideoFiles = GetFilePaths(MediaPathTypeId.Videos, ResponseTypeId.Television);
+                _currentTVShowFiles = GetFilePaths(MediaPathTypeId.TVShows, ResponseTypeId.Television);
 
-                if (_bgwVideoThumbnails.IsBusy) return;
-                lvVideos.SmallImageList?.Images.Clear();
-                _bgwVideoThumbnails.RunWorkerAsync();
+                if (_bgwTVShowThumbnails.IsBusy) return;
+                lvTVShows.SmallImageList?.Images.Clear();
+                _bgwTVShowThumbnails.RunWorkerAsync();
             }
             catch (Exception ex)
             {
-                _systemEventLogger?.WriteEntry($"Caregiver.LoadListViewVideos: {ex.Message}", EventLogEntryType.Error);
+                _systemEventLogger?.WriteEntry($"Caregiver.LoadListViewTVShows: {ex.Message}", EventLogEntryType.Error);
             }
         }
 
-        private void LoadListViewImages()
+        private void LoadListViewHomeMovies()
         {
             try
             {
-                lvImages.Items.Clear();
+                lvHomeMovies.Items.Clear();
 
-                var files = GetMediaFiles(MediaPathTypeId.Images, ResponseTypeId.SlideShow).ToArray();
-                
+                var files = GetMediaFiles(MediaPathTypeId.HomeMovies, ResponseTypeId.Television);
+
                 var rowIndex = 0;
                 foreach (var f in files)
                 {
-                    lvImages.Items.Add(new ListViewItem(new[]
+                    lvHomeMovies.Items.Add(new ListViewItem(new[]
                                     {
                                         string.Empty,
                                         f.Filename,
@@ -405,11 +442,46 @@ namespace Keebee.AAT.Display.Caregiver
                     rowIndex++;
                 }
 
-                _currentImageFiles = GetFilePaths(MediaPathTypeId.Images, ResponseTypeId.SlideShow);
+                _currentHomeMovieFiles = GetFilePaths(MediaPathTypeId.HomeMovies, ResponseTypeId.Television);
 
-                if (_bgwImageThumbnails.IsBusy) return;
-                lvImages.SmallImageList?.Images.Clear();
-                _bgwImageThumbnails.RunWorkerAsync();
+                if (_bgwHomeMovieThumbnails.IsBusy) return;
+                lvHomeMovies.SmallImageList?.Images.Clear();
+                _bgwHomeMovieThumbnails.RunWorkerAsync();
+            }
+            catch (Exception ex)
+            {
+                _systemEventLogger?.WriteEntry($"Caregiver.LoadListViewHomeMovies: {ex.Message}", EventLogEntryType.Error);
+            }
+        }
+
+        private void LoadListViewImages()
+        {
+            try
+            {
+                lvImagesGeneral.Items.Clear();
+
+                var files = GetMediaFiles(MediaPathTypeId.GeneralImages, ResponseTypeId.SlideShow).ToArray();
+                
+                var rowIndex = 0;
+                foreach (var f in files)
+                {
+                    lvImagesGeneral.Items.Add(new ListViewItem(new[]
+                                    {
+                                        string.Empty,
+                                        f.Filename,
+                                        f.StreamId.ToString()
+                                    })
+                    {
+                        BackColor = ((rowIndex & 1) == 0) ? Color.AliceBlue : Color.White
+                    });
+                    rowIndex++;
+                }
+
+                _currentImageGeneralFiles = GetFilePaths(MediaPathTypeId.GeneralImages, ResponseTypeId.SlideShow);
+
+                if (_bgwImageGeneralThumbnails.IsBusy) return;
+                lvImagesGeneral.SmallImageList?.Images.Clear();
+                _bgwImageGeneralThumbnails.RunWorkerAsync();
             }
             catch (Exception ex)
             {
@@ -445,23 +517,55 @@ namespace Keebee.AAT.Display.Caregiver
             }
             catch (Exception ex)
             {
-                _systemEventLogger?.WriteEntry($"Caregiver.LoadListView: {ex.Message}", EventLogEntryType.Error);
+                _systemEventLogger?.WriteEntry($"Caregiver.LoadListViewMusic: {ex.Message}", EventLogEntryType.Error);
             }
         }
 
-        private void LoadListViewPictures()
+        private void LoadListViewRadioShows()
         {
             try
             {
-                lvPictures.Items.Clear();
+                lvRadioShows.Items.Clear();
 
-                var files = GetMediaFiles(MediaPathTypeId.Pictures);
+                var files = GetMediaFiles(MediaPathTypeId.RadioShows, ResponseTypeId.Radio).ToArray();
+                var rowIndex = 0;
+                _totalRadioShows = files.Count();
+
+                foreach (var f in files)
+                {
+                    lvRadioShows.Items.Add(new ListViewItem(new[]
+                                    {
+                                        string.Empty,
+                                        string.Empty,
+                                        f.Filename,
+                                        f.StreamId.ToString()
+                                    })
+                    {
+                        ImageIndex = ImageIndexPlay,
+                        BackColor = ((rowIndex & 1) == 0) ? Color.AliceBlue : Color.White
+                    });
+                    rowIndex++;
+                }
+            }
+            catch (Exception ex)
+            {
+                _systemEventLogger?.WriteEntry($"Caregiver.LoadListViewRadioShows: {ex.Message}", EventLogEntryType.Error);
+            }
+        }
+
+        private void LoadListViewImagesPersonal()
+        {
+            try
+            {
+                lvImagesPersonal.Items.Clear();
+
+                var files = GetMediaFiles(MediaPathTypeId.PersonalImages);
 
                 var rowIndex = 0;
 
                 foreach (var f in files)
                 {
-                    lvPictures.Items.Add(new ListViewItem(new[]
+                    lvImagesPersonal.Items.Add(new ListViewItem(new[]
                     {
                         string.Empty,
                         f.Filename,
@@ -474,24 +578,24 @@ namespace Keebee.AAT.Display.Caregiver
                     rowIndex++;
                 }
 
-                _currentPictureFiles = GetFilePaths(MediaPathTypeId.Pictures);
+                _currentImagePersonalFiles = GetFilePaths(MediaPathTypeId.PersonalImages);
 
-                if (_bgwPictureThumbnails.IsBusy) return;
+                if (_bgwImagePersonalThumbnails.IsBusy) return;
 
-                lvPictures.SmallImageList?.Images.Clear();
-                _bgwPictureThumbnails.RunWorkerAsync();
+                lvImagesPersonal.SmallImageList?.Images.Clear();
+                _bgwImagePersonalThumbnails.RunWorkerAsync();
             }
             catch (Exception ex)
             {
-                _systemEventLogger?.WriteEntry($"Caregiver.LoadListViewPictures: {ex.Message}", EventLogEntryType.Error);
+                _systemEventLogger?.WriteEntry($"Caregiver.LoadListViewImagesPersonal: {ex.Message}", EventLogEntryType.Error);
             }
         }
 
-        private void LoadListViewInteractiveResponses(int residentId)
+        private void LoadListViewActivities(int residentId)
         {
             try
             {
-                lvInteractiveResponses.Items.Clear();
+                lvActivities.Items.Clear();
 
                 var gameDifficulatyLevel = (residentId > 0)
                     ? _currentResident.GameDifficultyLevel : 1;
@@ -505,7 +609,7 @@ namespace Keebee.AAT.Display.Caregiver
                 var rowIndex = 0;
                 foreach (var rt in interactiveResponseTypes)
                 {
-                    lvInteractiveResponses.Items.Add(new ListViewItem(new[]
+                    lvActivities.Items.Add(new ListViewItem(new[]
                     {
                         string.Empty,
                         gameDifficulatyLevel.ToString(),
@@ -520,29 +624,42 @@ namespace Keebee.AAT.Display.Caregiver
             }
             catch (Exception ex)
             {
-                _systemEventLogger?.WriteEntry($"Caregiver.LoadListViewInteractiveResponses: {ex.Message}", EventLogEntryType.Error);
+                _systemEventLogger?.WriteEntry($"Caregiver.LoadListViewActivities: {ex.Message}", EventLogEntryType.Error);
             }
         }
 
         private void LoadTabs(int residentId)
         {
-            ShowPicturesTab(residentId > 0);
+            ShowPersonalMediaTabs(residentId > 0);
 
             LoadListViewImages();
             LoadListViewMusic();
-            LoadListViewVideos();
-            LoadListViewInteractiveResponses(residentId);
+            LoadListViewRadioShows();
+            LoadListViewTVShows();
+            LoadListViewActivities(residentId);
 
-            if (TabPageExists(tabPictures))
-                LoadListViewPictures();
+            if (TabPageExists(tabHomeMovies))
+                LoadListViewHomeMovies();
+
+            if (TabPageExists(tabImagesPersonal))
+                LoadListViewImagesPersonal();
         }
 
         private void LoadMusicPlaylist()
         {
             var music = GetFilePaths(MediaPathTypeId.Music, ResponseTypeId.Radio);
-            _playlist = axWindowsMediaPlayer1.LoadPlaylist(PlaylistCaregiver, music);
+            _musicPlaylist = axWindowsMediaPlayer1.LoadPlaylist(PlaylistCaregiver, music);
 
-            axWindowsMediaPlayer1.currentPlaylist = _playlist;
+            axWindowsMediaPlayer1.currentPlaylist = _musicPlaylist;
+            axWindowsMediaPlayer1.Ctlcontrols.stop();
+        }
+
+        private void LoadRadioShowPlaylist()
+        {
+            var radioShows = GetFilePaths(MediaPathTypeId.RadioShows, ResponseTypeId.Radio);
+            _radioShowPlaylist = axWindowsMediaPlayer1.LoadPlaylist(PlaylistCaregiver, radioShows);
+
+            axWindowsMediaPlayer1.currentPlaylist = _radioShowPlaylist;
             axWindowsMediaPlayer1.Ctlcontrols.stop();
         }
 
@@ -572,7 +689,7 @@ namespace Keebee.AAT.Display.Caregiver
                 var mediaPath = paths.Single(x => x.MediaPathType.Id == mediaPathTypeId);
 
                 // get the description
-                var mediaPathType = mediaPath.MediaPathType.Description;
+                var mediaPathType = mediaPath.MediaPathType.Path;
 
                 if (streamId != null)
                 {
@@ -663,68 +780,6 @@ namespace Keebee.AAT.Display.Caregiver
 
         #region play media
 
-        private void PlayVideos(Guid selectedStreamId)
-        {
-            try
-            {
-                var videos = GetFilePaths(MediaPathTypeId.Videos, ResponseTypeId.Television, selectedStreamId);
-
-                if (File.Exists(videos[0]))
-                {
-                    var videoPlayer = new VideoPlayer
-                    {
-                        EventLogger = _systemEventLogger,
-                        Videos = videos
-                    };
-
-                    StopMusic();
-                    videoPlayer.ShowDialog();
-                }
-                else
-                {
-                    var messageBox = new MessageBoxCustom { MessageText = "This video is no longer available" };
-                    messageBox.ShowDialog();
-                }
-            }
-            catch (Exception ex)
-            {
-                _systemEventLogger.WriteEntry($"Caregiver.PlayVideos: {ex.Message}", EventLogEntryType.Error);
-            }
-        }
-
-        private void PlaySong(int selectedIndex)
-        {
-            try
-            {
-                lvMusic.Items[_currentMusicIndex].SubItems[ListViewMusicColumnStatus].Text = string.Empty;
-                lvMusic.Items[_currentMusicIndex].ImageIndex = ImageIndexPlay;
-                var media = _playlist.Item[selectedIndex];
-                axWindowsMediaPlayer1.Ctlcontrols.playItem(media);
-            }
-            catch (Exception ex)
-            {
-                _systemEventLogger.WriteEntry($"Caregiver.PlaySong: {ex.Message}", EventLogEntryType.Error);
-            }
-        }
-
-        private void StopMusic()
-        {
-            try
-            {
-                if (axWindowsMediaPlayer1.playState != WMPPlayState.wmppsPlaying &&
-                    axWindowsMediaPlayer1.playState != WMPPlayState.wmppsPaused)
-                    return;
-
-                lvMusic.Items[_currentMusicIndex].ImageIndex = ImageIndexPlay;
-                lvMusic.Items[_currentMusicIndex].SubItems[ListViewMusicColumnStatus].Text = string.Empty;
-                axWindowsMediaPlayer1.Ctlcontrols.stop();
-            }
-            catch (Exception ex)
-            {
-                _systemEventLogger.WriteEntry($"Caregiver.PlaySong: {ex.Message}", EventLogEntryType.Error);
-            }
-        }
-
         private void DisplayImages(int mediaTypeId, Guid selectedStreamId, int? responseTypdId = null)
         {
             try
@@ -749,7 +804,123 @@ namespace Keebee.AAT.Display.Caregiver
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"Caregiver.ShowImages: {ex.Message}", EventLogEntryType.Error);
+                _systemEventLogger.WriteEntry($"Caregiver.DisplayImages: {ex.Message}", EventLogEntryType.Error);
+            }
+        }
+
+        private void PlayMusic(int selectedIndex)
+        {
+            try
+            {
+                lvMusic.Items[_currentMusicIndex].SubItems[ListViewAudioColumnStatus].Text = string.Empty;
+                lvMusic.Items[_currentMusicIndex].ImageIndex = ImageIndexPlay;
+                var media = _musicPlaylist.Item[selectedIndex];
+                axWindowsMediaPlayer1.Ctlcontrols.playItem(media);
+            }
+            catch (Exception ex)
+            {
+                _systemEventLogger.WriteEntry($"Caregiver.PlayMusic: {ex.Message}", EventLogEntryType.Error);
+            }
+        }
+
+        private void PlayRadioShow(int selectedIndex)
+        {
+            try
+            {
+                lvRadioShows.Items[_currentRadioShowIndex].SubItems[ListViewAudioColumnStatus].Text = string.Empty;
+                lvRadioShows.Items[_currentRadioShowIndex].ImageIndex = ImageIndexPlay;
+                var media = _radioShowPlaylist.Item[selectedIndex];
+                axWindowsMediaPlayer1.Ctlcontrols.playItem(media);
+            }
+            catch (Exception ex)
+            {
+                _systemEventLogger.WriteEntry($"Caregiver.PlayRadioShow: {ex.Message}", EventLogEntryType.Error);
+            }
+        }
+
+        private void PlayTVShows(Guid selectedStreamId)
+        {
+            try
+            {
+                var videos = GetFilePaths(MediaPathTypeId.TVShows, ResponseTypeId.Television, selectedStreamId);
+
+                if (File.Exists(videos[0]))
+                {
+                    var videoPlayer = new VideoPlayer
+                    {
+                        EventLogger = _systemEventLogger,
+                        Videos = videos
+                    };
+
+                    StopAudio();
+                    videoPlayer.ShowDialog();
+                }
+                else
+                {
+                    var messageBox = new MessageBoxCustom { MessageText = "This video is no longer available" };
+                    messageBox.ShowDialog();
+                }
+            }
+            catch (Exception ex)
+            {
+                _systemEventLogger.WriteEntry($"Caregiver.PlayTVShows: {ex.Message}", EventLogEntryType.Error);
+            }
+        }
+
+        private void PlayHomeMovies(Guid selectedStreamId)
+        {
+            try
+            {
+                var videos = GetFilePaths(MediaPathTypeId.HomeMovies, ResponseTypeId.Television, selectedStreamId);
+
+                if (File.Exists(videos[0]))
+                {
+                    var videoPlayer = new VideoPlayer
+                    {
+                        EventLogger = _systemEventLogger,
+                        Videos = videos
+                    };
+
+                    StopAudio();
+                    videoPlayer.ShowDialog();
+                }
+                else
+                {
+                    var messageBox = new MessageBoxCustom { MessageText = "This video is no longer available" };
+                    messageBox.ShowDialog();
+                }
+            }
+            catch (Exception ex)
+            {
+                _systemEventLogger.WriteEntry($"Caregiver.PlayHomeMovies: {ex.Message}", EventLogEntryType.Error);
+            }
+        }
+
+        private void StopAudio()
+        {
+            try
+            {
+                if (axWindowsMediaPlayer1.playState != WMPPlayState.wmppsPlaying &&
+                    axWindowsMediaPlayer1.playState != WMPPlayState.wmppsPaused)
+                    return;
+
+                switch (tbMedia.SelectedIndex)
+                {
+                    case TabIndexMusic:
+                        lvMusic.Items[_currentMusicIndex].ImageIndex = ImageIndexPlay;
+                        lvMusic.Items[_currentMusicIndex].SubItems[ListViewAudioColumnStatus].Text = string.Empty;
+                        break;
+                    case TabIndexRadioShows:
+                        lvRadioShows.Items[_currentRadioShowIndex].ImageIndex = ImageIndexPlay;
+                        lvRadioShows.Items[_currentRadioShowIndex].SubItems[ListViewAudioColumnStatus].Text = string.Empty;
+                        break;
+                }
+
+                axWindowsMediaPlayer1.Ctlcontrols.stop();
+            }
+            catch (Exception ex)
+            {
+                _systemEventLogger.WriteEntry($"Caregiver.StopAudio: {ex.Message}", EventLogEntryType.Error);
             }
         }
 
@@ -757,8 +928,8 @@ namespace Keebee.AAT.Display.Caregiver
         {
             try
             {
-                var shapes = GetFilePaths(MediaPathTypeId.Shapes, ResponseTypeId.MatchingGame);
-                var sounds = GetFilePaths(MediaPathTypeId.Sounds, ResponseTypeId.MatchingGame);
+                var shapes = GetFilePaths(MediaPathTypeId.MatchingGameShapes, ResponseTypeId.MatchingGame);
+                var sounds = GetFilePaths(MediaPathTypeId.MatchingGameSounds, ResponseTypeId.MatchingGame);
 
                 // ensure there are enough shapes and sounds to play the game
                 var gameSetup = new MatchingGameSetup { OperationsClient = _opsClient };
@@ -777,7 +948,7 @@ namespace Keebee.AAT.Display.Caregiver
                     IsActiveEventLog = _config.IsActiveEventLog
                 };
 
-                StopMusic();
+                StopAudio();
                 matchingGamePlayer.ShowDialog();
             }
             catch (Exception ex)
@@ -790,7 +961,7 @@ namespace Keebee.AAT.Display.Caregiver
 
         #region event handlers
 
-        // for the main Display app
+        // to alert the caller (the Display App Main form)
         private void RaiseCaregiverCompleteEvent()
         {
             if (IsDisposed) return;
@@ -806,17 +977,31 @@ namespace Keebee.AAT.Display.Caregiver
         }
 
         // list views
-        private void VideosListViewClick(object sender, EventArgs e)
+        private void TVShowsListViewClick(object sender, EventArgs e)
         {
             try
             {
-                var selectedStreamId = new Guid(lvVideos.SelectedItems[0].SubItems[ListViewMediaColumnStreamId].Text);
+                var selectedStreamId = new Guid(lvTVShows.SelectedItems[0].SubItems[ListViewColumnStreamId].Text);
 
-                PlayVideos(selectedStreamId);
+                PlayTVShows(selectedStreamId);
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"Caregiver.VideosListViewClick: {ex.Message}", EventLogEntryType.Error);
+                _systemEventLogger.WriteEntry($"Caregiver.TVShowsListViewClick: {ex.Message}", EventLogEntryType.Error);
+            }
+        }
+
+        private void HomeMoviesListViewClick(object sender, EventArgs e)
+        {
+            try
+            {
+                var selectedStreamId = new Guid(lvHomeMovies.SelectedItems[0].SubItems[ListViewColumnStreamId].Text);
+
+                PlayHomeMovies(selectedStreamId);
+            }
+            catch (Exception ex)
+            {
+                _systemEventLogger.WriteEntry($"Caregiver.HomeMoviesListViewClick: {ex.Message}", EventLogEntryType.Error);
             }
         }
 
@@ -825,7 +1010,7 @@ namespace Keebee.AAT.Display.Caregiver
             try
             {
                 var selectedIndex = lvMusic.SelectedIndices[0];
-                if (File.Exists(_playlist.Item[selectedIndex].sourceURL))
+                if (File.Exists(_musicPlaylist.Item[selectedIndex].sourceURL))
                 {
                     if (_currentMusicIndex == selectedIndex)
                     {
@@ -833,19 +1018,19 @@ namespace Keebee.AAT.Display.Caregiver
                         {
                             axWindowsMediaPlayer1.Ctlcontrols.pause();
                             lvMusic.Items[_currentMusicIndex].ImageIndex = ImageIndexPlayActive;
-                            lvMusic.Items[_currentMusicIndex].SubItems[ListViewMusicColumnStatus].Text = "Paused";
+                            lvMusic.Items[_currentMusicIndex].SubItems[ListViewAudioColumnStatus].Text = "Paused";
                         }
                         else
                         {
                             axWindowsMediaPlayer1.Ctlcontrols.play();
                             lvMusic.Items[_currentMusicIndex].ImageIndex = ImageIndexPause;
-                            lvMusic.Items[_currentMusicIndex].SubItems[ListViewMusicColumnStatus].Text = "Playing...";
+                            lvMusic.Items[_currentMusicIndex].SubItems[ListViewAudioColumnStatus].Text = "Playing...";
                         }
                     }
                     else
                     {
-                        StopMusic();
-                        PlaySong(selectedIndex);
+                        StopAudio();
+                        PlayMusic(selectedIndex);
                     }
                 }
                 else
@@ -863,45 +1048,88 @@ namespace Keebee.AAT.Display.Caregiver
             }
         }
 
-        private void ImagesListViewClick(object sender, EventArgs e)
+        private void RadioShowListViewClick(object sender, EventArgs e)
         {
             try
             {
-                var selectedStreamId = new Guid(lvImages.SelectedItems[0].SubItems[ListViewMediaColumnStreamId].Text);
+                var selectedIndex = lvRadioShows.SelectedIndices[0];
+                if (File.Exists(_radioShowPlaylist.Item[selectedIndex].sourceURL))
+                {
+                    if (_currentRadioShowIndex == selectedIndex)
+                    {
+                        if (axWindowsMediaPlayer1.playState == WMPPlayState.wmppsPlaying)
+                        {
+                            axWindowsMediaPlayer1.Ctlcontrols.pause();
+                            lvRadioShows.Items[_currentRadioShowIndex].ImageIndex = ImageIndexPlayActive;
+                            lvRadioShows.Items[_currentRadioShowIndex].SubItems[ListViewAudioColumnStatus].Text = "Paused";
+                        }
+                        else
+                        {
+                            axWindowsMediaPlayer1.Ctlcontrols.play();
+                            lvRadioShows.Items[_currentRadioShowIndex].ImageIndex = ImageIndexPause;
+                            lvRadioShows.Items[_currentRadioShowIndex].SubItems[ListViewAudioColumnStatus].Text = "Playing...";
+                        }
+                    }
+                    else
+                    {
+                        StopAudio();
+                        PlayRadioShow(selectedIndex);
+                    }
+                }
+                else
+                {
+                    var messageBox = new MessageBoxCustom { MessageText = "This show is no longer available" };
+                    messageBox.ShowDialog();
+                }
 
-                DisplayImages(MediaPathTypeId.Images, selectedStreamId, ResponseTypeId.SlideShow);
+                // remove focus from the selected item in the ListView
+                lblMediaSource.Focus();
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"Caregiver.ImagesListViewClick: {ex.Message}", EventLogEntryType.Error);
+                _systemEventLogger.WriteEntry($"Caregiver.MusicListViewClick: {ex.Message}", EventLogEntryType.Error);
             }
         }
 
-        private void PicturesListViewClick(object sender, EventArgs e)
+        private void ImagesGeneralListViewClick(object sender, EventArgs e)
         {
             try
             {
-                var selectedStreamId = new Guid(lvPictures.SelectedItems[0].SubItems[ListViewMediaColumnStreamId].Text);
+                var selectedStreamId = new Guid(lvImagesGeneral.SelectedItems[0].SubItems[ListViewColumnStreamId].Text);
 
-                DisplayImages(MediaPathTypeId.Pictures, selectedStreamId);
+                DisplayImages(MediaPathTypeId.GeneralImages, selectedStreamId, ResponseTypeId.SlideShow);
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"Caregiver.PicturesListViewClick: {ex.Message}", EventLogEntryType.Error);
+                _systemEventLogger.WriteEntry($"Caregiver.ImagesGeneralListViewClick: {ex.Message}", EventLogEntryType.Error);
             }
         }
 
-        private void InteractiveResponsesListViewClick(object sender, EventArgs e)
+        private void ImagesPersonalListViewClick(object sender, EventArgs e)
         {
             try
             {
-                var difficultyLevel = Convert.ToInt32(lvInteractiveResponses.SelectedItems[0]
+                var selectedStreamId = new Guid(lvImagesPersonal.SelectedItems[0].SubItems[ListViewColumnStreamId].Text);
+
+                DisplayImages(MediaPathTypeId.PersonalImages, selectedStreamId);
+            }
+            catch (Exception ex)
+            {
+                _systemEventLogger.WriteEntry($"Caregiver.ImagesPersonalListViewClick: {ex.Message}", EventLogEntryType.Error);
+            }
+        }
+
+        private void ActivitiesListViewClick(object sender, EventArgs e)
+        {
+            try
+            {
+                var difficultyLevel = Convert.ToInt32(lvActivities.SelectedItems[0]
                     .SubItems[ListViewIActivitiesColumnDifficultyLevel].Text);
 
-                var activityname = lvInteractiveResponses.SelectedItems[0]
+                var activityname = lvActivities.SelectedItems[0]
                     .SubItems[ListViewIActivitiesColumnName].Text;
 
-                var activitid = Convert.ToInt32(lvInteractiveResponses.SelectedItems[0].SubItems[ListViewIActivitiesColumnId].Text);
+                var activitid = Convert.ToInt32(lvActivities.SelectedItems[0].SubItems[ListViewIActivitiesColumnId].Text);
 
                 switch (activitid)
                 {
@@ -913,7 +1141,7 @@ namespace Keebee.AAT.Display.Caregiver
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"Caregiver.InteractiveResponsesListViewClick: {ex.Message}", EventLogEntryType.Error);
+                _systemEventLogger.WriteEntry($"Caregiver.ActivitiesListViewClick: {ex.Message}", EventLogEntryType.Error);
             }
         }
 
@@ -922,18 +1150,32 @@ namespace Keebee.AAT.Display.Caregiver
         {
             try
             {
+                var lv = GetCurrentListView();
+
+                var index = tbMedia.SelectedIndex == TabIndexMusic 
+                    ? _currentMusicIndex 
+                    : _currentRadioShowIndex;
+
+                var playList = tbMedia.SelectedIndex == TabIndexMusic
+                    ? _musicPlaylist
+                    : _radioShowPlaylist;
+
+                var totalItems = tbMedia.SelectedIndex == TabIndexMusic
+                    ? _totalSongs
+                    : _totalRadioShows;
+
                 switch (e.newState)
                 {
                     case (int)WMPPlayState.wmppsPlaying:
-                        _currentMusicIndex = axWindowsMediaPlayer1.CurrentIndex(_playlist);
-                        lvMusic.Items[_currentMusicIndex].SubItems[ListViewMusicColumnStatus].Text = "Playing...";
-                        lvMusic.Items[_currentMusicIndex].ImageIndex = ImageIndexPause;
-                        lvMusic.Items[_currentMusicIndex].Selected = true;
+                        index = axWindowsMediaPlayer1.CurrentIndex(playList);
+                        lv.Items[index].SubItems[ListViewAudioColumnStatus].Text = "Playing...";
+                        lv.Items[index].ImageIndex = ImageIndexPause;
+                        lv.Items[index].Selected = true;
                         break;
 
                     case (int)WMPPlayState.wmppsMediaEnded:
-                        lvMusic.Items[_currentMusicIndex].SubItems[ListViewMusicColumnStatus].Text = string.Empty;
-                        lvMusic.Items[_currentMusicIndex].ImageIndex = ImageIndexPlay;
+                        lv.Items[index].SubItems[ListViewAudioColumnStatus].Text = string.Empty;
+                        lv.Items[index].ImageIndex = ImageIndexPlay;
                         break;
 
                     case (int)WMPPlayState.wmppsTransitioning:
@@ -941,17 +1183,27 @@ namespace Keebee.AAT.Display.Caregiver
                         {
                             if (!File.Exists(axWindowsMediaPlayer1.currentMedia.sourceURL))
                             {
-                                // song was not found - get the name of it
-                                var name = lvMusic.Items[_totalSongs - 1].SubItems[ListViewMusicColumnName].Text;
+                                // get the last item in the playlist
+                                var lastItem = playList.Item[totalItems - 1];
 
-                                // if it is not the last song then go to the next one
-                                if (axWindowsMediaPlayer1.currentMedia.name != name)
+                                // if it is not the last item then play next
+                                if (!axWindowsMediaPlayer1.currentMedia.isIdentical[lastItem])
                                     axWindowsMediaPlayer1.Ctlcontrols.next();
                                 else
                                     // otherwise stop the player
                                     axWindowsMediaPlayer1.Ctlcontrols.stop();
                             }
                         }
+                        break;
+                }
+
+                switch (tbMedia.SelectedIndex)
+                {
+                    case TabIndexMusic:
+                        _currentMusicIndex = index;
+                        break;
+                    case TabIndexRadioShows:
+                        _currentRadioShowIndex = index;
                         break;
                 }
             }
@@ -971,9 +1223,9 @@ namespace Keebee.AAT.Display.Caregiver
                 LoadResidentMedia(residentId);
 
                 CancelBackgroundWorkers();
-                StopMusic();
+                StopAudio();
                 LoadTabs(residentId);
-                LoadMusicPlaylist();
+                LoadAudioPlaylist();
             }
             catch (Exception ex)
             {
@@ -985,7 +1237,6 @@ namespace Keebee.AAT.Display.Caregiver
         private void CaregiverInterfaceShown(object sender, EventArgs e)
         {
             LoadResidentDropDown();
-            LoadTabs(_currentResident.Id);
         }
 
         private void CloseButtonClick(object sender, EventArgs e)
@@ -997,16 +1248,16 @@ namespace Keebee.AAT.Display.Caregiver
         private void CaregiverInterfaceFormClosing(object sender, FormClosingEventArgs e)
         {
             CancelBackgroundWorkers(true);
-            StopMusic();
+            StopAudio();
             axWindowsMediaPlayer1.ClearPlaylist(PlaylistCaregiver);
             RaiseCaregiverCompleteEvent();
         }
 
         // disable column resizing for all list views
-        private void ImagesListViewColumnWidthChanging(object sender, ColumnWidthChangingEventArgs e)
+        private void ImagesGeneralListViewColumnWidthChanging(object sender, ColumnWidthChangingEventArgs e)
         {
             e.Cancel = true;
-            e.NewWidth = lvImages.Columns[e.ColumnIndex].Width;
+            e.NewWidth = lvImagesGeneral.Columns[e.ColumnIndex].Width;
         }
 
         private void MusicListViewColumnWidthChanging(object sender, ColumnWidthChangingEventArgs e)
@@ -1015,37 +1266,60 @@ namespace Keebee.AAT.Display.Caregiver
             e.NewWidth = lvMusic.Columns[e.ColumnIndex].Width;
         }
 
-        private void VideosListViewColumnWidthChanging(object sender, ColumnWidthChangingEventArgs e)
+        private void RadioShowsListViewColumnWidthChanging(object sender, ColumnWidthChangingEventArgs e)
         {
             e.Cancel = true;
-            e.NewWidth = lvVideos.Columns[e.ColumnIndex].Width;
+            e.NewWidth = lvRadioShows.Columns[e.ColumnIndex].Width;
         }
 
-        private void InteractiveResponsesListViewColumnWidthChanging(object sender, ColumnWidthChangingEventArgs e)
+        private void TVShowsListViewColumnWidthChanging(object sender, ColumnWidthChangingEventArgs e)
         {
             e.Cancel = true;
-            e.NewWidth = lvInteractiveResponses.Columns[e.ColumnIndex].Width;
+            e.NewWidth = lvTVShows.Columns[e.ColumnIndex].Width;
         }
 
-        private void PicturesListViewColumnWidthChanging(object sender, ColumnWidthChangingEventArgs e)
+        private void ActivitiesListViewColumnWidthChanging(object sender, ColumnWidthChangingEventArgs e)
         {
             e.Cancel = true;
-            e.NewWidth = lvPictures.Columns[e.ColumnIndex].Width;
+            e.NewWidth = lvActivities.Columns[e.ColumnIndex].Width;
+        }
+
+        private void HomeMoviesListViewColumnWidthChanging(object sender, ColumnWidthChangingEventArgs e)
+        {
+            e.Cancel = true;
+            e.NewWidth = lvHomeMovies.Columns[e.ColumnIndex].Width;
+        }
+
+        private void ImagesPersonalListViewColumnWidthChanging(object sender, ColumnWidthChangingEventArgs e)
+        {
+            e.Cancel = true;
+            e.NewWidth = lvImagesPersonal.Columns[e.ColumnIndex].Width;
+        }
+
+        private void MediaTabSelectedIndexChanged(object sender, EventArgs e)
+        {
+            ResetAudioListViews();
+            LoadAudioPlaylist();
         }
 
         #endregion
 
-        #region helper
+        #region helpers
 
-        private void ShowPicturesTab(bool show)
+        private void ShowPersonalMediaTabs(bool show)
         {
             if (show)
             {
-                if (!TabPageExists(tabPictures))
-                    tbMedia.TabPages.Add(tabPictures);
+                if (!TabPageExists(tabHomeMovies))
+                    tbMedia.TabPages.Add(tabHomeMovies);
+                if (!TabPageExists(tabImagesPersonal))
+                    tbMedia.TabPages.Add(tabImagesPersonal);
             }
             else
-                tbMedia.TabPages.Remove(tabPictures);
+            {
+                tbMedia.TabPages.Remove(tabHomeMovies);
+                tbMedia.TabPages.Remove(tabImagesPersonal);
+            }
         }
 
         private bool TabPageExists(TabPage tabPage)
@@ -1053,19 +1327,81 @@ namespace Keebee.AAT.Display.Caregiver
             return tbMedia.TabPages.Cast<TabPage>().Contains(tabPage);
         }
 
+        private ListViewLarge GetCurrentListView()
+        {
+            ListViewLarge lv = null;
+
+            var currentTabIndex = tbMedia.SelectedIndex;
+
+            switch (currentTabIndex)
+            {
+                case TabIndexImagesGeneral:
+                    lv = lvImagesGeneral;
+                    break;
+                case TabIndexImagesPersonal:
+                    lv = lvImagesPersonal;
+                    break;
+                case TabIndexMusic:
+                    lv = lvMusic;
+                    break;
+                case TabIndexRadioShows:
+                    lv = lvRadioShows;
+                    break;
+                case TabIndexTVShows:
+                    lv = lvTVShows;
+                    break;
+                case TabIndexHomeMovies:
+                    lv = lvHomeMovies;
+                    break;
+                case TabIndexActivities:
+                    lv = lvActivities;
+                    break;
+            }
+
+            return lv;
+        }
+
+        private void LoadAudioPlaylist()
+        {
+            switch (tbMedia.SelectedIndex)
+            {
+                case TabIndexMusic:
+                    LoadMusicPlaylist();
+                    break;
+                case TabIndexRadioShows:
+                    LoadRadioShowPlaylist();
+                    break;
+            }
+        }
+
+        private void ResetAudioListViews()
+        {
+            for (var index = 0; index < _totalSongs; index++)
+            {
+                lvMusic.Items[index].ImageIndex = ImageIndexPlay;
+                lvMusic.Items[index].SubItems[ListViewAudioColumnStatus].Text = string.Empty;
+            }
+
+            for (var index = 0; index < _totalRadioShows; index++)
+            {
+                lvRadioShows.Items[index].ImageIndex = ImageIndexPlay;
+                lvRadioShows.Items[index].SubItems[ListViewAudioColumnStatus].Text = string.Empty;
+            }
+        }
+
         #endregion
 
         #region background workers (for thumbnails)
 
-        // image thumbnails
-        private void UpdateImagesListViewImage(object sender, ProgressChangedEventArgs e)
+        // image general thumbnails
+        private void UpdateImagesGeneralListViewImage(object sender, ProgressChangedEventArgs e)
         {
             try
             {
-                if (_bgwImageThumbnails.CancellationPending) return;
+                if (_bgwImageGeneralThumbnails.CancellationPending) return;
 
-                _imageListImages.Images.Add((Image) e.UserState);
-                lvImages.Items[e.ProgressPercentage].ImageIndex = e.ProgressPercentage;
+                _imageListImagesGeneral.Images.Add((Image) e.UserState);
+                lvImagesGeneral.Items[e.ProgressPercentage].ImageIndex = e.ProgressPercentage;
             }
             catch (Exception ex)
             {
@@ -1073,154 +1409,213 @@ namespace Keebee.AAT.Display.Caregiver
             }
         }
 
-        private void LoadImagesListViewThumbnails(object sender, DoWorkEventArgs e)
+        private void LoadImagesGeneralListViewThumbnails(object sender, DoWorkEventArgs e)
         {
             try
             {
                 var rowIndex = 0;
-                var files = _currentImageFiles;
+                var files = _currentImageGeneralFiles;
 
                 foreach (var file in files)
                 {
-                    if (_bgwImageThumbnails.CancellationPending)
+                    if (_bgwImageGeneralThumbnails.CancellationPending)
                     {
                         e.Cancel = true;
                         return;
                     }
 
                     var thumbnail = Thumbnail.Picture.Get(file, ThumbnailDimensions);
-                    _bgwImageThumbnails.ReportProgress(rowIndex, thumbnail);
+                    _bgwImageGeneralThumbnails.ReportProgress(rowIndex, thumbnail);
 
                     rowIndex++;
                 }
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"Caregiver.LoadImagesListViewThumbnails: {ex.Message}", EventLogEntryType.Error);
+                _systemEventLogger.WriteEntry($"Caregiver.LoadImagesGeneralListViewThumbnails: {ex.Message}", EventLogEntryType.Error);
             }
         }
 
-        private void LoadImagesListViewThumbnailsCompleted(object sender, RunWorkerCompletedEventArgs e)
+        private void LoadImagesGeneralListViewThumbnailsCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             try
             {
                 if (!e.Cancelled || _formIsClosing) return;
 
-                lvImages.SmallImageList?.Images.Clear();
-                _bgwImageThumbnails.RunWorkerAsync();
+                lvImagesGeneral.SmallImageList?.Images.Clear();
+                _bgwImageGeneralThumbnails.RunWorkerAsync();
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"Caregiver.LoadImagesListViewThumbnailsCompleted: {ex.Message}", EventLogEntryType.Error);
+                _systemEventLogger.WriteEntry($"Caregiver.LoadImagesGeneralListViewThumbnailsCompleted: {ex.Message}", EventLogEntryType.Error);
             }
         }
 
-        // picture thumbnails
-        private void UpdatePicturesListViewImage(object sender, ProgressChangedEventArgs e)
+        // image personal thumbnails
+        private void UpdateImagesPersonalListViewImage(object sender, ProgressChangedEventArgs e)
         {
             try
             {
-                if (_bgwPictureThumbnails.CancellationPending) return;
+                if (_bgwImagePersonalThumbnails.CancellationPending) return;
 
-                _imageListPictures.Images.Add((Image)e.UserState);
-                lvPictures.Items[e.ProgressPercentage].ImageIndex = e.ProgressPercentage;
+                _imageListImagesPersonal.Images.Add((Image)e.UserState);
+                lvImagesPersonal.Items[e.ProgressPercentage].ImageIndex = e.ProgressPercentage;
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"Caregiver.UpdatPicturesListViewImage: {ex.Message}", EventLogEntryType.Error);
+                _systemEventLogger.WriteEntry($"Caregiver.UpdateImagesPersonalListViewImage: {ex.Message}", EventLogEntryType.Error);
             }
         }
 
-        private void LoadPicturesListViewThumbnails(object sender, DoWorkEventArgs e)
+        private void LoadImagesPersonalListViewThumbnails(object sender, DoWorkEventArgs e)
         {
             var rowIndex = 0;
-            var files = _currentPictureFiles;
+            var files = _currentImagePersonalFiles;
 
             foreach (var file in files)
             {
-                if (_bgwPictureThumbnails.CancellationPending)
+                if (_bgwImagePersonalThumbnails.CancellationPending)
                 {
                     e.Cancel = true;
                     return;
                 }
 
                 var thumbnail = Thumbnail.Picture.Get(file, ThumbnailDimensions);
-                _bgwPictureThumbnails.ReportProgress(rowIndex, thumbnail);
+                _bgwImagePersonalThumbnails.ReportProgress(rowIndex, thumbnail);
 
                 rowIndex++;
             }
         }
 
-        private void LoadPicturesListViewThumbnailsCompleted(object sender, RunWorkerCompletedEventArgs e)
+        private void LoadImagesPersonalListViewThumbnailsCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             try
             {
                 if (!e.Cancelled || _formIsClosing) return;
 
-                lvPictures.SmallImageList?.Images.Clear();
-                _bgwImageThumbnails.RunWorkerAsync();
+                lvImagesPersonal.SmallImageList?.Images.Clear();
+                _bgwImageGeneralThumbnails.RunWorkerAsync();
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"Caregiver.LoadPicturesListViewThumbnailsCompleted: {ex.Message}", EventLogEntryType.Error);
+                _systemEventLogger.WriteEntry($"Caregiver.LoadImagesPersonalListViewThumbnailsCompleted: {ex.Message}", EventLogEntryType.Error);
             }
         }
 
-        // video thumbnails
-        private void UpdateVideosListViewImage(object sender, ProgressChangedEventArgs e)
+        // tv show thumbnails
+        private void UpdateTVShowsListViewImage(object sender, ProgressChangedEventArgs e)
         {
             try
             {
-                if (_bgwVideoThumbnails.CancellationPending) return;
+                if (_bgwTVShowThumbnails.CancellationPending) return;
 
-                _imageListVideos.Images.Add((Image)e.UserState);
-                lvVideos.Items[e.ProgressPercentage].ImageIndex = e.ProgressPercentage;
+                _imageListTVShows.Images.Add((Image)e.UserState);
+                lvTVShows.Items[e.ProgressPercentage].ImageIndex = e.ProgressPercentage;
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"Caregiver.UpdatVideosListViewImage: {ex.Message}", EventLogEntryType.Error);
+                _systemEventLogger.WriteEntry($"Caregiver.UpdateTVShowsListViewImage: {ex.Message}", EventLogEntryType.Error);
             }
         }
 
-        private void LoadVideosListViewThumbnails(object sender, DoWorkEventArgs e)
+        private void LoadTVShowsListViewThumbnails(object sender, DoWorkEventArgs e)
         {
             try
             {
                 var rowIndex = 0;
-                var files = _currentVideoFiles;
+                var files = _currentTVShowFiles;
 
                 foreach (var file in files)
                 {
-                    if (_bgwVideoThumbnails.CancellationPending)
+                    if (_bgwTVShowThumbnails.CancellationPending)
                     {
                         e.Cancel = true;
                         return;
                     }
 
                     var thumbnail = Thumbnail.Video.Get(file, 2, 5);
-                    _bgwVideoThumbnails.ReportProgress(rowIndex, thumbnail);
+                    _bgwTVShowThumbnails.ReportProgress(rowIndex, thumbnail);
 
                     rowIndex++;
                 }
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"Caregiver.LoadVideosListViewThumbnails: {ex.Message}", EventLogEntryType.Error);
+                _systemEventLogger.WriteEntry($"Caregiver.LoadTVShowsListViewThumbnails: {ex.Message}", EventLogEntryType.Error);
             }
         }
 
-        private void LoadVideosListViewThumbnailsCompleted(object sender, RunWorkerCompletedEventArgs e)
+        private void LoadTVShowsListViewThumbnailsCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             try
             {
                 if (!e.Cancelled || _formIsClosing) return;
 
-                lvVideos.SmallImageList?.Images.Clear();
-                _bgwVideoThumbnails.RunWorkerAsync();
+                lvTVShows.SmallImageList?.Images.Clear();
+                _bgwTVShowThumbnails.RunWorkerAsync();
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"Caregiver.LoadVideosListViewThumbnailsCompleted: {ex.Message}", EventLogEntryType.Error);
+                _systemEventLogger.WriteEntry($"Caregiver.LoadTVShowsListViewThumbnailsCompleted: {ex.Message}", EventLogEntryType.Error);
+
+            }
+        }
+
+        // home movie thumbnails
+        private void UpdateHomeMoviesListViewImage(object sender, ProgressChangedEventArgs e)
+        {
+            try
+            {
+                if (_bgwHomeMovieThumbnails.CancellationPending) return;
+
+                _imageListHomeMovies.Images.Add((Image)e.UserState);
+                lvHomeMovies.Items[e.ProgressPercentage].ImageIndex = e.ProgressPercentage;
+            }
+            catch (Exception ex)
+            {
+                _systemEventLogger.WriteEntry($"Caregiver.UpdatHomeMoviesListViewImage: {ex.Message}", EventLogEntryType.Error);
+            }
+        }
+
+        private void LoadHomeMoviesListViewThumbnails(object sender, DoWorkEventArgs e)
+        {
+            try
+            {
+                var rowIndex = 0;
+                var files = _currentHomeMovieFiles;
+
+                foreach (var file in files)
+                {
+                    if (_bgwHomeMovieThumbnails.CancellationPending)
+                    {
+                        e.Cancel = true;
+                        return;
+                    }
+
+                    var thumbnail = Thumbnail.Video.Get(file, 2, 5);
+                    _bgwHomeMovieThumbnails.ReportProgress(rowIndex, thumbnail);
+
+                    rowIndex++;
+                }
+            }
+            catch (Exception ex)
+            {
+                _systemEventLogger.WriteEntry($"Caregiver.LoadHomeMoviesListViewThumbnails: {ex.Message}", EventLogEntryType.Error);
+            }
+        }
+
+        private void LoadHomeMoviesListViewThumbnailsCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            try
+            {
+                if (!e.Cancelled || _formIsClosing) return;
+
+                lvHomeMovies.SmallImageList?.Images.Clear();
+                _bgwHomeMovieThumbnails.RunWorkerAsync();
+            }
+            catch (Exception ex)
+            {
+                _systemEventLogger.WriteEntry($"Caregiver.LoadHomeMoviesListViewThumbnailsCompleted: {ex.Message}", EventLogEntryType.Error);
 
             }
         }
@@ -1228,34 +1623,34 @@ namespace Keebee.AAT.Display.Caregiver
         // cancel workers
         private void CancelBackgroundWorkers(bool dispose = false)
         {
-            if (_bgwImageThumbnails != null)
+            if (_bgwImageGeneralThumbnails != null)
             {
-                if (_bgwImageThumbnails.IsBusy)
+                if (_bgwImageGeneralThumbnails.IsBusy)
                 {
-                    _bgwImageThumbnails.CancelAsync();
+                    _bgwImageGeneralThumbnails.CancelAsync();
                 }
             }
 
-            if (_bgwPictureThumbnails != null)
+            if (_bgwImagePersonalThumbnails != null)
             {
-                if (_bgwPictureThumbnails.IsBusy)
+                if (_bgwImagePersonalThumbnails.IsBusy)
                 {
-                    _bgwPictureThumbnails.CancelAsync();
+                    _bgwImagePersonalThumbnails.CancelAsync();
                 }
             }
 
-            if (_bgwVideoThumbnails != null)
+            if (_bgwTVShowThumbnails != null)
             {
-                if (_bgwVideoThumbnails.IsBusy)
+                if (_bgwTVShowThumbnails.IsBusy)
                 {
-                    _bgwVideoThumbnails.CancelAsync();
+                    _bgwTVShowThumbnails.CancelAsync();
                 }
             }
 
             if (!dispose) return;
-            _bgwImageThumbnails?.Dispose();
-            _bgwPictureThumbnails?.Dispose();
-            _bgwVideoThumbnails?.Dispose();
+            _bgwImageGeneralThumbnails?.Dispose();
+            _bgwImagePersonalThumbnails?.Dispose();
+            _bgwTVShowThumbnails?.Dispose();
         }
 
         #endregion

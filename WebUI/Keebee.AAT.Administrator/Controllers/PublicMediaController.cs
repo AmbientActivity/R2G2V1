@@ -2,7 +2,6 @@
 using Keebee.AAT.Administrator.ViewModels;
 using Keebee.AAT.Shared;
 using Keebee.AAT.Administrator.FileManagement;
-using Keebee.AAT.Administrator.Extensions;
 using Keebee.AAT.BusinessRules;
 using Keebee.AAT.SystemEventLogging;
 using CuteWebUI;
@@ -35,7 +34,7 @@ namespace Keebee.AAT.Administrator.Controllers
             string myuploader)
         {
             // first time loading
-            if (mediaPathTypeId == null) mediaPathTypeId = MediaPathTypeId.Images;
+            if (mediaPathTypeId == null) mediaPathTypeId = MediaPathTypeId.GeneralImages;
             if (responseTypeId == null) responseTypeId = ResponseTypeId.SlideShow;
 
             var vm = LoadPublicMediaViewModel(mediaPathTypeId, responseTypeId);
@@ -66,8 +65,8 @@ namespace Keebee.AAT.Administrator.Controllers
                     if (!PublicMediaRules.IsValidFile(file.FileName, mediaPathTypeId)) continue;
 
                     var rules = new PublicMediaRules { OperationsClient = _opsClient };
-                    var mediaPathType = rules.GetMediaPathType(mediaPathTypeId);
-                    var filePath = $@"{_mediaPath.ProfileRoot}\{PublicMediaSource.Id}\{mediaPathType}\{file.FileName}";
+                    var mediaPath = rules.GetMediaPath(mediaPathTypeId);
+                    var filePath = $@"{_mediaPath.ProfileRoot}\{PublicMediaSource.Id}\{mediaPath}\{file.FileName}";
 
                     // might already exist in another response type, in which case don't delete it
                     if (rules.IsRemovable(filePath, (int)mediaPathTypeId, (int)responseTypeId))
@@ -75,14 +74,14 @@ namespace Keebee.AAT.Administrator.Controllers
                         fileManager.DeleteFile(filePath);
                     }
 
-                    if (!rules.FileExists($@"{PublicMediaSource.Id}\{mediaPathType}", file.FileName))
+                    if (!rules.FileExists($@"{PublicMediaSource.Id}\{mediaPath}", file.FileName))
                     {
                         file.MoveTo(filePath);
                     }
 
                     // don't add it to the same response type twice
                     if (rules.CanAdd((int)responseTypeId, file.FileName))
-                        AddPublicMediaFile(file.FileName, (int)responseTypeId, (int)mediaPathTypeId, mediaPathType);
+                        AddPublicMediaFile(file.FileName, (int)responseTypeId, (int)mediaPathTypeId, mediaPath);
                 }
             }
 
@@ -95,7 +94,7 @@ namespace Keebee.AAT.Administrator.Controllers
         {
             var rules = new PublicMediaRules { OperationsClient =  _opsClient };
             var mediaPathTypes = _opsClient.GetMediaPathTypes()
-                .Where(x => x.Id != MediaPathTypeId.Pictures)
+                .Where(x => x.Id != MediaPathTypeId.PersonalImages && x.Id != MediaPathTypeId.HomeMovies)
                 .OrderBy(p => p.Description);
             var responseTypes = rules.GetValidResponseTypes(mediaPathTypeId)
                 .OrderBy(r => r.Description);
@@ -107,7 +106,7 @@ namespace Keebee.AAT.Administrator.Controllers
                 MediaPathTypeList = mediaPathTypes.Select(x => new
                 {
                     x.Id,
-                    Description = x.Description.ToUppercaseFirst()
+                    x.Description
                 }),
                 ResponseTypeList = responseTypes.Select(x => new
                 {
@@ -128,7 +127,7 @@ namespace Keebee.AAT.Administrator.Controllers
             {
                 uploader.UploadUrl = Response.ApplyAppPathModifier("~/UploadHandler.ashx");
                 uploader.Name = "myuploader";
-                uploader.AllowedFileExtensions = ResidentRules.GetAllowedExtensions(mediaPathTypeId); ;
+                uploader.AllowedFileExtensions = PublicMediaRules.GetAllowedExtensions(mediaPathTypeId); ;
                 uploader.MultipleFilesUpload = true;
                 uploader.InsertButtonID = "uploadbutton";
                 html = uploader.Render();
@@ -146,7 +145,7 @@ namespace Keebee.AAT.Administrator.Controllers
                     x.Id,
                     x.Description
                 }),
-                AddButtonText = $"Upload {rules.GetMediaPathType(mediaPathTypeId).ToUppercaseFirst()}",
+                AddButtonText = $"Upload {rules.GetMediaPathDescription(mediaPathTypeId)}",
             }, JsonRequestBehavior.AllowGet);
         }
 
@@ -248,8 +247,8 @@ namespace Keebee.AAT.Administrator.Controllers
             var vm = new PublicMediaViewModel
             {
                 Title = PublicMediaSource.Description,
-                AddButtonText = $"Upload {rules.GetMediaPathType(mediaPathTypeId).ToUppercaseFirst()}",
-                SelectedMediaPathType = mediaPathTypeId ?? MediaPathTypeId.Images,
+                AddButtonText = $"Upload {rules.GetMediaPathDescription(mediaPathTypeId)}",
+                SelectedMediaPathType = mediaPathTypeId ?? MediaPathTypeId.GeneralImages,
                 SelectedResponseType = responseTypeId ?? ResponseTypeId.SlideShow
             };
 
@@ -285,7 +284,7 @@ namespace Keebee.AAT.Administrator.Controllers
                             Filename = file.Filename.Replace($".{file.FileType}", string.Empty),
                             FileType = file.FileType.ToUpper(),
                             FileSize = file.FileSize,
-                            Path = $@"{pathRoot}\{path.MediaPathType.Description}",
+                            Path = $@"{pathRoot}\{path.MediaPathType.Path}",
                             MediaPathTypeId = path.MediaPathType.Id,
                             ResponseTypeId = media.ResponseType.Id
                         };

@@ -35,16 +35,16 @@ namespace Keebee.AAT.Display.Helpers
             if (shapeCount >= MatchingGameConfig.MinNumShapes) return residentShapes;
 
             var pathRoot = $@"{_mediaPath.ProfileRoot}\{MediaSourceTypeId.Public}";
-            var publicShapeMediaFiles = _opsClient.GetPublicMediaFilesForMediaPathType(MediaPathTypeId.Shapes)
+            var publicShapeMediaFiles = _opsClient.GetPublicMediaFilesForMediaPathType(MediaPathTypeId.MatchingGameShapes)
                 .MediaFiles.ToArray();
 
             var mediaPaths = publicShapeMediaFiles
                 .Single(x => x.ResponseType.Id == ResponseTypeId.MatchingGame)
-                .Paths.Where(p => p.MediaPathType.Id == MediaPathTypeId.Shapes).ToArray();
+                .Paths.Where(p => p.MediaPathType.Id == MediaPathTypeId.MatchingGameShapes).ToArray();
 
             var mediaPathType = mediaPaths
-                .Single(x => x.MediaPathType.Id == MediaPathTypeId.Shapes)
-                .MediaPathType.Description;
+                .Single(x => x.MediaPathType.Id == MediaPathTypeId.MatchingGameShapes)
+                .MediaPathType.Path;
 
             var publicShapes = publicShapeMediaFiles.SelectMany(m => m.Paths)
                 .SelectMany(p => p.Files)
@@ -65,17 +65,17 @@ namespace Keebee.AAT.Display.Helpers
             if (soundCount >= MatchingGameConfig.MinNumSounds) return residentSounds;
 
             var pathRoot = $@"{_mediaPath.ProfileRoot}\{PublicMediaSource.Id}";
-            var mediaFiles = _opsClient.GetPublicMediaFilesForMediaPathType(MediaPathTypeId.Sounds)
+            var mediaFiles = _opsClient.GetPublicMediaFilesForMediaPathType(MediaPathTypeId.MatchingGameSounds)
                 .MediaFiles.ToArray();
 
             var mediaPaths = mediaFiles
                 .Single(x => x.ResponseType.Id == ResponseTypeId.MatchingGame).Paths
-                .Where(p => p.MediaPathType.Id == MediaPathTypeId.Sounds)
+                .Where(p => p.MediaPathType.Id == MediaPathTypeId.MatchingGameSounds)
                 .ToArray();
 
             var mediaPathType = mediaPaths
-                .Single(x => x.MediaPathType.Id == MediaPathTypeId.Sounds)
-                .MediaPathType.Description;
+                .Single(x => x.MediaPathType.Id == MediaPathTypeId.MatchingGameSounds)
+                .MediaPathType.Path;
 
             var publicSounds = mediaFiles.SelectMany(m => m.Paths)
                 .SelectMany(p => p.Files)

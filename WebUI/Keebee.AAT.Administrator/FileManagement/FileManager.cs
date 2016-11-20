@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using Keebee.AAT.RESTClient;
 using Keebee.AAT.Shared;
 using Keebee.AAT.SystemEventLogging;
@@ -47,14 +48,15 @@ namespace Keebee.AAT.Administrator.FileManagement
             try
             {
                 var mediaRoot = $@"{_mediaPath.ProfileRoot}\{residentId}";
-                var paths = _opsClient.GetMediaPathTypes();
+                var paths = _opsClient.GetMediaPathTypes()
+                    .Where(p => p.Id != MediaPathTypeId.SystemVideos);
 
                 if (Directory.Exists(mediaRoot)) return;
 
                 var dirInfo = new DirectoryInfo(mediaRoot);
                 foreach (var path in paths)
                 {
-                    dirInfo.CreateSubdirectory(path.Description);
+                    dirInfo.CreateSubdirectory(path.Path);
                 }
             }
             catch (Exception ex)

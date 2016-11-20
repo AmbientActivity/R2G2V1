@@ -99,18 +99,20 @@ namespace Keebee.AAT.BusinessRules
 
             switch (mediaPathTypeId)
             {
-                case MediaPathTypeId.Images:
-                case MediaPathTypeId.Pictures:
+                case MediaPathTypeId.PersonalImages:
+                case MediaPathTypeId.GeneralImages:
                     isValid = name.Contains("jpg") || name.Contains("jpeg") || name.Contains("png") || name.Contains("gif");
                     break;
-                case MediaPathTypeId.Videos:
+                case MediaPathTypeId.HomeMovies:
+                case MediaPathTypeId.TVShows:
                     isValid = name.Contains("mp4");
                     break;
                 case MediaPathTypeId.Music:
-                case MediaPathTypeId.Sounds:
+                case MediaPathTypeId.RadioShows:
+                case MediaPathTypeId.MatchingGameSounds:
                     isValid = name.Contains("mp3");
                     break;
-                case MediaPathTypeId.Shapes:
+                case MediaPathTypeId.MatchingGameShapes:
                     isValid = name.Contains("png");
                     break;
             }
@@ -135,18 +137,20 @@ namespace Keebee.AAT.BusinessRules
 
             switch (mediaPathTypeId)
             {
-                case MediaPathTypeId.Images:
-                case MediaPathTypeId.Pictures:
+                case MediaPathTypeId.PersonalImages:
+                case MediaPathTypeId.GeneralImages:
                     extensions = "*.jpg,*.png,*.gif";
                     break;
-                case MediaPathTypeId.Videos:
+                case MediaPathTypeId.HomeMovies:
+                case MediaPathTypeId.TVShows:
                     extensions = "*.mp4";
                     break;
                 case MediaPathTypeId.Music:
-                case MediaPathTypeId.Sounds:
+                case MediaPathTypeId.RadioShows:
+                case MediaPathTypeId.MatchingGameSounds:
                     extensions = "*.mp3";
                     break;
-                case MediaPathTypeId.Shapes:
+                case MediaPathTypeId.MatchingGameShapes:
                     extensions = "*.png";
                     break;
             }
@@ -154,11 +158,18 @@ namespace Keebee.AAT.BusinessRules
             return extensions;
         }
 
-        public string GetMediaPathType(int? mediaPathTypeId)
+        public string GetMediaPath(int? mediaPathTypeId)
         {
             return mediaPathTypeId != null
-                ? _opsClient.GetMediaPathType((int)mediaPathTypeId).Description
-                : _opsClient.GetMediaPathType(MediaPathTypeId.Images).Description;
+                ? _opsClient.GetMediaPathType((int)mediaPathTypeId).Path
+                : _opsClient.GetMediaPathType(MediaPathTypeId.GeneralImages).Path;
+        }
+
+        public string GetMediaPathDescription(int? mediaPathTypeId)
+        {
+            return mediaPathTypeId != null
+                ? _opsClient.GetMediaPathType((int)mediaPathTypeId).ShortDescription
+                : _opsClient.GetMediaPathType(MediaPathTypeId.GeneralImages).ShortDescription;
         }
 
         public static int GetResponseTypeId(int mediaPathTypeId)
@@ -167,18 +178,20 @@ namespace Keebee.AAT.BusinessRules
 
             switch (mediaPathTypeId)
             {
-                case MediaPathTypeId.Images:
-                case MediaPathTypeId.Pictures:
+                case MediaPathTypeId.PersonalImages:
+                case MediaPathTypeId.GeneralImages:
                     responseTypeId = ResponseTypeId.SlideShow;
                     break;
-                case MediaPathTypeId.Videos:
+                case MediaPathTypeId.HomeMovies:
+                case MediaPathTypeId.TVShows:
                     responseTypeId = ResponseTypeId.Television;
                     break;
                 case MediaPathTypeId.Music:
+                case MediaPathTypeId.RadioShows:
                     responseTypeId = ResponseTypeId.Radio;
                     break;
-                case MediaPathTypeId.Shapes:
-                case MediaPathTypeId.Sounds:
+                case MediaPathTypeId.MatchingGameShapes:
+                case MediaPathTypeId.MatchingGameSounds:
                     responseTypeId = ResponseTypeId.MatchingGame;
                     break;
             }

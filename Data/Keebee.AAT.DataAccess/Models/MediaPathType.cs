@@ -7,6 +7,10 @@ namespace Keebee.AAT.DataAccess.Models
         [Key]
         public int Id { get; set; }
         [Required]
+        public string Path { get; set; }
+        [Required]
         public string Description { get; set; }
+        [Required]
+        public string ShortDescription { get; set; }
     }
 }

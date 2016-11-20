@@ -72,7 +72,9 @@ namespace Keebee.AAT.Operations.Controllers
                                     MediaPathType = new
                                         {
                                             pt.MediaPathType.Id,
-                                            pt.MediaPathType.Description
+                                            pt.MediaPathType.Path,
+                                            pt.MediaPathType.Description,
+                                            pt.MediaPathType.ShortDescription
                                         },
                                     Files = pt.Files.Select(f => new
                                         {
@@ -107,7 +109,6 @@ namespace Keebee.AAT.Operations.Controllers
             dynamic exObj = new ExpandoObject();
 
             exObj.Id = residentMediaFile.Id;
-            exObj.Path = residentMediaFile.MediaPathType.Description;
             exObj.Resident = new
                 {
                     residentMediaFile.Resident.Id,
@@ -129,7 +130,9 @@ namespace Keebee.AAT.Operations.Controllers
             exObj.MediaPathType = new
                 {
                     residentMediaFile.MediaPathType.Id,
-                    residentMediaFile.MediaPathType.Description
+                    residentMediaFile.MediaPathType.Path,
+                    residentMediaFile.MediaPathType.Description,
+                    residentMediaFile.MediaPathType.ShortDescription
                 };
             exObj.MediaFile = new
                 {
@@ -193,7 +196,9 @@ namespace Keebee.AAT.Operations.Controllers
                                     MediaPathType = new
                                     {
                                         pt.MediaPathType.Id,
-                                        pt.MediaPathType.Description
+                                        pt.MediaPathType.Path,
+                                        pt.MediaPathType.Description,
+                                        pt.MediaPathType.ShortDescription
                                     },
                                     Files = pt.Files.Select(f => new
                                     {
@@ -262,7 +267,9 @@ namespace Keebee.AAT.Operations.Controllers
                                     MediaPathType = new
                                     {
                                         pt.MediaPathType.Id,
-                                        pt.MediaPathType.Description
+                                        pt.MediaPathType.Path,
+                                        pt.MediaPathType.Description,
+                                        pt.MediaPathType.ShortDescription
                                     },
                                     Files = pt.Files.Select(f => new
                                     {

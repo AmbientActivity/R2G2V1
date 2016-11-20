@@ -333,74 +333,6 @@ namespace Keebee.AAT.Display
             }
         }
 
-        private string[] GetFilesForResponseType(int responseTypeId, int mediaPathTypeId)
-        {
-            var files = new string[0];
-            ICollection<MediaResponseType> mediaFiles = null;
-            var numFiles = 0;
-            var residentId = _activeResident.Id;
-
-            // get media from public library for the response type
-            if (_activeResident.Id == PublicMediaSource.Id)
-            {
-                mediaFiles = _opsClient.GetPublicMediaFiles().MediaFiles.ToArray();
-                numFiles = mediaFiles.Where(x => x.ResponseType.Id == responseTypeId)
-                    .SelectMany(m => m.Paths).Where(p => p.MediaPathType.Id == mediaPathTypeId)
-                    .SelectMany(p => p.Files).Count();
-            }
-            else
-            {
-                // get media from resident's profile for the response type
-                var media = _opsClient.GetResidentMediaFilesForResident(residentId);
-
-                // get a count of files for the response type
-                if (media != null)
-                {
-                    mediaFiles = media.MediaFiles.ToArray();
-                    numFiles = mediaFiles
-                        .Where(x => x.ResponseType.Id == responseTypeId)
-                        .SelectMany(m => m.Paths).Where(p => p.MediaPathType.Id == mediaPathTypeId)
-                        .SelectMany(p => p.Files).Count();
-                }
-
-                // if no files then look in public library
-                if (numFiles == 0)
-                {
-                    residentId = PublicMediaSource.Id;
-                    mediaFiles = _opsClient.GetPublicMediaFiles().MediaFiles.ToArray();
-                    numFiles = mediaFiles.Where(x => x.ResponseType.Id == responseTypeId)
-                        .SelectMany(m => m.Paths).Where(p => p.MediaPathType.Id == mediaPathTypeId)
-                        .SelectMany(p => p.Files).Count();
-                }
-            }
-
-            return (mediaFiles != null && numFiles > 0)
-                ? AssembleFileList(mediaFiles, residentId, responseTypeId, mediaPathTypeId)
-                : files;
-        }
-
-        private string[] AssembleFileList(ICollection<MediaResponseType> mediaFiles, int residentId, int responseTypeId, int mediaPathTypeId)
-        {
-            var pathRoot = $@"{_mediaPath.ProfileRoot}\{residentId}";
-
-            var mediaPaths = mediaFiles
-                .Single(x => x.ResponseType.Id == responseTypeId).Paths.ToArray();
-
-            var mediaPathType = mediaPaths
-                .Single(x => x.MediaPathType.Id == mediaPathTypeId)
-                .MediaPathType.Description;
-
-            var fileList = mediaFiles
-                .Single(m => m.ResponseType.Id == responseTypeId)
-                .Paths.Where(p =>p.MediaPathType.Id == mediaPathTypeId)
-                .SelectMany(p => p.Files)
-                .OrderBy(f => f.Filename)
-                .Select(f => $@"{pathRoot}\{mediaPathType}\{f.Filename}")
-                .ToArray();
-
-            return fileList.Any() ? fileList : new string[0];
-        }
-
         private void ExecuteRandom(IEnumerable<int> responseTypeIds)
         {
             var activeIds = responseTypeIds.Where(x => _activeResponseTypeIds.Contains(x)).ToArray();
@@ -460,19 +392,8 @@ namespace Keebee.AAT.Display
             {
                 if (_isNewResponse)
                 {
-                    var mediaPathTypeId = 0;
-                    switch (responseTypeId)
-                    {
-                        case ResponseTypeId.Radio:
-                            mediaPathTypeId = MediaPathTypeId.Music;
-                            break;
-                        case ResponseTypeId.Television:
-                        case ResponseTypeId.Cats:
-                            mediaPathTypeId = MediaPathTypeId.Videos;
-                            break;
-                    }
-
-                    var mediaFiles = GetFilesForResponseType(responseTypeId, mediaPathTypeId);
+                    var mediaFileQuery = new MediaFileQuery { OperationsClient = _opsClient };
+                    var mediaFiles = mediaFileQuery.GetFilesForResponseType(_activeResident.Id, responseTypeId);
                     if (!mediaFiles.Any()) return;
 
                     mediaFiles.Shuffle();
@@ -548,10 +469,11 @@ namespace Keebee.AAT.Display
             }
             else
             {
-                var images = GetFilesForResponseType(ResponseTypeId.SlideShow, MediaPathTypeId.Images);
+                var mediaFileQuery = new MediaFileQuery { OperationsClient = _opsClient };
+                var images = mediaFileQuery.GetFilesForResponseType(_activeResident.Id, ResponseTypeId.SlideShow);
                 if (!images.Any()) return;
 
-                var music = GetFilesForResponseType(ResponseTypeId.Radio, MediaPathTypeId.Music);
+                var music = mediaFileQuery.GetFilesForResponseType(_activeResident.Id, ResponseTypeId.Radio, MediaPathTypeId.Music);
                 if (!music.Any()) return;
 
                 StopCurrentResponse();
@@ -580,8 +502,9 @@ namespace Keebee.AAT.Display
             }
             else
             {
-                var shapes = GetFilesForResponseType(ResponseTypeId.MatchingGame, MediaPathTypeId.Shapes);
-                var sounds = GetFilesForResponseType(ResponseTypeId.MatchingGame, MediaPathTypeId.Sounds);
+                var mediaFileQuery = new MediaFileQuery { OperationsClient = _opsClient };
+                var shapes = mediaFileQuery.GetFilesForResponseType(_activeResident.Id, ResponseTypeId.MatchingGame, MediaPathTypeId.MatchingGameShapes);
+                var sounds = mediaFileQuery.GetFilesForResponseType(_activeResident.Id, ResponseTypeId.MatchingGame, MediaPathTypeId.MatchingGameSounds);
 
                 // ensure there are enough shapes and sounds to play the game
                 var gameSetup = new MatchingGameSetup { OperationsClient = _opsClient };

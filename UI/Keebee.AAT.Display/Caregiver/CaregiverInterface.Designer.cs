@@ -36,28 +36,34 @@ namespace Keebee.AAT.Display.Caregiver
             this.imageListMusicDebug = new System.Windows.Forms.ImageList(this.components);
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.tbMedia = new System.Windows.Forms.TabControl();
-            this.tabImages = new System.Windows.Forms.TabPage();
-            this.lvImages = new Keebee.AAT.Display.Caregiver.CustomControls.ListViewLarge();
+            this.tabImagesGeneral = new System.Windows.Forms.TabPage();
+            this.lvImagesGeneral = new Keebee.AAT.Display.Caregiver.CustomControls.ListViewLarge();
             this.tabMusic = new System.Windows.Forms.TabPage();
             this.lvMusic = new Keebee.AAT.Display.Caregiver.CustomControls.ListViewLarge();
-            this.axWindowsMediaPlayer1 = new AxWMPLib.AxWindowsMediaPlayer();
-            this.tabVideos = new System.Windows.Forms.TabPage();
-            this.lvVideos = new Keebee.AAT.Display.Caregiver.CustomControls.ListViewLarge();
+            this.tabRadioShows = new System.Windows.Forms.TabPage();
+            this.lvRadioShows = new Keebee.AAT.Display.Caregiver.CustomControls.ListViewLarge();
+            this.tabTVShows = new System.Windows.Forms.TabPage();
+            this.lvTVShows = new Keebee.AAT.Display.Caregiver.CustomControls.ListViewLarge();
             this.tabActivities = new System.Windows.Forms.TabPage();
-            this.lvInteractiveResponses = new Keebee.AAT.Display.Caregiver.CustomControls.ListViewLarge();
-            this.tabPictures = new System.Windows.Forms.TabPage();
-            this.lvPictures = new Keebee.AAT.Display.Caregiver.CustomControls.ListViewLarge();
+            this.lvActivities = new Keebee.AAT.Display.Caregiver.CustomControls.ListViewLarge();
+            this.tabHomeMovies = new System.Windows.Forms.TabPage();
+            this.lvHomeMovies = new Keebee.AAT.Display.Caregiver.CustomControls.ListViewLarge();
+            this.tabImagesPersonal = new System.Windows.Forms.TabPage();
+            this.lvImagesPersonal = new Keebee.AAT.Display.Caregiver.CustomControls.ListViewLarge();
             this.btnClose = new System.Windows.Forms.Button();
             this.cboResident = new Keebee.AAT.Display.Caregiver.CustomControls.ComboBoxLarge();
             this.lblMediaSource = new System.Windows.Forms.Label();
+            this.axWindowsMediaPlayer1 = new AxWMPLib.AxWindowsMediaPlayer();
             this.tableLayoutPanel1.SuspendLayout();
             this.tbMedia.SuspendLayout();
-            this.tabImages.SuspendLayout();
+            this.tabImagesGeneral.SuspendLayout();
             this.tabMusic.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.axWindowsMediaPlayer1)).BeginInit();
-            this.tabVideos.SuspendLayout();
+            this.tabRadioShows.SuspendLayout();
+            this.tabTVShows.SuspendLayout();
             this.tabActivities.SuspendLayout();
-            this.tabPictures.SuspendLayout();
+            this.tabHomeMovies.SuspendLayout();
+            this.tabImagesPersonal.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.axWindowsMediaPlayer1)).BeginInit();
             this.SuspendLayout();
             // 
             // imageListMusic
@@ -93,17 +99,20 @@ namespace Keebee.AAT.Display.Caregiver
             this.tableLayoutPanel1.RowCount = 2;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 73F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableLayoutPanel1.Size = new System.Drawing.Size(694, 404);
             this.tableLayoutPanel1.TabIndex = 7;
             // 
             // tbMedia
             // 
             this.tableLayoutPanel1.SetColumnSpan(this.tbMedia, 3);
-            this.tbMedia.Controls.Add(this.tabImages);
+            this.tbMedia.Controls.Add(this.tabImagesGeneral);
             this.tbMedia.Controls.Add(this.tabMusic);
-            this.tbMedia.Controls.Add(this.tabVideos);
+            this.tbMedia.Controls.Add(this.tabRadioShows);
+            this.tbMedia.Controls.Add(this.tabTVShows);
             this.tbMedia.Controls.Add(this.tabActivities);
-            this.tbMedia.Controls.Add(this.tabPictures);
+            this.tbMedia.Controls.Add(this.tabHomeMovies);
+            this.tbMedia.Controls.Add(this.tabImagesPersonal);
             this.tbMedia.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tbMedia.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.tbMedia.Location = new System.Drawing.Point(3, 76);
@@ -111,39 +120,39 @@ namespace Keebee.AAT.Display.Caregiver
             this.tbMedia.SelectedIndex = 0;
             this.tbMedia.Size = new System.Drawing.Size(688, 325);
             this.tbMedia.TabIndex = 0;
+            this.tbMedia.SelectedIndexChanged += new System.EventHandler(this.MediaTabSelectedIndexChanged);
             // 
-            // tabImages
+            // tabImagesGeneral
             // 
-            this.tabImages.Controls.Add(this.lvImages);
-            this.tabImages.Location = new System.Drawing.Point(4, 25);
-            this.tabImages.Name = "tabImages";
-            this.tabImages.Padding = new System.Windows.Forms.Padding(3);
-            this.tabImages.Size = new System.Drawing.Size(680, 296);
-            this.tabImages.TabIndex = 0;
-            this.tabImages.Text = "Images";
-            this.tabImages.UseVisualStyleBackColor = true;
+            this.tabImagesGeneral.Controls.Add(this.lvImagesGeneral);
+            this.tabImagesGeneral.Location = new System.Drawing.Point(4, 25);
+            this.tabImagesGeneral.Name = "tabImagesGeneral";
+            this.tabImagesGeneral.Padding = new System.Windows.Forms.Padding(3);
+            this.tabImagesGeneral.Size = new System.Drawing.Size(680, 296);
+            this.tabImagesGeneral.TabIndex = 0;
+            this.tabImagesGeneral.Text = "Images";
+            this.tabImagesGeneral.UseVisualStyleBackColor = true;
             // 
-            // lvImages
+            // lvImagesGeneral
             // 
-            this.lvImages.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lvImages.FullRowSelect = false;
-            this.lvImages.GridLines = false;
-            this.lvImages.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Clickable;
-            this.lvImages.Location = new System.Drawing.Point(3, 3);
-            this.lvImages.Margin = new System.Windows.Forms.Padding(4);
-            this.lvImages.MultiSelect = true;
-            this.lvImages.Name = "lvImages";
-            this.lvImages.Size = new System.Drawing.Size(674, 290);
-            this.lvImages.SmallImageList = null;
-            this.lvImages.TabIndex = 0;
-            this.lvImages.View = System.Windows.Forms.View.LargeIcon;
-            this.lvImages.ColumnWidthChanging += new System.Windows.Forms.ColumnWidthChangingEventHandler(this.ImagesListViewColumnWidthChanging);
-            this.lvImages.ItemClicked += new System.EventHandler(this.ImagesListViewClick);
+            this.lvImagesGeneral.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lvImagesGeneral.FullRowSelect = false;
+            this.lvImagesGeneral.GridLines = false;
+            this.lvImagesGeneral.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Clickable;
+            this.lvImagesGeneral.Location = new System.Drawing.Point(3, 3);
+            this.lvImagesGeneral.Margin = new System.Windows.Forms.Padding(4);
+            this.lvImagesGeneral.MultiSelect = true;
+            this.lvImagesGeneral.Name = "lvImagesGeneral";
+            this.lvImagesGeneral.Size = new System.Drawing.Size(674, 290);
+            this.lvImagesGeneral.SmallImageList = null;
+            this.lvImagesGeneral.TabIndex = 0;
+            this.lvImagesGeneral.View = System.Windows.Forms.View.LargeIcon;
+            this.lvImagesGeneral.ColumnWidthChanging += new System.Windows.Forms.ColumnWidthChangingEventHandler(this.ImagesGeneralListViewColumnWidthChanging);
+            this.lvImagesGeneral.ItemClicked += new System.EventHandler(this.ImagesGeneralListViewClick);
             // 
             // tabMusic
             // 
             this.tabMusic.Controls.Add(this.lvMusic);
-            this.tabMusic.Controls.Add(this.axWindowsMediaPlayer1);
             this.tabMusic.Location = new System.Drawing.Point(4, 25);
             this.tabMusic.Name = "tabMusic";
             this.tabMusic.Padding = new System.Windows.Forms.Padding(3);
@@ -169,48 +178,65 @@ namespace Keebee.AAT.Display.Caregiver
             this.lvMusic.ColumnWidthChanging += new System.Windows.Forms.ColumnWidthChangingEventHandler(this.MusicListViewColumnWidthChanging);
             this.lvMusic.ItemClicked += new System.EventHandler(this.MusicListViewClick);
             // 
-            // axWindowsMediaPlayer1
+            // tabRadioShows
             // 
-            this.axWindowsMediaPlayer1.Enabled = true;
-            this.axWindowsMediaPlayer1.Location = new System.Drawing.Point(562, 6);
-            this.axWindowsMediaPlayer1.Name = "axWindowsMediaPlayer1";
-            this.axWindowsMediaPlayer1.OcxState = ((System.Windows.Forms.AxHost.State)(resources.GetObject("axWindowsMediaPlayer1.OcxState")));
-            this.axWindowsMediaPlayer1.Size = new System.Drawing.Size(66, 40);
-            this.axWindowsMediaPlayer1.TabIndex = 4;
-            this.axWindowsMediaPlayer1.Visible = false;
-            this.axWindowsMediaPlayer1.PlayStateChange += new AxWMPLib._WMPOCXEvents_PlayStateChangeEventHandler(this.PlayStateChange);
+            this.tabRadioShows.Controls.Add(this.lvRadioShows);
+            this.tabRadioShows.Location = new System.Drawing.Point(4, 25);
+            this.tabRadioShows.Name = "tabRadioShows";
+            this.tabRadioShows.Padding = new System.Windows.Forms.Padding(3);
+            this.tabRadioShows.Size = new System.Drawing.Size(680, 296);
+            this.tabRadioShows.TabIndex = 3;
+            this.tabRadioShows.Text = "Radio Shows";
+            this.tabRadioShows.UseVisualStyleBackColor = true;
             // 
-            // tabVideos
+            // lvRadioShows
             // 
-            this.tabVideos.Controls.Add(this.lvVideos);
-            this.tabVideos.Location = new System.Drawing.Point(4, 25);
-            this.tabVideos.Name = "tabVideos";
-            this.tabVideos.Padding = new System.Windows.Forms.Padding(3);
-            this.tabVideos.Size = new System.Drawing.Size(680, 296);
-            this.tabVideos.TabIndex = 1;
-            this.tabVideos.Text = "Videos";
-            this.tabVideos.UseVisualStyleBackColor = true;
+            this.lvRadioShows.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lvRadioShows.FullRowSelect = false;
+            this.lvRadioShows.GridLines = false;
+            this.lvRadioShows.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Clickable;
+            this.lvRadioShows.Location = new System.Drawing.Point(3, 3);
+            this.lvRadioShows.Margin = new System.Windows.Forms.Padding(4);
+            this.lvRadioShows.MultiSelect = true;
+            this.lvRadioShows.Name = "lvRadioShows";
+            this.lvRadioShows.Size = new System.Drawing.Size(674, 290);
+            this.lvRadioShows.SmallImageList = null;
+            this.lvRadioShows.TabIndex = 7;
+            this.lvRadioShows.View = System.Windows.Forms.View.LargeIcon;
+            this.lvRadioShows.ColumnWidthChanging += new System.Windows.Forms.ColumnWidthChangingEventHandler(this.RadioShowsListViewColumnWidthChanging);
+            this.lvRadioShows.ItemClicked += new System.EventHandler(this.RadioShowListViewClick);
             // 
-            // lvVideos
+            // tabTVShows
             // 
-            this.lvVideos.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lvVideos.FullRowSelect = false;
-            this.lvVideos.GridLines = false;
-            this.lvVideos.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Clickable;
-            this.lvVideos.Location = new System.Drawing.Point(3, 3);
-            this.lvVideos.Margin = new System.Windows.Forms.Padding(4);
-            this.lvVideos.MultiSelect = true;
-            this.lvVideos.Name = "lvVideos";
-            this.lvVideos.Size = new System.Drawing.Size(674, 290);
-            this.lvVideos.SmallImageList = null;
-            this.lvVideos.TabIndex = 0;
-            this.lvVideos.View = System.Windows.Forms.View.LargeIcon;
-            this.lvVideos.ColumnWidthChanging += new System.Windows.Forms.ColumnWidthChangingEventHandler(this.VideosListViewColumnWidthChanging);
-            this.lvVideos.ItemClicked += new System.EventHandler(this.VideosListViewClick);
+            this.tabTVShows.Controls.Add(this.lvTVShows);
+            this.tabTVShows.Location = new System.Drawing.Point(4, 25);
+            this.tabTVShows.Name = "tabTVShows";
+            this.tabTVShows.Padding = new System.Windows.Forms.Padding(3);
+            this.tabTVShows.Size = new System.Drawing.Size(680, 296);
+            this.tabTVShows.TabIndex = 1;
+            this.tabTVShows.Text = "TV Shows";
+            this.tabTVShows.UseVisualStyleBackColor = true;
+            // 
+            // lvTVShows
+            // 
+            this.lvTVShows.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lvTVShows.FullRowSelect = false;
+            this.lvTVShows.GridLines = false;
+            this.lvTVShows.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Clickable;
+            this.lvTVShows.Location = new System.Drawing.Point(3, 3);
+            this.lvTVShows.Margin = new System.Windows.Forms.Padding(4);
+            this.lvTVShows.MultiSelect = true;
+            this.lvTVShows.Name = "lvTVShows";
+            this.lvTVShows.Size = new System.Drawing.Size(674, 290);
+            this.lvTVShows.SmallImageList = null;
+            this.lvTVShows.TabIndex = 0;
+            this.lvTVShows.View = System.Windows.Forms.View.LargeIcon;
+            this.lvTVShows.ColumnWidthChanging += new System.Windows.Forms.ColumnWidthChangingEventHandler(this.TVShowsListViewColumnWidthChanging);
+            this.lvTVShows.ItemClicked += new System.EventHandler(this.TVShowsListViewClick);
             // 
             // tabActivities
             // 
-            this.tabActivities.Controls.Add(this.lvInteractiveResponses);
+            this.tabActivities.Controls.Add(this.lvActivities);
             this.tabActivities.Location = new System.Drawing.Point(4, 25);
             this.tabActivities.Name = "tabActivities";
             this.tabActivities.Padding = new System.Windows.Forms.Padding(3);
@@ -219,50 +245,78 @@ namespace Keebee.AAT.Display.Caregiver
             this.tabActivities.Text = "Activities";
             this.tabActivities.UseVisualStyleBackColor = true;
             // 
-            // lvInteractiveResponses
+            // lvActivities
             // 
-            this.lvInteractiveResponses.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lvInteractiveResponses.FullRowSelect = false;
-            this.lvInteractiveResponses.GridLines = false;
-            this.lvInteractiveResponses.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Clickable;
-            this.lvInteractiveResponses.Location = new System.Drawing.Point(3, 3);
-            this.lvInteractiveResponses.Margin = new System.Windows.Forms.Padding(4);
-            this.lvInteractiveResponses.MultiSelect = true;
-            this.lvInteractiveResponses.Name = "lvInteractiveResponses";
-            this.lvInteractiveResponses.Size = new System.Drawing.Size(674, 290);
-            this.lvInteractiveResponses.SmallImageList = null;
-            this.lvInteractiveResponses.TabIndex = 0;
-            this.lvInteractiveResponses.View = System.Windows.Forms.View.LargeIcon;
-            this.lvInteractiveResponses.ColumnWidthChanging += new System.Windows.Forms.ColumnWidthChangingEventHandler(this.InteractiveResponsesListViewColumnWidthChanging);
-            this.lvInteractiveResponses.ItemClicked += new System.EventHandler(this.InteractiveResponsesListViewClick);
+            this.lvActivities.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lvActivities.FullRowSelect = false;
+            this.lvActivities.GridLines = false;
+            this.lvActivities.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Clickable;
+            this.lvActivities.Location = new System.Drawing.Point(3, 3);
+            this.lvActivities.Margin = new System.Windows.Forms.Padding(4);
+            this.lvActivities.MultiSelect = true;
+            this.lvActivities.Name = "lvActivities";
+            this.lvActivities.Size = new System.Drawing.Size(674, 290);
+            this.lvActivities.SmallImageList = null;
+            this.lvActivities.TabIndex = 0;
+            this.lvActivities.View = System.Windows.Forms.View.LargeIcon;
+            this.lvActivities.ColumnWidthChanging += new System.Windows.Forms.ColumnWidthChangingEventHandler(this.ActivitiesListViewColumnWidthChanging);
+            this.lvActivities.ItemClicked += new System.EventHandler(this.ActivitiesListViewClick);
             // 
-            // tabPictures
+            // tabHomeMovies
             // 
-            this.tabPictures.Controls.Add(this.lvPictures);
-            this.tabPictures.Location = new System.Drawing.Point(4, 25);
-            this.tabPictures.Name = "tabPictures";
-            this.tabPictures.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPictures.Size = new System.Drawing.Size(680, 296);
-            this.tabPictures.TabIndex = 4;
-            this.tabPictures.Text = "Pictures";
-            this.tabPictures.UseVisualStyleBackColor = true;
+            this.tabHomeMovies.Controls.Add(this.lvHomeMovies);
+            this.tabHomeMovies.Location = new System.Drawing.Point(4, 25);
+            this.tabHomeMovies.Name = "tabHomeMovies";
+            this.tabHomeMovies.Padding = new System.Windows.Forms.Padding(3);
+            this.tabHomeMovies.Size = new System.Drawing.Size(680, 296);
+            this.tabHomeMovies.TabIndex = 7;
+            this.tabHomeMovies.Text = "Home Movies";
+            this.tabHomeMovies.UseVisualStyleBackColor = true;
             // 
-            // lvPictures
+            // lvHomeMovies
             // 
-            this.lvPictures.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lvPictures.FullRowSelect = false;
-            this.lvPictures.GridLines = false;
-            this.lvPictures.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Clickable;
-            this.lvPictures.Location = new System.Drawing.Point(3, 3);
-            this.lvPictures.Margin = new System.Windows.Forms.Padding(4);
-            this.lvPictures.MultiSelect = true;
-            this.lvPictures.Name = "lvPictures";
-            this.lvPictures.Size = new System.Drawing.Size(674, 290);
-            this.lvPictures.SmallImageList = null;
-            this.lvPictures.TabIndex = 0;
-            this.lvPictures.View = System.Windows.Forms.View.LargeIcon;
-            this.lvPictures.ColumnWidthChanging += new System.Windows.Forms.ColumnWidthChangingEventHandler(this.PicturesListViewColumnWidthChanging);
-            this.lvPictures.ItemClicked += new System.EventHandler(this.PicturesListViewClick);
+            this.lvHomeMovies.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lvHomeMovies.FullRowSelect = false;
+            this.lvHomeMovies.GridLines = false;
+            this.lvHomeMovies.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Clickable;
+            this.lvHomeMovies.Location = new System.Drawing.Point(3, 3);
+            this.lvHomeMovies.Margin = new System.Windows.Forms.Padding(5);
+            this.lvHomeMovies.MultiSelect = true;
+            this.lvHomeMovies.Name = "lvHomeMovies";
+            this.lvHomeMovies.Size = new System.Drawing.Size(674, 290);
+            this.lvHomeMovies.SmallImageList = null;
+            this.lvHomeMovies.TabIndex = 1;
+            this.lvHomeMovies.View = System.Windows.Forms.View.LargeIcon;
+            this.lvHomeMovies.ColumnWidthChanging += new System.Windows.Forms.ColumnWidthChangingEventHandler(this.HomeMoviesListViewColumnWidthChanging);
+            this.lvHomeMovies.ItemClicked += new System.EventHandler(this.HomeMoviesListViewClick);
+            // 
+            // tabImagesPersonal
+            // 
+            this.tabImagesPersonal.Controls.Add(this.lvImagesPersonal);
+            this.tabImagesPersonal.Location = new System.Drawing.Point(4, 25);
+            this.tabImagesPersonal.Name = "tabImagesPersonal";
+            this.tabImagesPersonal.Padding = new System.Windows.Forms.Padding(3);
+            this.tabImagesPersonal.Size = new System.Drawing.Size(680, 296);
+            this.tabImagesPersonal.TabIndex = 4;
+            this.tabImagesPersonal.Text = "Personal Images";
+            this.tabImagesPersonal.UseVisualStyleBackColor = true;
+            // 
+            // lvImagesPersonal
+            // 
+            this.lvImagesPersonal.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lvImagesPersonal.FullRowSelect = false;
+            this.lvImagesPersonal.GridLines = false;
+            this.lvImagesPersonal.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Clickable;
+            this.lvImagesPersonal.Location = new System.Drawing.Point(3, 3);
+            this.lvImagesPersonal.Margin = new System.Windows.Forms.Padding(4);
+            this.lvImagesPersonal.MultiSelect = true;
+            this.lvImagesPersonal.Name = "lvImagesPersonal";
+            this.lvImagesPersonal.Size = new System.Drawing.Size(674, 290);
+            this.lvImagesPersonal.SmallImageList = null;
+            this.lvImagesPersonal.TabIndex = 0;
+            this.lvImagesPersonal.View = System.Windows.Forms.View.LargeIcon;
+            this.lvImagesPersonal.ColumnWidthChanging += new System.Windows.Forms.ColumnWidthChangingEventHandler(this.ImagesPersonalListViewColumnWidthChanging);
+            this.lvImagesPersonal.ItemClicked += new System.EventHandler(this.ImagesPersonalListViewClick);
             // 
             // btnClose
             // 
@@ -297,12 +351,24 @@ namespace Keebee.AAT.Display.Caregiver
             this.lblMediaSource.TabIndex = 3;
             this.lblMediaSource.Text = "Media Source";
             // 
+            // axWindowsMediaPlayer1
+            // 
+            this.axWindowsMediaPlayer1.Enabled = true;
+            this.axWindowsMediaPlayer1.Location = new System.Drawing.Point(3, 387);
+            this.axWindowsMediaPlayer1.Name = "axWindowsMediaPlayer1";
+            this.axWindowsMediaPlayer1.OcxState = ((System.Windows.Forms.AxHost.State)(resources.GetObject("axWindowsMediaPlayer1.OcxState")));
+            this.axWindowsMediaPlayer1.Size = new System.Drawing.Size(66, 14);
+            this.axWindowsMediaPlayer1.TabIndex = 4;
+            this.axWindowsMediaPlayer1.Visible = false;
+            this.axWindowsMediaPlayer1.PlayStateChange += new AxWMPLib._WMPOCXEvents_PlayStateChangeEventHandler(this.PlayStateChange);
+            // 
             // CaregiverInterface
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(694, 404);
             this.Controls.Add(this.tableLayoutPanel1);
+            this.Controls.Add(this.axWindowsMediaPlayer1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
@@ -314,12 +380,14 @@ namespace Keebee.AAT.Display.Caregiver
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();
             this.tbMedia.ResumeLayout(false);
-            this.tabImages.ResumeLayout(false);
+            this.tabImagesGeneral.ResumeLayout(false);
             this.tabMusic.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.axWindowsMediaPlayer1)).EndInit();
-            this.tabVideos.ResumeLayout(false);
+            this.tabRadioShows.ResumeLayout(false);
+            this.tabTVShows.ResumeLayout(false);
             this.tabActivities.ResumeLayout(false);
-            this.tabPictures.ResumeLayout(false);
+            this.tabHomeMovies.ResumeLayout(false);
+            this.tabImagesPersonal.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.axWindowsMediaPlayer1)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -329,19 +397,23 @@ namespace Keebee.AAT.Display.Caregiver
         private ImageList imageListMusicDebug;
         private TableLayoutPanel tableLayoutPanel1;
         private TabControl tbMedia;
-        private TabPage tabImages;
-        private CustomControls.ListViewLarge lvImages;
+        private TabPage tabImagesGeneral;
+        private CustomControls.ListViewLarge lvImagesGeneral;
         private TabPage tabMusic;
         private CustomControls.ListViewLarge lvMusic;
         private AxWMPLib.AxWindowsMediaPlayer axWindowsMediaPlayer1;
-        private TabPage tabVideos;
-        private CustomControls.ListViewLarge lvVideos;
+        private TabPage tabTVShows;
+        private CustomControls.ListViewLarge lvTVShows;
         private TabPage tabActivities;
-        private CustomControls.ListViewLarge lvInteractiveResponses;
-        private TabPage tabPictures;
-        private CustomControls.ListViewLarge lvPictures;
+        private CustomControls.ListViewLarge lvActivities;
+        private TabPage tabImagesPersonal;
+        private CustomControls.ListViewLarge lvImagesPersonal;
         private Button btnClose;
         private CustomControls.ComboBoxLarge cboResident;
         private Label lblMediaSource;
+        private TabPage tabRadioShows;
+        private TabPage tabHomeMovies;
+        private CustomControls.ListViewLarge lvHomeMovies;
+        private CustomControls.ListViewLarge lvRadioShows;
     }
 }

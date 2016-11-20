@@ -106,6 +106,7 @@
     <Compile Include="Helpers\AudioControl.cs" />
     <Compile Include="Helpers\GameEventLogger.cs" />
     <Compile Include="Helpers\MatchingGameSetup.cs" />
+    <Compile Include="Helpers\MediaFileQuery.cs" />
     <Compile Include="Helpers\Taskbar.cs" />
     <Compile Include="Main.cs">
       <SubType>Form</SubType>

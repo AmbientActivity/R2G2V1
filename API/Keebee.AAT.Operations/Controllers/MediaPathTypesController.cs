@@ -39,7 +39,9 @@ namespace Keebee.AAT.Operations.Controllers
                 .Select(x => new
                 {
                     x.Id,
-                    x.Description
+                    x.Path,
+                    x.Description,
+                    x.ShortDescription
                 });
 
             return new DynamicJsonObject(exObj);
@@ -62,7 +64,9 @@ namespace Keebee.AAT.Operations.Controllers
             dynamic exObj = new ExpandoObject();
 
             exObj.Id = mediaPathType.Id;
+            exObj.Path = mediaPathType.Path;
             exObj.Description = mediaPathType.Description;
+            exObj.ShortDescription = mediaPathType.ShortDescription;
 
             return new DynamicJsonObject(exObj);
         }

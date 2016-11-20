@@ -66,6 +66,7 @@ namespace Keebee.AAT.RESTClient
         ResidentMediaFile GetResidentMediaFile(int id);
         ResidentMedia GetResidentMediaFilesForResident(int residentId);
         ResidentMedia GetResidentMediaFilesForResponseType(int responseTypeId);
+        ResidentMedia GetResidentMediaFilesForResidentResponseType(int residentId, int responseTypeId);
 
         IEnumerable<ActivityEventLog> GetActivityEventLogsForDate(string date);
         IEnumerable<RfidEventLog> GetRfidEventLogsForDate(string date);
@@ -168,6 +169,7 @@ namespace Keebee.AAT.RESTClient
         private const string UrlResidentMediaFile = "residentmediafiles/{0}";
         private const string UrlResidentMediaFilesForResident = "residentmediafiles?residentId={0}";
         private const string UrlResidentMediaFilesForResponseType = "residentmediafiles?responseTypeId={0}";
+        private const string UrlResidentMediaFilesForResidentResponseType = "residentmediafiles?residentId={0}&responseTypeId={1}";
 
         // rfid event logs
         private const string UrlRfidEventLogs = "rfideventlogs";
@@ -736,6 +738,16 @@ namespace Keebee.AAT.RESTClient
             return residentMedia;
         }
 
+        public ResidentMedia GetResidentMediaFilesForResidentResponseType(int residentId, int responseTypeId)
+        {
+            var data = Get(string.Format(UrlResidentMediaFilesForResidentResponseType, residentId, responseTypeId));
+            if (data == null) return null;
+
+            var serializer = new JavaScriptSerializer();
+            var residentMedia = serializer.Deserialize<ResidentMedia>(data);
+
+            return residentMedia;
+        }
 
         // POST
 

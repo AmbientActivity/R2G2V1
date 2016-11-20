@@ -71,12 +71,15 @@ namespace Keebee.AAT.Shared
 
     public static class MediaPathTypeId
     {
-        public const int Images = 1;
-        public const int Videos = 2;
-        public const int Music = 3;
-        public const int Pictures = 4;
-        public const int Shapes = 5;
-        public const int Sounds = 6;
+        public const int Music = 1;
+        public const int RadioShows = 2;
+        public const int GeneralImages = 3;
+        public const int PersonalImages = 4;
+        public const int TVShows = 5;
+        public const int HomeMovies = 6;
+        public const int SystemVideos = 7;
+        public const int MatchingGameShapes = 8;
+        public const int MatchingGameSounds = 9;
     }
 
     public static class MediaSourceType

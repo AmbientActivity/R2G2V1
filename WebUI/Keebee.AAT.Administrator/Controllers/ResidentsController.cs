@@ -2,7 +2,6 @@
 using Keebee.AAT.Administrator.ViewModels;
 using Keebee.AAT.BusinessRules;
 using Keebee.AAT.Shared;
-using Keebee.AAT.Administrator.Extensions;
 using Keebee.AAT.Administrator.FileManagement;
 using Keebee.AAT.SystemEventLogging;
 using CuteWebUI;
@@ -49,7 +48,7 @@ namespace Keebee.AAT.Administrator.Controllers
             int? sortdescending)
         {
             // first time loading
-            if (mediaPathTypeId == null) mediaPathTypeId = MediaPathTypeId.Images;
+            if (mediaPathTypeId == null) mediaPathTypeId = MediaPathTypeId.GeneralImages;
 
             var vm = LoadResidentMediaViewModel(id, rfid, firstname, lastname, mediaPathTypeId, sortcolumn, sortdescending);
 
@@ -79,8 +78,8 @@ namespace Keebee.AAT.Administrator.Controllers
 
                     if (!ResidentRules.IsValidFile(file.FileName, mediaPathTypeId)) continue;
 
-                    var mediaPathType = rules.GetMediaPathType(mediaPathTypeId);
-                    var filePath = $@"{_mediaPath.ProfileRoot}\{id}\{mediaPathType}\{file.FileName}";
+                    var mediaPath = rules.GetMediaPath(mediaPathTypeId);
+                    var filePath = $@"{_mediaPath.ProfileRoot}\{id}\{mediaPath}\{file.FileName}";
 
                     // delete it if it already exists
                     var msg = fileManager.DeleteFile(filePath);
@@ -88,7 +87,7 @@ namespace Keebee.AAT.Administrator.Controllers
                     if (msg.Length == 0)
                     {
                         file.MoveTo(filePath);
-                        AddResidentMediaFile(id, file.FileName, (int) mediaPathTypeId, mediaPathType);
+                        AddResidentMediaFile(id, file.FileName, (int) mediaPathTypeId, mediaPath);
                     }
                 }
             }
@@ -121,8 +120,8 @@ namespace Keebee.AAT.Administrator.Controllers
                 MediaPathTypeList = mediaPathTypes.Select(x => new
                 {
                     x.Id,
-                    Description = x.Description.ToUppercaseFirst()
-                })
+                    x.Description
+                }).Where(p => p.Id != MediaPathTypeId.SystemVideos)
             };
 
             return Json(vm, JsonRequestBehavior.AllowGet);
@@ -147,7 +146,7 @@ namespace Keebee.AAT.Administrator.Controllers
             return Json(new
             {
                 UploaderHtml = html,
-                AddButtonText = $"Upload {rules.GetMediaPathType(mediaPathTypeId).ToUppercaseFirst()}",
+                AddButtonText = $"Upload {rules.GetMediaPathDescription(mediaPathTypeId)}",
             }, JsonRequestBehavior.AllowGet);
         }
 
@@ -378,13 +377,13 @@ namespace Keebee.AAT.Administrator.Controllers
             {
                 ResidentId = resident.Id,
                 FullName = fullName,
-                AddButtonText = $"Upload {rules.GetMediaPathType(mediaPathTypeId).ToUppercaseFirst()}",
+                AddButtonText = $"Upload {rules.GetMediaPathDescription(mediaPathTypeId)}",
                 RfidSearch = rfid,
                 FirstNameSearch = firstname,
                 LastNameSearch = lastname,
                 SortColumn = sortcolumn,
                 SortDescending = sortdescending,
-                SelectedMediaPathType = mediaPathTypeId ?? MediaPathTypeId.Images
+                SelectedMediaPathType = mediaPathTypeId ?? MediaPathTypeId.GeneralImages
             };
 
             return vm;

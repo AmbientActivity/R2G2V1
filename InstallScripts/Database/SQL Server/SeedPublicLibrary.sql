@@ -30,7 +30,7 @@ SELECT 5, 2, StreamId FROM MediaFiles WHERE [Path] = @pathProfile + '0\audio\rad
 
 --- Activity 6 - ResponseType "Television" ---
 INSERT INTO PublicMediaFiles (ResponseTypeId, MediaPathTypeId, StreamId)
-SELECT 6, 6, StreamId FROM MediaFiles WHERE [Path] = @pathProfile + '0\videos\tv-shows\' AND [Filename] NOT IN ('Bird-Feeding.mp4', 'Nature-Sounds.mp4', 'Cats.mp4')
+SELECT 6, 5, StreamId FROM MediaFiles WHERE [Path] = @pathProfile + '0\videos\tv-shows\' AND [Filename] NOT IN ('Bird-Feeding.mp4', 'Nature-Sounds.mp4', 'Cats.mp4')
 
 --- ResponseType "Ambient" ---
 INSERT INTO PublicMediaFiles (ResponseTypeId, MediaPathTypeId, StreamId)

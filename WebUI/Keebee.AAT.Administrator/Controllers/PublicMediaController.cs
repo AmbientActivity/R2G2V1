@@ -34,7 +34,7 @@ namespace Keebee.AAT.Administrator.Controllers
             string myuploader)
         {
             // first time loading
-            if (mediaPathTypeId == null) mediaPathTypeId = MediaPathTypeId.GeneralImages;
+            if (mediaPathTypeId == null) mediaPathTypeId = MediaPathTypeId.Music;
             if (responseTypeId == null) responseTypeId = ResponseTypeId.SlideShow;
 
             var vm = LoadPublicMediaViewModel(mediaPathTypeId, responseTypeId);
@@ -248,8 +248,8 @@ namespace Keebee.AAT.Administrator.Controllers
             {
                 Title = PublicMediaSource.Description,
                 AddButtonText = $"Upload {rules.GetMediaPathDescription(mediaPathTypeId)}",
-                SelectedMediaPathType = mediaPathTypeId ?? MediaPathTypeId.GeneralImages,
-                SelectedResponseType = responseTypeId ?? ResponseTypeId.SlideShow
+                SelectedMediaPathType = mediaPathTypeId ?? MediaPathTypeId.Music,
+                SelectedResponseType = responseTypeId ?? ResponseTypeId.Radio
             };
 
             return vm;

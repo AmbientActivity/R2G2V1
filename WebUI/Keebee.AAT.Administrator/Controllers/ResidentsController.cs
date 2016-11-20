@@ -48,7 +48,7 @@ namespace Keebee.AAT.Administrator.Controllers
             int? sortdescending)
         {
             // first time loading
-            if (mediaPathTypeId == null) mediaPathTypeId = MediaPathTypeId.GeneralImages;
+            if (mediaPathTypeId == null) mediaPathTypeId = MediaPathTypeId.Music;
 
             var vm = LoadResidentMediaViewModel(id, rfid, firstname, lastname, mediaPathTypeId, sortcolumn, sortdescending);
 
@@ -383,7 +383,7 @@ namespace Keebee.AAT.Administrator.Controllers
                 LastNameSearch = lastname,
                 SortColumn = sortcolumn,
                 SortDescending = sortdescending,
-                SelectedMediaPathType = mediaPathTypeId ?? MediaPathTypeId.GeneralImages
+                SelectedMediaPathType = mediaPathTypeId ?? MediaPathTypeId.Music
             };
 
             return vm;

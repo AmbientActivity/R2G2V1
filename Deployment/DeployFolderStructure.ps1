@@ -2,7 +2,8 @@
 $deployPath = "C:\Deployments\"
 
 # media
-$profilesPath = "Media\Profiles\new\"
+$profilesResidentPath = "Media\Profiles\new-resident\"
+$profilesPublicPath = "Media\Profiles\new-public\"
 
 $activitiesGameShapesPath = "activities\matching-game\shapes\"
 $activitiesGameSoundsPath = "activities\matching-game\sounds\"
@@ -20,8 +21,43 @@ Try
 
     Write-Host "Deploying Media Folders...” -NoNewline
 
-    $destPath = $deployPath + $profilesPath
+    $destPath = $deployPath + $profilesPublicPath
 
+
+    If(test-path $destPath)
+    {
+        Remove-Item $destPath -recurse -Force
+    }
+
+    # new public
+
+    New-Item -ItemType Directory -Force -Path $destPath | Out-Null
+
+    $path = $destPath + $activitiesGameShapesPath
+    New-Item -ItemType Directory -Force -Path $path | Out-Null
+
+    $path = $destPath + $activitiesGameSoundsPath
+    New-Item -ItemType Directory -Force -Path $path | Out-Null
+
+    $path = $destPath + $audioMusicPath
+    New-Item -ItemType Directory -Force -Path $path | Out-Null
+
+    $path = $destPath + $audioRadioShowsPath
+    New-Item -ItemType Directory -Force -Path $path | Out-Null
+
+    $path = $destPath + $imagesGeneralPath
+    New-Item -ItemType Directory -Force -Path $path | Out-Null
+
+    $path = $destPath + $videosSystemPath
+    New-Item -ItemType Directory -Force -Path $path | Out-Null
+
+    $path = $destPath + $videosTVShowsPath
+    New-Item -ItemType Directory -Force -Path $path | Out-Null
+
+
+    # new resident
+
+    $destPath = $deployPath + $profilesResidentPath
 
     If(test-path $destPath)
     {

@@ -357,6 +357,10 @@ Try
     }
     New-Item -ItemType Directory -Force -Path $path | Out-Null
     Copy-Item C:\Users\$env:USERNAME\Source\Repos\R2G2V1\Documentation\Setup\PostWindowsInstallationSetup.docx $path -recurse -Force
+
+    New-Item -ItemType Directory -Force -Path $path | Out-Null
+    Copy-Item C:\Users\$env:USERNAME\Source\Repos\R2G2V1\Documentation\Setup\DeployNewFolderStructure.docx $path -recurse -Force
+
     Write-Host "done.”
 
     Write-Host -foregroundcolor green "`nR2G2 successfully deployed.`n”

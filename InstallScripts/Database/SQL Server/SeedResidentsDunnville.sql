@@ -4,7 +4,7 @@ USE [KeebeeAAT]
 TRUNCATE TABLE ResidentMediaFiles
 */
 
--- residents
+-- insert residents
 SET IDENTITY_INSERT [dbo].[Residents] ON 
 INSERT [dbo].[Residents] ([Id], [FirstName], [LastName], [Gender], [GameDifficultyLevel], [AllowVideoCapturing], [DateCreated], [DateUpdated]) 
 VALUES (1, 'Edwin', 'Ranta', 'M', 1, 1, GETDATE(), GETDATE())

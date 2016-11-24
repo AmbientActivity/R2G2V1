@@ -32,7 +32,6 @@ namespace Keebee.AAT.Shared
     public class ResponseMessage
     {
         public int SensorValue { get; set; }
-        public bool IsSystem { get; set; }
         public bool IsActiveEventLog { get; set; }
         public ResidentMessage Resident { get; set; }
         public ConfigDetailMessage ConfigDetail { get; set; }

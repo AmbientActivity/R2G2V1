@@ -22,7 +22,7 @@ namespace Keebee.AAT.Simulator
     public partial class ControlPanel : Form
     {
         // delegate
-        delegate void UpdateLabelDelegate(string text);
+        private delegate void UpdateLabelDelegate(string text);
 
         // data
         private readonly IOperationsClient _opsClient;
@@ -31,6 +31,7 @@ namespace Keebee.AAT.Simulator
         // message queue sender
         private readonly CustomMessageQueue _messageQueuePhidget;
         private readonly CustomMessageQueue _messageQueueRfid;
+        private readonly CustomMessageQueue _messageQueueResponse;
 
         // timer
         private readonly int _autoSensorInterval;
@@ -72,6 +73,12 @@ namespace Keebee.AAT.Simulator
             _messageQueueRfid = new CustomMessageQueue(new CustomMessageQueueArgs
             {
                 QueueName = MessageQueueType.Rfid
+
+            });
+
+            _messageQueueResponse = new CustomMessageQueue(new CustomMessageQueueArgs
+            {
+                QueueName = MessageQueueType.Response
 
             });
 
@@ -172,7 +179,18 @@ namespace Keebee.AAT.Simulator
         {
             UpdateSensorLabel("3");
             UpdateValueLabel(Convert.ToString(MaxSensorValue - 1));
-            _messageQueuePhidget.Send(string.Format("{0}\"SensorId\":3,\"SensorValue\":{1}{2}", "{", MaxSensorValue - 1, "}"));
+            var responseMessage = new ResponseMessage
+            {
+                SensorValue = MaxSensorValue - 1,
+                ConfigDetail = new ConfigDetailMessage {ResponseTypeId = ResponseTypeId.KillDisplay, IsSystemReponseType = true},
+                Resident = new ResidentMessage(),
+                IsActiveEventLog = false,
+                ResponseTypeIds = null
+            };
+
+            var serializer = new JavaScriptSerializer();
+            var responseMessageBody = serializer.Serialize(responseMessage);
+            _messageQueueResponse.Send(responseMessageBody);
         }
 
         private void RadioSensorRightClick(object sender, EventArgs e)

@@ -677,7 +677,7 @@ namespace Keebee.AAT.Display
                 _currentIsActiveEventLog = response.IsActiveEventLog;
                 _activeResponseTypeIds = response.ResponseTypeIds;
 
-                ExecuteResponse(response.ConfigDetail.ResponseTypeId, response.SensorValue, response.IsSystem);
+                ExecuteResponse(response.ConfigDetail.ResponseTypeId, response.SensorValue, response.ConfigDetail.IsSystemReponseType);
             }
             catch (Exception ex)
             {

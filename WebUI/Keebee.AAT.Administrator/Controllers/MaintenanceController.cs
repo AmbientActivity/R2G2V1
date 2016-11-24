@@ -13,7 +13,6 @@ namespace Keebee.AAT.Administrator.Controllers
 {
     public class MaintenanceController : Controller
     {
-        private readonly OperationsClient _opsClient;
         private readonly SystemEventLogger _systemEventLogger;
 
         // message queue sender
@@ -22,11 +21,10 @@ namespace Keebee.AAT.Administrator.Controllers
         private readonly CustomMessageQueue _messageQueueDisplayPhidget;
         private readonly CustomMessageQueue _messageQueueDisplayVideoCapture;
         private readonly CustomMessageQueue _messageQueuePhidget;
+        private readonly CustomMessageQueue _messageQueueResponse;
 
         public MaintenanceController()
         {
-            _opsClient = new OperationsClient { SystemEventLogger = _systemEventLogger };
-
             _systemEventLogger = new SystemEventLogger(SystemEventLogType.AdminInterface);
 
             // config-sms message queue sender
@@ -57,6 +55,12 @@ namespace Keebee.AAT.Administrator.Controllers
             _messageQueuePhidget = new CustomMessageQueue(new CustomMessageQueueArgs
             {
                 QueueName = MessageQueueType.Phidget
+            });
+
+            // response message queue sender
+            _messageQueueResponse = new CustomMessageQueue(new CustomMessageQueueArgs
+            {
+                QueueName = MessageQueueType.Response
             });
         }
 
@@ -163,8 +167,7 @@ namespace Keebee.AAT.Administrator.Controllers
         {
             var rules = new MaintenanceRules
             {
-                OperationsClient = _opsClient,
-                MessageQueuePhidget = _messageQueuePhidget,
+                MessageQueueResponse = _messageQueueResponse,
                 EventLogger = _systemEventLogger
             };
 

@@ -7,21 +7,16 @@ using System.Configuration.Install;
 using System.Diagnostics;
 using System.ServiceProcess;
 using System.Linq;
+using System.Web.Script.Serialization;
 
 namespace Keebee.AAT.BusinessRules
 {
     public class MaintenanceRules
     {
-        private OperationsClient _opsClient;
-        public OperationsClient OperationsClient
+        private CustomMessageQueue _messageQueueResponse;
+        public CustomMessageQueue MessageQueueResponse
         {
-            set { _opsClient = value; }
-        }
-
-        private CustomMessageQueue _messageQueuePhidget;
-        public CustomMessageQueue MessageQueuePhidget
-        {
-            set { _messageQueuePhidget = value; }
+            set { _messageQueueResponse = value; }
         }
 
         private SystemEventLogger _systemEventLogger;
@@ -77,15 +72,18 @@ namespace Keebee.AAT.BusinessRules
 
             try
             {
-                var configDetails = _opsClient.GetActiveConfigDetails().ConfigDetails;
-                var killDetails = configDetails.Where(c => c.ResponseType.Id == ResponseTypeId.KillDisplay);
-
-                if (killDetails.Any())
+                var responseMessage = new ResponseMessage
                 {
-                    var sensorId = killDetails.First().PhidgetType.Id - 1;
-                    _messageQueuePhidget.Send(string.Format("{0}\"SensorId\":{1},\"SensorValue\":{2}{3}", "{", sensorId,
-                        999, "}"));
-                }
+                    SensorValue = 999,
+                    ConfigDetail = new ConfigDetailMessage { ResponseTypeId = ResponseTypeId.KillDisplay, IsSystemReponseType = true },
+                    Resident = new ResidentMessage(),
+                    IsActiveEventLog = false,
+                    ResponseTypeIds = null
+                };
+
+                var serializer = new JavaScriptSerializer();
+                var responseMessageBody = serializer.Serialize(responseMessage);
+                _messageQueueResponse.Send(responseMessageBody);
             }
             catch (Exception ex)
             {

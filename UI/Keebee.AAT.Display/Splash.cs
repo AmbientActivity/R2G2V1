@@ -71,11 +71,11 @@ namespace Keebee.AAT.Display
                 using (var mediaPlayer = new AxWindowsMediaPlayer())
                 {
                     Controls.Add(mediaPlayer);
-                    var media = _opsClient.GetPublicMediaFilesForResponseType(ResponseTypeId.Ambient);
-                    if (media == null) return false;
-                    if (!media.MediaFiles.Any()) return false;
+                    var mediaResponseType = _opsClient.GetPublicMediaFilesForResponseType(ResponseTypeId.Ambient).MediaResponseType;
+                    if (mediaResponseType == null) return false;
+                    if (!mediaResponseType.Paths.Any()) return false;
 
-                    var mediaPath = media.MediaFiles.Single().Paths.First();
+                    var mediaPath = mediaResponseType.Paths.First();
                     var mediaPathType = mediaPath.MediaPathType.Path;
                     var path = $@"{_mediaPath.ProfileRoot}\{PublicMediaSource.Id}\{mediaPathType}";
 

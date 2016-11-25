@@ -135,7 +135,7 @@ namespace Keebee.AAT.Operations.Controllers
 
             dynamic exObj = new ExpandoObject();
 
-            exObj.MediaFiles = mediaList
+            exObj.MediaResponseType = mediaList
                 .GroupBy(rt => rt.ResponseType)
                 .Select(mediaFiles => new { mediaFiles.First().ResponseType, MediaFiles = mediaFiles })
                 .Select(mf => new
@@ -171,7 +171,7 @@ namespace Keebee.AAT.Operations.Controllers
                                 f.MediaFile.FileSize
                             })
                         }).OrderBy(o => o.MediaPathType.Id)
-                });
+                }).SingleOrDefault();
 
             return new DynamicJsonObject(exObj);
         }

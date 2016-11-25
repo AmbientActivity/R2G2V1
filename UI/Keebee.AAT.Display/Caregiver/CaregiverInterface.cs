@@ -348,7 +348,7 @@ namespace Keebee.AAT.Display.Caregiver
                 var media = _opsClient.GetResidentMediaFilesForResident(_currentResident.Id);
 
                 _mediaFiles = media != null 
-                    ? _opsClient.GetResidentMediaFilesForResident(_currentResident.Id).MediaFiles 
+                    ? _opsClient.GetResidentMediaFilesForResident(_currentResident.Id).MediaResponseTypes 
                     : new List<MediaResponseType>();
             }
         }

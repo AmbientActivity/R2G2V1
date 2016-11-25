@@ -13,7 +13,7 @@ using Timer = System.Threading.Timer;
 namespace Keebee.AAT.Simulator
 {
 
-    enum SensorDirectionType
+    enum StepDirectionType
     {
         Left = 0,
         Right = 1
@@ -21,9 +21,6 @@ namespace Keebee.AAT.Simulator
 
     public partial class ControlPanel : Form
     {
-        // delegate
-        private delegate void UpdateLabelDelegate(string text);
-
         // data
         private readonly IOperationsClient _opsClient;
         private Resident[] _residents;
@@ -32,9 +29,10 @@ namespace Keebee.AAT.Simulator
         private readonly CustomMessageQueue _messageQueuePhidget;
         private readonly CustomMessageQueue _messageQueueRfid;
         private readonly CustomMessageQueue _messageQueueResponse;
+        private readonly CustomMessageQueue _messageQueuePhidgetContinuousRadio;
 
         // timer
-        private readonly int _autoSensorInterval;
+        private readonly int _autoResponseInterval;
         private Timer _timerSensor;
         private readonly int _autoResidentInterval;
         private Timer _timerResident;
@@ -43,13 +41,14 @@ namespace Keebee.AAT.Simulator
         private int _currentSensorId = -1;
         private const int MaxSensorId = 3;
 
-        // profile
+        // resident
         private int _currentResidentIndex = -1;
         private readonly int _totalResidents;
+        private Resident _currentResident;
 
-        // turn dial sensors
-        private const int MaxSensorValue = 1000;
-        private const int SensorStepIncrement = 200;
+        // step action
+        private const int MaxValue = 1000;
+        private const int StepIncrement = 200;
 
         private int _currentRadio4Value;
         private int _currentTelevsion5Value;
@@ -58,7 +57,7 @@ namespace Keebee.AAT.Simulator
         {
             InitializeComponent();
 
-            _autoSensorInterval = Convert.ToInt32(ConfigurationManager.AppSettings["AutoSensorInterval"]);
+            _autoResponseInterval = Convert.ToInt32(ConfigurationManager.AppSettings["AutoSensorInterval"]);
             _autoResidentInterval = Convert.ToInt32(ConfigurationManager.AppSettings["AutoResidentInterval"]);
 
             _opsClient = new OperationsClient ();
@@ -82,6 +81,11 @@ namespace Keebee.AAT.Simulator
 
             });
 
+            _messageQueuePhidgetContinuousRadio = new CustomMessageQueue(new CustomMessageQueueArgs
+            {
+                QueueName = MessageQueueType.PhidgetContinuousRadio
+            });
+
             LoadResidentDropDown();
             _totalResidents = _residents.Count();
         }
@@ -90,21 +94,33 @@ namespace Keebee.AAT.Simulator
         {
 
             var arrayList = new ArrayList();
-            _residents = _opsClient.GetResidents().ToArray();
+            
+            _residents = new List<Resident>
+            {
+                new Resident
+                {
+                    Id = PublicMediaSource.Id,
+                    FirstName = PublicMediaSource.Description,
+                    GameDifficultyLevel = 1,
+                    AllowVideoCapturing = false
+                }
+            }
+            .Union(_opsClient.GetResidents()
+                .Select(r => new Resident
+                    {
+                        Id = r.Id,
+                        FirstName = r.FirstName,
+                        LastName = r.LastName,
+                        Gender = r.Gender,
+                        GameDifficultyLevel = r.GameDifficultyLevel,
+                        AllowVideoCapturing = r.AllowVideoCapturing
+                    })).OrderBy(o => o.LastName).ToArray();
 
-            var residents = new List<Resident> { new Resident {Id = PublicMediaSource.Id, FirstName = PublicMediaSource.Description } }
-                .Union(_residents.Select(r => new Resident
-                                                {
-                                                    Id = r.Id,
-                                                    FirstName = r.FirstName,
-                                                    LastName = r.LastName,
-                                                })).ToList();
-
-            foreach (var r in residents)
+            foreach (var r in _residents)
             {
                 arrayList.Add(new {r.Id, Name = r.LastName == null 
                     ? $"{r.FirstName}" 
-                    : $"{r.FirstName} {r.LastName}" });
+                    : $"{r.LastName}, {r.FirstName}" });
             }
 
             cboResident.ValueMember = "Id";
@@ -112,150 +128,87 @@ namespace Keebee.AAT.Simulator
             cboResident.DataSource = arrayList;
 
             // make public library active
-            _messageQueueRfid.Send(CreateMessageBodyFromResident(new Resident { Id = PublicMediaSource.Id, GameDifficultyLevel =  1}));
+            _messageQueueRfid.Send(CreateMessageBodyForRfid(new Resident { Id = PublicMediaSource.Id, GameDifficultyLevel =  1}));
         }
 
-        private void UpdatResidentLabel(string text)
+        private void KillDisplayButtonClick(object sender, EventArgs e)
         {
-            if (InvokeRequired)
-            {
-                UpdateLabelDelegate d = UpdatResidentLabel;
-                Invoke(d, new object[] { text });
-            }
-            else
-            {
-                lblResident.Text = text;
-            }
+            _messageQueueResponse.Send(CreateMessageBodyForResponse(ResponseTypeId.KillDisplay, true));
         }
 
-        private void UpdateSensorLabel(string text)
+        private void SlideShowButtonClick(object sender, EventArgs e)
         {
-            if (InvokeRequired)
-            {
-                UpdateLabelDelegate d = UpdateSensorLabel;
-                Invoke(d, new object[] { text });
-            }
-            else
-            {
-                lblSensor.Text = text;
-            }
+            _messageQueueResponse.Send(CreateMessageBodyForResponse(ResponseTypeId.SlideShow, false));
         }
 
-        private void UpdateValueLabel(string text)
+        private void MatchingGameButtonClick(object sender, EventArgs e)
         {
-            if (InvokeRequired)
-            {
-                UpdateLabelDelegate d = UpdateValueLabel;
-                Invoke(d, new object[] { text });
-            }
-            else
-            {
-                lblValue.Text = text;
-            }
+            _messageQueueResponse.Send(CreateMessageBodyForResponse(ResponseTypeId.MatchingGame, false));
         }
 
-        private void SlideShowSensorClick(object sender, EventArgs e)
+        private void CatsButtonClick(object sender, EventArgs e)
         {
-            UpdateSensorLabel("0");
-            UpdateValueLabel(Convert.ToString(MaxSensorValue - 1));
-            _messageQueuePhidget.Send(string.Format("{0}\"SensorId\":0,\"SensorValue\":{1}{2}", "{", MaxSensorValue - 1, "}"));
+            _messageQueueResponse.Send(CreateMessageBodyForResponse(ResponseTypeId.Cats, false));
         }
 
-        private void MatchinggameSensorClick(object sender, EventArgs e)
+        private void OffScreenButtonClick(object sender, EventArgs e)
         {
-            UpdateSensorLabel("1");
-            UpdateValueLabel(Convert.ToString(MaxSensorValue - 1));
-            _messageQueuePhidget.Send(string.Format("{0}\"SensorId\":1,\"SensorValue\":{1}{2}", "{", MaxSensorValue - 1, "}"));
+            _messageQueueResponse.Send(CreateMessageBodyForResponse(ResponseTypeId.OffScreen, false));
         }
 
-        private void CatsSensorClick(object sender, EventArgs e)
+        private void RadioRightButtonClick(object sender, EventArgs e)
         {
-            UpdateSensorLabel("1");
-            UpdateValueLabel(Convert.ToString(MaxSensorValue - 1));
-            _messageQueuePhidget.Send(string.Format("{0}\"SensorId\":2,\"SensorValue\":{1}{2}", "{", MaxSensorValue - 1, "}"));
-        }
+            _currentRadio4Value = GetCurrentStepValue(ResponseTypeId.Radio, StepDirectionType.Right);
 
-        private void KillDisplaySensorClick(object sender, EventArgs e)
-        {
-            UpdateSensorLabel("3");
-            UpdateValueLabel(Convert.ToString(MaxSensorValue - 1));
-            var responseMessage = new ResponseMessage
-            {
-                SensorValue = MaxSensorValue - 1,
-                ConfigDetail = new ConfigDetailMessage {ResponseTypeId = ResponseTypeId.KillDisplay, IsSystemReponseType = true},
-                Resident = new ResidentMessage(),
-                IsActiveEventLog = false,
-                ResponseTypeIds = null
-            };
-
-            var serializer = new JavaScriptSerializer();
-            var responseMessageBody = serializer.Serialize(responseMessage);
-            _messageQueueResponse.Send(responseMessageBody);
-        }
-
-        private void RadioSensorRightClick(object sender, EventArgs e)
-        {
-            UpdateSensorLabel("4");
-
-            _currentRadio4Value = GetRotationCurrentValue(ResponseTypeId.Radio, SensorDirectionType.Right);
-
-            var valueToSend = (_currentRadio4Value == MaxSensorValue)
+            var valueToSend = (_currentRadio4Value == MaxValue)
                 ? _currentRadio4Value - 1 : _currentRadio4Value;
 
-            UpdateValueLabel(Convert.ToString(valueToSend));
             if (valueToSend <= 0) return;
 
-            _messageQueuePhidget.Send(string.Format("{0}\"SensorId\":4,\"SensorValue\":{1}{2}", "{", valueToSend, "}"));
+            _messageQueueResponse.Send(CreateMessageBodyForResponse(ResponseTypeId.Radio, false, valueToSend));
+            _messageQueuePhidgetContinuousRadio.Send($"{valueToSend}");
         }
 
-        private void RadioSensorLeftClick(object sender, EventArgs e)
+        private void RadioLeftButtonClick(object sender, EventArgs e)
         {
-            UpdateSensorLabel("4");
+            _currentRadio4Value = GetCurrentStepValue(ResponseTypeId.Radio, StepDirectionType.Left);
 
-            _currentRadio4Value = GetRotationCurrentValue(ResponseTypeId.Radio, SensorDirectionType.Left);
-
-            var valueToSend = (_currentRadio4Value == MaxSensorValue)
+            var valueToSend = (_currentRadio4Value == MaxValue)
                 ? _currentRadio4Value - 1 : _currentRadio4Value;
 
-            UpdateValueLabel(Convert.ToString(valueToSend));
             if (valueToSend <= 0) return;
 
-            _messageQueuePhidget.Send(string.Format("{0}\"SensorId\":4,\"SensorValue\":{1}{2}", "{", valueToSend, "}"));
+            _messageQueuePhidgetContinuousRadio.Send($"{valueToSend}");
+            _messageQueueResponse.Send(CreateMessageBodyForResponse(ResponseTypeId.Radio, false, valueToSend));
         }
 
-        private void TelevisionSensorRightClick(object sender, EventArgs e)
+        private void TelevisionRightButtonClick(object sender, EventArgs e)
         {
-            UpdateSensorLabel("5");
+            _currentTelevsion5Value = GetCurrentStepValue(ResponseTypeId.Television, StepDirectionType.Right);
 
-            _currentTelevsion5Value = GetRotationCurrentValue(ResponseTypeId.Television, SensorDirectionType.Right);
-
-            var valueToSend = (_currentTelevsion5Value == MaxSensorValue)
+            var valueToSend = (_currentTelevsion5Value == MaxValue)
                 ? _currentTelevsion5Value - 1 : _currentTelevsion5Value;
 
-            UpdateValueLabel(Convert.ToString(valueToSend));
             if (valueToSend <= 0) return;
 
-            _messageQueuePhidget.Send(string.Format("{0}\"SensorId\":5,\"SensorValue\":{1}{2}", "{", valueToSend, "}"));
+            _messageQueueResponse.Send(CreateMessageBodyForResponse(ResponseTypeId.Television, false, valueToSend));
         }
 
-        private void TelevisionSensorLeftClick(object sender, EventArgs e)
+        private void TelevisionLeftButtonClick(object sender, EventArgs e)
         {
-            UpdateSensorLabel("5");
+            _currentTelevsion5Value = GetCurrentStepValue(ResponseTypeId.Television, StepDirectionType.Left);
 
-            _currentTelevsion5Value = GetRotationCurrentValue(ResponseTypeId.Television, SensorDirectionType.Left);
-
-            var valueToSend = (_currentTelevsion5Value == MaxSensorValue)
+            var valueToSend = (_currentTelevsion5Value == MaxValue)
                 ? _currentTelevsion5Value - 1 : _currentTelevsion5Value;
 
-            UpdateValueLabel(Convert.ToString(valueToSend));
             if (valueToSend <= 0) return;
 
-            _messageQueuePhidget.Send(string.Format("{0}\"SensorId\":5,\"SensorValue\":{1}{2}", "{", valueToSend, "}"));
+            _messageQueueResponse.Send(CreateMessageBodyForResponse(ResponseTypeId.Television, false, valueToSend));
         }
 
-        private int GetRotationCurrentValue(int responseType, SensorDirectionType direction)
+        private int GetCurrentStepValue(int responseType, StepDirectionType direction)
         {
-            int currentValue = -1;
+            var currentValue = -1;
 
             switch (responseType)
             {
@@ -271,78 +224,74 @@ namespace Keebee.AAT.Simulator
 
             switch (direction)
             {
-                case SensorDirectionType.Left:
-                    if ((currentValue - SensorStepIncrement) > 0)
-                        currentValue -= SensorStepIncrement;
+                case StepDirectionType.Left:
+                    if ((currentValue - StepIncrement) > 0)
+                        currentValue -= StepIncrement;
                     else
-                        currentValue = MaxSensorValue;
+                        currentValue = MaxValue;
                     break;
 
-                case SensorDirectionType.Right:
-                    if ((currentValue + SensorStepIncrement) <= MaxSensorValue)
-                        currentValue += SensorStepIncrement;
+                case StepDirectionType.Right:
+                    if ((currentValue + StepIncrement) <= MaxValue)
+                        currentValue += StepIncrement;
                     else
-                        currentValue = SensorStepIncrement;
+                        currentValue = StepIncrement;
                     break;
             }
 
             return currentValue;
         }
 
-        private void CaregiverSensorClick(object sender, EventArgs e)
+        private void CaregiverButtonClick(object sender, EventArgs e)
         {
-            UpdateSensorLabel("6");
-            _messageQueuePhidget.Send(string.Format("{0}\"SensorId\":6,\"SensorValue\":{1}{2}", "{", MaxSensorValue - 1, "}"));
+            _messageQueueResponse.Send(CreateMessageBodyForResponse(ResponseTypeId.Caregiver, true));
         }
 
-        private void AmbientSensorClick(object sender, EventArgs e)
+        private void AmbientButtonClick(object sender, EventArgs e)
         {
-            UpdateSensorLabel("7");
-            _messageQueuePhidget.Send(string.Format("{0}\"SensorId\":7,\"SensorValue\":{1}{2}", "{", MaxSensorValue - 1, "}"));
+            _messageQueueResponse.Send(CreateMessageBodyForResponse(ResponseTypeId.Ambient, true));
         }
 
-        private void SlideShowInputClick(object sender, EventArgs e)
+        private string CreateMessageBodyForResponse(int responseTypeId, bool isSystem, int sensorValue = MaxValue - 1)
         {
-            UpdateSensorLabel("0");
-            UpdateValueLabel(Convert.ToString(MaxSensorValue - 1));
-            _messageQueuePhidget.Send(string.Format("{0}\"SensorId\":8,\"SensorValue\":{1}{2}", "{", MaxSensorValue - 1, "}"));
+            var responseMessage = new ResponseMessage
+            {
+                SensorValue = sensorValue,
+                ConfigDetail = new ConfigDetailMessage
+                {
+                    Id = 1,
+                    ResponseTypeId = responseTypeId,
+                    IsSystemReponseType = isSystem,
+                    ConfigId = ConfigId.Default
+                },
+                Resident = new ResidentMessage
+                {
+                    Id = _currentResident.Id,
+                    Name = $"{_currentResident.FirstName} {_currentResident.LastName}".Trim(),
+                    GameDifficultyLevel = _currentResident.GameDifficultyLevel,
+                    AllowVideoCapturing = _currentResident.AllowVideoCapturing
+                },
+                IsActiveEventLog = false,
+                ResponseTypeIds = new int[0]
+            };
+
+            var serializer = new JavaScriptSerializer();
+            return serializer.Serialize(responseMessage);
         }
 
-        private void MatchingGameInputClick(object sender, EventArgs e)
-        {
-            UpdateSensorLabel("1");
-            UpdateValueLabel(Convert.ToString(MaxSensorValue - 1));
-            _messageQueuePhidget.Send(string.Format("{0}\"SensorId\":9,\"SensorValue\":{1}{2}", "{", MaxSensorValue - 1, "}"));
-        }
-
-        private void RadioInputClick(object sender, EventArgs e)
-        {
-            UpdateSensorLabel("0");
-            UpdateValueLabel(Convert.ToString(MaxSensorValue - 1));
-            _messageQueuePhidget.Send(string.Format("{0}\"SensorId\":12,\"SensorValue\":{1}{2}", "{", MaxSensorValue - 1, "}"));
-        }
-
-        private void TelevisionInputClick(object sender, EventArgs e)
-        {
-            UpdateSensorLabel("1");
-            UpdateValueLabel(Convert.ToString(MaxSensorValue - 1));
-            _messageQueuePhidget.Send(string.Format("{0}\"SensorId\":13,\"SensorValue\":{1}{2}", "{", MaxSensorValue - 1, "}"));
-        }
-        
         private void ActivateResidentClick(object sender, EventArgs e)
         {
             var id = Convert.ToInt32(cboResident.SelectedValue.ToString());
 
             var resident = (id == PublicMediaSource.Id)
                 ? new Resident { Id = PublicMediaSource.Id, GameDifficultyLevel = 1, AllowVideoCapturing = false }
-                :_residents.Single(x => x.Id == id);
+                : _residents.Single(x => x.Id == id);
 
-            CreateMessageBodyFromResident(resident);
-            _messageQueueRfid.Send(CreateMessageBodyFromResident(resident));
-            lblResident.Text = cboResident.Text;
+            CreateMessageBodyForRfid(resident);
+            _messageQueueRfid.Send(CreateMessageBodyForRfid(resident));
         }
 
-        private static string CreateMessageBodyFromResident(Resident resident)
+        private static string CreateMessageBodyForRfid(Resident resident)
         {
             var residentMessage = new ResidentMessage
             {
@@ -367,9 +316,7 @@ namespace Keebee.AAT.Simulator
             else
                 _currentSensorId = 0;
 
-            UpdateSensorLabel(Convert.ToString(_currentSensorId));
-            UpdateValueLabel(Convert.ToString(MaxSensorValue - 1));
-            _messageQueuePhidget.Send(string.Format("{0}\"SensorId\":{1},\"SensorValue\":{2}{3}", "{", _currentSensorId, MaxSensorValue - 1, "}"));
+            _messageQueuePhidget.Send(string.Format("{0}\"SensorId\":{1},\"SensorValue\":{2}{3}", "{", _currentSensorId, MaxValue - 1, "}"));
         }
 
         private void TimerResidentTick(object sender)
@@ -382,8 +329,6 @@ namespace Keebee.AAT.Simulator
                 _currentResidentIndex = 0;
 
             var residentId = _residents[_currentResidentIndex].Id;
-            var firstName = _residents[_currentResidentIndex].FirstName;
-            UpdatResidentLabel(firstName);
 
             _messageQueueRfid.Send(Convert.ToString(residentId));
         }
@@ -394,7 +339,7 @@ namespace Keebee.AAT.Simulator
             _timerResident?.Dispose();
         }
 
-        private void AutoSensorCheckChanged(object sender, EventArgs e)
+        private void AutoResponseCheckChanged(object sender, EventArgs e)
         {
             // Search Auto Activity GroupBox
             foreach (var result in from control in grpAutoSensor.Controls.OfType<RadioButton>() 
@@ -404,7 +349,7 @@ namespace Keebee.AAT.Simulator
                 {
                     if (_timerSensor == null)
                     {
-                        _timerSensor = new Timer(TimerSensorTick, null, 0, _autoSensorInterval);
+                        _timerSensor = new Timer(TimerSensorTick, null, 0, _autoResponseInterval);
                     }
                 }
                 else
@@ -437,6 +382,22 @@ namespace Keebee.AAT.Simulator
                     _timerResident = null;
                 }
             }
+        }
+
+        private void ResidentSelectedIndexChanged(object sender, EventArgs e)
+        {
+            var id = Convert.ToInt32(cboResident.SelectedValue.ToString());
+            var resident = _residents.Single(x => x.Id == id);
+
+            _currentResident = new Resident
+            {
+                Id = resident.Id,
+                FirstName = resident.FirstName,
+                LastName = resident.LastName,
+                Gender = resident.Gender,
+                GameDifficultyLevel = resident.GameDifficultyLevel,
+                AllowVideoCapturing = resident.AllowVideoCapturing
+            };
         }
     }
 }

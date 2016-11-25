@@ -30,43 +30,30 @@
         {
             this.cboResident = new System.Windows.Forms.ComboBox();
             this.btnScan = new System.Windows.Forms.Button();
-            this.grpRFReader = new System.Windows.Forms.GroupBox();
+            this.grpMediaSource = new System.Windows.Forms.GroupBox();
             this.grpAutoResident = new System.Windows.Forms.GroupBox();
             this.radioButton1 = new System.Windows.Forms.RadioButton();
             this.radOn = new System.Windows.Forms.RadioButton();
             this.grpAutoSensor = new System.Windows.Forms.GroupBox();
             this.radioButton2 = new System.Windows.Forms.RadioButton();
             this.radioButton3 = new System.Windows.Forms.RadioButton();
-            this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.lblValue = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
-            this.lblSensor = new System.Windows.Forms.Label();
-            this.lblResident = new System.Windows.Forms.Label();
-            this.lblSensorLabel = new System.Windows.Forms.Label();
-            this.lblProfileLabel = new System.Windows.Forms.Label();
-            this.MatchingGameSensor = new System.Windows.Forms.Button();
-            this.SlideShowSensor = new System.Windows.Forms.Button();
-            this.RadioSensorRight = new System.Windows.Forms.Button();
-            this.KillDisplaySensor = new System.Windows.Forms.Button();
+            this.btnMatchingGame = new System.Windows.Forms.Button();
+            this.btnSlideShow = new System.Windows.Forms.Button();
+            this.bnRadioRight = new System.Windows.Forms.Button();
+            this.btnKillDisplay = new System.Windows.Forms.Button();
             this.label5 = new System.Windows.Forms.Label();
             this.grpInterfaceKit = new System.Windows.Forms.GroupBox();
-            this.TelevisionInput = new System.Windows.Forms.Button();
-            this.RadioInput = new System.Windows.Forms.Button();
-            this.MatchingGameInput = new System.Windows.Forms.Button();
-            this.SlideShowInput = new System.Windows.Forms.Button();
-            this.label3 = new System.Windows.Forms.Label();
-            this.label1 = new System.Windows.Forms.Label();
-            this.CaregiverButton6 = new System.Windows.Forms.Button();
-            this.AmbientButton7 = new System.Windows.Forms.Button();
-            this.CatsSensor = new System.Windows.Forms.Button();
+            this.btnOffScreen = new System.Windows.Forms.Button();
+            this.btnCaregiver = new System.Windows.Forms.Button();
+            this.btnAmbient = new System.Windows.Forms.Button();
+            this.btnCats = new System.Windows.Forms.Button();
             this.label6 = new System.Windows.Forms.Label();
-            this.TelevisionSensorRight = new System.Windows.Forms.Button();
-            this.TelevisionSensorLeft = new System.Windows.Forms.Button();
-            this.RadioSensorLeft = new System.Windows.Forms.Button();
-            this.grpRFReader.SuspendLayout();
+            this.btnTelevisionRight = new System.Windows.Forms.Button();
+            this.btnTelevisionLeft = new System.Windows.Forms.Button();
+            this.bnRadioLeft = new System.Windows.Forms.Button();
+            this.grpMediaSource.SuspendLayout();
             this.grpAutoResident.SuspendLayout();
             this.grpAutoSensor.SuspendLayout();
-            this.groupBox2.SuspendLayout();
             this.grpInterfaceKit.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -74,45 +61,47 @@
             // 
             this.cboResident.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.cboResident.FormattingEnabled = true;
-            this.cboResident.Location = new System.Drawing.Point(9, 30);
+            this.cboResident.Location = new System.Drawing.Point(9, 26);
             this.cboResident.Name = "cboResident";
-            this.cboResident.Size = new System.Drawing.Size(160, 24);
+            this.cboResident.Size = new System.Drawing.Size(257, 24);
             this.cboResident.TabIndex = 5;
+            this.cboResident.SelectedIndexChanged += new System.EventHandler(this.ResidentSelectedIndexChanged);
             // 
             // btnScan
             // 
             this.btnScan.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnScan.Location = new System.Drawing.Point(176, 24);
+            this.btnScan.Location = new System.Drawing.Point(283, 20);
             this.btnScan.Name = "btnScan";
-            this.btnScan.Size = new System.Drawing.Size(75, 34);
+            this.btnScan.Size = new System.Drawing.Size(127, 34);
             this.btnScan.TabIndex = 6;
             this.btnScan.Text = "Activate";
             this.btnScan.UseVisualStyleBackColor = true;
             this.btnScan.Click += new System.EventHandler(this.ActivateResidentClick);
             // 
-            // grpRFReader
+            // grpMediaSource
             // 
-            this.grpRFReader.Controls.Add(this.cboResident);
-            this.grpRFReader.Controls.Add(this.btnScan);
-            this.grpRFReader.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.grpRFReader.Location = new System.Drawing.Point(13, 57);
-            this.grpRFReader.Name = "grpRFReader";
-            this.grpRFReader.Size = new System.Drawing.Size(263, 80);
-            this.grpRFReader.TabIndex = 7;
-            this.grpRFReader.TabStop = false;
-            this.grpRFReader.Text = "Profile";
+            this.grpMediaSource.Controls.Add(this.cboResident);
+            this.grpMediaSource.Controls.Add(this.btnScan);
+            this.grpMediaSource.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.grpMediaSource.Location = new System.Drawing.Point(13, 17);
+            this.grpMediaSource.Name = "grpMediaSource";
+            this.grpMediaSource.Size = new System.Drawing.Size(420, 67);
+            this.grpMediaSource.TabIndex = 7;
+            this.grpMediaSource.TabStop = false;
+            this.grpMediaSource.Text = "Media Source";
             // 
             // grpAutoResident
             // 
             this.grpAutoResident.Controls.Add(this.radioButton1);
             this.grpAutoResident.Controls.Add(this.radOn);
+            this.grpAutoResident.Enabled = false;
             this.grpAutoResident.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.grpAutoResident.Location = new System.Drawing.Point(282, 67);
+            this.grpAutoResident.Location = new System.Drawing.Point(15, 92);
             this.grpAutoResident.Name = "grpAutoResident";
-            this.grpAutoResident.Size = new System.Drawing.Size(89, 70);
+            this.grpAutoResident.Size = new System.Drawing.Size(124, 70);
             this.grpAutoResident.TabIndex = 16;
             this.grpAutoResident.TabStop = false;
-            this.grpAutoResident.Text = "Auto Profile";
+            this.grpAutoResident.Text = "Auto Resident";
             // 
             // radioButton1
             // 
@@ -145,10 +134,11 @@
             // 
             this.grpAutoSensor.Controls.Add(this.radioButton2);
             this.grpAutoSensor.Controls.Add(this.radioButton3);
+            this.grpAutoSensor.Enabled = false;
             this.grpAutoSensor.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.grpAutoSensor.Location = new System.Drawing.Point(377, 67);
+            this.grpAutoSensor.Location = new System.Drawing.Point(158, 92);
             this.grpAutoSensor.Name = "grpAutoSensor";
-            this.grpAutoSensor.Size = new System.Drawing.Size(91, 71);
+            this.grpAutoSensor.Size = new System.Drawing.Size(121, 71);
             this.grpAutoSensor.TabIndex = 17;
             this.grpAutoSensor.TabStop = false;
             this.grpAutoSensor.Text = "Auto Sensor";
@@ -165,7 +155,7 @@
             this.radioButton2.TabStop = true;
             this.radioButton2.Text = "Off";
             this.radioButton2.UseVisualStyleBackColor = true;
-            this.radioButton2.CheckedChanged += new System.EventHandler(this.AutoSensorCheckChanged);
+            this.radioButton2.CheckedChanged += new System.EventHandler(this.AutoResponseCheckChanged);
             // 
             // radioButton3
             // 
@@ -177,140 +167,60 @@
             this.radioButton3.TabIndex = 0;
             this.radioButton3.Text = "On";
             this.radioButton3.UseVisualStyleBackColor = true;
-            this.radioButton3.CheckedChanged += new System.EventHandler(this.AutoSensorCheckChanged);
+            this.radioButton3.CheckedChanged += new System.EventHandler(this.AutoResponseCheckChanged);
             // 
-            // groupBox2
+            // btnMatchingGame
             // 
-            this.groupBox2.Controls.Add(this.lblValue);
-            this.groupBox2.Controls.Add(this.label2);
-            this.groupBox2.Controls.Add(this.lblSensor);
-            this.groupBox2.Controls.Add(this.lblResident);
-            this.groupBox2.Controls.Add(this.lblSensorLabel);
-            this.groupBox2.Controls.Add(this.lblProfileLabel);
-            this.groupBox2.Location = new System.Drawing.Point(12, 5);
-            this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(456, 46);
-            this.groupBox2.TabIndex = 18;
-            this.groupBox2.TabStop = false;
+            this.btnMatchingGame.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnMatchingGame.Location = new System.Drawing.Point(112, 28);
+            this.btnMatchingGame.Name = "btnMatchingGame";
+            this.btnMatchingGame.Size = new System.Drawing.Size(96, 36);
+            this.btnMatchingGame.TabIndex = 2;
+            this.btnMatchingGame.Text = "Matching Game";
+            this.btnMatchingGame.UseMnemonic = false;
+            this.btnMatchingGame.UseVisualStyleBackColor = true;
+            this.btnMatchingGame.Click += new System.EventHandler(this.MatchingGameButtonClick);
             // 
-            // lblValue
+            // btnSlideShow
             // 
-            this.lblValue.AutoSize = true;
-            this.lblValue.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblValue.ForeColor = System.Drawing.Color.Red;
-            this.lblValue.Location = new System.Drawing.Point(405, 12);
-            this.lblValue.Name = "lblValue";
-            this.lblValue.Size = new System.Drawing.Size(21, 24);
-            this.lblValue.TabIndex = 25;
-            this.lblValue.Text = "0";
+            this.btnSlideShow.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnSlideShow.Location = new System.Drawing.Point(10, 28);
+            this.btnSlideShow.Name = "btnSlideShow";
+            this.btnSlideShow.Size = new System.Drawing.Size(96, 36);
+            this.btnSlideShow.TabIndex = 1;
+            this.btnSlideShow.Text = "Slide Show";
+            this.btnSlideShow.UseMnemonic = false;
+            this.btnSlideShow.UseVisualStyleBackColor = true;
+            this.btnSlideShow.Click += new System.EventHandler(this.SlideShowButtonClick);
             // 
-            // label2
+            // bnRadioRight
             // 
-            this.label2.AutoSize = true;
-            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label2.ForeColor = System.Drawing.Color.Red;
-            this.label2.Location = new System.Drawing.Point(346, 11);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(69, 24);
-            this.label2.TabIndex = 24;
-            this.label2.Text = "Value: ";
+            this.bnRadioRight.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.bnRadioRight.Location = new System.Drawing.Point(58, 91);
+            this.bnRadioRight.Name = "bnRadioRight";
+            this.bnRadioRight.Size = new System.Drawing.Size(48, 36);
+            this.bnRadioRight.TabIndex = 4;
+            this.bnRadioRight.Text = ">";
+            this.bnRadioRight.UseMnemonic = false;
+            this.bnRadioRight.UseVisualStyleBackColor = true;
+            this.bnRadioRight.Click += new System.EventHandler(this.RadioRightButtonClick);
             // 
-            // lblSensor
+            // btnKillDisplay
             // 
-            this.lblSensor.AutoSize = true;
-            this.lblSensor.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblSensor.ForeColor = System.Drawing.Color.Green;
-            this.lblSensor.Location = new System.Drawing.Point(311, 12);
-            this.lblSensor.Name = "lblSensor";
-            this.lblSensor.Size = new System.Drawing.Size(21, 24);
-            this.lblSensor.TabIndex = 23;
-            this.lblSensor.Text = "0";
-            // 
-            // lblResident
-            // 
-            this.lblResident.AutoSize = true;
-            this.lblResident.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblResident.ForeColor = System.Drawing.Color.Blue;
-            this.lblResident.Location = new System.Drawing.Point(78, 15);
-            this.lblResident.Name = "lblResident";
-            this.lblResident.Size = new System.Drawing.Size(110, 20);
-            this.lblResident.TabIndex = 22;
-            this.lblResident.Text = "Public Media";
-            // 
-            // lblSensorLabel
-            // 
-            this.lblSensorLabel.AutoSize = true;
-            this.lblSensorLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblSensorLabel.ForeColor = System.Drawing.Color.Green;
-            this.lblSensorLabel.Location = new System.Drawing.Point(240, 11);
-            this.lblSensorLabel.Name = "lblSensorLabel";
-            this.lblSensorLabel.Size = new System.Drawing.Size(80, 24);
-            this.lblSensorLabel.TabIndex = 21;
-            this.lblSensorLabel.Text = "Sensor: ";
-            // 
-            // lblProfileLabel
-            // 
-            this.lblProfileLabel.AutoSize = true;
-            this.lblProfileLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblProfileLabel.ForeColor = System.Drawing.Color.Blue;
-            this.lblProfileLabel.Location = new System.Drawing.Point(8, 11);
-            this.lblProfileLabel.Name = "lblProfileLabel";
-            this.lblProfileLabel.Size = new System.Drawing.Size(76, 24);
-            this.lblProfileLabel.TabIndex = 20;
-            this.lblProfileLabel.Text = "Source:";
-            // 
-            // MatchingGameSensor
-            // 
-            this.MatchingGameSensor.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.MatchingGameSensor.Location = new System.Drawing.Point(117, 63);
-            this.MatchingGameSensor.Name = "MatchingGameSensor";
-            this.MatchingGameSensor.Size = new System.Drawing.Size(105, 36);
-            this.MatchingGameSensor.TabIndex = 2;
-            this.MatchingGameSensor.Text = "Matching Game";
-            this.MatchingGameSensor.UseMnemonic = false;
-            this.MatchingGameSensor.UseVisualStyleBackColor = true;
-            this.MatchingGameSensor.Click += new System.EventHandler(this.MatchinggameSensorClick);
-            // 
-            // SlideShowSensor
-            // 
-            this.SlideShowSensor.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.SlideShowSensor.Location = new System.Drawing.Point(6, 63);
-            this.SlideShowSensor.Name = "SlideShowSensor";
-            this.SlideShowSensor.Size = new System.Drawing.Size(105, 36);
-            this.SlideShowSensor.TabIndex = 1;
-            this.SlideShowSensor.Text = "Slide Show";
-            this.SlideShowSensor.UseMnemonic = false;
-            this.SlideShowSensor.UseVisualStyleBackColor = true;
-            this.SlideShowSensor.Click += new System.EventHandler(this.SlideShowSensorClick);
-            // 
-            // RadioSensorRight
-            // 
-            this.RadioSensorRight.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.RadioSensorRight.Location = new System.Drawing.Point(55, 132);
-            this.RadioSensorRight.Name = "RadioSensorRight";
-            this.RadioSensorRight.Size = new System.Drawing.Size(49, 30);
-            this.RadioSensorRight.TabIndex = 4;
-            this.RadioSensorRight.Text = ">";
-            this.RadioSensorRight.UseMnemonic = false;
-            this.RadioSensorRight.UseVisualStyleBackColor = true;
-            this.RadioSensorRight.Click += new System.EventHandler(this.RadioSensorRightClick);
-            // 
-            // KillDisplaySensor
-            // 
-            this.KillDisplaySensor.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.KillDisplaySensor.Location = new System.Drawing.Point(339, 63);
-            this.KillDisplaySensor.Name = "KillDisplaySensor";
-            this.KillDisplaySensor.Size = new System.Drawing.Size(105, 36);
-            this.KillDisplaySensor.TabIndex = 15;
-            this.KillDisplaySensor.Text = "Kill Display (3)";
-            this.KillDisplaySensor.UseVisualStyleBackColor = true;
-            this.KillDisplaySensor.Click += new System.EventHandler(this.KillDisplaySensorClick);
+            this.btnKillDisplay.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnKillDisplay.Location = new System.Drawing.Point(296, 97);
+            this.btnKillDisplay.Name = "btnKillDisplay";
+            this.btnKillDisplay.Size = new System.Drawing.Size(127, 65);
+            this.btnKillDisplay.TabIndex = 15;
+            this.btnKillDisplay.Text = "Kill Display";
+            this.btnKillDisplay.UseVisualStyleBackColor = true;
+            this.btnKillDisplay.Click += new System.EventHandler(this.KillDisplayButtonClick);
             // 
             // label5
             // 
             this.label5.AutoSize = true;
             this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label5.Location = new System.Drawing.Point(28, 111);
+            this.label5.Location = new System.Drawing.Point(39, 70);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(40, 15);
             this.label5.TabIndex = 7;
@@ -318,199 +228,136 @@
             // 
             // grpInterfaceKit
             // 
-            this.grpInterfaceKit.Controls.Add(this.TelevisionInput);
-            this.grpInterfaceKit.Controls.Add(this.RadioInput);
-            this.grpInterfaceKit.Controls.Add(this.MatchingGameInput);
-            this.grpInterfaceKit.Controls.Add(this.SlideShowInput);
-            this.grpInterfaceKit.Controls.Add(this.label3);
-            this.grpInterfaceKit.Controls.Add(this.label1);
-            this.grpInterfaceKit.Controls.Add(this.CaregiverButton6);
-            this.grpInterfaceKit.Controls.Add(this.AmbientButton7);
-            this.grpInterfaceKit.Controls.Add(this.CatsSensor);
+            this.grpInterfaceKit.Controls.Add(this.btnOffScreen);
+            this.grpInterfaceKit.Controls.Add(this.btnCaregiver);
+            this.grpInterfaceKit.Controls.Add(this.btnAmbient);
+            this.grpInterfaceKit.Controls.Add(this.btnCats);
             this.grpInterfaceKit.Controls.Add(this.label6);
-            this.grpInterfaceKit.Controls.Add(this.TelevisionSensorRight);
-            this.grpInterfaceKit.Controls.Add(this.TelevisionSensorLeft);
+            this.grpInterfaceKit.Controls.Add(this.btnTelevisionRight);
+            this.grpInterfaceKit.Controls.Add(this.btnTelevisionLeft);
             this.grpInterfaceKit.Controls.Add(this.label5);
-            this.grpInterfaceKit.Controls.Add(this.KillDisplaySensor);
-            this.grpInterfaceKit.Controls.Add(this.RadioSensorRight);
-            this.grpInterfaceKit.Controls.Add(this.SlideShowSensor);
-            this.grpInterfaceKit.Controls.Add(this.RadioSensorLeft);
-            this.grpInterfaceKit.Controls.Add(this.MatchingGameSensor);
+            this.grpInterfaceKit.Controls.Add(this.bnRadioRight);
+            this.grpInterfaceKit.Controls.Add(this.btnSlideShow);
+            this.grpInterfaceKit.Controls.Add(this.bnRadioLeft);
+            this.grpInterfaceKit.Controls.Add(this.btnMatchingGame);
             this.grpInterfaceKit.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.grpInterfaceKit.Location = new System.Drawing.Point(12, 153);
+            this.grpInterfaceKit.Location = new System.Drawing.Point(12, 171);
             this.grpInterfaceKit.Name = "grpInterfaceKit";
-            this.grpInterfaceKit.Size = new System.Drawing.Size(456, 247);
+            this.grpInterfaceKit.Size = new System.Drawing.Size(421, 141);
             this.grpInterfaceKit.TabIndex = 10;
             this.grpInterfaceKit.TabStop = false;
-            this.grpInterfaceKit.Text = "Interface Kit";
+            this.grpInterfaceKit.Text = "Repsonse";
             // 
-            // TelevisionInput
+            // btnOffScreen
             // 
-            this.TelevisionInput.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.TelevisionInput.Location = new System.Drawing.Point(339, 200);
-            this.TelevisionInput.Name = "TelevisionInput";
-            this.TelevisionInput.Size = new System.Drawing.Size(105, 36);
-            this.TelevisionInput.TabIndex = 36;
-            this.TelevisionInput.Text = "Television";
-            this.TelevisionInput.UseVisualStyleBackColor = true;
-            this.TelevisionInput.Click += new System.EventHandler(this.TelevisionInputClick);
+            this.btnOffScreen.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnOffScreen.Location = new System.Drawing.Point(315, 28);
+            this.btnOffScreen.Name = "btnOffScreen";
+            this.btnOffScreen.Size = new System.Drawing.Size(96, 36);
+            this.btnOffScreen.TabIndex = 37;
+            this.btnOffScreen.Text = "Off Screen";
+            this.btnOffScreen.UseVisualStyleBackColor = true;
+            this.btnOffScreen.Click += new System.EventHandler(this.OffScreenButtonClick);
             // 
-            // RadioInput
+            // btnCaregiver
             // 
-            this.RadioInput.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.RadioInput.Location = new System.Drawing.Point(228, 200);
-            this.RadioInput.Name = "RadioInput";
-            this.RadioInput.Size = new System.Drawing.Size(105, 36);
-            this.RadioInput.TabIndex = 35;
-            this.RadioInput.Text = "Radio";
-            this.RadioInput.UseVisualStyleBackColor = true;
-            this.RadioInput.Click += new System.EventHandler(this.RadioInputClick);
+            this.btnCaregiver.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnCaregiver.Location = new System.Drawing.Point(213, 91);
+            this.btnCaregiver.Name = "btnCaregiver";
+            this.btnCaregiver.Size = new System.Drawing.Size(96, 36);
+            this.btnCaregiver.TabIndex = 30;
+            this.btnCaregiver.Text = "Caregiver";
+            this.btnCaregiver.UseVisualStyleBackColor = true;
+            this.btnCaregiver.Click += new System.EventHandler(this.CaregiverButtonClick);
             // 
-            // MatchingGameInput
+            // btnAmbient
             // 
-            this.MatchingGameInput.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.MatchingGameInput.Location = new System.Drawing.Point(117, 200);
-            this.MatchingGameInput.Name = "MatchingGameInput";
-            this.MatchingGameInput.Size = new System.Drawing.Size(105, 36);
-            this.MatchingGameInput.TabIndex = 34;
-            this.MatchingGameInput.Text = "Matching Game";
-            this.MatchingGameInput.UseMnemonic = false;
-            this.MatchingGameInput.UseVisualStyleBackColor = true;
-            this.MatchingGameInput.Click += new System.EventHandler(this.MatchingGameInputClick);
+            this.btnAmbient.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnAmbient.Location = new System.Drawing.Point(315, 91);
+            this.btnAmbient.Name = "btnAmbient";
+            this.btnAmbient.Size = new System.Drawing.Size(96, 36);
+            this.btnAmbient.TabIndex = 29;
+            this.btnAmbient.Text = "Ambient";
+            this.btnAmbient.UseVisualStyleBackColor = true;
+            this.btnAmbient.Click += new System.EventHandler(this.AmbientButtonClick);
             // 
-            // SlideShowInput
+            // btnCats
             // 
-            this.SlideShowInput.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.SlideShowInput.Location = new System.Drawing.Point(6, 200);
-            this.SlideShowInput.Name = "SlideShowInput";
-            this.SlideShowInput.Size = new System.Drawing.Size(105, 36);
-            this.SlideShowInput.TabIndex = 33;
-            this.SlideShowInput.Text = "Slide Show";
-            this.SlideShowInput.UseMnemonic = false;
-            this.SlideShowInput.UseVisualStyleBackColor = true;
-            this.SlideShowInput.Click += new System.EventHandler(this.SlideShowInputClick);
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label3.Location = new System.Drawing.Point(8, 181);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(49, 16);
-            this.label3.TabIndex = 32;
-            this.label3.Text = "Inputs";
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.Location = new System.Drawing.Point(8, 40);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(65, 16);
-            this.label1.TabIndex = 31;
-            this.label1.Text = "Sensors";
-            // 
-            // CaregiverButton6
-            // 
-            this.CaregiverButton6.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.CaregiverButton6.Location = new System.Drawing.Point(228, 126);
-            this.CaregiverButton6.Name = "CaregiverButton6";
-            this.CaregiverButton6.Size = new System.Drawing.Size(105, 36);
-            this.CaregiverButton6.TabIndex = 30;
-            this.CaregiverButton6.Text = "Caregiver (6)";
-            this.CaregiverButton6.UseVisualStyleBackColor = true;
-            this.CaregiverButton6.Click += new System.EventHandler(this.CaregiverSensorClick);
-            // 
-            // AmbientButton7
-            // 
-            this.AmbientButton7.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.AmbientButton7.Location = new System.Drawing.Point(339, 126);
-            this.AmbientButton7.Name = "AmbientButton7";
-            this.AmbientButton7.Size = new System.Drawing.Size(105, 36);
-            this.AmbientButton7.TabIndex = 29;
-            this.AmbientButton7.Text = "Ambient (7)";
-            this.AmbientButton7.UseVisualStyleBackColor = true;
-            this.AmbientButton7.Click += new System.EventHandler(this.AmbientSensorClick);
-            // 
-            // CatsSensor
-            // 
-            this.CatsSensor.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.CatsSensor.Location = new System.Drawing.Point(228, 63);
-            this.CatsSensor.Name = "CatsSensor";
-            this.CatsSensor.Size = new System.Drawing.Size(105, 36);
-            this.CatsSensor.TabIndex = 28;
-            this.CatsSensor.Text = "Cats";
-            this.CatsSensor.UseVisualStyleBackColor = true;
-            this.CatsSensor.Click += new System.EventHandler(this.CatsSensorClick);
+            this.btnCats.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnCats.Location = new System.Drawing.Point(213, 28);
+            this.btnCats.Name = "btnCats";
+            this.btnCats.Size = new System.Drawing.Size(96, 36);
+            this.btnCats.TabIndex = 28;
+            this.btnCats.Text = "Cats";
+            this.btnCats.UseVisualStyleBackColor = true;
+            this.btnCats.Click += new System.EventHandler(this.CatsButtonClick);
             // 
             // label6
             // 
             this.label6.AutoSize = true;
             this.label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label6.Location = new System.Drawing.Point(130, 112);
+            this.label6.Location = new System.Drawing.Point(130, 70);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(62, 15);
             this.label6.TabIndex = 27;
             this.label6.Text = "Television";
             // 
-            // TelevisionSensorRight
+            // btnTelevisionRight
             // 
-            this.TelevisionSensorRight.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.TelevisionSensorRight.Location = new System.Drawing.Point(169, 132);
-            this.TelevisionSensorRight.Name = "TelevisionSensorRight";
-            this.TelevisionSensorRight.Size = new System.Drawing.Size(49, 30);
-            this.TelevisionSensorRight.TabIndex = 25;
-            this.TelevisionSensorRight.Text = ">";
-            this.TelevisionSensorRight.UseMnemonic = false;
-            this.TelevisionSensorRight.UseVisualStyleBackColor = true;
-            this.TelevisionSensorRight.MouseCaptureChanged += new System.EventHandler(this.TelevisionSensorRightClick);
+            this.btnTelevisionRight.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnTelevisionRight.Location = new System.Drawing.Point(160, 91);
+            this.btnTelevisionRight.Name = "btnTelevisionRight";
+            this.btnTelevisionRight.Size = new System.Drawing.Size(48, 36);
+            this.btnTelevisionRight.TabIndex = 25;
+            this.btnTelevisionRight.Text = ">";
+            this.btnTelevisionRight.UseMnemonic = false;
+            this.btnTelevisionRight.UseVisualStyleBackColor = true;
+            this.btnTelevisionRight.MouseCaptureChanged += new System.EventHandler(this.TelevisionRightButtonClick);
             // 
-            // TelevisionSensorLeft
+            // btnTelevisionLeft
             // 
-            this.TelevisionSensorLeft.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.TelevisionSensorLeft.Location = new System.Drawing.Point(119, 132);
-            this.TelevisionSensorLeft.Name = "TelevisionSensorLeft";
-            this.TelevisionSensorLeft.Size = new System.Drawing.Size(49, 30);
-            this.TelevisionSensorLeft.TabIndex = 26;
-            this.TelevisionSensorLeft.Text = "<";
-            this.TelevisionSensorLeft.UseMnemonic = false;
-            this.TelevisionSensorLeft.UseVisualStyleBackColor = true;
-            this.TelevisionSensorLeft.Click += new System.EventHandler(this.TelevisionSensorLeftClick);
+            this.btnTelevisionLeft.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnTelevisionLeft.Location = new System.Drawing.Point(112, 91);
+            this.btnTelevisionLeft.Name = "btnTelevisionLeft";
+            this.btnTelevisionLeft.Size = new System.Drawing.Size(48, 36);
+            this.btnTelevisionLeft.TabIndex = 26;
+            this.btnTelevisionLeft.Text = "<";
+            this.btnTelevisionLeft.UseMnemonic = false;
+            this.btnTelevisionLeft.UseVisualStyleBackColor = true;
+            this.btnTelevisionLeft.Click += new System.EventHandler(this.TelevisionLeftButtonClick);
             // 
-            // RadioSensorLeft
+            // bnRadioLeft
             // 
-            this.RadioSensorLeft.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.RadioSensorLeft.Location = new System.Drawing.Point(5, 132);
-            this.RadioSensorLeft.Name = "RadioSensorLeft";
-            this.RadioSensorLeft.Size = new System.Drawing.Size(49, 30);
-            this.RadioSensorLeft.TabIndex = 4;
-            this.RadioSensorLeft.Text = "<";
-            this.RadioSensorLeft.UseMnemonic = false;
-            this.RadioSensorLeft.UseVisualStyleBackColor = true;
-            this.RadioSensorLeft.Click += new System.EventHandler(this.RadioSensorLeftClick);
+            this.bnRadioLeft.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.bnRadioLeft.Location = new System.Drawing.Point(10, 91);
+            this.bnRadioLeft.Name = "bnRadioLeft";
+            this.bnRadioLeft.Size = new System.Drawing.Size(48, 36);
+            this.bnRadioLeft.TabIndex = 4;
+            this.bnRadioLeft.Text = "<";
+            this.bnRadioLeft.UseMnemonic = false;
+            this.bnRadioLeft.UseVisualStyleBackColor = true;
+            this.bnRadioLeft.Click += new System.EventHandler(this.RadioLeftButtonClick);
             // 
             // ControlPanel
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(477, 409);
-            this.Controls.Add(this.groupBox2);
+            this.ClientSize = new System.Drawing.Size(445, 326);
             this.Controls.Add(this.grpAutoSensor);
             this.Controls.Add(this.grpAutoResident);
             this.Controls.Add(this.grpInterfaceKit);
-            this.Controls.Add(this.grpRFReader);
+            this.Controls.Add(this.grpMediaSource);
+            this.Controls.Add(this.btnKillDisplay);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
             this.Name = "ControlPanel";
             this.Text = "Keebee AAT Simulator";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.ControlPanelClosing);
-            this.grpRFReader.ResumeLayout(false);
+            this.grpMediaSource.ResumeLayout(false);
             this.grpAutoResident.ResumeLayout(false);
             this.grpAutoResident.PerformLayout();
             this.grpAutoSensor.ResumeLayout(false);
             this.grpAutoSensor.PerformLayout();
-            this.groupBox2.ResumeLayout(false);
-            this.groupBox2.PerformLayout();
             this.grpInterfaceKit.ResumeLayout(false);
             this.grpInterfaceKit.PerformLayout();
             this.ResumeLayout(false);
@@ -521,39 +368,27 @@
 
         private System.Windows.Forms.ComboBox cboResident;
         private System.Windows.Forms.Button btnScan;
-        private System.Windows.Forms.GroupBox grpRFReader;
+        private System.Windows.Forms.GroupBox grpMediaSource;
         private System.Windows.Forms.GroupBox grpAutoResident;
         private System.Windows.Forms.RadioButton radioButton1;
         private System.Windows.Forms.RadioButton radOn;
         private System.Windows.Forms.GroupBox grpAutoSensor;
         private System.Windows.Forms.RadioButton radioButton2;
         private System.Windows.Forms.RadioButton radioButton3;
-        private System.Windows.Forms.GroupBox groupBox2;
-        private System.Windows.Forms.Label lblSensor;
-        private System.Windows.Forms.Label lblResident;
-        private System.Windows.Forms.Label lblSensorLabel;
-        private System.Windows.Forms.Label lblProfileLabel;
-        private System.Windows.Forms.Label lblValue;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Button MatchingGameSensor;
-        private System.Windows.Forms.Button SlideShowSensor;
-        private System.Windows.Forms.Button RadioSensorRight;
-        private System.Windows.Forms.Button KillDisplaySensor;
+        private System.Windows.Forms.Button btnMatchingGame;
+        private System.Windows.Forms.Button btnSlideShow;
+        private System.Windows.Forms.Button bnRadioRight;
+        private System.Windows.Forms.Button btnKillDisplay;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.GroupBox grpInterfaceKit;
+        private System.Windows.Forms.Button btnTelevisionRight;
+        private System.Windows.Forms.Button btnTelevisionLeft;
+        private System.Windows.Forms.Button bnRadioLeft;
+        private System.Windows.Forms.Button btnCaregiver;
+        private System.Windows.Forms.Button btnAmbient;
+        private System.Windows.Forms.Button btnCats;
+        private System.Windows.Forms.Button btnOffScreen;
         private System.Windows.Forms.Label label6;
-        private System.Windows.Forms.Button TelevisionSensorRight;
-        private System.Windows.Forms.Button TelevisionSensorLeft;
-        private System.Windows.Forms.Button RadioSensorLeft;
-        private System.Windows.Forms.Button CaregiverButton6;
-        private System.Windows.Forms.Button AmbientButton7;
-        private System.Windows.Forms.Button CatsSensor;
-        private System.Windows.Forms.Button TelevisionInput;
-        private System.Windows.Forms.Button RadioInput;
-        private System.Windows.Forms.Button MatchingGameInput;
-        private System.Windows.Forms.Button SlideShowInput;
-        private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.Label label1;
     }
 }
 

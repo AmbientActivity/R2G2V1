@@ -14,7 +14,7 @@ package
 	public class Main extends MovieClip 
 	{
 		// uncomment to test
-		//private var xmlStringTest:String = "<xml><images><pic>\\\\Dev1\\sqlexpress\\KeebeeAATFilestream\\Media\\Profiles\\0\\images\\2008_01_30.jpg</pic></images></xml>"; 
+		//private var xmlStringTest:String = "<xml><images><pic>\\\\Dev1\\sqlexpress\\KeebeeAATFilestream\\Media\\Profiles\\0\\images\\general\\2008_01_30.jpg</pic></images></xml>"; 
 	
 		private var clientWidth:Number = 1920;
 		private var clientHeight:Number = 1080;

@@ -468,8 +468,7 @@ namespace Keebee.AAT.Administrator.Controllers
 
             if (residentMedia == null) return list;
 
-            var mediaPaths = residentMedia.MediaFiles.SelectMany(x => x.Paths)
-                .ToArray();
+            var mediaPaths = residentMedia.MediaResponseTypes.SelectMany(x => x.Paths).ToArray();
 
             if (!mediaPaths.Any()) return list;
 

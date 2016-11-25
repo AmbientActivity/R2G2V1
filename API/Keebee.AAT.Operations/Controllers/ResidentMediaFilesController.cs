@@ -173,7 +173,7 @@ namespace Keebee.AAT.Operations.Controllers
                         x.Resident.Gender,
                         x.Resident.GameDifficultyLevel
                     },
-                    MediaFiles = x.Files
+                    MediaResponseTypes = x.Files
                         .GroupBy(rt => rt.ResponseType)
                         .Select(mediaFiles => new { mediaFiles.First().ResponseType, MediaFiles = mediaFiles })
                         .Select(mf => new
@@ -211,7 +211,7 @@ namespace Keebee.AAT.Operations.Controllers
                                     })
                                 }).OrderBy(o => o.MediaPathType.Id)
                         }).OrderBy(o => o.ResponseType.Id)
-                }).Single();
+                }).SingleOrDefault();
 
             return new DynamicJsonObject(exObj);
         }
@@ -244,7 +244,7 @@ namespace Keebee.AAT.Operations.Controllers
                         x.Resident.Gender,
                         x.Resident.GameDifficultyLevel
                     },
-                    MediaFiles = x.Files
+                    MediaResponseType = x.Files
                         .GroupBy(rt => rt.ResponseType)
                         .Select(mediaFiles => new { mediaFiles.First().ResponseType, MediaFiles = mediaFiles })
                         .Select(mf => new
@@ -281,8 +281,8 @@ namespace Keebee.AAT.Operations.Controllers
                                         f.IsPublic
                                     })
                                 }).OrderBy(o => o.MediaPathType.Id)
-                        }).OrderBy(o => o.ResponseType.Id)
-                });
+                        }).SingleOrDefault()
+                }).SingleOrDefault();
 
             return new DynamicJsonObject(exObj);
         }

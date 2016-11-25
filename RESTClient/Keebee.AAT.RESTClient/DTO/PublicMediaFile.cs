@@ -16,9 +16,9 @@ namespace Keebee.AAT.RESTClient
         public IEnumerable<MediaResponseType> MediaFiles;
     }
 
-    public class PublicMediaList
+    public class PublicMediaResponseType
     {
-        public IEnumerable<PublicMedia> Media;
+        public MediaResponseType MediaResponseType;
     }
 
     public class PublicMediaFileEdit

@@ -7,6 +7,7 @@ using System.Linq;
 using System;
 using System.Windows.Forms;
 using System.Configuration;
+using System.Diagnostics;
 using System.Web.Script.Serialization;
 using Timer = System.Threading.Timer;
 
@@ -133,27 +134,27 @@ namespace Keebee.AAT.Simulator
 
         private void KillDisplayButtonClick(object sender, EventArgs e)
         {
-            _messageQueueResponse.Send(CreateMessageBodyForResponse(ResponseTypeId.KillDisplay, true));
+            ExecuteResponse(ResponseTypeId.KillDisplay, MaxValue - 1, true);
         }
 
         private void SlideShowButtonClick(object sender, EventArgs e)
         {
-            _messageQueueResponse.Send(CreateMessageBodyForResponse(ResponseTypeId.SlideShow, false));
+            ExecuteResponse(ResponseTypeId.SlideShow);
         }
 
         private void MatchingGameButtonClick(object sender, EventArgs e)
         {
-            _messageQueueResponse.Send(CreateMessageBodyForResponse(ResponseTypeId.MatchingGame, false));
+            ExecuteResponse(ResponseTypeId.MatchingGame);
         }
 
         private void CatsButtonClick(object sender, EventArgs e)
         {
-            _messageQueueResponse.Send(CreateMessageBodyForResponse(ResponseTypeId.Cats, false));
+            ExecuteResponse(ResponseTypeId.Cats);
         }
 
         private void OffScreenButtonClick(object sender, EventArgs e)
         {
-            _messageQueueResponse.Send(CreateMessageBodyForResponse(ResponseTypeId.OffScreen, false));
+            ExecuteResponse(ResponseTypeId.OffScreen);
         }
 
         private void RadioRightButtonClick(object sender, EventArgs e)
@@ -165,8 +166,8 @@ namespace Keebee.AAT.Simulator
 
             if (valueToSend <= 0) return;
 
-            _messageQueueResponse.Send(CreateMessageBodyForResponse(ResponseTypeId.Radio, false, valueToSend));
             _messageQueuePhidgetContinuousRadio.Send($"{valueToSend}");
+            ExecuteResponse(ResponseTypeId.Radio, valueToSend);
         }
 
         private void RadioLeftButtonClick(object sender, EventArgs e)
@@ -179,7 +180,7 @@ namespace Keebee.AAT.Simulator
             if (valueToSend <= 0) return;
 
             _messageQueuePhidgetContinuousRadio.Send($"{valueToSend}");
-            _messageQueueResponse.Send(CreateMessageBodyForResponse(ResponseTypeId.Radio, false, valueToSend));
+            ExecuteResponse(ResponseTypeId.Radio, valueToSend);
         }
 
         private void TelevisionRightButtonClick(object sender, EventArgs e)
@@ -191,7 +192,7 @@ namespace Keebee.AAT.Simulator
 
             if (valueToSend <= 0) return;
 
-            _messageQueueResponse.Send(CreateMessageBodyForResponse(ResponseTypeId.Television, false, valueToSend));
+            ExecuteResponse(ResponseTypeId.Television, valueToSend);
         }
 
         private void TelevisionLeftButtonClick(object sender, EventArgs e)
@@ -203,7 +204,7 @@ namespace Keebee.AAT.Simulator
 
             if (valueToSend <= 0) return;
 
-            _messageQueueResponse.Send(CreateMessageBodyForResponse(ResponseTypeId.Television, false, valueToSend));
+            ExecuteResponse(ResponseTypeId.Television, valueToSend);
         }
 
         private int GetCurrentStepValue(int responseType, StepDirectionType direction)
@@ -244,39 +245,12 @@ namespace Keebee.AAT.Simulator
 
         private void CaregiverButtonClick(object sender, EventArgs e)
         {
-            _messageQueueResponse.Send(CreateMessageBodyForResponse(ResponseTypeId.Caregiver, true));
+            ExecuteResponse(ResponseTypeId.Caregiver, MaxValue - 1, true);
         }
 
         private void AmbientButtonClick(object sender, EventArgs e)
         {
-            _messageQueueResponse.Send(CreateMessageBodyForResponse(ResponseTypeId.Ambient, true));
-        }
-
-        private string CreateMessageBodyForResponse(int responseTypeId, bool isSystem, int sensorValue = MaxValue - 1)
-        {
-            var responseMessage = new ResponseMessage
-            {
-                SensorValue = sensorValue,
-                ConfigDetail = new ConfigDetailMessage
-                {
-                    Id = 1,
-                    ResponseTypeId = responseTypeId,
-                    IsSystemReponseType = isSystem,
-                    ConfigId = ConfigId.Default
-                },
-                Resident = new ResidentMessage
-                {
-                    Id = _currentResident.Id,
-                    Name = $"{_currentResident.FirstName} {_currentResident.LastName}".Trim(),
-                    GameDifficultyLevel = _currentResident.GameDifficultyLevel,
-                    AllowVideoCapturing = _currentResident.AllowVideoCapturing
-                },
-                IsActiveEventLog = false,
-                ResponseTypeIds = new int[0]
-            };
-
-            var serializer = new JavaScriptSerializer();
-            return serializer.Serialize(responseMessage);
+            ExecuteResponse(ResponseTypeId.Ambient, MaxValue - 1, true);
         }
 
         private void ActivateResidentClick(object sender, EventArgs e)
@@ -398,6 +372,39 @@ namespace Keebee.AAT.Simulator
                 GameDifficultyLevel = resident.GameDifficultyLevel,
                 AllowVideoCapturing = resident.AllowVideoCapturing
             };
+        }
+
+        private void ExecuteResponse(int responseTypeId, int sensorValue = MaxValue - 1, bool isSystem = false)
+        {
+            if (Process.GetProcessesByName(ApplicationName.DisplayApp).Any())
+                _messageQueueResponse.Send(CreateMessageBodyForResponse(responseTypeId, isSystem, sensorValue));
+        }
+
+        private string CreateMessageBodyForResponse(int responseTypeId, bool isSystem, int sensorValue)
+        {
+            var responseMessage = new ResponseMessage
+            {
+                SensorValue = sensorValue,
+                ConfigDetail = new ConfigDetailMessage
+                {
+                    Id = 1,
+                    ResponseTypeId = responseTypeId,
+                    IsSystemReponseType = isSystem,
+                    ConfigId = ConfigId.Default
+                },
+                Resident = new ResidentMessage
+                {
+                    Id = _currentResident.Id,
+                    Name = $"{_currentResident.FirstName} {_currentResident.LastName}".Trim(),
+                    GameDifficultyLevel = _currentResident.GameDifficultyLevel,
+                    AllowVideoCapturing = _currentResident.AllowVideoCapturing
+                },
+                IsActiveEventLog = false,
+                ResponseTypeIds = new int[0]
+            };
+
+            var serializer = new JavaScriptSerializer();
+            return serializer.Serialize(responseMessage);
         }
     }
 }

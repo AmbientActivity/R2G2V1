@@ -91,8 +91,8 @@ namespace Keebee.AAT.PhidgetService
             _systemEventLogger = new SystemEventLogger(SystemEventLogType.PhidgetService);
             _opsClient = new OperationsClient { SystemEventLogger = _systemEventLogger };
             _sensorThreshold = ValidateSensorThreshold(ConfigurationManager.AppSettings["TouchSensorThreshold"]);
-            _inputDebounceTime = ValidateSensorThreshold(ConfigurationManager.AppSettings["InputDebounceTime"]);
-            _incrementalDebounceTime = ValidateSensorThreshold(ConfigurationManager.AppSettings["IncrementalDebounceTime"]);
+            _inputDebounceTime = int.Parse(ConfigurationManager.AppSettings["InputDebounceTime"]);
+            _incrementalDebounceTime = int.Parse(ConfigurationManager.AppSettings["IncrementalDebounceTime"]);
 
             _interfaceKit = new InterfaceKit();
             _interfaceKit.SensorChange += SensorChange;

@@ -228,21 +228,9 @@ namespace Keebee.AAT.Display.UserControls
 
                     if (_isLoop) return;
 
-                    // television - should exit once the current playlist item has ended
-                    if (_responseTypeId == ResponseTypeId.Television)
-                    {
-                        RaiseMediaCompleteEvent();
-                        _isPlaylistComplete = true;
-                    }
-                    // radio - should exit once the entire playlist is complete
-                    else if (_responseTypeId == ResponseTypeId.Radio)
-                    {
-                        if (axWindowsMediaPlayer1.currentMedia.isIdentical[_lastMedia])
-                        {
-                            RaiseMediaCompleteEvent();
-                            _isPlaylistComplete = true;
-                        }
-                    }
+                    RaiseMediaCompleteEvent();
+                    _isPlaylistComplete = true;
+
                     break;
 
                 case (int)WMPPlayState.wmppsTransitioning:

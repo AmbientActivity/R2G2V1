@@ -60,6 +60,8 @@ namespace Keebee.AAT.PhidgetService
         //private const int StepTolerance = 10;
         private const int DefaultTouchSensorThreshold = 990;
         private readonly int _sensorThreshold;
+        private readonly int _inputDebounceTime;
+        private readonly int _incrementalDebounceTime;
         private RotationSensorStep _currentDiscreteStepValue = RotationSensorStep.Value5;
 
         // active config
@@ -89,6 +91,8 @@ namespace Keebee.AAT.PhidgetService
             _systemEventLogger = new SystemEventLogger(SystemEventLogType.PhidgetService);
             _opsClient = new OperationsClient { SystemEventLogger = _systemEventLogger };
             _sensorThreshold = ValidateSensorThreshold(ConfigurationManager.AppSettings["TouchSensorThreshold"]);
+            _inputDebounceTime = ValidateSensorThreshold(ConfigurationManager.AppSettings["InputDebounceTime"]);
+            _incrementalDebounceTime = ValidateSensorThreshold(ConfigurationManager.AppSettings["IncrementalDebounceTime"]);
 
             _interfaceKit = new InterfaceKit();
             _interfaceKit.SensorChange += SensorChange;
@@ -254,8 +258,8 @@ namespace Keebee.AAT.PhidgetService
         {
             try
             {
-                // debounce - don't allow consecutive events < 75 milliseconds apart
-                if (DateTime.Now - _latestSensorHit < TimeSpan.FromMilliseconds(75))
+                // debounce - don't allow consecutive events < xx milliseconds apart
+                if (DateTime.Now - _latestSensorHit < TimeSpan.FromMilliseconds(_incrementalDebounceTime))
                 {
                     _latestSensorHit = DateTime.Now;
                     return; // too fast
@@ -300,8 +304,8 @@ namespace Keebee.AAT.PhidgetService
                 return;
             }
 
-            // debounce the switch - don't allow consecutive events < 300 milliseconds apart
-            if (DateTime.Now - _latestInputHit  < TimeSpan.FromMilliseconds(300))
+            // debounce the switch - don't allow consecutive events < xx milliseconds apart
+            if (DateTime.Now - _latestInputHit  < TimeSpan.FromMilliseconds(_inputDebounceTime))
             {
                 _latestInputHit = DateTime.Now;
                 return;  // too fast

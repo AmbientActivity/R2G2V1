@@ -154,7 +154,7 @@ namespace Keebee.AAT.Simulator
 
         private void OffScreenButtonClick(object sender, EventArgs e)
         {
-            ExecuteResponse(ResponseTypeId.OffScreen);
+            ExecuteResponse(ResponseTypeId.OffScreen, MaxValue - 1, false, new [] {ResponseTypeId.MatchingGame, ResponseTypeId.SlideShow});
         }
 
         private void RadioRightButtonClick(object sender, EventArgs e)
@@ -374,13 +374,13 @@ namespace Keebee.AAT.Simulator
             };
         }
 
-        private void ExecuteResponse(int responseTypeId, int sensorValue = MaxValue - 1, bool isSystem = false)
+        private void ExecuteResponse(int responseTypeId, int sensorValue = MaxValue - 1, bool isSystem = false, int[] reponseTypeIds = null)
         {
             if (Process.GetProcessesByName(ApplicationName.DisplayApp).Any())
-                _messageQueueResponse.Send(CreateMessageBodyForResponse(responseTypeId, isSystem, sensorValue));
+                _messageQueueResponse.Send(CreateMessageBodyForResponse(responseTypeId, isSystem, sensorValue, reponseTypeIds));
         }
 
-        private string CreateMessageBodyForResponse(int responseTypeId, bool isSystem, int sensorValue)
+        private string CreateMessageBodyForResponse(int responseTypeId, bool isSystem, int sensorValue, int[] reponseTypeIds)
         {
             var responseMessage = new ResponseMessage
             {
@@ -400,7 +400,7 @@ namespace Keebee.AAT.Simulator
                     AllowVideoCapturing = _currentResident.AllowVideoCapturing
                 },
                 IsActiveEventLog = false,
-                ResponseTypeIds = new int[0]
+                ResponseTypeIds = reponseTypeIds
             };
 
             var serializer = new JavaScriptSerializer();

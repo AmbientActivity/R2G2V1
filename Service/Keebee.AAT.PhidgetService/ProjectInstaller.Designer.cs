@@ -41,7 +41,6 @@
             // 
             // phidgetServiceInstaller
             // 
-            this.phidgetServiceInstaller.DelayedAutoStart = true;
             this.phidgetServiceInstaller.Description = "Processes all phidget sensor change events and hands them to the State Machine Se" +
     "rvice";
             this.phidgetServiceInstaller.DisplayName = "Keebee AAT Phidget Service";

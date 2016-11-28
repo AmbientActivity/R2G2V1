@@ -1,4 +1,8 @@
-﻿# media paths
+﻿# export path
+$sourceExportPath = "\\" + $env:COMPUTERNAME + "\SQLEXPRESS\KeebeeAATFilestream\Media\Exports\*"
+$destExportPath = "C:\Deployments\Media\Exports\"
+
+# media paths
 $sourceProfilePath = "\\" + $env:COMPUTERNAME + "\SQLEXPRESS\KeebeeAATFilestream\Media\Profiles\"
 $destProfilePath = "C:\Deployments\Media\Profiles\"
 
@@ -17,6 +21,9 @@ Try
     # -------------------- TRANSFER MEDIA --------------------
 
     Write-Host "Transferring Media to New Folder Structure...” -NoNewline
+
+    # exports
+    Copy-Item $sourceExportPath $destExportPath -recurse -Force
 
     # public profile
     # images

@@ -10,7 +10,9 @@ using System.Web.Script.Serialization;
 using System.ServiceProcess;
 using System.Diagnostics;
 using System.IO;
+using System.Threading;
 using System.Timers;
+using Timer = System.Timers.Timer;
 
 
 namespace Keebee.AAT.VideoCaptureService
@@ -21,6 +23,7 @@ namespace Keebee.AAT.VideoCaptureService
 
         // app.config settings
         private readonly int _videoDuration;
+        private readonly int _stopRecordPostDelay;
         private readonly VideoEncodingQuality _encodingQuality;
 
         // media capture
@@ -56,6 +59,7 @@ namespace Keebee.AAT.VideoCaptureService
             InitializeMediaCapture();
 
             _videoDuration = Convert.ToInt32(ConfigurationManager.AppSettings["VideoDuration"]);
+            _stopRecordPostDelay = Convert.ToInt32(ConfigurationManager.AppSettings["StopRecordPostDelay"]);
             _encodingQuality = (VideoEncodingQuality)Convert.ToInt32(ConfigurationManager.AppSettings["VideoEncodingQuality"]);
 
             _timer = new Timer(_videoDuration);
@@ -136,9 +140,10 @@ namespace Keebee.AAT.VideoCaptureService
         }
 
         private void OnTimerElapsed(object source, ElapsedEventArgs e)
-        {
+        {            
             StopCapture();
             _timer.Stop();
+            Thread.Sleep(_stopRecordPostDelay); // give the file system a chaance to store the file
         }
 
         private void MessageReceivedVideoCapture(object source, MessageEventArgs e)

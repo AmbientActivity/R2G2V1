@@ -231,8 +231,23 @@ namespace Keebee.AAT.Display.UserControls
         // raised by the shockwave activex component
         // let's us know when the image is finised being hidden
         private void FlashCall(object sender, _IShockwaveFlashEvents_FlashCallEvent e)
-        {
-            OnImageHidden();
+        {     
+            // check for no arguments       
+            if (!e.request.Contains("<string>"))
+            {
+                OnImageHidden();
+            }
+            else  // existence of a string argument implies an error has occurred
+            {                
+                var request = e.request;
+
+                const string stringOpen = "<string>";
+                const string stringClose = "</string>";
+                var message = request.Substring(request.IndexOf(stringOpen) + stringOpen.Length,
+                    request.IndexOf(stringClose) - request.IndexOf(stringOpen) - stringOpen.Length);
+
+                _systemEventLogger.WriteEntry($"SlideViewerFlash.DisplayImage: {message}", EventLogEntryType.Error);
+            }
         }
 
         private void RaiseSlideShowCompleteEvent()

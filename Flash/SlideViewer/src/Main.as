@@ -51,27 +51,42 @@ package
 		
 		// called externally by the Windows UserControl 
 		private function showImage(xmlString:String) : void {
-			imageArray = new Array();
-			painterArray = new Array();
-			xml = new XML(xmlString);
-			
-			if (numChildren > 0) {
-				stopAllMovieClips();
-				movieClip.removeChildAt(0);
-				removeChild(movieClip);
-				TweenLite.killTweensOf(movieClip);
+			try
+			{
+				imageArray = new Array();
+				painterArray = new Array();
+				xml = new XML(xmlString);
+				
+				if (numChildren > 0) {
+					stopAllMovieClips();
+					movieClip.removeChildAt(0);
+					removeChild(movieClip);
+					TweenLite.killTweensOf(movieClip);
+				}
+				
+				imageArray[0] = xml.images[0].pic;
+				beginImage();
 			}
-			
-			imageArray[0] = xml.images[0].pic;
-			beginImage();
+			catch (error:Error)
+			{
+				ExternalInterface.call("FlashCall", error.message);
+			}
 		}
 		
 		// called externally by the Windows UserControl 
 		private function stopImage() : void {
-			// stop and kill the movie clip tween
-			stopAllMovieClips();
-			removeChild(movieClip);
-			TweenLite.killTweensOf(movieClip);
+			try
+			{
+				// stop and kill the movie clip tween
+				stopAllMovieClips();
+				removeChild(movieClip);
+				TweenLite.killTweensOf(movieClip);
+			}
+			catch(error:Error)
+			{
+				ExternalInterface.call("FlashCall", error.message);
+			}
+			
 			imageArray = null;
 			painterArray = null;
 			movieClip = null;

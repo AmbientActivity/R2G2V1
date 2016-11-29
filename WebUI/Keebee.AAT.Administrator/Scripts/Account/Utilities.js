@@ -118,7 +118,7 @@
                 });
 
                 BootstrapDialog.show({
-                    title: title + "Change Password",
+                    title: title + " Change Password",
                     message: message,
                     onshown: function () {
                         $("#txtOldPassword").focus();

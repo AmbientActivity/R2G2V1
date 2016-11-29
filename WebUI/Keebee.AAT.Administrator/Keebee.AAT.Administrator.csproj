@@ -275,7 +275,6 @@
     <Content Include="Scripts\Residents\Media.js" />
     <Content Include="Scripts\Residents\Index.js" />
     <Content Include="Scripts\Maintenance\Index.js" />
-    <Content Include="Scripts\Shared\_LogOnPartial.js" />
     <Content Include="Scripts\Site\Namespaces.js" />
     <Content Include="Scripts\Site\Site.js" />
     <Content Include="Scripts\VideoCaptures\Index.js" />

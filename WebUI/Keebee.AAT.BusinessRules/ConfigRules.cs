@@ -35,12 +35,50 @@ namespace Keebee.AAT.BusinessRules
             return msgs.Count > 0 ? msgs : null;
         }
 
-        public List<string> ValidateDetail(string description)
+        public List<string> ValidateDetail(string description, int phidgetTypeId, int phidgetStyleTypeId)
         {
             var msgs = new List<string>();
 
             if (string.IsNullOrEmpty(description))
                 msgs.Add("Description is required");
+
+            var validPhidgetMsg = ValidatePhidgetStyle(phidgetTypeId, phidgetStyleTypeId);
+
+            if (validPhidgetMsg != null)
+                msgs.AddRange(validPhidgetMsg);
+
+            return msgs.Count > 0 ? msgs : null;
+        }
+
+        public List<string> ValidatePhidgetStyle(int phidgetTypeId, int phidgetStyleTypeId)
+        {
+            var msgs = new List<string>();
+
+            switch (phidgetTypeId)
+            {
+                case PhidgetTypeId.Sensor0:
+                case PhidgetTypeId.Sensor1:
+                case PhidgetTypeId.Sensor2:
+                case PhidgetTypeId.Sensor3:
+                case PhidgetTypeId.Sensor4:
+                case PhidgetTypeId.Sensor5:
+                case PhidgetTypeId.Sensor6:
+                case PhidgetTypeId.Sensor7:
+                    if (phidgetStyleTypeId == PhidgetStyleTypeIdId.OnOff)
+                        msgs.Add("Sensors cannot be of type On/Off");
+                    break;
+                case PhidgetTypeId.Input0:
+                case PhidgetTypeId.Input1:
+                case PhidgetTypeId.Input2:
+                case PhidgetTypeId.Input3:
+                case PhidgetTypeId.Input4:
+                case PhidgetTypeId.Input5:
+                case PhidgetTypeId.Input6:
+                case PhidgetTypeId.Input7:
+                    if (phidgetStyleTypeId != PhidgetStyleTypeIdId.OnOff)
+                        msgs.Add("Inputs must be of type On/Off");
+                    break;
+            }
 
             return msgs.Count > 0 ? msgs : null;
         }

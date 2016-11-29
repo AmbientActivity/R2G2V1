@@ -111,7 +111,7 @@ namespace Keebee.AAT.Administrator.Controllers
             var configDetailid = cd.Id;
             var configurationRules = new ConfigRules();
 
-            var msgs = configurationRules.ValidateDetail(cd.Description);
+            var msgs = configurationRules.ValidateDetail(cd.Description, cd.PhidgetTypeId, cd.PhidgetStyleTypeId);
 
             if (msgs == null)
             {

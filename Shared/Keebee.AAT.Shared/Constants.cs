@@ -118,6 +118,7 @@ namespace Keebee.AAT.Shared
         public const int MultiTurn = 2;
         public const int StopTurn = 3;
         public const int Slider = 4;
+        public const int OnOff = 5;
     }
 
     public static class PhidgetTypeId

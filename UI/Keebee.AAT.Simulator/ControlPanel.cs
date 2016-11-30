@@ -134,27 +134,27 @@ namespace Keebee.AAT.Simulator
 
         private void KillDisplayButtonClick(object sender, EventArgs e)
         {
-            ExecuteResponse(ResponseTypeId.KillDisplay, MaxValue - 1, true);
+            ExecuteResponse(ResponseTypeId.KillDisplay, PhidgetTypeId.Input1, MaxValue - 1, true);
         }
 
         private void SlideShowButtonClick(object sender, EventArgs e)
         {
-            ExecuteResponse(ResponseTypeId.SlideShow);
+            ExecuteResponse(ResponseTypeId.SlideShow, PhidgetTypeId.Sensor0);
         }
 
         private void MatchingGameButtonClick(object sender, EventArgs e)
         {
-            ExecuteResponse(ResponseTypeId.MatchingGame);
+            ExecuteResponse(ResponseTypeId.MatchingGame, PhidgetTypeId.Sensor1);
         }
 
         private void CatsButtonClick(object sender, EventArgs e)
         {
-            ExecuteResponse(ResponseTypeId.Cats);
+            ExecuteResponse(ResponseTypeId.Cats, PhidgetTypeId.Sensor3);
         }
 
         private void OffScreenButtonClick(object sender, EventArgs e)
         {
-            ExecuteResponse(ResponseTypeId.OffScreen, MaxValue - 1, false, new [] {ResponseTypeId.MatchingGame, ResponseTypeId.SlideShow});
+            ExecuteResponse(ResponseTypeId.OffScreen, PhidgetTypeId.Sensor4, MaxValue - 1, false, new [] {ResponseTypeId.MatchingGame, ResponseTypeId.SlideShow});
         }
 
         private void RadioRightButtonClick(object sender, EventArgs e)
@@ -167,7 +167,7 @@ namespace Keebee.AAT.Simulator
             if (valueToSend <= 0) return;
 
             _messageQueuePhidgetContinuousRadio.Send($"{valueToSend}");
-            ExecuteResponse(ResponseTypeId.Radio, valueToSend);
+            ExecuteResponse(ResponseTypeId.Radio, PhidgetTypeId.Sensor5, valueToSend);
         }
 
         private void RadioLeftButtonClick(object sender, EventArgs e)
@@ -180,7 +180,7 @@ namespace Keebee.AAT.Simulator
             if (valueToSend <= 0) return;
 
             _messageQueuePhidgetContinuousRadio.Send($"{valueToSend}");
-            ExecuteResponse(ResponseTypeId.Radio, valueToSend);
+            ExecuteResponse(ResponseTypeId.Radio, PhidgetTypeId.Sensor5, valueToSend);
         }
 
         private void TelevisionRightButtonClick(object sender, EventArgs e)
@@ -192,7 +192,7 @@ namespace Keebee.AAT.Simulator
 
             if (valueToSend <= 0) return;
 
-            ExecuteResponse(ResponseTypeId.Television, valueToSend);
+            ExecuteResponse(ResponseTypeId.Television, PhidgetTypeId.Sensor6, valueToSend);
         }
 
         private void TelevisionLeftButtonClick(object sender, EventArgs e)
@@ -204,7 +204,7 @@ namespace Keebee.AAT.Simulator
 
             if (valueToSend <= 0) return;
 
-            ExecuteResponse(ResponseTypeId.Television, valueToSend);
+            ExecuteResponse(ResponseTypeId.Television, PhidgetTypeId.Sensor6, valueToSend);
         }
 
         private int GetCurrentStepValue(int responseType, StepDirectionType direction)
@@ -245,12 +245,12 @@ namespace Keebee.AAT.Simulator
 
         private void CaregiverButtonClick(object sender, EventArgs e)
         {
-            ExecuteResponse(ResponseTypeId.Caregiver, MaxValue - 1, true);
+            ExecuteResponse(ResponseTypeId.Caregiver, PhidgetTypeId.Input0, MaxValue - 1, true);
         }
 
         private void AmbientButtonClick(object sender, EventArgs e)
         {
-            ExecuteResponse(ResponseTypeId.Ambient, MaxValue - 1, true);
+            ExecuteResponse(ResponseTypeId.Ambient, PhidgetTypeId.Sensor7, MaxValue - 1, true);
         }
 
         private void ActivateResidentClick(object sender, EventArgs e)
@@ -374,13 +374,13 @@ namespace Keebee.AAT.Simulator
             };
         }
 
-        private void ExecuteResponse(int responseTypeId, int sensorValue = MaxValue - 1, bool isSystem = false, int[] reponseTypeIds = null)
+        private void ExecuteResponse(int responseTypeId, int phidgetTypeId, int sensorValue = MaxValue - 1, bool isSystem = false, int[] reponseTypeIds = null)
         {
             if (Process.GetProcessesByName(ApplicationName.DisplayApp).Any())
-                _messageQueueResponse.Send(CreateMessageBodyForResponse(responseTypeId, isSystem, sensorValue, reponseTypeIds));
+                _messageQueueResponse.Send(CreateMessageBodyForResponse(responseTypeId, phidgetTypeId, isSystem, sensorValue, reponseTypeIds));
         }
 
-        private string CreateMessageBodyForResponse(int responseTypeId, bool isSystem, int sensorValue, int[] reponseTypeIds)
+        private string CreateMessageBodyForResponse(int responseTypeId, int phidgetTypeId, bool isSystem, int sensorValue, int[] reponseTypeIds)
         {
             var responseMessage = new ResponseMessage
             {
@@ -389,6 +389,7 @@ namespace Keebee.AAT.Simulator
                 {
                     Id = 1,
                     ResponseTypeId = responseTypeId,
+                    PhidgetTypeId = phidgetTypeId,
                     IsSystemReponseType = isSystem,
                     ConfigId = ConfigId.Default
                 },

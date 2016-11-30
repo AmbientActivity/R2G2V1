@@ -67,7 +67,10 @@ namespace Keebee.AAT.Display
         // current sensor values
         private int _currentRadioSensorValue;
         private int _currentTelevisionSensorValue;
+
+        // current activity/response types
         private int _currentResponseTypeId;
+        private int _currentPhidgetTypeId;
 
         // active event logging
         private bool _currentIsActiveEventLog;
@@ -670,12 +673,14 @@ namespace Keebee.AAT.Display
 
                 _isNewResponse =
                      (response.ConfigDetail.ResponseTypeId != _currentResponseTypeId) ||
+                     (response.ConfigDetail.PhidgetTypeId != _currentPhidgetTypeId) ||
                      (response.Resident.Id != _activeResident?.Id);
 
                 _activeResident = response.Resident;
                 _activeConfigDetail = response.ConfigDetail;
                 _currentIsActiveEventLog = response.IsActiveEventLog;
                 _activeResponseTypeIds = response.ResponseTypeIds;
+                _currentPhidgetTypeId = response.ConfigDetail.PhidgetTypeId;
 
                 ExecuteResponse(response.ConfigDetail.ResponseTypeId, response.SensorValue, response.ConfigDetail.IsSystemReponseType);
             }

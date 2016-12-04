@@ -27,8 +27,6 @@ namespace Keebee.AAT.VideoCaptureService
         // media capture
         private MediaCapture _capture;
         private bool _isRecording;
-        private string _filename;
-        private StorageFolder _storageFolder;
 
         // event logger
         private readonly SystemEventLogger _systemEventLogger;
@@ -106,9 +104,9 @@ namespace Keebee.AAT.VideoCaptureService
                 if (!Directory.Exists(rootFolder))
                     Directory.CreateDirectory(rootFolder);
 
-                _filename = $"Capture_{DateTime.Now:yyyyMMdd_hhmmss}.mp4";
-                _storageFolder = await StorageFolder.GetFolderFromPathAsync(rootFolder);
-                var recordStorageFile = await _storageFolder.CreateFileAsync(_filename);
+                var filename = $"Capture_{DateTime.Now:yyyyMMdd_hhmmss}.mp4";
+                var storageFolder = await StorageFolder.GetFolderFromPathAsync(rootFolder);
+                var recordStorageFile = await storageFolder.CreateFileAsync(filename);
                 var recordProfile = MediaEncodingProfile.CreateMp4(_encodingQuality);
 
                 await _capture.StartRecordToStorageFileAsync(recordProfile, recordStorageFile);

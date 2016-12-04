@@ -25,7 +25,10 @@ namespace Keebee.AAT.BusinessRules
                 var dateTime = DateTime.Parse(date);
                 var folder = dateTime.ToString("yyyy-MM-dd");
                 var root = new DirectoryInfo($@"{VideoCaptures.Path}\{folder}");
-                var files = root.EnumerateFiles().Select(f => $@"{f.DirectoryName}\{f.Name}").ToList();
+                var files = root.EnumerateFiles()
+                    .Where(f => f.Length > 0)
+                    .Select(f => $@"{f.DirectoryName}\{f.Name}")
+                    .ToList();
 
                 using (var zipFile = new ZipFile())
                 {

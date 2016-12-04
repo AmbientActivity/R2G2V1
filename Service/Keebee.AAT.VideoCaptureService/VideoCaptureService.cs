@@ -10,7 +10,6 @@ using System.Web.Script.Serialization;
 using System.ServiceProcess;
 using System.Diagnostics;
 using System.IO;
-using System.Threading;
 using System.Timers;
 using Timer = System.Timers.Timer;
 
@@ -23,12 +22,13 @@ namespace Keebee.AAT.VideoCaptureService
 
         // app.config settings
         private readonly int _videoDuration;
-        private readonly int _stopRecordPostDelay;
         private readonly VideoEncodingQuality _encodingQuality;
 
         // media capture
         private MediaCapture _capture;
         private bool _isRecording;
+        private string _filename;
+        private StorageFolder _storageFolder;
 
         // event logger
         private readonly SystemEventLogger _systemEventLogger;
@@ -59,7 +59,6 @@ namespace Keebee.AAT.VideoCaptureService
             InitializeMediaCapture();
 
             _videoDuration = Convert.ToInt32(ConfigurationManager.AppSettings["VideoDuration"]);
-            _stopRecordPostDelay = Convert.ToInt32(ConfigurationManager.AppSettings["StopRecordPostDelay"]);
             _encodingQuality = (VideoEncodingQuality)Convert.ToInt32(ConfigurationManager.AppSettings["VideoEncodingQuality"]);
 
             _timer = new Timer(_videoDuration);
@@ -107,9 +106,9 @@ namespace Keebee.AAT.VideoCaptureService
                 if (!Directory.Exists(rootFolder))
                     Directory.CreateDirectory(rootFolder);
 
-                var filename = $"Capture_{DateTime.Now:yyyyMMdd_hhmmss}.mp4";
-                var storageFolder = await StorageFolder.GetFolderFromPathAsync(rootFolder);
-                var recordStorageFile = await storageFolder.CreateFileAsync(filename);
+                _filename = $"Capture_{DateTime.Now:yyyyMMdd_hhmmss}.mp4";
+                _storageFolder = await StorageFolder.GetFolderFromPathAsync(rootFolder);
+                var recordStorageFile = await _storageFolder.CreateFileAsync(_filename);
                 var recordProfile = MediaEncodingProfile.CreateMp4(_encodingQuality);
 
                 await _capture.StartRecordToStorageFileAsync(recordProfile, recordStorageFile);
@@ -118,6 +117,7 @@ namespace Keebee.AAT.VideoCaptureService
             }
             catch (Exception ex)
             {
+                _isRecording = false;
                 _systemEventLogger.WriteEntry($"StartCapture: {ex.Message}", EventLogEntryType.Error);
             }
         }
@@ -135,15 +135,22 @@ namespace Keebee.AAT.VideoCaptureService
             }
             catch (Exception ex)
             {
+                _isRecording = false;
                 _systemEventLogger.WriteEntry($"StopCapture: {ex.Message}", EventLogEntryType.Error);
             }
         }
 
         private void OnTimerElapsed(object source, ElapsedEventArgs e)
-        {            
-            StopCapture();
-            _timer.Stop();
-            Thread.Sleep(_stopRecordPostDelay); // give the file system a chaance to store the file
+        {
+            try
+            {
+                StopCapture();
+                _timer.Stop();
+            }
+            catch (Exception ex)
+            {
+                _systemEventLogger.WriteEntry($"OnTimerElapsed: {ex.Message}", EventLogEntryType.Error);
+            }
         }
 
         private void MessageReceivedVideoCapture(object source, MessageEventArgs e)

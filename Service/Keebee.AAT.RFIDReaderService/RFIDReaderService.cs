@@ -218,7 +218,7 @@ namespace Keebee.AAT.RfidReaderService
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"Read: {ex.Message}", EventLogEntryType.Error);
+                // do nothing
             }
 
             return residentId;

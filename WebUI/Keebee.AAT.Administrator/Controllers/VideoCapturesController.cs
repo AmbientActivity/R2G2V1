@@ -68,7 +68,8 @@ namespace Keebee.AAT.Administrator.Controllers
             var root = new DirectoryInfo(VideoCaptures.Path);
             var folders = root.EnumerateDirectories().OrderBy(x => x.Name);
 
-            var list = folders.SelectMany(x => x.EnumerateFiles())
+            var list = folders.SelectMany(x => x.EnumerateFiles()
+                .Where(f => f.Length > 0))
                 .Select(video => new VideoCaptureViewModel
                 {
                     Filename = video.Name,

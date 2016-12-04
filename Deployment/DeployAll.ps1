@@ -22,6 +22,7 @@ $simulatorPath = "UI\Simulator\"
 # scheduled tasks
 $scheduledTasksPath = "ScheduledTasks\"
 $eventLogExportPath = "EventLogExporter\"
+$videoCaptureCleanupPath = "VideoCaptureFileCleanup\"
 
 # install
 $installRoot = "Install\"
@@ -252,6 +253,16 @@ Try
     }
     New-Item -ItemType Directory -Force -Path $path | Out-Null
     Copy-Item C:\Users\$env:USERNAME\Source\Repos\R2G2V1\ScheduledTasks\Keebee.AAT.EventLogExporter\bin\Release\* $path -recurse -Force
+
+    # video capture file cleanup
+    $path = $destPath + $scheduledTasksPath + $videoCaptureCleanupPath + $versionPath
+    If(test-path $path)
+    {
+        Remove-Item $path -recurse -Force
+    }
+    New-Item -ItemType Directory -Force -Path $path | Out-Null
+    Copy-Item C:\Users\$env:USERNAME\Source\Repos\R2G2V1\ScheduledTasks\Keebee.AAT.VideoCaptureFileCleanup\bin\Release\* $path -recurse -Force
+
     Write-Host "done.”
 
 

@@ -173,21 +173,27 @@ namespace Keebee.AAT.Display
         private void ConfigureUserControls()
         {
             ambient1.Dock = DockStyle.Fill;
+            ambient1.BringToFront();
             ambient1.Show();
 
             mediaPlayer1.Dock = DockStyle.Fill;
+            mediaPlayer1.SendToBack();
             mediaPlayer1.Hide();
 
             radioControl1.Dock = DockStyle.Fill;
+            radioControl1.SendToBack();
             radioControl1.Hide();
 
             slideViewerFlash1.Dock = DockStyle.Fill;
+            slideViewerFlash1.SendToBack();
             slideViewerFlash1.Hide();
 
             matchingGame1.Dock = DockStyle.Fill;
+            matchingGame1.SendToBack();
             matchingGame1.Hide();
 
             offScreen1.Dock = DockStyle.Fill;
+            offScreen1.SendToBack();
             offScreen1.Hide();
 
 #if DEBUG
@@ -198,6 +204,7 @@ namespace Keebee.AAT.Display
             lblActiveResident.Font = new Font(FontFamily.GenericSansSerif, 17);
 #endif
             lblActiveResident.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            lblActiveResident.SendToBack();
             lblActiveResident.Hide();
         }
 
@@ -313,13 +320,13 @@ namespace Keebee.AAT.Display
                     case ResponseTypeId.Cats:
                         radioControl1.Hide();
                         radioControl1.SendToBack();
-                        mediaPlayer1.Stop();
                         if (newResponseTypeid != ResponseTypeId.Television &&
                             newResponseTypeid != ResponseTypeId.Cats)
                         {
                             mediaPlayer1.SendToBack();
                             mediaPlayer1.Hide();
                         }
+                        mediaPlayer1.Stop();
                         break;
                     case ResponseTypeId.Ambient:
                         ambient1.Hide();
@@ -377,10 +384,12 @@ namespace Keebee.AAT.Display
         private void DisplayActiveResident()
         {
             lblActiveResident.Hide();
+            lblActiveResident.SendToBack();
             _residentDisplayTimer.Stop();
 
             lblActiveResident.Text = _activeResident.Name;
             lblActiveResident.Left = Width - lblActiveResident.Width;
+            lblActiveResident.BringToFront();
             lblActiveResident.Show();
 
             _residentDisplayTimer.Start();

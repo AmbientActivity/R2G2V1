@@ -6,6 +6,7 @@ using Keebee.AAT.Display.UserControls;
 using Keebee.AAT.Display.Caregiver;
 using Keebee.AAT.Display.Helpers;
 using Keebee.AAT.Display.Volume;
+using Keebee.AAT.Display.Extensions;
 using System.Web.Script.Serialization;
 using System.Diagnostics;
 using System.Drawing;
@@ -13,8 +14,6 @@ using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Linq;
-using Keebee.AAT.Display.Extensions;
-using Keebee.AAT.Display.Properties;
 using WMPLib;
 
 namespace Keebee.AAT.Display

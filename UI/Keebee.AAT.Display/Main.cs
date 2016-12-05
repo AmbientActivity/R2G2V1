@@ -299,30 +299,36 @@ namespace Keebee.AAT.Display
                 {
                     case ResponseTypeId.SlideShow:
                         slideViewerFlash1.Hide();
+                        slideViewerFlash1.SendToBack();
                         slideViewerFlash1.Stop();
                         mediaPlayer1.Stop();
                         break;
                     case ResponseTypeId.MatchingGame:
                         matchingGame1.Hide();
+                        matchingGame1.SendToBack();
                         matchingGame1.Stop(_isMatchingGameTimeoutExpired);
                         break;
                     case ResponseTypeId.Radio:
                     case ResponseTypeId.Television:
                     case ResponseTypeId.Cats:
                         radioControl1.Hide();
+                        radioControl1.SendToBack();
                         mediaPlayer1.Stop();
                         if (newResponseTypeid != ResponseTypeId.Television &&
                             newResponseTypeid != ResponseTypeId.Cats)
                         {
+                            mediaPlayer1.SendToBack();
                             mediaPlayer1.Hide();
                         }
                         break;
                     case ResponseTypeId.Ambient:
                         ambient1.Hide();
+                        ambient1.SendToBack();
                         ambient1.Pause();
                         break;
                     case ResponseTypeId.OffScreen:
                         offScreen1.Hide();
+                        offScreen1.SendToBack();
                         offScreen1.Stop();
                         break;
                 }
@@ -398,12 +404,24 @@ namespace Keebee.AAT.Display
 
                     mediaFiles.Shuffle();
                     StopCurrentResponse(responseTypeId);
+
+                    switch (responseTypeId)
+                    {
+                        case ResponseTypeId.Radio:
 #if !DEBUG
-                    if (responseTypeId == ResponseTypeId.Radio)
-                        radioControl1.Show();
+                            radioControl1.BringToFront();
+                            radioControl1.Show();
+#elif DEBUG
+                            mediaPlayer1.BringToFront();
+                            mediaPlayer1.Show();
 #endif
-                    mediaPlayer1.BringToFront();
-                    mediaPlayer1.Show();
+                            break;
+                        case ResponseTypeId.Television:
+                            mediaPlayer1.BringToFront();
+                            mediaPlayer1.Show();
+                            break;
+                    }
+
                     mediaPlayer1.Play(responseTypeId, responseValue, mediaFiles, _currentIsActiveEventLog, false);
                     DisplayActiveResident();
 

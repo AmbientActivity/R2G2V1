@@ -416,7 +416,7 @@ namespace Keebee.AAT.Display
                             mediaPlayer1.Show();
 #endif
                             break;
-                        case ResponseTypeId.Television:
+                        default:
                             mediaPlayer1.BringToFront();
                             mediaPlayer1.Show();
                             break;

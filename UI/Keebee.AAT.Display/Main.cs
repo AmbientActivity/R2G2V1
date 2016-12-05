@@ -852,6 +852,7 @@ namespace Keebee.AAT.Display
         private void ActiveResidentTimerTick(object sender, EventArgs e)
         {
             lblActiveResident.Hide();
+            lblActiveResident.SendToBack();
         }
 
         #endregion

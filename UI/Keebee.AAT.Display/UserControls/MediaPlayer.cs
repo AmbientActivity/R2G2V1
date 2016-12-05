@@ -65,7 +65,6 @@ namespace Keebee.AAT.Display.UserControls
                 _maxIndex = files.Length - 1;
                 _isActiveEventLog = isActiveEventLog;
 
-                ShowHideResponseControls();
                 ConfigureMediaPlayer();
 
                 if (files.Length > 1) 
@@ -124,6 +123,7 @@ namespace Keebee.AAT.Display.UserControls
 
         private void ConfigureMediaPlayer()
         {
+
 #if DEBUG
             axWindowsMediaPlayer1.uiMode = "full";
 #elif !DEBUG
@@ -136,22 +136,6 @@ namespace Keebee.AAT.Display.UserControls
             axWindowsMediaPlayer1.settings.mute = false;
             axWindowsMediaPlayer1.settings.setMode("loop", _isLoop);
             axWindowsMediaPlayer1.enableContextMenu = false;
-        }
-
-        private void ShowHideResponseControls()
-        {
-            switch (_responseTypeId)
-            {
-                case ResponseTypeId.Radio:
-                    //pbDial.Show();
-                    //pbRadioPanel.Show();
-                    break;
-                case ResponseTypeId.Television:
-                case ResponseTypeId.Cats:
-                    //pbRadioPanel.Hide();
-                    //pbDial.Hide();
-                    break;
-            }
         }
 
         private void PlayMedia(string[] files)

@@ -34,9 +34,9 @@ namespace Keebee.AAT.Display
             this.radioControl1 = new Keebee.AAT.Display.UserControls.RadioControl();
             this.offScreen1 = new Keebee.AAT.Display.UserControls.OffScreen();
             this.slideViewerFlash1 = new Keebee.AAT.Display.UserControls.SlideViewerFlash();
-            this.mediaPlayer1 = new Keebee.AAT.Display.UserControls.MediaPlayer();
             this.ambient1 = new Keebee.AAT.Display.UserControls.AmbientPlayer();
             this.matchingGame1 = new Keebee.AAT.Display.UserControls.MatchingGame();
+            this.mediaPlayer1 = new Keebee.AAT.Display.UserControls.MediaPlayer();
             this.SuspendLayout();
             // 
             // lblActiveResident
@@ -76,14 +76,6 @@ namespace Keebee.AAT.Display
             this.slideViewerFlash1.Size = new System.Drawing.Size(116, 62);
             this.slideViewerFlash1.TabIndex = 8;
             // 
-            // mediaPlayer1
-            // 
-            this.mediaPlayer1.BackColor = System.Drawing.Color.Yellow;
-            this.mediaPlayer1.Location = new System.Drawing.Point(0, 76);
-            this.mediaPlayer1.Name = "mediaPlayer1";
-            this.mediaPlayer1.Size = new System.Drawing.Size(116, 62);
-            this.mediaPlayer1.TabIndex = 7;
-            // 
             // ambient1
             // 
             this.ambient1.BackColor = System.Drawing.Color.Yellow;
@@ -100,6 +92,14 @@ namespace Keebee.AAT.Display
             this.matchingGame1.Size = new System.Drawing.Size(116, 62);
             this.matchingGame1.TabIndex = 2;
             // 
+            // mediaPlayer1
+            // 
+            this.mediaPlayer1.BackColor = System.Drawing.SystemColors.ActiveCaptionText;
+            this.mediaPlayer1.Location = new System.Drawing.Point(0, 76);
+            this.mediaPlayer1.Name = "mediaPlayer1";
+            this.mediaPlayer1.Size = new System.Drawing.Size(127, 63);
+            this.mediaPlayer1.TabIndex = 16;
+            // 
             // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -107,11 +107,11 @@ namespace Keebee.AAT.Display
             this.BackColor = System.Drawing.Color.Yellow;
             this.ClientSize = new System.Drawing.Size(408, 221);
             this.ControlBox = false;
+            this.Controls.Add(this.mediaPlayer1);
             this.Controls.Add(this.lblActiveResident);
             this.Controls.Add(this.radioControl1);
             this.Controls.Add(this.offScreen1);
             this.Controls.Add(this.slideViewerFlash1);
-            this.Controls.Add(this.mediaPlayer1);
             this.Controls.Add(this.ambient1);
             this.Controls.Add(this.matchingGame1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
@@ -132,11 +132,11 @@ namespace Keebee.AAT.Display
 
         private AmbientPlayer ambient1;
         private MatchingGame matchingGame1;
-        private MediaPlayer mediaPlayer1;
         private SlideViewerFlash slideViewerFlash1;
         private OffScreen offScreen1;
         private RadioControl radioControl1;
         private System.Windows.Forms.Label lblActiveResident;
+        private MediaPlayer mediaPlayer1;
     }
 }
 

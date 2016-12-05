@@ -95,9 +95,6 @@ namespace Keebee.AAT.Display
         private readonly GameEventLogger _gameEventLogger;
         private readonly ActivityEventLogger _activityEventLogger;
 
-        // media path
-        private readonly MediaSourcePath _mediaPath = new MediaSourcePath();
-
         // opacity layer (for volume control or any other modal dialogs)
         private readonly OpaqueLayer _opaqueLayer;
 
@@ -405,6 +402,7 @@ namespace Keebee.AAT.Display
                     if (responseTypeId == ResponseTypeId.Radio)
                         radioControl1.Show();
 #endif
+                    mediaPlayer1.BringToFront();
                     mediaPlayer1.Show();
                     mediaPlayer1.Play(responseTypeId, responseValue, mediaFiles, _currentIsActiveEventLog, false);
                     DisplayActiveResident();
@@ -482,6 +480,7 @@ namespace Keebee.AAT.Display
                 StopCurrentResponse();
 
                 images.Shuffle();
+                slideViewerFlash1.BringToFront();
                 slideViewerFlash1.Show();
                 slideViewerFlash1.Play(images, autoStart: true);
 
@@ -519,6 +518,7 @@ namespace Keebee.AAT.Display
                 StopCurrentResponse();
                 _isMatchingGameTimeoutExpired = false;
 
+                matchingGame1.BringToFront();
                 matchingGame1.Show();
                 DisplayActiveResident();
 
@@ -543,6 +543,7 @@ namespace Keebee.AAT.Display
             else
             {
                 StopCurrentResponse();
+                ambient1.BringToFront();
                 ambient1.Show();
                 ambient1.Resume();
 
@@ -578,6 +579,7 @@ namespace Keebee.AAT.Display
                 if (_currentResponseTypeId != ResponseTypeId.OffScreen)
                 {
                     StopCurrentResponse();
+                    offScreen1.BringToFront();
                     offScreen1.Show();
                     offScreen1.Play();
                     DisplayActiveResident();

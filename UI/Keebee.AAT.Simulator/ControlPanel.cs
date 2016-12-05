@@ -396,7 +396,9 @@ namespace Keebee.AAT.Simulator
                 Resident = new ResidentMessage
                 {
                     Id = _currentResident.Id,
-                    Name = $"{_currentResident.FirstName} {_currentResident.LastName}".Trim(),
+                    Name = _currentResident.Id == PublicMediaSource.Id 
+                            ? PublicMediaSource.Name
+                            : $"{_currentResident.FirstName} {_currentResident.LastName}".Trim(),
                     GameDifficultyLevel = _currentResident.GameDifficultyLevel,
                     AllowVideoCapturing = _currentResident.AllowVideoCapturing
                 },

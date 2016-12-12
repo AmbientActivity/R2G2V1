@@ -21,6 +21,9 @@ namespace Keebee.AAT.RfidReaderService
         private bool _readerMonitorIsActive;
 #endif
 
+        // residents
+        private Resident[] _residents;
+
         // operations REST client
         private readonly IOperationsClient _opsClient;
 
@@ -64,7 +67,6 @@ namespace Keebee.AAT.RfidReaderService
                 MessageReceivedCallback = RfidReaderMonitorMessageReceived
             });
 #endif
-
             InitializeReader();
             _readTagThread = new Thread(ReadTag);
             _readTagThread.Start();
@@ -89,6 +91,9 @@ namespace Keebee.AAT.RfidReaderService
         {
             try
             {
+                if (_residents == null)
+                    LoadResidents();
+
                 while (true)
                 {
                     var residentId = GetResidentId();
@@ -96,7 +101,7 @@ namespace Keebee.AAT.RfidReaderService
 
                     var resident = residentId == 0
                         ? new Resident { Id = PublicMediaSource.Id, FirstName = PublicMediaSource.Name, GameDifficultyLevel = 1, AllowVideoCapturing = false }
-                        : _opsClient.GetResident(residentId);
+                        : GetResident(residentId);
 
                     if (resident == null) continue;
 #if DEBUG
@@ -238,6 +243,16 @@ namespace Keebee.AAT.RfidReaderService
             var messageBody = serializer.Serialize(residentMessage);
 
             return messageBody;
+        }
+
+        private void LoadResidents()
+        {
+            _residents = _opsClient.GetResidents().ToArray();
+        }
+
+        private Resident GetResident(int id)
+        {
+            return _residents?.SingleOrDefault(r => r.Id == id);
         }
 
 #if DEBUG

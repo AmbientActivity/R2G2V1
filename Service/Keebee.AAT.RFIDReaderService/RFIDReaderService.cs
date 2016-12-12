@@ -247,12 +247,27 @@ namespace Keebee.AAT.RfidReaderService
 
         private void LoadResidents()
         {
-            _residents = _opsClient.GetResidents().ToArray();
+            try
+            {
+                _residents = _opsClient.GetResidents().ToArray();
+            }
+            catch (Exception ex)
+            {
+                _systemEventLogger.WriteEntry($"LoadResidents: {ex.Message}", EventLogEntryType.Error);
+            }
         }
 
         private Resident GetResident(int id)
         {
-            return _residents?.SingleOrDefault(r => r.Id == id);
+            try
+            {
+                return _residents?.SingleOrDefault(r => r.Id == id);
+            }
+            catch (Exception ex)
+            {
+                _systemEventLogger.WriteEntry($"GetResident: {ex.Message}", EventLogEntryType.Error);
+                return null;
+            }
         }
 
 #if DEBUG

@@ -23,6 +23,7 @@ $simulatorPath = "UI\Simulator\"
 $scheduledTasksPath = "ScheduledTasks\"
 $eventLogExportPath = "EventLogExporter\"
 $videoCaptureCleanupPath = "VideoCaptureFileCleanup\"
+$recycleDefaultAppPoolPath = "Utilities\AppPool\"
 
 # install
 $installRoot = "Install\"
@@ -262,6 +263,15 @@ Try
     }
     New-Item -ItemType Directory -Force -Path $path | Out-Null
     Copy-Item C:\Users\$env:USERNAME\Source\Repos\R2G2V1\ScheduledTasks\Keebee.AAT.VideoCaptureFileCleanup\bin\Release\* $path -recurse -Force
+
+    # recycle default app pool
+    $path = $destPath + $scheduledTasksPath + $recycleDefaultAppPoolPath + $versionPath
+    If(test-path $path)
+    {
+        Remove-Item $path -recurse -Force
+    }
+    New-Item -ItemType Directory -Force -Path $path | Out-Null
+    Copy-Item C:\Users\$env:USERNAME\Source\Repos\R2G2V1\ScheduledTasks\Keebee.AAT.Utilities\AppPool\RecycleDefaultAppPool.exe $path -recurse -Force
 
     Write-Host "done.”
 

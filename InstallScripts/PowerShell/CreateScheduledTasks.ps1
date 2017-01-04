@@ -8,8 +8,8 @@
     $rootFolder = $service.GetFolder("\")
 
 
-    # automated event log export
-    $TaskName = "R2G2 - Automated Event Log Export"
+    # event log export
+    $TaskName = "R2G2 - Event Log Export"
     $TaskDescr = "R2G2 - Automated event log export routine"
     $TaskCommand = "C:\Deployments\ScheduledTasks\EventLogExporter\1.0.0.0\Keebee.AAT.EventLogExporter.exe"
  
@@ -21,6 +21,29 @@
     $triggers = $TaskDefinition.Triggers
     $trigger = $triggers.Create(2) # Creates a "Daily" trigger
     $TaskStartTime = [datetime]::ParseExact("01:00","hh:mm", $null)
+    $trigger.StartBoundary = $TaskStartTime.ToString("yyyy-MM-dd'T'HH:mm:ss")
+    $trigger.Enabled = $true
+
+    $Action = $TaskDefinition.Actions.Create(0)
+    $action.Path = "$TaskCommand"
+    $action.Arguments = "$TaskArg"
+
+    $rootFolder.RegisterTaskDefinition("$TaskName", $TaskDefinition, 6, "System", $null, 5) | Out-Null
+
+
+    # backup
+    $TaskName = "R2G2 - Backup"
+    $TaskDescr = "R2G2 - Backup"
+    $TaskCommand = "C:\Deployments\ScheduledTasks\Backup\1.0.0.0\Keebee.AAT.Backup.exe"
+ 
+    $TaskDefinition = $service.NewTask(0) 
+    $TaskDefinition.RegistrationInfo.Description = "$TaskDescr"
+    $TaskDefinition.Settings.Enabled = $true
+    $TaskDefinition.Settings.AllowDemandStart = $true
+ 
+    $triggers = $TaskDefinition.Triggers
+    $trigger = $triggers.Create(2) # Creates a "Daily" trigger
+    $TaskStartTime = [datetime]::ParseExact("03:30","hh:mm", $null)
     $trigger.StartBoundary = $TaskStartTime.ToString("yyyy-MM-dd'T'HH:mm:ss")
     $trigger.Enabled = $true
 
@@ -44,6 +67,29 @@
     $triggers = $TaskDefinition.Triggers
     $trigger = $triggers.Create(2) # Creates a "Daily" trigger
     $TaskStartTime = [datetime]::ParseExact("03:00","hh:mm", $null)
+    $trigger.StartBoundary = $TaskStartTime.ToString("yyyy-MM-dd'T'HH:mm:ss")
+    $trigger.Enabled = $true
+
+    $Action = $TaskDefinition.Actions.Create(0)
+    $action.Path = "$TaskCommand"
+    $action.Arguments = "$TaskArg"
+
+    $rootFolder.RegisterTaskDefinition("$TaskName", $TaskDefinition, 6, "System", $null, 5) | Out-Null
+
+
+    # recycle IIS default app pool
+    $TaskName = "R2G2 - Recycle DefaultAppPool"
+    $TaskDescr = "R2G2 - Recycle DefaultAppPool"
+    $TaskCommand = "C:\Deployments\ScheduledTasks\Utilities\AppPool\RecycleDefaultAppPool.exe"
+ 
+    $TaskDefinition = $service.NewTask(0) 
+    $TaskDefinition.RegistrationInfo.Description = "$TaskDescr"
+    $TaskDefinition.Settings.Enabled = $true
+    $TaskDefinition.Settings.AllowDemandStart = $true
+ 
+    $triggers = $TaskDefinition.Triggers
+    $trigger = $triggers.Create(2) # Creates a "Daily" trigger
+    $TaskStartTime = [datetime]::ParseExact("12:00","hh:mm", $null)
     $trigger.StartBoundary = $TaskStartTime.ToString("yyyy-MM-dd'T'HH:mm:ss")
     $trigger.Enabled = $true
 

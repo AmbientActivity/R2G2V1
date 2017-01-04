@@ -1,0 +1,2 @@
+wmic path Win32_UserAccount set PasswordExpires=False
+pause

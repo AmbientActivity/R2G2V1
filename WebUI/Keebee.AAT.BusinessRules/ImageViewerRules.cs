@@ -1,7 +1,7 @@
-﻿using System;
-using Keebee.AAT.RESTClient;
-using System.Drawing;
+﻿using Keebee.AAT.RESTClient;
 using Keebee.AAT.BusinessRules.DTO;
+using System;
+using System.Drawing;
 
 namespace Keebee.AAT.BusinessRules
 {

@@ -13,7 +13,6 @@ using System.IO;
 using System.Timers;
 using Timer = System.Timers.Timer;
 
-
 namespace Keebee.AAT.VideoCaptureService
 {
     internal partial class VideoCaptureService : ServiceBase

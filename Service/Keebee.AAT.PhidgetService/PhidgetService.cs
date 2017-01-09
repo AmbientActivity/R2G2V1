@@ -79,9 +79,6 @@ namespace Keebee.AAT.PhidgetService
         private int _totalSensors;
         private int _totalInputs;
 
-        //TODO:  might decide to to show a Test Pattern between stations
-        //private int _currentTelevisionSensorValue;
-
         private readonly InterfaceKit _interfaceKit;
 
         public PhidgetService()

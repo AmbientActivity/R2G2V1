@@ -11,12 +11,13 @@ namespace Keebee.AAT.SystemEventLogging
         KeebeeMessageQueuing = 3,
         StateMachineService = 4,
         RfidReaderService = 5,
-        PhidgetService = 6,
-        VideoCaptureService = 7,
-        KeepIISAliveService = 8,
-        EventLog = 9,
-        AutomatedExport = 10,
-        AdminInterface = 11
+        BeaconReaderService = 6,
+        PhidgetService = 7,
+        VideoCaptureService = 8,
+        KeepIISAliveService = 9,
+        EventLog = 10,
+        AutomatedExport = 11,
+        AdminInterface = 12
     }
 
     public class SystemEventLogger
@@ -25,6 +26,7 @@ namespace Keebee.AAT.SystemEventLogging
         private const string EventLogMessageQueuing = "R2G2 Message Queuing";
         private const string EventLogStateMachineService = "R2G2 State Machine Service";
         private const string EventLogRfidReaderService = "R2G2 RFID Reader Service";
+        private const string EventLogBeaconReaderService = "R2G2 Beacon Reader Service";
         private const string EventLogPhidgetService = "R2G2 Phidget Service";
         private const string EventLogVideoCaptureService = "R2G2 Video Capture Service";
         private const string EventLogKeepIISAliveService = "R2G2 Keep IIS Alive Service";
@@ -76,6 +78,9 @@ namespace Keebee.AAT.SystemEventLogging
                     break;
                 case SystemEventLogType.PhidgetService:
                     literal = EventLogPhidgetService;
+                    break;
+                case SystemEventLogType.BeaconReaderService:
+                    literal = EventLogBeaconReaderService;
                     break;
                 case SystemEventLogType.VideoCaptureService:
                     literal = EventLogVideoCaptureService;

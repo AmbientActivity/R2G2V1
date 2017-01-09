@@ -1,4 +1,4 @@
-﻿namespace Keebee.AAT.RfidReaderService
+﻿namespace Keebee.AAT.BeaconReaderService
 {
     partial class ProjectInstaller
     {
@@ -29,27 +29,27 @@
         private void InitializeComponent()
         {
             this.serviceProcessInstaller1 = new System.ServiceProcess.ServiceProcessInstaller();
-            this.rfidReaderServiceInstaller = new System.ServiceProcess.ServiceInstaller();
+            this.beaconReaderInstaller = new System.ServiceProcess.ServiceInstaller();
             // 
             // serviceProcessInstaller1
             // 
             this.serviceProcessInstaller1.Account = System.ServiceProcess.ServiceAccount.LocalSystem;
             this.serviceProcessInstaller1.Installers.AddRange(new System.Configuration.Install.Installer[] {
-            this.rfidReaderServiceInstaller});
+            this.beaconReaderInstaller});
             this.serviceProcessInstaller1.Password = null;
             this.serviceProcessInstaller1.Username = null;
-            this.serviceProcessInstaller1.AfterInstall += new System.Configuration.Install.InstallEventHandler(this.serviceProcessInstaller1_AfterInstall);
             // 
-            // rfidReaderServiceInstaller
+            // beaconReaderInstaller
             // 
-            this.rfidReaderServiceInstaller.Description = "Processes all RFID Reader events from the Skyetek receiver and hands them to the " +
-    "State Machine Service";
-            this.rfidReaderServiceInstaller.DisplayName = "Keebee AAT RFID Reader Service";
-            this.rfidReaderServiceInstaller.ServiceName = "RfidReaderService";
-            this.rfidReaderServiceInstaller.ServicesDependedOn = new string[] {
+            this.beaconReaderInstaller.Description = "Processes all iBeacon events via Bluetooth and hands them to the State Machine Se" +
+    "rvice";
+            this.beaconReaderInstaller.DisplayName = "Keebee AAT Beacon Reader Service";
+            this.beaconReaderInstaller.ServiceName = "BeaconReaderService";
+            this.beaconReaderInstaller.ServicesDependedOn = new string[] {
         "MSMQ",
         "StateMachineService"};
-            this.rfidReaderServiceInstaller.StartType = System.ServiceProcess.ServiceStartMode.Automatic;
+            this.beaconReaderInstaller.StartType = System.ServiceProcess.ServiceStartMode.Automatic;
+            this.beaconReaderInstaller.AfterInstall += new System.Configuration.Install.InstallEventHandler(this.beaconReaderInstaller_AfterInstall);
             // 
             // ProjectInstaller
             // 
@@ -61,6 +61,6 @@
         #endregion
 
         private System.ServiceProcess.ServiceProcessInstaller serviceProcessInstaller1;
-        private System.ServiceProcess.ServiceInstaller rfidReaderServiceInstaller;
+        private System.ServiceProcess.ServiceInstaller beaconReaderInstaller;
     }
 }

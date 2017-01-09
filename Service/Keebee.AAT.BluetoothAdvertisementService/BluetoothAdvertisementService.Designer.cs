@@ -1,6 +1,6 @@
-﻿namespace Keebee.AAT.BeaconReaderService
+﻿namespace Keebee.AAT.BluetoothAdvertisementService
 {
-    partial class BeaconReaderService
+    partial class BluetoothAdvertisementService
     {
         /// <summary> 
         /// Required designer variable.

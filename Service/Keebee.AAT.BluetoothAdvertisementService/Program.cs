@@ -1,6 +1,6 @@
 ﻿using System.ServiceProcess;
 
-namespace Keebee.AAT.BeaconReaderService
+namespace Keebee.AAT.BluetoothAdvertisementService
 {
     static class Program
     {
@@ -12,7 +12,7 @@ namespace Keebee.AAT.BeaconReaderService
             ServiceBase[] ServicesToRun;
             ServicesToRun = new ServiceBase[]
             {
-                new BeaconReaderService()
+                new BluetoothAdvertisementService()
             };
             ServiceBase.Run(ServicesToRun);
         }

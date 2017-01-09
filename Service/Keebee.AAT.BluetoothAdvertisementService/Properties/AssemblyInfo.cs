@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Keebee.AAT.BeaconReaderService")]
+[assembly: AssemblyTitle("Keebee.AAT.BluetoothAdvertisementService")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("Keebee.AAT.BeaconReaderService")]
+[assembly: AssemblyProduct("Keebee.AAT.BluetoothAdvertisementService")]
 [assembly: AssemblyCopyright("Copyright ©  2017")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("7d2cbd48-cfa7-41ce-87af-3b998e090a1c")]
+[assembly: Guid("8cd92aa2-da12-42c7-a94d-9aa12f08edda")]
 
 // Version information for an assembly consists of the following four values:
 //

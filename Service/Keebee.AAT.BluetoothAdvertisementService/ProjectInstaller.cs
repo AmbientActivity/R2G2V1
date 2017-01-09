@@ -2,7 +2,7 @@
 using System.Configuration.Install;
 using System.ServiceProcess;
 
-namespace Keebee.AAT.BeaconReaderService
+namespace Keebee.AAT.BluetoothAdvertisementService
 {
     [RunInstaller(true)]
     public partial class ProjectInstaller : Installer
@@ -12,9 +12,9 @@ namespace Keebee.AAT.BeaconReaderService
             InitializeComponent();
         }
 
-        private void beaconReaderInstaller_AfterInstall(object sender, InstallEventArgs e)
+        private void bluetoothAdvertisementInstaller_AfterInstall(object sender, InstallEventArgs e)
         {
-            using (ServiceController sc = new ServiceController(beaconReaderInstaller.ServiceName))
+            using (ServiceController sc = new ServiceController(bluetoothAdvertisementServiceInstaller.ServiceName))
             {
                 sc.Start();
             }

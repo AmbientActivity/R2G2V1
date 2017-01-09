@@ -3,22 +3,22 @@ using System;
 using System.ServiceProcess;
 using Windows.Devices.Bluetooth.Advertisement;
 
-namespace Keebee.AAT.BeaconReaderService
+namespace Keebee.AAT.BluetoothAdvertisementService
 {
-    public partial class BeaconReaderService : ServiceBase
+    public partial class BluetoothAdvertisementService : ServiceBase
     {
         // event logger
         private readonly SystemEventLogger _systemEventLogger;
 
-        public BeaconReaderService()
+        public BluetoothAdvertisementService()
         {
             InitializeComponent();
-            _systemEventLogger = new SystemEventLogger(SystemEventLogType.BeaconReaderService);
+            _systemEventLogger = new SystemEventLogger(SystemEventLogType.BluetoothAdvertisementrService);
 
             InitializeWatcher();
         }
 
-        private static void InitializeWatcher()
+        private void InitializeWatcher()
         {
             var watcher = new BluetoothLEAdvertisementWatcher
             {
@@ -43,10 +43,14 @@ namespace Keebee.AAT.BeaconReaderService
             watcher.Start();
         }
 
-        private static void OnAdvertisementReceived(BluetoothLEAdvertisementWatcher watcher, BluetoothLEAdvertisementReceivedEventArgs eventArgs)
+        private void OnAdvertisementReceived(BluetoothLEAdvertisementWatcher watcher, BluetoothLEAdvertisementReceivedEventArgs eventArgs)
         {
             var address = eventArgs.BluetoothAddress;
-            var name = eventArgs.Advertisement.LocalName;
+            var UIDs = eventArgs.Advertisement.ServiceUuids;
+
+            _systemEventLogger.WriteEntry(
+                $"ADDRESS: {address}{Environment.NewLine}" +
+                $"UID: {UIDs}");
         }
 
         protected override void OnStart(string[] args)

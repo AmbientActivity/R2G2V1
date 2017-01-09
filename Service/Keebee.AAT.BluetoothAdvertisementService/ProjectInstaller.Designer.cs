@@ -1,4 +1,4 @@
-﻿namespace Keebee.AAT.BeaconReaderService
+﻿namespace Keebee.AAT.BluetoothAdvertisementService
 {
     partial class ProjectInstaller
     {
@@ -29,27 +29,25 @@
         private void InitializeComponent()
         {
             this.serviceProcessInstaller1 = new System.ServiceProcess.ServiceProcessInstaller();
-            this.beaconReaderInstaller = new System.ServiceProcess.ServiceInstaller();
+            this.bluetoothAdvertisementServiceInstaller = new System.ServiceProcess.ServiceInstaller();
             // 
             // serviceProcessInstaller1
             // 
             this.serviceProcessInstaller1.Account = System.ServiceProcess.ServiceAccount.LocalSystem;
-            this.serviceProcessInstaller1.Installers.AddRange(new System.Configuration.Install.Installer[] {
-            this.beaconReaderInstaller});
             this.serviceProcessInstaller1.Password = null;
             this.serviceProcessInstaller1.Username = null;
             // 
-            // beaconReaderInstaller
+            // bluetoothAdvertisementServiceInstaller
             // 
-            this.beaconReaderInstaller.Description = "Processes all iBeacon events via Bluetooth and hands them to the State Machine Se" +
-    "rvice";
-            this.beaconReaderInstaller.DisplayName = "Keebee AAT Beacon Reader Service";
-            this.beaconReaderInstaller.ServiceName = "BeaconReaderService";
-            this.beaconReaderInstaller.ServicesDependedOn = new string[] {
+            this.bluetoothAdvertisementServiceInstaller.Description = "Processes all Bluetooth Advertisements and hands them to the State Machine Servic" +
+    "e";
+            this.bluetoothAdvertisementServiceInstaller.DisplayName = "Keebee AAT Bluetooth Advertisement Service";
+            this.bluetoothAdvertisementServiceInstaller.ServiceName = "BluetoothAdvertisementService";
+            this.bluetoothAdvertisementServiceInstaller.ServicesDependedOn = new string[] {
         "MSMQ",
         "StateMachineService"};
-            this.beaconReaderInstaller.StartType = System.ServiceProcess.ServiceStartMode.Automatic;
-            this.beaconReaderInstaller.AfterInstall += new System.Configuration.Install.InstallEventHandler(this.beaconReaderInstaller_AfterInstall);
+            this.bluetoothAdvertisementServiceInstaller.StartType = System.ServiceProcess.ServiceStartMode.Automatic;
+            this.bluetoothAdvertisementServiceInstaller.AfterInstall += new System.Configuration.Install.InstallEventHandler(this.bluetoothAdvertisementInstaller_AfterInstall);
             // 
             // ProjectInstaller
             // 
@@ -61,6 +59,6 @@
         #endregion
 
         private System.ServiceProcess.ServiceProcessInstaller serviceProcessInstaller1;
-        private System.ServiceProcess.ServiceInstaller beaconReaderInstaller;
+        private System.ServiceProcess.ServiceInstaller bluetoothAdvertisementServiceInstaller;
     }
 }

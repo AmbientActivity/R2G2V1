@@ -83,12 +83,12 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
             var watcher = new BluetoothLEAdvertisementWatcher
             {
                 ScanningMode = BluetoothLEScanningMode.Active,
-                SignalStrengthFilter =
-                {
-                    InRangeThresholdInDBm = _inRangeThreshold,
-                    OutOfRangeThresholdInDBm = outOfRangeThreshold,
-                    OutOfRangeTimeout = TimeSpan.FromMilliseconds(outOfRangeTimeout)
-                }
+                //SignalStrengthFilter =
+                //{
+                //    InRangeThresholdInDBm = _inRangeThreshold,
+                //    OutOfRangeThresholdInDBm = outOfRangeThreshold,
+                //    OutOfRangeTimeout = TimeSpan.FromMilliseconds(outOfRangeTimeout)
+                //}
             };
 
             watcher.Received += WatcherOnReceived;
@@ -166,11 +166,7 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
         {
             try
             {
-                var manufacturerData = eventArgs.Advertisement.ManufacturerData;
-                if (manufacturerData.Any())
-                {
-                    _beaconManager.ReceivedAdvertisement(eventArgs);
-                }
+                _beaconManager.ReceivedAdvertisement(eventArgs);
             }
             catch (ArgumentException e)
             {

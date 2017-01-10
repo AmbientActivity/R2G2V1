@@ -105,6 +105,8 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
 
                 if (_beaconManager.BluetoothBeacons.Count == 0) return;
 
+                _timer.Stop();
+
                 var closestBeacon = GetClosestKeebeeBeacon(_beaconManager.BluetoothBeacons);
                 var residentId = closestBeacon?.ResidentId ?? 0;
 
@@ -113,6 +115,8 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
                     : GetResident(residentId);
 
                 _messageQueueBeaconWatcher.Send(CreateMessageBodyFromResident(resident));
+
+                _timer.Start();
 
 #if DEBUG
                 if (closestBeacon == null) return;
@@ -149,7 +153,9 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
                         ResidentId =
                             GetIntFromByteArray(new byte[] {0, 0, beaconFrame.Payload[20], beaconFrame.Payload[21]})
                     };
-                }).Where(x => x.CompanyUuid == _companyUuid && x.FacilityId == _facilityId)
+                })
+                .Where(x => x.BeaconType == Beacon.Beacon.BeaconTypeEnum.iBeacon)
+                .Where(x => x.CompanyUuid == _companyUuid && x.FacilityId == _facilityId)
                 .Where(x => x.Rssi >= (_inRangeThreshold ?? DefaultInRangeThreshold))
                 .OrderByDescending(x => x.Rssi);
 

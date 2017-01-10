@@ -12,7 +12,7 @@
     "R2G2 Rfid Reader Service, R2G2RfidReaderService",
     "R2G2 Keep IIS Alive Service, R2G2KeepIISAliveService",
     "R2G2 Video Capture Service, R2G2VideoCaptureService"
-    "R2G2 Bluetooth Advertisement Service, R2G2BluetoothAdvertisementService"
+    "R2G2 Bluetooth Beacon Watcher Service, R2G2BluetoothBeaconWatcherService"
 
     # Display app
     "R2G2 Display,R2G2Display",

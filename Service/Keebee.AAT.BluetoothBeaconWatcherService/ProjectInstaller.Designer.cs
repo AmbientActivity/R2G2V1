@@ -29,27 +29,27 @@
         private void InitializeComponent()
         {
             this.serviceProcessInstaller1 = new System.ServiceProcess.ServiceProcessInstaller();
-            this.bluetoothAdvertisementServiceInstaller = new System.ServiceProcess.ServiceInstaller();
+            this.bluetoothBeaconWatcherServiceInstaller = new System.ServiceProcess.ServiceInstaller();
             // 
             // serviceProcessInstaller1
             // 
             this.serviceProcessInstaller1.Account = System.ServiceProcess.ServiceAccount.LocalSystem;
             this.serviceProcessInstaller1.Installers.AddRange(new System.Configuration.Install.Installer[] {
-            this.bluetoothAdvertisementServiceInstaller});
+            this.bluetoothBeaconWatcherServiceInstaller});
             this.serviceProcessInstaller1.Password = null;
             this.serviceProcessInstaller1.Username = null;
             // 
-            // bluetoothAdvertisementServiceInstaller
+            // bluetoothBeaconWatcherServiceInstaller
             // 
-            this.bluetoothAdvertisementServiceInstaller.Description = "Processes all Bluetooth Advertisements and hands them to the State Machine Servic" +
-    "e";
-            this.bluetoothAdvertisementServiceInstaller.DisplayName = "Keebee AAT Bluetooth Advertisement Service";
-            this.bluetoothAdvertisementServiceInstaller.ServiceName = "BluetoothBeaconWatcherService";
-            this.bluetoothAdvertisementServiceInstaller.ServicesDependedOn = new string[] {
+            this.bluetoothBeaconWatcherServiceInstaller.Description = "Processes all Bluetooth Beacon Advertisements and hands them to the State Machine" +
+    " Service";
+            this.bluetoothBeaconWatcherServiceInstaller.DisplayName = "Keebee AAT Bluetooth Beacon Watcher Service";
+            this.bluetoothBeaconWatcherServiceInstaller.ServiceName = "BluetoothBeaconWatcherService";
+            this.bluetoothBeaconWatcherServiceInstaller.ServicesDependedOn = new string[] {
         "MSMQ",
         "StateMachineService"};
-            this.bluetoothAdvertisementServiceInstaller.StartType = System.ServiceProcess.ServiceStartMode.Automatic;
-            this.bluetoothAdvertisementServiceInstaller.AfterInstall += new System.Configuration.Install.InstallEventHandler(this.bluetoothAdvertisementInstaller_AfterInstall);
+            this.bluetoothBeaconWatcherServiceInstaller.StartType = System.ServiceProcess.ServiceStartMode.Automatic;
+            this.bluetoothBeaconWatcherServiceInstaller.AfterInstall += new System.Configuration.Install.InstallEventHandler(this.bluetoothAdvertisementInstaller_AfterInstall);
             // 
             // ProjectInstaller
             // 
@@ -61,6 +61,6 @@
         #endregion
 
         private System.ServiceProcess.ServiceProcessInstaller serviceProcessInstaller1;
-        private System.ServiceProcess.ServiceInstaller bluetoothAdvertisementServiceInstaller;
+        private System.ServiceProcess.ServiceInstaller bluetoothBeaconWatcherServiceInstaller;
     }
 }

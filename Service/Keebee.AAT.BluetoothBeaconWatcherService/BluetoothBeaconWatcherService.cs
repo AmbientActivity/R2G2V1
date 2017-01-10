@@ -127,39 +127,50 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
                                     $"FacilityId: {closestBeacon.FacilityId}{Environment.NewLine}" +
                                     $"ResidentId: {closestBeacon.ResidentId}";
 
-                _systemEventLogger.WriteEntry(eventLogText);
+                //_systemEventLogger.WriteEntry(eventLogText);
 #endif
             }
             catch (Exception ex)
             {
                 _systemEventLogger.WriteEntry($"TimerElapsed{Environment.NewLine}{ex.Message}", EventLogEntryType.Error);
+                _timer.Start();
             }
         }
 
         private KeebeeBeacon GetClosestKeebeeBeacon(IEnumerable<Beacon.Beacon> allBeacons)
         {
-            var keebeeBeacons = allBeacons
-                .Select(x =>
-                {
-                    var beaconFrame = x.BeaconFrames.First();
+            try
+            {
+                var iBeacons = allBeacons
+                    .Where(x => x.BeaconType == Beacon.Beacon.BeaconTypeEnum.iBeacon);
 
-                    return new KeebeeBeacon
+                var keebeeBeacons = iBeacons
+                    .Select(x =>
                     {
-                        BeaconType = x.BeaconType,
-                        Rssi = x.Rssi,
-                        CompanyUuid = GetCompanyUuid(x),
-                        FacilityId =
-                            GetIntFromByteArray(new byte[] {0, 0, beaconFrame.Payload[18], beaconFrame.Payload[19]}),
-                        ResidentId =
-                            GetIntFromByteArray(new byte[] {0, 0, beaconFrame.Payload[20], beaconFrame.Payload[21]})
-                    };
-                })
-                .Where(x => x.BeaconType == Beacon.Beacon.BeaconTypeEnum.iBeacon)
-                .Where(x => x.CompanyUuid == _companyUuid && x.FacilityId == _facilityId)
-                .Where(x => x.Rssi >= (_inRangeThreshold ?? DefaultInRangeThreshold))
-                .OrderByDescending(x => x.Rssi);
+                        var beaconFrame = x.BeaconFrames.First();
+                        return new KeebeeBeacon
+                        {
+                            BeaconType = x.BeaconType,
+                            Rssi = x.Rssi,
+                            CompanyUuid = GetCompanyUuid(x),
+                            FacilityId =
+                                GetIntFromByteArray(new byte[] { 0, 0, beaconFrame.Payload[18], beaconFrame.Payload[19] }),
+                            ResidentId =
+                                GetIntFromByteArray(new byte[] { 0, 0, beaconFrame.Payload[20], beaconFrame.Payload[21] })
+                        };
+                    })
+                    .Where(x => x.BeaconType == Beacon.Beacon.BeaconTypeEnum.iBeacon)
+                    .Where(x => x.CompanyUuid == _companyUuid && x.FacilityId == _facilityId)
+                    .Where(x => x.Rssi >= (_inRangeThreshold ?? DefaultInRangeThreshold))
+                    .OrderByDescending(x => x.Rssi);
 
-            return !keebeeBeacons.Any() ? null : keebeeBeacons.First();
+                return !keebeeBeacons.Any() ? null : keebeeBeacons.First();
+            }
+            catch (Exception ex)
+            {
+                _systemEventLogger.WriteEntry($"GetClosestKeebeeBeacon{Environment.NewLine}{ex.Message}", EventLogEntryType.Error);
+                return null;
+            }
         }
 
         private void WatcherOnReceived(BluetoothLEAdvertisementWatcher watcher, BluetoothLEAdvertisementReceivedEventArgs eventArgs)
@@ -248,7 +259,7 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
             return messageBody;
         }
 
-#region Tools
+        #region Tools
 
         private static string GetCompanyUuid(Beacon.Beacon bluetoothBeacon)
         {
@@ -260,14 +271,14 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
 
             if (beaconFrame is UidEddystoneFrame)
             {
-                payload = ((UidEddystoneFrame) beaconFrame).NamespaceIdAsNumber.ToString("X") +
+                payload = ((UidEddystoneFrame)beaconFrame).NamespaceIdAsNumber.ToString("X") +
                           " / " +
-                          ((UidEddystoneFrame) beaconFrame).InstanceIdAsNumber.ToString("X");
+                          ((UidEddystoneFrame)beaconFrame).InstanceIdAsNumber.ToString("X");
             }
             else
             {
                 if (!(beaconFrame is UrlEddystoneFrame) && !(beaconFrame is TlmEddystoneFrame))
-                    payload = BitConverter.ToString(((UnknownBeaconFrame) beaconFrame).Payload);
+                    payload = BitConverter.ToString(((UnknownBeaconFrame)beaconFrame).Payload);
             }
 
             var payloadBytes = HexStringToByteArray(payload);
@@ -329,7 +340,7 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
             }
             return bytes;
         }
-#endregion
+        #endregion
 
         protected override void OnStart(string[] args)
         {

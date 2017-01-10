@@ -14,7 +14,7 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
 
         private void bluetoothAdvertisementInstaller_AfterInstall(object sender, InstallEventArgs e)
         {
-            using (ServiceController sc = new ServiceController(bluetoothAdvertisementServiceInstaller.ServiceName))
+            using (ServiceController sc = new ServiceController(bluetoothBeaconWatcherServiceInstaller.ServiceName))
             {
                 sc.Start();
             }

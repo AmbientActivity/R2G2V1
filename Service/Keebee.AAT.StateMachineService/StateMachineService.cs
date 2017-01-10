@@ -91,6 +91,12 @@ namespace Keebee.AAT.StateMachineService
                 MessageReceivedCallback = MessageReceivedDisplaySms
             })
             { SystemEventLogger = _systemEventLogger };
+            var q5 = new CustomMessageQueue(new CustomMessageQueueArgs
+            {
+                QueueName = MessageQueueType.BluetoothBeaconWatcher,
+                MessageReceivedCallback = MessageReceivedBluetoothBeaconWatcher
+            })
+            { SystemEventLogger = _systemEventLogger };
         }
 
         private void ExecuteResponse(int phidgetTypeId, int sensorValue)
@@ -185,7 +191,35 @@ namespace Keebee.AAT.StateMachineService
                 _systemEventLogger.WriteEntry($"MessageReceivedRfid{Environment.NewLine}{ex.Message}", EventLogEntryType.Error);
             }
         }
-         
+
+        private void MessageReceivedBluetoothBeaconWatcher(object source, MessageEventArgs e)
+        {
+            try
+            {
+                var resident = GetResidentFromMessageBody(e.MessageBody);
+
+                if (resident.Id > 0)
+                {
+                    if (_activeResident?.Id == resident.Id) return;
+                    LogRfidEvent(resident.Id, "New active resident");
+                    SetActiveResident(_isDisplayActive ? resident.Id : (int?)null);
+                }
+                else
+                {
+                    if (_activeResident?.Id == PublicMediaSource.Id) return;
+                    LogRfidEvent(PublicMediaSource.Id, "Active resident is public");
+                    SetActiveResident(null);
+                }
+
+                _activeResident = resident;
+            }
+
+            catch (Exception ex)
+            {
+                _systemEventLogger.WriteEntry($"MessageReceivedRfid{Environment.NewLine}{ex.Message}", EventLogEntryType.Error);
+            }
+        }
+
         private void MessageReceivedDisplaySms(object source, MessageEventArgs e)
         {
             try

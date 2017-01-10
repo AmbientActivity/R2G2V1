@@ -27,12 +27,6 @@ installutil C:\Deployments\Services\RfidReaderService\1.0.0.0\Keebee.AAT.RfidRea
 echo Done.
 
 echo ---------------------------------------------------
-echo Installing Beacon Reader Service...
-echo ---------------------------------------------------
-installutil C:\Deployments\Services\BeaconReaderService\1.0.0.0\Keebee.AAT.BeaconReaderService.exe
-echo Done.
-
-echo ---------------------------------------------------
 echo Installing Keep IIS Alive Service...
 echo ---------------------------------------------------
 installutil C:\Deployments\Services\KeepIISAliveService\1.0.0.0\Keebee.AAT.KeepIISAliveService.exe

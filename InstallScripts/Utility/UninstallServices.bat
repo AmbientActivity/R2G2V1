@@ -15,12 +15,6 @@ installutil /u C:\Deployments\Services\RfidReaderService\1.0.0.0\Keebee.AAT.Rfid
 echo Done.
 
 echo ---------------------------------------------------
-echo Uninstalling Beacon Reader Service...
-echo ---------------------------------------------------
-installutil /u C:\Deployments\Services\BeaconReaderService\1.0.0.0\Keebee.AAT.BeaconReaderService.exe
-echo Done.
-
-echo ---------------------------------------------------
 echo Uninstalling Phidget Service...
 echo ---------------------------------------------------
 installutil /u C:\Deployments\Services\PhidgetService\1.0.0.0\Keebee.AAT.PhidgetService.exe

@@ -71,7 +71,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Keebee.AAT.VideoCaptureFile
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Keebee.AAT.Backup", "ScheduledTasks\Keebee.AAT.Backup\Keebee.AAT.Backup.csproj", "{9EB45A92-C12C-4DB1-8628-5393851B40B1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Keebee.AAT.BluetoothAdvertisementService", "Service\Keebee.AAT.BluetoothAdvertisementService\Keebee.AAT.BluetoothAdvertisementService.csproj", "{8CD92AA2-DA12-42C7-A94D-9AA12F08EDDA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Keebee.AAT.BluetoothBeaconWatcherService", "Service\Keebee.AAT.BluetoothBeaconWatcherService\Keebee.AAT.BluetoothBeaconWatcherService.csproj", "{8CD92AA2-DA12-42C7-A94D-9AA12F08EDDA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -2,7 +2,7 @@
 using System.Configuration.Install;
 using System.ServiceProcess;
 
-namespace Keebee.AAT.BluetoothAdvertisementService
+namespace Keebee.AAT.BluetoothBeaconWatcherService
 {
     [RunInstaller(true)]
     public partial class ProjectInstaller : Installer

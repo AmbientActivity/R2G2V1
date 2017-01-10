@@ -1,4 +1,4 @@
-﻿namespace Keebee.AAT.BluetoothAdvertisementService
+﻿namespace Keebee.AAT.BluetoothBeaconWatcherService
 {
     partial class ProjectInstaller
     {
@@ -44,7 +44,7 @@
             this.bluetoothAdvertisementServiceInstaller.Description = "Processes all Bluetooth Advertisements and hands them to the State Machine Servic" +
     "e";
             this.bluetoothAdvertisementServiceInstaller.DisplayName = "Keebee AAT Bluetooth Advertisement Service";
-            this.bluetoothAdvertisementServiceInstaller.ServiceName = "BluetoothAdvertisementService";
+            this.bluetoothAdvertisementServiceInstaller.ServiceName = "BluetoothBeaconWatcherService";
             this.bluetoothAdvertisementServiceInstaller.ServicesDependedOn = new string[] {
         "MSMQ",
         "StateMachineService"};

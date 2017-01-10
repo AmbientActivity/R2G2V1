@@ -11,7 +11,7 @@ namespace Keebee.AAT.SystemEventLogging
         KeebeeMessageQueuing = 3,
         StateMachineService = 4,
         RfidReaderService = 5,
-        BluetoothAdvertisementrService = 6,
+        BluetoothBeaconWatcherrService = 6,
         PhidgetService = 7,
         VideoCaptureService = 8,
         KeepIISAliveService = 9,
@@ -26,7 +26,7 @@ namespace Keebee.AAT.SystemEventLogging
         private const string EventLogMessageQueuing = "R2G2 Message Queuing";
         private const string EventLogStateMachineService = "R2G2 State Machine Service";
         private const string EventLogRfidReaderService = "R2G2 RFID Reader Service";
-        private const string EventLogBluetoothAdvertisementService = "R2G2 Bluetooth Advertisement Service";
+        private const string EventLogBluetoothBeaconWatcherService = "R2G2 Bluetooth Beacon Watcher Service";
         private const string EventLogPhidgetService = "R2G2 Phidget Service";
         private const string EventLogVideoCaptureService = "R2G2 Video Capture Service";
         private const string EventLogKeepIISAliveService = "R2G2 Keep IIS Alive Service";
@@ -79,8 +79,8 @@ namespace Keebee.AAT.SystemEventLogging
                 case SystemEventLogType.PhidgetService:
                     literal = EventLogPhidgetService;
                     break;
-                case SystemEventLogType.BluetoothAdvertisementrService:
-                    literal = EventLogBluetoothAdvertisementService;
+                case SystemEventLogType.BluetoothBeaconWatcherrService:
+                    literal = EventLogBluetoothBeaconWatcherService;
                     break;
                 case SystemEventLogType.VideoCaptureService:
                     literal = EventLogVideoCaptureService;

@@ -91,11 +91,6 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
                 }
             };
 
-            var manufacturerDataWriter = new DataWriter();
-            manufacturerDataWriter.WriteUInt16(0x1234);
-            var manufacturerData = new BluetoothLEManufacturerData { CompanyId = 0xFFFE, Data = manufacturerDataWriter.DetachBuffer() };
-            watcher.AdvertisementFilter.Advertisement.ManufacturerData.Add(manufacturerData);
-
             watcher.Received += WatcherOnReceived;
             watcher.Stopped += WatcherOnStopped;
             watcher.Start();

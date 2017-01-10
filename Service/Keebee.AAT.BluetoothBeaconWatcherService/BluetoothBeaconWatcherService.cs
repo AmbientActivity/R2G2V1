@@ -36,6 +36,9 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
         private readonly string _companyUuid;
         private readonly int _facilityId;
 
+        // beacon watcher
+        private BluetoothLEAdvertisementWatcher _watcher;
+
         // residents
         private Resident[] _residents;
 
@@ -43,8 +46,7 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
         private readonly Timer _timer;
 
         // thresholds
-        private const short DefaultInRangeThreshold = -60;   // dummy value, actual value is in app.config
-        private readonly short? _inRangeThreshold;
+        private readonly short _inRangeThreshold;
 
         public BluetoothBeaconWatcherService()
         {
@@ -57,8 +59,6 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
             _facilityId = Convert.ToInt32(ConfigurationManager.AppSettings["FacilityId"]);
             _inRangeThreshold = Convert.ToInt16(ConfigurationManager.AppSettings["InRangeThreshold"]);
             var readInterval = Convert.ToInt32(ConfigurationManager.AppSettings["BeaconReadInterval"]);
-            short? outOfRangeThreshold = Convert.ToInt16(ConfigurationManager.AppSettings["OutOfRangeThreshold"]);
-            var outOfRangeTimeout = Convert.ToInt32(ConfigurationManager.AppSettings["OutOfRangeTimeout"]);
 
             // message queue sender
             _messageQueueBeaconWatcher = new CustomMessageQueue(new CustomMessageQueueArgs
@@ -70,7 +70,9 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
             _beaconManager = new BeaconManager();
 
             // initialize watcher
-            InitializeWatcher(outOfRangeThreshold, outOfRangeTimeout);
+            _watcher = new BluetoothLEAdvertisementWatcher { ScanningMode = BluetoothLEScanningMode.Active };
+            _watcher.Stopped += WatcherOnStopped;
+            StartWatching();
 
             // set the timer for timed beacon reads
             _timer = new Timer(readInterval);
@@ -78,22 +80,16 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
             _timer.Start();
         }
 
-        private void InitializeWatcher(short? outOfRangeThreshold, int outOfRangeTimeout)
+        private void StartWatching()
         {
-            var watcher = new BluetoothLEAdvertisementWatcher
-            {
-                ScanningMode = BluetoothLEScanningMode.Active,
-                //SignalStrengthFilter =
-                //{
-                //    InRangeThresholdInDBm = _inRangeThreshold,
-                //    OutOfRangeThresholdInDBm = outOfRangeThreshold,
-                //    OutOfRangeTimeout = TimeSpan.FromMilliseconds(outOfRangeTimeout)
-                //}
-            };
+            _watcher.Received += WatcherOnReceived;
+            _watcher.Start();
+        }
 
-            watcher.Received += WatcherOnReceived;
-            watcher.Stopped += WatcherOnStopped;
-            watcher.Start();
+        private void StopWatching()
+        {
+            _watcher.Stop();
+            _watcher.Received -= WatcherOnReceived;
         }
 
         private void TimerElapsed(object sender, ElapsedEventArgs e)
@@ -106,6 +102,7 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
                 if (_beaconManager.BluetoothBeacons.Count == 0) return;
 
                 _timer.Stop();
+                StopWatching();
 
                 var closestBeacon = GetClosestKeebeeBeacon(_beaconManager.BluetoothBeacons);
                 var residentId = closestBeacon?.ResidentId ?? 0;
@@ -116,6 +113,7 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
 
                 _messageQueueBeaconWatcher.Send(CreateMessageBodyFromResident(resident));
 
+                StartWatching();
                 _timer.Start();
 
 #if DEBUG
@@ -158,13 +156,14 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
                             ResidentId =
                                 GetIntFromByteArray(new byte[] { 0, 0, beaconFrame.Payload[20], beaconFrame.Payload[21] })
                         };
-                    })
-                    .Where(x => x.BeaconType == Beacon.Beacon.BeaconTypeEnum.iBeacon)
+                    });
+
+                var filteredKeebeeBeacons = keebeeBeacons
                     .Where(x => x.CompanyUuid == _companyUuid && x.FacilityId == _facilityId)
-                    .Where(x => x.Rssi >= (_inRangeThreshold ?? DefaultInRangeThreshold))
+                    .Where(x => x.Rssi >= _inRangeThreshold)
                     .OrderByDescending(x => x.Rssi);
 
-                return !keebeeBeacons.Any() ? null : keebeeBeacons.First();
+                return !filteredKeebeeBeacons.Any() ? null : filteredKeebeeBeacons.First();
             }
             catch (Exception ex)
             {

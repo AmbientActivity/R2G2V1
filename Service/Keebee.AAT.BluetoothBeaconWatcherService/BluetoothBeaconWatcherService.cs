@@ -14,7 +14,6 @@ using System.Timers;
 using System.Web.Script.Serialization;
 using Windows.Devices.Bluetooth;
 using Windows.Devices.Bluetooth.Advertisement;
-using Windows.Storage.Streams;
 
 namespace Keebee.AAT.BluetoothBeaconWatcherService
 {

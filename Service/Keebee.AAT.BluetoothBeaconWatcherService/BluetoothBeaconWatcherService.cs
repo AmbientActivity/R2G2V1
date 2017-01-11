@@ -20,6 +20,9 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
 {
     public partial class BluetoothBeaconWatcherService : ServiceBase
     {
+        // Company Id for Apple
+        private const int CompanyIdApple = 0x004C;
+
         // operations api
         private readonly IOperationsClient _opsClient;
 
@@ -139,10 +142,8 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
         {
             try
             {
-                var iBeacons = allBeacons
-                    .Where(x => x.BeaconType == Beacon.Beacon.BeaconTypeEnum.iBeacon);
-
-                var keebeeBeacons = iBeacons
+                var keebeeBeacons = allBeacons
+                    .Where(x => x.BeaconFrames.Count > 0)
                     .Select(x =>
                     {
                         var beaconFrame = x.BeaconFrames.First();
@@ -156,14 +157,12 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
                             ResidentId =
                                 GetIntFromByteArray(new byte[] { 0, 0, beaconFrame.Payload[20], beaconFrame.Payload[21] })
                         };
-                    });
-
-                var filteredKeebeeBeacons = keebeeBeacons
+                    })
                     .Where(x => x.CompanyUuid == _companyUuid && x.FacilityId == _facilityId)
                     .Where(x => x.Rssi >= _inRangeThreshold)
                     .OrderByDescending(x => x.Rssi);
 
-                return !filteredKeebeeBeacons.Any() ? null : filteredKeebeeBeacons.First();
+                return !keebeeBeacons.Any() ? null : keebeeBeacons.First();
             }
             catch (Exception ex)
             {
@@ -176,7 +175,12 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
         {
             try
             {
-                _beaconManager.ReceivedAdvertisement(eventArgs);
+                if (eventArgs.Advertisement.ManufacturerData.Any())
+                {
+                    var manufacturerData = eventArgs.Advertisement.ManufacturerData.First();
+                    if (manufacturerData.CompanyId == CompanyIdApple)
+                        _beaconManager.ReceivedAdvertisement(eventArgs);
+                }
             }
             catch (ArgumentException e)
             {

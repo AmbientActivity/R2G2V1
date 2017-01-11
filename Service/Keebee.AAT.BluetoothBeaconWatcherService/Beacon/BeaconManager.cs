@@ -46,7 +46,9 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService.Beacon
 
             // Beacon was not yet known - add it to the list.
             var newBeacon = new Beacon(btAdv);
-            BluetoothBeacons.Add(newBeacon);
+
+            if (newBeacon.BeaconType == Beacon.BeaconTypeEnum.iBeacon)
+                BluetoothBeacons.Add(newBeacon);
         }
     }
 }

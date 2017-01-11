@@ -19,9 +19,6 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
 {
     public partial class BluetoothBeaconWatcherService : ServiceBase
     {
-        // Company Id for Apple
-        private const int CompanyIdApple = 0x004C;
-
         // operations api
         private readonly IOperationsClient _opsClient;
 
@@ -163,12 +160,7 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
         {
             try
             {
-                if (eventArgs.Advertisement.ManufacturerData.Any())
-                {
-                    var manufacturerData = eventArgs.Advertisement.ManufacturerData.First();
-                    if (manufacturerData.CompanyId == CompanyIdApple)
-                        _beaconManager.ReceivedAdvertisement(eventArgs);
-                }
+                _beaconManager.ReceivedAdvertisement(eventArgs);
             }
             catch (ArgumentException e)
             {

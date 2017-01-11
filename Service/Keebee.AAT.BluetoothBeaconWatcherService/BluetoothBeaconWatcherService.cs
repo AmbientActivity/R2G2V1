@@ -117,22 +117,11 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
 
                 StartWatching();
                 _timer.Start();
-
-#if DEBUG
-                if (closestBeacon == null) return;
-
-                var eventLogText = $"Type: {closestBeacon.BeaconType}{Environment.NewLine}" +
-                                    $"Strength: {closestBeacon.Rssi}{Environment.NewLine}" +
-                                    $"CompanyUuid: {closestBeacon.CompanyUuid}{Environment.NewLine}" +
-                                    $"FacilityId: {closestBeacon.FacilityId}{Environment.NewLine}" +
-                                    $"ResidentId: {closestBeacon.ResidentId}";
-
-                //_systemEventLogger.WriteEntry(eventLogText);
-#endif
             }
             catch (Exception ex)
             {
                 _systemEventLogger.WriteEntry($"TimerElapsed{Environment.NewLine}{ex.Message}", EventLogEntryType.Error);
+                StartWatching();
                 _timer.Start();
             }
         }

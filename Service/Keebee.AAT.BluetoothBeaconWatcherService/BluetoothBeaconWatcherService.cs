@@ -95,13 +95,13 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
         {
             try
             {
-                if (_residents == null)
-                    LoadResidents();
-
                 if (_beaconManager.BluetoothBeacons.Count == 0) return;
 
                 _timer.Stop();
                 StopWatching();
+
+                if (_residents == null)
+                    LoadResidents();
 
                 var closestBeacon = GetClosestKeebeeBeacon(_beaconManager.BluetoothBeacons);
                 var residentId = closestBeacon?.ResidentId ?? 0;

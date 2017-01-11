@@ -39,7 +39,7 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
         private readonly int _facilityId;
 
         // beacon watcher
-        private BluetoothLEAdvertisementWatcher _watcher;
+        private readonly BluetoothLEAdvertisementWatcher _watcher;
 
         // residents
         private Resident[] _residents;

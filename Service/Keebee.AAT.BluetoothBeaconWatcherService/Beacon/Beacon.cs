@@ -1,11 +1,11 @@
-﻿using System;
+﻿using Keebee.AAT.BluetoothBeaconWatcherService.Annotations;
+using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Devices.Bluetooth.Advertisement;
-using Keebee.AAT.BluetoothBeaconWatcherService.Annotations;
 
 namespace Keebee.AAT.BluetoothBeaconWatcherService.Beacon
 {

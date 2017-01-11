@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using System.Linq;
 using Windows.Devices.Bluetooth.Advertisement;
 
 namespace Keebee.AAT.BluetoothBeaconWatcherService.Beacon
@@ -47,7 +48,11 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService.Beacon
             // Beacon was not yet known - add it to the list.
             var newBeacon = new Beacon(btAdv);
 
-            if (newBeacon.BeaconType == Beacon.BeaconTypeEnum.iBeacon)
+            // if not an iBeacon, exit
+            if (newBeacon.BeaconType != Beacon.BeaconTypeEnum.iBeacon) return;
+
+            // only add if there is a payload
+            if (newBeacon.BeaconFrames.Any())
                 BluetoothBeacons.Add(newBeacon);
         }
     }

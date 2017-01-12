@@ -9,7 +9,6 @@
     # windows services
     "R2G2 State Machine Service, R2G2StateMachineService",
     "R2G2 Phidget Service, R2G2PhidgetService",
-    "R2G2 Rfid Reader Service, R2G2RfidReaderService",
     "R2G2 Keep IIS Alive Service, R2G2KeepIISAliveService",
     "R2G2 Video Capture Service, R2G2VideoCaptureService"
     "R2G2 Bluetooth Beacon Watcher Service, R2G2BluetoothBeaconWatcherService"
@@ -18,7 +17,6 @@
     "R2G2 Display,R2G2Display",
 
     # shared
-    "R2G2 Message Queuing, R2G2MessageQueuing",
     "R2G2 Event Log, R2G2EventLog",
 
     #scheduled tasks

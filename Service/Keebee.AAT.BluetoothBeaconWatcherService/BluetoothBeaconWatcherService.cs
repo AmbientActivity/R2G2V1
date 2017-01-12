@@ -50,7 +50,7 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
         public BluetoothBeaconWatcherService()
         {
             InitializeComponent();
-            _systemEventLogger = new SystemEventLogger(SystemEventLogType.BluetoothBeaconWatcherrService);
+            _systemEventLogger = new SystemEventLogger(SystemEventLogType.BluetoothBeaconWatcherService);
             _opsClient = new OperationsClient();
 
             // app settings
@@ -327,14 +327,14 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
 
         protected override void OnStart(string[] args)
         {
-            //_systemEventLogger.WriteEntry("In OnStart");
+            _systemEventLogger.WriteEntry("In OnStart");
         }
 
         protected override void OnStop()
         {
+            _systemEventLogger.WriteEntry("In OnStop");
             _timer.Stop();
             _timer.Dispose();
-            //_systemEventLogger.WriteEntry("In OnStop");
         }
     }
 }

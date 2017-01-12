@@ -44,7 +44,6 @@ namespace Keebee.AAT.MessageQueuing
         private const string QueueNameDisplayVideoCapture = "Display-Video-Capture";
         private const string QueueNamePhidget = "Phidget";
         private const string QueueNameResponse = "Response";
-        private const string QueueNameRfid = "RFID";
         private const string QueueNameBluetoothBeaconWatcher = "Bluetooth-Beacon-Watcher";
         private const string QueueNameVideoCapture = "Video-Capture";
         private const string QueueNameConfigSms = "Config-SMS";
@@ -53,9 +52,6 @@ namespace Keebee.AAT.MessageQueuing
 #if DEBUG
         private const string QueueNamePhidgetMonitor = "Phidget-Monitor";
         private const string QueueNamePhidgetMonitorState = "Phidget-Monitor-State";
-
-        private const string QueueNameRFIDMonitor = "RFID-Monitor";
-        private const string QueueNameRFIDMonitorState = "RFID-Monitor-State";
 #endif
         private SystemEventLogger _systemEventLogger;
         public SystemEventLogger SystemEventLogger
@@ -137,9 +133,6 @@ namespace Keebee.AAT.MessageQueuing
                 case MessageQueueType.Response:
                     literal = QueueNameResponse;
                     break;
-                case MessageQueueType.Rfid:
-                    literal = QueueNameRfid;
-                    break;
                 case MessageQueueType.BluetoothBeaconWatcher:
                     literal = QueueNameBluetoothBeaconWatcher;
                     break;
@@ -161,12 +154,6 @@ namespace Keebee.AAT.MessageQueuing
                     break;
                 case MessageQueueType.PhidgetMonitorState:
                     literal = QueueNamePhidgetMonitorState;
-                    break;
-                case MessageQueueType.RfidMonitor:
-                    literal = QueueNameRFIDMonitor;
-                    break;
-                case MessageQueueType.RfidMonitorState:
-                    literal = QueueNameRFIDMonitorState;
                     break;
 #endif
             }

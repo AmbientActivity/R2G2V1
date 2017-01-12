@@ -39,8 +39,8 @@ namespace Keebee.AAT.BusinessRules
                     while (StateMachineIsInstalled()) { }
                 }
 
-                // rfid reader
-                service = new ServiceController(ServiceName.RfidReader);
+                // bluetooth beacon watcher
+                service = new ServiceController(ServiceName.BluetoothBeaconWatcher);
 
                 service.Start();
                 service.WaitForStatus(ServiceControllerStatus.Running);
@@ -109,7 +109,7 @@ namespace Keebee.AAT.BusinessRules
                 eventLog = new SystemEventLogger(SystemEventLogType.PhidgetService);
                 eventLog.Clear();
 
-                eventLog = new SystemEventLogger(SystemEventLogType.RfidReaderService);
+                eventLog = new SystemEventLogger(SystemEventLogType.BluetoothBeaconWatcherService);
                 eventLog.Clear();
 
                 eventLog = new SystemEventLogger(SystemEventLogType.VideoCaptureService);
@@ -124,11 +124,11 @@ namespace Keebee.AAT.BusinessRules
             return errormessage;
         }
 
-        public string ReinstallServices(string smsPath, string phidgetPath, string rfidPath, string videoCapturPath, string keepIISAlivePath)
+        public string ReinstallServices(string smsPath, string phidgetPath, string bluetoothBeaconWatcherPath, string videoCapturPath, string keepIISAlivePath)
         {
             var exePathSms = $@"{smsPath}\{ServiceName.StateMachineExe}";
             var exePathPhidget = $@"{phidgetPath}\{ServiceName.PhidgetExe}";
-            var exePathRfidReader = $@"{rfidPath}\{ServiceName.RfidReaderExe}";
+            var exePathBluetoothBeaconWatcher = $@"{bluetoothBeaconWatcherPath}\{ServiceName.BluetoothBeaconWatcherExe}";
             var exePathVideoCapture = $@"{videoCapturPath}\{ServiceName.VideoCaptureExe}";
             var exePathKeepIISAlive = $@"{keepIISAlivePath}\{ServiceName.KeepIISAliveExe}";
 
@@ -136,7 +136,7 @@ namespace Keebee.AAT.BusinessRules
             {
                 // uninstall
                 var msg = ServiceInstaller.Uninstall(exePathKeepIISAlive)
-                          ?? ServiceInstaller.Uninstall(exePathRfidReader)
+                          ?? ServiceInstaller.Uninstall(exePathBluetoothBeaconWatcher)
                           ?? ServiceInstaller.Uninstall(exePathPhidget)
                           ?? ServiceInstaller.Uninstall(exePathVideoCapture);
 
@@ -160,7 +160,7 @@ namespace Keebee.AAT.BusinessRules
                     msg = ServiceInstaller.Install(exePathVideoCapture);
 
                 if (msg == null)
-                    msg = ServiceInstaller.Install(exePathRfidReader);
+                    msg = ServiceInstaller.Install(exePathBluetoothBeaconWatcher);
 
                 if (msg == null)
                     msg = ServiceInstaller.Install(exePathKeepIISAlive);
@@ -175,11 +175,11 @@ namespace Keebee.AAT.BusinessRules
             }
         }
 
-        public string UninstallServices(string smsPath, string phidgetPath, string rfidPath, string videoCapturPath, string keepIISAlivePath)
+        public string UninstallServices(string smsPath, string phidgetPath, string bluetoothBeaconWatcherPath, string videoCapturPath, string keepIISAlivePath)
         {
             var exePathSms = $@"{smsPath}\{ServiceName.StateMachineExe}";
             var exePathPhidget = $@"{phidgetPath}\{ServiceName.PhidgetExe}";
-            var exePathRfidReader = $@"{rfidPath}\{ServiceName.RfidReaderExe}";
+            var exePathPathBluetoothBeaconWatcher = $@"{bluetoothBeaconWatcherPath}\{ServiceName.BluetoothBeaconWatcherExe}";
             var exePathVideoCapture = $@"{videoCapturPath}\{ServiceName.VideoCaptureExe}";
             var exePathKeepIISAlive = $@"{keepIISAlivePath}\{ServiceName.KeepIISAliveExe}";
 
@@ -187,7 +187,7 @@ namespace Keebee.AAT.BusinessRules
             {
                 // uninstall
                 var msg = ((ServiceInstaller.Uninstall(exePathKeepIISAlive) 
-                        ?? ServiceInstaller.Uninstall(exePathRfidReader)) 
+                        ?? ServiceInstaller.Uninstall(exePathPathBluetoothBeaconWatcher)) 
                         ?? ServiceInstaller.Uninstall(exePathPhidget)) 
                         ?? ServiceInstaller.Uninstall(exePathVideoCapture);
 

@@ -20,7 +20,6 @@ namespace Keebee.AAT.Administrator.Controllers
         private readonly CustomMessageQueue _messageQueueDisplaySms;
         private readonly CustomMessageQueue _messageQueueDisplayPhidget;
         private readonly CustomMessageQueue _messageQueueDisplayVideoCapture;
-        private readonly CustomMessageQueue _messageQueuePhidget;
         private readonly CustomMessageQueue _messageQueueResponse;
 
         public MaintenanceController()
@@ -51,12 +50,6 @@ namespace Keebee.AAT.Administrator.Controllers
                 QueueName = MessageQueueType.DisplayVideoCapture
             });
 
-            // phidget message queue sender
-            _messageQueuePhidget = new CustomMessageQueue(new CustomMessageQueueArgs
-            {
-                QueueName = MessageQueueType.Phidget
-            });
-
             // response message queue sender
             _messageQueueResponse = new CustomMessageQueue(new CustomMessageQueueArgs
             {
@@ -76,7 +69,7 @@ namespace Keebee.AAT.Administrator.Controllers
         {
             var smsPath = ConfigurationManager.AppSettings["StateMachineServiceLocation"];
             var phidgetPath = ConfigurationManager.AppSettings["PhidgetServiceLocation"];
-            var rfidPath = ConfigurationManager.AppSettings["RfidReaderServiceLocation"];
+            var bluetoothBeaconWatcherPath = ConfigurationManager.AppSettings["BluetoothBeaconWatcherServiceLocation"];
             var videoCapturePath = ConfigurationManager.AppSettings["VideoCaptureServiceLocation"];
             var keepIISAlivePath = ConfigurationManager.AppSettings["KeepIISAliveServiceLocation"];
 
@@ -87,7 +80,7 @@ namespace Keebee.AAT.Administrator.Controllers
 
             // uninstall / reinstall the services
             var rules = new MaintenanceRules { EventLogger = _systemEventLogger };
-            var msg = rules.ReinstallServices(smsPath, phidgetPath, rfidPath, videoCapturePath, keepIISAlivePath);
+            var msg = rules.ReinstallServices(smsPath, phidgetPath, bluetoothBeaconWatcherPath, videoCapturePath, keepIISAlivePath);
 
             if (msg == null) return null;
 
@@ -115,7 +108,7 @@ namespace Keebee.AAT.Administrator.Controllers
         {
             var smsPath = ConfigurationManager.AppSettings["StateMachineServiceLocation"];
             var phidgetPath = ConfigurationManager.AppSettings["PhidgetServiceLocation"];
-            var rfidPath = ConfigurationManager.AppSettings["RfidReaderServiceLocation"];
+            var bluetoothBeaconWatcherPath = ConfigurationManager.AppSettings["BluetoothBeaconWatcherServiceLocation"];
             var videoCapturePath = ConfigurationManager.AppSettings["VideoCaptureServiceLocation"];
             var keepIISAlivePath = ConfigurationManager.AppSettings["KeepIISAliveServiceLocation"];
 
@@ -126,7 +119,7 @@ namespace Keebee.AAT.Administrator.Controllers
 
             // uninstall the services
             var rules = new MaintenanceRules { EventLogger = _systemEventLogger };
-            var msg = rules.UninstallServices(smsPath, phidgetPath, rfidPath, videoCapturePath, keepIISAlivePath);
+            var msg = rules.UninstallServices(smsPath, phidgetPath, bluetoothBeaconWatcherPath, videoCapturePath, keepIISAlivePath);
 
             return msg;
         }

@@ -80,18 +80,11 @@ namespace Keebee.AAT.StateMachineService
 
             var q3 = new CustomMessageQueue(new CustomMessageQueueArgs
             {
-                QueueName = MessageQueueType.Rfid,
-                MessageReceivedCallback = MessageReceivedRfid
-            })
-            { SystemEventLogger = _systemEventLogger };
-
-            var q4 = new CustomMessageQueue(new CustomMessageQueueArgs
-            {
                 QueueName = MessageQueueType.DisplaySms,
                 MessageReceivedCallback = MessageReceivedDisplaySms
             })
             { SystemEventLogger = _systemEventLogger };
-            var q5 = new CustomMessageQueue(new CustomMessageQueueArgs
+            var q4 = new CustomMessageQueue(new CustomMessageQueueArgs
             {
                 QueueName = MessageQueueType.BluetoothBeaconWatcher,
                 MessageReceivedCallback = MessageReceivedBluetoothBeaconWatcher
@@ -164,34 +157,6 @@ namespace Keebee.AAT.StateMachineService
             }
         }
 
-        private void MessageReceivedRfid(object source, MessageEventArgs e)
-        {
-            try
-            {
-                var resident = GetResidentFromMessageBody(e.MessageBody);
-
-                if (resident.Id > 0)
-                {
-                    if (_activeResident?.Id == resident.Id) return;
-                    LogRfidEvent(resident.Id, "New active resident");
-                    SetActiveResident(_isDisplayActive ? resident.Id : (int?)null);
-                }
-                else
-                {
-                    if (_activeResident?.Id == PublicMediaSource.Id) return;
-                    LogRfidEvent(PublicMediaSource.Id, "Active resident is public");
-                    SetActiveResident(null);
-                }
-
-                _activeResident = resident;
-            }
-
-            catch (Exception ex)
-            {
-                _systemEventLogger.WriteEntry($"MessageReceivedRfid{Environment.NewLine}{ex.Message}", EventLogEntryType.Error);
-            }
-        }
-
         private void MessageReceivedBluetoothBeaconWatcher(object source, MessageEventArgs e)
         {
             try
@@ -216,7 +181,7 @@ namespace Keebee.AAT.StateMachineService
 
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"MessageReceivedRfid{Environment.NewLine}{ex.Message}", EventLogEntryType.Error);
+                _systemEventLogger.WriteEntry($"MessageReceivedBluetoothBeaconWatcher{Environment.NewLine}{ex.Message}", EventLogEntryType.Error);
             }
         }
 

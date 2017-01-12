@@ -8,24 +8,20 @@ namespace Keebee.AAT.SystemEventLogging
     {
         Display = 1,
         Simulator = 2,
-        KeebeeMessageQueuing = 3,
-        StateMachineService = 4,
-        RfidReaderService = 5,
-        BluetoothBeaconWatcherrService = 6,
-        PhidgetService = 7,
-        VideoCaptureService = 8,
-        KeepIISAliveService = 9,
-        EventLog = 10,
-        AutomatedExport = 11,
-        AdminInterface = 12
+        StateMachineService = 3,
+        BluetoothBeaconWatcherService = 4,
+        PhidgetService = 5,
+        VideoCaptureService = 6,
+        KeepIISAliveService = 7,
+        EventLog = 8,
+        AutomatedExport = 9,
+        AdminInterface = 10
     }
 
     public class SystemEventLogger
     {
         private const string EventLogDisplay = "R2G2 Display";
-        private const string EventLogMessageQueuing = "R2G2 Message Queuing";
         private const string EventLogStateMachineService = "R2G2 State Machine Service";
-        private const string EventLogRfidReaderService = "R2G2 RFID Reader Service";
         private const string EventLogBluetoothBeaconWatcherService = "R2G2 Bluetooth Beacon Watcher Service";
         private const string EventLogPhidgetService = "R2G2 Phidget Service";
         private const string EventLogVideoCaptureService = "R2G2 Video Capture Service";
@@ -67,19 +63,13 @@ namespace Keebee.AAT.SystemEventLogging
                 case SystemEventLogType.Display:
                     literal = EventLogDisplay;
                     break;
-                case SystemEventLogType.KeebeeMessageQueuing:
-                    literal = EventLogMessageQueuing;
-                    break;
                 case SystemEventLogType.StateMachineService:
                     literal = EventLogStateMachineService;
-                    break;
-                case SystemEventLogType.RfidReaderService:
-                    literal = EventLogRfidReaderService;
                     break;
                 case SystemEventLogType.PhidgetService:
                     literal = EventLogPhidgetService;
                     break;
-                case SystemEventLogType.BluetoothBeaconWatcherrService:
+                case SystemEventLogType.BluetoothBeaconWatcherService:
                     literal = EventLogBluetoothBeaconWatcherService;
                     break;
                 case SystemEventLogType.VideoCaptureService:

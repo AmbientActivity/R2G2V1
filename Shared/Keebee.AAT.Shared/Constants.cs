@@ -32,12 +32,14 @@ namespace Keebee.AAT.Shared
         public const string StateMachine = "StateMachineService";
         public const string Phidget = "PhidgetService";
         public const string RfidReader = "RfidReaderService";
+        public const string BluetoothBeaconWatcher = "BluetoothBeaconWatcherService";
         public const string VideoCapture = "VideoCaptureService";
         public const string KeepIISAlive = "KeepIISAliveService";
 
         public const string StateMachineExe = "Keebee.AAT.StateMachineService.exe";
         public const string PhidgetExe = "Keebee.AAT.PhidgetService.exe";
         public const string RfidReaderExe = "Keebee.AAT.RfidReaderService.exe";
+        public const string BluetoothBeaconWatcherExe = "Keebee.AAT.BluetoothBeaconWatcherService.exe";
         public const string VideoCaptureExe = "Keebee.AAT.VideoCaptureService.exe";
         public const string KeepIISAliveExe = "Keebee.AAT.KeepIISAliveService.exe";
     }

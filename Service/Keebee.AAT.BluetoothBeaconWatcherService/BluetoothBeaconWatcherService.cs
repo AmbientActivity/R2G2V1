@@ -66,6 +66,7 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
             })
             { SystemEventLogger = _systemEventLogger };
 
+            // message queue listener
             var q1 = new CustomMessageQueue(new CustomMessageQueueArgs
             {
                 QueueName = MessageQueueType.BluetoothBeaconWatcherReload,

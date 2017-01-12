@@ -221,6 +221,8 @@ function DisableScreen() {
                     if (typeof id === "undefined") return;
                     $("#mediaPathTypeId").val(id);
                     self.reloadUploaderHtml();
+                    self.checkSelectAll(false);
+                    self.selectAllRows();
                 });
 
                 self.filteredFiles = ko.computed(function () {
@@ -326,7 +328,8 @@ function DisableScreen() {
 
                     self.highlightSelectedRows();
                     self.enableDetail();
-                    self.clearSelectAll();
+
+                    self.checkSelectAll(self.selectedIds().length === self.filteredFiles().length);
 
                     return true;
                 };
@@ -392,7 +395,7 @@ function DisableScreen() {
                                         self.sort({ afterSave: true });
                                         self.enableDetail();
                                         self.selectedIds([]);
-                                        self.clearSelectAll();
+                                        self.checkSelectAll(false);
                                     } else {
                                         $("body").css("cursor", "default");
                                         self.enableDetail();
@@ -461,9 +464,9 @@ function DisableScreen() {
                         cmdDelete.attr("disabled", "disabled");
                 };
 
-                self.clearSelectAll = function () {
-                    self.selectAllIsSelected(false);
-                    $("#chk_all").prop("checked", false);
+                self.checkSelectAll = function (checked) {
+                    self.selectAllIsSelected(checked);
+                    $("#chk_all").prop("checked", checked);
                 };
             };
 

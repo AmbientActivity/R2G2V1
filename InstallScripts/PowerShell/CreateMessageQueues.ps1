@@ -40,6 +40,17 @@ $qObject.SetPermissions("Everyone", [System.Messaging.MessageQueueAccessRights]:
 $qObject.SetPermissions("ANONYMOUS LOGON", [System.Messaging.MessageQueueAccessRights]::FullControl, [System.Messaging.AccessControlEntryType]::Allow)
 write-host -foregroundcolor green "done."
 
+# Bluetooth Beacon Watcher Reload Message Queue
+write-host "Creating Bluetooth Beacon Watcher Reload message queue..."
+$name = "Bluetooth-Beacon-Watcher-Reload"
+$qname = “.\private$\” + $name
+If (($msmq::Exists($qname))) {
+    $qObject = $msmq::Delete($qname)
+}
+$qObject = $msmq::Create($qname) 
+$qObject.SetPermissions("Everyone", [System.Messaging.MessageQueueAccessRights]::FullControl, [System.Messaging.AccessControlEntryType]::Allow)
+$qObject.SetPermissions("ANONYMOUS LOGON", [System.Messaging.MessageQueueAccessRights]::FullControl, [System.Messaging.AccessControlEntryType]::Allow)
+write-host -foregroundcolor green "done."
 
 # Response Message Queue
 write-host "Creating Response message queue..."

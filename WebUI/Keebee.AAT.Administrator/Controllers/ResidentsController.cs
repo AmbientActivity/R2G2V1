@@ -4,6 +4,7 @@ using Keebee.AAT.BusinessRules;
 using Keebee.AAT.Shared;
 using Keebee.AAT.Administrator.FileManagement;
 using Keebee.AAT.SystemEventLogging;
+using Keebee.AAT.MessageQueuing;
 using CuteWebUI;
 using Newtonsoft.Json;
 using System.Collections.Generic;
@@ -20,11 +21,18 @@ namespace Keebee.AAT.Administrator.Controllers
         private readonly OperationsClient _opsClient;
         private readonly SystemEventLogger _systemEventLogger;
         private readonly MediaSourcePath _mediaPath = new MediaSourcePath();
+        private readonly CustomMessageQueue _messageQueueBluetoothBeaconWatcherReload;
 
         public ResidentsController()
         {
             _systemEventLogger = new SystemEventLogger(SystemEventLogType.AdminInterface);
             _opsClient = new OperationsClient { SystemEventLogger = _systemEventLogger };
+
+            // bluetooth beacon watcher reload message queue sender
+            _messageQueueBluetoothBeaconWatcherReload = new CustomMessageQueue(new CustomMessageQueueArgs
+            {
+                QueueName = MessageQueueType.BluetoothBeaconWatcherReload
+            });
         }
 
         // GET: Residen
@@ -178,6 +186,9 @@ namespace Keebee.AAT.Administrator.Controllers
                     residentId = AddResident(r);
             }
 
+            // alert the bluetooth beacon watcher to reload its residents
+            _messageQueueBluetoothBeaconWatcherReload.Send("1");
+
             return Json(new
             {
                 ResidentList = GetResidentList(),
@@ -212,7 +223,13 @@ namespace Keebee.AAT.Administrator.Controllers
                         fileManager.DeleteFolders(id);
                     }
                 }
+
                 success = (errormessage.Length == 0);
+
+                if (success)
+                    // alert the bluetooth beacon watcher to reload its residents
+                    _messageQueueBluetoothBeaconWatcherReload.Send("1");
+
             }
             catch (Exception ex)
             {

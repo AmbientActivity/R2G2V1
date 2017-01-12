@@ -66,6 +66,13 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
             })
             { SystemEventLogger = _systemEventLogger };
 
+            var q1 = new CustomMessageQueue(new CustomMessageQueueArgs
+            {
+                QueueName = MessageQueueType.BluetoothBeaconWatcherReload,
+                MessageReceivedCallback = MessageReceivedBluetoothBeaconWatcherReload
+            })
+            { SystemEventLogger = _systemEventLogger };
+
             _beaconManager = new BeaconManager();
 
             // initialize watcher
@@ -240,6 +247,12 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
             var messageBody = serializer.Serialize(residentMessage);
 
             return messageBody;
+        }
+
+        private void MessageReceivedBluetoothBeaconWatcherReload(object source, MessageEventArgs e)
+        {
+            if (e.MessageBody == "1")
+                LoadResidents();
         }
 
         #region Tools

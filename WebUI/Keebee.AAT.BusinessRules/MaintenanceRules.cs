@@ -1,6 +1,5 @@
 ﻿using Keebee.AAT.SystemEventLogging;
 using Keebee.AAT.Shared;
-using Keebee.AAT.RESTClient;
 using Keebee.AAT.MessageQueuing;
 using System;
 using System.Configuration.Install;

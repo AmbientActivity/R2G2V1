@@ -28,7 +28,7 @@ namespace Keebee.AAT.Simulator
 
         // message queue sender
         private readonly CustomMessageQueue _messageQueuePhidget;
-        private readonly CustomMessageQueue _messageQueueRfid;
+        private readonly CustomMessageQueue _messageQueueBluetoothBeaconWatcher;
         private readonly CustomMessageQueue _messageQueueResponse;
         private readonly CustomMessageQueue _messageQueuePhidgetContinuousRadio;
 
@@ -70,9 +70,9 @@ namespace Keebee.AAT.Simulator
 
             });
 
-            _messageQueueRfid = new CustomMessageQueue(new CustomMessageQueueArgs
+            _messageQueueBluetoothBeaconWatcher = new CustomMessageQueue(new CustomMessageQueueArgs
             {
-                QueueName = MessageQueueType.Rfid
+                QueueName = MessageQueueType.BluetoothBeaconWatcher
 
             });
 
@@ -129,7 +129,7 @@ namespace Keebee.AAT.Simulator
             cboResident.DataSource = arrayList;
 
             // make public library active
-            _messageQueueRfid.Send(CreateMessageBodyForRfid(new Resident { Id = PublicMediaSource.Id, GameDifficultyLevel =  1}));
+            _messageQueueBluetoothBeaconWatcher.Send(CreateMessageBodyForBluetoothBeaconWatcher(new Resident { Id = PublicMediaSource.Id, GameDifficultyLevel =  1}));
         }
 
         private void KillDisplayButtonClick(object sender, EventArgs e)
@@ -261,11 +261,11 @@ namespace Keebee.AAT.Simulator
                 ? new Resident { Id = PublicMediaSource.Id, GameDifficultyLevel = 1, AllowVideoCapturing = false }
                 : _residents.Single(x => x.Id == id);
 
-            CreateMessageBodyForRfid(resident);
-            _messageQueueRfid.Send(CreateMessageBodyForRfid(resident));
+            CreateMessageBodyForBluetoothBeaconWatcher(resident);
+            _messageQueueBluetoothBeaconWatcher.Send(CreateMessageBodyForBluetoothBeaconWatcher(resident));
         }
 
-        private static string CreateMessageBodyForRfid(Resident resident)
+        private static string CreateMessageBodyForBluetoothBeaconWatcher(Resident resident)
         {
             var residentMessage = new ResidentMessage
             {
@@ -302,9 +302,14 @@ namespace Keebee.AAT.Simulator
             else
                 _currentResidentIndex = 0;
 
-            var residentId = _residents[_currentResidentIndex].Id;
+            var id = _residents[_currentResidentIndex].Id;
 
-            _messageQueueRfid.Send(Convert.ToString(residentId));
+            var resident = (id == PublicMediaSource.Id)
+                ? new Resident { Id = PublicMediaSource.Id, GameDifficultyLevel = 1, AllowVideoCapturing = false }
+                : _residents.Single(x => x.Id == id);
+
+            CreateMessageBodyForBluetoothBeaconWatcher(resident);
+            _messageQueueBluetoothBeaconWatcher.Send(CreateMessageBodyForBluetoothBeaconWatcher(resident));
         }
 
         private void ControlPanelClosing(object sender, FormClosingEventArgs e)

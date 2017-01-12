@@ -12,17 +12,15 @@ namespace Keebee.AAT.MessageQueuing
         DisplayVideoCapture = 3,
         Phidget = 4,
         Response = 5,
-        Rfid = 6,
-        BluetoothBeaconWatcher = 7,
+        BluetoothBeaconWatcher = 6,
+        BluetoothBeaconWatcherReload = 7,
         VideoCapture = 8,
         ConfigSms = 9,
         ConfigPhidget = 10,
         PhidgetContinuousRadio = 11
 #if DEBUG
         , PhidgetMonitor = 12,
-        PhidgetMonitorState = 13,
-        RfidMonitor = 14,
-        RfidMonitorState = 15
+        PhidgetMonitorState = 13
 #endif
     }
 
@@ -45,6 +43,7 @@ namespace Keebee.AAT.MessageQueuing
         private const string QueueNamePhidget = "Phidget";
         private const string QueueNameResponse = "Response";
         private const string QueueNameBluetoothBeaconWatcher = "Bluetooth-Beacon-Watcher";
+        private const string QueueNameBluetoothBeaconWatcherReload = "Bluetooth-Beacon-Watcher-Reload";
         private const string QueueNameVideoCapture = "Video-Capture";
         private const string QueueNameConfigSms = "Config-SMS";
         private const string QueueNameConfigPhidget = "Config-Phidget";
@@ -135,6 +134,9 @@ namespace Keebee.AAT.MessageQueuing
                     break;
                 case MessageQueueType.BluetoothBeaconWatcher:
                     literal = QueueNameBluetoothBeaconWatcher;
+                    break;
+                case MessageQueueType.BluetoothBeaconWatcherReload:
+                    literal = QueueNameBluetoothBeaconWatcherReload;
                     break;
                 case MessageQueueType.VideoCapture:
                     literal = QueueNameVideoCapture;

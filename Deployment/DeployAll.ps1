@@ -4,7 +4,7 @@ $versionPath = "1.0.0.0\"
 
 # service paths
 $stateMachinePath = "Services\StateMachineService\"
-$rfidReaderPath = "Services\RfidReaderService\"
+# $rfidReaderPath = "Services\RfidReaderService\"
 $bluetoothBeaconWatcherPath = "Services\BluetoothBeaconWatcherService\"
 $phidgetPath = "Services\PhidgetService\"
 $videoCapturePath = "Services\VideoCaptureService\"
@@ -353,13 +353,13 @@ Try
     Copy-Item C:\Users\$env:USERNAME\Source\Repos\R2G2V1\Service\Keebee.AAT.PhidgetService\bin\Release\* $path -recurse -Force
 
     # rfid reader service
-    $path = $destPath + $rfidReaderPath + $versionPath
-    If(test-path $path)
-    {
-        Remove-Item $path -recurse -Force
-    }
-    New-Item -ItemType Directory -Force -Path $path | Out-Null
-    Copy-Item C:\Users\$env:USERNAME\Source\Repos\R2G2V1\Service\Keebee.AAT.RfidReaderService\bin\Release\* $path -recurse -Force
+    # $path = $destPath + $rfidReaderPath + $versionPath
+    # If(test-path $path)
+    # {
+    #     Remove-Item $path -recurse -Force
+    # }
+    # New-Item -ItemType Directory -Force -Path $path | Out-Null
+    # Copy-Item C:\Users\$env:USERNAME\Source\Repos\R2G2V1\Service\Keebee.AAT.RfidReaderService\bin\Release\* $path -recurse -Force
 
     # bluetooth beacon watcher service
     $path = $destPath + $bluetoothBeaconWatcherPath + $versionPath

@@ -31,7 +31,7 @@ namespace Keebee.AAT.Backup
 
             if (driveBackup.IsReady)
             {
-                // backup deployment folders except the media
+                // backup deployment folders (except media)
                 BackupFiles(pathDeployments, pathBackup, deploymentsFolder, sqlFilestreamName, excludeFolders: new [] { Path.Combine(pathDeployments, "Media") });
 
                 // back up the media
@@ -40,14 +40,14 @@ namespace Keebee.AAT.Backup
                 // back up video captures
                 BackupFiles(pathVideoCaptures, pathBackup, deploymentsFolder, sqlFilestreamName);
 
-                // delete obsolete deployment folders
+                // delete obsolete deployment folders (except media)
                 RemoveObsoleteFolders(pathDeployments, pathBackup, mediaBackupPath, sqlFilestreamName, excludeFolders: new[] { Path.Combine(pathBackup, mediaBackupPath) });
                 // delete obsolete media folders
                 RemoveObsoleteFolders(pathSqlMedia, pathBackup, mediaBackupPath, sqlFilestreamName);
                 // delete obsolete video capture folders
                 RemoveObsoleteFolders(pathVideoCaptures, pathBackup, mediaBackupPath, sqlFilestreamName);
 
-                // delete obsolete deployment files
+                // delete obsolete deployment files (except media)
                 RemoveObsoleteFiles(pathDeployments, pathBackup, mediaBackupPath, sqlFilestreamName, excludeFolders: new[] { Path.Combine(pathBackup, mediaBackupPath) });
                 // delete obsolete media files
                 RemoveObsoleteFiles(pathSqlMedia, pathBackup, mediaBackupPath, sqlFilestreamName);
@@ -227,6 +227,83 @@ namespace Keebee.AAT.Backup
                 && (File.ReadAllBytes(file1).SequenceEqual(File.ReadAllBytes(file2)));
         }
 
+        private static void RemoveObsoleteFolders(string source, string destination, string mediaBackupPath, string sqlFileStreamName, string[] excludeFolders = null)
+        {
+            // Data structure to hold names of subfolders
+            var dirs = new Stack<string>(20);
+
+            var driveSource = source.Contains(sqlFileStreamName)
+                ? source
+                : Path.GetPathRoot(source);
+
+            var driveDest = Path.GetPathRoot(destination);
+
+            if (driveDest == null)
+            {
+                //TODO: log issue
+                return;
+            }
+
+            var pathDestination = source.Contains(sqlFileStreamName)
+                ? Path.Combine(destination, mediaBackupPath)
+                : Path.Combine(destination, source.Replace(driveSource, string.Empty));
+
+            if (!Directory.Exists(pathDestination))
+            {
+                throw new ArgumentException();
+            }
+            dirs.Push(pathDestination);
+
+            while (dirs.Count > 0)
+            {
+                var currentDir = dirs.Pop();
+                string[] subDirs;
+                try
+                {
+                    subDirs = Directory.GetDirectories(currentDir);
+                }
+                catch (UnauthorizedAccessException e)
+                {
+                    Console.WriteLine(e.Message);
+                    continue;
+                }
+                catch (DirectoryNotFoundException e)
+                {
+                    Console.WriteLine(e.Message);
+                    continue;
+                }
+
+                // remove trainling slash if it exists
+                string pathDest;
+                if (destination.EndsWith(@"\"))
+                {
+                    var indexOfSlash = destination.LastIndexOf(@"\", StringComparison.Ordinal);
+                    pathDest = destination.Substring(0, indexOfSlash);
+                }
+                else
+                {
+                    pathDest = destination;
+                }
+
+                var pathSource = source.Contains(sqlFileStreamName)
+                    ? $@"{source}{currentDir.Replace($@"{pathDest}\{mediaBackupPath}", string.Empty)}"
+                    : $"{driveSource}{currentDir.Replace($@"{pathDest}\", string.Empty)}";
+
+                var directorySource = new DirectoryInfo(pathSource);
+                var directoryDest = new DirectoryInfo(currentDir);
+
+                if (!directorySource.Exists)
+                {
+                    directoryDest.Delete(true);
+                }
+                else
+                {
+                    foreach (var dir in subDirs.Select(x => x).Except(excludeFolders ?? new string[0]))
+                        dirs.Push(dir);
+                }
+            }
+        }
+
         private static void RemoveObsoleteFiles(string source, string destination, string mediaBackupPath, string sqlFileStreamName, string[] excludeFolders = null)
         {
             if (source == null || destination == null) return;
@@ -237,17 +314,16 @@ namespace Keebee.AAT.Backup
                 ? source
                 : Path.GetPathRoot(source);
 
-            var driveDest = Path.GetPathRoot(destination);
-
-            var pathDestination = source.Contains(sqlFileStreamName)
+            var pathDest = source.Contains(sqlFileStreamName)
                 ? Path.Combine(destination, mediaBackupPath)
-                : Path.Combine(destination, source.Replace(driveDest, string.Empty));
+                : Path.Combine(destination, source.Replace(driveSource, string.Empty));
 
-            if (!Directory.Exists(pathDestination))
+            if (!Directory.Exists(pathDest))
             {
                 throw new ArgumentException();
             }
-            dirs.Push(pathDestination);
+
+            dirs.Push(pathDest);
 
             while (dirs.Count > 0)
             {
@@ -295,13 +371,24 @@ namespace Keebee.AAT.Backup
                         var fiDest = new FileInfo(file);
                         if (fiDest.DirectoryName == null) continue;
 
-                        var pathDest = source.Contains(sqlFileStreamName)
-                            ? fiDest.DirectoryName.Replace($@"{destination}\{mediaBackupPath}\", string.Empty)
-                            : fiDest.DirectoryName.Replace($@"{destination}\", string.Empty);
+                        // remove trainling slash if it exists
+                        if (destination.EndsWith(@"\"))
+                        {
+                            var indexOfSlash = destination.LastIndexOf(@"\", StringComparison.Ordinal);
+                            pathDest = pathDest.Substring(0, indexOfSlash);
+                        }
+                        else
+                        {
+                            pathDest = destination;
+                        }
+
+                        var subPathDest = source.Contains(sqlFileStreamName)
+                            ? fiDest.DirectoryName.Replace($@"{pathDest}\{mediaBackupPath}\", string.Empty)
+                            : fiDest.DirectoryName.Replace($@"{pathDest}\", string.Empty);
 
                         var pathSource = source.Contains(sqlFileStreamName)
-                            ? Path.Combine(source, pathDest)
-                            : $"{driveSource}{pathDest}";
+                            ? Path.Combine(source, subPathDest)
+                            : $"{driveSource}{subPathDest}";
 
                         var sourceFilePath = Path.Combine(pathSource, fiDest.Name);
 
@@ -316,73 +403,6 @@ namespace Keebee.AAT.Backup
 
                 foreach (var dir in subDirs.Select(x => x).Except(excludeFolders ?? new string[0]).ToArray())
                     dirs.Push(dir);
-            }
-        }
-
-        private static void RemoveObsoleteFolders(string source, string destination, string mediaBackupPath, string sqlFileStreamName, string[] excludeFolders = null)
-        {
-            // Data structure to hold names of subfolders
-            var dirs = new Stack<string>(20);
-
-            var driveSource = source.Contains(sqlFileStreamName)
-                ? source
-                : Path.GetPathRoot(source);
-
-            var driveDest = Path.GetPathRoot(destination);
-
-            if (driveDest == null)
-            {
-                //TODO: log issue
-                return;
-            }
-
-            var pathDestination = source.Contains(sqlFileStreamName)
-                ? Path.Combine(destination, mediaBackupPath)
-                : Path.Combine(destination, source.Replace(driveDest, string.Empty));
-
-            if (!Directory.Exists(pathDestination))
-            {
-                throw new ArgumentException();
-            }
-            dirs.Push(pathDestination);
-
-            while (dirs.Count > 0)
-            {
-                var currentDir = dirs.Pop();
-                string[] subDirs;
-                try
-                {
-                    subDirs = Directory.GetDirectories(currentDir);
-                }
-                catch (UnauthorizedAccessException e)
-                {
-                    Console.WriteLine(e.Message);
-                    continue;
-                }
-                catch (DirectoryNotFoundException e)
-                {
-                    Console.WriteLine(e.Message);
-                    continue;
-                }
-
-                var pathSource = source.Contains(sqlFileStreamName)
-                    ? $@"{source}{currentDir.Replace($@"{destination}\{mediaBackupPath}", string.Empty)}"
-                    : $"{driveSource}{currentDir.Replace($@"{destination}\", string.Empty)}";
-
-                var pathDest = currentDir;
-
-                var directorySource = new DirectoryInfo(pathSource);
-                var directoryDest = new DirectoryInfo(pathDest);
-
-                if (!directorySource.Exists)
-                {
-                    directoryDest.Delete(true);
-                }
-                else
-                {
-                    foreach (var dir in subDirs.Select(x => x).Except(excludeFolders ?? new string[0]))
-                        dirs.Push(dir);
-                }
             }
         }
 

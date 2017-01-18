@@ -113,10 +113,16 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
 
                 var closestBeacon = GetClosestKeebeeBeacon(_beaconManager.BluetoothBeacons);
                 var residentId = closestBeacon?.ResidentId ?? 0;
+                var r = GetResident(residentId);
 
-                var resident = (residentId == 0)
-                    ? new Resident { Id = PublicMediaSource.Id, FirstName = PublicMediaSource.Name, GameDifficultyLevel = 1, AllowVideoCapturing = false }
-                    : GetResident(residentId);
+                var resident = r ?? 
+                    new Resident
+                    {
+                        Id = PublicMediaSource.Id,
+                        FirstName = PublicMediaSource.Name,
+                        GameDifficultyLevel = 1,
+                        AllowVideoCapturing = false
+                    };
 
                 _messageQueueBeaconWatcher.Send(CreateMessageBodyFromResident(resident));
 
@@ -150,12 +156,14 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
                             ResidentId =
                                 GetIntFromByteArray(new byte[] { 0, 0, beaconFrame.Payload[20], beaconFrame.Payload[21] })
                         };
-                    })
-                    .Where(x => x.CompanyUuid == _companyUuid && x.FacilityId == _facilityId)
-                    .Where(x => x.Rssi >= _inRangeThreshold)
-                    .OrderByDescending(x => x.Rssi);
+                    }).ToArray();
 
-                return !keebeeBeacons.Any() ? null : keebeeBeacons.First();
+                    var filtered = keebeeBeacons
+                            .Where(x => x.CompanyUuid == _companyUuid && x.FacilityId == _facilityId)
+                            .Where(x => x.Rssi >= _inRangeThreshold)
+                            .OrderByDescending(x => x.Rssi);
+
+                return !filtered.Any() ? null : filtered.First();
             }
             catch (Exception ex)
             {

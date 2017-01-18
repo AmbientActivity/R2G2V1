@@ -297,7 +297,7 @@ namespace Keebee.AAT.Backup
 
                         var pathDest = source.Contains(sqlFileStreamName)
                             ? fiDest.DirectoryName.Replace($@"{destination}\{mediaBackupPath}\", string.Empty)
-                            : fiDest.DirectoryName.Replace(destination, string.Empty);
+                            : fiDest.DirectoryName.Replace($@"{destination}\", string.Empty);
 
                         var pathSource = source.Contains(sqlFileStreamName)
                             ? Path.Combine(source, pathDest)

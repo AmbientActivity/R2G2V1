@@ -1,4 +1,6 @@
-﻿namespace Keebee.AAT.BluetoothBeaconWatcherService.Beacon
+﻿using System;
+
+namespace Keebee.AAT.BluetoothBeaconWatcherService.Beacon
 {
     public class KeebeeBeacon
     {
@@ -7,5 +9,6 @@
         public int FacilityId { get; set; }
         public int Rssi { get; set; }
         public int ResidentId { get; set; }
+        public DateTimeOffset Timestamp { get; set; }
     }
 }

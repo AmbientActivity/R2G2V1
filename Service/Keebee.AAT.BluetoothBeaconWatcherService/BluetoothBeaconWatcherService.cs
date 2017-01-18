@@ -77,7 +77,17 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
             _beaconManager = new BeaconManager();
 
             // initialize watcher
-            _watcher = new BluetoothLEAdvertisementWatcher { ScanningMode = BluetoothLEScanningMode.Active };
+            _watcher = new BluetoothLEAdvertisementWatcher
+            {
+                ScanningMode = BluetoothLEScanningMode.Active,
+                SignalStrengthFilter = new BluetoothSignalStrengthFilter
+                {
+                    InRangeThresholdInDBm = -80,
+                    OutOfRangeThresholdInDBm = -100,
+                    OutOfRangeTimeout = TimeSpan.FromMilliseconds(5000)
+                }
+            };
+
             _watcher.Stopped += WatcherOnStopped;
             StartWatching();
 
@@ -154,13 +164,15 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
                             FacilityId =
                                 GetIntFromByteArray(new byte[] { 0, 0, beaconFrame.Payload[18], beaconFrame.Payload[19] }),
                             ResidentId =
-                                GetIntFromByteArray(new byte[] { 0, 0, beaconFrame.Payload[20], beaconFrame.Payload[21] })
+                                GetIntFromByteArray(new byte[] { 0, 0, beaconFrame.Payload[20], beaconFrame.Payload[21] }),
+                            Timestamp = x.Timestamp
                         };
                     }).ToArray();
 
                     var filtered = keebeeBeacons
                             .Where(x => x.CompanyUuid == _companyUuid && x.FacilityId == _facilityId)
                             .Where(x => x.Rssi >= _inRangeThreshold)
+                            .Where(x => (DateTimeOffset.Now - x.Timestamp) < new TimeSpan(0, 0, 0, 2, 0))
                             .OrderByDescending(x => x.Rssi);
 
                 return !filtered.Any() ? null : filtered.First();

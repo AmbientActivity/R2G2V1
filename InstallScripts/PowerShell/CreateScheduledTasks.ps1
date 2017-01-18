@@ -10,7 +10,7 @@
 
     # event log export
     $TaskName = "R2G2 - Event Log Export"
-    $TaskDescr = "R2G2 - Automated event log export routine"
+    $TaskDescr = "Executes the event log export routine which creates an Excel file containing one day's worth of activities."
     $TaskCommand = "C:\Deployments\ScheduledTasks\EventLogExporter\1.0.0.0\Keebee.AAT.EventLogExporter.exe"
  
     $TaskDefinition = $service.NewTask(0) 
@@ -33,7 +33,8 @@
 
     # backup
     $TaskName = "R2G2 - Backup"
-    $TaskDescr = "R2G2 - Backup"
+    $TaskDescr = "Performs a full backup of the deployment folders and resident media " +
+                 "and creates additional database scripts for restoring the data back to its original state." 
     $TaskCommand = "C:\Deployments\ScheduledTasks\Backup\1.0.0.0\Keebee.AAT.Backup.exe"
  
     $TaskDefinition = $service.NewTask(0) 
@@ -56,7 +57,7 @@
 
     # video capture file cleanup (delete all 0KB files)
     $TaskName = "R2G2 - Video Capture File Cleanup"
-    $TaskDescr = "R2G2 - Video Capture file cleanup routine"
+    $TaskDescr = "Finds and deletes all 0KB video capture files."
     $TaskCommand = "C:\Deployments\ScheduledTasks\VideoCaptureFileCleanup\1.0.0.0\Keebee.AAT.VideoCaptureFileCleanup.exe"
  
     $TaskDefinition = $service.NewTask(0) 
@@ -75,29 +76,6 @@
     $action.Arguments = "$TaskArg"
 
     $rootFolder.RegisterTaskDefinition("$TaskName", $TaskDefinition, 6, "System", $null, 5) | Out-Null
-
-
-    # recycle IIS default app pool
-    # $TaskName = "R2G2 - Recycle DefaultAppPool"
-    # $TaskDescr = "R2G2 - Recycle DefaultAppPool"
-    # $TaskCommand = "C:\Deployments\ScheduledTasks\Utilities\AppPool\RecycleDefaultAppPool.exe"
- 
-    # $TaskDefinition = $service.NewTask(0) 
-    # $TaskDefinition.RegistrationInfo.Description = "$TaskDescr"
-    # $TaskDefinition.Settings.Enabled = $true
-    # $TaskDefinition.Settings.AllowDemandStart = $true
- 
-    # $triggers = $TaskDefinition.Triggers
-    # $trigger = $triggers.Create(2) # Creates a "Daily" trigger
-    # $TaskStartTime = [datetime]::ParseExact("12:00","hh:mm", $null)
-    # $trigger.StartBoundary = $TaskStartTime.ToString("yyyy-MM-dd'T'HH:mm:ss")
-    # $trigger.Enabled = $true
-
-    # $Action = $TaskDefinition.Actions.Create(0)
-    # $action.Path = "$TaskCommand"
-    # $action.Arguments = "$TaskArg"
-
-    # $rootFolder.RegisterTaskDefinition("$TaskName", $TaskDefinition, 6, "System", $null, 5) | Out-Null
 
     Write-Host "done.`n"
 }

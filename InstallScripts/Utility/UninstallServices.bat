@@ -9,13 +9,6 @@ echo ---------------------------------------------------
 installutil /u C:\Deployments\Services\KeepIISAliveService\1.0.0.0\Keebee.AAT.KeepIISAliveService.exe
 echo Done.
 
-rem echo.
-rem echo ---------------------------------------------------
-rem echo Uninstalling RFID Reader Service...
-rem echo ---------------------------------------------------
-rem installutil /u C:\Deployments\Services\RfidReaderService\1.0.0.0\Keebee.AAT.RfidReaderService.exe
-rem echo Done.
-
 echo.
 echo ---------------------------------------------------
 echo Uninstalling Bluetooth Beacon Watcher Service...

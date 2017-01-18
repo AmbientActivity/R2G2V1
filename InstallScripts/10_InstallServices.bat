@@ -22,13 +22,6 @@ echo ---------------------------------------------------
 installutil C:\Deployments\Services\VideoCaptureService\1.0.0.0\Keebee.AAT.VideoCaptureService.exe
 echo Done.
 
-rem echo.
-rem echo ---------------------------------------------------
-rem echo Installing Rfid Reader Service...
-rem echo ---------------------------------------------------
-rem installutil C:\Deployments\Services\RfidReaderService\1.0.0.0\Keebee.AAT.RfidReaderService.exe
-rem echo Done.
-
 echo.
 echo ---------------------------------------------------
 echo Installing Bluetooth Beacon Watcher Service...

@@ -11,33 +11,52 @@ namespace Keebee.AAT.Backup
     {
         private static void Main(string[] args)
         {
-            var pathSource = ConfigurationManager.AppSettings["SourcePath"];
+            const string sqlFilestreamName = "KeebeeAATFilestream";
+            
+            var pathDeployments = ConfigurationManager.AppSettings["DeploymentsPath"];
+            var pathVideoCaptures = ConfigurationManager.AppSettings["VideoCapturesPath"];
             var pathBackup = ConfigurationManager.AppSettings["BackupPath"];
 
             var computerName = Environment.MachineName;
-            var mediaSourcePath = $@"\\{computerName}\sqlexpress\KeebeeAATFilestream\Media";
-            const string videoCaptureSourcePath = @"C:\VideoCaptures";
+            var pathSqlMedia = $@"\\{computerName}\sqlexpress\{sqlFilestreamName}\Media";
+
+            var deploymentsFolder = pathDeployments.Replace(Path.GetPathRoot(pathDeployments), string.Empty);
+            var mediaBackupPath = $@"{deploymentsFolder}\Media";
 
             var diBackup = new DirectoryInfo(pathBackup);
             if (!diBackup.Exists) return;
 
-            var drive = Path.GetPathRoot(pathBackup);
-            var di = new DriveInfo(drive);
+            var rootBackup = Path.GetPathRoot(pathBackup);
+            var driveBackup = new DriveInfo(rootBackup);
 
-            if (di.IsReady)
+            if (driveBackup.IsReady)
             {
-                // backup deployment folders minus the media
-                BackupFiles(pathSource, pathBackup, excludeFolders: new [] { Path.Combine(pathSource, "Media") });
+                // backup deployment folders except the media
+                BackupFiles(pathDeployments, pathBackup, deploymentsFolder, sqlFilestreamName, excludeFolders: new [] { Path.Combine(pathDeployments, "Media") });
 
                 // back up the media
-                BackupFiles(mediaSourcePath, pathBackup);
+                BackupFiles(pathSqlMedia, pathBackup, deploymentsFolder, sqlFilestreamName);
 
-                // back up the video captures
-                BackupFiles(videoCaptureSourcePath, pathBackup);
+                // back up video captures
+                BackupFiles(pathVideoCaptures, pathBackup, deploymentsFolder, sqlFilestreamName);
+
+                // delete obsolete deployment folders
+                RemoveObsoleteFolders(pathDeployments, pathBackup, mediaBackupPath, sqlFilestreamName, excludeFolders: new[] { Path.Combine(pathBackup, mediaBackupPath) });
+                // delete obsolete media folders
+                RemoveObsoleteFolders(pathSqlMedia, pathBackup, mediaBackupPath, sqlFilestreamName);
+                // delete obsolete video capture folders
+                RemoveObsoleteFolders(pathVideoCaptures, pathBackup, mediaBackupPath, sqlFilestreamName);
+
+                // delete obsolete deployment files
+                RemoveObsoleteFiles(pathDeployments, pathBackup, mediaBackupPath, sqlFilestreamName, excludeFolders: new[] { Path.Combine(pathBackup, mediaBackupPath) });
+                // delete obsolete media files
+                RemoveObsoleteFiles(pathSqlMedia, pathBackup, mediaBackupPath, sqlFilestreamName);
+                // delete obsolete video capture files
+                RemoveObsoleteFiles(pathVideoCaptures, pathBackup, mediaBackupPath, sqlFilestreamName);
 
                 // create the database scripts
-                CreateScriptSeedResidents(pathBackup);
-                CreateScriptSeedConfigs(pathBackup);
+                CreateScriptSeedResidents($@"{pathBackup}\{deploymentsFolder}");
+                CreateScriptSeedConfigurations($@"{pathBackup}\{deploymentsFolder}");
             }
             else
             {
@@ -45,8 +64,60 @@ namespace Keebee.AAT.Backup
             }
         }
 
-        public static void BackupFiles(string source, string destination, string[] excludeFolders = null)
+        private static void CreateBackupFolders(string source, string destination, string[] excludeFolders = null)
         {
+            // Data structure to hold names of subfolders
+            var dirs = new Stack<string>(20);
+            var driveSource = Path.GetPathRoot(source);
+            if (driveSource == null)
+            {
+                //TODO: log issue
+                return;
+            }
+
+            if (!Directory.Exists(source))
+            {
+                throw new ArgumentException();
+            }
+            dirs.Push(source);
+
+            while (dirs.Count > 0)
+            {
+                var currentDir = dirs.Pop();
+                string[] subDirs;
+                try
+                {
+                    subDirs = Directory.GetDirectories(currentDir);
+                }
+                catch (UnauthorizedAccessException e)
+                {
+                    Console.WriteLine(e.Message);
+                    continue;
+                }
+                catch (DirectoryNotFoundException e)
+                {
+                    Console.WriteLine(e.Message);
+                    continue;
+                }
+
+                var pathSource = currentDir.Replace(driveSource, string.Empty);
+                var pathDest = pathSource.Contains("KeebeeAATFilestream")
+                    ? Path.Combine(destination, $@"Deployments\{pathSource.Replace(@"\KeebeeAATFilestream\", string.Empty)}")
+                    : Path.Combine(destination, pathSource);
+
+                var directory = new DirectoryInfo(pathDest);
+                if (!directory.Exists)
+                    directory.Create();
+
+                foreach (var dir in subDirs.Select(x => x).Except(excludeFolders ?? new string[0]))
+                    dirs.Push(dir);
+            }
+        }
+
+        private static void BackupFiles(string source, string destination, string deploymentsFolder, string sqlFileStreamName, string[] excludeFolders = null)
+        {
+            CreateBackupFolders(source, destination, excludeFolders);
+
             // Data structure to hold names of subfolders to be examined for files
             var dirs = new Stack<string>(20);
             var driveSource = Path.GetPathRoot(source);
@@ -119,8 +190,8 @@ namespace Keebee.AAT.Backup
 
                         var pathSource = fiSource.DirectoryName.Replace(driveSource, string.Empty);
 
-                        var pathDest = pathSource.Contains("KeebeeAATFilestream")
-                            ? Path.Combine(destination, $@"Deployments\{pathSource.Replace(@"\KeebeeAATFilestream\", string.Empty)}")
+                        var pathDest = pathSource.Contains(sqlFileStreamName)
+                            ? Path.Combine(destination, $@"{deploymentsFolder}\{pathSource.Replace($@"\{sqlFileStreamName}\", string.Empty)}")
                             : Path.Combine(destination, pathSource);
 
                         if (!Directory.Exists(pathDest))
@@ -156,114 +227,173 @@ namespace Keebee.AAT.Backup
                 && (File.ReadAllBytes(file1).SequenceEqual(File.ReadAllBytes(file2)));
         }
 
-        private static void CreateScriptSeedConfigs(string pathBackup)
+        private static void RemoveObsoleteFiles(string source, string destination, string mediaBackupPath, string sqlFileStreamName, string[] excludeFolders = null)
         {
-            var opsClient = new OperationsClient();
-            var configs = opsClient.GetConfigs().ToArray();
+            if (source == null || destination == null) return;
 
-            if (!configs.Any()) return;
+            // Data structure to hold names of subfolders to be examined for files
+            var dirs = new Stack<string>(20);
+            var driveSource = source.Contains(sqlFileStreamName)
+                ? source
+                : Path.GetPathRoot(source);
 
-            var pathScript = $@"{pathBackup}\Deployments\Install\Database\SQL Server\SeedConfigurations.sql";
+            var driveDest = Path.GetPathRoot(destination);
 
-            if (File.Exists(pathScript))
-                File.Delete(pathScript);
+            var pathDestination = source.Contains(sqlFileStreamName)
+                ? Path.Combine(destination, mediaBackupPath)
+                : Path.Combine(destination, source.Replace(driveDest, string.Empty));
 
-            using (var sw = new StreamWriter(pathScript))
+            if (!Directory.Exists(pathDestination))
             {
-                sw.WriteLine("-- remove all exisiting confgis");
-                sw.WriteLine("DELETE FROM [dbo].[ConfigDetails]");
-                sw.WriteLine("GO");
-                sw.WriteLine("DELETE FROM [dbo].[Configs]");
-                sw.WriteLine("GO");
+                throw new ArgumentException();
+            }
+            dirs.Push(pathDestination);
 
-                // interate through configs
-                foreach (var c in configs)
+            while (dirs.Count > 0)
+            {
+                var currentDir = dirs.Pop();
+                string[] subDirs;
+                try
                 {
-                    var isActive = c.IsActive ? 1 : 0;
-                    var isActiveEventLog = c.IsActiveEventLog ? 1 : 0;
-
-                    // insert config
-                    sw.WriteLine("SET IDENTITY_INSERT [dbo].[Configs] ON");
-                    sw.WriteLine(
-                        "INSERT [dbo].[Configs] ([Id], [Description], [IsActive], [IsActiveEventLog]) " +
-                        $"VALUES({c.Id}, '{c.Description.Replace("'","''")}', {isActive}, {isActiveEventLog})");
-                    sw.WriteLine("SET IDENTITY_INSERT [dbo].[Configs] OFF");
-
-                    // insert config details
-                    var configDetails = opsClient.GetConfigWithDetails(c.Id).ConfigDetails;
-                    sw.WriteLine();
-                    sw.WriteLine("SET IDENTITY_INSERT [dbo].[ConfigDetails] ON");
-                    foreach (var cd in configDetails)
-                    {
-                        sw.WriteLine(
-                            "INSERT [dbo].[ConfigDetails] ([Id], [ConfigId], [PhidgetTypeId], [PhidgetStyleTypeId], [ResponseTypeId], [Description]) " +
-                            $"VALUES ({cd.Id}, {c.Id}, {cd.PhidgetType.Id}, {cd.PhidgetStyleType.Id}, {cd.ResponseType.Id}, '{cd.Description}')");
-                    }
-                    sw.WriteLine("SET IDENTITY_INSERT [dbo].[ConfigDetails] OFF");
-                    sw.WriteLine();
+                    subDirs = Directory.GetDirectories(currentDir);
                 }
-                sw.WriteLine();
-            }
+                catch (UnauthorizedAccessException e)
+                {
+                    Console.WriteLine(e.Message);
+                    continue;
+                }
+                catch (DirectoryNotFoundException e)
+                {
+                    Console.WriteLine(e.Message);
+                    continue;
+                }
 
-            var pathPowerShell = $@"{pathBackup}\Deployments\Install\Database\PowerShell\SeedConfigurations.ps1";
+                string[] files;
+                try
+                {
+                    files = Directory.GetFiles(currentDir);
+                }
 
-            if (File.Exists(pathPowerShell))
-                File.Delete(pathPowerShell);
+                catch (UnauthorizedAccessException e)
+                {
 
-            using (var sw = new StreamWriter(pathPowerShell))
-            {
-                sw.WriteLine("$server = $env:COMPUTERNAME + " + "\"" + @"\SQLEXPRESS" + "\"");
-                sw.WriteLine("$database = " + "\"" + "KeebeeAAT" + "\"");
-                sw.WriteLine("$path = " + "\"" + @"C:\Deployments\Install\Database\SQL Server\" + "\"");
-                sw.WriteLine();
-                sw.WriteLine();
-                sw.WriteLine("# check if the database exists");
-                sw.WriteLine("$query = Invoke-SqlQuery -Query " + "\"SELECT COUNT(*) AS DatabaseCount FROM master.sys.databases WHERE name = N'$database'" + "\"" + " -Server $server -Database " + "\"master" + "\"");
-                sw.WriteLine("$databaseCount = $query.DatabaseCount");
-                sw.WriteLine();
-                sw.WriteLine("# if the database doesn't exist, don't attempt anything");
-                sw.WriteLine("if ($databaseCount -eq 0) {");
-                sw.WriteLine("    Write-Host -ForegroundColor yellow " + "\"" + "`nR2G2 database does not exist." + "`n" + "\"");
-                sw.WriteLine("}");
-                sw.WriteLine("else");
-                sw.WriteLine("{");
-                sw.WriteLine("    Try");
-                sw.WriteLine("    {");
-                sw.WriteLine("        Write-Host " + "\"" + "Seeding configurations..." + "\"" + "-NoNewline");
-                sw.WriteLine("        $queryFile = $path + " + "\"SeedConfigurations.sql" + "\"");
-                sw.WriteLine("        Invoke-SqlQuery -File $queryFile -Server $server -Database $database");
-                sw.WriteLine("        Write-Host " + "\"done.`n" + "\"");
-                sw.WriteLine();
-                sw.WriteLine("        Write-Host " + "\"" + "Configurations seeded successfully!`n" + "\"");
-                sw.WriteLine("    }");
-                sw.WriteLine("    Catch");
-                sw.WriteLine("    {");
-                sw.WriteLine("        Write-Host -ForegroundColor red $_.Exception.Message");
-                sw.WriteLine("    }");
-                sw.Write("}");
-            }
+                    //TODO: log issue
+                    continue;
+                }
 
-            var pathBatch = $@"{pathBackup}\Deployments\Install\Utility\SeedConfigurations.bat";
+                catch (DirectoryNotFoundException e)
+                {
+                    //TODO: log issue
+                    continue;
+                }
 
-            if (File.Exists(pathBatch))
-                File.Delete(pathBatch);
+                // delete obsolete files
+                foreach (var file in files)
+                {
+                    try
+                    {
+                        var fiDest = new FileInfo(file);
+                        if (fiDest.DirectoryName == null) continue;
 
-            using (var sw = new StreamWriter(pathBatch))
-            {
-                sw.WriteLine("@ECHO OFF");
-                sw.WriteLine("PowerShell -NoProfile -ExecutionPolicy Unrestricted -Command " + "\"& " + @"'C:\Deployments\Install\Database\PowerShell\SeedConfigurations.ps1'" + "\"");
-                sw.Write("pause");
+                        var pathDest = source.Contains(sqlFileStreamName)
+                            ? fiDest.DirectoryName.Replace($@"{destination}\{mediaBackupPath}\", string.Empty)
+                            : fiDest.DirectoryName.Replace(destination, string.Empty);
+
+                        var pathSource = source.Contains(sqlFileStreamName)
+                            ? Path.Combine(source, pathDest)
+                            : $"{driveSource}{pathDest}";
+
+                        var sourceFilePath = Path.Combine(pathSource, fiDest.Name);
+
+                        if (!File.Exists(sourceFilePath))
+                            File.Delete(file);
+                    }
+                    catch (FileNotFoundException e)
+                    {
+                        //TODO: log issue
+                    }
+                }
+
+                foreach (var dir in subDirs.Select(x => x).Except(excludeFolders ?? new string[0]).ToArray())
+                    dirs.Push(dir);
             }
         }
 
-        private static void CreateScriptSeedResidents(string pathBackup)
+        private static void RemoveObsoleteFolders(string source, string destination, string mediaBackupPath, string sqlFileStreamName, string[] excludeFolders = null)
+        {
+            // Data structure to hold names of subfolders
+            var dirs = new Stack<string>(20);
+
+            var driveSource = source.Contains(sqlFileStreamName)
+                ? source
+                : Path.GetPathRoot(source);
+
+            var driveDest = Path.GetPathRoot(destination);
+
+            if (driveDest == null)
+            {
+                //TODO: log issue
+                return;
+            }
+
+            var pathDestination = source.Contains(sqlFileStreamName)
+                ? Path.Combine(destination, mediaBackupPath)
+                : Path.Combine(destination, source.Replace(driveDest, string.Empty));
+
+            if (!Directory.Exists(pathDestination))
+            {
+                throw new ArgumentException();
+            }
+            dirs.Push(pathDestination);
+
+            while (dirs.Count > 0)
+            {
+                var currentDir = dirs.Pop();
+                string[] subDirs;
+                try
+                {
+                    subDirs = Directory.GetDirectories(currentDir);
+                }
+                catch (UnauthorizedAccessException e)
+                {
+                    Console.WriteLine(e.Message);
+                    continue;
+                }
+                catch (DirectoryNotFoundException e)
+                {
+                    Console.WriteLine(e.Message);
+                    continue;
+                }
+
+                var pathSource = source.Contains(sqlFileStreamName)
+                    ? $@"{source}{currentDir.Replace($@"{destination}\{mediaBackupPath}", string.Empty)}"
+                    : $"{driveSource}{currentDir.Replace($@"{destination}\", string.Empty)}";
+
+                var pathDest = currentDir;
+
+                var directorySource = new DirectoryInfo(pathSource);
+                var directoryDest = new DirectoryInfo(pathDest);
+
+                if (!directorySource.Exists)
+                {
+                    directoryDest.Delete(true);
+                }
+                else
+                {
+                    foreach (var dir in subDirs.Select(x => x).Except(excludeFolders ?? new string[0]))
+                        dirs.Push(dir);
+                }
+            }
+        }
+
+        private static void CreateScriptSeedResidents(string path)
         {
             var opsClient = new OperationsClient();
             var residents = opsClient.GetResidents().ToArray();
 
             if (!residents.Any()) return;
 
-            var pathScript = $@"{pathBackup}\Deployments\Install\Database\SQL Server\SeedResidents.sql";
+            var pathScript = $@"{path}\Install\Database\SQL Server\SeedResidents.sql";
 
             if (File.Exists(pathScript))
                 File.Delete(pathScript);
@@ -337,7 +467,66 @@ namespace Keebee.AAT.Backup
                 }
             }
 
-            var pathPowerShell = $@"{pathBackup}\Deployments\Install\Database\PowerShell\SeedResidents.ps1";
+            CreatePowershellScript(path, "SeedResidents", "Residents");
+            CreateBatchFile(path, "9a_SeedResidents", "SeedResidents");
+        }
+
+        private static void CreateScriptSeedConfigurations(string path)
+        {
+            var opsClient = new OperationsClient();
+            var configs = opsClient.GetConfigs().ToArray();
+
+            if (!configs.Any()) return;
+
+            var pathScript = $@"{path}\Install\Database\SQL Server\SeedConfigurations.sql";
+
+            if (File.Exists(pathScript))
+                File.Delete(pathScript);
+
+            using (var sw = new StreamWriter(pathScript))
+            {
+                sw.WriteLine("-- remove all exisiting confgis");
+                sw.WriteLine("DELETE FROM [dbo].[ConfigDetails]");
+                sw.WriteLine("GO");
+                sw.WriteLine("DELETE FROM [dbo].[Configs]");
+                sw.WriteLine("GO");
+
+                // interate through configs
+                foreach (var c in configs)
+                {
+                    var isActive = c.IsActive ? 1 : 0;
+                    var isActiveEventLog = c.IsActiveEventLog ? 1 : 0;
+
+                    // insert config
+                    sw.WriteLine("SET IDENTITY_INSERT [dbo].[Configs] ON");
+                    sw.WriteLine(
+                        "INSERT [dbo].[Configs] ([Id], [Description], [IsActive], [IsActiveEventLog]) " +
+                        $"VALUES({c.Id}, '{c.Description.Replace("'", "''")}', {isActive}, {isActiveEventLog})");
+                    sw.WriteLine("SET IDENTITY_INSERT [dbo].[Configs] OFF");
+
+                    // insert config details
+                    var configDetails = opsClient.GetConfigWithDetails(c.Id).ConfigDetails;
+                    sw.WriteLine();
+                    sw.WriteLine("SET IDENTITY_INSERT [dbo].[ConfigDetails] ON");
+                    foreach (var cd in configDetails)
+                    {
+                        sw.WriteLine(
+                            "INSERT [dbo].[ConfigDetails] ([Id], [ConfigId], [PhidgetTypeId], [PhidgetStyleTypeId], [ResponseTypeId], [Description]) " +
+                            $"VALUES ({cd.Id}, {c.Id}, {cd.PhidgetType.Id}, {cd.PhidgetStyleType.Id}, {cd.ResponseType.Id}, '{cd.Description}')");
+                    }
+                    sw.WriteLine("SET IDENTITY_INSERT [dbo].[ConfigDetails] OFF");
+                    sw.WriteLine();
+                }
+                sw.WriteLine();
+            }
+
+            CreatePowershellScript(path, "SeedConfigurations", "Configurations");
+            CreateBatchFile(path, "9b_SeedConfigurations", "SeedConfigurations");
+        }
+
+        private static void CreatePowershellScript(string path, string filename, string description)
+        {
+            var pathPowerShell = $@"{path}\Install\Database\PowerShell\{filename}.ps1";
 
             if (File.Exists(pathPowerShell))
                 File.Delete(pathPowerShell);
@@ -361,12 +550,12 @@ namespace Keebee.AAT.Backup
                 sw.WriteLine("{");
                 sw.WriteLine("    Try");
                 sw.WriteLine("    {");
-                sw.WriteLine("        Write-Host " + "\"" + "Seeding residents..." + "\"" + "-NoNewline");
-                sw.WriteLine("        $queryFile = $path + " + "\"SeedResidents.sql" + "\"");
+                sw.WriteLine("        Write-Host " + "\"" + $"Seeding {description.ToLower()}..." + "\"" + "-NoNewline");
+                sw.WriteLine("        $queryFile = $path + " + $"\"{filename}.sql" + "\"");
                 sw.WriteLine("        Invoke-SqlQuery -File $queryFile -Server $server -Database $database");
                 sw.WriteLine("        Write-Host " + "\"done.`n" + "\"");
                 sw.WriteLine();
-                sw.WriteLine("        Write-Host " + "\"" + "Residents seeded successfully!`n" + "\"");
+                sw.WriteLine("        Write-Host " + "\"" + $"{description} seeded successfully!`n" + "\"");
                 sw.WriteLine("    }");
                 sw.WriteLine("    Catch");
                 sw.WriteLine("    {");
@@ -374,8 +563,11 @@ namespace Keebee.AAT.Backup
                 sw.WriteLine("    }");
                 sw.Write("}");
             }
+        }
 
-            var pathBatch = $@"{pathBackup}\Deployments\Install\Utility\SeedResidents.bat";
+        private static void CreateBatchFile(string path, string batchName, string powershellName)
+        {
+            var pathBatch = $@"{path}\Install\{batchName}.bat";
 
             if (File.Exists(pathBatch))
                 File.Delete(pathBatch);
@@ -383,7 +575,7 @@ namespace Keebee.AAT.Backup
             using (var sw = new StreamWriter(pathBatch))
             {
                 sw.WriteLine("@ECHO OFF");
-                sw.WriteLine("PowerShell -NoProfile -ExecutionPolicy Unrestricted -Command " + "\"& " + @"'C:\Deployments\Install\Database\PowerShell\SeedResidents.ps1'" + "\"");
+                sw.WriteLine("PowerShell -NoProfile -ExecutionPolicy Unrestricted -Command " + "\"& " + $@"'C:\Deployments\Install\Database\PowerShell\{powershellName}.ps1'" + "\"");
                 sw.Write("pause");
             }
         }

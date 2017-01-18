@@ -100,10 +100,10 @@ namespace Keebee.AAT.Backup
                     continue;
                 }
 
-                var pathSource = currentDir.Replace(driveSource, string.Empty);
-                var pathDest = pathSource.Contains("KeebeeAATFilestream")
-                    ? Path.Combine(destination, $@"Deployments\{pathSource.Replace(@"\KeebeeAATFilestream\", string.Empty)}")
-                    : Path.Combine(destination, pathSource);
+                var subPathSource = currentDir.Replace(driveSource, string.Empty);
+                var pathDest = subPathSource.Contains("KeebeeAATFilestream")
+                    ? Path.Combine(destination, $@"Deployments\{subPathSource.Replace(@"\KeebeeAATFilestream\", string.Empty)}")
+                    : Path.Combine(destination, subPathSource);
 
                 var directory = new DirectoryInfo(pathDest);
                 if (!directory.Exists)

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 
 namespace Keebee.AAT.BluetoothBeaconWatcherService.Beacon
 {

@@ -53,13 +53,25 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService.Beacon
         /// </summary>
         public ObservableCollection<BeaconFrameBase> BeaconFrames { get; set; } = new ObservableCollection<BeaconFrameBase>();
 
-        private short _rssi;
+        //private short _rssi;
         /// <summary>
         /// Raw signal strength in dBM.
         /// If a new advertisement is received for the same beacon (with the same
         /// Bluetooth MAC address), always the latest signal strength is recorded.
         /// </summary>
-        public short Rssi
+        //public short Rssi
+        //{
+        //    get { return _rssi; }
+        //    set
+        //    {
+        //        if (_rssi == value) return;
+        //        _rssi = value;
+        //        OnPropertyChanged();
+        //    }
+        //}
+
+        private Collection<short> _rssi;
+        public Collection<short> Rssi
         {
             get { return _rssi; }
             set
@@ -123,6 +135,7 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService.Beacon
         public Beacon(BluetoothLEAdvertisementReceivedEventArgs btAdv)
         {
             BluetoothAddress = btAdv.BluetoothAddress;
+            Rssi = new Collection<short>();
             UpdateBeacon(btAdv);
         }
 
@@ -133,6 +146,21 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService.Beacon
         public Beacon(BeaconTypeEnum beaconType)
         {
             BeaconType = beaconType;
+        }
+
+
+        private void SetRssi(short value)
+        {
+
+            if (Rssi.Count < 10)
+            { 
+                Rssi.Add(value);
+            }
+            else
+            {
+                Rssi.RemoveAt(9);
+                Rssi.Add(value);
+            }
         }
 
         /// <summary>
@@ -151,11 +179,10 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService.Beacon
                 throw new BeaconException("Bluetooth address of beacon does not match - not updating beacon information");
             }
 
-            Rssi = btAdv.RawSignalStrengthInDBm;
-            Timestamp = btAdv.Timestamp;
+            //Rssi = btAdv.RawSignalStrengthInDBm;
+            SetRssi(btAdv.RawSignalStrengthInDBm);
 
-            if (Rssi == -127)
-                Rssi = Rssi;
+            Timestamp = btAdv.Timestamp;
 
             // Check if beacon advertisement contains any actual usable data
             if (btAdv.Advertisement == null) return;

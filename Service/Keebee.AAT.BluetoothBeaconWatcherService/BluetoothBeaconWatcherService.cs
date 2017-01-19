@@ -158,7 +158,7 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
                 foreach (var beacon in beacons)
                 {
                     // if the beacon has stopped advertising 
-                    if ((beacon.Rssi <= -127) || (DateTimeOffset.Now - beacon.Timestamp >= tenSeconds))
+                    if ((beacon.Rssi.Last() <= -127) || (DateTimeOffset.Now - beacon.Timestamp >= tenSeconds))
                     {
                         // remove it
                         _beaconManager.BluetoothBeacons.Remove(beacon);
@@ -183,13 +183,12 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
                         return new KeebeeBeacon
                         {
                             BeaconType = x.BeaconType,
-                            Rssi = x.Rssi,
+                            Rssi = x.Rssi.Sum(y => y) / x.Rssi.Count,  // calculate average strength
                             CompanyUuid = GetCompanyUuid(x),
                             FacilityId =
                                 GetIntFromByteArray(new byte[] { 0, 0, beaconFrame.Payload[18], beaconFrame.Payload[19] }),
                             ResidentId =
-                                GetIntFromByteArray(new byte[] { 0, 0, beaconFrame.Payload[20], beaconFrame.Payload[21] }),
-                            Timestamp = x.Timestamp
+                                GetIntFromByteArray(new byte[] { 0, 0, beaconFrame.Payload[20], beaconFrame.Payload[21] })
                         };
                     }).ToArray();
 

@@ -1,8 +1,8 @@
 ﻿using Keebee.AAT.SystemEventLogging;
 using Keebee.AAT.RESTClient;
-using Keebee.AAT.BluetoothBeaconWatcherService.Beacon;
 using Keebee.AAT.MessageQueuing;
 using Keebee.AAT.Shared;
+using Keebee.AAT.BluetoothBeaconWatcherService.Beacon;
 using System;
 using System.Collections.Generic;
 using System.Configuration;

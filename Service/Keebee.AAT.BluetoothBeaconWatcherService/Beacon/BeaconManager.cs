@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using System.Linq;
 using Windows.Devices.Bluetooth.Advertisement;
 
@@ -31,29 +32,32 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService.Beacon
         /// the Windows Bluetooth LE API.</param>
         public void ReceivedAdvertisement(BluetoothLEAdvertisementReceivedEventArgs btAdv)
         {
-            if (btAdv == null) return;
 
-            // Check if we already know this bluetooth address
-            foreach (var bluetoothBeacon in BluetoothBeacons)
+            if (btAdv == null) return;
+            var beacons = BluetoothBeacons.ToList();
+
+            foreach (var bluetoothBeacon in beacons)
             {
-                if (bluetoothBeacon.BluetoothAddress == btAdv.BluetoothAddress)
-                {
-                    // We already know this beacon
-                    // Update / Add info to existing beacon
-                    bluetoothBeacon.UpdateBeacon(btAdv);
-                    return;
-                }
+                // check if we already know this bluetooth address
+                if (bluetoothBeacon.BluetoothAddress != btAdv.BluetoothAddress) continue;
+
+                // update it
+                bluetoothBeacon.UpdateBeacon(btAdv);
+
+                return;
             }
 
-            // Beacon was not yet known - add it to the list.
+            // make sure a duplicate doesn't get added (just for good measure)
+            if (beacons.Any(x => x.BluetoothAddress == btAdv.BluetoothAddress)) return;
+
+            // create a new beacon
             var newBeacon = new Beacon(btAdv);
 
-            // if not an iBeacon, exit
-            if (newBeacon.BeaconType != Beacon.BeaconTypeEnum.iBeacon) return;
+            // make sure it is an iBeacon, and verify that it has a payload
+            if ((newBeacon.BeaconType != Beacon.BeaconTypeEnum.iBeacon) ||
+                !newBeacon.BeaconFrames.Any()) return;
 
-            // only add if there is a payload
-            if (newBeacon.BeaconFrames.Any())
-                BluetoothBeacons.Add(newBeacon);
+            BluetoothBeacons.Add(newBeacon);
         }
     }
 }

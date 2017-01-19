@@ -154,6 +154,9 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService.Beacon
             Rssi = btAdv.RawSignalStrengthInDBm;
             Timestamp = btAdv.Timestamp;
 
+            if (Rssi == -127)
+                Rssi = Rssi;
+
             // Check if beacon advertisement contains any actual usable data
             if (btAdv.Advertisement == null) return;
 

@@ -46,6 +46,13 @@ namespace Keebee.AAT.Simulator
         private int _currentResidentIndex = -1;
         private readonly int _totalResidents;
         private Resident _currentResident;
+        private readonly Resident _publicResident = new Resident
+        {
+            Id = PublicMediaSource.Id,
+            FirstName = PublicMediaSource.Description,
+            GameDifficultyLevel = 1,
+            AllowVideoCapturing = false
+        };
 
         // step action
         private const int MaxValue = 1000;
@@ -93,19 +100,9 @@ namespace Keebee.AAT.Simulator
 
         private void LoadResidentDropDown()
         {
-
             var arrayList = new ArrayList();
             
-            _residents = new List<Resident>
-            {
-                new Resident
-                {
-                    Id = PublicMediaSource.Id,
-                    FirstName = PublicMediaSource.Description,
-                    GameDifficultyLevel = 1,
-                    AllowVideoCapturing = false
-                }
-            }
+            _residents = new List<Resident> { _publicResident }
             .Union(_opsClient.GetResidents()
                 .Select(r => new Resident
                     {
@@ -305,7 +302,7 @@ namespace Keebee.AAT.Simulator
             var id = _residents[_currentResidentIndex].Id;
 
             var resident = (id == PublicMediaSource.Id)
-                ? new Resident { Id = PublicMediaSource.Id, GameDifficultyLevel = 1, AllowVideoCapturing = false }
+                ? _publicResident
                 : _residents.Single(x => x.Id == id);
 
             CreateMessageBodyForBluetoothBeaconWatcher(resident);

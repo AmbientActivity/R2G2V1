@@ -40,13 +40,16 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
 
         // residents
         private Resident[] _residents;
+        private readonly Resident _publicResident = new Resident
+        {
+            Id = PublicMediaSource.Id,
+            FirstName = PublicMediaSource.Name,
+            GameDifficultyLevel = 1,
+            AllowVideoCapturing = false
+        };
 
         // timer
         private readonly Timer _timer;
-
-        // thresholds
-        private readonly short _inRangeThreshold;
-        private const int InactiveSeconds = 3;
 
         public BluetoothBeaconWatcherService()
         {
@@ -57,7 +60,9 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
             // app settings
             _companyUuid = ConfigurationManager.AppSettings["CompanyUUID"];
             _facilityId = Convert.ToInt32(ConfigurationManager.AppSettings["FacilityId"]);
-            _inRangeThreshold = Convert.ToInt16(ConfigurationManager.AppSettings["InRangeThreshold"]);
+            var inRangeThresholdInDb = Convert.ToInt16(ConfigurationManager.AppSettings["InRangeThresholdInDB"]);
+            var outOfRangeThresholdInDBb = Convert.ToInt16(ConfigurationManager.AppSettings["OutOfRangeThresholdInDB"]);
+            var outOfRangeTimeout = Convert.ToInt16(ConfigurationManager.AppSettings["OutOfRangeTimeout"]);
             var readInterval = Convert.ToInt32(ConfigurationManager.AppSettings["BeaconReadInterval"]);
 
             // message queue sender
@@ -83,9 +88,9 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
                 ScanningMode = BluetoothLEScanningMode.Active,
                 SignalStrengthFilter = new BluetoothSignalStrengthFilter
                 {
-                    InRangeThresholdInDBm = -80,
-                    OutOfRangeThresholdInDBm = -100,
-                    OutOfRangeTimeout = TimeSpan.FromMilliseconds(5000)
+                    InRangeThresholdInDBm = inRangeThresholdInDb,
+                    OutOfRangeThresholdInDBm = outOfRangeThresholdInDBb,
+                    OutOfRangeTimeout = TimeSpan.FromMilliseconds(outOfRangeTimeout)
                 }
             };
 
@@ -104,47 +109,65 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
             _watcher.Start();
         }
 
-        private void StopWatching()
-        {
-            _watcher.Stop();
-            _watcher.Received -= WatcherOnReceived;
-        }
-
         private void TimerElapsed(object sender, ElapsedEventArgs e)
         {
             try
             {
-                if (_beaconManager.BluetoothBeacons.Count == 0) return;
+                ValidateBeacons();
+
+                if (!_beaconManager.BluetoothBeacons.Any())
+                {
+                    _messageQueueBeaconWatcher.Send(CreateMessageBodyFromResident(_publicResident));
+                    return;
+                }
 
                 _timer.Stop();
-                StopWatching();
 
                 if (_residents == null)
                     LoadResidents();
 
                 var closestBeacon = GetClosestKeebeeBeacon(_beaconManager.BluetoothBeacons);
                 var residentId = closestBeacon?.ResidentId ?? 0;
-                var r = GetResident(residentId);
-
-                var resident = r ?? 
-                    new Resident
-                    {
-                        Id = PublicMediaSource.Id,
-                        FirstName = PublicMediaSource.Name,
-                        GameDifficultyLevel = 1,
-                        AllowVideoCapturing = false
-                    };
+                var resident = GetResident(residentId) ?? _publicResident;
 
                 _messageQueueBeaconWatcher.Send(CreateMessageBodyFromResident(resident));
 
-                StartWatching();
                 _timer.Start();
+
+                if (_watcher.Status != BluetoothLEAdvertisementWatcherStatus.Started)
+                    _watcher.Start();
+            }
+            catch(InvalidOperationException)
+            { 
+                // occurs when a beacon is removed from the beacon manager's list - ignore it
             }
             catch (Exception ex)
             {
                 _systemEventLogger.WriteEntry($"TimerElapsed{Environment.NewLine}{ex.Message}", EventLogEntryType.Error);
-                StartWatching();
                 _timer.Start();
+            }
+        }
+
+        private void ValidateBeacons()
+        {
+            try
+            {
+                var beacons = _beaconManager.BluetoothBeacons;
+                var tenSeconds = new TimeSpan(0, 0, 0, 10, 0);
+
+                foreach (var beacon in beacons)
+                {
+                    // if the beacon has stopped advertising 
+                    if ((beacon.Rssi <= -127) || (DateTimeOffset.Now - beacon.Timestamp >= tenSeconds))
+                    {
+                        // remove it
+                        _beaconManager.BluetoothBeacons.Remove(beacon);
+                    }
+                }
+            }
+            catch (ArgumentException e)
+            {
+                _systemEventLogger.WriteEntry($"ValidateBeacons{Environment.NewLine}{e}", EventLogEntryType.Error);
             }
         }
 
@@ -172,8 +195,6 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
 
                     var filtered = keebeeBeacons
                             .Where(x => x.CompanyUuid == _companyUuid && x.FacilityId == _facilityId)
-                            .Where(x => x.Rssi >= _inRangeThreshold)
-                            .Where(x => (DateTimeOffset.Now - x.Timestamp) < new TimeSpan(0, 0, 0, InactiveSeconds, 0))
                             .OrderByDescending(x => x.Rssi);
 
                 return !filtered.Any() ? null : filtered.First();
@@ -189,7 +210,8 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
         {
             try
             {
-                _beaconManager.ReceivedAdvertisement(eventArgs);
+                if (_timer.Enabled)
+                    _beaconManager.ReceivedAdvertisement(eventArgs);
             }
             catch (ArgumentException e)
             {
@@ -368,6 +390,7 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
         protected override void OnStop()
         {
             _systemEventLogger.WriteEntry("In OnStop");
+            _messageQueueBeaconWatcher.Send(CreateMessageBodyFromResident(_publicResident));
             _timer.Stop();
             _timer.Dispose();
         }

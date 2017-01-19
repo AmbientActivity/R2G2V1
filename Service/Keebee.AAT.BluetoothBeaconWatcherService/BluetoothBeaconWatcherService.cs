@@ -46,6 +46,7 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
 
         // thresholds
         private readonly short _inRangeThreshold;
+        private const int InactiveSeconds = 3;
 
         public BluetoothBeaconWatcherService()
         {
@@ -172,7 +173,7 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
                     var filtered = keebeeBeacons
                             .Where(x => x.CompanyUuid == _companyUuid && x.FacilityId == _facilityId)
                             .Where(x => x.Rssi >= _inRangeThreshold)
-                            .Where(x => (DateTimeOffset.Now - x.Timestamp) < new TimeSpan(0, 0, 0, 2, 0))
+                            .Where(x => (DateTimeOffset.Now - x.Timestamp) < new TimeSpan(0, 0, 0, InactiveSeconds, 0))
                             .OrderByDescending(x => x.Rssi);
 
                 return !filtered.Any() ? null : filtered.First();

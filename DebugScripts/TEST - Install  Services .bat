@@ -26,7 +26,7 @@ echo.
 echo ---------------------------------------------------
 echo Installing Bluetooth Beacon Watcher Service...
 echo ---------------------------------------------------
-installutil C:\Users\%USERNAME%\Source\Repos\R2G2V1\Service\Keebee.AAT.BluetoothBeaconWatcherService\bin\Debug\BluetoothBeaconWatcherService.exe
+installutil C:\Users\%USERNAME%\Source\Repos\R2G2V1\Service\Keebee.AAT.BluetoothBeaconWatcherService\bin\Debug\Keebee.AAT.BluetoothBeaconWatcherService.exe
 echo Done.
 
 echo.

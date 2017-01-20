@@ -10,9 +10,9 @@ echo Done.
 
 echo.
 echo ---------------------------------------------------
-echo Uninstalling Bluetooth Beacon Watcher Service...
+echo Installing Bluetooth Beacon Watcher Service...
 echo ---------------------------------------------------
-installutil /u C:\Users\%USERNAME%\Source\Repos\R2G2V1\Service\Keebee.AAT.BluetoothBeaconWatcherService\bin\Debug\BluetoothBeaconWatcherService.exe
+installutil /u C:\Users\%USERNAME%\Source\Repos\R2G2V1\Service\Keebee.AAT.BluetoothBeaconWatcherService\bin\Debug\Keebee.AAT.BluetoothBeaconWatcherService.exe
 echo Done.
 
 echo ---------------------------------------------------

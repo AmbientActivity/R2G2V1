@@ -4,7 +4,6 @@ $versionPath = "1.0.0.0\"
 
 # service paths
 $stateMachinePath = "Services\StateMachineService\"
-# $rfidReaderPath = "Services\RfidReaderService\"
 $bluetoothBeaconWatcherPath = "Services\BluetoothBeaconWatcherService\"
 $phidgetPath = "Services\PhidgetService\"
 $videoCapturePath = "Services\VideoCaptureService\"
@@ -25,7 +24,6 @@ $scheduledTasksPath = "ScheduledTasks\"
 $eventLogExportPath = "EventLogExporter\"
 $videoCaptureCleanupPath = "VideoCaptureFileCleanup\"
 $backupPath = "Backup\"
-$recycleDefaultAppPoolPath = "Utilities\AppPool\"
 
 # install
 $installRoot = "Install\"
@@ -54,59 +52,59 @@ Try
     Write-Host "Uninstall Services”
     Write-Host "------------------`n”
 
-    Write-Host "Functionality temporarily removed...`n” -NoNewline
+    # Write-Host "--- Functionality temporarily removed ---`n” -NoNewline
 
     # register ServiceUtilities powershell module
-    #$path = "C:\Users\" + $env:USERNAME + "\Documents\WindowsPowerShell\Modules\ServiceUtilities\"
-    #If(!(test-path $path))
-    #{
-    #    Write-Host "Registering Module ServiceUtilities...” -NoNewline
-    #    New-Item -ItemType Directory -Force -Path $path | Out-Null
-    #    Copy-Item C:\Users\$env:USERNAME\Source\Repos\R2G2V1\Deployment\Modules\ServiceUtilities\* $path -recurse -Force
-    #    Write-Host "done.`n”
-    #}
+    $path = "C:\Users\" + $env:USERNAME + "\Documents\WindowsPowerShell\Modules\ServiceUtilities\"
+    If(!(test-path $path))
+    {
+        Write-Host "Registering Module ServiceUtilities...” -NoNewline
+        New-Item -ItemType Directory -Force -Path $path | Out-Null
+        Copy-Item C:\Users\$env:USERNAME\Source\Repos\R2G2V1\Deployment\Modules\ServiceUtilities\* $path -recurse -Force
+        Write-Host "done.`n”
+    }
 
-    #Get-Module SeriveUtilities | Out-Null
+    Get-Module SeriveUtilities | Out-Null
 
-    #Write-Host "Uninstalling Phidget Service...” -NoNewline
-    #$svcName = "PhidgetService"
-    #If (Get-Service $svcName -ErrorAction SilentlyContinue)
-    #{
-    #    Uninstall-Service -Name $svcName
-    #}
-    #Write-Host "done.”
+    Write-Host "Uninstalling Phidget Service...” -NoNewline
+    $svcName = "PhidgetService"
+    If (Get-Service $svcName -ErrorAction SilentlyContinue)
+    {
+       Uninstall-Service -Name $svcName
+    }
+    Write-Host "done.”
 
-    #Write-Host "Uninstalling Rfid Reader Service...” -NoNewline
-    #$svcName = "RfidReaderService"
-    #If (Get-Service $svcName -ErrorAction SilentlyContinue)
-    #{
-    #    Uninstall-Service -Name $svcName
-    #}
-    #Write-Host "done.”
+    Write-Host "Uninstalling Blutooth Beacon Watcher Service...” -NoNewline
+    $svcName = "BluetoothBeaconWatcherService"
+    If (Get-Service $svcName -ErrorAction SilentlyContinue)
+    {
+        Uninstall-Service -Name $svcName
+    }
+    Write-Host "done.”
 
-    #Write-Host "Uninstalling Video Capture Service...” -NoNewline
-    #$svcName = "VideoCaptureService"
-    #If (Get-Service $svcName -ErrorAction SilentlyContinue)
-    #{
-    #    Uninstall-Service -Name $svcName
-    #}
-    #Write-Host "done.”
+    Write-Host "Uninstalling Video Capture Service...” -NoNewline
+    $svcName = "VideoCaptureService"
+    If (Get-Service $svcName -ErrorAction SilentlyContinue)
+    {
+        Uninstall-Service -Name $svcName
+    }
+    Write-Host "done.”
 
-    #Write-Host "Uninstalling State Machine Service...” -NoNewline
-    #$svcName = "StateMachineService"
-    #If (Get-Service $svcName -ErrorAction SilentlyContinue)
-    #{
-    #    Uninstall-Service -Name $svcName
-    #}
-    #Write-Host "done.”
+    Write-Host "Uninstalling State Machine Service...” -NoNewline
+    $svcName = "StateMachineService"
+    If (Get-Service $svcName -ErrorAction SilentlyContinue)
+    {
+        Uninstall-Service -Name $svcName
+    }
+    Write-Host "done.”
 
-    #Write-Host "Uninstalling Keep IIS Alive Service...” -NoNewline
-    #$svcName = "KeepIISAliveService"
-    #If (Get-Service $svcName -ErrorAction SilentlyContinue)
-    #{
-    #    Uninstall-Service -Name $svcName
-    #}
-    #Write-Host "done.”
+    Write-Host "Uninstalling Keep IIS Alive Service...” -NoNewline
+    $svcName = "KeepIISAliveService"
+    If (Get-Service $svcName -ErrorAction SilentlyContinue)
+    {
+        Uninstall-Service -Name $svcName
+    }
+    Write-Host "done.”
 
 
     # build the solution
@@ -114,35 +112,35 @@ Try
     Write-Host "Build Solution”
     Write-Host "--------------`n”
 
-    Write-Host "Functionality temporarily removed...`n” -NoNewline
+    # Write-Host "--- Functionality temporarily removed ---`n” -NoNewline
 
     # register Build-VisualStudioSolution powershell module
-    #$path = "C:\Users\" + $env:USERNAME + "\Documents\WindowsPowerShell\Modules\Build-VisualStudioSolution\"
-    #If(!(test-path $path))
-    #{
-    #    Write-Host "Registering Module Build-VisualStudioSolution...” -NoNewline
-    #    New-Item -ItemType Directory -Force -Path $path | Out-Null
-    #    Copy-Item C:\Users\$env:USERNAME\Source\Repos\R2G2V1\Deployment\Modules\Build-VisualStudioSolution\* $path -recurse -Force
-    #    Write-Host "done.`n”
-    #}
+    $path = "C:\Users\" + $env:USERNAME + "\Documents\WindowsPowerShell\Modules\Build-VisualStudioSolution\"
+    If(!(test-path $path))
+    {
+        Write-Host "Registering Module Build-VisualStudioSolution...” -NoNewline
+        New-Item -ItemType Directory -Force -Path $path | Out-Null
+        Copy-Item C:\Users\$env:USERNAME\Source\Repos\R2G2V1\Deployment\Modules\Build-VisualStudioSolution\* $path -recurse -Force
+        Write-Host "done.`n”
+    }
 
-    #Get-Module Build-VisualStudioSolution
+    Get-Module Build-VisualStudioSolution
 
     # build debug
-    #$buildResult = Build-VisualStudioSolution -SourceCodePath $sourceCode -SolutionFile $solutionFile -BuildLogFile "R2G2BuildDebug.log" -Configuration "Debug" -CleanFirst;
+    $buildResult = Build-VisualStudioSolution -SourceCodePath $sourceCode -SolutionFile $solutionFile -BuildLogFile "R2G2BuildDebug.log" -Configuration "Debug" -CleanFirst;
 
-    #If (!$buildResult)
-    #{
-    #    exit
-    #}
+    If (!$buildResult)
+    {
+       exit
+    }
 
     # build release
-    #$buildResult = Build-VisualStudioSolution -SourceCodePath $sourceCode -SolutionFile $solutionFile -BuildLogFile "R2G2BuildRelease.log" -Configuration "Release" -CleanFirst;
+    $buildResult = Build-VisualStudioSolution -SourceCodePath $sourceCode -SolutionFile $solutionFile -BuildLogFile "R2G2BuildRelease.log" -Configuration "Release" -CleanFirst;
 
-    #If (!$buildResult)
-    #{
-    #    exit
-    #}
+    If (!$buildResult)
+    {
+        exit
+    }
 
     # delpoy components
     Write-Host "`n`n-----------------”
@@ -275,15 +273,6 @@ Try
     New-Item -ItemType Directory -Force -Path $path | Out-Null
     Copy-Item C:\Users\$env:USERNAME\Source\Repos\R2G2V1\ScheduledTasks\Keebee.AAT.Backup\bin\Release\* $path -recurse -Force
 
-    # recycle default app pool
-    # $path = $destPath + $scheduledTasksPath + $recycleDefaultAppPoolPath
-    # If(test-path $path)
-    # {
-    #     Remove-Item $path -recurse -Force
-    # }
-    # New-Item -ItemType Directory -Force -Path $path | Out-Null
-    # Copy-Item C:\Users\$env:USERNAME\Source\Repos\R2G2V1\ScheduledTasks\Keebee.AAT.Utilities\AppPool\RecycleDefaultAppPool.exe $path -recurse -Force
-
     Write-Host "done.”
 
 
@@ -327,11 +316,11 @@ Try
     # -------------------- SERVICES --------------------
 
     # wait until they are done unstalling
-    #while((Get-Service $svcName -ErrorAction SilentlyContinue)) {}
-    #while((Get-Service $svcName -ErrorAction SilentlyContinue)) {}
-    #while((Get-Service $svcName -ErrorAction SilentlyContinue)) {}
-    #while((Get-Service $svcName -ErrorAction SilentlyContinue)) {}
-    #while((Get-Service $svcName -ErrorAction SilentlyContinue)) {}
+    while((Get-Service $svcName -ErrorAction SilentlyContinue)) {}
+    while((Get-Service $svcName -ErrorAction SilentlyContinue)) {}
+    while((Get-Service $svcName -ErrorAction SilentlyContinue)) {}
+    while((Get-Service $svcName -ErrorAction SilentlyContinue)) {}
+    while((Get-Service $svcName -ErrorAction SilentlyContinue)) {}
 
     # state machine service
     Write-Host "Deploying Services...” -NoNewline

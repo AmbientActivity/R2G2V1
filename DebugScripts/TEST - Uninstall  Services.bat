@@ -1,0 +1,36 @@
+@ECHO OFF
+
+cd C:\Windows\Microsoft.NET\Framework\v4.0.30319
+
+echo ---------------------------------------------------
+echo Uninstalling Keep IIS Alive Service...
+installutil /u C:\Users\%USERNAME%\Source\Repos\R2G2V1\Service\Keebee.AAT.KeepIISAliveService\bin\Debug\Keebee.AAT.KeepIISAliveService.exe
+echo ---------------------------------------------------
+echo Done.
+
+echo.
+echo ---------------------------------------------------
+echo Uninstalling Bluetooth Beacon Watcher Service...
+echo ---------------------------------------------------
+installutil /u C:\Users\%USERNAME%\Source\Repos\R2G2V1\Service\Keebee.AAT.BluetoothBeaconWatcherService\bin\Debug\BluetoothBeaconWatcherService.exe
+echo Done.
+
+echo ---------------------------------------------------
+echo Uninstalling Phidget Service...
+installutil /u C:\Users\%USERNAME%\Source\Repos\R2G2V1\Service\Keebee.AAT.PhidgetService\bin\Debug\Keebee.AAT.PhidgetService.exe
+echo ---------------------------------------------------
+echo Done.
+
+echo ---------------------------------------------------
+echo Uninstalling Video Capture Service...
+installutil /u C:\Users\%USERNAME%\Source\Repos\R2G2V1\Service\Keebee.AAT.VideoCaptureService\bin\Debug\Keebee.AAT.VideoCaptureService.exe
+echo ---------------------------------------------------
+echo Done.
+
+echo ---------------------------------------------------
+echo Uninstalling State Machine Service...
+installutil /u C:\Users\%USERNAME%\Source\Repos\R2G2V1\Service\Keebee.AAT.StateMachineService\bin\Debug\Keebee.AAT.StateMachineService.exe
+echo ---------------------------------------------------
+echo Done.
+
+pause

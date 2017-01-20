@@ -148,17 +148,15 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService.Beacon
             BeaconType = beaconType;
         }
 
-
         private void SetRssi(short value)
         {
-
             if (Rssi.Count < 10)
             { 
                 Rssi.Add(value);
             }
             else
             {
-                Rssi.RemoveAt(9);
+                Rssi.RemoveAt(0);
                 Rssi.Add(value);
             }
         }

@@ -352,15 +352,6 @@ Try
     New-Item -ItemType Directory -Force -Path $path | Out-Null
     Copy-Item C:\Users\$env:USERNAME\Source\Repos\R2G2V1\Service\Keebee.AAT.PhidgetService\bin\Release\* $path -recurse -Force
 
-    # rfid reader service
-    # $path = $destPath + $rfidReaderPath + $versionPath
-    # If(test-path $path)
-    # {
-    #     Remove-Item $path -recurse -Force
-    # }
-    # New-Item -ItemType Directory -Force -Path $path | Out-Null
-    # Copy-Item C:\Users\$env:USERNAME\Source\Repos\R2G2V1\Service\Keebee.AAT.RfidReaderService\bin\Release\* $path -recurse -Force
-
     # bluetooth beacon watcher service
     $path = $destPath + $bluetoothBeaconWatcherPath + $versionPath
     If(test-path $path)

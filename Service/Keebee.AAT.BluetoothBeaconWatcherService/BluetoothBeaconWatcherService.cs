@@ -157,11 +157,17 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
 
                 foreach (var beacon in beacons)
                 {
-                    // if the beacon has stopped advertising 
-                    if ((beacon.Rssi.Last() <= -127) || (DateTimeOffset.Now - beacon.Timestamp >= tenSeconds))
+                    // if the beacon has stopped advertising remove it
+                    if (DateTimeOffset.Now - beacon.Timestamp >= tenSeconds)
                     {
-                        // remove it
                         _beaconManager.BluetoothBeacons.Remove(beacon);
+                    }
+                    else
+                    {
+                        if (!beacon.Rssi.Any()) continue;
+
+                        if (beacon.Rssi.Last() <= -127)
+                            _beaconManager.BluetoothBeacons.Remove(beacon);
                     }
                 }
             }

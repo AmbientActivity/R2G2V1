@@ -126,7 +126,12 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
                 if (_residents == null)
                     LoadResidents();
 
-                if (_residents == null) return;
+                // when the service is initially started the residents might not be loaded yet
+                if (_residents == null)
+                {
+                    _timer.Start();
+                    return;
+                }
 
                 var closestBeacon = GetClosestKeebeeBeacon(_beaconManager.BluetoothBeacons);
                 var residentId = closestBeacon?.ResidentId ?? 0;

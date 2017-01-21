@@ -126,6 +126,8 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
                 if (_residents == null)
                     LoadResidents();
 
+                if (_residents == null) return;
+
                 var closestBeacon = GetClosestKeebeeBeacon(_beaconManager.BluetoothBeacons);
                 var residentId = closestBeacon?.ResidentId ?? 0;
                 var resident = GetResident(residentId) ?? _publicResident;
@@ -393,7 +395,6 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
         protected override void OnStop()
         {
             _systemEventLogger.WriteEntry("In OnStop");
-            _messageQueueBeaconWatcher.Send(CreateMessageBodyFromResident(_publicResident));
             _timer.Stop();
             _timer.Dispose();
         }

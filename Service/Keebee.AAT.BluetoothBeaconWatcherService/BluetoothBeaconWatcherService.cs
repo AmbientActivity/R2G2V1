@@ -9,6 +9,7 @@ using System.Configuration;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.Remoting.Messaging;
 using System.ServiceProcess;
 using System.Timers;
 using System.Web.Script.Serialization;
@@ -123,11 +124,7 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
 
                 _timer.Stop();
 
-                if (_residents == null)
-                    LoadResidents();
-
-                // when the service is initially started the residents might not be loaded yet
-                if (_residents == null)
+                if (!LoadResidents())
                 {
                     _timer.Start();
                     return;
@@ -262,16 +259,21 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
             _systemEventLogger.WriteEntry($"WatcherOnStopped{Environment.NewLine}Failed to restart Bluetooth Watch", EventLogEntryType.Error);
         }
 
-        private void LoadResidents()
+        private bool LoadResidents()
         {
             try
             {
+                if (_residents != null) return true;
+
                 _residents = _opsClient.GetResidents().ToArray();
+                return (_residents != null);
+
             }
             catch (Exception ex)
             {
                 _systemEventLogger.WriteEntry($"LoadResidents: {ex.Message}", EventLogEntryType.Error);
             }
+            return false;
         }
 
         private Resident GetResident(int id)
@@ -305,8 +307,10 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
 
         private void MessageReceivedBluetoothBeaconWatcherReload(object source, MessageEventArgs e)
         {
-            if (e.MessageBody == "1")
-                LoadResidents();
+            if (e.MessageBody != "1") return;
+
+            _residents = null;
+            LoadResidents();
         }
 
         #region Tools

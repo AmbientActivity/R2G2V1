@@ -89,9 +89,9 @@ namespace Keebee.AAT.Backup
                     {
                         logText.Append($"--- ERROR --- Main: Backup drive {driveBackup.Name} is not accessible.");
                     }
-                    w.WriteLine("------------------------------------");
+                    w.WriteLine("--------------------------------------------");
                     w.WriteLine($"Backup Summary for {DateTime.Now.ToLongDateString()}");
-                    w.WriteLine("------------------------------------");
+                    w.WriteLine("--------------------------------------------");
                     w.Write(logText.Length <= 0
                         ? "No actions taken - all files and folders are up to date"
                         : logText.ToString());

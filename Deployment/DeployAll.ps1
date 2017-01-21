@@ -32,7 +32,8 @@ $installPowerShellPath = "Install\PowerShell\"
 $installUtilityPath = "Install\Utility\"
 
 # media
-$profilesPath = "Media\Profiles\0\"
+$profilesPath = "Media\Profiles\"
+$profilesPublicPath = "Media\Profiles\0\"
 $exportsPath = "Media\Exports\EventLog\"
 $publicLibrarySource = "\\" + $env:COMPUTERNAME + "\SQLEXPRESS\KeebeeAATFilestream\Media\Profiles\0\*"
 
@@ -151,7 +152,7 @@ Try
     # create the root directory
     If(!(test-path $destPath))
     {
-        New-Item -ItemType Directory -Force -Path $destPath
+        New-Item -ItemType Directory -Force -Path $destPath | Out-Null
     }
 
     # -------------------- UI --------------------
@@ -225,12 +226,15 @@ Try
     }
     New-Item -ItemType Directory -Force -Path $path | Out-Null
 
-    # public library
+    # clear profiles folder
     $path = $destPath + $profilesPath
     If(test-path $path)
     {
         Remove-Item $path -recurse -Force
     }
+
+    # public library
+    $path = $destPath + $profilesPublicPath
     New-Item -ItemType Directory -Force -Path $path | Out-Null
     Copy-Item $publicLibrarySource $path -recurse -Force
     Write-Host "done.”

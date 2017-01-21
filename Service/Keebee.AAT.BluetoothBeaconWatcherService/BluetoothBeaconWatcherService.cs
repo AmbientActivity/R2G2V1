@@ -189,20 +189,18 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
                         return new KeebeeBeacon
                         {
                             BeaconType = x.BeaconType,
-                            Rssi = x.Rssi.Sum(y => y) / x.Rssi.Count,  // calculate average strength
+                            Rssi = x.Rssi.Sum(y => y) / x.Rssi.Count,  // calculate average signal strength
                             CompanyUuid = GetCompanyUuid(x),
                             FacilityId =
                                 GetIntFromByteArray(new byte[] { 0, 0, beaconFrame.Payload[18], beaconFrame.Payload[19] }),
                             ResidentId =
                                 GetIntFromByteArray(new byte[] { 0, 0, beaconFrame.Payload[20], beaconFrame.Payload[21] })
                         };
-                    }).ToArray();
+                    })
+                    .Where(x => x.CompanyUuid == _companyUuid && x.FacilityId == _facilityId)
+                    .OrderByDescending(x => x.Rssi);
 
-                    var filtered = keebeeBeacons
-                            .Where(x => x.CompanyUuid == _companyUuid && x.FacilityId == _facilityId)
-                            .OrderByDescending(x => x.Rssi);
-
-                return !filtered.Any() ? null : filtered.First();
+                return !keebeeBeacons.Any() ? null : keebeeBeacons.First();
             }
             catch (Exception ex)
             {

@@ -1,12 +1,14 @@
 ﻿Try
 {
+  Write-Host -ForegroundColor yellow "`n--- Local webuser ---`n"
+
   Write-Host "Deleting local webuser..." -NoNewline
 
   $computername = $env:COMPUTERNAME
   $ADSIComp = [adsi]"WinNT://$computername"
   $ADSIComp.Delete('User','webuser') 
 
-  Write-Host "done.`n" 
+  Write-Host "done." 
 }
 Catch
 {

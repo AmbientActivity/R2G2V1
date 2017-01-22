@@ -1,5 +1,7 @@
 ﻿Try
 {
+    Write-Host -ForegroundColor yellow "`n--- Local webuser ---`n"
+
     Write-Host "Creating local webuser..." -NoNewline
 
     $computername = $env:COMPUTERNAME
@@ -11,10 +13,17 @@
     $newUser.SetPassword(($password))
     $newUser.SetInfo()
 
-    $newUser.Description  ='Test webuser account'
+    $newUser.Description  ='webuser account'
     $newUser.SetInfo()
 
-    Write-Host "done.`n"
+    Invoke-Command -ScriptBlock { C:\Windows\system32\net localgroup Administrators webuser /add } | Out-Null
+
+    Write-Host "done."
+
+    # disable password expiry
+    Write-Host "Disabling password expiry..." -NoNewline
+    Invoke-Command -ScriptBlock { wmic path Win32_UserAccount set PasswordExpires=False } | Out-Null
+    Write-Host "done."
 }
 Catch
 {

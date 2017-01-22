@@ -53,59 +53,25 @@ Try
     Write-Host "Uninstall Services”
     Write-Host "------------------`n”
 
-    # Write-Host "--- Functionality temporarily removed ---`n” -NoNewline
+    Write-Host "Uninstalling Phidget Service..." -NoNewline
+    Invoke-Command -ScriptBlock { C:\WINDOWS\Microsoft.NET\Framework\v4.0.30319\InstallUtil.exe /uninstall "C:\Deployments\Services\PhidgetService\1.0.0.0\Keebee.AAT.PhidgetService.exe"} | Out-Null
+    Write-Host "done."
 
-    # register ServiceUtilities powershell module
-    $path = "C:\Users\" + $env:USERNAME + "\Documents\WindowsPowerShell\Modules\ServiceUtilities\"
-    If(!(test-path $path))
-    {
-        Write-Host "Registering Module ServiceUtilities...” -NoNewline
-        New-Item -ItemType Directory -Force -Path $path | Out-Null
-        Copy-Item C:\Users\$env:USERNAME\Source\Repos\R2G2V1\Deployment\Modules\ServiceUtilities\* $path -recurse -Force
-        Write-Host "done.`n”
-    }
+    Write-Host "Uninstalling Video Capture Service..." -NoNewline
+    Invoke-Command -ScriptBlock { C:\WINDOWS\Microsoft.NET\Framework\v4.0.30319\InstallUtil.exe /uninstall "C:\Deployments\Services\VideoCaptureService\1.0.0.0\Keebee.AAT.VideoCaptureService.exe"} | Out-Null
+    Write-Host "done."
 
-    Get-Module SeriveUtilities | Out-Null
+    Write-Host "Uninstalling Bluetooth Beacon Watcher Service..." -NoNewline
+    Invoke-Command -ScriptBlock { C:\WINDOWS\Microsoft.NET\Framework\v4.0.30319\InstallUtil.exe /uninstall "C:\Deployments\Services\BluetoothBeaconWatcherService\1.0.0.0\Keebee.AAT.BluetoothBeaconWatcherService.exe"} | Out-Null
+    Write-Host "done."
 
-    Write-Host "Uninstalling Phidget Service...” -NoNewline
-    $svcName = "PhidgetService"
-    If (Get-Service $svcName -ErrorAction SilentlyContinue)
-    {
-       Uninstall-Service -Name $svcName
-    }
-    Write-Host "done.”
+    Write-Host "Uninstalling State Machine Service..." -NoNewline
+    Invoke-Command -ScriptBlock { C:\WINDOWS\Microsoft.NET\Framework\v4.0.30319\InstallUtil.exe /uninstall "C:\Deployments\Services\StateMachineService\1.0.0.0\Keebee.AAT.StateMachineService.exe"} | Out-Null
+    Write-Host "done."
 
-    Write-Host "Uninstalling Blutooth Beacon Watcher Service...” -NoNewline
-    $svcName = "BluetoothBeaconWatcherService"
-    If (Get-Service $svcName -ErrorAction SilentlyContinue)
-    {
-        Uninstall-Service -Name $svcName
-    }
-    Write-Host "done.”
-
-    Write-Host "Uninstalling Video Capture Service...” -NoNewline
-    $svcName = "VideoCaptureService"
-    If (Get-Service $svcName -ErrorAction SilentlyContinue)
-    {
-        Uninstall-Service -Name $svcName
-    }
-    Write-Host "done.”
-
-    Write-Host "Uninstalling State Machine Service...” -NoNewline
-    $svcName = "StateMachineService"
-    If (Get-Service $svcName -ErrorAction SilentlyContinue)
-    {
-        Uninstall-Service -Name $svcName
-    }
-    Write-Host "done.”
-
-    Write-Host "Uninstalling Keep IIS Alive Service...” -NoNewline
-    $svcName = "KeepIISAliveService"
-    If (Get-Service $svcName -ErrorAction SilentlyContinue)
-    {
-        Uninstall-Service -Name $svcName
-    }
-    Write-Host "done.”
+    Write-Host "Uninstalling Keep IIS Alive Service..." -NoNewline
+    Invoke-Command -ScriptBlock { C:\WINDOWS\Microsoft.NET\Framework\v4.0.30319\InstallUtil.exe /uninstall "C:\Deployments\Services\KeepIISAliveService\1.0.0.0\Keebee.AAT.KeepIISAliveService.exe"} | Out-Null
+    Write-Host "done."
 
 
     # build the solution
@@ -318,13 +284,6 @@ Try
 
 
     # -------------------- SERVICES --------------------
-
-    # wait until they are done unstalling
-    while((Get-Service $svcName -ErrorAction SilentlyContinue)) {}
-    while((Get-Service $svcName -ErrorAction SilentlyContinue)) {}
-    while((Get-Service $svcName -ErrorAction SilentlyContinue)) {}
-    while((Get-Service $svcName -ErrorAction SilentlyContinue)) {}
-    while((Get-Service $svcName -ErrorAction SilentlyContinue)) {}
 
     # state machine service
     Write-Host "Deploying Services...” -NoNewline

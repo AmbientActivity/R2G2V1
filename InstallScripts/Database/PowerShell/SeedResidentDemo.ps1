@@ -2,18 +2,19 @@
 $database = "KeebeeAAT"
 $path = "C:\Deployments\Install\Database\SQL Server\"
 
-
-# check if the database exists
-$query = Invoke-SqlQuery -Query "SELECT COUNT(*) AS DatabaseCount FROM master.sys.databases WHERE name = N'$database'" -Server $server -Database "master"
-$databaseCount = $query.DatabaseCount
-
-# if the database doesn't exist, don't attempt anything
-if ($databaseCount -eq 0) {
-    Write-Host -ForegroundColor yellow "`nR2G2 database does not exist.`n"
-} 
-else
+Try
 {
-    Try
+    Write-Host -ForegroundColor yellow "`n--- Seed Demo Resident ---`n`n"
+
+    # check if the database exists
+    $query = Invoke-SqlQuery -Query "SELECT COUNT(*) AS DatabaseCount FROM master.sys.databases WHERE name = N'$database'" -Server $server -Database "master"
+    $databaseCount = $query.DatabaseCount
+
+    # if the database doesn't exist, don't attempt anything
+    if ($databaseCount -eq 0) {
+        Write-Host -ForegroundColor yellow "`nR2G2 database does not exist.`n"
+    } 
+    else
     {
         Write-Host "Seeding Demo resident...” -NoNewline
         $queryFile = $path + "SeedResidentDemo.sql"
@@ -22,8 +23,8 @@ else
 
         Write-Host "Demo residents seeded successfully!`n”
     }
-    Catch
-    {
-        Write-Host -ForegroundColor red $_.Exception.Message
-    }
+}
+Catch
+{
+    Write-Host -ForegroundColor red $_.Exception.Message
 }

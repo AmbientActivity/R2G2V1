@@ -2,18 +2,19 @@
 $database = "KeebeeAAT"
 $path = "C:\Deployments\Install\Database\SQL Server\"
 
-
-# check if the database exists
-$query = Invoke-SqlQuery -Query "SELECT COUNT(*) AS DatabaseCount FROM master.sys.databases WHERE name = N'$database'" -Server $server -Database "master"
-$databaseCount = $query.DatabaseCount
-
-# if the database doesn't exist, don't attempt anything
-if ($databaseCount -eq 0) {
-    Write-Host -ForegroundColor yellow "`nR2G2 database does not exist.`n"
-} 
-else
+Try
 {
-    Try
+    Write-Host -ForegroundColor yellow "`n--- Seeding ---`n"
+
+    # check if the database exists
+    $query = Invoke-SqlQuery -Query "SELECT COUNT(*) AS DatabaseCount FROM master.sys.databases WHERE name = N'$database'" -Server $server -Database "master"
+    $databaseCount = $query.DatabaseCount
+
+    # if the database doesn't exist, don't attempt anything
+    if ($databaseCount -eq 0) {
+        Write-Host -ForegroundColor yellow "`nR2G2 database does not exist.`n"
+    } 
+    else
     {
         # check if there are any configurations
         $query = Invoke-SqlQuery -Query "SELECT COUNT(*) AS ConfigCount FROM Configs" -Server $server -Database $database
@@ -28,7 +29,7 @@ else
             $mediaProfiles = $mediaDestination + "\Profiles\*"
             $mediaExports = $mediaDestination + "\Exports\*"
 
-            Write-Host "`nTransfering media...” -NoNewline
+            Write-Host "Transfering media...” -NoNewline
 
             If(test-path $mediaProfiles)
             {
@@ -41,28 +42,26 @@ else
             }
 
             Copy-Item C:\Deployments\Media\* $mediaDestination -recurse -Force
-            Write-Host "done.`n”
+            Write-Host "done.”
 
             Write-Host "Creating MediaFiles view...” -NoNewline
             $queryFile = $path + "CreateMediaFilesView.sql"
             Invoke-SqlQuery -File $queryFile -Server $server -Database $database
-            Write-Host "done.`n”
+            Write-Host "done.”
 
             Write-Host "Seeding configuration data...” -NoNewline
             $queryFile = $path + "SeedConfigurationData.sql"
             Invoke-SqlQuery -File $queryFile -Server $server -Database $database
-            Write-Host "done.`n”
+            Write-Host "done.”
 
             Write-Host "Seeding public library...” -NoNewline
             $queryFile = $path + "SeedPublicLibrary.sql"
             Invoke-SqlQuery -File $queryFile -Server $server -Database $database
-            Write-Host "done.`n”
-
-            Write-Host "Data seeded successfully!`n”
+            Write-Host "done.”
         }
     }
-    Catch
-    {
-        Write-Host -ForegroundColor red $_.Exception.Message
-    }
+}
+Catch
+{
+    Write-Host -ForegroundColor red $_.Exception.Message
 }

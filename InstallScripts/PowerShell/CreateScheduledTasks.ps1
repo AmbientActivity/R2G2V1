@@ -1,12 +1,11 @@
 ﻿Try
 {
-   
-    Write-Host "Creating scheduled tasks..." -NoNewline
+    Write-Host -ForegroundColor yellow "`n--- Scheduled Tasks ---`n"
 
+    Write-Host "Creating Event Log Export task..." -NoNewline
     $service = new-object -ComObject("Schedule.Service")
     $service.Connect()
     $rootFolder = $service.GetFolder("\")
-
 
     # event log export
     $TaskName = "R2G2 - Event Log Export"
@@ -29,9 +28,10 @@
     $action.Arguments = "$TaskArg"
 
     $rootFolder.RegisterTaskDefinition("$TaskName", $TaskDefinition, 6, "System", $null, 5) | Out-Null
-
+    Write-Host "done."
 
     # backup
+    Write-Host "Creating Backup task..." -NoNewline
     $TaskName = "R2G2 - Backup"
     $TaskDescr = "Performs a full backup of the deployment folders and resident media " +
                  "and creates additional database scripts for restoring the data back to its original state." 
@@ -53,9 +53,10 @@
     $action.Arguments = "$TaskArg"
 
     $rootFolder.RegisterTaskDefinition("$TaskName", $TaskDefinition, 6, "System", $null, 5) | Out-Null
-
+    Write-Host "done."
 
     # video capture file cleanup (delete all 0KB files)
+    Write-Host "Creating Video Capture Cleanup task..." -NoNewline
     $TaskName = "R2G2 - Video Capture File Cleanup"
     $TaskDescr = "Finds and deletes all 0KB video capture files."
     $TaskCommand = "C:\Deployments\ScheduledTasks\VideoCaptureFileCleanup\1.0.0.0\Keebee.AAT.VideoCaptureFileCleanup.exe"
@@ -76,8 +77,7 @@
     $action.Arguments = "$TaskArg"
 
     $rootFolder.RegisterTaskDefinition("$TaskName", $TaskDefinition, 6, "System", $null, 5) | Out-Null
-
-    Write-Host "done.`n"
+    Write-Host "done."
 }
 Catch
 {

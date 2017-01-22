@@ -1,7 +1,5 @@
 Try
 {
-    Write-Host -ForegroundColor green "`nInstalling R2G2..."
-
     Write-Host -ForegroundColor yellow "`n--- Event Log Sources ---`n"
 
     # eventSources is an array of comma delimited strings containing the Event Log followed by the event source.
@@ -24,24 +22,24 @@ Try
 
         #admin interface
         "R2G2 Administrator Interface,R2G2AdministratorInterface"
-    )
+     )
+ 
+     # loop through each event log, source pair to delete the source on the specified log if it exists
+ 
+     foreach($logSource in $eventSources) 
+     {
+         $log = $logSource.split(",")[0]
+         $source = $logSource.split(",")[1]
 
-    # loop through each event log, source pair to create the source on the specified log if it does not exist.
-    foreach($logSource in $eventSources) {
-        $log = $logSource.split(",")[0]
-        $source = $logSource.split(",")[1]
-
-        if ([System.Diagnostics.EventLog]::SourceExists($source) -eq $false) {
-        write-host "Creating event log source $log..." -NoNewline
-        [System.Diagnostics.EventLog]::CreateEventSource($source, $log)
-        write-host "done."
-        }
-        else {
-        write-host -foregroundcolor yellow "Warning: Event source $source already exists. Cannot create this source on Event log $log"
-        }
-    }
-}
-Catch
-{
+         write-host "Removing event log source $log..." -NoNewline
+         if ([System.Diagnostics.EventLog]::SourceExists($source) -eq $true) 
+         {   
+            Remove-EventLog -LogName $log
+         }
+         write-host "done."
+     }
+ }
+ Catch
+ {
     Write-Host -ForegroundColor red $_.Exception.Message
-}
+ }

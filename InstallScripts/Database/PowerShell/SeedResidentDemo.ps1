@@ -4,7 +4,7 @@ $path = "C:\Deployments\Install\Database\SQL Server\"
 
 Try
 {
-    Write-Host -ForegroundColor yellow "`n--- Seed Demo Resident ---`n`n"
+    Write-Host -ForegroundColor yellow "`n--- Demo Resident ---`n`n"
 
     # check if the database exists
     $query = Invoke-SqlQuery -Query "SELECT COUNT(*) AS DatabaseCount FROM master.sys.databases WHERE name = N'$database'" -Server $server -Database "master"
@@ -16,12 +16,10 @@ Try
     } 
     else
     {
-        Write-Host "Seeding Demo resident...” -NoNewline
+        Write-Host "Seeding demo resident...” -NoNewline
         $queryFile = $path + "SeedResidentDemo.sql"
         Invoke-SqlQuery -File $queryFile -Server $server -Database $database
         Write-Host "done.`n”
-
-        Write-Host "Demo residents seeded successfully!`n”
     }
 }
 Catch

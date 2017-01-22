@@ -1,8 +1,6 @@
 Try
 {
-    Write-Host -ForegroundColor green "`nInstalling R2G2..."
-
-    Write-Host -ForegroundColor yellow "`n--- Event Log Sources ---`n"
+    Write-Host -ForegroundColor yellow "--- Event Log Sources ---`n"
 
     # eventSources is an array of comma delimited strings containing the Event Log followed by the event source.
     $eventSources = @(

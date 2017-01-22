@@ -28,8 +28,6 @@
         Unregister-ScheduledTask -TaskName $taskName -Confirm:$false
     }
     Write-Host "done."
-
-    Write-Host -ForegroundColor green "`nR2G2 successfully uninstalled..."
 }
 Catch
 {

@@ -22,8 +22,6 @@
     Write-Host "Installing Keep IIS Alive Service..." -NoNewline
     Invoke-Command -ScriptBlock { C:\WINDOWS\Microsoft.NET\Framework\v4.0.30319\InstallUtil.exe /install "C:\Deployments\Services\KeepIISAliveService\1.0.0.0\Keebee.AAT.KeepIISAliveService.exe"} | Out-Null
     Write-Host "done."
-
-    Write-Host -ForegroundColor green "`nR2G2 successfully installed."
 }
 Catch
 {

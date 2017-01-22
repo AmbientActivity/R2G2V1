@@ -7,7 +7,7 @@ Try
 
 
     # Phidget Message Queue
-    write-host "Deleting Phidget message queue..." -NoNewline
+    write-host "Removing Phidget message queue..." -NoNewline
     $name = "Phidget"
     $qname = “.\private$\” + $name
     If (($msmq::Exists($qname))) {
@@ -17,7 +17,7 @@ Try
 
 
     # Video Capture Message Queue
-    write-host "Deleting Video Capture message queue..." -NoNewline
+    write-host "Removing Video Capture message queue..." -NoNewline
     $name = "Video-Capture"
     $qname = “.\private$\” + $name
     If (($msmq::Exists($qname))) {
@@ -27,7 +27,7 @@ Try
 
 
     # Bluetooth Beacon Watcher Message Queue
-    write-host "Deleting Bluetooth Beacon Watcher message queue..." -NoNewline
+    write-host "Removing Bluetooth Beacon Watcher message queue..." -NoNewline
     $name = "Bluetooth-Beacon-Watcher"
     $qname = “.\private$\” + $name
     If (($msmq::Exists($qname))) {
@@ -36,7 +36,7 @@ Try
     write-host "done."
 
     # Bluetooth Beacon Watcher Reload Message Queue
-    write-host "Deleting Bluetooth Beacon Watcher Reload message queue..." -NoNewline
+    write-host "Removing Bluetooth Beacon Watcher Reload message queue..." -NoNewline
     $name = "Bluetooth-Beacon-Watcher-Reload"
     $qname = “.\private$\” + $name
     If (($msmq::Exists($qname))) {
@@ -45,7 +45,7 @@ Try
     write-host "done."
 
     # Response Message Queue
-    write-host "Deleting Response message queue..." -NoNewline
+    write-host "Removing Response message queue..." -NoNewline
     $name = "Response"
     $qname = “.\private$\” + $name
     If (($msmq::Exists($qname))) {
@@ -55,7 +55,7 @@ Try
 
 
     # Display Message Queue (to alert the State Machine Service when the Display App is running)
-    write-host "Deleting Display message queues..." -NoNewline
+    write-host "Removing Display message queues..." -NoNewline
     $name = "Display-SMS"
     $qname = “.\private$\” + $name
     $qname = “.\private$\” + $name
@@ -84,7 +84,7 @@ Try
 
 
     # Config Message Queue (to alert the State Machine Service when to repload a newly activated configuration)
-    write-host "Deleting Config message queues..." -NoNewline
+    write-host "Removing Config message queues..." -NoNewline
     $name = "Config-SMS"
     $qname = “.\private$\” + $name
     $qname = “.\private$\” + $name
@@ -104,7 +104,7 @@ Try
 
 
     # Phidget Continuous Radio Message Queue (sends constant phidget values to the radio user control)
-    write-host "Deleting Continuous Radio message queue..." -NoNewline
+    write-host "Removing Continuous Radio message queue..." -NoNewline
     $name = "Phidget-Continuous-Radio"
     $qname = “.\private$\” + $name
     $qname = “.\private$\” + $name

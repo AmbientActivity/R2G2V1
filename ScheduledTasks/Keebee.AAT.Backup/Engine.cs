@@ -40,7 +40,9 @@ namespace Keebee.AAT.Backup
                 var pathLogs = $@"{_pathBackup}\BackupLogs";
 
                 var logFilename = InitializeLogFile(pathLogs);
-
+#if DEBUG
+                Console.WriteLine($"{Environment.NewLine}Examining files...");
+#endif
                 using (var w = File.AppendText(logFilename))
                 {
                     var diBackup = new DirectoryInfo(_pathBackup);
@@ -82,27 +84,38 @@ namespace Keebee.AAT.Backup
                         logText.Append(RemoveObsoleteFiles(_pathVideoCaptures, _pathBackup));
 
                         // create the database scripts
-                        logText.Append(CreateScriptSeedResidents($@"{_pathBackup}\{_deploymentsFolder}"));
-                        logText.Append(CreateScriptSeedConfigurations($@"{_pathBackup}\{_deploymentsFolder}"));
+                        logText.Append(CreateScriptRestoreResidents($@"{_pathBackup}\{_deploymentsFolder}"));
+                        logText.Append(CreateScriptRestoreConfigurations($@"{_pathBackup}\{_deploymentsFolder}"));
+                        logText.Append(CreateInstallPowerShellScript($@"{_pathBackup}\{_deploymentsFolder}"));
                     }
                     else
                     {
                         logText.Append($"--- ERROR --- Main: Backup drive {driveBackup.Name} is not accessible.");
                     }
+
+                    const string noChangesMessage = "No actions taken - all files and folders are up to date";
                     w.WriteLine("--------------------------------------------");
                     w.WriteLine($"Backup Summary for {DateTime.Now.ToLongDateString()}");
                     w.WriteLine("--------------------------------------------");
                     w.Write(logText.Length <= 0
-                        ? "No actions taken - all files and folders are up to date"
+                        ? noChangesMessage
                         : logText.ToString());
+#if DEBUG
+                    Console.WriteLine($"{Environment.NewLine}Backup Completed{Environment.NewLine}");
+                    if (logText.Length <= 0)
+                        Console.WriteLine(noChangesMessage);
+                    Console.WriteLine($"{Environment.NewLine}Press any key to exit...");
+                    Console.ReadKey();
+#endif
                 }
             }
             catch (Exception e)
             {
-                // for debugging only
-                Console.Write(e.Message);
+#if DEBUG
+                Console.WriteLine(e.Message);
+#endif
             }
-    }
+        }
 
         private static string InitializeLogFile(string pathLog)
         {
@@ -115,6 +128,10 @@ namespace Keebee.AAT.Backup
             if (File.Exists(filePath))
                 File.Delete(filePath);
 
+            var message = $"Log file: {filePath}{Environment.NewLine}";
+#if DEBUG
+            Console.Write(message);
+#endif
             return filePath;
         }
 
@@ -129,7 +146,11 @@ namespace Keebee.AAT.Backup
                 var driveSource = Path.GetPathRoot(source);
                 if (driveSource == null)
                 {
-                    return $"--- ERROR --- CreateBackupFolders: Source drive for {source} is not available{Environment.NewLine}";
+                    var message = $"--- ERROR --- CreateBackupFolders: Source drive for {source} is not available{Environment.NewLine}";
+#if DEBUG
+                    Console.Write(message);
+#endif
+                    return message;
                 }
 
                 if (!Directory.Exists(source))
@@ -148,12 +169,20 @@ namespace Keebee.AAT.Backup
                     }
                     catch (UnauthorizedAccessException e)
                     {
-                        sb.Append($"--- ERROR --- CreateBackupFolders: {e.Message}{Environment.NewLine}");
+                        var message = $"--- ERROR --- CreateBackupFolders: {e.Message}{Environment.NewLine}";
+#if DEBUG
+                        Console.Write(message);
+#endif
+                        sb.Append(message);
                         continue;
                     }
                     catch (DirectoryNotFoundException e)
                     {
-                        sb.Append($"--- ERROR --- CreateBackupFolders: {e.Message}{Environment.NewLine}");
+                        var message = $"--- ERROR --- CreateBackupFolders: {e.Message}{Environment.NewLine}";
+#if DEBUG
+                        Console.Write(message);
+#endif
+                        sb.Append(message);
                         continue;
                     }
 
@@ -167,7 +196,11 @@ namespace Keebee.AAT.Backup
                     if (!directory.Exists)
                     {
                         directory.Create();
-                        sb.Append($"Folder '{directory.FullName}' was created{Environment.NewLine}");
+                        var message = $"Folder '{directory.FullName}' was created{Environment.NewLine}";
+#if DEBUG
+                        Console.Write(message);
+#endif
+                        sb.Append(message);
                     }
 
                     foreach (var dir in subDirs.Select(x => x).Except(excludeFolders ?? new string[0]))
@@ -176,7 +209,11 @@ namespace Keebee.AAT.Backup
             }
             catch (Exception e)
             {
-                sb.Append($"--- ERROR --- CreateBackupFolders: {e.Message}{Environment.NewLine}");
+                var message = $"--- ERROR --- CreateBackupFolders: {e.Message}{Environment.NewLine}";
+#if DEBUG
+                Console.Write(message);
+#endif
+                sb.Append(message);
             }
 
             return sb.ToString();
@@ -195,7 +232,11 @@ namespace Keebee.AAT.Backup
                 var driveSource = Path.GetPathRoot(source);
                 if (driveSource == null)
                 {
-                    return $"--- ERROR --- BackupFiles: Source drive for {source} is not ready{Environment.NewLine}";
+                    var message = $"--- ERROR --- BackupFiles: Source drive for {source} is not ready{Environment.NewLine}";
+#if DEBUG
+                    Console.Write(message);
+#endif
+                    return message;
                 }
 
                 if (!Directory.Exists(source))
@@ -223,12 +264,20 @@ namespace Keebee.AAT.Backup
                     // about the systems on which this code will run.
                     catch (UnauthorizedAccessException e)
                     {
-                        sb.Append($"--- ERROR --- BackupFiles: {e.Message}{Environment.NewLine}");
+                        var message = $"--- ERROR --- BackupFiles: {e.Message}{Environment.NewLine}";
+#if DEBUG
+                        Console.Write(message);
+#endif
+                        sb.Append(message);
                         continue;
                     }
                     catch (DirectoryNotFoundException e)
                     {
-                        sb.Append($"--- ERROR --- BackupFiles: {e.Message}{Environment.NewLine}");
+                        var message = $"--- ERROR --- BackupFiles: {e.Message}{Environment.NewLine}";
+#if DEBUG
+                        Console.Write(message);
+#endif
+                        sb.Append(message);
                         continue;
                     }
 
@@ -240,13 +289,21 @@ namespace Keebee.AAT.Backup
 
                     catch (UnauthorizedAccessException e)
                     {
-                        sb.Append($"--- ERROR --- BackupFiles: {e.Message}{Environment.NewLine}");
+                        var message = $"--- ERROR --- BackupFiles: {e.Message}{Environment.NewLine}";
+#if DEBUG
+                        Console.Write(message);
+#endif
+                        sb.Append(message);
                         continue;
                     }
 
                     catch (DirectoryNotFoundException e)
                     {
-                        sb.Append($"--- ERROR --- BackupFiles: {e.Message}{Environment.NewLine}");
+                        var message = $"--- ERROR --- BackupFiles: {e.Message}{Environment.NewLine}";
+#if DEBUG
+                        Console.Write(message);
+#endif
+                        sb.Append(message);
                         continue;
                     }
 
@@ -276,11 +333,19 @@ namespace Keebee.AAT.Backup
                             }
 
                             File.Copy(fiSource.FullName, Path.Combine(pathDest, fiSource.Name), true);
-                            sb.Append($"File '{fiSource.Name}' was copied to '{pathDest}'{Environment.NewLine}");
+                            var message = $"File '{fiSource.Name}' was copied to '{pathDest}'{Environment.NewLine}";
+#if DEBUG
+                            Console.Write(message);
+#endif
+                            sb.Append(message);
                         }
                         catch (FileNotFoundException e)
                         {
-                            sb.Append($"--- ERROR --- BackupFiles: {e.Message}{Environment.NewLine}");
+                            var message = $"--- ERROR --- BackupFiles: {e.Message}{Environment.NewLine}";
+#if DEBUG
+                            Console.Write(message);
+#endif
+                            sb.Append(message);
                         }
                     }
 
@@ -292,7 +357,11 @@ namespace Keebee.AAT.Backup
             }
             catch (Exception e)
             {
-                sb.Append($"--- ERROR --- BackupFiles: {e.Message}{Environment.NewLine}");
+                var message = $"--- ERROR --- BackupFiles: {e.Message}{Environment.NewLine}";
+#if DEBUG
+                Console.Write(message);
+#endif
+                sb.Append(message);
             }
             return sb.ToString();
         }
@@ -320,7 +389,11 @@ namespace Keebee.AAT.Backup
 
                 if (driveDest == null)
                 {
-                    return $"--- ERROR --- RemoveObsoleteFolders: Destination drive for {destination} is not available";
+                    var message = $"--- ERROR --- RemoveObsoleteFolders: Destination drive for {destination} is not available";
+#if DEBUG
+                    Console.Write(message);
+#endif
+                    return message;
                 }
 
                 var pathDestination = source.Contains(SqlFilestreamName)
@@ -329,7 +402,11 @@ namespace Keebee.AAT.Backup
 
                 if (!Directory.Exists(pathDestination))
                 {
-                    return $"--- ERROR --- RemoveObsoleteFolders: {pathDestination} does not exist{Environment.NewLine}";
+                    var message = $"--- ERROR --- RemoveObsoleteFolders: {pathDestination} does not exist{Environment.NewLine}";
+#if DEBUG
+                    Console.Write(message);
+#endif
+                    return message;
                 }
 
                 dirs.Push(pathDestination);
@@ -344,12 +421,20 @@ namespace Keebee.AAT.Backup
                     }
                     catch (UnauthorizedAccessException e)
                     {
-                        sb.Append($"--- ERROR --- RemoveObsoleteFolders: {e.Message}{Environment.NewLine}");
+                        var message = $"--- ERROR --- RemoveObsoleteFolders: {e.Message}{Environment.NewLine}";
+#if DEBUG
+                        Console.Write(message);
+#endif
+                        sb.Append(message);
                         continue;
                     }
                     catch (DirectoryNotFoundException e)
                     {
-                        sb.Append($"--- ERROR --- RemoveObsoleteFolders: {e.Message}{Environment.NewLine}");
+                        var message = $"--- ERROR --- RemoveObsoleteFolders: {e.Message}{Environment.NewLine}";
+#if DEBUG
+                        Console.Write(message);
+#endif
+                        sb.Append(message);
                         continue;
                     }
 
@@ -375,7 +460,11 @@ namespace Keebee.AAT.Backup
                     if (!directorySource.Exists)
                     {
                         directoryDest.Delete(true);
-                        sb.Append($"Obsolete folder '{directoryDest.Name}' was deleted{Environment.NewLine}");
+                        var message = $"Obsolete folder '{directoryDest.FullName}' was deleted{Environment.NewLine}";
+#if DEBUG
+                        Console.Write(message);
+#endif
+                        sb.Append(message);
                     }
                     else
                     {
@@ -386,7 +475,11 @@ namespace Keebee.AAT.Backup
             }
             catch (Exception e)
             {
-                sb.Append($"--- ERROR --- RemoveObsoleteFolders: {e.Message}{Environment.NewLine}");
+                var message = $"--- ERROR --- RemoveObsoleteFolders: {e.Message}{Environment.NewLine}";
+#if DEBUG
+                Console.Write(message);
+#endif
+                sb.Append(message);
             }
 
             return sb.ToString();
@@ -425,12 +518,20 @@ namespace Keebee.AAT.Backup
                     }
                     catch (UnauthorizedAccessException e)
                     {
-                        sb.Append($"--- ERROR --- RemoveObsoleteFiles: {e.Message}{Environment.NewLine}");
+                        var message = $"--- ERROR --- RemoveObsoleteFiles: {e.Message}{Environment.NewLine}";
+#if DEBUG
+                        Console.Write(message);
+#endif
+                        sb.Append(message);
                         continue;
                     }
                     catch (DirectoryNotFoundException e)
                     {
-                        sb.Append($"--- ERROR --- RemoveObsoleteFiles: {e.Message}{Environment.NewLine}");
+                        var message = $"--- ERROR --- RemoveObsoleteFiles: {e.Message}{Environment.NewLine}";
+#if DEBUG
+                        Console.Write(message);
+#endif
+                        sb.Append(message);
                         continue;
                     }
 
@@ -445,13 +546,21 @@ namespace Keebee.AAT.Backup
 
                     catch (UnauthorizedAccessException e)
                     {
-                        sb.Append($"--- ERROR --- RemoveObsoleteFiles: {e.Message}{Environment.NewLine}");
+                        var message = $"--- ERROR --- RemoveObsoleteFiles: {e.Message}{Environment.NewLine}";
+#if DEBUG
+                        Console.Write(message);
+#endif
+                        sb.Append(message);
                         continue;
                     }
 
                     catch (DirectoryNotFoundException e)
                     {
-                        sb.Append($"--- ERROR --- RemoveObsoleteFiles: {e.Message}{Environment.NewLine}");
+                        var message = $"--- ERROR --- RemoveObsoleteFiles: {e.Message}{Environment.NewLine}";
+#if DEBUG
+                        Console.Write(message);
+#endif
+                        sb.Append(message);
                         continue;
                     }
 
@@ -487,11 +596,19 @@ namespace Keebee.AAT.Backup
                             if (File.Exists(sourceFilePath)) continue;
 
                             File.Delete(file);
-                            sb.Append($"Obsolete file '{file}' was deleted{Environment.NewLine}");
+                            var message = $"Obsolete file '{file}' was deleted{Environment.NewLine}";
+#if DEBUG
+                            Console.Write(message);
+#endif
+                            sb.Append(message);
                         }
                         catch (FileNotFoundException e)
                         {
-                            sb.Append($"--- ERROR --- RemoveObsoleteFiles: {e.Message}{Environment.NewLine}");
+                            var message = $"--- ERROR --- RemoveObsoleteFiles: {e.Message}{Environment.NewLine}";
+#if DEBUG
+                            Console.Write(message);
+#endif
+                            sb.Append(message);
                         }
                     }
 
@@ -501,13 +618,17 @@ namespace Keebee.AAT.Backup
             }
             catch (Exception e)
             {
-                sb.Append($"--- ERROR --- RemoveObsoleteFiles: {e.Message}{Environment.NewLine}");
+                var message = $"--- ERROR --- RemoveObsoleteFiles: {e.Message}{Environment.NewLine}";
+#if DEBUG
+                Console.Write(message);
+#endif
+                sb.Append(message);
             }
 
             return sb.ToString();
         }
 
-        private static string CreateScriptSeedResidents(string path)
+        private static string CreateScriptRestoreResidents(string path)
         {
             var sb = new StringBuilder();
 
@@ -517,9 +638,15 @@ namespace Keebee.AAT.Backup
                 var residents = opsClient.GetResidents().ToArray();
 
                 if (!residents.Any())
-                    return $"--- WARNING --- CreateScriptSeedResidents: No residents found{Environment.NewLine}";
+                {
+                    var message = $"--- WARNING --- CreateScriptRestoreResidents: No residents found{Environment.NewLine}";
+#if DEBUG
+                    Console.Write(message);
+#endif
+                    return message;
+                }
 
-                var pathScript = $@"{path}\Install\Database\SQL Server\SeedResidents.sql";
+                var pathScript = $@"{path}\Install\Database\SQL Server\RestoreResidents.sql";
 
                 if (File.Exists(pathScript))
                     File.Delete(pathScript);
@@ -603,16 +730,19 @@ namespace Keebee.AAT.Backup
             }
             catch (Exception e)
             {
-                sb.Append($"--- ERROR --- CreateScriptSeedResidents: {e.Message}{Environment.NewLine}");
+                var message = $"--- ERROR --- CreateScriptRestoreResidents: {e.Message}{Environment.NewLine}";
+#if DEBUG
+                Console.Write(message);
+#endif
+                sb.Append(message);
             }
 
-            sb.Append(CreatePowershellScript(path, "SeedResidents", "Residents"));
-            sb.Append(CreateBatchFile(path, "9a_SeedResidents", "SeedResidents"));
+            sb.Append(CreatePowerShellScript(path, "RestoreResidents", "Residents"));
 
             return sb.ToString();
         }
 
-        private static string CreateScriptSeedConfigurations(string path)
+        private static string CreateScriptRestoreConfigurations(string path)
         {
             var sb = new StringBuilder();
 
@@ -622,9 +752,15 @@ namespace Keebee.AAT.Backup
                 var configs = opsClient.GetConfigs().ToArray();
 
                 if (!configs.Any())
-                    return $"--- WARNING --- CreateScriptSeedConfigurations: No configurations found{Environment.NewLine}";
+                {
+                    var message = $"--- WARNING --- CreateScriptRestoreConfigurations: No configurations found{Environment.NewLine}";
+#if DEBUG
+                    Console.Write(message);
+#endif
+                    return message;
+                }
 
-                var pathScript = $@"{path}\Install\Database\SQL Server\SeedConfigurations.sql";
+                var pathScript = $@"{path}\Install\Database\SQL Server\RestoreConfigurations.sql";
 
                 if (File.Exists(pathScript))
                     File.Delete(pathScript);
@@ -668,16 +804,19 @@ namespace Keebee.AAT.Backup
             }
             catch (Exception e)
             {
-                sb.Append($"--- ERROR --- CreateScriptSeedResidents: {e.Message}{Environment.NewLine}");
+                var message = $"--- ERROR --- CreateScriptRestoreConfigurations: {e.Message}{Environment.NewLine}";
+#if DEBUG
+                Console.Write(message);
+#endif
+                sb.Append(message);
             }
 
-            sb.Append(CreatePowershellScript(path, "SeedConfigurations", "Configurations"));
-            sb.Append(CreateBatchFile(path, "9b_SeedConfigurations", "SeedConfigurations"));
+            sb.Append(CreatePowerShellScript(path, "RestoreConfigurations", "Configurations"));
 
             return sb.ToString();
         }
 
-        private static string CreatePowershellScript(string path, string filename, string description)
+        private static string CreatePowerShellScript(string path, string filename, string description)
         {
             var sb = new StringBuilder();
 
@@ -694,68 +833,91 @@ namespace Keebee.AAT.Backup
                     sw.WriteLine("$database = " + "\"" + "KeebeeAAT" + "\"");
                     sw.WriteLine("$path = " + "\"" + @"C:\Deployments\Install\Database\SQL Server\" + "\"");
                     sw.WriteLine();
-                    sw.WriteLine();
-                    sw.WriteLine("# check if the database exists");
-                    sw.WriteLine("$query = Invoke-SqlQuery -Query " +
-                                 "\"SELECT COUNT(*) AS DatabaseCount FROM master.sys.databases WHERE name = N'$database'" +
-                                 "\"" + " -Server $server -Database " + "\"master" + "\"");
-                    sw.WriteLine("$databaseCount = $query.DatabaseCount");
-                    sw.WriteLine();
-                    sw.WriteLine("# if the database doesn't exist, don't attempt anything");
-                    sw.WriteLine("if ($databaseCount -eq 0) {");
-                    sw.WriteLine("    Write-Host -ForegroundColor yellow " + "\"" + "`nR2G2 database does not exist." +
-                                 "`n" + "\"");
-                    sw.WriteLine("}");
-                    sw.WriteLine("else");
+                    sw.WriteLine("Try");
                     sw.WriteLine("{");
-                    sw.WriteLine("    Try");
+                    sw.WriteLine("    # check if the database exists");
+                    sw.WriteLine("    $query = Invoke-SqlQuery -Query " +
+                                      "\"SELECT COUNT(*) AS DatabaseCount FROM master.sys.databases WHERE name = N'$database'" +
+                                      "\"" + " -Server $server -Database " + "\"master" + "\"");
+                    sw.WriteLine("    $databaseCount = $query.DatabaseCount");
+                    sw.WriteLine();
+                    sw.WriteLine("    # if the database doesn't exist, don't attempt anything");
+                    sw.WriteLine("    if ($databaseCount -eq 0) {");
+                    sw.WriteLine("        Write-Host -ForegroundColor yellow " + "\"" + "`nR2G2 database does not exist." + "`n" + "\"");
+                    sw.WriteLine("    }");
+                    sw.WriteLine("    else");
                     sw.WriteLine("    {");
-                    sw.WriteLine("        Write-Host " + "\"" + $"Seeding {description.ToLower()}..." + "\"" +
-                                 "-NoNewline");
+                    sw.WriteLine("        Write-Host " + "\"" + $"Restoring {description.ToLower()}..." + "\"" + "-NoNewline");
                     sw.WriteLine("        $queryFile = $path + " + $"\"{filename}.sql" + "\"");
                     sw.WriteLine("        Invoke-SqlQuery -File $queryFile -Server $server -Database $database");
-                    sw.WriteLine("        Write-Host " + "\"done.`n" + "\"");
-                    sw.WriteLine();
-                    sw.WriteLine("        Write-Host " + "\"" + $"{description} seeded successfully!`n" + "\"");
+                    sw.WriteLine("        Write-Host " + "\"done." + "\"");
                     sw.WriteLine("    }");
-                    sw.WriteLine("    Catch");
-                    sw.WriteLine("    {");
-                    sw.WriteLine("        Write-Host -ForegroundColor red $_.Exception.Message");
-                    sw.WriteLine("    }");
+                    sw.WriteLine("}");
+                    sw.WriteLine("Catch");
+                    sw.WriteLine("{");
+                    sw.WriteLine("    Write-Host -ForegroundColor red $_.Exception.Message");
                     sw.Write("}");
                 }
             }
             catch (Exception e)
             {
-                sb.Append($"--- ERROR --- CreatePowershellScript: {e.Message}{Environment.NewLine}");
+                var message = $"--- ERROR --- CreatePowerShellScript: {e.Message}{Environment.NewLine}";
+#if DEBUG
+                Console.Write(message);
+#endif
+                sb.Append(message);
             }
 
             return sb.ToString();
         }
 
-        private static string CreateBatchFile(string path, string batchName, string powershellName)
+        private static string CreateInstallPowerShellScript(string path)
         {
             var sb = new StringBuilder();
 
             try
             {
-                var pathBatch = $@"{path}\Install\{batchName}.bat";
+                var pathScript = $@"{path}\Install\PowerShell\INSTALL_R2G2.ps1";
 
-                if (File.Exists(pathBatch))
-                    File.Delete(pathBatch);
+                if (File.Exists(pathScript))
+                    File.Delete(pathScript);
 
-                using (var sw = new StreamWriter(pathBatch))
+                using (var sw = new StreamWriter(pathScript))
                 {
-                    sw.WriteLine("@ECHO OFF");
-                    sw.WriteLine("PowerShell -NoProfile -ExecutionPolicy Unrestricted -Command " + "\"& " +
-                                 $@"'C:\Deployments\Install\Database\PowerShell\{powershellName}.ps1'" + "\"");
-                    sw.Write("pause");
+                    sw.WriteLine("Try");
+                    sw.WriteLine("{");
+
+                    sw.WriteLine("    Write-Host -ForegroundColor yellow " + "\"" + "`nInstalling R2G2...`n" + "\"");
+                    sw.WriteLine();
+                    sw.WriteLine(@"    invoke-expression -Command C:\Deployments\Install\PowerShell\CreateEventLogSources.ps1");
+                    sw.WriteLine(@"    invoke-expression -Command C:\Deployments\Install\PowerShell\CreateMessageQueues.ps1");
+                    sw.WriteLine(@"    invoke-expression -Command C:\Deployments\Install\PowerShell\CreateScheduledTasks.ps1");
+                    sw.WriteLine(@"    invoke-expression -Command C:\Deployments\Install\PowerShell\CreateLocalWebuser.ps1");
+                    sw.WriteLine(@"    invoke-expression -Command C:\Deployments\Install\PowerShell\CreateWebApplications.ps1");
+                    sw.WriteLine(@"    invoke-expression -Command C:\Deployments\Install\Database\PowerShell\CreateDatabase.ps1");
+                    sw.WriteLine(@"    invoke-expression -Command C:\Deployments\Install\Database\PowerShell\DropAndCreateTables.ps1");
+                    sw.WriteLine(@"    invoke-expression -Command C:\Deployments\Install\Database\PowerShell\SeedData.ps1");
+                    sw.WriteLine(@"    invoke-expression -Command C:\Deployments\Install\Database\PowerShell\RestoreResidents.ps1");
+                    sw.WriteLine(@"    invoke-expression -Command C:\Deployments\Install\Database\PowerShell\RestoreConfigurations.ps1");
+                    sw.WriteLine(@"    invoke-expression -Command C:\Deployments\Install\PowerShell\InstallServices.ps1");
+                    sw.WriteLine();
+                    sw.WriteLine("    Write-Host -ForegroundColor green " + "\"" + "`nR2G2 successfully installed.`n" + "\"");
+
+                    sw.WriteLine("}");
+                    sw.WriteLine("Catch");
+                    sw.WriteLine("{");
+                    sw.WriteLine("    Write-Host -ForegroundColor red $_.Exception.Message");
+                    sw.Write("}");
                 }
             }
 
             catch (Exception e)
             {
-                sb.Append($"--- ERROR --- CreateBatchFile: {e.Message}{Environment.NewLine}");
+                var message = $"--- ERROR --- CreateInstallPowerShellScript: {e.Message}{Environment.NewLine}";
+#if DEBUG
+                Console.Write(message);
+#endif
+                sb.Append(message);
             }
 
             return sb.ToString();

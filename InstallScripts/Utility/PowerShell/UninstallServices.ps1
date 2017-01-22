@@ -1,7 +1,5 @@
 ﻿Try
 {
-    Write-Host -ForegroundColor green "`nUninstalling R2G2...`n"
-
     Write-Host "Uninstalling Phidget Service..." -NoNewline
     Invoke-Command -ScriptBlock { C:\WINDOWS\Microsoft.NET\Framework\v4.0.30319\InstallUtil.exe /uninstall "C:\Deployments\Services\PhidgetService\1.0.0.0\Keebee.AAT.PhidgetService.exe"} | Out-Null
     Write-Host "done."

@@ -887,7 +887,7 @@ namespace Keebee.AAT.Backup
                     sw.WriteLine("Try");
                     sw.WriteLine("{");
 
-                    sw.WriteLine("    Write-Host -ForegroundColor yellow " + "\"" + "`nInstalling R2G2...`n" + "\"");
+                    sw.WriteLine("    Write-Host -ForegroundColor green " + "\"" + "`nInstalling R2G2...`n" + "\"");
                     sw.WriteLine();
                     sw.WriteLine(@"    invoke-expression -Command C:\Deployments\Install\PowerShell\CreateEventLogSources.ps1");
                     sw.WriteLine(@"    invoke-expression -Command C:\Deployments\Install\PowerShell\CreateMessageQueues.ps1");

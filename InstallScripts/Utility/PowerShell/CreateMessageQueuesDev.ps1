@@ -1,6 +1,6 @@
 Try
 {
-    Write-Host -ForegroundColor yellow "`n--- Dev Message queuesr ---`n"
+    Write-Host -ForegroundColor yellow "`n--- Dev Message Queues ---`n"
 
     [Reflection.Assembly]::LoadWithPArtialName(“System.Messaging”) | Out-Null
     $msmq = [System.Messaging.MessageQueue]

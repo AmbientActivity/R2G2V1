@@ -1,6 +1,6 @@
 ﻿Try
 {
-    Write-Host -ForegroundColor yellow "`nInstalling R2G2...`n"
+    Write-Host -ForegroundColor greeb "`nInstalling R2G2...`n"
 
     invoke-expression -Command C:\Deployments\Install\PowerShell\CreateEventLogSources.ps1
     invoke-expression -Command C:\Deployments\Install\PowerShell\CreateMessageQueues.ps1

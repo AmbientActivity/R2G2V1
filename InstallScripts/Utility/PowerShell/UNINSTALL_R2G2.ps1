@@ -1,6 +1,6 @@
 ﻿Try
 {
-    Write-Host -ForegroundColor yellow "`Uninstalling R2G2...`n"
+    Write-Host -ForegroundColor green "`nUninstalling R2G2...`n"
 
     invoke-expression -Command C:\Deployments\Install\Utility\PowerShell\UninstallServices.ps1
     invoke-expression -Command C:\Deployments\Install\Database\PowerShell\DropDatabase.ps1

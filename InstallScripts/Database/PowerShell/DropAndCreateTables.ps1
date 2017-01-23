@@ -29,12 +29,11 @@ Try
         }
 
         # restart IIS
-        Write-Host "-----------”
-        Write-Host "Restart IIS”
-        Write-Host "-----------”
-        invoke-command -scriptblock {iisreset}
+        Write-Host "Restarting IIS...” -NoNewline
+        invoke-command -scriptblock {iisreset} | Out-Null
+        Write-Host "done.”
 
-        Write-Host "`nCreating tables...” -NoNewline
+        Write-Host "Creating tables...” -NoNewline
         $webclient = New-Object System.Net.WebClient
         $result = $webclient.DownloadString($url)
         Write-Host "done."

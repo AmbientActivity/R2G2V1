@@ -17,12 +17,11 @@ Try
     else {
 
         # restart IIS
-        Write-Host "-----------”
-        Write-Host "IIS Restart”
-        Write-Host "-----------”
-        invoke-command -scriptblock {iisreset}
+        Write-Host "Restarting IIS...” -NoNewline
+        invoke-command -scriptblock {iisreset} | Out-Null
+        Write-Host "done.”
 
-        Write-Host "`nDropping users...” -NoNewline
+        Write-Host "Dropping users...” -NoNewline
         $queryFile = $path + "DropUsers.sql"
         Invoke-SqlQuery -File $queryFile -Server $server -Database "KeebeeAAT"
         Write-Host "done.”
@@ -30,6 +29,12 @@ Try
         Write-Host "Dropping database...” -NoNewline
         $queryFile = $path + "DropDatabase.sql"
         Invoke-SqlQuery -File $queryFile -Server $server -Database "master"
+        Write-Host "done.”
+
+        # restart SQLEXPRESS
+        Write-Host "Restarting SQLEXPRESS...” -NoNewline
+        $SQLEXPRESS = 'MSSQL$SQLEXPRESS'
+        Restart-Service -Force $SQLEXPRESS -WarningAction SilentlyContinue
         Write-Host "done.”
     }
 }

@@ -44,12 +44,10 @@ Try
             Copy-Item C:\Deployments\Media\* $mediaDestination -recurse -Force
             Write-Host "done.”
 
-            Write-Host "Creating MediaFiles view...” -NoNewline
+            Write-Host "Seeding configuration data...” -NoNewline
             $queryFile = $path + "CreateMediaFilesView.sql"
             Invoke-SqlQuery -File $queryFile -Server $server -Database $database
-            Write-Host "done.”
 
-            Write-Host "Seeding configuration data...” -NoNewline
             $queryFile = $path + "SeedConfigurationData.sql"
             Invoke-SqlQuery -File $queryFile -Server $server -Database $database
             Write-Host "done.”

@@ -32,7 +32,7 @@ Try
         Invoke-SqlQuery -File $queryFile -Server $server -Database "master"
         Write-Host "done.”
 
-        Write-Host "Creating database...” -NoNewline
+        Write-Host "Creating KeebeeAAT database...” -NoNewline
         $queryFile = $path + "CreateDatabase.sql"
         Invoke-SqlQuery -File $queryFile -Server $server -Database "master"
         Write-Host "done.”

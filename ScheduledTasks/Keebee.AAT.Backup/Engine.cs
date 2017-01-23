@@ -539,8 +539,9 @@ namespace Keebee.AAT.Backup
                     try
                     {
                         files = Directory.GetFiles(currentDir)
-                            .Where(x => !x.Contains("SeedResidents"))
-                            .Where(x => !x.Contains("SeedConfigurations"))
+                            .Where(x => !x.Contains("RestoreResidents"))
+                            .Where(x => !x.Contains("RestoreConfigurations"))
+                            .Where(x => !x.Contains("INSTALL_R2G2"))
                             .ToArray();
                     }
 

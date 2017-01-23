@@ -11,6 +11,10 @@ namespace Keebee.AAT.Backup
     public class Engine
     {
         private const string SqlFilestreamName = "KeebeeAATFilestream";
+        private const string RestoreResidentsFilename = "RestoreResidents";
+        private const string RestoreConfigurationsFilename = "RestoreConfigurations";
+        private const string InstallR2G2Filename = "INSTALL_R2G2.ps1";
+
         private readonly string _pathDeployments;
         private readonly string _pathVideoCaptures;
         private readonly string _pathBackup;
@@ -18,6 +22,8 @@ namespace Keebee.AAT.Backup
         private readonly string _pathSqlMedia;
         private readonly string _deploymentsFolder;
         private readonly string _mediaBackupPath;
+
+        private bool _residentsExist;
 
         public Engine()
         {
@@ -326,6 +332,10 @@ namespace Keebee.AAT.Backup
                                 Directory.CreateDirectory(pathDest);
 
                             var destFilePath = Path.Combine(pathDest, fiSource.Name);
+
+                            if (fiSource.Name == InstallR2G2Filename)
+                                continue;
+
                             if (File.Exists(destFilePath))
                             {
                                 if (IsFileIdentical(fiSource.FullName, destFilePath))
@@ -539,9 +549,8 @@ namespace Keebee.AAT.Backup
                     try
                     {
                         files = Directory.GetFiles(currentDir)
-                            .Where(x => !x.Contains("RestoreResidents"))
-                            .Where(x => !x.Contains("RestoreConfigurations"))
-                            .Where(x => !x.Contains("INSTALL_R2G2"))
+                            .Where(x => !x.Contains(RestoreResidentsFilename))
+                            .Where(x => !x.Contains(RestoreConfigurationsFilename))
                             .ToArray();
                     }
 
@@ -629,7 +638,7 @@ namespace Keebee.AAT.Backup
             return sb.ToString();
         }
 
-        private static string CreateScriptRestoreResidents(string path)
+        private string CreateScriptRestoreResidents(string path)
         {
             var sb = new StringBuilder();
 
@@ -644,9 +653,11 @@ namespace Keebee.AAT.Backup
 #if DEBUG
                     Console.Write(message);
 #endif
+                    _residentsExist = false;
                     return message;
                 }
 
+                _residentsExist = true;
                 var pathScript = $@"{path}\Install\Database\SQL Server\RestoreResidents.sql";
 
                 if (File.Exists(pathScript))
@@ -872,7 +883,7 @@ namespace Keebee.AAT.Backup
             return sb.ToString();
         }
 
-        private static string CreateInstallPowerShellScript(string path)
+        private string CreateInstallPowerShellScript(string path)
         {
             var sb = new StringBuilder();
 
@@ -898,7 +909,8 @@ namespace Keebee.AAT.Backup
                     sw.WriteLine(@"    invoke-expression -Command C:\Deployments\Install\Database\PowerShell\CreateDatabase.ps1");
                     sw.WriteLine(@"    invoke-expression -Command C:\Deployments\Install\Database\PowerShell\DropAndCreateTables.ps1");
                     sw.WriteLine(@"    invoke-expression -Command C:\Deployments\Install\Database\PowerShell\SeedData.ps1");
-                    sw.WriteLine(@"    invoke-expression -Command C:\Deployments\Install\Database\PowerShell\RestoreResidents.ps1");
+                    if (_residentsExist)
+                        sw.WriteLine(@"    invoke-expression -Command C:\Deployments\Install\Database\PowerShell\RestoreResidents.ps1");
                     sw.WriteLine(@"    invoke-expression -Command C:\Deployments\Install\Database\PowerShell\RestoreConfigurations.ps1");
                     sw.WriteLine(@"    invoke-expression -Command C:\Deployments\Install\PowerShell\InstallServices.ps1");
                     sw.WriteLine();

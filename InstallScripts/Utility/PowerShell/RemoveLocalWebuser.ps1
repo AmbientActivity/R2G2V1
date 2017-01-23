@@ -2,7 +2,7 @@
 {
   Write-Host -ForegroundColor yellow "`n--- Local webuser ---`n"
 
-  Write-Host "Deleting local webuser..." -NoNewline
+  Write-Host "Removing local webuser..." -NoNewline
 
   $computername = $env:COMPUTERNAME
   $ADSIComp = [adsi]"WinNT://$computername"

@@ -46,12 +46,10 @@ $solutionFile = "Keebee.AAT.sln"
 
 Try
 {
-    Write-Host -foregroundcolor yellow "`nDeploying R2G2...”
+    Write-Host -foregroundcolor green "`nDeploying R2G2...`n”
 
     # stop all services
-    Write-Host "`n------------------”
-    Write-Host "Uninstall Services”
-    Write-Host "------------------`n”
+    Write-Host -ForegroundColor yellow "`n--- Uninstall Services ---`n”
 
     Write-Host "Uninstalling Phidget Service..." -NoNewline
     Invoke-Command -ScriptBlock { C:\WINDOWS\Microsoft.NET\Framework\v4.0.30319\InstallUtil.exe /uninstall "C:\Deployments\Services\PhidgetService\1.0.0.0\Keebee.AAT.PhidgetService.exe"} | Out-Null
@@ -75,9 +73,7 @@ Try
 
 
     # build the solution
-    Write-Host "`n`n--------------”
-    Write-Host "Build Solution”
-    Write-Host "--------------`n”
+    Write-Host -ForegroundColor yellow "`n`n--- Build Solution ---`n”
 
     # Write-Host "--- Functionality temporarily removed ---`n” -NoNewline
 
@@ -110,9 +106,7 @@ Try
     }
 
     # delpoy components
-    Write-Host "`n`n-----------------”
-    Write-Host "Deploy Components”
-    Write-Host "-----------------”
+    Write-Host -ForegroundColor yellow "`n`n--- Deploy Components ---`n”
     # -------------------- ROOT --------------------
 
     # create the root directory
@@ -123,7 +117,7 @@ Try
 
     # -------------------- UI --------------------
     # display
-    Write-Host "`nDeploying UI Components...” -NoNewline
+    Write-Host "Deploying UI Components...” -NoNewline
     $path = $destPath + $displayReleasePath + $versionPath + "Release\"
     If(test-path $path)
     {

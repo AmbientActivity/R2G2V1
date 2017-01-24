@@ -101,8 +101,18 @@ Try
     $qObject = $msmq::Create($qname) 
     $qObject.SetPermissions("Everyone", [System.Messaging.MessageQueueAccessRights]::FullControl, [System.Messaging.AccessControlEntryType]::Allow)
     $qObject.SetPermissions("ANONYMOUS LOGON", [System.Messaging.MessageQueueAccessRights]::FullControl, [System.Messaging.AccessControlEntryType]::Allow)
-    write-host "done."
 
+    # Display Message Queue (to alert the Bluetooth Beacon Watcher Service when the Display App is running)
+    $name = "Display-Bluetooth-Beacon-Watcher"
+    $qname = “.\private$\” + $name
+    $qname = “.\private$\” + $name
+    If (($msmq::Exists($qname))) {
+        $qObject = $msmq::Delete($qname)
+    }
+    $qObject = $msmq::Create($qname) 
+    $qObject.SetPermissions("Everyone", [System.Messaging.MessageQueueAccessRights]::FullControl, [System.Messaging.AccessControlEntryType]::Allow)
+    $qObject.SetPermissions("ANONYMOUS LOGON", [System.Messaging.MessageQueueAccessRights]::FullControl, [System.Messaging.AccessControlEntryType]::Allow)
+    write-host "done."
 
     # Config Message Queue (to alert the State Machine Service when to repload a newly activated configuration)
     write-host "Creating Config message queues..." -NoNewline

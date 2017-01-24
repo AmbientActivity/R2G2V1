@@ -49,7 +49,7 @@ Try
     Write-Host -foregroundcolor green "`nDeploying R2G2...`n”
 
     # stop all services
-    Write-Host -ForegroundColor yellow "`n--- Uninstall Services ---`n”
+    Write-Host -ForegroundColor yellow "--- Uninstall Services ---`n”
 
     Write-Host "Uninstalling Phidget Service..." -NoNewline
     Invoke-Command -ScriptBlock { C:\WINDOWS\Microsoft.NET\Framework\v4.0.30319\InstallUtil.exe /uninstall "C:\Deployments\Services\PhidgetService\1.0.0.0\Keebee.AAT.PhidgetService.exe"} | Out-Null
@@ -73,7 +73,7 @@ Try
 
 
     # build the solution
-    Write-Host -ForegroundColor yellow "`n`n--- Build Solution ---`n”
+    Write-Host -ForegroundColor yellow "`n--- Build Solution ---`n”
 
     # Write-Host "--- Functionality temporarily removed ---`n” -NoNewline
 
@@ -106,7 +106,7 @@ Try
     }
 
     # delpoy components
-    Write-Host -ForegroundColor yellow "`n`n--- Deploy Components ---`n”
+    Write-Host -ForegroundColor yellow "`n--- Deploy Components ---`n”
     # -------------------- ROOT --------------------
 
     # create the root directory

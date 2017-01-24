@@ -154,7 +154,7 @@ namespace Keebee.AAT.Display
             }
         }
 
-        private static bool StartSqlExpressService()
+        private bool StartSqlExpressService()
         {
             try
             {
@@ -163,8 +163,9 @@ namespace Keebee.AAT.Display
                 if (controller.Status == ServiceControllerStatus.Stopped)
                     controller.Start();
             }
-            catch
+            catch (Exception ex)
             {
+                _systemEventLogger.WriteEntry($"Splash.TimerTick: {ex.Message}", EventLogEntryType.Warning);
                 return false;
             }
             return true;

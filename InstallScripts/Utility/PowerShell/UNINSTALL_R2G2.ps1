@@ -10,7 +10,7 @@
     invoke-expression -Command C:\Deployments\Install\Utility\PowerShell\RemoveEventLogSources.ps1
     invoke-expression -Command C:\Deployments\Install\Utility\PowerShell\RemoveScheduledTasks.ps1
 
-    Write-Host -ForegroundColor green "`nR2G2 successfully uninstalled.`n"
+    Write-Host -ForegroundColor green "`nUninstall complete.`n"
 }
 Catch
 {

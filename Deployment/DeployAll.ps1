@@ -338,7 +338,7 @@ Try
 
     Write-Host "done.”
 
-    Write-Host -foregroundcolor green "`nR2G2 successfully deployed.`n”
+    Write-Host -foregroundcolor green "`nDeployment complete.`n”
 }
 Catch
 {

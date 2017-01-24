@@ -156,12 +156,19 @@ namespace Keebee.AAT.Display
             }
         }
 
-        private static void StartSqlExpressService()
+        private void StartSqlExpressService()
         {
-            var controller = new ServiceController(SqlExpressServiceName);
+            try
+            {
+                var controller = new ServiceController(SqlExpressServiceName);
 
-            if (controller.Status == ServiceControllerStatus.Stopped)
-                controller.Start();
+                if (controller.Status == ServiceControllerStatus.Stopped)
+                    controller.Start();
+            }
+            catch (Exception ex)
+            {
+                _systemEventLogger.WriteEntry($"Splash.StartSqlExpressService: {ex.Message}", EventLogEntryType.Error);
+            }
         }
 
         private void SplashShown(object sender, EventArgs e)

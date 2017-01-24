@@ -12,5 +12,5 @@
 }
 Catch
 {
-    Write-Host -ForegroundColor red $_.Exception.Message
+    throw $_.Exception.Message
 }

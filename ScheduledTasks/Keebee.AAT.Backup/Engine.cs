@@ -867,7 +867,7 @@ namespace Keebee.AAT.Backup
                     sw.WriteLine("}");
                     sw.WriteLine("Catch");
                     sw.WriteLine("{");
-                    sw.WriteLine("    Write-Host -ForegroundColor red $_.Exception.Message");
+                    sw.WriteLine("    throw $_.Exception.Message");
                     sw.Write("}");
                 }
             }
@@ -920,6 +920,7 @@ namespace Keebee.AAT.Backup
                     sw.WriteLine("Catch");
                     sw.WriteLine("{");
                     sw.WriteLine("    Write-Host -ForegroundColor red $_.Exception.Message");
+                    sw.WriteLine("    Write-Host -ForegroundColor yellow " + "\"" + "`nInstallation aborted.`n" + "\"");
                     sw.Write("}");
                 }
             }

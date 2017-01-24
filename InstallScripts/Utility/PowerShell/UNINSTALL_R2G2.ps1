@@ -15,4 +15,5 @@
 Catch
 {
     Write-Host -ForegroundColor red $_.Exception.Message
+    Write-Host -ForegroundColor yellow "`nUninstall aborted.`n"
 }

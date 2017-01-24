@@ -4,7 +4,7 @@ $path = "C:\Deployments\Install\Database\SQL Server\"
 
 Try
 {
-    Write-Host -ForegroundColor yellow "`n--- Seeding ---`n"
+    Write-Host -ForegroundColor yellow "`n--- Seed ---`n"
 
     # check if the database exists
     $query = Invoke-SqlQuery -Query "SELECT COUNT(*) AS DatabaseCount FROM master.sys.databases WHERE name = N'$database'" -Server $server -Database "master"
@@ -29,7 +29,7 @@ Try
             $mediaProfiles = $mediaDestination + "\Profiles\*"
             $mediaExports = $mediaDestination + "\Exports\*"
 
-            Write-Host "Transferring media...” -NoNewline
+            Write-Host "Transfering media...” -NoNewline
 
             If(test-path $mediaProfiles)
             {
@@ -61,5 +61,5 @@ Try
 }
 Catch
 {
-    Write-Host -ForegroundColor red $_.Exception.Message
+    throw $_.Exception.Message
 }

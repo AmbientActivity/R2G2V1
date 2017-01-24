@@ -5,7 +5,7 @@ $url = "http://localhost/Keebee.AAT.Operations/api/Configs"
 
 Try
 {
-    Write-Host -ForegroundColor yellow "`n--- Database Tables ---`n"
+    Write-Host -ForegroundColor yellow "`n--- Tables ---`n"
 
     # check if the database exists
     $query = Invoke-SqlQuery -Query "SELECT COUNT(*) AS DatabaseCount FROM master.sys.databases WHERE name = N'$database'" -Server $server -Database "master"
@@ -41,5 +41,5 @@ Try
 }
 Catch
 {
-    Write-Host -ForegroundColor red $_.Exception.Message
+    throw $_.Exception.Message
 }

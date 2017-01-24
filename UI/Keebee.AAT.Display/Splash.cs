@@ -7,6 +7,7 @@ using System;
 using System.Linq;
 using System.Diagnostics;
 using System.Drawing;
+using System.ServiceProcess;
 using System.Windows.Forms;
 using AxWMPLib;
 using WMPLib;
@@ -15,6 +16,7 @@ namespace Keebee.AAT.Display
 {
     public partial class Splash : Form
     {
+        private const string SqlExpressServiceName = "MSSQL$SQLEXPRESS";
         private const string PlaylistAmbient = PlaylistName.Ambient;
 
         private Timer _timer;
@@ -129,6 +131,7 @@ namespace Keebee.AAT.Display
 
                 if (!success)
                 {
+                    StartSqlExpressService();
                     if (_numAttempt < MaxNumAttempts) return;
 
                     // exceeded the max number of database read attempts - abort
@@ -151,6 +154,14 @@ namespace Keebee.AAT.Display
             {
                 _systemEventLogger.WriteEntry($"Splash.TimerTick: {ex.Message}", EventLogEntryType.Error);
             }
+        }
+
+        private static void StartSqlExpressService()
+        {
+            var controller = new ServiceController(SqlExpressServiceName);
+
+            if (controller.Status == ServiceControllerStatus.Stopped)
+                controller.Start();
         }
 
         private void SplashShown(object sender, EventArgs e)

@@ -30,12 +30,12 @@ Try
         $source = $logSource.split(",")[1]
 
         if ([System.Diagnostics.EventLog]::SourceExists($source) -eq $false) {
-        write-host "Creating event log source $log..." -NoNewline
-        [System.Diagnostics.EventLog]::CreateEventSource($source, $log)
-        write-host "done."
+            write-host "Creating event log source $log..." -NoNewline
+            [System.Diagnostics.EventLog]::CreateEventSource($source, $log)
+            write-host "done."
         }
         else {
-        write-host -foregroundcolor yellow "Warning: Event source $source already exists. Cannot create this source on Event log $log"
+            write-host -foregroundcolor yellow "Warning: Event source $source already exists. Cannot create this source on Event log $log"
         }
     }
 }

@@ -47,11 +47,11 @@ namespace Keebee.AAT.Display
         private void LaunchMain()
         {
             var main = new Main()
-                       {
-                           AmbientPlaylist = _ambientPlaylist,
-                           EventLogger = _systemEventLogger,
-                           OperationsClient = _opsClient
-                       };
+            {
+                AmbientPlaylist = _ambientPlaylist,
+                EventLogger = _systemEventLogger,
+                OperationsClient = _opsClient
+            };
             main.Show();
             Hide();
         }
@@ -66,8 +66,8 @@ namespace Keebee.AAT.Display
 
             try
             {
-                // stop the timer while attempting to read the data
-                _timer.Stop();
+                if (!StartSqlExpressService())
+                    return false;
 
                 // create a temporary media player for loading the ambient playlist
                 using (var mediaPlayer = new AxWindowsMediaPlayer())
@@ -98,7 +98,7 @@ namespace Keebee.AAT.Display
                             _ambientPlaylist = mediaPlayer.LoadPlaylist(PlaylistAmbient, ambientMediaFiles);
                         }
                     }
-                    
+
                     Controls.Remove(mediaPlayer);
 
                     if (_ambientPlaylist == null)
@@ -106,19 +106,16 @@ namespace Keebee.AAT.Display
                         _systemEventLogger.WriteEntry(
                             $"Splash.LoadAmbientMediaPlaylist{Environment.NewLine}Failed to read the database.{Environment.NewLine}Number of attempts {_numAttempt}", EventLogEntryType.Warning);
 
-                        _timer.Start();
                         return false;
                     }
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 _systemEventLogger.WriteEntry($"Splash.LoadAmbientMediaPlaylist: {ex.Message}", EventLogEntryType.Error);
-                _timer.Start();
                 return false;       // fail - will need to try again
             }
 
-            _timer.Start();
             return true;            // success - splash can be closed
         }
 
@@ -126,37 +123,38 @@ namespace Keebee.AAT.Display
         {
             try
             {
+                _timer.Stop();
                 _numAttempt++;
+
                 var success = LoadAmbientMediaPlaylist();
 
                 if (!success)
                 {
-                    StartSqlExpressService();
-                    if (_numAttempt < MaxNumAttempts) return;
+                    if (_numAttempt < MaxNumAttempts)
+                    {
+                        _timer.Start();
+                        return;
+                    }
 
                     // exceeded the max number of database read attempts - abort
-                    _timer.Stop();
                     Hide();
-
-                    MessageBox.Show(
-                        Resources.DatabaseReadErrorMessage, Resources.DatabaseReadErrorCaption, MessageBoxButtons.OK);
-
+                    MessageBox.Show(Resources.DatabaseReadErrorMessage, Resources.DatabaseReadErrorCaption,
+                        MessageBoxButtons.OK);
                     Application.Exit();
                 }
                 else
                 {
-                    _timer.Stop();
-                    LaunchMain(); 
+                    LaunchMain();
                 }
-
             }
             catch (Exception ex)
             {
                 _systemEventLogger.WriteEntry($"Splash.TimerTick: {ex.Message}", EventLogEntryType.Error);
+                _timer.Start();
             }
         }
 
-        private void StartSqlExpressService()
+        private static bool StartSqlExpressService()
         {
             try
             {
@@ -165,10 +163,11 @@ namespace Keebee.AAT.Display
                 if (controller.Status == ServiceControllerStatus.Stopped)
                     controller.Start();
             }
-            catch (Exception ex)
+            catch
             {
-                _systemEventLogger.WriteEntry($"Splash.StartSqlExpressService: {ex.Message}", EventLogEntryType.Error);
+                return false;
             }
+            return true;
         }
 
         private void SplashShown(object sender, EventArgs e)

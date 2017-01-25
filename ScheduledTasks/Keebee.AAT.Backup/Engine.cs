@@ -921,7 +921,7 @@ namespace Keebee.AAT.Backup
                     sw.WriteLine("    Write-Host -ForegroundColor green " + "\"" + "`nInstallation complete.`n" + "\"");
                     sw.WriteLine("    Write-Host -ForegroundColor DarkYellow " + "\"" + "The application will launch after the system is rebooted.`n" + "\"");
                     sw.WriteLine();
-                    sw.WriteLine("    $confirmation = Read-Host " + "\"" + "Reboot now ?" + "\"");
+                    sw.WriteLine("    $confirmation = Read-Host " + "\"" + "Reboot now (Y/N)?" + "\"");
                     sw.WriteLine("    if ($confirmation -eq 'Y')");
                     sw.WriteLine("    {");
                     sw.WriteLine("        Restart-Computer");

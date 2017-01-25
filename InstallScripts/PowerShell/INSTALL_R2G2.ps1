@@ -19,7 +19,7 @@ Try
     Write-Host -ForegroundColor DarkYellow  "The application will launch after the system is rebooted.`n"
 
     $confirmation = Read-Host "Reboot now (Y/N)?"
-    if ($confirmation -eq 'Y')
+    if ($confirmation.ToUpper() -eq 'Y')
     {
         Restart-Computer
     }

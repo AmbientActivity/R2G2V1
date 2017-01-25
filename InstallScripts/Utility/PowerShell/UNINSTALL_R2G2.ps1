@@ -12,6 +12,7 @@
     invoke-expression -Command $installPathUtility\RemoveMessageQueues.ps1
     invoke-expression -Command $installPathUtility\RemoveEventLogSources.ps1
     invoke-expression -Command $installPathUtility\RemoveScheduledTasks.ps1
+    invoke-expression -Command $installPathUtility\RemoveVideoCaptures.ps1
 
     Write-Host -ForegroundColor green "`nUninstall complete.`n"
 }

@@ -918,8 +918,14 @@ namespace Keebee.AAT.Backup
                     sw.WriteLine(@"    invoke-expression -Command $installPathData\RestoreConfigurations.ps1");
                     sw.WriteLine(@"    invoke-expression -Command $installPath\InstallServices.ps1");
                     sw.WriteLine();
-                    sw.WriteLine("    Write-Host -ForegroundColor green " + "\"" + "`nR2G2 successfully installed.`n" + "\"");
-
+                    sw.WriteLine("    Write-Host -ForegroundColor green " + "\"" + "`nInstallation complete.`n" + "\"");
+                    sw.WriteLine("    Write-Host -ForegroundColor DarkYellow " + "\"" + "The application will launch after the system is rebooted.`n" + "\"");
+                    sw.WriteLine();
+                    sw.WriteLine("    $confirmation = Read-Host " + "\"" + "Reboot now ?" + "\"");
+                    sw.WriteLine("    if ($confirmation -eq 'Y')");
+                    sw.WriteLine("    {");
+                    sw.WriteLine("        Restart-Computer");
+                    sw.WriteLine("    }");
                     sw.WriteLine("}");
                     sw.WriteLine("Catch");
                     sw.WriteLine("{");

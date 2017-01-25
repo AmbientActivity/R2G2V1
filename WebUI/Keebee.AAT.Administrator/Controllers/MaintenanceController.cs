@@ -144,7 +144,7 @@ namespace Keebee.AAT.Administrator.Controllers
             var rules = new MaintenanceRules { EventLogger = _systemEventLogger };
             var msg = rules.RestartServices();
 
-            if (msg == null) return null;
+            if (msg != null) return msg;
 
             // inform the services if the display is currently active
             if (DisplayIsActive())
@@ -157,14 +157,14 @@ namespace Keebee.AAT.Administrator.Controllers
             else
             {
                 // inform the state machine to reload the current config
-                var opsClient = new OperationsClient { SystemEventLogger = _systemEventLogger };
+                var opsClient = new OperationsClient {SystemEventLogger = _systemEventLogger};
                 var activeConfigId = opsClient.GetActiveConfig().Id;
-                var configRules = new ConfigRules { OperationsClient = opsClient };
+                var configRules = new ConfigRules {OperationsClient = opsClient};
                 var message = configRules.GetMessageBody(activeConfigId);
                 _messageQueueConfigSms.Send(message);
             }
 
-            return msg;
+            return null;
         }
 
         [Authorize]

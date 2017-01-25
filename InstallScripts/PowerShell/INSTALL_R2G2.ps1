@@ -16,6 +16,10 @@ Try
     invoke-expression -Command $installPath\InstallServices.ps1
 
     Write-Host -ForegroundColor green "`nInstallation complete.`n"
+    Write-Host -ForegroundColor DarkYellow  "The application will launch after the system is rebooted.`n"
+
+    # TODO: add optional reboot
+    #Restart-Computer
 }
 Catch
 {

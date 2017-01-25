@@ -29,7 +29,7 @@ Try
             $mediaProfiles = $mediaDestination + "\Profiles\*"
             $mediaExports = $mediaDestination + "\Exports\*"
 
-            Write-Host "Transfering media...” -NoNewline
+            Write-Host "Transferring media...” -NoNewline
 
             If(test-path $mediaProfiles)
             {

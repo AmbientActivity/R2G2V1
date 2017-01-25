@@ -20,6 +20,7 @@ namespace Keebee.AAT.Administrator.Controllers
         private readonly CustomMessageQueue _messageQueueDisplaySms;
         private readonly CustomMessageQueue _messageQueueDisplayPhidget;
         private readonly CustomMessageQueue _messageQueueDisplayVideoCapture;
+        private readonly CustomMessageQueue _messageQueueDisplayBluetoothBeaconWatcher;
         private readonly CustomMessageQueue _messageQueueResponse;
 
         public MaintenanceController()
@@ -44,10 +45,16 @@ namespace Keebee.AAT.Administrator.Controllers
                 QueueName = MessageQueueType.DisplayPhidget
             });
 
-            // display-phidget message queue sender
+            // display-video-capture message queue sender
             _messageQueueDisplayVideoCapture = new CustomMessageQueue(new CustomMessageQueueArgs
             {
                 QueueName = MessageQueueType.DisplayVideoCapture
+            });
+
+            // display-bluetooth-beacon-watcher message queue sender
+            _messageQueueDisplayBluetoothBeaconWatcher = new CustomMessageQueue(new CustomMessageQueueArgs
+            {
+                QueueName = MessageQueueType.DisplayBluetoothBeaconWatcher
             });
 
             // response message queue sender
@@ -127,24 +134,29 @@ namespace Keebee.AAT.Administrator.Controllers
         [Authorize]
         public string RestartServices()
         {
+            // temporarily inform the services that the display is currently not active
             _messageQueueDisplaySms.Send(CreateDisplayMessageBody(false));
             _messageQueueDisplayPhidget.Send(CreateDisplayMessageBody(false));
             _messageQueueDisplayVideoCapture.Send(CreateDisplayMessageBody(false));
+            _messageQueueDisplayBluetoothBeaconWatcher.Send(CreateDisplayMessageBody(false));
 
+            // restart the services
             var rules = new MaintenanceRules { EventLogger = _systemEventLogger };
             var msg = rules.RestartServices();
 
             if (msg == null) return null;
 
+            // inform the services if the display is currently active
             if (DisplayIsActive())
             {
                 _messageQueueDisplaySms.Send(CreateDisplayMessageBody(true));
                 _messageQueueDisplayPhidget.Send(CreateDisplayMessageBody(true));
                 _messageQueueDisplayVideoCapture.Send(CreateDisplayMessageBody(true));
+                _messageQueueDisplayBluetoothBeaconWatcher.Send(CreateDisplayMessageBody(true));
             }
             else
             {
-                // send active config update
+                // inform the state machine to reload the current config
                 var opsClient = new OperationsClient { SystemEventLogger = _systemEventLogger };
                 var activeConfigId = opsClient.GetActiveConfig().Id;
                 var configRules = new ConfigRules { OperationsClient = opsClient };

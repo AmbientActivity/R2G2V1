@@ -74,7 +74,7 @@
 
     $get_task = Get-ScheduledTask $task_name -ErrorAction SilentlyContinue
     if (!$get_task) {
-        $action = New-ScheduledTaskAction -Execute $execute -WorkingDirectory $working_directory
+        $action = New-ScheduledTaskAction -Execute $execute
         $trigger =  New-ScheduledTaskTrigger -AtLogon -User $user
         Register-ScheduledTask -Action $action -Trigger $trigger -RunLevel Highest -TaskName $task_name -Description $description | Out-Null
     }

@@ -18,8 +18,11 @@ Try
     Write-Host -ForegroundColor green "`nInstallation complete.`n"
     Write-Host -ForegroundColor DarkYellow  "The application will launch after the system is rebooted.`n"
 
-    # TODO: add optional reboot
-    #Restart-Computer
+    $confirmation = Read-Host "Reboot now?"
+    if ($confirmation -eq 'Y')
+    {
+        Restart-Computer
+    }
 }
 Catch
 {

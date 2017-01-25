@@ -890,6 +890,8 @@ namespace Keebee.AAT.Backup
             try
             {
                 var pathScript = $@"{path}\Install\PowerShell\INSTALL_R2G2.ps1";
+                const string pathPowerShell = @"C:\Deployments\Install\PowerShell";
+                const string pathPowerShellData = @"C:\Deployments\Install\Database\PowerShell";
 
                 if (File.Exists(pathScript))
                     File.Delete(pathScript);
@@ -898,21 +900,23 @@ namespace Keebee.AAT.Backup
                 {
                     sw.WriteLine("Try");
                     sw.WriteLine("{");
-
                     sw.WriteLine("    Write-Host -ForegroundColor green " + "\"" + "`nInstalling R2G2...`n" + "\"");
                     sw.WriteLine();
-                    sw.WriteLine(@"    invoke-expression -Command C:\Deployments\Install\PowerShell\CreateEventLogSources.ps1");
-                    sw.WriteLine(@"    invoke-expression -Command C:\Deployments\Install\PowerShell\CreateMessageQueues.ps1");
-                    sw.WriteLine(@"    invoke-expression -Command C:\Deployments\Install\PowerShell\CreateScheduledTasks.ps1");
-                    sw.WriteLine(@"    invoke-expression -Command C:\Deployments\Install\PowerShell\CreateLocalWebuser.ps1");
-                    sw.WriteLine(@"    invoke-expression -Command C:\Deployments\Install\PowerShell\CreateWebApplications.ps1");
-                    sw.WriteLine(@"    invoke-expression -Command C:\Deployments\Install\Database\PowerShell\CreateDatabase.ps1");
-                    sw.WriteLine(@"    invoke-expression -Command C:\Deployments\Install\Database\PowerShell\DropAndCreateTables.ps1");
-                    sw.WriteLine(@"    invoke-expression -Command C:\Deployments\Install\Database\PowerShell\SeedData.ps1");
+                    sw.WriteLine("    $installPath = " + "\"" + $@"{pathPowerShell}" + "\"");
+                    sw.WriteLine("    $installPathData = " + "\"" + $@"{pathPowerShellData}" + "\"");
+                    sw.WriteLine();
+                    sw.WriteLine(@"    invoke-expression -Command $installPath\CreateEventLogSources.ps1");
+                    sw.WriteLine(@"    invoke-expression -Command $installPath\CreateMessageQueues.ps1");
+                    sw.WriteLine(@"    invoke-expression -Command $installPath\CreateScheduledTasks.ps1");
+                    sw.WriteLine(@"    invoke-expression -Command $installPath\CreateLocalWebuser.ps1");
+                    sw.WriteLine(@"    invoke-expression -Command $installPath\CreateWebApplications.ps1");
+                    sw.WriteLine(@"    invoke-expression -Command $installPathData\CreateDatabase.ps1");
+                    sw.WriteLine(@"    invoke-expression -Command $installPathData\DropAndCreateTables.ps1");
+                    sw.WriteLine(@"    invoke-expression -Command $installPathData\SeedData.ps1");
                     if (_residentsExist)
-                        sw.WriteLine(@"    invoke-expression -Command C:\Deployments\Install\Database\PowerShell\RestoreResidents.ps1");
-                    sw.WriteLine(@"    invoke-expression -Command C:\Deployments\Install\Database\PowerShell\RestoreConfigurations.ps1");
-                    sw.WriteLine(@"    invoke-expression -Command C:\Deployments\Install\PowerShell\InstallServices.ps1");
+                        sw.WriteLine(@"    invoke-expression -Command $installPathData\RestoreResidents.ps1");
+                    sw.WriteLine(@"    invoke-expression -Command $installPathData\RestoreConfigurations.ps1");
+                    sw.WriteLine(@"    invoke-expression -Command $installPath\InstallServices.ps1");
                     sw.WriteLine();
                     sw.WriteLine("    Write-Host -ForegroundColor green " + "\"" + "`nR2G2 successfully installed.`n" + "\"");
 

@@ -35,14 +35,17 @@ $installUtilityPath = "Install\Utility\"
 $profilesPath = "Media\Profiles\"
 $profilesPublicPath = "Media\Profiles\0\"
 $exportsPath = "Media\Exports\EventLog\"
-$publicLibrarySource = "\\" + $env:COMPUTERNAME + "\SQLEXPRESS\KeebeeAATFilestream\Media\Profiles\0\*"
+$publicLibrarySource = "\\$env:COMPUTERNAME\SQLEXPRESS\KeebeeAATFilestream\Media\Profiles\0\*"
 
 # documentation paths
 $documentationPath = "Install\Documentation\"
 
 # source code
-$sourceCode = "C:\Users\" + $env:USERNAME + "\Source\Repos\R2G2V1\"
+$sourceCode = "C:\Users\$env:USERNAME\Source\Repos\R2G2V1\"
 $solutionFile = "Keebee.AAT.sln"
+
+# services
+$servicesRoot = "C:\Deployments\Services"
 
 Try
 {
@@ -52,23 +55,23 @@ Try
     Write-Host -ForegroundColor yellow "--- Uninstall Services ---`n”
 
     Write-Host "Uninstalling Phidget Service..." -NoNewline
-    Invoke-Command -ScriptBlock { C:\WINDOWS\Microsoft.NET\Framework\v4.0.30319\InstallUtil.exe /uninstall "C:\Deployments\Services\PhidgetService\1.0.0.0\Keebee.AAT.PhidgetService.exe"} | Out-Null
+    Invoke-Command -ScriptBlock { C:\WINDOWS\Microsoft.NET\Framework\v4.0.30319\InstallUtil.exe /uninstall "$servicesRoot\PhidgetService\1.0.0.0\Keebee.AAT.PhidgetService.exe"} | Out-Null
     Write-Host "done."
 
     Write-Host "Uninstalling Video Capture Service..." -NoNewline
-    Invoke-Command -ScriptBlock { C:\WINDOWS\Microsoft.NET\Framework\v4.0.30319\InstallUtil.exe /uninstall "C:\Deployments\Services\VideoCaptureService\1.0.0.0\Keebee.AAT.VideoCaptureService.exe"} | Out-Null
+    Invoke-Command -ScriptBlock { C:\WINDOWS\Microsoft.NET\Framework\v4.0.30319\InstallUtil.exe /uninstall "$servicesRoot\VideoCaptureService\1.0.0.0\Keebee.AAT.VideoCaptureService.exe"} | Out-Null
     Write-Host "done."
 
     Write-Host "Uninstalling Bluetooth Beacon Watcher Service..." -NoNewline
-    Invoke-Command -ScriptBlock { C:\WINDOWS\Microsoft.NET\Framework\v4.0.30319\InstallUtil.exe /uninstall "C:\Deployments\Services\BluetoothBeaconWatcherService\1.0.0.0\Keebee.AAT.BluetoothBeaconWatcherService.exe"} | Out-Null
+    Invoke-Command -ScriptBlock { C:\WINDOWS\Microsoft.NET\Framework\v4.0.30319\InstallUtil.exe /uninstall "$servicesRoot\BluetoothBeaconWatcherService\1.0.0.0\Keebee.AAT.BluetoothBeaconWatcherService.exe"} | Out-Null
     Write-Host "done."
 
     Write-Host "Uninstalling State Machine Service..." -NoNewline
-    Invoke-Command -ScriptBlock { C:\WINDOWS\Microsoft.NET\Framework\v4.0.30319\InstallUtil.exe /uninstall "C:\Deployments\Services\StateMachineService\1.0.0.0\Keebee.AAT.StateMachineService.exe"} | Out-Null
+    Invoke-Command -ScriptBlock { C:\WINDOWS\Microsoft.NET\Framework\v4.0.30319\InstallUtil.exe /uninstall "$servicesRoot\StateMachineService\1.0.0.0\Keebee.AAT.StateMachineService.exe"} | Out-Null
     Write-Host "done."
 
     Write-Host "Uninstalling Keep IIS Alive Service..." -NoNewline
-    Invoke-Command -ScriptBlock { C:\WINDOWS\Microsoft.NET\Framework\v4.0.30319\InstallUtil.exe /uninstall "C:\Deployments\Services\KeepIISAliveService\1.0.0.0\Keebee.AAT.KeepIISAliveService.exe"} | Out-Null
+    Invoke-Command -ScriptBlock { C:\WINDOWS\Microsoft.NET\Framework\v4.0.30319\InstallUtil.exe /uninstall "$servicesRoot\KeepIISAliveService\1.0.0.0\Keebee.AAT.KeepIISAliveService.exe"} | Out-Null
     Write-Host "done."
 
 
@@ -78,7 +81,7 @@ Try
     # Write-Host "--- Functionality temporarily removed ---`n” -NoNewline
 
     # register Build-VisualStudioSolution powershell module
-    $path = "C:\Users\" + $env:USERNAME + "\Documents\WindowsPowerShell\Modules\Build-VisualStudioSolution\"
+    $path = "C:\Users\$env:USERNAME\Documents\WindowsPowerShell\Modules\Build-VisualStudioSolution\"
     If(!(test-path $path))
     {
         Write-Host "Registering Module Build-VisualStudioSolution...” -NoNewline

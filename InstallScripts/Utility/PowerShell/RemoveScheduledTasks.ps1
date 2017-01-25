@@ -2,31 +2,33 @@
 {
     Write-Host -ForegroundColor yellow "`n--- Scheduled Tasks ---`n"
 
+    function RemoveScheduledTask
+    {
+        $task_name = $args[0]
+        $exists = Get-ScheduledTask | Where-Object {$_.TaskName -like "$task_name" }
+        if ($exists) {
+            Unregister-ScheduledTask -TaskName $task_name -Confirm:$false
+        }
+    }
+
     # event log export
     Write-Host "Removing Event Log Export task..." -NoNewline
-    $taskName = "R2G2 - Event Log Export"
-    $taskExists = Get-ScheduledTask | Where-Object {$_.TaskName -like $taskName }
-    if ($taskExists) {
-        Unregister-ScheduledTask -TaskName $taskName -Confirm:$false
-    }
+    RemoveScheduledTask "R2G2 - Event Log Export"
     Write-Host "done."
 
     # backup
     Write-Host "Removing Backup task..." -NoNewline
-    $taskName = "R2G2 - Backup"
-    $taskExists = Get-ScheduledTask | Where-Object {$_.TaskName -like $taskName }
-    if ($taskExists) {
-        Unregister-ScheduledTask -TaskName $taskName -Confirm:$false
-    }
+     RemoveScheduledTask "R2G2 - Backup"
     Write-Host "done."
 
     # video capture cleanup
     Write-Host "Removing Video Capture Cleanup task..." -NoNewline
-    $taskName = "R2G2 - Video Capture File Cleanup"
-    $taskExists = Get-ScheduledTask | Where-Object {$_.TaskName -like $taskName }
-    if ($taskExists) {
-        Unregister-ScheduledTask -TaskName $taskName -Confirm:$false
-    }
+    RemoveScheduledTask "R2G2 - Video Capture File Cleanup"
+    Write-Host "done."
+
+    # display launch
+    Write-Host "Removing Display Launch task..." -NoNewline
+    RemoveScheduledTask "R2G2 - Display Launch"
     Write-Host "done."
 }
 Catch

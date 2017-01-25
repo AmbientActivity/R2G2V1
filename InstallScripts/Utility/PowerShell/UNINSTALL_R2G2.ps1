@@ -1,14 +1,17 @@
 ﻿Try
 {
-    Write-Host -ForegroundColor green "`nUninstalling R2G2...`n"
+    Write-Host -ForegroundColor green "`nUninstalling R2G2..."
 
-    invoke-expression -Command C:\Deployments\Install\Utility\PowerShell\UninstallServices.ps1
-    invoke-expression -Command C:\Deployments\Install\Database\PowerShell\DropDatabase.ps1
-    invoke-expression -Command C:\Deployments\Install\Utility\PowerShell\RemoveWebApplications.ps1
-    invoke-expression -Command C:\Deployments\Install\Utility\PowerShell\RemoveLocalWebuser.ps1
-    invoke-expression -Command C:\Deployments\Install\Utility\PowerShell\RemoveMessageQueues.ps1
-    invoke-expression -Command C:\Deployments\Install\Utility\PowerShell\RemoveEventLogSources.ps1
-    invoke-expression -Command C:\Deployments\Install\Utility\PowerShell\RemoveScheduledTasks.ps1
+    $installPathUtility = "C:\Deployments\Install\Utility\PowerShell"
+    $installPathData = "C:\Deployments\Install\Database\PowerShell"
+
+    invoke-expression -Command $installPathUtility\UninstallServices.ps1
+    invoke-expression -Command $installPathData\DropDatabase.ps1
+    invoke-expression -Command $installPathUtility\RemoveWebApplications.ps1
+    invoke-expression -Command $installPathUtility\RemoveLocalWebuser.ps1
+    invoke-expression -Command $installPathUtility\RemoveMessageQueues.ps1
+    invoke-expression -Command $installPathUtility\RemoveEventLogSources.ps1
+    invoke-expression -Command $installPathUtility\RemoveScheduledTasks.ps1
 
     Write-Host -ForegroundColor green "`nUninstall complete.`n"
 }

@@ -77,7 +77,7 @@ namespace Keebee.AAT.Operations.Service.Services
             var container = new Container(new Uri(ODataHost.Url));
 
             if (configDetail.Location.Length > 0)
-                configDetail = null;
+                configDetail.Location = null;
 
             container.AddToConfigDetails(configDetail);
             container.SaveChanges();

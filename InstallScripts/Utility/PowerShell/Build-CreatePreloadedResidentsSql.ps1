@@ -17,6 +17,7 @@ Try
     {
         If ($residentId.ToString() -eq "0") { continue }
 
+        "IF NOT EXISTS (SELECT * FROM Residents WHERE Id = $residentId)`n" +
         "INSERT [dbo].[Residents] ([Id], [FirstName], [LastName], [Gender], [GameDifficultyLevel], [AllowVideoCapturing], [DateCreated], [DateUpdated]) " +
         "VALUES($residentId, 'Resident $residentId', '', 'F', 1, 1, GetDate(), GetDate())" | Out-File $sqlFilename -Append
     }
@@ -28,10 +29,12 @@ Try
         If ($residentId.ToString() -eq "0") { continue }
 
         $sql = "`r`n--- ResidentId $residentId ---`r`n`r`n" +
+        "IF NOT EXISTS (SELECT * FROM Residents WHERE Id = $residentId)`n" +
+        "BEGIN" +
         "--- Activity 1 - ResponseType 'SlideShow' ---`r`n" +
         "INSERT INTO ResidentMediaFiles (IsPublic, ResidentId, ResponseTypeId, MediaPathTypeId, StreamId)`r`n" +
         "SELECT 0, $residentId, 1, 3, StreamId FROM MediaFiles WHERE [Path] = @pathProfile + " +
-        "'$residentId\images\general\' AND [FileType] IN ('jpg', 'jpeg', 'png', 'bmp', 'gif')" + 
+        "'$residentId\images\general\' AND [FileType] IN ('jpg', 'jpeg', 'png', 'bmp', 'gif')`r`n" + 
         "INSERT INTO ResidentMediaFiles (IsPublic, ResidentId, ResponseTypeId, MediaPathTypeId, StreamId)`r`n" +
         "SELECT 0, $residentId, 1, 4, StreamId FROM MediaFiles WHERE [Path] = @pathProfile + " +
         "'$residentId\images\personal\' AND [FileType] IN ('jpg', 'jpeg', 'png', 'bmp', 'gif')" +
@@ -58,7 +61,8 @@ Try
             "'$residentId\videos\tv-shows\' AND [FileType] = 'mp4'`r`n" +
         "INSERT INTO ResidentMediaFiles (IsPublic, ResidentId, ResponseTypeId, MediaPathTypeId, StreamId)`r`n" +
         "SELECT 0, $residentId, 6, 6, StreamId FROM MediaFiles WHERE [Path] = @pathProfile + " +
-        "'$residentId\videos\home-movies\' AND [FileType] = 'mp4'"
+        "'$residentId\videos\home-movies\' AND [FileType] = 'mp4'" +
+        "END"
 
         $sql | Out-File $sqlFilename -Append
     }

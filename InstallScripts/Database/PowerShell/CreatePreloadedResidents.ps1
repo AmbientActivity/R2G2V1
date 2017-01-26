@@ -31,7 +31,11 @@ Try
         foreach($residentId in $residentIds)
         {
             If ($residentId.ToString() -eq "0") { continue }
-            Copy-Item "$pathProfiles\$residentId" $pathSqlProfiles -Recurse -Force
+
+            $query = Invoke-SqlQuery -Query "SELECT COUNT(*) AS ResidentCount FROM Residents WHERE Id = $residentId" -Server $server -Database $database
+            If ($query.ResidentCount -eq 0) {
+                Copy-Item "$pathProfiles\$residentId" $pathSqlProfiles -Recurse -Force
+            }
         }
         Write-Host "done."
 

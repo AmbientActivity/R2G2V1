@@ -427,7 +427,7 @@ namespace Keebee.AAT.Backup
 
                 if (!Directory.Exists(pathDestination))
                 {
-                    var message = $"--- ERROR --- RemoveObsoleteFolders: {pathDestination} does not exist{Environment.NewLine}";
+                    var message = $"--- WARNING --- RemoveObsoleteFolders: {pathDestination} does not exist{Environment.NewLine}";
 #if DEBUG
                     Console.Write(message);
 #endif

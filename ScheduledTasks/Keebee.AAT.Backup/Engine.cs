@@ -699,9 +699,13 @@ namespace Keebee.AAT.Backup
                     {
                         var allowVideoCapturing = r.AllowVideoCapturing ? 1 : 0;
 
+                        var lastName = (r.LastName != null) 
+                            ? $"'{r.LastName.Replace("'", "''")}'" 
+                            : "null";
+
                         sw.WriteLine(
                             "INSERT [dbo].[Residents] ([Id], [FirstName], [LastName], [Gender], [GameDifficultyLevel], [AllowVideoCapturing], [DateCreated], [DateUpdated]) " +
-                            $"VALUES({r.Id}, '{r.FirstName.Replace("'", "''")}', '{r.LastName.Replace("'", "''")}', '{r.Gender}', {r.GameDifficultyLevel}, {allowVideoCapturing}, GETDATE(), GETDATE())");
+                            $"VALUES({r.Id}, '{r.FirstName.Replace("'", "''")}', {lastName}, '{r.Gender}', {r.GameDifficultyLevel}, {allowVideoCapturing}, GETDATE(), GETDATE())");
                     }
                     sw.WriteLine("SET IDENTITY_INSERT [dbo].[Residents] OFF");
 
@@ -828,9 +832,17 @@ namespace Keebee.AAT.Backup
                         sw.WriteLine("SET IDENTITY_INSERT [dbo].[ConfigDetails] ON");
                         foreach (var cd in configDetails)
                         {
+                            var description = (cd.Description != null)
+                                ? $"'{cd.Description.Replace("'", "''")}'"
+                                : "null";
+
+                            var location = (cd.Location != null)
+                                ? $"'{cd.Location.Replace("'", "''")}'"
+                                : "null";
+
                             sw.WriteLine(
-                                "INSERT [dbo].[ConfigDetails] ([Id], [ConfigId], [PhidgetTypeId], [PhidgetStyleTypeId], [ResponseTypeId], [Description]) " +
-                                $"VALUES ({cd.Id}, {c.Id}, {cd.PhidgetType.Id}, {cd.PhidgetStyleType.Id}, {cd.ResponseType.Id}, '{cd.Description.Replace("'", "''")}')");
+                                "INSERT [dbo].[ConfigDetails] ([Id], [ConfigId], [PhidgetTypeId], [PhidgetStyleTypeId], [ResponseTypeId], [Description], [Location]) " +
+                                $"VALUES ({cd.Id}, {c.Id}, {cd.PhidgetType.Id}, {cd.PhidgetStyleType.Id}, {cd.ResponseType.Id}, {description}, {location})");
                         }
                         sw.WriteLine("SET IDENTITY_INSERT [dbo].[ConfigDetails] OFF");
                         sw.WriteLine();

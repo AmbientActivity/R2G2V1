@@ -42,6 +42,9 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
         // display state
         private bool _displayIsActive;
 
+        // active resident
+        private int _activeResidentId;
+
         // residents
         private ResidentMessage[] _residents;
 
@@ -152,28 +155,23 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
 
                 if (!_beaconManager.BluetoothBeacons.Any())
                 {
+                    if (_activeResidentId == PublicMediaSource.Id) return;
+
                     _messageQueueBeaconWatcher.Send(GetSerializedResident(_publicResident));
-                    return;
+                    _activeResidentId = PublicMediaSource.Id;
                 }
 
-                _timer.Stop();
-
-                if (!LoadResidents())
+                else if (LoadResidents())
                 {
-                    _timer.Start();
-                    return;
+                    var closestBeacon = GetClosestKeebeeBeacon(_beaconManager.BluetoothBeacons);
+                    var residentId = closestBeacon?.ResidentId ?? 0;
+
+                    if (residentId == _activeResidentId) return;
+
+                    var resident = GetResident(residentId) ?? _publicResident;
+                    _messageQueueBeaconWatcher.Send(GetSerializedResident(resident));
+                    _activeResidentId = residentId;
                 }
-
-                var closestBeacon = GetClosestKeebeeBeacon(_beaconManager.BluetoothBeacons);
-                var residentId = closestBeacon?.ResidentId ?? 0;
-                var resident = GetResident(residentId) ?? _publicResident;
-
-                _messageQueueBeaconWatcher.Send(GetSerializedResident(resident));
-
-                _timer.Start();
-
-                if (_watcher.Status != BluetoothLEAdvertisementWatcherStatus.Started)
-                    _watcher.Start();
             }
             catch(InvalidOperationException)
             { 
@@ -182,7 +180,6 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
             catch (Exception ex)
             {
                 _systemEventLogger.WriteEntry($"TimerElapsed{Environment.NewLine}{ex.Message}", EventLogEntryType.Error);
-                _timer.Start();
             }
         }
 
@@ -309,6 +306,7 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
                     AllowVideoCapturing = r.AllowVideoCapturing
                 }).ToArray();
 
+                _activeResidentId = PublicMediaSource.Id;
                 return _residents.Any();
 
             }

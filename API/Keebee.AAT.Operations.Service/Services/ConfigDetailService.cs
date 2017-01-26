@@ -76,6 +76,9 @@ namespace Keebee.AAT.Operations.Service.Services
         {
             var container = new Container(new Uri(ODataHost.Url));
 
+            if (configDetail.Location.Length > 0)
+                configDetail = null;
+
             container.AddToConfigDetails(configDetail);
             container.SaveChanges();
 
@@ -94,8 +97,9 @@ namespace Keebee.AAT.Operations.Service.Services
             if (configDetail.Description != null)
                 el.Description = configDetail.Description;
 
-            if (configDetail.Location != null)
-                el.Location = configDetail.Location;
+            el.Location = (configDetail.Location.Length > 0)
+                ? configDetail.Location
+                : null;
 
             if (configDetail.PhidgetTypeId > 0)
                 el.PhidgetTypeId = configDetail.PhidgetTypeId;

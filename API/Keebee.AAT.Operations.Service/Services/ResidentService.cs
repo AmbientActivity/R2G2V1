@@ -92,8 +92,9 @@ namespace Keebee.AAT.Operations.Service.Services
             if (resident.FirstName != null)
                 r.FirstName = resident.FirstName;
 
-            if (resident.LastName != null)
-                r.LastName = resident.LastName;
+            r.LastName = (resident.LastName.Length > 0) 
+                ? resident.LastName
+                : null;
 
             if (resident.Gender != null)
                 r.Gender = resident.Gender;

@@ -60,7 +60,7 @@ namespace Keebee.AAT.Backup
                     if (driveBackup.IsReady)
                     {
                         // backup deployment folders (except media)
-                        logText.Append(BackupFiles(_pathDeployments, _pathBackup, 
+                        logText.Append(BackupFiles(_pathDeployments, _pathBackup,
                             excludeFolders: new[] { Path.Combine(_pathDeployments, "Media") }));
 
                         // backup the media
@@ -70,7 +70,7 @@ namespace Keebee.AAT.Backup
                         logText.Append(BackupFiles(_pathVideoCaptures, _pathBackup));
 
                         // delete obsolete deployment folders (except media)
-                        logText.Append(RemoveObsoleteFolders(_pathDeployments, _pathBackup, 
+                        logText.Append(RemoveObsoleteFolders(_pathDeployments, _pathBackup,
                             excludeFolders: new[] { Path.Combine(_pathBackup, _mediaBackupPath) }));
 
                         // delete obsolete media folders
@@ -161,8 +161,18 @@ namespace Keebee.AAT.Backup
 
                 if (!Directory.Exists(source))
                 {
-                    throw new ArgumentException();
+                    return string.Empty;
                 }
+
+                if (!Directory.Exists(destination))
+                {
+                    var message = $"--- ERROR --- CreateBackupFolders: Destination folder {destination} does not exist{Environment.NewLine}";
+#if DEBUG
+                    Console.Write(message);
+#endif
+                    return message;
+                }
+
                 dirs.Push(source);
 
                 while (dirs.Count > 0)
@@ -247,8 +257,13 @@ namespace Keebee.AAT.Backup
 
                 if (!Directory.Exists(source))
                 {
-                    throw new ArgumentException();
+                    var message = $"--- WARNING --- BackupFiles: Source folder {source} does not exist{Environment.NewLine}";
+#if DEBUG
+                    Console.Write(message);
+#endif
+                    return message;
                 }
+
                 dirs.Push(source);
 
                 while (dirs.Count > 0)
@@ -511,9 +526,18 @@ namespace Keebee.AAT.Backup
                     ? Path.Combine(destination, _mediaBackupPath)
                     : Path.Combine(destination, source.Replace(driveSource, string.Empty));
 
+                if (!Directory.Exists(source))
+                {
+                    return string.Empty;
+                }
+
                 if (!Directory.Exists(pathDest))
                 {
-                    throw new ArgumentException();
+                    var message = $"--- ERROR --- RemoveObsoleteFiles: Destination folder {pathDest} does not exist{Environment.NewLine}";
+#if DEBUG
+                    Console.Write(message);
+#endif
+                    return message;
                 }
 
                 dirs.Push(pathDest);

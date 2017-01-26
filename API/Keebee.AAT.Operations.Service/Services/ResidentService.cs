@@ -73,6 +73,9 @@ namespace Keebee.AAT.Operations.Service.Services
             resident.DateCreated = DateTime.Now;
             resident.DateUpdated = DateTime.Now;
 
+            if (resident.LastName.Length == 0)
+                resident.LastName = null;
+
             container.AddToResidents(resident);
             container.SaveChanges();
 

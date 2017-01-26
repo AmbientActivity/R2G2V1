@@ -385,7 +385,7 @@ namespace Keebee.AAT.Administrator.Controllers
             int? sortdescending)
         {
             var resident = _opsClient.GetResident(id);
-            var fullName = (resident.LastName.Length > 0)
+            var fullName = (resident.LastName != null)
                 ? $"{resident.FirstName} {resident.LastName}"
                 : resident.FirstName;
             var rules = new ResidentRules {OperationsClient = _opsClient};

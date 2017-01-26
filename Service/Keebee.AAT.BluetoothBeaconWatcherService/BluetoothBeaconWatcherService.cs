@@ -248,8 +248,7 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
         {
             try
             {
-                if (_timer.Enabled)
-                    _beaconManager.ReceivedAdvertisement(eventArgs);
+                _beaconManager.ReceivedAdvertisement(eventArgs);
             }
             catch (ArgumentException e)
             {

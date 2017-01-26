@@ -5,7 +5,10 @@
     $videoCapturesRoot = "C:\VideoCaptures"
 
     Write-Host "Removing Video Captures..." -NoNewline
-    Remove-Item $videoCapturesRoot -recurse -Force
+    If(test-path $videoCapturesRoot)
+    {
+        Remove-Item $videoCapturesRoot -recurse -Force
+    }
     Write-Host "done."
 }
 Catch

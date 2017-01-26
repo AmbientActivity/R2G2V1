@@ -13,6 +13,7 @@ using System.Linq;
 using System.Web.Mvc;
 using System;
 using System.IO;
+using System.Web.Script.Serialization;
 
 namespace Keebee.AAT.Administrator.Controllers
 {
@@ -172,6 +173,7 @@ namespace Keebee.AAT.Administrator.Controllers
             var r = JsonConvert.DeserializeObject<ResidentEditViewModel>(resident);
             var residentId = r.Id;
             var rules = new ResidentRules { OperationsClient = _opsClient };
+            IEnumerable<ResidentViewModel> residentList = new Collection<ResidentViewModel>();
 
             IEnumerable<string> msgs = rules.Validate(r.FirstName, r.LastName, r.Gender, residentId == 0);
 
@@ -186,14 +188,18 @@ namespace Keebee.AAT.Administrator.Controllers
                     residentId = AddResident(r);
             }
 
-            // alert the bluetooth beacon watcher to reload its residents
-            _messageQueueBluetoothBeaconWatcherReload.Send("1");
+            residentList = GetResidentList();
+
+            var success = (null == msgs) && (residentId > 0);
+            if (success)
+                // alert the bluetooth beacon watcher to reload its residents
+                _messageQueueBluetoothBeaconWatcherReload.Send(CreateMessageBodyFromResidents(residentList));
 
             return Json(new
             {
-                ResidentList = GetResidentList(),
+                ResidentList = residentList,
                 SelectedId = residentId,
-                Success = (null == msgs) && (residentId > 0),
+                Success = success,
                 ErrorMessages = msgs
             }, JsonRequestBehavior.AllowGet);
         }
@@ -204,7 +210,8 @@ namespace Keebee.AAT.Administrator.Controllers
         {
             string errormessage;
             bool success;
-
+            IEnumerable<ResidentViewModel> residentList = new Collection<ResidentViewModel>();
+            
             try
             {
                 var activeResident = _opsClient.GetActiveResident();
@@ -214,7 +221,7 @@ namespace Keebee.AAT.Administrator.Controllers
                 }
                 else
                 {
-                    var rules = new ResidentRules {OperationsClient = _opsClient};
+                    var rules = new ResidentRules { OperationsClient = _opsClient };
                     errormessage = rules.DeleteResident(id);
 
                     if (errormessage.Length == 0)
@@ -224,11 +231,12 @@ namespace Keebee.AAT.Administrator.Controllers
                     }
                 }
 
-                success = (errormessage.Length == 0);
+                residentList = GetResidentList();
 
+                success = (errormessage.Length == 0);    
                 if (success)
                     // alert the bluetooth beacon watcher to reload its residents
-                    _messageQueueBluetoothBeaconWatcherReload.Send("1");
+                    _messageQueueBluetoothBeaconWatcherReload.Send(CreateMessageBodyFromResidents(residentList));
 
             }
             catch (Exception ex)
@@ -241,7 +249,7 @@ namespace Keebee.AAT.Administrator.Controllers
             {
                 Success = success,
                 ErrorMessage = errormessage,
-                ResidentList = GetResidentList(),
+                ResidentList = residentList,
             }, JsonRequestBehavior.AllowGet);
         }
 
@@ -513,6 +521,22 @@ namespace Keebee.AAT.Administrator.Controllers
             }
 
             return list;
+        }
+
+        private static string CreateMessageBodyFromResidents(IEnumerable<ResidentViewModel> residents)
+        {
+            var residentMessages = residents.Select(r => new ResidentMessage
+            {
+                Id = r.Id,
+                Name = $"{r.FirstName} {r.LastName}".Trim(),
+                GameDifficultyLevel = r.GameDifficultyLevel,
+                AllowVideoCapturing = r.AllowVideoCapturing
+            }).ToArray();
+
+            var serializer = new JavaScriptSerializer();
+            var messageBody = serializer.Serialize(residentMessages);
+
+            return messageBody;
         }
     }
 }

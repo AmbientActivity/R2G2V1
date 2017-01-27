@@ -93,7 +93,7 @@ Try
         }  
      
         If ($profilesExist) {
-            Write-Host -ForegroundColor Cyan "`nNote: Must set relevant FirstName, LastName and Gender through the Administrator Interface."
+            Write-Host -ForegroundColor Cyan "Note: Must set relevant FirstName, LastName and Gender through the Administrator Interface."
         } else {
             Write-Host "None created."
         }  

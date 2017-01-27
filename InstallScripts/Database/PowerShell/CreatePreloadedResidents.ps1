@@ -34,7 +34,7 @@ Try
                 If (Test-Path "$pathProfiles\$residentId") {
                     $profilesExist = $true
 
-                    Write-Host "Transferring Profile\$residentId..." -NoNewline  
+                    Write-Host "Transferring Profile $residentId..." -NoNewline  
                     Copy-Item "$pathProfiles\$residentId" $pathSqlProfiles -Recurse -Force
                     Write-Host "done."
 
@@ -87,7 +87,7 @@ Try
 
                     #Write-Host $sql
                     Invoke-SqlQuery -Query $sql -Server $server -Database $database
-                    Write-Host "done."
+                    Write-Host "done.`n"
                 }
             }
         }  

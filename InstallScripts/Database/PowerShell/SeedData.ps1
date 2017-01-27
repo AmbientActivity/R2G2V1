@@ -1,9 +1,13 @@
-﻿$server = $env:COMPUTERNAME + "\SQLEXPRESS"
-$database = "KeebeeAAT"
-$path = "C:\Deployments\Install\Database\SQL Server\"
-
-Try
+﻿Try
 {
+    $database = "KeebeeAAT"
+    $server = $env:COMPUTERNAME + "\SQLEXPRESS"
+
+    $mediaDestination = "\\$server\KeebeeAATFilestream\Media\"
+    $pathDeployments = "C:\Deployments"
+    $pathSqlScript = "$pathDeployments\Install\Database\SQL Server\"
+    $pathPublicLibrary = "Profiles\0"
+    
     Write-Host -ForegroundColor yellow "`n--- Seed ---`n"
 
     # check if the database exists
@@ -22,38 +26,37 @@ Try
 
         # if there is already data, don't rerun
         if ($configCount -gt 0) {
-            Write-Host "`nData has already been seeded."
+            Write-Host "Data has already been seeded."
         } 
         else {
-            $mediaDestination = "\\" + $env:COMPUTERNAME + "\SQLEXPRESS\KeebeeAATFilestream\Media\"
+            
             $mediaProfiles = $mediaDestination + "\Profiles\*"
-            $mediaExports = $mediaDestination + "\Exports\*"
-
-            Write-Host "Transferring media...” -NoNewline
-
             If(test-path $mediaProfiles)
             {
                 Remove-Item $mediaProfiles -recurse -Force
             }
 
+            $mediaExports = $mediaDestination + "\Exports\*"
             If(test-path $mediaExports)
             {
                 Remove-Item $mediaExports -recurse -Force
             }
 
-            Copy-Item C:\Deployments\Media\* $mediaDestination -recurse -Force
+            Write-Host "Transferring startup nmedia...” -NoNewline
+            Copy-Item "$pathDeployments\Media\$pathPublicLibrary" "$mediaDestination\$pathPublicLibrary" -recurse -Force
+            Copy-Item "$pathDeployments\Media\Exports" "$mediaDestination\Exports" -recurse -Force
             Write-Host "done.”
 
             Write-Host "Seeding configuration data...” -NoNewline
-            $queryFile = $path + "CreateMediaFilesView.sql"
+            $queryFile = $pathSqlScript + "CreateMediaFilesView.sql"
             Invoke-SqlQuery -File $queryFile -Server $server -Database $database
 
-            $queryFile = $path + "SeedConfigurationData.sql"
+            $queryFile = $pathSqlScript + "SeedConfigurationData.sql"
             Invoke-SqlQuery -File $queryFile -Server $server -Database $database
             Write-Host "done.”
 
             Write-Host "Seeding public library...” -NoNewline
-            $queryFile = $path + "SeedPublicLibrary.sql"
+            $queryFile = $pathSqlScript + "SeedPublicLibrary.sql"
             Invoke-SqlQuery -File $queryFile -Server $server -Database $database
             Write-Host "done.”
         }

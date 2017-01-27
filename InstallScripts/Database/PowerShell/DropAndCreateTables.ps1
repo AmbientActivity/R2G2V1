@@ -22,10 +22,10 @@ Try
 
         If ($configId -gt 0)
         {
-            Write-Host "`nDropping existing tables...” -NoNewline
+            Write-Host "Dropping tables...” -NoNewline
             $queryFile = $path + "DropTables.sql"
             Invoke-SqlQuery -File $queryFile -Server $server -Database $database
-            Write-Host "done.`n”
+            Write-Host "done.”
         }
 
         # restart IIS

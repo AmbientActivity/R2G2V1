@@ -42,7 +42,7 @@ Try
                     $sql = "DECLARE @pathProfile varchar(max)`r`n" +
                            "SET @pathProfile = '$pathSqlProfiles'"
  
-                    Write-Host "Creating 'Resident $residentId'..."-NoNewline
+                    Write-Host "Creating resident ($residentId) ..."-NoNewline
                     $sql += "`r`n`r`n--- ResidentId $residentId ---`r`n`r`n" +
 
                     "IF NOT EXISTS (SELECT * FROM Residents WHERE Id = $residentId)`r`n" +

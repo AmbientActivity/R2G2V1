@@ -42,7 +42,7 @@
                 Remove-Item $mediaExports -recurse -Force
             }
 
-            Write-Host "Transferring startup nmedia...” -NoNewline
+            Write-Host "Transferring startup media...” -NoNewline
             Copy-Item "$pathDeployments\Media\$pathPublicLibrary" "$mediaDestination\$pathPublicLibrary" -recurse -Force
             Copy-Item "$pathDeployments\Media\Exports" "$mediaDestination\Exports" -recurse -Force
             Write-Host "done.”

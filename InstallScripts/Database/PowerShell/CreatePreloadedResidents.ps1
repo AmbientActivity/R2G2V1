@@ -34,7 +34,7 @@ Try
                 If (Test-Path "$pathProfiles\$residentId") {
                     $profilesExist = $true
 
-                    Write-Host "Transferring profile $residentId..." -NoNewline  
+                    Write-Host "Transferring Profile\$residentId..." -NoNewline  
                     Copy-Item "$pathProfiles\$residentId" $pathSqlProfiles -Recurse -Force
                     Write-Host "done."
 
@@ -42,7 +42,7 @@ Try
                     $sql = "DECLARE @pathProfile varchar(max)`r`n" +
                            "SET @pathProfile = '$pathSqlProfiles'"
  
-                    Write-Host "Creating resident ($residentId) ..."-NoNewline
+                    Write-Host "Creating Resident $residentId ..."-NoNewline
                     $sql += "`r`n`r`n--- ResidentId $residentId ---`r`n`r`n" +
 
                     "IF NOT EXISTS (SELECT * FROM Residents WHERE Id = $residentId)`r`n" +

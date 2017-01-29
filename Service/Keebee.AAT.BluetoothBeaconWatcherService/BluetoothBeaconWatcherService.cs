@@ -20,6 +20,7 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
 {
     public partial class BluetoothBeaconWatcherService : ServiceBase
     {
+        private const int BeaconReadInterval = 1000;  // 1 second
         // operations api
         private readonly IOperationsClient _opsClient;
 
@@ -71,7 +72,6 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
             var inRangeThresholdInDb = Convert.ToInt16(ConfigurationManager.AppSettings["InRangeThresholdInDB"]);
             var outOfRangeThresholdInDBb = Convert.ToInt16(ConfigurationManager.AppSettings["OutOfRangeThresholdInDB"]);
             var outOfRangeTimeout = Convert.ToInt16(ConfigurationManager.AppSettings["OutOfRangeTimeout"]);
-            var readInterval = Convert.ToInt32(ConfigurationManager.AppSettings["BeaconReadInterval"]);
 
             // message queue sender
             _messageQueueBeaconWatcher = new CustomMessageQueue(new CustomMessageQueueArgs
@@ -110,41 +110,11 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
             };
 
             _watcher.Stopped += WatcherOnStopped;
-            StartWatching();
+            _watcher.Received += WatcherOnReceived;
 
             // set the timer for timed beacon reads
-            _timer = new Timer(readInterval);
+            _timer = new Timer(BeaconReadInterval);
             _timer.Elapsed += TimerElapsed;
-        }
-
-        private void StartWatching()
-        {
-            if (_watcher == null) return;
-
-            try
-            {
-                _watcher.Received += WatcherOnReceived;
-                _watcher.Start();
-            }
-            catch (Exception ex)
-            {
-                _systemEventLogger.WriteEntry($"StartWatching{Environment.NewLine}{ex.Message}", EventLogEntryType.Error);
-            }
-        }
-
-        private void StoptWatching()
-        {
-            if (_watcher == null) return;
-
-            try
-            {
-                _watcher.Stop();
-                _watcher.Received -= WatcherOnReceived;
-            }
-            catch (Exception ex)
-            {
-                _systemEventLogger.WriteEntry($"StoptWatching{Environment.NewLine}{ex.Message}", EventLogEntryType.Error);
-            }
         }
 
         private void TimerElapsed(object sender, ElapsedEventArgs e)
@@ -365,19 +335,19 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
 
                 if (_displayIsActive)
                 {
-                    StartWatching();
-                    _timer?.Start();
+                    _watcher.Start();
+                    _timer.Start();
                 }
                 else
                 {
-                    _timer?.Stop();
-                    StoptWatching();
+                    _timer.Stop();
+                    _watcher.Stop();
                 }
             }
             catch (Exception ex)
             {
                 _systemEventLogger.WriteEntry($"MessageReceivedDisplaydBluetoothBeaconWatcher{Environment.NewLine}{ex.Message}", EventLogEntryType.Error);
-            }
+            } 
         }
 
         private static DisplayMessage GetDisplayStateFromMessageBody(string messageBody)

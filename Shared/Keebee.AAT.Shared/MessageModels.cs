@@ -44,7 +44,6 @@ namespace Keebee.AAT.Shared
         public bool IsActive { get; set; }
     }
 
-#if DEBUG
     public class BeaconMonitorResidentMessage
     {
         public int ResidentId { get; set; }
@@ -60,5 +59,4 @@ namespace Keebee.AAT.Shared
         public DateTimeOffset TimeStamp { get; set; }
         public string Payload { get; set; }
     }
-#endif
 }

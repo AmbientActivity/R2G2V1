@@ -26,7 +26,7 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
         private bool _beaconMonitorIsActive;
 #endif
 
-        private const int BeaconReadInterval = 1000;  // 1 second
+        private const int BeaconReadInterval = 500;  // 1/2 second
 
         // operations api
         private readonly IOperationsClient _opsClient;

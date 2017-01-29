@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Keebee.AAT.Shared
 {
@@ -43,10 +44,21 @@ namespace Keebee.AAT.Shared
         public bool IsActive { get; set; }
     }
 
-    public class RfidMonitorMessage
+#if DEBUG
+    public class BeaconMonitorResidentMessage
     {
-        public bool IsFinal { get; set; }
-        public int ReadCount { get; set; }
         public int ResidentId { get; set; }
+        public string ResidentName { get; set; }
+        public int Rssi { get; set; }
     }
+
+    public class BeaconMonitorMessage
+    {
+        public string BeaconType { get; set; }
+        public ulong Address { get; set; }
+        public short[] Rssi { get; set; }
+        public DateTimeOffset TimeStamp { get; set; }
+        public string Payload { get; set; }
+    }
+#endif
 }

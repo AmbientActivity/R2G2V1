@@ -57,7 +57,6 @@ namespace Keebee.AAT.PhidgetService
         private readonly SystemEventLogger _systemEventLogger;
 
         // sensor value
-        //private const int StepTolerance = 10;
         private const int DefaultTouchSensorThreshold = 990;
         private readonly int _sensorThreshold;
         private readonly int _inputDebounceTime;

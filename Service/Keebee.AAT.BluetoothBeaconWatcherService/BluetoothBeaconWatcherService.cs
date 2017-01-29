@@ -342,6 +342,7 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
                 {
                     _timer.Stop();
                     _watcher.Stop();
+                    _messageQueueBeaconWatcher.Send(GetSerializedResident(_publicResident));
                 }
             }
             catch (Exception ex)

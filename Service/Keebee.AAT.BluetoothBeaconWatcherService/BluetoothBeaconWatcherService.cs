@@ -343,6 +343,7 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
                     _timer.Stop();
                     _watcher.Stop();
                     _messageQueueBeaconWatcher.Send(GetSerializedResident(_publicResident));
+                    _activeResidentId = PublicMediaSource.Id;
                 }
             }
             catch (Exception ex)

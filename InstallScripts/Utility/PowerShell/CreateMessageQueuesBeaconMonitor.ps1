@@ -1,6 +1,6 @@
 Try
 {
-    Write-Host -ForegroundColor yellow "`n--- Message Queues ---`n"
+    Write-Host -ForegroundColor yellow "`n--- Beacon Monitor Message Queues ---`n"
 
     [Reflection.Assembly]::LoadWithPArtialName(“System.Messaging”) | Out-Null
     $msmq = [System.Messaging.MessageQueue]

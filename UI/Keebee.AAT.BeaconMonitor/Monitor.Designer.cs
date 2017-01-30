@@ -130,7 +130,7 @@
             this.btnRestartWatcher.TabIndex = 9;
             this.btnRestartWatcher.Text = "Restart Watcher";
             this.btnRestartWatcher.UseVisualStyleBackColor = true;
-            this.btnRestartWatcher.Click += new System.EventHandler(this.btnRestartWatcher_Click);
+            this.btnRestartWatcher.Click += new System.EventHandler(this.RestartWatcherClick);
             // 
             // lblActiveResident
             // 

@@ -188,7 +188,7 @@ namespace Keebee.AAT.BeaconMonitor
             _beaconAddresses.Clear();
         }
 
-        private void btnRestartWatcher_Click(object sender, EventArgs e)
+        private void RestartWatcherClick(object sender, EventArgs e)
         {
             try
             {

@@ -37,6 +37,7 @@
             this.lblActiveResident = new System.Windows.Forms.Label();
             this.lblRssi = new System.Windows.Forms.Label();
             this.lblCaption = new System.Windows.Forms.Label();
+            this.btnRestartBeaconService = new System.Windows.Forms.Button();
             this.grpMonitor.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
@@ -102,6 +103,7 @@
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 499F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 167F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 274F));
+            this.tableLayoutPanel1.Controls.Add(this.btnRestartBeaconService, 0, 3);
             this.tableLayoutPanel1.Controls.Add(this.grpMonitor, 2, 1);
             this.tableLayoutPanel1.Controls.Add(this.btnClear, 2, 2);
             this.tableLayoutPanel1.Controls.Add(this.lvBeacons, 0, 1);
@@ -152,6 +154,16 @@
             this.lblCaption.TabIndex = 8;
             this.lblCaption.Text = "Average Strength:";
             // 
+            // btnRestartBeaconService
+            // 
+            this.btnRestartBeaconService.Location = new System.Drawing.Point(669, 149);
+            this.btnRestartBeaconService.Name = "btnRestartBeaconService";
+            this.btnRestartBeaconService.Size = new System.Drawing.Size(106, 41);
+            this.btnRestartBeaconService.TabIndex = 9;
+            this.btnRestartBeaconService.Text = "Restart Beacon Service";
+            this.btnRestartBeaconService.UseVisualStyleBackColor = true;
+            this.btnRestartBeaconService.Click += new System.EventHandler(this.RetsartBeaconServiceClick);
+            // 
             // Monitor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -181,6 +193,7 @@
         private System.Windows.Forms.Label lblActiveResident;
         private System.Windows.Forms.Label lblRssi;
         private System.Windows.Forms.Label lblCaption;
+        private System.Windows.Forms.Button btnRestartBeaconService;
     }
 }
 

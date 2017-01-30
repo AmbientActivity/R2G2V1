@@ -140,12 +140,17 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
             // set the timer for timed beacon reads
             _timer = new Timer(BeaconReadInterval);
             _timer.Elapsed += TimerElapsed;
+
+            _watcher.Start();
+            _timer.Start();
         }
 
         private void TimerElapsed(object sender, ElapsedEventArgs e)
         {
             try
             {
+                if (!_displayIsActive) return;
+
                 ValidateBeacons();
 
                 if (!_beaconManager.BluetoothBeacons.Any())
@@ -260,6 +265,8 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
         {
             try
             {
+                if (!_displayIsActive) return;
+
                 _beaconManager.ReceivedAdvertisement(eventArgs);
 #if DEBUG
                 if (!_beaconMonitorIsActive) return;
@@ -377,18 +384,10 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
                 var displayMessage = GetDisplayStateFromMessageBody(e.MessageBody);
                 _displayIsActive = displayMessage.IsActive;
 
-                if (_displayIsActive)
-                {
-                    _watcher.Start();
-                    _timer.Start();
-                }
-                else
-                {
-                    _timer.Stop();
-                    _watcher.Stop();
-                    _messageQueueBeaconWatcher.Send(GetSerializedResident(_publicResident));
-                    _activeResidentId = PublicMediaSource.Id;
-                }
+                if (_displayIsActive) return;
+
+                _messageQueueBeaconWatcher.Send(GetSerializedResident(_publicResident));
+                _activeResidentId = PublicMediaSource.Id;
             }
             catch (Exception ex)
             {

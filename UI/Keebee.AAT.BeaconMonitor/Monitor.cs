@@ -3,7 +3,9 @@ using Keebee.AAT.Shared;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
+using System.ServiceProcess;
 using System.Web.Script.Serialization;
 using System.Windows.Forms;
 
@@ -13,13 +15,13 @@ namespace Keebee.AAT.BeaconMonitor
     {
         // delegate
         private delegate void UpdateLabelActiveResidentDelegate(string residentName, int rssi);
-
         private delegate void AddListViewBeaconDelegate(string beaconType, ulong address, short rssi, DateTimeOffset updated, string payload);
         private delegate void UpdateListViewBeaconDelegate(ulong address, short rssi, DateTimeOffset updated);
         private delegate void RemoveListViewBeaconDelegate(ulong address);
 
-        // message queue
+        // message queues
         private readonly CustomMessageQueue _messageQueueBeaconMonitorState;
+        private readonly CustomMessageQueue _messageQueueDisplayBluetoothBeaconWatcher;
 
         private readonly ICollection<ulong> _beaconAddresses = new Collection<ulong>();
         public Monitor()
@@ -31,6 +33,11 @@ namespace Keebee.AAT.BeaconMonitor
             _messageQueueBeaconMonitorState = new CustomMessageQueue(new CustomMessageQueueArgs
             {
                 QueueName = MessageQueueType.BeaconMonitorState
+            });
+
+            _messageQueueDisplayBluetoothBeaconWatcher = new CustomMessageQueue(new CustomMessageQueueArgs
+            {
+                QueueName = MessageQueueType.DisplayBluetoothBeaconWatcher
             });
 
             // listener
@@ -180,6 +187,63 @@ namespace Keebee.AAT.BeaconMonitor
         {
             lvBeacons.Items.Clear();
             _beaconAddresses.Clear();
+        }
+
+        private void RetsartBeaconServiceClick(object sender, EventArgs e)
+        {
+            try
+            {
+                var currentCursor = Cursor.Current;
+                Cursor.Current = Cursors.WaitCursor;
+
+                TurnOffMonitor();
+
+                // bluetooth beacon watcher service
+                var service = new ServiceController(ServiceName.BluetoothBeaconWatcher);
+
+                service.Stop();
+                service.WaitForStatus(ServiceControllerStatus.Stopped);
+
+                service.Start();
+                service.WaitForStatus(ServiceControllerStatus.Running);
+
+                if (DisplayIsActive())
+                {
+                    _messageQueueDisplayBluetoothBeaconWatcher.Send(CreateDisplayMessageBody(true));
+                }
+
+                Cursor.Current = currentCursor;
+                MessageBox.Show("Bluetooth Beacon Watcher Service has been restarted.", "Restart Service", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Error restartinng service", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private static bool DisplayIsActive()
+        {
+            var processes = Process.GetProcessesByName("Keebee.AAT.Display");
+            return (processes.Any());
+        }
+
+        private static string CreateDisplayMessageBody(bool isActive)
+        {
+            var displayMessage = new DisplayMessage
+            {
+                IsActive = isActive
+            };
+
+            var serializer = new JavaScriptSerializer();
+            var displayMessageBody = serializer.Serialize(displayMessage);
+            return displayMessageBody;
+        }
+
+        private void TurnOffMonitor()
+        {
+            radOff.Checked = true;
+            radOn.Checked = false;
+            _messageQueueBeaconMonitorState.Send("0");
         }
     }
 }

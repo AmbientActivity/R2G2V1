@@ -59,7 +59,6 @@ namespace Keebee.AAT.Display
         private readonly CustomMessageQueue _messageQueueDisplaySms;
         private readonly CustomMessageQueue _messageQueueDisplayPhidget;
         private readonly CustomMessageQueue _messageQueueDisplayVideoCapture;
-        private readonly CustomMessageQueue _messageQueueDisplayBluetoothBeaconWatcher;
 
         // message queue listener
         private readonly CustomMessageQueue _messageQueueResponse;
@@ -125,12 +124,6 @@ namespace Keebee.AAT.Display
             _messageQueueDisplayVideoCapture = new CustomMessageQueue(new CustomMessageQueueArgs
             {
                 QueueName = MessageQueueType.DisplayVideoCapture
-            });
-
-            // display-bluetooth-beacon-watcher message queue sender
-            _messageQueueDisplayBluetoothBeaconWatcher = new CustomMessageQueue(new CustomMessageQueueArgs
-            {
-                QueueName = MessageQueueType.DisplayBluetoothBeaconWatcher
             });
 
             // response message queue listener
@@ -679,7 +672,6 @@ namespace Keebee.AAT.Display
                 _messageQueueDisplaySms.Send(CreateDisplayMessageBody(false));
                 _messageQueueDisplayPhidget.Send(CreateDisplayMessageBody(false));
                 _messageQueueDisplayVideoCapture.Send(CreateDisplayMessageBody(false));
-                _messageQueueDisplayBluetoothBeaconWatcher.Send(CreateDisplayMessageBody(false));
                 Application.Exit();
             }
         }
@@ -837,7 +829,6 @@ namespace Keebee.AAT.Display
                 _messageQueueDisplaySms.Send(CreateDisplayMessageBody(true));
                 _messageQueueDisplayPhidget.Send(CreateDisplayMessageBody(true));
                 _messageQueueDisplayVideoCapture.Send(CreateDisplayMessageBody(true));
-                _messageQueueDisplayBluetoothBeaconWatcher.Send(CreateDisplayMessageBody(true));
 
                 ambient1.Show();
                 ambient1.Play(_ambientPlaylist);

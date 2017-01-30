@@ -20,7 +20,6 @@ namespace Keebee.AAT.Administrator.Controllers
         private readonly CustomMessageQueue _messageQueueDisplaySms;
         private readonly CustomMessageQueue _messageQueueDisplayPhidget;
         private readonly CustomMessageQueue _messageQueueDisplayVideoCapture;
-        private readonly CustomMessageQueue _messageQueueDisplayBluetoothBeaconWatcher;
         private readonly CustomMessageQueue _messageQueueResponse;
 
         public MaintenanceController()
@@ -49,12 +48,6 @@ namespace Keebee.AAT.Administrator.Controllers
             _messageQueueDisplayVideoCapture = new CustomMessageQueue(new CustomMessageQueueArgs
             {
                 QueueName = MessageQueueType.DisplayVideoCapture
-            });
-
-            // display-bluetooth-beacon-watcher message queue sender
-            _messageQueueDisplayBluetoothBeaconWatcher = new CustomMessageQueue(new CustomMessageQueueArgs
-            {
-                QueueName = MessageQueueType.DisplayBluetoothBeaconWatcher
             });
 
             // response message queue sender
@@ -138,7 +131,6 @@ namespace Keebee.AAT.Administrator.Controllers
             _messageQueueDisplaySms.Send(CreateDisplayMessageBody(false));
             _messageQueueDisplayPhidget.Send(CreateDisplayMessageBody(false));
             _messageQueueDisplayVideoCapture.Send(CreateDisplayMessageBody(false));
-            _messageQueueDisplayBluetoothBeaconWatcher.Send(CreateDisplayMessageBody(false));
 
             // restart the services
             var rules = new MaintenanceRules { EventLogger = _systemEventLogger };
@@ -152,7 +144,6 @@ namespace Keebee.AAT.Administrator.Controllers
                 _messageQueueDisplaySms.Send(CreateDisplayMessageBody(true));
                 _messageQueueDisplayPhidget.Send(CreateDisplayMessageBody(true));
                 _messageQueueDisplayVideoCapture.Send(CreateDisplayMessageBody(true));
-                _messageQueueDisplayBluetoothBeaconWatcher.Send(CreateDisplayMessageBody(true));
             }
             else
             {

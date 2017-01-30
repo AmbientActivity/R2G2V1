@@ -34,7 +34,6 @@
             this.radOff = new System.Windows.Forms.RadioButton();
             this.radOn = new System.Windows.Forms.RadioButton();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
-            this.btnRestartWatcher = new System.Windows.Forms.Button();
             this.lblActiveResident = new System.Windows.Forms.Label();
             this.lblRssi = new System.Windows.Forms.Label();
             this.lblCaption = new System.Windows.Forms.Label();
@@ -103,7 +102,6 @@
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 499F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 167F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 274F));
-            this.tableLayoutPanel1.Controls.Add(this.btnRestartWatcher, 0, 3);
             this.tableLayoutPanel1.Controls.Add(this.grpMonitor, 2, 1);
             this.tableLayoutPanel1.Controls.Add(this.btnClear, 2, 2);
             this.tableLayoutPanel1.Controls.Add(this.lvBeacons, 0, 1);
@@ -119,18 +117,8 @@
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 47F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 294F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(780, 263);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(778, 263);
             this.tableLayoutPanel1.TabIndex = 2;
-            // 
-            // btnRestartWatcher
-            // 
-            this.btnRestartWatcher.Location = new System.Drawing.Point(669, 149);
-            this.btnRestartWatcher.Name = "btnRestartWatcher";
-            this.btnRestartWatcher.Size = new System.Drawing.Size(106, 41);
-            this.btnRestartWatcher.TabIndex = 9;
-            this.btnRestartWatcher.Text = "Restart Beacon Service";
-            this.btnRestartWatcher.UseVisualStyleBackColor = true;
-            this.btnRestartWatcher.Click += new System.EventHandler(this.RestartWatcherClick);
             // 
             // lblActiveResident
             // 
@@ -168,10 +156,9 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(780, 263);
+            this.ClientSize = new System.Drawing.Size(778, 263);
             this.Controls.Add(this.tableLayoutPanel1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
-            this.MinimizeBox = false;
             this.Name = "Monitor";
             this.Text = "Beacon Monitor";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MonitorFormClosing);
@@ -194,7 +181,6 @@
         private System.Windows.Forms.Label lblActiveResident;
         private System.Windows.Forms.Label lblRssi;
         private System.Windows.Forms.Label lblCaption;
-        private System.Windows.Forms.Button btnRestartWatcher;
     }
 }
 

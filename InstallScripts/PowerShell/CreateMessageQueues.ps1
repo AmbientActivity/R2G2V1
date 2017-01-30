@@ -43,6 +43,7 @@ Try
     CreateMessageQueue "Display-SMS"
     CreateMessageQueue "Display-Phidget"
     CreateMessageQueue "Display-Video-Capture"
+    CreateMessageQueue "Display-Bluetooth-Beacon-Watcher"
     write-host "done."
 
     # Config Message Queues (to alert the Services when to reload a newly activated configuration)

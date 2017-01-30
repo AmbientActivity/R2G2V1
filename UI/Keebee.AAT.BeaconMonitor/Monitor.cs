@@ -3,9 +3,7 @@ using Keebee.AAT.Shared;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.Linq;
-using System.ServiceProcess;
 using System.Web.Script.Serialization;
 using System.Windows.Forms;
 
@@ -20,9 +18,8 @@ namespace Keebee.AAT.BeaconMonitor
         private delegate void UpdateListViewBeaconDelegate(ulong address, short rssi, DateTimeOffset updated);
         private delegate void RemoveListViewBeaconDelegate(ulong address);
 
-        // message queues
+        // message queue
         private readonly CustomMessageQueue _messageQueueBeaconMonitorState;
-        private readonly CustomMessageQueue _messageQueueDisplayBluetoothBeaconWatcher;
 
         private readonly ICollection<ulong> _beaconAddresses = new Collection<ulong>();
         public Monitor()
@@ -34,11 +31,6 @@ namespace Keebee.AAT.BeaconMonitor
             _messageQueueBeaconMonitorState = new CustomMessageQueue(new CustomMessageQueueArgs
             {
                 QueueName = MessageQueueType.BeaconMonitorState
-            });
-
-            _messageQueueDisplayBluetoothBeaconWatcher = new CustomMessageQueue(new CustomMessageQueueArgs
-            {
-                QueueName = MessageQueueType.BluetoothBeaconWatcher
             });
 
             // listener
@@ -173,6 +165,7 @@ namespace Keebee.AAT.BeaconMonitor
 
         private void MonitorCheckChanged(object sender, EventArgs e)
         {
+#if DEBUG
             foreach (var result in from control in grpMonitor.Controls.OfType<RadioButton>()
                                    select control into radio
                                    where radio.Checked
@@ -180,55 +173,13 @@ namespace Keebee.AAT.BeaconMonitor
             {
                 _messageQueueBeaconMonitorState.Send(result == "On" ? "1" : "0");
             }
+#endif
         }
 
         private void ClearButtonClick(object sender, EventArgs e)
         {
             lvBeacons.Items.Clear();
             _beaconAddresses.Clear();
-        }
-
-        private void RestartWatcherClick(object sender, EventArgs e)
-        {
-            try
-            {
-                var currentCursor = Cursor.Current;
-                Cursor.Current = Cursors.WaitCursor;
-
-                TurnOffMonitor();
-
-                // bluetooth beacon watcher service
-                var service = new ServiceController(ServiceName.BluetoothBeaconWatcher);
-
-                service.Stop();
-                service.WaitForStatus(ServiceControllerStatus.Stopped);
-
-                while (BeaconServicveIsInstalled()) { }
-
-                service.Start();
-                service.WaitForStatus(ServiceControllerStatus.Running);
-
-                Cursor.Current = currentCursor;
-                MessageBox.Show("Bluetooth Beacon Watcher Service has been restarted.", "Restart Service", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message, "Error restartinng service", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-
-        private static bool BeaconServicveIsInstalled()
-        {
-            var processes = Process.GetProcessesByName("Keebee.AAT.BluetoothBeaconWatcher");
-            return (processes.Any());
-        }
-
-        private void TurnOffMonitor()
-        {
-            radOff.Checked = true;
-            radOn.Checked = false;
-            _messageQueueBeaconMonitorState.Send("0");
         }
     }
 }

@@ -47,6 +47,9 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
         // beacon watcher
         private readonly BluetoothLEAdvertisementWatcher _watcher;
 
+        // display state
+        private bool _displayIsActive;
+
         // active resident
         private int _activeResidentId;
 
@@ -84,11 +87,18 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
                 })
                 {SystemEventLogger = _systemEventLogger};
 
-            // message queue listeners
+            // message queue listener
             var q1 = new CustomMessageQueue(new CustomMessageQueueArgs
                 {
                     QueueName = MessageQueueType.BluetoothBeaconWatcherReload,
                     MessageReceivedCallback = MessageReceivedBluetoothBeaconWatcherReload
+                })
+                {SystemEventLogger = _systemEventLogger};
+
+            var q2 = new CustomMessageQueue(new CustomMessageQueueArgs
+                {
+                    QueueName = MessageQueueType.DisplayBluetoothBeaconWatcher,
+                    MessageReceivedCallback = MessageReceivedDisplayBluetoothBeaconWatcher
                 })
                 {SystemEventLogger = _systemEventLogger};
 
@@ -130,9 +140,6 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
             // set the timer for timed beacon reads
             _timer = new Timer(BeaconReadInterval);
             _timer.Elapsed += TimerElapsed;
-
-            _watcher.Start();
-            _timer.Start();
         }
 
         private void TimerElapsed(object sender, ElapsedEventArgs e)
@@ -363,6 +370,32 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
                 _residents = residents.ToArray();
         }
 
+        private void MessageReceivedDisplayBluetoothBeaconWatcher(object source, MessageEventArgs e)
+        {
+            try
+            {
+                var displayMessage = GetDisplayStateFromMessageBody(e.MessageBody);
+                _displayIsActive = displayMessage.IsActive;
+
+                if (_displayIsActive)
+                {
+                    _watcher.Start();
+                    _timer.Start();
+                }
+                else
+                {
+                    _timer.Stop();
+                    _watcher.Stop();
+                    _messageQueueBeaconWatcher.Send(GetSerializedResident(_publicResident));
+                    _activeResidentId = PublicMediaSource.Id;
+                }
+            }
+            catch (Exception ex)
+            {
+                _systemEventLogger.WriteEntry($"MessageReceivedDisplaydBluetoothBeaconWatcher{Environment.NewLine}{ex.Message}", EventLogEntryType.Error);
+            } 
+        }
+
         private static DisplayMessage GetDisplayStateFromMessageBody(string messageBody)
         {
             var serializer = new JavaScriptSerializer();
@@ -536,6 +569,7 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
         {
             _systemEventLogger.WriteEntry("In OnStop");
             _timer.Stop();
+            _timer.Dispose();
         }
     }
 }

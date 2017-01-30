@@ -128,7 +128,7 @@
             this.btnRestartWatcher.Name = "btnRestartWatcher";
             this.btnRestartWatcher.Size = new System.Drawing.Size(106, 41);
             this.btnRestartWatcher.TabIndex = 9;
-            this.btnRestartWatcher.Text = "Restart Watcher";
+            this.btnRestartWatcher.Text = "Restart Beacon Service";
             this.btnRestartWatcher.UseVisualStyleBackColor = true;
             this.btnRestartWatcher.Click += new System.EventHandler(this.RestartWatcherClick);
             // 

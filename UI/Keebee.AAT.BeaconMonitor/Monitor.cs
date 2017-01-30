@@ -196,7 +196,7 @@ namespace Keebee.AAT.BeaconMonitor
                 var currentCursor = Cursor.Current;
                 Cursor.Current = Cursors.WaitCursor;
 
-                TurnOffMonitor();
+                TurnMonitorOff();
 
                 // bluetooth beacon watcher service
                 var service = new ServiceController(ServiceName.BluetoothBeaconWatcher);
@@ -212,8 +212,14 @@ namespace Keebee.AAT.BeaconMonitor
                     _messageQueueDisplayBluetoothBeaconWatcher.Send(CreateDisplayMessageBody(true));
                 }
 
+                lvBeacons.Items.Clear();
+                _beaconAddresses.Clear();
+                UpdateLabelActiveResident("Public", 0);
+
                 Cursor.Current = currentCursor;
                 MessageBox.Show("Bluetooth Beacon Watcher Service has been restarted.", "Restart Service", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                TurnMonitorOn();
             }
             catch (Exception ex)
             {
@@ -239,11 +245,18 @@ namespace Keebee.AAT.BeaconMonitor
             return displayMessageBody;
         }
 
-        private void TurnOffMonitor()
+        private void TurnMonitorOff()
         {
             radOff.Checked = true;
             radOn.Checked = false;
             _messageQueueBeaconMonitorState.Send("0");
+        }
+
+        private void TurnMonitorOn()
+        {
+            radOff.Checked = false;
+            radOn.Checked = true;
+            _messageQueueBeaconMonitorState.Send("1");
         }
     }
 }

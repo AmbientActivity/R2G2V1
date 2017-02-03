@@ -8,7 +8,7 @@
     $isfound = $false
 
     Write-Host "Removing user..." -NoNewline
-    $ADSIComp.Children | where {$_.SchemaClassName -eq 'user'}  | % {$_.name[0].ToString()} | where {$_.ToString() -like 'webuser'} | foreach {
+    $ADSIComp.Children | where {$_.SchemaClassName -eq 'user'}  | % {$_.name[0].ToString()} | where {$_.ToString() -eq $webuser} | foreach {
         if ($_) {       
             $ADSIComp.Delete('User', $webuser)
             $isfound = $true
@@ -23,9 +23,7 @@
 
     $isfound = $false
     Write-Host "Removing profile..." -NoNewline
-    #-filter "localpath='C:\\Users\\$webuser'"
-    Get-WmiObject Win32_UserProfile | where localpath -like '*webuser*' | foreach {
-        #Write-Host $_.localpath
+    Get-WmiObject Win32_UserProfile | where localpath -like "$webuser*" | foreach {
         if ($_) {
             $isfound = $true
             $_.Delete()

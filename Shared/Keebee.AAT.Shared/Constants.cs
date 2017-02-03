@@ -112,6 +112,7 @@ namespace Keebee.AAT.Shared
     {
         public const int MatchThePictures = 1;
         public const int MatchThePairs = 2;
+        public const int PaintAPicture = 3;
     }
 
     public static class PhidgetStyleTypeIdId
@@ -165,6 +166,7 @@ namespace Keebee.AAT.Shared
         public const int Ambient = 8;
         public const int OffScreen = 9;
         public const int VolumeControl = 10;
+        public const int PaintingGame = 11;
     }
 
     public static class MediaPlayerControl

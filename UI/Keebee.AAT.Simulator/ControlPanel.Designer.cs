@@ -51,6 +51,7 @@
             this.btnTelevisionRight = new System.Windows.Forms.Button();
             this.btnTelevisionLeft = new System.Windows.Forms.Button();
             this.bnRadioLeft = new System.Windows.Forms.Button();
+            this.btnPaintingGame = new System.Windows.Forms.Button();
             this.grpMediaSource.SuspendLayout();
             this.grpAutoResident.SuspendLayout();
             this.grpAutoSensor.SuspendLayout();
@@ -228,6 +229,7 @@
             // 
             // grpInterfaceKit
             // 
+            this.grpInterfaceKit.Controls.Add(this.btnPaintingGame);
             this.grpInterfaceKit.Controls.Add(this.btnOffScreen);
             this.grpInterfaceKit.Controls.Add(this.btnCaregiver);
             this.grpInterfaceKit.Controls.Add(this.btnAmbient);
@@ -243,7 +245,7 @@
             this.grpInterfaceKit.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.grpInterfaceKit.Location = new System.Drawing.Point(12, 171);
             this.grpInterfaceKit.Name = "grpInterfaceKit";
-            this.grpInterfaceKit.Size = new System.Drawing.Size(421, 141);
+            this.grpInterfaceKit.Size = new System.Drawing.Size(421, 195);
             this.grpInterfaceKit.TabIndex = 10;
             this.grpInterfaceKit.TabStop = false;
             this.grpInterfaceKit.Text = "Repsonse";
@@ -338,11 +340,23 @@
             this.bnRadioLeft.UseVisualStyleBackColor = true;
             this.bnRadioLeft.Click += new System.EventHandler(this.RadioLeftButtonClick);
             // 
+            // btnPaintingGame
+            // 
+            this.btnPaintingGame.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnPaintingGame.Location = new System.Drawing.Point(10, 151);
+            this.btnPaintingGame.Name = "btnPaintingGame";
+            this.btnPaintingGame.Size = new System.Drawing.Size(96, 36);
+            this.btnPaintingGame.TabIndex = 38;
+            this.btnPaintingGame.Text = "Painting Game";
+            this.btnPaintingGame.UseMnemonic = false;
+            this.btnPaintingGame.UseVisualStyleBackColor = true;
+            this.btnPaintingGame.Click += new System.EventHandler(this.PaintingGameClick);
+            // 
             // ControlPanel
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(445, 326);
+            this.ClientSize = new System.Drawing.Size(444, 372);
             this.Controls.Add(this.grpAutoSensor);
             this.Controls.Add(this.grpAutoResident);
             this.Controls.Add(this.grpInterfaceKit);
@@ -389,6 +403,7 @@
         private System.Windows.Forms.Button btnCats;
         private System.Windows.Forms.Button btnOffScreen;
         private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.Button btnPaintingGame;
     }
 }
 

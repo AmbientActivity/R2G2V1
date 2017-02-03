@@ -120,6 +120,12 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="UserControls\PaintingGame.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UserControls\PaintingGame.Designer.cs">
+      <DependentUpon>PaintingGame.cs</DependentUpon>
+    </Compile>
     <Compile Include="UserControls\RadioControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -217,6 +223,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Main.resx">
       <DependentUpon>Main.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UserControls\PaintingGame.resx">
+      <DependentUpon>PaintingGame.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UserControls\RadioControl.resx">
       <DependentUpon>RadioControl.cs</DependentUpon>

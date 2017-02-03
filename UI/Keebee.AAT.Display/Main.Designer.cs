@@ -37,6 +37,7 @@ namespace Keebee.AAT.Display
             this.ambient1 = new Keebee.AAT.Display.UserControls.AmbientPlayer();
             this.matchingGame1 = new Keebee.AAT.Display.UserControls.MatchingGame();
             this.mediaPlayer1 = new Keebee.AAT.Display.UserControls.MediaPlayer();
+            this.paintingGame1 = new Keebee.AAT.Display.UserControls.PaintingGame();
             this.SuspendLayout();
             // 
             // lblActiveResident
@@ -100,6 +101,14 @@ namespace Keebee.AAT.Display
             this.mediaPlayer1.Size = new System.Drawing.Size(127, 63);
             this.mediaPlayer1.TabIndex = 16;
             // 
+            // paintingGame1
+            // 
+            this.paintingGame1.BackColor = System.Drawing.Color.Yellow;
+            this.paintingGame1.Location = new System.Drawing.Point(0, 154);
+            this.paintingGame1.Name = "paintingGame1";
+            this.paintingGame1.Size = new System.Drawing.Size(116, 55);
+            this.paintingGame1.TabIndex = 17;
+            // 
             // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -107,6 +116,7 @@ namespace Keebee.AAT.Display
             this.BackColor = System.Drawing.Color.Yellow;
             this.ClientSize = new System.Drawing.Size(408, 221);
             this.ControlBox = false;
+            this.Controls.Add(this.paintingGame1);
             this.Controls.Add(this.mediaPlayer1);
             this.Controls.Add(this.lblActiveResident);
             this.Controls.Add(this.radioControl1);
@@ -137,6 +147,7 @@ namespace Keebee.AAT.Display
         private RadioControl radioControl1;
         private System.Windows.Forms.Label lblActiveResident;
         private MediaPlayer mediaPlayer1;
+        private PaintingGame paintingGame1;
     }
 }
 

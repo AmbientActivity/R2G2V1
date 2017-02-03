@@ -250,6 +250,11 @@ namespace Keebee.AAT.Simulator
             ExecuteResponse(ResponseTypeId.Ambient, PhidgetTypeId.Sensor7, MaxValue - 1, true);
         }
 
+        private void PaintingGameClick(object sender, EventArgs e)
+        {
+            ExecuteResponse(ResponseTypeId.PaintingGame, PhidgetTypeId.Input4);
+        }
+
         private void ActivateResidentClick(object sender, EventArgs e)
         {
             var id = Convert.ToInt32(cboResident.SelectedValue.ToString());

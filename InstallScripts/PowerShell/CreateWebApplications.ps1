@@ -48,6 +48,13 @@
             Set-WebConfigurationProperty $fullPath -Name "password" -Value $password
         }
     }
+
+    # start iis if not already running
+    $status = (Get-Service "W3SVC").Status
+    if ($status -eq "Stopped") {
+        Start-Service "W3SVC"
+    }
+
     Write-Host "done."
 }
 Catch

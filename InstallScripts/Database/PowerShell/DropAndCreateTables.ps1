@@ -30,7 +30,14 @@ Try
 
         # restart IIS
         Write-Host "Restarting IIS...” -NoNewline
-        invoke-command -scriptblock {iisreset} | Out-Null
+
+        $status = (Get-Service "W3SVC").Status
+        if ($status -eq "Running") {
+            invoke-command -scriptblock {iisreset} | Out-Null
+        } else {
+            Start-Service "W3SVC"
+        }
+
         Write-Host "done.”
 
         Write-Host "Creating tables...” -NoNewline

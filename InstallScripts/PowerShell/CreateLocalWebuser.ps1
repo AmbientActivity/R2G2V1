@@ -6,14 +6,21 @@
 
     $computername = $env:COMPUTERNAME
     $ADSIComp = [adsi]"WinNT://$computername"
+    $webuser = 'webuser'
 
-    $username = 'webuser'
-    $newUser = $ADSIComp.Create('User', $username) 
+    $ADSIComp.Children | where {$_.SchemaClassName -eq 'user'}  | % {$_.name[0].ToString()} | where {$_.ToString() -like $webuser} | foreach {
+        if ($_) {
+            Write-Host "already exists."
+            exit
+        }
+    }
+
+    $newUser = $ADSIComp.Create('User', $webuser) 
     $password = 'R2G2u$er'
     $newUser.SetPassword(($password))
     $newUser.SetInfo()
 
-    $newUser.Description  ='webuser account'
+    $newUser.Description  ='R2G2 webuser account'
     $newUser.SetInfo()
 
     Invoke-Command -ScriptBlock { C:\Windows\system32\net localgroup Administrators webuser /add } | Out-Null

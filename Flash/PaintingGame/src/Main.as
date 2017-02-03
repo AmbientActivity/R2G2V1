@@ -1,35 +1,10 @@
 package
 {
-	//import flash.external.ExternalInterface;
-	//import flash.display.Sprite;
-	//import flash.events.Event;
-	//import flash.utils.setTimeout;
-	//import flash.utils.clearTimeout;
-	
 	import flash.external.ExternalInterface;
-	
-	import com.greensock.*;
-	import com.greensock.plugins.*;
-	import com.greensock.easing.*;
-	
-	import flash.net.URLRequest;
-	import flash.net.URLLoader;
-	import flash.media.SoundMixer;
-	import flash.media.Sound;
 	import flash.display.Sprite;
-	import flash.display.Shape;
 	import flash.events.Event;
-	import flash.events.MouseEvent;
-	import flash.events.IOErrorEvent;
-	import flash.display.Loader;
-	import flash.display.Bitmap;
 	import flash.utils.setTimeout;
 	import flash.utils.clearTimeout;
-
-	import flash.text.TextField;
-	import flash.text.TextFormat;
-	import flash.text.TextFormatAlign;
-	import flash.text.AntiAliasType;
 	
 	[SWF(backgroundColor="0xffff00")]
 	public class Main extends Sprite 

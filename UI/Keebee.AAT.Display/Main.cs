@@ -201,6 +201,10 @@ namespace Keebee.AAT.Display
             matchingGame1.SendToBack();
             matchingGame1.Hide();
 
+            paintingGame1.Dock = DockStyle.Fill;
+            paintingGame1.SendToBack();
+            paintingGame1.Hide();
+
             offScreen1.Dock = DockStyle.Fill;
             offScreen1.SendToBack();
             offScreen1.Hide();
@@ -909,6 +913,7 @@ namespace Keebee.AAT.Display
             ambient1.Dock = DockStyle.None;
             slideViewerFlash1.Dock = DockStyle.None;
             matchingGame1.Dock = DockStyle.None;
+            paintingGame1.Dock = DockStyle.None;
             mediaPlayer1.Dock = DockStyle.None;
             radioControl1.Dock = DockStyle.None;
             offScreen1.Dock = DockStyle.None;

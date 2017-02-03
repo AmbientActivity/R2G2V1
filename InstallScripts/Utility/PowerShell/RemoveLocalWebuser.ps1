@@ -23,7 +23,7 @@
 
     $isfound = $false
     Write-Host "Removing profile..." -NoNewline
-    Get-WmiObject Win32_UserProfile | where localpath -like "$webuser*" | foreach {
+    Get-WmiObject Win32_UserProfile | where localpath -like "*$webuser*" | foreach {
         if ($_) {
             $isfound = $true
             $_.Delete()

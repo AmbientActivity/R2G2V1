@@ -2,6 +2,7 @@
 using AxShockwaveFlashObjects;
 using System;
 using System.Diagnostics;
+using System.IO;
 using System.Windows.Forms;
 using Keebee.AAT.Shared;
 
@@ -44,16 +45,14 @@ namespace Keebee.AAT.Display.UserControls
         {
             try
             {
-                //var enableTimeout = _enableGameTimeout ? 1 : 0;
-                //var swf = Path.Combine(Application.StartupPath, "PaintingGame.swf");
-                //axShockwaveFlash1.LoadMovie(0, swf);
+                var enableTimeout = _enableGameTimeout ? 1 : 0;
+                var swf = Path.Combine(Application.StartupPath, "PaintingGame.swf");
+                axShockwaveFlash1.LoadMovie(0, swf);
 
-                //axShockwaveFlash1.CallFunction(
-                //    "<invoke name=\"setParameters\"><arguments>" +
-                //    $"<number>{enableTimeout}</number></arguments></invoke>");
-                //axShockwaveFlash1.CallFunction("<invoke name=\"playPaintingGame\"></invoke>");
+                axShockwaveFlash1.CallFunction("<invoke name=\"playPaintingGame\"><arguments>" +
+                    $"<number>{enableTimeout}</number></arguments></invoke>");
 
-                //axShockwaveFlash1.Show();
+                axShockwaveFlash1.Show();
             }
 
             catch (Exception ex)

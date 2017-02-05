@@ -129,7 +129,7 @@ package
 			//loadMedia(xmlShapesTest, wouldYouLikeToMatchThePicturesTest, wouldYouLikeToMatchThePairsTest, 
 			//	correctTest, goodJobTest, wellDoneTest, TryAgainTest, letsTryAgainTest, letsTrySomethingDifferentTest, 1, 1);
 				
-			playMatchingGame();
+			//playMatchingGame();
 		}
 		
 		// called externally by the Windows UserControl

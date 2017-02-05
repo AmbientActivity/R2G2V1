@@ -118,7 +118,7 @@ namespace Keebee.AAT.VideoCaptureService
             catch (Exception ex)
             {
                 _isRecording = false;
-                _systemEventLogger.WriteEntry($"StartCapture: {ex.Message}", EventLogEntryType.Error);
+                _systemEventLogger.WriteEntry($"StartCapture: {ex.Message}", EventLogEntryType.Warning);
             }
         }
 

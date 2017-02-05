@@ -521,7 +521,7 @@ package
 			}
 			tipLayer.graphics.clear();
 			
-			LogInteractiveActivityEvent("The last brush stroke as been undone", false)
+			LogInteractiveActivityEvent("The last brush stroke was undone", false)
 		}
 
 		//this function assists with creating colors for the gradients.

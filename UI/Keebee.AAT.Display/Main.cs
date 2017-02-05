@@ -605,7 +605,6 @@ namespace Keebee.AAT.Display
                 if (_currentIsActiveEventLog)
                 {
                     _activityEventLogger.Add(_activeConfigDetail.ConfigId, _activeConfigDetail.Id, _activeResident.Id);
-                    _interactiveActivityEventLogger.Add(_activeResident.Id, InteractiveActivityTypeId.PaintingActivity, "New paint palette has been created");
                 }
 
                 paintingActivity1.Play(true, _currentIsActiveEventLog);

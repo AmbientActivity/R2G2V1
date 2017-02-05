@@ -118,6 +118,7 @@ package
 		private var timeoutValue:Number = 900000;		
 		private var enableActivityTimeout:Boolean;
 		private var currentSwatch:Object;
+		private var currentColourSelection:String;
 		
 		//Setting the following NO_SCALE parameter helps avoid strange artifacts
 		//in the displayed bitmaps caused by repositioning of the swf within the html page.
@@ -269,6 +270,9 @@ package
 			
 			bitmapHolder.addEventListener(MouseEvent.MOUSE_DOWN, startDraw);
 			stage.addEventListener(KeyboardEvent.KEY_DOWN, keyDownListener);
+			
+			currentColourSelection = "Black"
+			LogInteractiveActivityEvent("New palette has been created (Brush colour: " + currentColourSelection + ")", false)
 		}
 
 		private function createSwatches():void {
@@ -298,6 +302,9 @@ package
 			paintColorR2 = thisSwatch.red2;
 			paintColorG2 = thisSwatch.green2;
 			paintColorB2 = thisSwatch.blue2;
+			
+			currentColourSelection = GetColourDescriptor(thisSwatch)
+			LogInteractiveActivityEvent("New colour was selected ("  + currentColourSelection + ")")
 		}
 
 		private function startDraw(evt:MouseEvent):void {
@@ -469,11 +476,14 @@ package
 				undoStack.splice(0,1);
 			}*/
 			
+			LogInteractiveActivityEvent("New brush stroke was applied", false)
 		}
 
 		private function erase(evt:MouseEvent):void {
 			tipLayer.graphics.clear();
 			drawBackground();
+			
+			LogInteractiveActivityEvent("The eraser was applied", false)
 		}
 
 		private function drawBackground():void {
@@ -510,6 +520,8 @@ package
 				undoStack.splice(undoStack.length - 1, 1);
 			}
 			tipLayer.graphics.clear();
+			
+			LogInteractiveActivityEvent("The last brush stroke as been undone", false)
 		}
 
 		//this function assists with creating colors for the gradients.
@@ -532,6 +544,37 @@ package
 		
 		private function timedFunctionGame():void {
 			LogInteractiveActivityEvent("Game timeout has expired", true);
+		}
+		
+		private function GetColourDescriptor(swatch:Object):String {
+			if (swatch.red1 == 0 && swatch.green1 == 0 && swatch.blue1 == 178 && swatch.red2 == 0 && swatch.green2 == 0 && swatch.blue2 == 255)
+				return "Blue";
+			else if (swatch.red1 == 107 && swatch.green1 == 71 && swatch.blue1 == 35 && swatch.red2 == 153 && swatch.green2 == 102 && swatch.blue2 == 51)
+				return "Brown";
+			else if (swatch.red1 == 0 && swatch.green1 == 178 && swatch.blue1 == 178 && swatch.red2 == 0 && swatch.green2 == 255 && swatch.blue2 == 255)
+				return "Cyan";
+			else if (swatch.red1 == 35 && swatch.green1 == 142 && swatch.blue1 == 0 && swatch.red2 == 51 && swatch.green2 == 204 && swatch.blue2 == 0)
+				return "Green";
+			else if (swatch.red1 == 178 && swatch.green1 == 0 && swatch.blue1 == 178 && swatch.red2 == 255 && swatch.green2 == 0 && swatch.blue2 == 255)
+				return "Pink";
+			else if (swatch.red1 == 178 && swatch.green1 == 88 && swatch.blue1 == 0 && swatch.red2 == 255 && swatch.green2 == 127 && swatch.blue2 == 0)
+				return "Orange";
+			else if (swatch.red1 == 88 && swatch.green1 == 0 && swatch.blue1 == 88 && swatch.red2 == 127 && swatch.green2 == 0 && swatch.blue2 == 127)
+				return "Purple";
+			else if (swatch.red1 == 178 && swatch.green1 == 0 && swatch.blue1 == 0 && swatch.red2 == 255 && swatch.green2 == 0 && swatch.blue2 == 0)
+				return "Red";
+			else if (swatch.red1 == 178 && swatch.green1 == 178 && swatch.blue1 == 0 && swatch.red2 == 255 && swatch.green2 == 255 && swatch.blue2 == 0)
+				return "Yellow";
+			else if (swatch.red1 == 0 && swatch.green1 == 0 && swatch.blue1 == 0 && swatch.red2 == 0 && swatch.green2 == 0 && swatch.blue2 == 0)
+				return "Black";
+			else if (swatch.red1 == 59 && swatch.green1 == 59 && swatch.blue1 == 59 && swatch.red2 == 85 && swatch.green2 == 85 && swatch.blue2 == 85)
+				return "Dark Grey";
+			else if (swatch.red1 == 107 && swatch.green1 == 107 && swatch.blue1 == 107 && swatch.red2 == 153 && swatch.green2 == 153 && swatch.blue2 == 153)
+				return "Light Grey";
+			else if (swatch.red1 == 229 && swatch.green1 == 229 && swatch.blue1 == 229 && swatch.red2 == 255 && swatch.green2 == 255 && swatch.blue2 == 255)
+				return "White";
+				
+			return "Unknown";
 		}
 		
 		/*private function exportHandler(evt:MouseEvent):void {

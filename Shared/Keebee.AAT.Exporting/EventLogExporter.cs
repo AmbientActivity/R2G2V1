@@ -136,7 +136,11 @@ namespace Keebee.AAT.Exporting
                     worksheet3.Cells[rowIndex, 1] = new Cell(eventLog.Time) { Format = CellFormat.Date };
                     worksheet3.Cells[rowIndex, 2] = new Cell(eventLog.ResidentId);
                     worksheet3.Cells[rowIndex, 3] = new Cell(eventLog.Resident);
-                    worksheet3.Cells[rowIndex, 4] = new Cell(eventLog.DifficultyLevel);
+                    if (eventLog.DifficultyLevel != null)
+                        worksheet3.Cells[rowIndex, 4] = new Cell(eventLog.DifficultyLevel);
+                    else
+                        worksheet3.Cells[rowIndex, 4] = new Cell(string.Empty);
+
                     if (eventLog.IsSuccess != null)
                         worksheet3.Cells[rowIndex, 5] = new Cell(eventLog.IsSuccess.ToString().ToUpper());
                     else

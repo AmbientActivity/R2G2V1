@@ -61,7 +61,12 @@ namespace Keebee.AAT.Operations.Controllers
                         {
                             cd.ResponseType.Id,
                             cd.ResponseType.Description,
-                            cd.ResponseType.IsInteractive,
+                            InteractiveActivityType = (cd.ResponseType.InteractiveActivityTypeId != null)
+                            ? new
+                            {
+                                cd.ResponseType.InteractiveActivityType.Id,
+                                cd.ResponseType.InteractiveActivityType.Description
+                            } : null,
                             cd.ResponseType.IsSystem
                         }
                     }).OrderBy(o => o.PhidgetType.Id)
@@ -177,15 +182,20 @@ namespace Keebee.AAT.Operations.Controllers
                 cd.Location,
                 ResponseType = new
                 {
+                    cd.ResponseType.Id,
+                    cd.ResponseType.Description,
+                    cd.ResponseType.IsSystem,
                     ResponseTypeCategory = new
                     {
                         cd.ResponseType.ResponseTypeCategory.Id,
                         cd.ResponseType.ResponseTypeCategory.Description
                     },
-                    cd.ResponseType.Id,
-                    cd.ResponseType.Description,
-                    cd.ResponseType.IsInteractive,
-                    cd.ResponseType.IsSystem
+                    InteractiveActivityType = (cd.ResponseType.InteractiveActivityTypeId != null) 
+                    ? new
+                    {
+                        cd.ResponseType.InteractiveActivityType.Id,
+                        cd.ResponseType.InteractiveActivityType.Description
+                    } : null
                 }
             }).OrderBy(o => o.PhidgetType.Id);
 
@@ -229,15 +239,20 @@ namespace Keebee.AAT.Operations.Controllers
                 cd.Location,
                 ResponseType = new
                 {
+                    cd.ResponseType.Id,
+                    cd.ResponseType.Description,
+                    cd.ResponseType.IsSystem,
                     ResponseTypeCategory = new
                     {
                         cd.ResponseType.ResponseTypeCategory.Id,
                         cd.ResponseType.ResponseTypeCategory.Description                      
                     },
-                    cd.ResponseType.Id,
-                    cd.ResponseType.Description,
-                    cd.ResponseType.IsInteractive,
-                    cd.ResponseType.IsSystem
+                    InteractiveActivityType = (cd.ResponseType.InteractiveActivityTypeId != null)
+                    ? new
+                    {
+                        cd.ResponseType.InteractiveActivityType.Id,
+                        cd.ResponseType.InteractiveActivityType.Description
+                    } : null
                 }
             }).OrderBy(o => o.PhidgetType.Id);
 

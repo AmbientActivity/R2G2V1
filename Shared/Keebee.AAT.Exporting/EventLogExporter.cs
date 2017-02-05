@@ -50,12 +50,12 @@ namespace Keebee.AAT.Exporting
             try
             {
                 var activityEventLogs = _opsClient.GetActivityEventLogsForDate(date).ToArray();
-                var gameEventLogs = _opsClient.GetGameEventLogsForDate(date).ToArray();
-                var rfidEventLogs = _opsClient.GetRfidEventLogsForDate(date).ToArray();
+                var interactiveActivityEventLogs = _opsClient.GetInteractiveActivityEventLogsForDate(date).ToArray();
+                var activeResidentEventLogs = _opsClient.GetActiveResidentEventLogsForDate(date).ToArray();
 
-                // -------------------- RFID Log------------------------
+                // -------------------- Active Resident Log------------------------
 
-                var worksheet1 = new Worksheet("RFID Log");
+                var worksheet1 = new Worksheet("Active Resident");
 
                 // unfortunate hack needed to make ExcelLibrary work (need to initialize with 100 blank cells)
                 for (var i = 0; i < 100; i++)
@@ -63,12 +63,12 @@ namespace Keebee.AAT.Exporting
 
                 worksheet1.Cells[0, 0] = new Cell("Date");
                 worksheet1.Cells[0, 1] = new Cell("Time");
-                worksheet1.Cells[0, 2] = new Cell("RFID");
+                worksheet1.Cells[0, 2] = new Cell("ID");
                 worksheet1.Cells[0, 3] = new Cell("Resident");
                 worksheet1.Cells[0, 4] = new Cell("Description");
 
                 ushort rowIndex = 1;
-                foreach (var eventLog in rfidEventLogs)
+                foreach (var eventLog in activeResidentEventLogs)
                 {
                     worksheet1.Cells[rowIndex, 0] = new Cell(eventLog.Date) { Format = CellFormat.Date };
                     worksheet1.Cells[rowIndex, 1] = new Cell(eventLog.Time) { Format = CellFormat.Date };
@@ -83,13 +83,13 @@ namespace Keebee.AAT.Exporting
 
                 // -------------------- Activity Log------------------------
 
-                var worksheet2 = new Worksheet("Activity Log")
+                var worksheet2 = new Worksheet("Activity")
                                  {
                                      Cells =
                                      {
                                          [0, 0] = new Cell("Date") { Format = CellFormat.Date },
                                          [0, 1] = new Cell("Time") { Format = CellFormat.Date },
-                                         [0, 2] = new Cell("RFID"),
+                                         [0, 2] = new Cell("ID"),
                                          [0, 3] = new Cell("Resident"),
                                          [0, 4] = new Cell("Activity"),
                                          [0, 5] = new Cell("Response Type"),
@@ -113,15 +113,15 @@ namespace Keebee.AAT.Exporting
 
                 workbook.Worksheets.Add(worksheet2);
 
-                //-------------------- Game Log ------------------------
+                //-------------------- Interactive Activity Log ------------------------
 
-                var worksheet3 = new Worksheet("Game Log")
+                var worksheet3 = new Worksheet("Interactive Activity")
                 {
                     Cells =
                                      {
                                          [0, 0] = new Cell("Date"),
                                          [0, 1] = new Cell("Time"),
-                                         [0, 2] = new Cell("RFID"),
+                                         [0, 2] = new Cell("ID"),
                                          [0, 3] = new Cell("Resident"),
                                          [0, 4] = new Cell("Difficulty"),
                                          [0, 5] = new Cell("Success"),
@@ -130,7 +130,7 @@ namespace Keebee.AAT.Exporting
                 };
 
                 rowIndex = 1;
-                foreach (var eventLog in gameEventLogs)
+                foreach (var eventLog in interactiveActivityEventLogs)
                 {
                     worksheet3.Cells[rowIndex, 0] = new Cell(eventLog.Date) { Format = CellFormat.Date };
                     worksheet3.Cells[rowIndex, 1] = new Cell(eventLog.Time) { Format = CellFormat.Date };

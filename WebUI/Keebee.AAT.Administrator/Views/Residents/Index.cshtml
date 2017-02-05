@@ -12,7 +12,7 @@
         residents.index.init(
         {
             selectedid: '@Model.SelectedId',
-            rfid: '@Model.RfidSearch',
+            idsearch: '@Model.IdSearch',
             firstname: '@Model.FirstNameSearch',
             lastname: '@Model.LastNameSearch',
             sortcolumn: '@Model.SortColumnName',
@@ -28,7 +28,7 @@
                 <input type="button" class="btn btn-success" value="Add Resident" data-bind="click: showEditDialog"/>
             </li>
             <li>
-                <input id="txtSearchRfid" type="text" class="form-control" placeholder="RFID" data-bind="value: rfidSearch, valueUpdate: 'keyup'" />
+                <input id="txtSearchId" type="text" class="form-control" placeholder="ID" data-bind="value: idSearch, valueUpdate: 'keyup'" />
             </li>
             <li>
                 <input id="txtSearchFirstName" type="text" class="form-control" placeholder="First Name" data-bind="value: firstNameSearch, valueUpdate: 'keyup'"/>

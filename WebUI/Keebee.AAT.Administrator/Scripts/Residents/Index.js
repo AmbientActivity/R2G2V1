@@ -16,7 +16,7 @@
 
             var config = {
                 selectedid: 0,
-                rfid: "",
+                idsearch: "",
                 firstname: "",
                 lastname: "",
                 sortcolumn: "",
@@ -78,7 +78,7 @@
 
                 self.residents = ko.observableArray([]);
                 self.selectedResident = ko.observable();
-                self.rfidSearch = ko.observable(config.rfid);
+                self.idSearch = ko.observable(config.idsearch);
                 self.firstNameSearch = ko.observable(config.firstname);
                 self.lastNameSearch = ko.observable(config.lastname);
 
@@ -95,7 +95,7 @@
 
                 self.columns = ko.computed(function () {
                     var arr = [];
-                    arr.push({ title: "RFID", sortable: true, sortKey: "id", numeric: true, cssClass: "col-rfid" });
+                    arr.push({ title: "ID", sortable: true, sortKey: "id", numeric: true, cssClass: "col-idsearch" });
                     arr.push({ title: "First Name", sortable: true, sortKey: "firstname", numeric: false, cssClass: "col-firstname" });
                     arr.push({ title: "Last Name", sortable: true, sortKey: "lastname", numeric: false, cssClass: "col-lastname" });
                     arr.push({ title: "Gender", sortable: true, sortKey: "gender", numeric: false, cssClass: "col-gender" });
@@ -163,7 +163,7 @@
                             &&
                             (self.lastNameSearch().length === 0 || r.lastname.toLowerCase().indexOf(self.lastNameSearch().toLowerCase()) !== -1)
                             &&
-                            (self.rfidSearch().length === 0 || r.id.toString().indexOf(self.rfidSearch().toString()) !== -1)
+                            (self.idSearch().length === 0 || r.id.toString().indexOf(self.idSearch().toString()) !== -1)
                         );
                     });
                 });
@@ -193,7 +193,7 @@
 
                     if (id > 0) {
                         window.location = site.url + "Residents/Media/" + id
-                            + "?rfid=" + self.rfidSearch()
+                            + "?idsearch=" + self.idSearch()
                             + "&firstname=" + self.firstNameSearch()
                             + "&lastname=" + self.lastNameSearch()
                             + "&sortcolumn=" + _currentSortKey

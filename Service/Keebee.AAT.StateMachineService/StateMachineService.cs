@@ -166,13 +166,13 @@ namespace Keebee.AAT.StateMachineService
                 if (resident.Id > 0)
                 {
                     if (_activeResident?.Id == resident.Id) return;
-                    LogRfidEvent(resident.Id, "New active resident");
+                    LogActiveResidentEvent(resident.Id, "New active resident");
                     SetActiveResident(_isDisplayActive ? resident.Id : (int?)null);
                 }
                 else
                 {
                     if (_activeResident?.Id == PublicMediaSource.Id) return;
-                    LogRfidEvent(PublicMediaSource.Id, "Active resident is public");
+                    LogActiveResidentEvent(PublicMediaSource.Id, "Active resident is public");
                     SetActiveResident(null);
                 }
 
@@ -306,7 +306,7 @@ namespace Keebee.AAT.StateMachineService
             _systemEventLogger.WriteEntry("In OnStop");
         }
 
-        private void LogRfidEvent(int residentId, string description)
+        private void LogActiveResidentEvent(int residentId, string description)
         {
             try
             {
@@ -314,16 +314,16 @@ namespace Keebee.AAT.StateMachineService
                 if (_activeConfig == null) return;
                 if (!_activeConfig.IsActiveEventLog) return;
 
-                var rfidEventLogger = new RfidEventLogger()
+                var activeResdientEventLogger = new ActiveResidentEventLogger()
                 {
                     OperationsClient = _opsClient,
                     SystemEventLogger = _systemEventLogger
                 };
-                rfidEventLogger.Add(residentId, description);
+                activeResdientEventLogger.Add(residentId, description);
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"LogRfidEvent: {ex.Message}", EventLogEntryType.Error);
+                _systemEventLogger.WriteEntry($"LogActiveResidentEvent: {ex.Message}", EventLogEntryType.Error);
             }
         }
 

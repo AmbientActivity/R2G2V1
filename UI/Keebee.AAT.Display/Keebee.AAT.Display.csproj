@@ -53,11 +53,11 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Caregiver\MatchingGamePlayer.cs">
+    <Compile Include="Caregiver\InteractiveActivityPlayer.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Caregiver\MatchingGamePlayer.Designer.cs">
-      <DependentUpon>MatchingGamePlayer.cs</DependentUpon>
+    <Compile Include="Caregiver\InteractiveActivityPlayer.Designer.cs">
+      <DependentUpon>InteractiveActivityPlayer.cs</DependentUpon>
     </Compile>
     <Compile Include="Caregiver\CustomControls\ListViewLarge.cs">
       <SubType>UserControl</SubType>
@@ -105,7 +105,7 @@
     <Compile Include="Extensions\ProgressBarExtensions.cs" />
     <Compile Include="Helpers\ActivityEventLogger.cs" />
     <Compile Include="Helpers\AudioControl.cs" />
-    <Compile Include="Helpers\GameEventLogger.cs" />
+    <Compile Include="Helpers\InteractiveActivityEventLogger.cs" />
     <Compile Include="Helpers\MatchingGameSetup.cs" />
     <Compile Include="Helpers\MediaFileQuery.cs" />
     <Compile Include="Helpers\Taskbar.cs" />
@@ -115,16 +115,17 @@
     <Compile Include="Main.Designer.cs">
       <DependentUpon>Main.cs</DependentUpon>
     </Compile>
+    <Compile Include="Models\LogInteractiveActivityEventArgs.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="UserControls\PaintingGame.cs">
+    <Compile Include="UserControls\PaintingActivity.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="UserControls\PaintingGame.Designer.cs">
-      <DependentUpon>PaintingGame.cs</DependentUpon>
+    <Compile Include="UserControls\PaintingActivity.Designer.cs">
+      <DependentUpon>PaintingActivity.cs</DependentUpon>
     </Compile>
     <Compile Include="UserControls\RadioControl.cs">
       <SubType>UserControl</SubType>
@@ -182,17 +183,11 @@
     <Compile Include="UserControls\OffScreen.Designer.cs">
       <DependentUpon>OffScreen.cs</DependentUpon>
     </Compile>
-    <Compile Include="UserControls\SlideViewerFlash.cs">
+    <Compile Include="UserControls\SlideViewer.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="UserControls\SlideViewerFlash.Designer.cs">
-      <DependentUpon>SlideViewerFlash.cs</DependentUpon>
-    </Compile>
-    <Compile Include="UserControls\SlideViewerSimple.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="UserControls\SlideViewerSimple.Designer.cs">
-      <DependentUpon>SlideViewerSimple.cs</DependentUpon>
+    <Compile Include="UserControls\SlideViewer.Designer.cs">
+      <DependentUpon>SlideViewer.cs</DependentUpon>
     </Compile>
     <Compile Include="Volume\VolumeControl.cs">
       <SubType>Form</SubType>
@@ -200,8 +195,8 @@
     <Compile Include="Volume\VolumeControl.Designer.cs">
       <DependentUpon>VolumeControl.cs</DependentUpon>
     </Compile>
-    <EmbeddedResource Include="Caregiver\MatchingGamePlayer.resx">
-      <DependentUpon>MatchingGamePlayer.cs</DependentUpon>
+    <EmbeddedResource Include="Caregiver\InteractiveActivityPlayer.resx">
+      <DependentUpon>InteractiveActivityPlayer.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Caregiver\CustomControls\ListViewLarge.resx">
       <DependentUpon>ListViewLarge.cs</DependentUpon>
@@ -224,8 +219,8 @@
     <EmbeddedResource Include="Main.resx">
       <DependentUpon>Main.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="UserControls\PaintingGame.resx">
-      <DependentUpon>PaintingGame.cs</DependentUpon>
+    <EmbeddedResource Include="UserControls\PaintingActivity.resx">
+      <DependentUpon>PaintingActivity.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UserControls\RadioControl.resx">
       <DependentUpon>RadioControl.cs</DependentUpon>
@@ -259,11 +254,8 @@
     <EmbeddedResource Include="UserControls\OffScreen.resx">
       <DependentUpon>OffScreen.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="UserControls\SlideViewerFlash.resx">
-      <DependentUpon>SlideViewerFlash.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UserControls\SlideViewerSimple.resx">
-      <DependentUpon>SlideViewerSimple.cs</DependentUpon>
+    <EmbeddedResource Include="UserControls\SlideViewer.resx">
+      <DependentUpon>SlideViewer.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Volume\VolumeControl.resx">
       <DependentUpon>VolumeControl.cs</DependentUpon>

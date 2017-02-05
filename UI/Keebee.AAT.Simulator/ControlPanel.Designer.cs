@@ -51,7 +51,7 @@
             this.btnTelevisionRight = new System.Windows.Forms.Button();
             this.btnTelevisionLeft = new System.Windows.Forms.Button();
             this.bnRadioLeft = new System.Windows.Forms.Button();
-            this.btnPaintingGame = new System.Windows.Forms.Button();
+            this.btnPaintingActivity = new System.Windows.Forms.Button();
             this.grpMediaSource.SuspendLayout();
             this.grpAutoResident.SuspendLayout();
             this.grpAutoSensor.SuspendLayout();
@@ -229,7 +229,7 @@
             // 
             // grpInterfaceKit
             // 
-            this.grpInterfaceKit.Controls.Add(this.btnPaintingGame);
+            this.grpInterfaceKit.Controls.Add(this.btnPaintingActivity);
             this.grpInterfaceKit.Controls.Add(this.btnOffScreen);
             this.grpInterfaceKit.Controls.Add(this.btnCaregiver);
             this.grpInterfaceKit.Controls.Add(this.btnAmbient);
@@ -340,17 +340,17 @@
             this.bnRadioLeft.UseVisualStyleBackColor = true;
             this.bnRadioLeft.Click += new System.EventHandler(this.RadioLeftButtonClick);
             // 
-            // btnPaintingGame
+            // btnPaintingActivity
             // 
-            this.btnPaintingGame.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnPaintingGame.Location = new System.Drawing.Point(10, 151);
-            this.btnPaintingGame.Name = "btnPaintingGame";
-            this.btnPaintingGame.Size = new System.Drawing.Size(96, 36);
-            this.btnPaintingGame.TabIndex = 38;
-            this.btnPaintingGame.Text = "Painting Game";
-            this.btnPaintingGame.UseMnemonic = false;
-            this.btnPaintingGame.UseVisualStyleBackColor = true;
-            this.btnPaintingGame.Click += new System.EventHandler(this.PaintingGameClick);
+            this.btnPaintingActivity.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnPaintingActivity.Location = new System.Drawing.Point(10, 151);
+            this.btnPaintingActivity.Name = "btnPaintingActivity";
+            this.btnPaintingActivity.Size = new System.Drawing.Size(96, 36);
+            this.btnPaintingActivity.TabIndex = 38;
+            this.btnPaintingActivity.Text = "Painting Game";
+            this.btnPaintingActivity.UseMnemonic = false;
+            this.btnPaintingActivity.UseVisualStyleBackColor = true;
+            this.btnPaintingActivity.Click += new System.EventHandler(this.PaintingActivityClick);
             // 
             // ControlPanel
             // 
@@ -403,7 +403,7 @@
         private System.Windows.Forms.Button btnCats;
         private System.Windows.Forms.Button btnOffScreen;
         private System.Windows.Forms.Label label6;
-        private System.Windows.Forms.Button btnPaintingGame;
+        private System.Windows.Forms.Button btnPaintingActivity;
     }
 }
 

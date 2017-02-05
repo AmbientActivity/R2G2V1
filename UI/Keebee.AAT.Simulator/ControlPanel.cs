@@ -250,9 +250,9 @@ namespace Keebee.AAT.Simulator
             ExecuteResponse(ResponseTypeId.Ambient, PhidgetTypeId.Sensor7, MaxValue - 1, true);
         }
 
-        private void PaintingGameClick(object sender, EventArgs e)
+        private void PaintingActivityClick(object sender, EventArgs e)
         {
-            ExecuteResponse(ResponseTypeId.PaintingGame, PhidgetTypeId.Input4);
+            ExecuteResponse(ResponseTypeId.PaintingActivity, PhidgetTypeId.Input4);
         }
 
         private void ActivateResidentClick(object sender, EventArgs e)
@@ -383,7 +383,7 @@ namespace Keebee.AAT.Simulator
 
         private void ExecuteResponse(int responseTypeId, int phidgetTypeId, int sensorValue = MaxValue - 1, bool isSystem = false, int[] reponseTypeIds = null)
         {
-            //if (Process.GetProcessesByName(ApplicationName.DisplayApp).Any())
+            if (Process.GetProcessesByName(ApplicationName.DisplayApp).Any())
                 _messageQueueResponse.Send(CreateMessageBodyForResponse(responseTypeId, phidgetTypeId, isSystem, sensorValue, reponseTypeIds));
         }
 

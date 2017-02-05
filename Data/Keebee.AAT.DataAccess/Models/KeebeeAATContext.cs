@@ -29,11 +29,11 @@ namespace Keebee.AAT.DataAccess.Models
 
         public DbSet<ActivityEventLog> ActivityEventLogs { get; set; }
 
-        public DbSet<GameEventLog> GameEventLogs { get; set; }
+        public DbSet<InteractiveActivityEventLog> InteractiveActivityEventLogs { get; set; }
 
-        public DbSet<RfidEventLog> RfidEventLogs { get; set; }
+        public DbSet<ActiveResidentEventLog> ActiveResidentEventLogs { get; set; }
 
-        public DbSet<GameType> GameTypes { get; set; }
+        public DbSet<InteractiveActivityType> InteractiveActivityTypes { get; set; }
 
         public DbSet<MediaFile> MediaFiles { get; set; }
 

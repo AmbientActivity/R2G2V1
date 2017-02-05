@@ -10,11 +10,15 @@ namespace Keebee.AAT.DataAccess.Models
 
         [ForeignKey("ResponseTypeCategory")]
         public int ResponseTypeCategoryId { get; set; }
+
         public virtual ResponseTypeCategory ResponseTypeCategory { get; set; }
 
         [Required]
         public string Description { get; set; }
-        public bool IsInteractive { get; set; }
+
+        public virtual InteractiveActivityType InteractiveActivityType { get; set; }
+        public int? InteractiveActivityTypeId { get; set; }
+
         public bool IsSystem { get; set; }
     }
 }

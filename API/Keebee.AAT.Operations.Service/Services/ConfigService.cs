@@ -29,7 +29,7 @@ namespace Keebee.AAT.Operations.Service.Services
             var container = new Container(new Uri(ODataHost.Url));
 
             var configs = container.Configs
-                .Expand("ConfigDetails($expand=PhidgetType,PhidgetStyleType,ResponseType)")
+                .Expand("ConfigDetails($expand=PhidgetType,PhidgetStyleType,ResponseType($expand=InteractiveActivityType))")
                 .AsEnumerable();
 
             return configs;
@@ -84,7 +84,7 @@ namespace Keebee.AAT.Operations.Service.Services
 
             var config = container.Configs
                 .AddQueryOption("$filter", "IsActive")
-                .Expand("ConfigDetails($expand=PhidgetType,PhidgetStyleType,ResponseType($expand=ResponseTypeCategory))")
+                .Expand("ConfigDetails($expand=PhidgetType,PhidgetStyleType,ResponseType($expand=ResponseTypeCategory,InteractiveActivityType))")
                 .Single();
 
             return config;
@@ -134,7 +134,7 @@ namespace Keebee.AAT.Operations.Service.Services
             var container = new Container(new Uri(ODataHost.Url));
 
             var config = container.Configs.ByKey(id)
-                 .Expand("ConfigDetails($expand=PhidgetType,PhidgetStyleType,ResponseType($expand=ResponseTypeCategory))")
+                 .Expand("ConfigDetails($expand=PhidgetType,PhidgetStyleType,ResponseType($expand=ResponseTypeCategory,InteractiveActivityType))")
                 .GetValue();
 
             return config;
@@ -147,7 +147,7 @@ namespace Keebee.AAT.Operations.Service.Services
             var config = container.Configs
                     .AddQueryOption("$filter", "IsActive")
                     .Expand("ConfigDetails($filter=ResponseType/IsSystem eq false;" +
-                            "$expand=PhidgetType,ResponseType($expand=ResponseTypeCategory))")
+                            "$expand=PhidgetType,ResponseType($expand=ResponseTypeCategory,InteractiveActivityType))")
                     .Single();
 
             return config;
@@ -160,7 +160,7 @@ namespace Keebee.AAT.Operations.Service.Services
             var config = container.Configs
                     .AddQueryOption("$filter", "IsActive")
                     .Expand($"ConfigDetails($filter=Id eq {configDetailId};" +
-                            $"$expand=PhidgetType,ResponseType($filter=IsSystem;$expand=ResponseTypeCategory,Responses($filter=ProfileId eq {profileId};$expand=MediaFile)))")
+                            $"$expand=PhidgetType,ResponseType($filter=IsSystem;$expand=ResponseTypeCategory,InteractiveActivityType,Responses($filter=ProfileId eq {profileId};$expand=MediaFile)))")
                     .FirstOrDefault();
 
             return config;

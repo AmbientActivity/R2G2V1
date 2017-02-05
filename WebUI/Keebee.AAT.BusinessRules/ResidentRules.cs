@@ -45,14 +45,14 @@ namespace Keebee.AAT.BusinessRules
 
             try
             {
-                // delete rfid event logs
-                var rfidEventLogs = _opsClient.GetRfidEventLogsForResident(id).ToArray();
-                foreach (var eventLog in rfidEventLogs)
+                // delete active resident event logs
+                var activeResidentEventLogs = _opsClient.GetActiveResidentEventLogsForResident(id).ToArray();
+                foreach (var eventLog in activeResidentEventLogs)
                 {
-                    result = _opsClient.DeleteRfidEventLog(eventLog.Id);
+                    result = _opsClient.DeleteActiveResidentEventLog(eventLog.Id);
 
                     if (result.Length > 0)
-                        throw new Exception($"Error deleting RFID Event Logs{Environment.NewLine}{result}");
+                        throw new Exception($"Error deleting Active Resident Event Logs{Environment.NewLine}{result}");
                 }
 
                 // delete activity event logs
@@ -65,14 +65,14 @@ namespace Keebee.AAT.BusinessRules
                         throw new Exception($"Error deleting Activity Event Logs{Environment.NewLine}{result}");
                 }
 
-                // delete game event logs
-                var gameEventLogs = _opsClient.GetGameEventLogsForResident(id).ToArray();
-                foreach (var eventLog in gameEventLogs)
+                // delete interactive activity event logs
+                var interactiveActivityEventLogs = _opsClient.GetInteractiveActivityEventLogsForResident(id).ToArray();
+                foreach (var eventLog in interactiveActivityEventLogs)
                 {
-                    result = _opsClient.DeleteGameEventLog(eventLog.Id);
+                    result = _opsClient.DeleteInteractiveActivityEventLog(eventLog.Id);
 
                     if (result.Length > 0)
-                        throw new Exception($"Error deleting Game Event Logs{Environment.NewLine}{result}");
+                        throw new Exception($"Error deleting Interactive Activity Event Logs{Environment.NewLine}{result}");
                 }
 
                 // delete resident

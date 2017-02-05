@@ -31,14 +31,12 @@ namespace Keebee.AAT.Shared
     {
         public const string StateMachine = "StateMachineService";
         public const string Phidget = "PhidgetService";
-        public const string RfidReader = "RfidReaderService";
         public const string BluetoothBeaconWatcher = "BluetoothBeaconWatcherService";
         public const string VideoCapture = "VideoCaptureService";
         public const string KeepIISAlive = "KeepIISAliveService";
 
         public const string StateMachineExe = "Keebee.AAT.StateMachineService.exe";
         public const string PhidgetExe = "Keebee.AAT.PhidgetService.exe";
-        public const string RfidReaderExe = "Keebee.AAT.RfidReaderService.exe";
         public const string BluetoothBeaconWatcherExe = "Keebee.AAT.BluetoothBeaconWatcherService.exe";
         public const string VideoCaptureExe = "Keebee.AAT.VideoCaptureService.exe";
         public const string KeepIISAliveExe = "Keebee.AAT.KeepIISAliveService.exe";
@@ -108,11 +106,10 @@ namespace Keebee.AAT.Shared
         public const string Description = "Public Library";
     }
 
-    public static class GameTypeId
+    public static class InteractiveActivityTypeId
     {
-        public const int MatchThePictures = 1;
-        public const int MatchThePairs = 2;
-        public const int PaintAPicture = 3;
+        public const int MatchingGame = 1;
+        public const int PaintingActivity = 2;
     }
 
     public static class PhidgetStyleTypeIdId
@@ -166,7 +163,7 @@ namespace Keebee.AAT.Shared
         public const int Ambient = 8;
         public const int OffScreen = 9;
         public const int VolumeControl = 10;
-        public const int PaintingGame = 11;
+        public const int PaintingActivity = 11;
     }
 
     public static class MediaPlayerControl

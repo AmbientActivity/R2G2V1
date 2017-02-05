@@ -38,7 +38,7 @@
             this.btnPlay = new System.Windows.Forms.Button();
             this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this.lblAutoMode = new System.Windows.Forms.Label();
-            this.slideViewerFlash1 = new Keebee.AAT.Display.UserControls.SlideViewerFlash();
+            this.slideViewerFlash1 = new Keebee.AAT.Display.UserControls.SlideViewer();
             this.tableLayoutPanel1.SuspendLayout();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
@@ -183,6 +183,6 @@
         private System.Windows.Forms.Button btnPlay;
         private System.Windows.Forms.ImageList imageList1;
         private System.Windows.Forms.Label lblAutoMode;
-        private UserControls.SlideViewerFlash slideViewerFlash1;
+        private UserControls.SlideViewer slideViewerFlash1;
     }
 }

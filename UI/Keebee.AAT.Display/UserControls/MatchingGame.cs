@@ -1,5 +1,7 @@
 ﻿using Keebee.AAT.SystemEventLogging;
-using AxShockwaveFlashObjects;
+using Keebee.AAT.Display.Helpers;
+using Keebee.AAT.Display.Models;
+using Keebee.AAT.Shared;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -7,13 +9,14 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using Keebee.AAT.Display.Helpers;
-using Keebee.AAT.Shared;
+using AxShockwaveFlashObjects;
 
 namespace Keebee.AAT.Display.UserControls
 {
     public partial class MatchingGame : UserControl
     {
+        private const string SwfFilename = "MatchingGame.swf";
+
         private SystemEventLogger _systemEventLogger;
         public SystemEventLogger SystemEventLogger
         {
@@ -22,21 +25,13 @@ namespace Keebee.AAT.Display.UserControls
 
         // event handler
         public event EventHandler MatchingGameTimeoutExpiredEvent;
-        public event EventHandler LogGameEventEvent;
+        public event EventHandler LogInteractiveActivityEventEvent;
 
         private bool _isActiveEventLog;
 
-        public class LogGameEventEventArgs : EventArgs
-        {
-            public int GameTypeId { get; set; }
-            public string Description { get; set; }
-            public int DifficultyLevel { get; set; }
-            public bool? Success { get; set; }
-        }
-
         // delegate
         private delegate void RaiseMatchingGameTimeoutExpiredDelegate();
-        private delegate void RaiseLogGameEventEventDelegate(int eventLogEntryTypeId, int difficultyLevel, bool? success, string description);
+        private delegate void RaiseLogInteractiveActivityEventEventDelegate(string description, int difficultyLevel, bool? success);
 
         private int _initialDifficultyLevel;
         private bool _enableGameTimeout;
@@ -64,7 +59,7 @@ namespace Keebee.AAT.Display.UserControls
         {
             try
             {
-                var swf = Path.Combine(Application.StartupPath, "MatchingGame.swf");
+                var swf = Path.Combine(Application.StartupPath, SwfFilename);
                 axShockwaveFlash1.LoadMovie(0, swf);
 
                 if (!shapes.Any()) return;
@@ -155,23 +150,18 @@ namespace Keebee.AAT.Display.UserControls
                 // existence of arguments implies "log gaming event"
                 if (e.request.Contains("<number>"))
                 {
-                    // extract eventLogEntryTypeId
+                    // extract difficultyLevel
                     const string numberOpen = "<number>";
                     const string numberClose = "</number>";
-                    var eventLogEntryTypeId = Convert.ToInt32(request.Substring(request.IndexOf(numberOpen) + numberOpen.Length,
+                    var difficultyLevel = Convert.ToInt32(request.Substring(request.IndexOf(numberOpen) + numberOpen.Length,
                             request.IndexOf(numberClose) - request.IndexOf(numberOpen) - numberOpen.Length));
 
-                    const string stringOpen = "<string>";
-                    const string stringClose = "</string>";
-
-                    // extract difficultyLevel
-                    var difficultyLevel = Convert.ToInt32(request.Substring(request.IndexOf(stringOpen) + stringOpen.Length,
-                            request.IndexOf(stringClose) - request.IndexOf(stringOpen) - stringOpen.Length));
-
                     // remove difficultyLevel from the request string
-                    request = request.Replace($"{stringOpen}{difficultyLevel}{stringClose}", string.Empty);
+                    request = request.Replace($"{numberOpen}{difficultyLevel}{numberClose}", string.Empty);
 
                     // extract success
+                    const string stringOpen = "<string>";
+                    const string stringClose = "</string>";
                     var successDesc = request.Substring(request.IndexOf(stringOpen) + stringOpen.Length,
                             request.IndexOf(stringClose) - request.IndexOf(stringOpen) - stringOpen.Length);
 
@@ -202,7 +192,7 @@ namespace Keebee.AAT.Display.UserControls
                         RaiseMatchingGameTimeoutExpired();
 
                     if (_isActiveEventLog)
-                        RaiseLogGameEventEvent(eventLogEntryTypeId, difficultyLevel, isSuccess, description);
+                        RaiseLogInteractiveActivityEventEvent(description, difficultyLevel, isSuccess);
                 }
 
                 // no arguments implies "raise game complete event"
@@ -232,25 +222,25 @@ namespace Keebee.AAT.Display.UserControls
             }
         }
 
-        private void RaiseLogGameEventEvent(int gameTypeId, int difficultyLevel, bool? success, string description)
+        private void RaiseLogInteractiveActivityEventEvent(string description, int difficultyLevel, bool? success)
         {
             if (IsDisposed) return;
 
             if (InvokeRequired)
             {
-                Invoke(new RaiseLogGameEventEventDelegate(RaiseLogGameEventEvent));
+                Invoke(new RaiseLogInteractiveActivityEventEventDelegate(RaiseLogInteractiveActivityEventEvent));
             }
             else
             {
-                var args = new LogGameEventEventArgs
-                           {
-                               GameTypeId = gameTypeId,
-                               DifficultyLevel = difficultyLevel,
+                var args = new LogInteractiveActivityEventArgs
+                {
+                    InteractiveActivityTypeId = InteractiveActivityTypeId.MatchingGame,
+                    DifficultyLevel = difficultyLevel,
                                Success = success,
                                Description = description
                            };
 
-                LogGameEventEvent?.Invoke(new object(), args);
+                LogInteractiveActivityEventEvent?.Invoke(new object(), args);
             }
         }
     }

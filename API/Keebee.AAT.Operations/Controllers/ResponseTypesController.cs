@@ -45,7 +45,12 @@ namespace Keebee.AAT.Operations.Controllers
                         x.ResponseTypeCategory.Description
                     },
                     x.Description,
-                    x.IsInteractive,
+                    InteractiveActivityType = (x.InteractiveActivityTypeId != null) 
+                    ? new
+                    { 
+                        x.InteractiveActivityType.Id,
+                        x.InteractiveActivityType.Description 
+                   } : null,
                     x.IsSystem
                 });
 
@@ -75,7 +80,12 @@ namespace Keebee.AAT.Operations.Controllers
                     responseType.ResponseTypeCategory.Id,
                     responseType.ResponseTypeCategory.Description,
                 };
-            exObj.IsInteractive = responseType.IsInteractive;
+            exObj.InteractiveActivityType = (responseType.InteractiveActivityTypeId != null)
+                ? new
+                {
+                    responseType.InteractiveActivityType.Id,
+                    responseType.InteractiveActivityType.Description
+                } : null;
             exObj.IsSystem = responseType.IsSystem;
 
             return new DynamicJsonObject(exObj);

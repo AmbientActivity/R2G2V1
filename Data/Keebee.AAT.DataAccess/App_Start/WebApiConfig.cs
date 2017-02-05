@@ -17,10 +17,10 @@ namespace Keebee.AAT.DataAccess
             builder.EntitySet<PhidgetType>("PhidgetTypes");
             builder.EntitySet<ResponseType>("ResponseTypes");
             builder.EntitySet<ResponseTypeCategory>("ResponseTypeCategories");
-            builder.EntitySet<GameType>("GameTypes");
+            builder.EntitySet<InteractiveActivityType>("InteractiveActivityTypes");
             builder.EntitySet<ActivityEventLog>("ActivityEventLogs");
-            builder.EntitySet<GameEventLog>("GameEventLogs");
-            builder.EntitySet<RfidEventLog>("RfidEventLogs");
+            builder.EntitySet<InteractiveActivityEventLog>("InteractiveActivityEventLogs");
+            builder.EntitySet<ActiveResidentEventLog>("ActiveResidentEventLogs");
             builder.EntitySet<MediaFile>("MediaFiles");
             builder.EntitySet<MediaFileStream>("MediaFileStreams");
             builder.EntitySet<MediaPathType>("MediaPathTypes");

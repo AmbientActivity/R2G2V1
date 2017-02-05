@@ -260,7 +260,7 @@ namespace Keebee.AAT.Display.Caregiver
             this.lvActivities.TabIndex = 0;
             this.lvActivities.View = System.Windows.Forms.View.LargeIcon;
             this.lvActivities.ColumnWidthChanging += new System.Windows.Forms.ColumnWidthChangingEventHandler(this.ActivitiesListViewColumnWidthChanging);
-            this.lvActivities.ItemClicked += new System.EventHandler(this.ActivitiesListViewClick);
+            this.lvActivities.ItemClicked += new System.EventHandler(this.InteractivitiesActivitiesListViewClick);
             // 
             // tabHomeMovies
             // 

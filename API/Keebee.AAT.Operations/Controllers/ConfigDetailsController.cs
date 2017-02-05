@@ -36,27 +36,37 @@ namespace Keebee.AAT.Operations.Controllers
 
             dynamic exObj = new ExpandoObject();
             exObj.ConfigDetails = configDetails.Select(cd => new
-            {
-                cd.Id,
-                cd.ConfigId,
-                PhidgetType = new
                 {
-                    cd.PhidgetType.Id,
-                    cd.PhidgetType.Description
-                },
-                PhidgetStyleType = new
-                {
-                    cd.PhidgetStyleType.Id,
-                    cd.PhidgetStyleType.Description,
-                },
-                cd.Description,
-                cd.Location,
-                ResponseType = new
-                {
-                    cd.ResponseType.Id,
-                    cd.ResponseType.Description,
-                    cd.ResponseType.IsInteractive
-                }
+                    cd.Id,
+                    cd.ConfigId,
+                    PhidgetType = new
+                    {
+                        cd.PhidgetType.Id,
+                        cd.PhidgetType.Description
+                    },
+                    PhidgetStyleType = new
+                    {
+                        cd.PhidgetStyleType.Id,
+                        cd.PhidgetStyleType.Description,
+                    },
+                    cd.Description,
+                    cd.Location,
+                    ResponseType = new
+                    {
+                        cd.ResponseType.Id,
+                        cd.ResponseType.Description,
+                        ResponseTypeCategory = new
+                        {
+                            cd.ResponseType.ResponseTypeCategory.Id,
+                            cd.ResponseType.ResponseTypeCategory.Description
+                        },
+                        InteractiveActivityType = (cd.ResponseType.InteractiveActivityTypeId != null)
+                        ? new
+                        {
+                            cd.ResponseType.InteractiveActivityType.Id,
+                            cd.ResponseType.InteractiveActivityType.Description
+                        } : null,
+                    }
             }).OrderBy(o => o.PhidgetType.Id);
 
             return new DynamicJsonObject(exObj);
@@ -92,10 +102,20 @@ namespace Keebee.AAT.Operations.Controllers
             exObj.Description = configDetail.Description;
             exObj.Location = configDetail.Location;
             exObj.ResponseType = new
-            {
-                configDetail.ResponseType.Id,
-                configDetail.ResponseType.Description,
-                configDetail.ResponseType.IsInteractive
+                {
+                    configDetail.ResponseType.Id,
+                    configDetail.ResponseType.Description,
+                    ResponseTypeCategory = new
+                    {
+                        configDetail.ResponseType.ResponseTypeCategory.Id,
+                        configDetail.ResponseType.ResponseTypeCategory.Description
+                    },
+                    InteractiveActivityType = (configDetail.ResponseType.InteractiveActivityTypeId != null)
+                    ? new
+                    {
+                        configDetail.ResponseType.InteractiveActivityType.Id,
+                        configDetail.ResponseType.InteractiveActivityType.Description
+                    } : null
             };
 
             return new DynamicJsonObject(exObj);

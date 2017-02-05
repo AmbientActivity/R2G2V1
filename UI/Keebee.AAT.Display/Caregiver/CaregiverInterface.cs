@@ -590,7 +590,7 @@ namespace Keebee.AAT.Display.Caregiver
             }
         }
 
-        private void LoadListViewActivities(int residentId)
+        private void LoadListViewInteractiveActivities(int residentId)
         {
             try
             {
@@ -600,7 +600,7 @@ namespace Keebee.AAT.Display.Caregiver
                     ? _currentResident.GameDifficultyLevel : 1;
 
                 var interactiveResponseTypes = _config.ConfigDetails
-                    .Where(rt => rt.ResponseType.IsInteractive)
+                    .Where(rt => rt.ResponseType.InteractiveActivityType != null)
                     .Select(rt => rt.ResponseType)
                     .GroupBy(rt => rt.Id, (key, r) => r.FirstOrDefault())
                     .ToArray();
@@ -613,7 +613,7 @@ namespace Keebee.AAT.Display.Caregiver
                         string.Empty,
                         gameDifficulatyLevel.ToString(),
                         rt.Description,
-                        rt.Id.ToString()
+                        rt.InteractiveActivityType.Id.ToString()
                     })
                     {
                         BackColor = ((rowIndex & 1) == 0) ? Color.AliceBlue : Color.White
@@ -623,7 +623,7 @@ namespace Keebee.AAT.Display.Caregiver
             }
             catch (Exception ex)
             {
-                _systemEventLogger?.WriteEntry($"Caregiver.LoadListViewActivities: {ex.Message}", EventLogEntryType.Error);
+                _systemEventLogger?.WriteEntry($"Caregiver.LoadListViewInteractiveActivities: {ex.Message}", EventLogEntryType.Error);
             }
         }
 
@@ -635,7 +635,7 @@ namespace Keebee.AAT.Display.Caregiver
             LoadListViewMusic();
             LoadListViewRadioShows();
             LoadListViewTVShows();
-            LoadListViewActivities(residentId);
+            LoadListViewInteractiveActivities(residentId);
 
             if (TabPageExists(tabHomeMovies))
                 LoadListViewHomeMovies();
@@ -923,36 +923,55 @@ namespace Keebee.AAT.Display.Caregiver
             }
         }
 
-        private void PlayMatchingGame(int difficultyLevel, string activityName)
+        private void PlayInteractiveActivity(int interactiveActivityId, int difficultyLevel, string interactiveActivityType)
         {
             try
             {
-                var shapes = GetFilePaths(MediaPathTypeId.MatchingGameShapes, ResponseTypeId.MatchingGame);
-                var sounds = GetFilePaths(MediaPathTypeId.MatchingGameSounds, ResponseTypeId.MatchingGame);
-
-                // ensure there are enough shapes and sounds to play the game
-                var gameSetup = new MatchingGameSetup { OperationsClient = _opsClient };
-                var totalShapes = gameSetup.GetTotalShapes(shapes);
-                var totalSounds = gameSetup.GetTotalSounds(sounds);
-
-                var matchingGamePlayer = new MatchingGamePlayer
+                switch (interactiveActivityId)
                 {
-                    ResidentId = _currentResident.Id,
-                    SystemEventLogger = _systemEventLogger,
-                    OperationsClient = _opsClient,
-                    Shapes = totalShapes,
-                    Sounds = totalSounds,
-                    DifficultyLevel = difficultyLevel,
-                    ActivityName = activityName,
-                    IsActiveEventLog = _config.IsActiveEventLog
-                };
+                    case InteractiveActivityTypeId.MatchingGame:
+                        var shapes = GetFilePaths(MediaPathTypeId.MatchingGameShapes, ResponseTypeId.MatchingGame);
+                        var sounds = GetFilePaths(MediaPathTypeId.MatchingGameSounds, ResponseTypeId.MatchingGame);
 
-                StopAudio();
-                matchingGamePlayer.ShowDialog();
+                        // ensure there are enough shapes and sounds to play the game
+                        var gameSetup = new MatchingGameSetup { OperationsClient = _opsClient };
+                        var totalShapes = gameSetup.GetTotalShapes(shapes);
+                        var totalSounds = gameSetup.GetTotalSounds(sounds);
+
+                        var matchingGamePlayer = new InteractiveActivityPlayer
+                        {
+                            InteractiveActivityId = interactiveActivityId,
+                            ResidentId = _currentResident.Id,
+                            SystemEventLogger = _systemEventLogger,
+                            OperationsClient = _opsClient,
+                            Shapes = totalShapes,
+                            Sounds = totalSounds,
+                            DifficultyLevel = difficultyLevel,
+                            ActivityName = interactiveActivityType,
+                            IsActiveEventLog = _config.IsActiveEventLog
+                        };
+                        StopAudio();
+                        matchingGamePlayer.ShowDialog();
+                        break;
+
+                    case InteractiveActivityTypeId.PaintingActivity:
+                        var paintingActivityPlayer = new InteractiveActivityPlayer
+                        {
+                            InteractiveActivityId = interactiveActivityId,
+                            ResidentId = _currentResident.Id,
+                            SystemEventLogger = _systemEventLogger,
+                            OperationsClient = _opsClient,
+                            ActivityName = interactiveActivityType,
+                            IsActiveEventLog = _config.IsActiveEventLog
+                        };
+                        StopAudio();
+                        paintingActivityPlayer.ShowDialog();
+                        break;
+                }
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"Caregiver.PlayMatchingGame: {ex.Message}", EventLogEntryType.Error);
+                _systemEventLogger.WriteEntry($"Caregiver.PlayInteractiveActivity: {ex.Message}", EventLogEntryType.Error);
             }
         }
 
@@ -1118,29 +1137,24 @@ namespace Keebee.AAT.Display.Caregiver
             }
         }
 
-        private void ActivitiesListViewClick(object sender, EventArgs e)
+        private void InteractivitiesActivitiesListViewClick(object sender, EventArgs e)
         {
             try
             {
+                var interactiveActivityId = Convert.ToInt32(lvActivities.SelectedItems[0]
+                    .SubItems[ListViewIActivitiesColumnId].Text);
+
                 var difficultyLevel = Convert.ToInt32(lvActivities.SelectedItems[0]
                     .SubItems[ListViewIActivitiesColumnDifficultyLevel].Text);
 
-                var activityname = lvActivities.SelectedItems[0]
+                var interactiveActivityType = lvActivities.SelectedItems[0]
                     .SubItems[ListViewIActivitiesColumnName].Text;
 
-                var activitid = Convert.ToInt32(lvActivities.SelectedItems[0].SubItems[ListViewIActivitiesColumnId].Text);
-
-                switch (activitid)
-                {
-                    case ResponseTypeId.MatchingGame:
-                        PlayMatchingGame(difficultyLevel, activityname);
-                        break;
-                }
-                
+                PlayInteractiveActivity(interactiveActivityId, difficultyLevel, interactiveActivityType);              
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"Caregiver.ActivitiesListViewClick: {ex.Message}", EventLogEntryType.Error);
+                _systemEventLogger.WriteEntry($"Caregiver.InteractivitiesActivitiesListViewClick: {ex.Message}", EventLogEntryType.Error);
             }
         }
 

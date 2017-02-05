@@ -52,12 +52,9 @@ package
 		private var currentLevel:Number;
 		private var timeoutValue:Number = 900000;
 		
-		private const GameTypeId_MatchPictures:Number = 1;
-		private const GameTypeId_MatchPairs:Number = 2;
-		private var currentGameTypeId:Number;
-		
 		// for standalone testing
-		private var xmlShapesTest:String = "<images><image><name>\\\\WIN10\\sqlexpress\\KeebeeAATFilestream\\Media\\Profiles\\0\\activities\\matching-game\\shapes\\cloud.png</name></image><image><name>\\\\WIN10\\sqlexpress\\KeebeeAATFilestream\\Media\\Profiles\\0\\shapes\\sun.png</name></image><image><name>\\\\WIN10\\sqlexpress\\KeebeeAATFilestream\\Media\\Profiles\\0\\shapes\\snail.png</name></image><image><name>\\\\WIN10\\sqlexpress\\KeebeeAATFilestream\\Media\\Profiles\\0\\shapes\\airplane.png</name></image><image><name>\\\\WIN10\\sqlexpress\\KeebeeAATFilestream\\Media\\Profiles\\0\\shapes\\dog.png</name></image><image><name>\\\\WIN10\\sqlexpress\\KeebeeAATFilestream\\Media\\Profiles\\0\\shapes\\car.png</name></image><image><name>\\\\WIN10\\sqlexpress\\KeebeeAATFilestream\\Media\\Profiles\\0\\shapes\\umbrella.png</name></image><image><name>\\\\WIN10\\sqlexpress\\KeebeeAATFilestream\\Media\\Profiles\\0\\shapes\\moon.png</name></image><image><name>\\\\WIN10\\sqlexpress\\KeebeeAATFilestream\\Media\\Profiles\\0\\shapes\\envelope.png</name></image><image><name>\\\\WIN10\\sqlexpress\\KeebeeAATFilestream\\Media\\Profiles\\0\\shapes\\cat.png</name></image><image><name>\\\\WIN10\\sqlexpress\\KeebeeAATFilestream\\Media\\Profiles\\0\\shapes\\rabbit.png</name></image><image><name>\\\\WIN10\\sqlexpress\\KeebeeAATFilestream\\Media\\Profiles\\0\\shapes\\hemp.png</name></image><image><name>\\\\WIN10\\sqlexpress\\KeebeeAATFilestream\\Media\\Profiles\\0\\shapes\\house.png</name></image><image><name>\\\\WIN10\\sqlexpress\\KeebeeAATFilestream\\Media\\Profiles\\0\\shapes\\pine-tree.png</name></image><image><name>\\\\WIN10\\sqlexpress\\KeebeeAATFilestream\\Media\\Profiles\\0\\shapes\\light-bulb.png</name></image><image><name>\\\\WIN10\\sqlexpress\\KeebeeAATFilestream\\Media\\Profiles\\0\\shapes\\butterfly.png</name></image><image><name>\\\\WIN10\\sqlexpress\\KeebeeAATFilestream\\Media\\Profiles\\0\\shapes\\phone.png</name></image><image><name>\\\\WIN10\\sqlexpress\\KeebeeAATFilestream\\Media\\Profiles\\0\\shapes\\parrot.png</name></image><image><name>\\\\WIN10\\sqlexpress\\KeebeeAATFilestream\\Media\\Profiles\\0\\shapes\\flower.png</name></image><image><name>\\\\WIN10\\sqlexpress\\KeebeeAATFilestream\\Media\\Profiles\\0\\shapes\\fish.png</name></image><image><name>\\\\WIN10\\sqlexpress\\KeebeeAATFilestream\\Media\\Profiles\\0\\shapes\\bird.png</name></image><image><name>\\\\WIN10\\sqlexpress\\KeebeeAATFilestream\\Media\\Profiles\\0\\shapes\\bicycle.png</name></image><image><name>\\\\WIN10\\sqlexpress\\KeebeeAATFilestream\\Media\\Profiles\\0\\shapes\\maple-leaf.png</name></image></images>";
+		/*
+		private var xmlShapesTest:String = "<images><image><name>\\\\WIN10\\sqlexpress\\KeebeeAATFilestream\\Media\\Profiles\\0\\activities\\matching-game\\shapes\\car.png</name></image><image><name>\\\\WIN10\\sqlexpress\\KeebeeAATFilestream\\Media\\Profiles\\0\\activities\\matching-game\\shapes\\maple-leaf.png</name></image><image><name>\\\\WIN10\\sqlexpress\\KeebeeAATFilestream\\Media\\Profiles\\0\\activities\\matching-game\\shapes\\parrot.png</name></image><image><name>\\\\WIN10\\sqlexpress\\KeebeeAATFilestream\\Media\\Profiles\\0\\activities\\matching-game\\shapes\\moon.png</name></image><image><name>\\\\WIN10\\sqlexpress\\KeebeeAATFilestream\\Media\\Profiles\\0\\activities\\matching-game\\shapes\\light-bulb.png</name></image><image><name>\\\\WIN10\\sqlexpress\\KeebeeAATFilestream\\Media\\Profiles\\0\\activities\\matching-game\\shapes\\cat.png</name></image><image><name>\\\\WIN10\\sqlexpress\\KeebeeAATFilestream\\Media\\Profiles\\0\\activities\\matching-game\\shapes\\dog.png</name></image><image><name>\\\\WIN10\\sqlexpress\\KeebeeAATFilestream\\Media\\Profiles\\0\\activities\\matching-game\\shapes\\rabbit.png</name></image><image><name>\\\\WIN10\\sqlexpress\\KeebeeAATFilestream\\Media\\Profiles\\0\\activities\\matching-game\\shapes\\flower.png</name></image><image><name>\\\\WIN10\\sqlexpress\\KeebeeAATFilestream\\Media\\Profiles\\0\\activities\\matching-game\\shapes\\hemp.png</name></image><image><name>\\\\WIN10\\sqlexpress\\KeebeeAATFilestream\\Media\\Profiles\\0\\activities\\matching-game\\shapes\\envelope.png</name></image><image><name>\\\\WIN10\\sqlexpress\\KeebeeAATFilestream\\Media\\Profiles\\0\\activities\\matching-game\\shapes\\fish.png</name></image><image><name>\\\\WIN10\\sqlexpress\\KeebeeAATFilestream\\Media\\Profiles\\0\\activities\\matching-game\\shapes\\umbrella.png</name></image><image><name>\\\\WIN10\\sqlexpress\\KeebeeAATFilestream\\Media\\Profiles\\0\\activities\\matching-game\\shapes\\sun.png</name></image><image><name>\\\\WIN10\\sqlexpress\\KeebeeAATFilestream\\Media\\Profiles\\0\\activities\\matching-game\\shapes\\phone.png</name></image><image><name>\\\\WIN10\\sqlexpress\\KeebeeAATFilestream\\Media\\Profiles\\0\\activities\\matching-game\\shapes\\bicycle.png</name></image><image><name>\\\\WIN10\\sqlexpress\\KeebeeAATFilestream\\Media\\Profiles\\0\\activities\\matching-game\\shapes\\butterfly.png</name></image><image><name>\\\\WIN10\\sqlexpress\\KeebeeAATFilestream\\Media\\Profiles\\0\\activities\\matching-game\\shapes\\cloud.png</name></image><image><name>\\\\WIN10\\sqlexpress\\KeebeeAATFilestream\\Media\\Profiles\\0\\activities\\matching-game\\shapes\\snail.png</name></image><image><name>\\\\WIN10\\sqlexpress\\KeebeeAATFilestream\\Media\\Profiles\\0\\activities\\matching-game\\shapes\\bird.png</name></image><image><name>\\\\WIN10\\sqlexpress\\KeebeeAATFilestream\\Media\\Profiles\\0\\activities\\matching-game\\shapes\\airplane.png</name></image><image><name>\\\\WIN10\\sqlexpress\\KeebeeAATFilestream\\Media\\Profiles\\0\\activities\\matching-game\\shapes\\pine-tree.png</name></image><image><name>\\\\WIN10\\sqlexpress\\KeebeeAATFilestream\\Media\\Profiles\\0\\activities\\matching-game\\shapes\\house.png</name></image></images>";
 		private var wouldYouLikeToMatchThePicturesTest:String = "\\\\WIN10\\sqlexpress\\KeebeeAATFilestream\\Media\\Profiles\\0\\activities\\matching-game\\sounds\\would-you-like-to-match-the-pictures.mp3";
 		private var wouldYouLikeToMatchThePairsTest:String = "\\\\WIN10\\sqlexpress\\KeebeeAATFilestream\\Media\\Profiles\\0\\activities\\matching-game\\sounds\\would-you-like-to-match-the-pairs.mp3";
 		private var correctTest:String = "\\\\WIN10\\sqlexpress\\KeebeeAATFilestream\\Media\\Profiles\\0\\activities\\matching-game\\sounds\\correct.mp3";
@@ -66,6 +63,7 @@ package
 		private var TryAgainTest:String = "\\\\WIN10\\sqlexpress\\KeebeeAATFilestream\\Media\\Profiles\\0\\activities\\matching-game\\sounds\\try-again.mp3";
 		private var letsTryAgainTest:String = "\\\\WIN10\\sqlexpress\\KeebeeAATFilestream\\Media\\Profiles\\0\\activities\\matching-game\\sounds\\lets-try-again.mp3";
 		private var letsTrySomethingDifferentTest:String = "\\\\WIN10\\sqlexpress\\KeebeeAATFilestream\\Media\\Profiles\\0\\activities\\matching-game\\sounds\\lets-try-something-different.mp3";
+		*/
 		
 		// media
 		private var xmlShapes:String;
@@ -131,7 +129,7 @@ package
 			//loadMedia(xmlShapesTest, wouldYouLikeToMatchThePicturesTest, wouldYouLikeToMatchThePairsTest, 
 			//	correctTest, goodJobTest, wellDoneTest, TryAgainTest, letsTryAgainTest, letsTrySomethingDifferentTest, 1, 1);
 				
-			//playMatchingGame();
+			playMatchingGame();
 		}
 		
 		// called externally by the Windows UserControl
@@ -272,12 +270,10 @@ package
 			}
 			
 			if (currentLevel < 5) {
-				currentGameTypeId = GameTypeId_MatchPictures;
 				loadImages();
 				loadMainImage();
 				drawLine();
 			} else {
-				currentGameTypeId = GameTypeId_MatchPairs;
 				loadImagesMatchThePairs();
 			}
 		}
@@ -397,7 +393,7 @@ package
 				setTimeout(timedFunctionImage, 3000);
 				SoundMixer.stopAll();
 				playCorrectSound();
-				LogGamingEvent(1, "Image '" + RemoveExtension(mainFilename) + "' was matched");
+				LogInteractiveActivityEvent(1, "Image '" + RemoveExtension(mainFilename) + "' was matched");
 				
 				TweenMax.to(event.target, 2, { transformMatrix:{a:0, tx:event.target.x, ty:event.target.y, scaleX:1.2, scaleY:1.2 }});
 				if (currentLevel < 5) currentLevel++;
@@ -410,7 +406,7 @@ package
 			// incorrect - reload level 1 or go back a level
 			} else if (clickCount == 1) {
 				soundTryAgain.play();
-				LogGamingEvent(0, "Image '" + RemoveExtension(mainFilename) + "' was mismatched (Selected Image: '" + RemoveExtension(filename) + "')");
+				LogInteractiveActivityEvent(0, "Image '" + RemoveExtension(mainFilename) + "' was mismatched (Selected Image: '" + RemoveExtension(filename) + "')");
 				spliceArrays()
 				if (currentLevel > 1) currentLevel--;
 				loadScreen();
@@ -443,13 +439,13 @@ package
 			clickedImagesPairsInstance = [];
 		}
 		
-		private function LogGamingEvent(success:Number, description:String, isGameHasExpired:Boolean = false):void {
+		private function LogInteractiveActivityEvent(success:Number, description:String, isGameHasExpired:Boolean = false):void {
 			var successDesc:String = "NULL";
 			if (success == 0) successDesc = "FALSE";
 			else if (success == 1) successDesc = "TRUE";
 			
 			// comment the following line to test
-			ExternalInterface.call("FlashCall", currentGameTypeId, currentLevel.toString(), successDesc, description, isGameHasExpired);
+			ExternalInterface.call("FlashCall", currentLevel, successDesc, description, isGameHasExpired);
 		}
 			
 		// ----------------------- match-the-pairs (begin) -----------------------------
@@ -497,7 +493,7 @@ package
 			addChild(matchThePairsText);
 			TweenLite.to(matchThePairsText, 1, {x:thirdStageWidth, y:35, alpha:1});
 			
-			LogGamingEvent(-1, "New set of pairs has been displayed (6 pairs)");
+			LogInteractiveActivityEvent(-1, "New set of pairs has been displayed (6 pairs)");
 		}
 		
 		private function getMatchThePairsText():Bitmap {
@@ -596,7 +592,7 @@ package
 						loadScreen();
 					}
 				}
-				LogGamingEvent(success, eventLogDescription);
+				LogInteractiveActivityEvent(success, eventLogDescription);
 			}
 			
 			if (enableGameTimeout) {
@@ -635,7 +631,7 @@ package
 				gameOver.x = halfStageWidth-gameOver.width / 2;
 				gameOver.y = halfStageHeight-gameOver.height / 2;
 				addChild(gameOver);
-				LogGamingEvent(1, "All pairs were matched successfully");
+				LogInteractiveActivityEvent(1, "All pairs were matched successfully");
 				setTimeout(timedFunctionClick3, 3000);
 			}
 		}
@@ -724,7 +720,7 @@ package
 			addChild(matchThePicturesText);
 			TweenLite.to(matchThePicturesText, 1, {x:120, y:100, alpha:1});
 			
-			LogGamingEvent(-1, "New target image has been displayed (Image: '" + RemoveExtension(mainFilename) + "')");
+			LogInteractiveActivityEvent(-1, "New target image has been displayed (Image: '" + RemoveExtension(mainFilename) + "')");
 		}
 		
 		private function mainImageLoaded(event:Event):void {
@@ -772,7 +768,7 @@ package
 		}
 			
 		private function timedFunctionGame():void {
-			LogGamingEvent(-1, "Game timeout has expired", true);
+			LogInteractiveActivityEvent(-1, "Game timeout has expired", true);
 		}
 	}
 }

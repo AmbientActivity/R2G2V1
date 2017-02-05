@@ -22,7 +22,7 @@ namespace Keebee.AAT.Operations.Service.Services
             var container = new Container(new Uri(ODataHost.Url));
 
             var responseTypes = container.ResponseTypes
-                .Expand("ResponseTypeCategory")
+                .Expand("ResponseTypeCategory,InteractiveActivityType")
                 .AsEnumerable();
 
             return responseTypes;
@@ -33,7 +33,7 @@ namespace Keebee.AAT.Operations.Service.Services
             var container = new Container(new Uri(ODataHost.Url));
 
             var responseType = container.ResponseTypes.ByKey(id)
-                .Expand("ResponseTypeCategory")
+                .Expand("ResponseTypeCategory,InteractiveActivityType")
                 .GetValue();
 
             return responseType;

@@ -36,19 +36,19 @@ namespace Keebee.AAT.Administrator.Controllers
             });
         }
 
-        // GET: Residen
+        // GET: Resident
         [Authorize]
-        public ActionResult Index(int? id, string rfid, string firstname, string lastname, string sortcolumn,
+        public ActionResult Index(int? id, string idsearch, string firstname, string lastname, string sortcolumn,
             int? sortdescending)
         {
             return
-                View(LoadResidentsViewModel(id ?? 0, null, true, rfid, firstname, lastname, sortcolumn, sortdescending));
+                View(LoadResidentsViewModel(id ?? 0, null, true, idsearch, firstname, lastname, sortcolumn, sortdescending));
         }
 
         [Authorize]
         public ActionResult Media(
             int id, 
-            string rfid, 
+            string idsearch, 
             string firstname, 
             string lastname, 
             string sortcolumn, 
@@ -59,7 +59,7 @@ namespace Keebee.AAT.Administrator.Controllers
             // first time loading
             if (mediaPathTypeId == null) mediaPathTypeId = MediaPathTypeId.Music;
 
-            var vm = LoadResidentMediaViewModel(id, rfid, firstname, lastname, mediaPathTypeId, sortcolumn, sortdescending);
+            var vm = LoadResidentMediaViewModel(id, idsearch, firstname, lastname, mediaPathTypeId, sortcolumn, sortdescending);
 
             using (var uploader = new MvcUploader(System.Web.HttpContext.Current))
             {
@@ -331,7 +331,7 @@ namespace Keebee.AAT.Administrator.Controllers
             int id, 
             List<string> msgs, 
             bool success, 
-            string rfid, 
+            string idsearch, 
             string firstname, 
             string lastname, 
             string sortcolumn, 
@@ -343,7 +343,7 @@ namespace Keebee.AAT.Administrator.Controllers
                 ErrorMessages = msgs,
                 Success = success,
 
-                RfidSearch = rfid,
+                IdSearch = idsearch,
                 FirstNameSearch = firstname,
                 LastNameSearch = lastname,
                 SortColumnName = sortcolumn,
@@ -385,7 +385,7 @@ namespace Keebee.AAT.Administrator.Controllers
 
         private ResidentMediaViewModel LoadResidentMediaViewModel(
             int id, 
-            string rfid, 
+            string idsearch, 
             string firstname, 
             string lastname, 
             int? mediaPathTypeId,
@@ -403,7 +403,7 @@ namespace Keebee.AAT.Administrator.Controllers
                 ResidentId = resident.Id,
                 FullName = fullName,
                 AddButtonText = $"Upload {rules.GetMediaPathDescription(mediaPathTypeId)}",
-                RfidSearch = rfid,
+                IdSearch = idsearch,
                 FirstNameSearch = firstname,
                 LastNameSearch = lastname,
                 SortColumn = sortcolumn,

@@ -120,7 +120,7 @@ namespace Keebee.AAT.Administrator.Controllers
         [Authorize]
         public JsonResult GetDataMedia(int id, int mediaPathTypeId)
         {
-            var mediaPathTypes = _opsClient.GetMediaPathTypes().OrderBy(p => p.Description); ;
+            var mediaPathTypes = _opsClient.GetMediaPathTypes().OrderBy(p => p.Description);
             var fileList = GetFiles(id);
 
             var vm = new
@@ -129,7 +129,7 @@ namespace Keebee.AAT.Administrator.Controllers
                 MediaPathTypeList = mediaPathTypes.Select(x => new
                 {
                     x.Id,
-                    x.Description
+                    x.Description,
                 }).Where(p => p.Id != MediaPathTypeId.SystemVideos)
             };
 
@@ -164,6 +164,13 @@ namespace Keebee.AAT.Administrator.Controllers
         public PartialViewResult GetResidentEditView(int id)
         {
             return PartialView("_ResidentEdit", LoadResidentEditViewModel(id));
+        }
+
+        [HttpGet]
+        [Authorize]
+        public PartialViewResult GetSharedLibarayAddView(int residentId, int mediaPathTypeId)
+        {
+            return PartialView("_SharedLibraryAdd", LoadSharedLibaryAddViewModel(residentId, mediaPathTypeId));
         }
 
         [HttpPost]
@@ -274,16 +281,26 @@ namespace Keebee.AAT.Administrator.Controllers
                         var rules = new ResidentRules {OperationsClient = _opsClient};
                         foreach (var id in ids)
                         {
-                            var file = rules.GetMediaFile(id);
-                            if (file == null) continue;
+                            var resdientMediaFile = _opsClient.GetResidentMediaFile(id);
+                            if (resdientMediaFile == null) continue;
 
-                            var fileManager = new FileManager {EventLogger = _systemEventLogger};
-                            errormessage = fileManager.DeleteFile($@"{file.Path}\{file.Filename}");
-
-                            if (errormessage.Length == 0)
+                            if (resdientMediaFile.MediaFile.IsShared)
+                            {
                                 rules.DeleteResidentMediaFile(id);
+                            }
                             else
-                                break;
+                            {
+                                var file = rules.GetMediaFile(id);
+                                if (file == null) continue;
+
+                                var fileManager = new FileManager {EventLogger = _systemEventLogger};
+                                errormessage = fileManager.DeleteFile($@"{file.Path}\{file.Filename}");
+
+                                if (errormessage.Length == 0)
+                                    rules.DeleteResidentMediaFile(id);
+                                else
+                                    break;
+                            }
                         }
                     }
                 }
@@ -325,6 +342,46 @@ namespace Keebee.AAT.Administrator.Controllers
         {
             var info = new FileInfo(filePath);
             return File(info.OpenRead(), $"image/{info}");
+        }
+
+        [HttpPost]
+        [Authorize]
+        public JsonResult AddSharedMediaFiles(Guid[] streamIds, int residentId, int mediaPathTypeId)
+        {
+            bool success;
+            var errormessage = string.Empty;
+
+            try
+            {
+                var responseTypeId = ResidentRules.GetResponseTypeId(mediaPathTypeId);
+
+                foreach (var streamId in streamIds)
+                {
+                    var mf = new ResidentMediaFileEdit
+                    {
+                        StreamId = streamId,
+                        ResidentId = residentId,
+                        ResponseTypeId = responseTypeId,
+                        MediaPathTypeId = mediaPathTypeId,
+                        IsShared = true
+                    };
+
+                    _opsClient.PostResidentMediaFile(mf);
+                }
+                success = true;
+            }
+            catch (Exception ex)
+            {
+                success = false;
+                errormessage = ex.Message;
+            }
+
+            return Json(new
+            {
+                Success = success,
+                ErrorMessage = errormessage,
+                FileList = GetFiles(residentId)
+            }, JsonRequestBehavior.AllowGet);
         }
 
         private static ResidentsViewModel LoadResidentsViewModel(
@@ -378,6 +435,25 @@ namespace Keebee.AAT.Administrator.Controllers
                     new SelectListItem { Value = "5", Text = "5" }},
                     "Value", "Text", resident?.GameDifficultyLevel),
                 AllowVideoCapturing = resident?.AllowVideoCapturing ?? false,
+            };
+
+            return vm;
+        }
+
+        private SharedLibraryAddViewModel LoadSharedLibaryAddViewModel(int residentId, int mediaPathTypeId)
+        {
+            var rules = new ResidentRules {OperationsClient = _opsClient};
+            var files = rules.GetAvailableSharedMediaFiles(residentId, mediaPathTypeId).ToArray();
+
+            var vm = new SharedLibraryAddViewModel
+            {
+                SharedFiles = files
+                .Select(f => new SharedLibraryFileViewModel
+                {
+                    StreamId = f.StreamId,
+                    Filename = f.Filename
+                }),
+                NoAvailableMediaMessage = rules.GetNoAvailableSharedMediaMessage(mediaPathTypeId)
             };
 
             return vm;
@@ -480,7 +556,8 @@ namespace Keebee.AAT.Administrator.Controllers
                 StreamId = streamId,
                 ResidentId = residentId,
                 ResponseTypeId = responseTypeId,
-                MediaPathTypeId = mediaPathTypeId
+                MediaPathTypeId = mediaPathTypeId,
+                IsShared = false
             };
 
             _opsClient.PostResidentMediaFile(mf);
@@ -512,8 +589,9 @@ namespace Keebee.AAT.Administrator.Controllers
                         Filename = file.Filename.Replace($".{file.FileType}", string.Empty),
                         FileType = file.FileType.ToUpper(),
                         FileSize = file.FileSize,
+                        IsShared = file.IsShared,
                         Path = $@"{pathRoot}\{path.MediaPathType.Description}",
-                        MediaPathTypeId = path.MediaPathType.Id,
+                        MediaPathTypeId = path.MediaPathType.Id
                     };
 
                     list.Add(item);

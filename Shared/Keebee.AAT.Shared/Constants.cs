@@ -24,6 +24,7 @@ namespace Keebee.AAT.Shared
 
         public string MediaRoot = $@"\\{Environment.MachineName}\{SqlServerFilestream}";
         public string ProfileRoot = $@"\\{Environment.MachineName}\{SqlServerFilestream}\Profiles";
+        public string SharedMedia = @"SharedLibrary";
         public string ExportEventLogRoot = $@"\\{Environment.MachineName}\{SqlServerFilestream}\Exports\EventLog";
     }
 
@@ -85,7 +86,7 @@ namespace Keebee.AAT.Shared
     public static class MediaSourceType
     {
         public const string Personal = "Personal Content";
-        public const string Public = "Public Library";
+        public const string Public = "Public Profile";
     }
 
     public static class MediaSourceTypeId
@@ -103,7 +104,7 @@ namespace Keebee.AAT.Shared
     {
         public const int Id = 0;
         public const string Name = "Public";
-        public const string Description = "Public Library";
+        public const string Description = "Public Profile";
     }
 
     public static class InteractiveActivityTypeId

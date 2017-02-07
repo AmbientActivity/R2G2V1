@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using Keebee.AAT.RESTClient;
+﻿using Keebee.AAT.RESTClient;
 using Keebee.AAT.Shared;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Keebee.AAT.Display.Helpers
 {
@@ -78,8 +78,7 @@ namespace Keebee.AAT.Display.Helpers
         private string[] GetAssembledFileList(MediaResponseType mediaResponseType, int residentId, int mediaPatheTypeId = -1)
         {
             var fileList = new List<string>();
-            var pathRoot = $@"{_mediaPath.ProfileRoot}\{residentId}";
-
+           
             var mediaPaths = mediaResponseType
                 .Paths.Where(p => mediaPatheTypeId < 0 ||  p.MediaPathType.Id == mediaPatheTypeId)
                 .ToArray();
@@ -91,7 +90,14 @@ namespace Keebee.AAT.Display.Helpers
                     .Where(p => p.MediaPathType.Id == mediaPath.MediaPathType.Id)
                     .SelectMany(p => p.Files)
                     .OrderBy(f => f.Filename)
-                    .Select(f => $@"{pathRoot}\{mediaPath.MediaPathType.Path}\{f.Filename}")
+                    .Select(f =>
+                    {
+                        var pathRoot = f.IsShared
+                            ? $@"{_mediaPath.MediaRoot}\{_mediaPath.SharedMedia}"
+                            : $@"{_mediaPath.ProfileRoot}\{residentId}";
+
+                        return $@"{pathRoot}\{mediaPath.MediaPathType.Path}\{f.Filename}";
+                    })
                     .ToList();
 
                 fileList.AddRange(list);

@@ -83,8 +83,8 @@ namespace Keebee.AAT.Operations.Controllers
                                                 f.MediaFile.Filename,
                                                 f.MediaFile.FileType,
                                                 f.MediaFile.FileSize,
-                                                f.IsPublic
-                                        })
+                                                f.IsShared
+                                    })
                                     }).OrderBy(o => o.MediaPathType.Id)
                         }).OrderBy(o => o.ResponseType.Id)
                 }).OrderBy(o => o.Resident.Id);
@@ -140,8 +140,8 @@ namespace Keebee.AAT.Operations.Controllers
                     residentMediaFile.MediaFile.Filename,
                     residentMediaFile.MediaFile.FileType,
                     residentMediaFile.MediaFile.FileSize,
-                    residentMediaFile.IsPublic
-                };
+                    residentMediaFile.IsShared
+            };
 
             return new DynamicJsonObject(exObj);
         }
@@ -207,7 +207,7 @@ namespace Keebee.AAT.Operations.Controllers
                                         f.MediaFile.Filename,
                                         f.MediaFile.FileType,
                                         f.MediaFile.FileSize,
-                                        f.IsPublic
+                                        f.IsShared
                                     })
                                 }).OrderBy(o => o.MediaPathType.Id)
                         }).OrderBy(o => o.ResponseType.Id)
@@ -278,7 +278,7 @@ namespace Keebee.AAT.Operations.Controllers
                                         f.MediaFile.Filename,
                                         f.MediaFile.FileType,
                                         f.MediaFile.FileSize,
-                                        f.IsPublic
+                                        f.IsShared
                                     })
                                 }).OrderBy(o => o.MediaPathType.Id)
                         }).SingleOrDefault()

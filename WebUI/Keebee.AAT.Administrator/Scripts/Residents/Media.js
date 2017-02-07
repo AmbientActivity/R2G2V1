@@ -81,6 +81,7 @@ function DisableScreen() {
 
             // buttons
             var cmdDelete = $("#delete");
+            var cmdAddShared = $("#add-shared");
 
             var _sortDescending = false;
             var _currentSortKey = "filename";
@@ -135,6 +136,7 @@ function DisableScreen() {
                             filename: value.Filename,
                             filetype: value.FileType,
                             filesize: value.FileSize,
+                            isshared: value.IsShared,
                             path: value.Path,
                             mediapathtypeid: value.MediaPathTypeId,
                             isselected: false
@@ -154,6 +156,7 @@ function DisableScreen() {
                     arr.push({ title: "Name", sortable: true, sortKey: "filename", numeric: false, cssClass: "" });
                     arr.push({ title: "Type", sortable: true, sortKey: "filetype", numeric: false, cssClass: "col-filetype" });
                     arr.push({ title: "Size", sortable: true, sortKey: "filesize", numeric: true, cssClass: "col-filesize" });
+                    arr.push({ title: "Shared", sortable: true, sortKey: "isshared", numeric: true, cssClass: "col-isshared" });
                     return arr;
                 });
 
@@ -243,6 +246,10 @@ function DisableScreen() {
 
                 // ------------------
 
+                self.showAddFromSharedLibarayDialog = function () {
+                    self.showSharedLibrayAddDialog();
+                };
+
                 self.showDeleteSelectedDialog = function (row) {
                     self.showSelectedFileDeleteDialog(row);
                 };
@@ -251,8 +258,45 @@ function DisableScreen() {
                     self.showImagePreview(row);
                 };
 
-                self.showAddPublicDialog = function () {
-                    self.showFeatureNotDoneYetDialog();
+                self.showSharedLibrayAddDialog = function () {
+                    var message;
+                    var residentId = config.residentid;
+
+                    $.ajax({
+                        type: "GET",
+                        async: false,
+                        data: 
+                        {
+                            residentId: residentId,
+                            mediaPathTypeId: self.selectedMediaPathType()
+                        },
+                        url: site.url + "Residents/GetSharedLibarayAddView/",
+                        success: function (data) {
+                            message = data;
+                        }
+                    });
+
+                    BootstrapDialog.show({
+                        title: "Add From Shared Libaray",
+                        message: $("<div></div>").append(message),
+                        
+                        closable: false,
+                        buttons: [
+                            {
+                                label: "Cancel",
+                                action: function (dialog) {
+                                    dialog.close();
+                                }
+                            }, {
+                                label: "OK",
+                                cssClass: "btn-primary",
+                                action: function (dialog) {
+                                    self.addSharedFiles();
+                                    dialog.close();
+                                }
+                            }
+                        ]
+                    });
                 };
 
                 self.showSelectedFileDeleteDialog = function () {
@@ -423,6 +467,62 @@ function DisableScreen() {
                     });
                 };
 
+                self.addSharedFiles = function () {
+                    $("body").css("cursor", "wait");
+
+                    var ids = [];
+                    $("input[name='shared_files']:checked").each(function(item, value) {
+                        ids.push(value.id);
+                    });
+                    var residentId = config.residentid;
+                    var mediaPathTypeId = $("#mediaPathTypeId").val();
+
+                    $.ajax({
+                        type: "POST",
+                        async: true,
+                        traditional: true,
+                        url: site.url + "Residents/AddSharedMediaFiles/",
+                        data:
+                        {
+                            streamIds: ids,
+                            residentId: residentId,
+                            mediaPathTypeId: mediaPathTypeId
+                        },
+                        dataType: "json",
+                        success: function(data) {
+                            $("body").css("cursor", "default");
+                            if (data.Success) {
+                                lists.FileList = data.FileList;
+                                createFileArray(lists.FileList);
+                                self.sort({ afterSave: true });
+                                self.enableDetail();
+                                self.selectedIds([]);
+                                self.checkSelectAll(false);
+                            } else {
+                                $("body").css("cursor", "default");
+                                self.enableDetail();
+
+                                BootstrapDialog.show({
+                                    type: BootstrapDialog.TYPE_DANGER,
+                                    title: "Error Adding Shared Files",
+                                    message: data.ErrorMessage
+                                });
+                            }
+                        },
+                        error: function(data) {
+                            $("body").css("cursor", "default");
+                            self.enableDetail();
+
+                            BootstrapDialog.show({
+                                type: BootstrapDialog.TYPE_DANGER,
+                                title: "Error Adding Shared Files",
+                                message: "Unexpected Error\n" + data
+                            });
+                        }
+                    });
+
+                };
+
                 self.showImagePreview = function (row) {
                     $("body").css("cursor", "wait");
                     var message;
@@ -442,7 +542,7 @@ function DisableScreen() {
                     BootstrapDialog.show({
                         type: BootstrapDialog.TYPE_INFO,
                         title: "Image Viewer - " + row.filename + "." + row.filetype.toLowerCase(),
-                        message: message,
+                        message: $("<div></div>").append(message),
                         closable: false,
                         onshown: function() { $("body").css("cursor", "default"); },
                         buttons: [{
@@ -462,6 +562,12 @@ function DisableScreen() {
                         cmdDelete.removeAttr("disabled");
                     else
                         cmdDelete.attr("disabled", "disabled");
+
+                    var mediaPathTypeId = $("#mediaPathTypeId").val();
+                    if (mediaPathTypeId !== "4" && mediaPathTypeId !== "6") // personal images, home movies
+                        cmdAddShared.removeAttr("disabled");
+                    else
+                        cmdAddShared.attr("disabled", "disabled");
                 };
 
                 self.checkSelectAll = function (checked) {

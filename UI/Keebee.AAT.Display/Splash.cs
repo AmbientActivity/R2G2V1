@@ -79,6 +79,7 @@ namespace Keebee.AAT.Display
 
                     var mediaPath = mediaResponseType.Paths.First();
                     var mediaPathType = mediaPath.MediaPathType.Path;
+
                     var path = $@"{_mediaPath.ProfileRoot}\{PublicMediaSource.Id}\{mediaPathType}";
 
                     var files = mediaPath.Files.ToArray();

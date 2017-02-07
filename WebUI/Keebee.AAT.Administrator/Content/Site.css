@@ -102,6 +102,7 @@ a:hover, a:visited, a:link, a:active {
 .edit-dialog-container {
     width: 450px;
 }
+
 .modal-content {
     width: 470px;
 }
@@ -197,7 +198,9 @@ a:hover, a:visited, a:link, a:active {
 .col-filesize {
     width: 85px;
 }
-
+.col-isshared {
+    width: 60px;
+}
 /* bootstrap glyphicons*/
 .col-glyphicon {
     width: 20px;

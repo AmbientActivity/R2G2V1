@@ -34,8 +34,10 @@ $installUtilityPath = "Install\Utility\"
 # media
 $profilesPath = "Media\Profiles\"
 $profilesPublicPath = "Media\Profiles\0\"
+$sharedLibraryPath = "Media\SharedLibrary\"
 $exportsPath = "Media\Exports\EventLog\"
-$publicLibrarySource = "\\$env:COMPUTERNAME\SQLEXPRESS\KeebeeAATFilestream\Media\Profiles\0\*"
+$publicProfileSource = "\\$env:COMPUTERNAME\SQLEXPRESS\KeebeeAATFilestream\Media\Profiles\0\*"
+$CommonLibrarySource = "\\$env:COMPUTERNAME\SQLEXPRESS\KeebeeAATFilestream\Media\SharedLibrary\*"
 
 # documentation paths
 $documentationPath = "Install\Documentation\"
@@ -91,7 +93,6 @@ Try
     }
 
     Get-Module Build-VisualStudioSolution
-
     # build debug
     $buildResult = Build-VisualStudioSolution -SourceCodePath $sourceCode -SolutionFile $solutionFile -BuildLogFile "R2G2BuildDebug.log" -Configuration "Debug" -CleanFirst;
 
@@ -189,17 +190,24 @@ Try
     }
     New-Item -ItemType Directory -Force -Path $path | Out-Null
 
-    # clear profiles folder
+    # public profile
     $path = $destPath + $profilesPath
     If(test-path $path)
     {
         Remove-Item $path -recurse -Force
     }
-
-    # public library
     $path = $destPath + $profilesPublicPath
     New-Item -ItemType Directory -Force -Path $path | Out-Null
-    Copy-Item $publicLibrarySource $path -recurse -Force
+    Copy-Item $publicProfileSource $path -recurse -Force
+
+    # sgared library
+    $path = $destPath + $sharedLibraryPath
+    If(test-path $path)
+    {
+        Remove-Item $path -recurse -Force
+    } 
+    New-Item -ItemType Directory -Force -Path $path | Out-Null
+    Copy-Item $commonLibrarySource $path -recurse -Force
     Write-Host "done.”
 
     # -------------------- SCHEDULED TASKS --------------------

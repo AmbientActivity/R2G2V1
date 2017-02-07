@@ -27,6 +27,7 @@ namespace Keebee.AAT.RESTClient
         public Guid StreamId { get; set; }
         public int MediaPathTypeId { get; set; }
         public int ResponseTypeId { get; set; }
+        public bool IsShared { get; set; }
     }
 
     public class PublicMediaStreamIdList

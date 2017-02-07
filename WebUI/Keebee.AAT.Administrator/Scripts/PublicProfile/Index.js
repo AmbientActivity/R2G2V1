@@ -1,6 +1,6 @@
 ﻿/*!
  * 1.0 Keebee AAT Copyright © 2016
- * PublicMedia/Index.js
+ * PublicProfile/Index.js
  * Author: John Charlton
  * Date: 2016-09
  */
@@ -70,7 +70,7 @@ function DisableScreen() {
 ; (function ($) {
     var HIGHLIGHT_ROW_COLOUR = "#e3e8ff";
 
-    publicmedia.index = {
+    publicprofile.index = {
         init: function (values) {
 
             var config = {
@@ -80,7 +80,9 @@ function DisableScreen() {
 
             $.extend(config, values);
 
+            // buttons
             var cmdDelete = $("#delete");
+            var cmdAddShared = $("#add-shared");
 
             var _sortDescending = false;
             var _currentSortKey = "filename";
@@ -100,7 +102,7 @@ function DisableScreen() {
 
                 $.ajax({
                     type: "GET",
-                    url: site.url + "PublicMedia/GetData?" + "mediaPathTypeId=" + mediaPathTypeId,
+                    url: site.url + "PublicProfile/GetData?" + "mediaPathTypeId=" + mediaPathTypeId,
                     dataType: "json",
                     traditional: true,
                     async: false,
@@ -138,6 +140,7 @@ function DisableScreen() {
                             filename: value.Filename,
                             filetype: value.FileType,
                             filesize: value.FileSize,
+                            isshared: value.IsShared,
                             path: value.Path,
                             mediapathtypeid: value.MediaPathTypeId,
                             responsetypeid: value.ResponseTypeId,
@@ -165,6 +168,7 @@ function DisableScreen() {
                     arr.push({ title: "Name", sortable: true, sortKey: "filename", numeric: false, cssClass: "" });
                     arr.push({ title: "Type", sortable: true, sortKey: "filetype", numeric: false, cssClass: "col-filetype" });
                     arr.push({ title: "Size", sortable: true, sortKey: "filesize", numeric: true, cssClass: "col-filesize" });
+                    arr.push({ title: "Shared", sortable: true, sortKey: "isshared", numeric: true, cssClass: "col-isshared" });
                     return arr;
                 });
 
@@ -217,7 +221,7 @@ function DisableScreen() {
 
                     $.ajax({
                         type: "GET",
-                        url: site.url + "PublicMedia/GetUploaderHtml?mediaPathTypeId=" + mediaPathTypeId,
+                        url: site.url + "PublicProfile/GetUploaderHtml?mediaPathTypeId=" + mediaPathTypeId,
                         traditional: true,
                         async: true,
                         dataType: "json",
@@ -239,6 +243,7 @@ function DisableScreen() {
                 self.selectedResponseType.subscribe(function (id) {
                     if (typeof id === "undefined") return;
                     $("#responseTypeId").val(id);
+                    self.enableDetail();
                 });
 
                 self.filteredFiles = ko.computed(function () {
@@ -281,12 +286,52 @@ function DisableScreen() {
 
                 // ------------------
 
+                self.showAddFromSharedLibarayDialog = function () {
+                    self.showSharedLibrayAddDialog();
+                };
+
                 self.showDeleteSelectedDialog = function () {
                     self.showSelectedFileDeleteDialog();
                 };
 
                 self.showPreview = function (row) {
                     self.showImagePreview(row);
+                };
+
+                self.showSharedLibrayAddDialog = function () {
+                    var message;
+
+                    $.ajax({
+                        type: "GET",
+                        async: false,
+                        data: {mediaPathTypeId: self.selectedMediaPathType()},
+                        url: site.url + "PublicProfile/GetSharedLibarayAddView/",
+                        success: function (data) {
+                            message = data;
+                        }
+                    });
+
+                    BootstrapDialog.show({
+                        title: "Add From Shared Libaray",
+                        message: $("<div></div>").append(message),
+
+                        closable: false,
+                        buttons: [
+                            {
+                                label: "Cancel",
+                                action: function (dialog) {
+                                    dialog.close();
+                                }
+                            }, {
+                                label: "OK",
+                                cssClass: "btn-primary",
+                                action: function (dialog) {
+                                    self.addSharedFiles();
+                                    dialog.close();
+                                }
+                            }
+                        ]
+                    });
                 };
 
                 self.showAddPublicDialog = function () {
@@ -414,7 +459,7 @@ function DisableScreen() {
                                 type: "POST",
                                 async: true,
                                 traditional: true,
-                                url: site.url + "PublicMedia/DeleteSelected/",
+                                url: site.url + "PublicProfile/DeleteSelected/",
                                 data:
                                 {
                                     ids: ids,
@@ -459,6 +504,63 @@ function DisableScreen() {
                     });
                 };
 
+                self.addSharedFiles = function () {
+                    $("body").css("cursor", "wait");
+
+                    var ids = [];
+                    $("input[name='shared_files']:checked").each(function (item, value) {
+                        ids.push(value.id);
+                    });
+
+                    var mediaPathTypeId = $("#mediaPathTypeId").val();
+                    var responseTypeId = $("#responseTypeId").val();
+
+                    $.ajax({
+                        type: "POST",
+                        async: true,
+                        traditional: true,
+                        url: site.url + "PublicProfile/AddSharedMediaFiles/",
+                        data:
+                        {
+                            streamIds: ids,
+                            mediaPathTypeId: mediaPathTypeId,
+                            responseTypeId: responseTypeId
+                        },
+                        dataType: "json",
+                        success: function (data) {
+                            $("body").css("cursor", "default");
+                            if (data.Success) {
+                                lists.FileList = data.FileList;
+                                createFileArray(lists.FileList);
+                                self.sort({ afterSave: true });
+                                self.enableDetail();
+                                self.selectedIds([]);
+                                self.checkSelectAll(false);
+                            } else {
+                                $("body").css("cursor", "default");
+                                self.enableDetail();
+
+                                BootstrapDialog.show({
+                                    type: BootstrapDialog.TYPE_DANGER,
+                                    title: "Error Adding Shared Files",
+                                    message: data.ErrorMessage
+                                });
+                            }
+                        },
+                        error: function (data) {
+                            $("body").css("cursor", "default");
+                            self.enableDetail();
+
+                            BootstrapDialog.show({
+                                type: BootstrapDialog.TYPE_DANGER,
+                                title: "Error Adding Shared Files",
+                                message: "Unexpected Error\n" + data
+                            });
+                        }
+                    });
+
+                };
+
                 self.showImagePreview = function (row) {
                     $("body").css("cursor", "wait");
                     var message;
@@ -466,7 +568,7 @@ function DisableScreen() {
                     $.ajax({
                         type: "GET",
                         async: false,
-                        url: site.url + "PublicMedia/GetImageViewerView?streamId=" + row.streamid + "&fileType=" + row.filetype,
+                        url: site.url + "PublicProfile/GetImageViewerView?streamId=" + row.streamid + "&fileType=" + row.filetype,
                         success: function (data) {
                             message = data;
                         },
@@ -478,7 +580,7 @@ function DisableScreen() {
                     BootstrapDialog.show({
                         type: BootstrapDialog.TYPE_INFO,
                         title: "Image Viewer - " + row.filename + "." + row.filetype.toLowerCase(),
-                        message: message,
+                        message: $("<div></div>").append(message),
                         closable: false,
                         onshown: function() { $("body").css("cursor", "default"); },
                         buttons: [{
@@ -500,6 +602,12 @@ function DisableScreen() {
                             cmdDelete.removeAttr("disabled");
                         }
                     }
+
+                    var responseTypeId = $("#responseTypeId").val();
+                    if (responseTypeId === "3" || responseTypeId === "8") // cats, ambient
+                        cmdAddShared.attr("disabled", "disabled");
+                    else
+                        cmdAddShared.removeAttr("disabled");
                 };
 
                 self.checkSelectAll = function (checked) {

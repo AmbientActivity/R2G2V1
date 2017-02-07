@@ -57,7 +57,7 @@
 
                 BootstrapDialog.show({
                     title: "R2G2 Login",
-                    message: message,
+                    message: $("<div></div>").append(message),
                     onshown: function () {
                         $("#txtPassword").focus();
                     },
@@ -119,7 +119,7 @@
 
                 BootstrapDialog.show({
                     title: title + " Change Password",
-                    message: message,
+                    message: $("<div></div>").append(message),
                     onshown: function () {
                         $("#txtOldPassword").focus();
                         $("#txtOldPassword").val("");

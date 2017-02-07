@@ -268,7 +268,7 @@
 
                     BootstrapDialog.show({
                         title: title,
-                        message: message,
+                        message: $("<div></div>").append(message),
                         onshown: function() {
                             $("#txtFirstName").focus();
                         },

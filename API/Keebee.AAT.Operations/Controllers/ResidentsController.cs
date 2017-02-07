@@ -157,7 +157,7 @@ namespace Keebee.AAT.Operations.Controllers
                                 f.MediaFile.Filename,
                                 f.MediaFile.FileType,
                                 f.MediaFile.FileSize,
-                                f.IsPublic
+                                f.IsShared
                             })
                         })
                 });

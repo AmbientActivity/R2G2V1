@@ -240,7 +240,7 @@
 
                     BootstrapDialog.show({
                         title: title,
-                        message: message,
+                        message: $("<div></div>").append(message),
                         onshown: function () {
                             $("#txtDescription").focus();
                         },
@@ -388,7 +388,7 @@
 
                     BootstrapDialog.show({
                         title: title,
-                        message: message,
+                        message: $("<div></div>").append(message),
                         onshown: function () {
                             $("#txtDescription").focus();
                         },

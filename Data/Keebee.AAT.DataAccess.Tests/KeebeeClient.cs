@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-// Generation date: 2017-02-04 10:27:58 PM
+// Generation date: 2017-02-07 11:38:30 AM
 namespace Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models
 {
     /// <summary>
@@ -2861,13 +2861,13 @@ namespace Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models
         /// Create a new ResidentMediaFile object.
         /// </summary>
         /// <param name="ID">Initial value of Id.</param>
-        /// <param name="isPublic">Initial value of IsPublic.</param>
+        /// <param name="isShared">Initial value of IsShared.</param>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        public static ResidentMediaFile CreateResidentMediaFile(int ID, bool isPublic)
+        public static ResidentMediaFile CreateResidentMediaFile(int ID, bool isShared)
         {
             ResidentMediaFile residentMediaFile = new ResidentMediaFile();
             residentMediaFile.Id = ID;
-            residentMediaFile.IsPublic = isPublic;
+            residentMediaFile.IsShared = isShared;
             return residentMediaFile;
         }
         /// <summary>
@@ -2894,28 +2894,28 @@ namespace Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models
         partial void OnIdChanging(int value);
         partial void OnIdChanged();
         /// <summary>
-        /// There are no comments for Property IsPublic in the schema.
+        /// There are no comments for Property IsShared in the schema.
         /// </summary>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        [global::Microsoft.OData.Client.OriginalNameAttribute("IsPublic")]
-        public bool IsPublic
+        [global::Microsoft.OData.Client.OriginalNameAttribute("IsShared")]
+        public bool IsShared
         {
             get
             {
-                return this._IsPublic;
+                return this._IsShared;
             }
             set
             {
-                this.OnIsPublicChanging(value);
-                this._IsPublic = value;
-                this.OnIsPublicChanged();
-                this.OnPropertyChanged("IsPublic");
+                this.OnIsSharedChanging(value);
+                this._IsShared = value;
+                this.OnIsSharedChanged();
+                this.OnPropertyChanged("IsShared");
             }
         }
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private bool _IsPublic;
-        partial void OnIsPublicChanging(bool value);
-        partial void OnIsPublicChanged();
+        private bool _IsShared;
+        partial void OnIsSharedChanging(bool value);
+        partial void OnIsSharedChanged();
         /// <summary>
         /// There are no comments for Property ResidentId in the schema.
         /// </summary>
@@ -3223,11 +3223,13 @@ namespace Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models
         /// Create a new PublicMediaFile object.
         /// </summary>
         /// <param name="ID">Initial value of Id.</param>
+        /// <param name="isShared">Initial value of IsShared.</param>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        public static PublicMediaFile CreatePublicMediaFile(int ID)
+        public static PublicMediaFile CreatePublicMediaFile(int ID, bool isShared)
         {
             PublicMediaFile publicMediaFile = new PublicMediaFile();
             publicMediaFile.Id = ID;
+            publicMediaFile.IsShared = isShared;
             return publicMediaFile;
         }
         /// <summary>
@@ -3253,6 +3255,29 @@ namespace Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models
         private int _Id;
         partial void OnIdChanging(int value);
         partial void OnIdChanged();
+        /// <summary>
+        /// There are no comments for Property IsShared in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        [global::Microsoft.OData.Client.OriginalNameAttribute("IsShared")]
+        public bool IsShared
+        {
+            get
+            {
+                return this._IsShared;
+            }
+            set
+            {
+                this.OnIsSharedChanging(value);
+                this._IsShared = value;
+                this.OnIsSharedChanged();
+                this.OnPropertyChanged("IsShared");
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private bool _IsShared;
+        partial void OnIsSharedChanging(bool value);
+        partial void OnIsSharedChanged();
         /// <summary>
         /// There are no comments for Property StreamId in the schema.
         /// </summary>
@@ -5573,7 +5598,7 @@ namespace Keebee.AAT.DataAccess.Tests.KeebeeAAT
           <PropertyRef Name=""Id"" />
         </Key>
         <Property Name=""Id"" Type=""Edm.Int32"" Nullable=""false"" />
-        <Property Name=""IsPublic"" Type=""Edm.Boolean"" Nullable=""false"" />
+        <Property Name=""IsShared"" Type=""Edm.Boolean"" Nullable=""false"" />
         <Property Name=""ResidentId"" Type=""Edm.Int32"" />
         <Property Name=""StreamId"" Type=""Edm.Guid"" />
         <Property Name=""ResponseTypeId"" Type=""Edm.Int32"" />
@@ -5596,6 +5621,7 @@ namespace Keebee.AAT.DataAccess.Tests.KeebeeAAT
           <PropertyRef Name=""Id"" />
         </Key>
         <Property Name=""Id"" Type=""Edm.Int32"" Nullable=""false"" />
+        <Property Name=""IsShared"" Type=""Edm.Boolean"" Nullable=""false"" />
         <Property Name=""StreamId"" Type=""Edm.Guid"" />
         <Property Name=""ResponseTypeId"" Type=""Edm.Int32"" />
         <Property Name=""MediaPathTypeId"" Type=""Edm.Int32"" />

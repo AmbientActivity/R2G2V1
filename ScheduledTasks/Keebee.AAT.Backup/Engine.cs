@@ -716,12 +716,12 @@ namespace Keebee.AAT.Backup
                         sw.WriteLine($"--- ResidentId {r.Id} ---");
                         sw.WriteLine("--- Activity 1 - ResponseType 'SlideShow' ---");
                         sw.WriteLine(
-                            "INSERT INTO ResidentMediaFiles (IsPublic, ResidentId, ResponseTypeId, MediaPathTypeId, StreamId)");
+                            "INSERT INTO ResidentMediaFiles (IsShared, ResidentId, ResponseTypeId, MediaPathTypeId, StreamId)");
                         sw.WriteLine(
                             $"SELECT 0, {r.Id}, 1, 3, StreamId FROM MediaFiles WHERE [Path] = @pathProfile + " +
                             $@"'{r.Id}\images\general\' AND [FileType] IN ('jpg', 'jpeg', 'png', 'bmp', 'gif')");
                         sw.WriteLine(
-                            "INSERT INTO ResidentMediaFiles (IsPublic, ResidentId, ResponseTypeId, MediaPathTypeId, StreamId)");
+                            "INSERT INTO ResidentMediaFiles (IsShared, ResidentId, ResponseTypeId, MediaPathTypeId, StreamId)");
                         sw.WriteLine(
                             $"SELECT 0, {r.Id}, 1, 4, StreamId FROM MediaFiles WHERE [Path] = @pathProfile + " +
                             $@"'{r.Id}\images\personal\' AND [FileType] IN ('jpg', 'jpeg', 'png', 'bmp', 'gif')");
@@ -729,12 +729,12 @@ namespace Keebee.AAT.Backup
                         sw.WriteLine();
                         sw.WriteLine("--- Activity 2 - ResponseType 'MatchingGame' ---");
                         sw.WriteLine(
-                            "INSERT INTO ResidentMediaFiles (IsPublic, ResidentId, ResponseTypeId, MediaPathTypeId, StreamId)");
+                            "INSERT INTO ResidentMediaFiles (IsShared, ResidentId, ResponseTypeId, MediaPathTypeId, StreamId)");
                         sw.WriteLine(
                             $"SELECT 0, {r.Id}, 2, 8, StreamId FROM MediaFiles WHERE [Path] = @pathProfile + " +
                             $@"'{r.Id}\activities\matching-game\shapes\' AND [FileType] = 'png'");
                         sw.WriteLine(
-                            "INSERT INTO ResidentMediaFiles (IsPublic, ResidentId, ResponseTypeId, MediaPathTypeId, StreamId)");
+                            "INSERT INTO ResidentMediaFiles (IsShared, ResidentId, ResponseTypeId, MediaPathTypeId, StreamId)");
                         sw.WriteLine(
                             $"SELECT 0, {r.Id}, 2, 9, StreamId FROM MediaFiles WHERE [Path] = @pathProfile + " +
                             $@"'{r.Id}\activities\matching-game\sounds\' AND [FileType] = 'mp3'");
@@ -742,12 +742,12 @@ namespace Keebee.AAT.Backup
                         sw.WriteLine();
                         sw.WriteLine("--- Activity 5 - ResponseType 'Radio' ---");
                         sw.WriteLine(
-                            "INSERT INTO ResidentMediaFiles (IsPublic, ResidentId, ResponseTypeId, MediaPathTypeId, StreamId)");
+                            "INSERT INTO ResidentMediaFiles (IsShared, ResidentId, ResponseTypeId, MediaPathTypeId, StreamId)");
                         sw.WriteLine(
                             $"SELECT 0, {r.Id}, 5, 1, StreamId FROM MediaFiles WHERE [Path] = @pathProfile + " +
                             $@"'{r.Id}\audio\music\' AND [FileType] = 'mp3'");
                         sw.WriteLine(
-                            "INSERT INTO ResidentMediaFiles (IsPublic, ResidentId, ResponseTypeId, MediaPathTypeId, StreamId)");
+                            "INSERT INTO ResidentMediaFiles (IsShared, ResidentId, ResponseTypeId, MediaPathTypeId, StreamId)");
                         sw.WriteLine(
                             $"SELECT 0, {r.Id}, 5, 2, StreamId FROM MediaFiles WHERE [Path] = @pathProfile + " +
                             $@"'{r.Id}\audio\radio-shows\' AND [FileType] = 'mp3'");
@@ -755,12 +755,12 @@ namespace Keebee.AAT.Backup
                         sw.WriteLine();
                         sw.WriteLine("--- Activity 5 - ResponseType 'Television' ---");
                         sw.WriteLine(
-                            "INSERT INTO ResidentMediaFiles (IsPublic, ResidentId, ResponseTypeId, MediaPathTypeId, StreamId)");
+                            "INSERT INTO ResidentMediaFiles (IsShared, ResidentId, ResponseTypeId, MediaPathTypeId, StreamId)");
                         sw.WriteLine(
                             $"SELECT 0, {r.Id}, 6, 5, StreamId FROM MediaFiles WHERE [Path] = @pathProfile + " +
                             $@"'{r.Id}\videos\tv-shows\' AND [FileType] = 'mp4'");
                         sw.WriteLine(
-                            "INSERT INTO ResidentMediaFiles (IsPublic, ResidentId, ResponseTypeId, MediaPathTypeId, StreamId)");
+                            "INSERT INTO ResidentMediaFiles (IsShared, ResidentId, ResponseTypeId, MediaPathTypeId, StreamId)");
                         sw.WriteLine(
                             $"SELECT 0, {r.Id}, 6, 6, StreamId FROM MediaFiles WHERE [Path] = @pathProfile + " +
                             $@"'{r.Id}\videos\home-movies\' AND [FileType] = 'mp4'");

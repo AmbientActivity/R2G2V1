@@ -10,7 +10,7 @@ namespace Keebee.AAT.RESTClient
         public string Filename { get; set; }
         public string FileType { get; set; }
         public int FileSize { get; set; }
-        public bool IsPublic { get; set; }
+        public bool IsShared { get; set; }
     }
 
     public class LinkedMediaFile : MediaFile

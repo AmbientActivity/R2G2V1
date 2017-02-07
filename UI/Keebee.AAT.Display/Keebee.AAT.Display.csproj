@@ -53,6 +53,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Caregiver\Helpers\MediaFileQuery.cs" />
     <Compile Include="Caregiver\InteractiveActivityPlayer.cs">
       <SubType>Form</SubType>
     </Compile>

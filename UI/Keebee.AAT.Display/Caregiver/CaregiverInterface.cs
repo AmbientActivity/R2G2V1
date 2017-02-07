@@ -46,7 +46,7 @@ namespace Keebee.AAT.Display.Caregiver
             set { _config = value; }
         }
 
-        private readonly Resident _publicLibrary = new Resident
+        private readonly Resident _publicProfile = new Resident
         {
             Id = PublicMediaSource.Id,
             FirstName = PublicMediaSource.Description,
@@ -170,7 +170,7 @@ namespace Keebee.AAT.Display.Caregiver
             ConfigureControls();
             ConfigureBackgroundWorkers();
             InitializeStartupPosition();
-            _currentResident = _publicLibrary;
+            _currentResident = _publicProfile;
         }
 
         #region initiialization
@@ -335,7 +335,7 @@ namespace Keebee.AAT.Display.Caregiver
         private void LoadResidentMedia(int residentId)
         {
             _currentResident = residentId == PublicMediaSource.Id
-                ? _publicLibrary
+                ? _publicProfile
                 : _opsClient.GetResident(residentId);
 
             if (residentId == PublicMediaSource.Id)
@@ -359,7 +359,7 @@ namespace Keebee.AAT.Display.Caregiver
                 var residents = _opsClient.GetResidents().ToList();
                 var arrayList = new ArrayList();
 
-                var residentList = new List<Resident> { _publicLibrary }
+                var residentList = new List<Resident> { _publicProfile }
                     .Union(residents
                     .OrderBy(o => o.LastName).ThenBy(o => o.FirstName))
                     .ToArray();
@@ -666,106 +666,31 @@ namespace Keebee.AAT.Display.Caregiver
 
         #region file queries
 
-        // get filenames with full path for (for usage)
+        // get filenames with full path (for the thumbnails)
         private string[] GetFilePaths(int mediaPathTypeId, int? responseTypeId = null, Guid? streamId = null)
         {
-            string[] files = null;
+            string[] filePaths = null;
             try
             {
-                var isPublic = _currentResident.Id == PublicMediaSource.Id;
-                var pathRoot = $@"{_mediaPath.ProfileRoot}\{_currentResident.Id}";
-                var mediaFiles = _mediaFiles.ToArray();
-
-                var paths = mediaFiles
-                    .Where(x => x.ResponseType.Id == responseTypeId || responseTypeId == null)
-                    .SelectMany(x => x.Paths)
-                    .Where(x => x.MediaPathType.Id == mediaPathTypeId)
-                    .ToArray();
-
-                if (!paths.Any()) return new string[0];
-
-                // get the path type
-                var mediaPath = paths.Single(x => x.MediaPathType.Id == mediaPathTypeId);
-
-                // get the description
-                var mediaPathType = mediaPath.MediaPathType.Path;
-
-                if (streamId != null)
-                {
-                    // organize the files so that the selected appears first in the list
-                    var selectedFile = mediaPath.Files
-                        .Single(f => f.StreamId == streamId).Filename;
-
-                    var filesAfterSelected = new[] {$@"{pathRoot}\{mediaPathType}\{selectedFile}"}
-                                .Union(mediaPath.Files
-                                .Where(f => f.IsPublic == false || isPublic)
-                                .OrderBy(f => f.Filename)
-                                .SkipWhile(f => f.Filename != selectedFile)
-                                .Select(f => $@"{pathRoot}\{mediaPathType}\{f.Filename}"))
-                                .ToArray();
-
-                    var filesBeforeSelected = mediaPath.Files
-                            .Where(f => f.IsPublic == false || isPublic)
-                            .OrderBy(f => f.Filename)
-                            .Select(f => $@"{pathRoot}\{mediaPathType}\{f.Filename}")
-                            .Except(filesAfterSelected)
-                            .ToArray();
-
-                    files = filesAfterSelected.Concat(filesBeforeSelected).ToArray();
-                }
-                else
-                {
-                    files = mediaPath.Files
-                        .Where(f => f.IsPublic == false || isPublic)
-                        .OrderBy(f => f.Filename)
-                        .Select(f => $@"{pathRoot}\{mediaPathType}\{f.Filename}").ToArray();
-                }
+                var mediaFileQuery = new Helpers.MediaFileQuery(_mediaFiles, _publicMediaFiles, _currentResident.Id);
+                filePaths = mediaFileQuery.GetFilePaths(mediaPathTypeId, responseTypeId, streamId);
             }
             catch (Exception ex)
             {
                 _systemEventLogger?.WriteEntry($"Caregiver.GetFilePaths: {ex.Message}", EventLogEntryType.Error);
             }
 
-            return files;
+            return filePaths;
         }
 
-        // get files with no extensions or path (for display)
+        // get filenames with no extensions or path (for displaying on the screen)
         private IEnumerable<MediaFile> GetMediaFiles(int mediaPathTypeId, int? responseTypeId = null)
         {
             IEnumerable<MediaFile> files = null;
             try
             {
-                var mediaFiles = _mediaFiles.ToArray();
-                var isPublic = _currentResident.Id == PublicMediaSource.Id;
-
-                var paths = mediaFiles
-                    .Where(x => x.ResponseType.Id == responseTypeId || responseTypeId == null)
-                    .SelectMany(x => x.Paths)
-                    .Where(x => x.MediaPathType.Id == mediaPathTypeId)
-                    .ToArray();
-
-                if (!paths.Any())
-                {
-                    if (responseTypeId == ResponseTypeId.MatchingGame)
-                    {
-                        paths = _publicMediaFiles
-                            .Where(x => x.ResponseType.Id == responseTypeId)
-                            .SelectMany(x => x.Paths)
-                            .Where(x => x.MediaPathType.Id == mediaPathTypeId)
-                            .ToArray();
-                    }
-                    else return new List<MediaFile>();
-                }
-
-                files = paths
-                    .Single(x => x.MediaPathType.Id == mediaPathTypeId).Files
-                    .Where(f => f.IsPublic == false || isPublic)
-                    .Select(f => new MediaFile
-                                 {
-                                     StreamId = f.StreamId,
-                                     Filename = f.Filename.Replace($".{f.FileType}", string.Empty)
-                                 })
-                    .OrderBy(f => f.Filename);
+                var mediaFileQuery = new Helpers.MediaFileQuery(_mediaFiles, _publicMediaFiles, _currentResident.Id);
+                files = mediaFileQuery.GetMediaFiles(mediaPathTypeId, responseTypeId);  
             }
             catch (Exception ex)
             {

@@ -8,7 +8,7 @@ namespace Keebee.AAT.DataAccess.Models
     {
         [Key]
         public int Id { get; set; }
-        public bool IsPublic { get; set; }
+        public bool IsShared { get; set; }
 
         [ForeignKey("Resident")]
         public int ResidentId { get; set; }

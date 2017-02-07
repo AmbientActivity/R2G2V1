@@ -1,11 +1,12 @@
-﻿using Keebee.AAT.RESTClient;
+﻿using System;
+using Keebee.AAT.RESTClient;
 using Keebee.AAT.Shared;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace Keebee.AAT.BusinessRules
 {
-    public class PublicMediaRules
+    public class PublicProfileRules
     {
         private OperationsClient _opsClient;
         public OperationsClient OperationsClient
@@ -185,6 +186,42 @@ namespace Keebee.AAT.BusinessRules
             }
 
             return isValid;
+        }
+
+        public IEnumerable<MediaFile> GetAvailableSharedMediaFiles(int mediaPathTypeId)
+        {
+            var mediaSource = new MediaSourcePath();
+            var mediaPath = GetMediaPath(mediaPathTypeId);
+            var sharedPaths = _opsClient.GetMediaFilesForPath($@"{mediaSource.SharedMedia}\{mediaPath}").ToArray();
+            var existingSharedMediaPaths = _opsClient.GetPublicMediaFilesForMediaPathType(mediaPathTypeId);
+            IEnumerable<Guid> existingStreamIds = new List<Guid>();
+
+            if (existingSharedMediaPaths != null)
+            {
+                if (existingSharedMediaPaths.MediaFiles.Any())
+                {
+                    existingStreamIds = existingSharedMediaPaths.MediaFiles.SelectMany(p => p.Paths)
+                        .SelectMany(f => f.Files)
+                        .Where(f => f.IsShared)
+                        .Select(f => f.StreamId);
+                }
+            }
+
+            var availableFiles = sharedPaths
+                .SelectMany(f => f.Files)
+                .Where(f => !existingStreamIds.Contains(f.StreamId));
+
+            return availableFiles;
+        }
+
+        public string GetNoAvailableSharedMediaMessage(int mediaPathTypeId)
+        {
+            var mediaPathType = GetMediaPathDescription(mediaPathTypeId);
+
+            var hasHave = mediaPathType.EndsWith("s") ? "have" : "has";
+            var message = $"All available shared {mediaPathType} {hasHave} already been included in this profile.";
+
+            return message;
         }
     }
 }

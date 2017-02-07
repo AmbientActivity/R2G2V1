@@ -210,5 +210,43 @@ namespace Keebee.AAT.BusinessRules
         {
             return _opsClient.DeleteResidentMediaFile(id);
         }
+
+        public IEnumerable<MediaFile> GetAvailableSharedMediaFiles(int residentId, int mediaPathTypeId)
+        {
+            var mediaSource = new MediaSourcePath();
+            var mediaPath = GetMediaPath(mediaPathTypeId);
+            var sharedPaths = _opsClient.GetMediaFilesForPath($@"{mediaSource.SharedMedia}\{mediaPath}").ToArray();
+            var responseTypeId = GetResponseTypeId(mediaPathTypeId);
+            var existingSharedMediaPaths = _opsClient.GetResidentMediaFilesForResidentResponseType(residentId, responseTypeId);
+            IEnumerable<Guid> existingStreamIds = new List<Guid>();
+
+            if (existingSharedMediaPaths.MediaResponseType != null)
+            {
+                if (existingSharedMediaPaths.MediaResponseType.Paths.Any())
+                {
+                    existingStreamIds = existingSharedMediaPaths
+                        .MediaResponseType.Paths
+                        .SelectMany(f => f.Files)
+                        .Where(f => f.IsShared)
+                        .Select(f => f.StreamId);
+                }
+            }
+
+            var availableFiles = sharedPaths
+                .SelectMany(f => f.Files)
+                .Where(f => !existingStreamIds.Contains(f.StreamId));
+
+            return availableFiles;
+        }
+
+        public string GetNoAvailableSharedMediaMessage(int mediaPathTypeId)
+        {
+            var mediaPathType = GetMediaPathDescription(mediaPathTypeId);
+
+            var hasHave = mediaPathType.EndsWith("s") ? "have" : "has";
+            var message = $"All available shared {mediaPathType} {hasHave} already been included in this profile.";
+
+            return message;
+        }
     }
 }

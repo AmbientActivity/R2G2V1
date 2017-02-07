@@ -71,7 +71,8 @@ namespace Keebee.AAT.Operations.Controllers
                                 f.StreamId,
                                 f.MediaFile.Filename,
                                 f.MediaFile.FileType,
-                                f.MediaFile.FileSize
+                                f.MediaFile.FileSize,
+                                f.IsShared
                             })
                         }).OrderBy(o => o.MediaPathType.Id)
                 }).OrderBy(o => o.ResponseType.Id);
@@ -114,7 +115,8 @@ namespace Keebee.AAT.Operations.Controllers
                     publicMediaFile.MediaFile.Filename,
                     publicMediaFile.MediaFile.FileType,
                     publicMediaFile.MediaFile.FileSize,
-                };
+                    publicMediaFile.IsShared
+            };
 
             return new DynamicJsonObject(exObj);
         }
@@ -168,7 +170,8 @@ namespace Keebee.AAT.Operations.Controllers
                                 f.StreamId,
                                 f.MediaFile.Filename,
                                 f.MediaFile.FileType,
-                                f.MediaFile.FileSize
+                                f.MediaFile.FileSize,
+                                f.IsShared
                             })
                         }).OrderBy(o => o.MediaPathType.Id)
                 }).SingleOrDefault();
@@ -220,7 +223,8 @@ namespace Keebee.AAT.Operations.Controllers
                                 f.StreamId,
                                 f.MediaFile.Filename,
                                 f.MediaFile.FileType,
-                                f.MediaFile.FileSize
+                                f.MediaFile.FileSize,
+                                f.IsShared
                             })
                         }).OrderBy(o => o.MediaPathType.Id)
                 });
@@ -260,7 +264,8 @@ namespace Keebee.AAT.Operations.Controllers
                                 x.MediaPathType.Id,
                                 x.MediaPathType.Path,
                                 x.MediaPathType.Description,
-                                x.MediaPathType.ShortDescription
+                                x.MediaPathType.ShortDescription,
+                                x.IsShared
                         }
                     });
 

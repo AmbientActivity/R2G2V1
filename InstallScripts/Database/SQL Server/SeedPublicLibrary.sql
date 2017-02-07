@@ -4,37 +4,39 @@ USE [KeebeeAAT]
 TRUNCATE TABLE PublicMediaFiles
 */
 
-DECLARE @pathProfile varchar(max)
-SET @pathProfile = FileTableRootPath() + '\Media\Profiles\'
+DECLARE @pathProfiles varchar(max)
+DECLARE @pathSharedLibrary varchar(max)
+SET @pathProfiles = FileTableRootPath() + '\Media\Profiles\'
+SET @pathSharedLibrary = FileTableRootPath() + '\Media\SharedLibrary\'
 
 --- Activity 1 - ResponseType "SlideShow" ---
-INSERT INTO PublicMediaFiles (ResponseTypeId, MediaPathTypeId, StreamId)
-SELECT 1, 3, StreamId FROM MediaFiles WHERE [Path] = @pathProfile + '0\images\general\' AND [FileType] IN ('jpg', 'jpeg', 'png', 'bmp', 'gif')
+INSERT INTO PublicMediaFiles (IsShared, ResponseTypeId, MediaPathTypeId, StreamId)
+SELECT 1, 1, 3, StreamId FROM MediaFiles WHERE [Path] = @pathSharedLibrary + 'images\general\' AND [FileType] IN ('jpg', 'jpeg', 'png', 'bmp', 'gif')
 
 --- Activity 2 - ResponseType "MatchingGame" ---
-INSERT INTO PublicMediaFiles (ResponseTypeId, MediaPathTypeId, StreamId)
-SELECT 2, 8, StreamId FROM MediaFiles WHERE [Path] = @pathProfile + '0\activities\matching-game\shapes\' AND [FileType] = 'png'
-INSERT INTO PublicMediaFiles (ResponseTypeId, MediaPathTypeId, StreamId)
-SELECT 2, 9, StreamId FROM MediaFiles WHERE [Path] = @pathProfile + '0\activities\matching-game\sounds\' AND [FileType] = 'mp3'
+INSERT INTO PublicMediaFiles (IsShared, ResponseTypeId, MediaPathTypeId, StreamId)
+SELECT 1, 2, 8, StreamId FROM MediaFiles WHERE [Path] = @pathSharedLibrary + 'activities\matching-game\shapes\' AND [FileType] = 'png'
+INSERT INTO PublicMediaFiles (IsShared, ResponseTypeId, MediaPathTypeId, StreamId)
+SELECT 1, 2, 9, StreamId FROM MediaFiles WHERE [Path] = @pathSharedLibrary + 'activities\matching-game\sounds\' AND [FileType] = 'mp3'
 
 --- Activity 3 - ResponseType "Cats" ---
-INSERT INTO PublicMediaFiles (ResponseTypeId, MediaPathTypeId, StreamId)
-SELECT 3, 7, StreamId FROM MediaFiles WHERE [Path] = @pathProfile + '0\videos\system\' AND [Filename] IN ('Cats.mp4')
+INSERT INTO PublicMediaFiles (IsShared, ResponseTypeId, MediaPathTypeId, StreamId)
+SELECT 0, 3, 7, StreamId FROM MediaFiles WHERE [Path] = @pathProfiles + '0\videos\system\' AND [Filename] IN ('Cats.mp4')
 
 --- Activity 5 - ResponseType "Radio" ---
-INSERT INTO PublicMediaFiles (ResponseTypeId, MediaPathTypeId, StreamId)
-SELECT 5, 1, StreamId FROM MediaFiles WHERE [Path] = @pathProfile + '0\audio\music\' AND [FileType] = 'mp3'
+INSERT INTO PublicMediaFiles (IsShared, ResponseTypeId, MediaPathTypeId, StreamId)
+SELECT 1, 5, 1, StreamId FROM MediaFiles WHERE [Path] = @pathSharedLibrary + 'audio\music\' AND [FileType] = 'mp3'
 
-INSERT INTO PublicMediaFiles (ResponseTypeId, MediaPathTypeId, StreamId)
-SELECT 5, 2, StreamId FROM MediaFiles WHERE [Path] = @pathProfile + '0\audio\radio-shows\' AND [FileType] = 'mp3'
+INSERT INTO PublicMediaFiles (IsShared, ResponseTypeId, MediaPathTypeId, StreamId)
+SELECT 1, 5, 2, StreamId FROM MediaFiles WHERE [Path] = @pathSharedLibrary + 'audio\radio-shows\' AND [FileType] = 'mp3'
 
 --- Activity 6 - ResponseType "Television" ---
-INSERT INTO PublicMediaFiles (ResponseTypeId, MediaPathTypeId, StreamId)
-SELECT 6, 5, StreamId FROM MediaFiles WHERE [Path] = @pathProfile + '0\videos\tv-shows\' AND [Filename] NOT IN ('Bird-Feeding.mp4', 'Nature-Sounds.mp4', 'Cats.mp4')
+INSERT INTO PublicMediaFiles (IsShared, ResponseTypeId, MediaPathTypeId, StreamId)
+SELECT 1, 6, 5, StreamId FROM MediaFiles WHERE [Path] = @pathSharedLibrary + 'videos\tv-shows\'
 
 --- ResponseType "Ambient" ---
-INSERT INTO PublicMediaFiles (ResponseTypeId, MediaPathTypeId, StreamId)
-SELECT 8, 7, StreamId FROM MediaFiles WHERE [Path] = @pathProfile + '0\videos\system\'  AND [Filename] IN ('Bird-Feeding.mp4', 'Nature-Sounds.mp4')
+INSERT INTO PublicMediaFiles (IsShared, ResponseTypeId, MediaPathTypeId, StreamId)
+SELECT 0, 8, 7, StreamId FROM MediaFiles WHERE [Path] = @pathProfiles + '0\videos\system\'  AND [Filename] IN ('Bird-Feeding.mp4', 'Nature-Sounds.mp4')
 
 
 -- VIEW THE RESULTS --
@@ -46,15 +48,17 @@ SELECT
 	mp.[Description] AS MediaPath,
 	mf.[FileType],
 	mf.[Filename],
-	mf.[Path]
+	mf.[Path],
+	pm.[IsShared]
 FROM 
 	[Configs] c 
 	JOIN ConfigDetails cd ON c.Id = cd.ConfigId
 	JOIN ResponseTypes rt ON cd.ResponseTypeId = rt.Id
 	JOIN PhidgetTypes pt ON cd.PhidgetTypeId = pt.Id
-	JOIN PublicMediaFiles rm ON cd.ResponseTypeId = rm.ResponseTypeId
-	JOIN MediaPathTypes mp ON mp.Id = rm.MediaPathTypeId
-	JOIN MediaFiles mf ON rm.StreamId = mf.StreamId
-WHERE c.IsActive = 1
+	JOIN PublicMediaFiles pm ON cd.ResponseTypeId = pm.ResponseTypeId
+	JOIN MediaPathTypes mp ON mp.Id = pm.MediaPathTypeId
+	JOIN MediaFiles mf ON pm.StreamId = mf.StreamId
+--WHERE c.Id = 1
+WHERE pm.IsShared = 0
 ORDER BY cd.Id, pt.[Description], mf.FileType, mf.[Filename]
 */

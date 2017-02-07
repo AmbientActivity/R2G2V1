@@ -14,6 +14,6 @@
     window.videocaptures = {};
     window.mediafiles = {};
     window.phidgetconfig = {};
-    window.publicmedia = {};
+    window.publicprofile = {};
     window.maintenance = {};
 })();

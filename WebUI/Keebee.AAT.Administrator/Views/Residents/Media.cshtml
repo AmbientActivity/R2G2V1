@@ -37,6 +37,7 @@
         <div class="add-button-container">
             <div class="upload-action-container">
                 <button id="uploadbutton" type="button" class="btn btn-md btn-success upload-media-button" onclick="return" false;">@Model.AddButtonText</button>
+                <button id="add-shared" type="button" class="btn btn-md btn-success" data-bind="click: showAddFromSharedLibarayDialog">Add From Shared Library</button>
                 <button id="delete" type="button" class="btn btn-md btn-danger" disabled data-bind="click: showDeleteSelectedDialog">Delete Selected</button>
             </div>
             <input id="mediaPathTypeId" name="mediaPathTypeId" type="hidden" value="@Model.SelectedMediaPathType"/>
@@ -83,6 +84,12 @@
                 <td data-bind="text: filename"></td>
                 <td data-bind="text: filetype"></td>
                 <td data-bind="text: filesize"></td>
+                <!-- ko if: isshared -->
+                <td style="text-align: center"><span class="glyphicon glyphicon-ok"></span></td>
+                <!-- /ko -->
+                <!-- ko if: !isshared -->
+                <td></td>
+                <!-- /ko -->
             </tr>
             </tbody>
         </table>

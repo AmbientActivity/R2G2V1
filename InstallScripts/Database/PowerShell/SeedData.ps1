@@ -6,7 +6,8 @@
     $mediaDestination = "\\$server\KeebeeAATFilestream\Media\"
     $pathDeployments = "C:\Deployments"
     $pathSqlScript = "$pathDeployments\Install\Database\SQL Server\"
-    $pathPublicLibrary = "Profiles\0"
+    $pathPublicProfile = "Profiles\0"
+    $pathSharedLibrary = "SharedLibrary"
     
     Write-Host -ForegroundColor yellow "`n--- Seed ---`n"
 
@@ -43,7 +44,8 @@
             }
 
             Write-Host "Transferring startup media...” -NoNewline
-            Copy-Item "$pathDeployments\Media\$pathPublicLibrary" "$mediaDestination\$pathPublicLibrary" -recurse -Force
+            Copy-Item "$pathDeployments\Media\$pathSharedLibrary" $mediaDestination -recurse -Force
+            Copy-Item "$pathDeployments\Media\$pathPublicProfile" "$mediaDestination\$pathPublicProfile" -recurse -Force
             Copy-Item "$pathDeployments\Media\Exports" "$mediaDestination\Exports" -recurse -Force
             Write-Host "done.”
 

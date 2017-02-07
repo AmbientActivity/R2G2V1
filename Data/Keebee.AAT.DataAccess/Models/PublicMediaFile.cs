@@ -8,6 +8,7 @@ namespace Keebee.AAT.DataAccess.Models
     {
         [Key]
         public int Id { get; set; }
+        public bool IsShared { get; set; }
 
         [ForeignKey("MediaFile")]
         public Guid StreamId { get; set; }

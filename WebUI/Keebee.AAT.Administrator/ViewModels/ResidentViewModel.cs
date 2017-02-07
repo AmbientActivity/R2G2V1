@@ -43,6 +43,12 @@ namespace Keebee.AAT.Administrator.ViewModels
         public bool AllowVideoCapturing { get; set; }
     }
 
+    public class SharedLibraryAddViewModel
+    {
+        public IEnumerable<SharedLibraryFileViewModel> SharedFiles { get; set; }
+        public string NoAvailableMediaMessage { get; set; }
+    }
+
     public class ResidentMediaViewModel
     {
         public int ResidentId { get; set; }

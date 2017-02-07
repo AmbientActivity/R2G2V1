@@ -27,6 +27,7 @@ Try
         foreach($residentId in $residentIds)
         {
             If ($residentId.ToString() -eq "0") { continue }
+            If ($residentId.ToString() -eq "common") { continue }
 
             $query = Invoke-SqlQuery -Query "SELECT COUNT(*) AS ResidentCount FROM Residents WHERE Id = $residentId" -Server $server -Database $database
 
@@ -41,7 +42,7 @@ Try
                     # create sql statement
                     $sql = "DECLARE @pathProfile varchar(max)`r`n" +
                            "SET @pathProfile = '$pathSqlProfiles'"
- 
+
                     Write-Host "Creating Resident $residentId..."-NoNewline
                     $sql += "`r`n`r`n--- ResidentId $residentId ---`r`n`r`n" +
 
@@ -53,34 +54,34 @@ Try
                         "SET IDENTITY_INSERT [dbo].[Residents] OFF`r`n`r`n" +
             
                         "--- Activity 1 - ResponseType 'SlideShow' ---`r`n" +
-                        "INSERT INTO ResidentMediaFiles (IsPublic, ResidentId, ResponseTypeId, MediaPathTypeId, StreamId)`r`n" +
+                        "INSERT INTO ResidentMediaFiles (IsShared, ResidentId, ResponseTypeId, MediaPathTypeId, StreamId)`r`n" +
                         "SELECT 0, $residentId, 1, 3, StreamId FROM MediaFiles WHERE [Path] = @pathProfile + " +
                         "'$residentId\images\general\' AND [FileType] IN ('jpg', 'jpeg', 'png', 'bmp', 'gif')`r`n" + 
-                        "INSERT INTO ResidentMediaFiles (IsPublic, ResidentId, ResponseTypeId, MediaPathTypeId, StreamId)`r`n" +
+                        "INSERT INTO ResidentMediaFiles (IsShared, ResidentId, ResponseTypeId, MediaPathTypeId, StreamId)`r`n" +
                         "SELECT 0, $residentId, 1, 4, StreamId FROM MediaFiles WHERE [Path] = @pathProfile + " +
                         "'$residentId\images\personal\' AND [FileType] IN ('jpg', 'jpeg', 'png', 'bmp', 'gif')" +
 
                         "`r`n`r`n--- Activity 2 - ResponseType 'MatchingGame' ---`r`n" + 
-                        "INSERT INTO ResidentMediaFiles (IsPublic, ResidentId, ResponseTypeId, MediaPathTypeId, StreamId)`r`n" + 
+                        "INSERT INTO ResidentMediaFiles (IsShared, ResidentId, ResponseTypeId, MediaPathTypeId, StreamId)`r`n" + 
                         "SELECT 0, $residentId, 2, 8, StreamId FROM MediaFiles WHERE [Path] = @pathProfile + " +
                         "'$residentId\activities\matching-game\shapes\' AND [FileType] = 'png'`r`n" + 
-                        "INSERT INTO ResidentMediaFiles (IsPublic, ResidentId, ResponseTypeId, MediaPathTypeId, StreamId)`r`n" +
+                        "INSERT INTO ResidentMediaFiles (IsShared, ResidentId, ResponseTypeId, MediaPathTypeId, StreamId)`r`n" +
                         "SELECT 0, $residentId, 2, 9, StreamId FROM MediaFiles WHERE [Path] = @pathProfile + " +
                         "'$residentId\activities\matching-game\sounds\' AND [FileType] = 'mp3'" +
 
                         "`r`n`r`n--- Activity 5 - ResponseType 'Radio' ---`r`n" +
-                        "INSERT INTO ResidentMediaFiles (IsPublic, ResidentId, ResponseTypeId, MediaPathTypeId, StreamId)`r`n" + 
+                        "INSERT INTO ResidentMediaFiles (IsShared, ResidentId, ResponseTypeId, MediaPathTypeId, StreamId)`r`n" + 
                         "SELECT 0, $residentId, 5, 1, StreamId FROM MediaFiles WHERE [Path] = @pathProfile + " +
                         "'$residentId\audio\music\' AND [FileType] = 'mp3'`r`n" +
-                        "INSERT INTO ResidentMediaFiles (IsPublic, ResidentId, ResponseTypeId, MediaPathTypeId, StreamId)`r`n" +
+                        "INSERT INTO ResidentMediaFiles (IsShared, ResidentId, ResponseTypeId, MediaPathTypeId, StreamId)`r`n" +
                         "SELECT 0, $residentId, 5, 2, StreamId FROM MediaFiles WHERE [Path] = @pathProfile + " +
                         "'$residentId\audio\radio-shows\' AND [FileType] = 'mp3'" +
 
                         "`r`n`r`n--- Activity 5 - ResponseType 'Television' ---`n" +
-                        "INSERT INTO ResidentMediaFiles (IsPublic, ResidentId, ResponseTypeId, MediaPathTypeId, StreamId)`r`n" +
+                        "INSERT INTO ResidentMediaFiles (IsShared, ResidentId, ResponseTypeId, MediaPathTypeId, StreamId)`r`n" +
                         "SELECT 0, $residentId, 6, 5, StreamId FROM MediaFiles WHERE [Path] = @pathProfile + " +
-                            "'$residentId\videos\tv-shows\' AND [FileType] = 'mp4'`r`n" +
-                        "INSERT INTO ResidentMediaFiles (IsPublic, ResidentId, ResponseTypeId, MediaPathTypeId, StreamId)`r`n" +
+                        "'$residentId\videos\tv-shows\' AND [FileType] = 'mp4'`r`n" +
+                        "INSERT INTO ResidentMediaFiles (IsShared, ResidentId, ResponseTypeId, MediaPathTypeId, StreamId)`r`n" +
                         "SELECT 0, $residentId, 6, 6, StreamId FROM MediaFiles WHERE [Path] = @pathProfile + " +
                         "'$residentId\videos\home-movies\' AND [FileType] = 'mp4'`r`n" +
                     "END"

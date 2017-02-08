@@ -35,9 +35,11 @@ $installUtilityPath = "Install\Utility\"
 $profilesPath = "Media\Profiles\"
 $profilesPublicPath = "Media\Profiles\0\"
 $sharedLibraryPath = "Media\SharedLibrary\"
+$systemMediaPath = "Media\System\"
 $exportsPath = "Media\Exports\EventLog\"
 $publicProfileSource = "\\$env:COMPUTERNAME\SQLEXPRESS\KeebeeAATFilestream\Media\Profiles\0\*"
-$CommonLibrarySource = "\\$env:COMPUTERNAME\SQLEXPRESS\KeebeeAATFilestream\Media\SharedLibrary\*"
+$sharedLibrarySource = "\\$env:COMPUTERNAME\SQLEXPRESS\KeebeeAATFilestream\Media\SharedLibrary\*"
+$systemMediaSource = "\\$env:COMPUTERNAME\SQLEXPRESS\KeebeeAATFilestream\Media\System\*"
 
 # documentation paths
 $documentationPath = "Install\Documentation\"
@@ -200,14 +202,23 @@ Try
     New-Item -ItemType Directory -Force -Path $path | Out-Null
     Copy-Item $publicProfileSource $path -recurse -Force
 
-    # sgared library
+    # shared library
     $path = $destPath + $sharedLibraryPath
     If(test-path $path)
     {
         Remove-Item $path -recurse -Force
     } 
     New-Item -ItemType Directory -Force -Path $path | Out-Null
-    Copy-Item $commonLibrarySource $path -recurse -Force
+    Copy-Item $sharedLibrarySource $path -recurse -Force
+
+    # system media
+    $path = $destPath + $systemMediaPath
+    If(test-path $path)
+    {
+        Remove-Item $path -recurse -Force
+    } 
+    New-Item -ItemType Directory -Force -Path $path | Out-Null
+    Copy-Item $systemMediaSource $path -recurse -Force
     Write-Host "done.”
 
     # -------------------- SCHEDULED TASKS --------------------

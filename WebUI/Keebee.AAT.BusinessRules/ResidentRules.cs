@@ -220,7 +220,7 @@ namespace Keebee.AAT.BusinessRules
             var existingSharedMediaPaths = _opsClient.GetResidentMediaFilesForResidentResponseType(residentId, responseTypeId);
             IEnumerable<Guid> existingStreamIds = new List<Guid>();
 
-            if (existingSharedMediaPaths.MediaResponseType != null)
+            if (existingSharedMediaPaths?.MediaResponseType != null)
             {
                 if (existingSharedMediaPaths.MediaResponseType.Paths.Any())
                 {

@@ -369,7 +369,8 @@ namespace Keebee.AAT.Display
             }
         }
 
-        private void ExecuteRandom(IEnumerable<int> responseTypeIds)
+        private int _currentSequentialResponseTypeIndex = -1;
+        private void ExecuteSequential(IEnumerable<int> responseTypeIds)
         {
             var activeIds = responseTypeIds.Where(x => _activeResponseTypeIds.Contains(x)).ToArray();
 
@@ -379,9 +380,12 @@ namespace Keebee.AAT.Display
             }
             else
             {
-                var r = new Random();
-                var id = r.Next(activeIds.Length);
-                var responseTypeId = activeIds[id];
+                if (_currentSequentialResponseTypeIndex < activeIds.Length - 1)
+                    _currentSequentialResponseTypeIndex++;
+                else
+                    _currentSequentialResponseTypeIndex = 0;
+
+                var responseTypeId = activeIds[_currentSequentialResponseTypeIndex];
 
                 switch (responseTypeId)
                 {
@@ -675,7 +679,7 @@ namespace Keebee.AAT.Display
                     offScreen1.Stop();
 
                     // randomly execute one of the following reponse types
-                    ExecuteRandom(new [] {
+                    ExecuteSequential(new [] {
                         ResponseTypeId.MatchingGame,
                         ResponseTypeId.PaintingActivity,
                         ResponseTypeId.SlideShow});

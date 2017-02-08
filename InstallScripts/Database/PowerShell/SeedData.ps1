@@ -8,6 +8,7 @@
     $pathSqlScript = "$pathDeployments\Install\Database\SQL Server\"
     $pathPublicProfile = "Profiles\0"
     $pathSharedLibrary = "SharedLibrary"
+    $pathSystemMedia = "System"
     
     Write-Host -ForegroundColor yellow "`n--- Seed ---`n"
 
@@ -46,6 +47,7 @@
             Write-Host "Transferring startup media...” -NoNewline
             Copy-Item "$pathDeployments\Media\$pathSharedLibrary" $mediaDestination -recurse -Force
             Copy-Item "$pathDeployments\Media\$pathPublicProfile" "$mediaDestination\$pathPublicProfile" -recurse -Force
+            Copy-Item "$pathDeployments\Media\$pathSystemMedia" "$mediaDestination\$pathSystemMedia" -recurse -Force
             Copy-Item "$pathDeployments\Media\Exports" "$mediaDestination\Exports" -recurse -Force
             Write-Host "done.”
 

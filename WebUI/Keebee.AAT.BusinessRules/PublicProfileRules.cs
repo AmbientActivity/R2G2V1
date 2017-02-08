@@ -25,10 +25,6 @@ namespace Keebee.AAT.BusinessRules
 
                 case MediaPathTypeId.TVShows:
                     return responseTypes.Where(x => x.Id == ResponseTypeId.Television);
-                case MediaPathTypeId.SystemVideos:
-                    return responseTypes.Where(x => x.Id == ResponseTypeId.Cats
-                        || x.Id == ResponseTypeId.Ambient);
-
                 case MediaPathTypeId.Music:
                     return responseTypes.Where(x => x.Id == ResponseTypeId.Radio);
                 case MediaPathTypeId.RadioShows:
@@ -63,33 +59,11 @@ namespace Keebee.AAT.BusinessRules
             return (file != null);
         }
 
-        // don't delete the file if already it exists in another response type
-        public bool IsRemovable(string filePath, int mediaPathTypeId, int responseTypeId)
-        {
-            var publicMedia = _opsClient.GetPublicMediaFilesForMediaPathType(mediaPathTypeId);
-
-            if (publicMedia == null) return true;
-            if (!publicMedia.MediaFiles.Any()) return true;
-
-            var paths = publicMedia.MediaFiles.Select(x => x.ResponseType)
-                .Where(x => x.Id != responseTypeId);
-
-            return (paths.Count() <= 1);
-        }
-
-        // don't add it to the same response type more than once
-        public bool CanAdd(int responseTypeId, string filename)
-        {
-            var publicMediaFile = _opsClient.GetPublicMediaFileForResponseTypeFilename(responseTypeId, filename);
-
-            return (publicMediaFile.Id == 0);
-        }
-
         // when doing a bulk delete, ensure there is at least one media file remaining per response type
-        public string CanDeleteMultiple(int numSelected, int mediaPathTypeId, int responseTypeId)
+        public string CanDeleteMultiple(int numSelected, int mediaPathTypeId)
         {
             var result = string.Empty;
-
+            var responseTypeId = GetResponseTypeId(mediaPathTypeId);
             var publicMedia = _opsClient.GetPublicMediaFilesForMediaPathType(mediaPathTypeId);
 
             if (publicMedia == null) return result;
@@ -142,7 +116,6 @@ namespace Keebee.AAT.BusinessRules
                     extensions = "*.jpg,*.jpeg,*.png,*.gif";
                     break;
                 case MediaPathTypeId.TVShows:
-                case MediaPathTypeId.SystemVideos:
                     extensions = "*.mp4";
                     break;
                 case MediaPathTypeId.Music:
@@ -172,7 +145,6 @@ namespace Keebee.AAT.BusinessRules
                     isValid = name.Contains("jpg") || name.Contains("jpeg") || name.Contains("png") || name.Contains("gif");
                     break;
                 case MediaPathTypeId.TVShows:
-                case MediaPathTypeId.SystemVideos:
                     isValid = name.Contains("mp4");
                     break;
                 case MediaPathTypeId.Music:
@@ -186,6 +158,33 @@ namespace Keebee.AAT.BusinessRules
             }
 
             return isValid;
+        }
+
+        public static int GetResponseTypeId(int mediaPathTypeId)
+        {
+            var responseTypeId = -1;
+
+            switch (mediaPathTypeId)
+            {
+                case MediaPathTypeId.PersonalImages:
+                case MediaPathTypeId.GeneralImages:
+                    responseTypeId = ResponseTypeId.SlideShow;
+                    break;
+                case MediaPathTypeId.HomeMovies:
+                case MediaPathTypeId.TVShows:
+                    responseTypeId = ResponseTypeId.Television;
+                    break;
+                case MediaPathTypeId.Music:
+                case MediaPathTypeId.RadioShows:
+                    responseTypeId = ResponseTypeId.Radio;
+                    break;
+                case MediaPathTypeId.MatchingGameShapes:
+                case MediaPathTypeId.MatchingGameSounds:
+                    responseTypeId = ResponseTypeId.MatchingGame;
+                    break;
+            }
+
+            return responseTypeId;
         }
 
         public IEnumerable<MediaFile> GetAvailableSharedMediaFiles(int mediaPathTypeId)
@@ -219,9 +218,22 @@ namespace Keebee.AAT.BusinessRules
             var mediaPathType = GetMediaPathDescription(mediaPathTypeId);
 
             var hasHave = mediaPathType.EndsWith("s") ? "have" : "has";
-            var message = $"All available shared {mediaPathType} {hasHave} already been included in this profile.";
+            var message = $"All available {mediaPathType} {hasHave} already been included in this profile.";
 
             return message;
+        }
+    
+        public static bool IsPreviewable(int mediaPathTypeId)
+        {
+            switch (mediaPathTypeId)
+            {
+                case MediaPathTypeId.GeneralImages:
+                case MediaPathTypeId.PersonalImages:
+                case MediaPathTypeId.MatchingGameShapes:
+                    return true;
+                default:
+                    return false;
+            }
         }
     }
 }

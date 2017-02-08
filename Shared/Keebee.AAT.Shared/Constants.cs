@@ -26,6 +26,8 @@ namespace Keebee.AAT.Shared
         public string ProfileRoot = $@"\\{Environment.MachineName}\{SqlServerFilestream}\Profiles";
         public string SharedMedia = @"SharedLibrary";
         public string ExportEventLogRoot = $@"\\{Environment.MachineName}\{SqlServerFilestream}\Exports\EventLog";
+        public string Cats = @"System\Cats";
+        public string Ambient = @"System\Ambient";
     }
 
     public static class ServiceName
@@ -78,9 +80,8 @@ namespace Keebee.AAT.Shared
         public const int PersonalImages = 4;
         public const int TVShows = 5;
         public const int HomeMovies = 6;
-        public const int SystemVideos = 7;
-        public const int MatchingGameShapes = 8;
-        public const int MatchingGameSounds = 9;
+        public const int MatchingGameShapes = 7;
+        public const int MatchingGameSounds = 8;
     }
 
     public static class MediaSourceType

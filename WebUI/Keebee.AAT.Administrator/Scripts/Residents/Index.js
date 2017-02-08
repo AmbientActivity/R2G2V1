@@ -185,14 +185,14 @@
                     self.showResidentEditDialog(row);
                 };
 
-                self.editMedia = function (row) {
+                self.editProfile = function (row) {
                     var id = row.id;
 
                     var sortdescending = 0;
                     if (_sortDescending) sortdescending = "1";
 
                     if (id > 0) {
-                        window.location = site.url + "Residents/Media/" + id
+                        window.location = site.url + "Residents/Profile/" + id
                             + "?idsearch=" + self.idSearch()
                             + "&firstname=" + self.firstNameSearch()
                             + "&lastname=" + self.lastNameSearch()

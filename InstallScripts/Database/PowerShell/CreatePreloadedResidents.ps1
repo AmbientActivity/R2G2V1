@@ -63,10 +63,10 @@ Try
 
                         "`r`n`r`n--- Activity 2 - ResponseType 'MatchingGame' ---`r`n" + 
                         "INSERT INTO ResidentMediaFiles (IsShared, ResidentId, ResponseTypeId, MediaPathTypeId, StreamId)`r`n" + 
-                        "SELECT 0, $residentId, 2, 8, StreamId FROM MediaFiles WHERE [Path] = @pathProfile + " +
+                        "SELECT 0, $residentId, 2, 7, StreamId FROM MediaFiles WHERE [Path] = @pathProfile + " +
                         "'$residentId\activities\matching-game\shapes\' AND [FileType] = 'png'`r`n" + 
                         "INSERT INTO ResidentMediaFiles (IsShared, ResidentId, ResponseTypeId, MediaPathTypeId, StreamId)`r`n" +
-                        "SELECT 0, $residentId, 2, 9, StreamId FROM MediaFiles WHERE [Path] = @pathProfile + " +
+                        "SELECT 0, $residentId, 2, 8, StreamId FROM MediaFiles WHERE [Path] = @pathProfile + " +
                         "'$residentId\activities\matching-game\sounds\' AND [FileType] = 'mp3'" +
 
                         "`r`n`r`n--- Activity 5 - ResponseType 'Radio' ---`r`n" +

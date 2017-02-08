@@ -11,7 +11,7 @@
 <script type="text/javascript">
     $(document)
         .ready(function() {
-            publicprofile.index.init({ selectedMediaPathTypeId: @Model.SelectedMediaPathType, selectedResponseTypeId: @Model.SelectedResponseType });
+            publicprofile.index.init({ selectedMediaPathTypeId: @Model.SelectedMediaPathType });
         });
 </script>
 
@@ -28,7 +28,6 @@
                 <button id="delete" disabled type="button" class="btn btn-md btn-danger" data-bind="click: showDeleteSelectedDialog">Delete Selected</button>
             </div>
             <input id="mediaPathTypeId" name="mediaPathTypeId" type="hidden" value="@Model.SelectedMediaPathType" />
-            <input id="responseTypeId" name="responseTypeId" type="hidden" value="@Model.SelectedResponseType" />
         </div>
         <ul class="nav nav-pills">
             <li>
@@ -39,9 +38,6 @@
             </li>
             <li>
                 <select id="ddlMediaPathTypes" class="form-control select-filter" data-bind="options: mediaPathTypes, optionsValue: 'id', optionsText: 'description', value: selectedMediaPathType"></select>
-            </li>
-            <li>
-                <select id="ddlResponseTypes" class="form-control select-filter" data-bind="options: responseTypes, optionsValue: 'id', optionsText: 'description', value: selectedResponseType"></select>
             </li>
             <li class="pull-right">
                 <label>Total:</label> <span data-bind="text: totalFilteredFiles()"></span>
@@ -54,7 +50,7 @@
             <tr>
                 <th class="col-glyphicon"><input type="checkbox" id="chk_all" data-bind="checked: selectAllIsSelected, click: selectAllRows"/></th>
 
-                <!-- ko if: selectedMediaPathType() === 3 || selectedMediaPathType() === 8 -->
+                <!-- ko if: isPreviewable() -->
                 <th class="col-glyphicon"></th>
                 <!-- /ko -->
 
@@ -72,7 +68,7 @@
             <tbody data-bind="foreach: filesTable">
             <tr data-bind="attr: { id: 'row_' + id }">
                 <td><input type="checkbox" data-bind="attr: { id: 'chk_' + id }, checked: isselected, click: $parent.selectFile"/></td>
-                <!-- ko if: $parent.selectedMediaPathType() === 3 || $parent.selectedMediaPathType() === 8 -->
+                <!-- ko if: $parent.isPreviewable() -->
                 <td><a href="#" data-bind="click: $parent.showPreview, css: 'glyphicon glyphicon-eye-open'"></a></td>
                 <!-- /ko -->
                 <td data-bind="text: filename"></td>

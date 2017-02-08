@@ -30,14 +30,12 @@ namespace Keebee.AAT.Administrator.Controllers
         [Authorize]
         public ActionResult Index(
             int? mediaPathTypeId,
-            int? responseTypeId,
             string myuploader)
         {
             // first time loading
             if (mediaPathTypeId == null) mediaPathTypeId = MediaPathTypeId.Music;
-            if (responseTypeId == null) responseTypeId = ResponseTypeId.SlideShow;
 
-            var vm = LoadPublicProfileViewModel(mediaPathTypeId, responseTypeId);
+            var vm = LoadPublicProfileViewModel(mediaPathTypeId);
 
             using (var uploader = new MvcUploader(System.Web.HttpContext.Current))
             {
@@ -68,20 +66,14 @@ namespace Keebee.AAT.Administrator.Controllers
                     var mediaPath = rules.GetMediaPath(mediaPathTypeId);
                     var filePath = $@"{_mediaPath.ProfileRoot}\{PublicMediaSource.Id}\{mediaPath}\{file.FileName}";
 
-                    // might already exist in another response type, in which case don't delete it
-                    if (rules.IsRemovable(filePath, (int)mediaPathTypeId, (int)responseTypeId))
-                    {
-                        fileManager.DeleteFile(filePath);
-                    }
+                    // delete it if it already exists
+                    var msg = fileManager.DeleteFile(filePath);
 
-                    if (!rules.FileExists($@"{PublicMediaSource.Id}\{mediaPath}", file.FileName))
+                    if (msg.Length == 0)
                     {
                         file.MoveTo(filePath);
-                    }
-
-                    // don't add it to the same response type twice
-                    if (rules.CanAdd((int)responseTypeId, file.FileName))
-                        AddPublicMediaFile(file.FileName, (int)responseTypeId, (int)mediaPathTypeId, mediaPath);
+                        AddPublicMediaFile(file.FileName, (int)mediaPathTypeId, mediaPath);
+                    }       
                 }
             }
 
@@ -92,12 +84,9 @@ namespace Keebee.AAT.Administrator.Controllers
         [Authorize]
         public JsonResult GetData(int mediaPathTypeId)
         {
-            var rules = new PublicProfileRules { OperationsClient =  _opsClient };
             var mediaPathTypes = _opsClient.GetMediaPathTypes()
                 .Where(x => x.Id != MediaPathTypeId.PersonalImages && x.Id != MediaPathTypeId.HomeMovies)
                 .OrderBy(p => p.Description);
-            var responseTypes = rules.GetValidResponseTypes(mediaPathTypeId)
-                .OrderBy(r => r.Description);
             var fileList = GetMediaFiles();
 
             var vm = new
@@ -106,12 +95,9 @@ namespace Keebee.AAT.Administrator.Controllers
                 MediaPathTypeList = mediaPathTypes.Select(x => new
                 {
                     x.Id,
-                    x.Description
-                }),
-                ResponseTypeList = responseTypes.Select(x => new
-                {
-                    x.Id,
-                    x.Description
+                    x.Description,
+                    x.ShortDescription,
+                    IsPreviewable = PublicProfileRules.IsPreviewable(x.Id)
                 })
             };
 
@@ -151,7 +137,7 @@ namespace Keebee.AAT.Administrator.Controllers
 
         [HttpPost]
         [Authorize]
-        public JsonResult DeleteSelected(int[] ids, int mediaPathTypeId, int responseTypeId)
+        public JsonResult DeleteSelected(int[] ids, int mediaPathTypeId)
         {
             bool success;
             string errormessage;
@@ -160,7 +146,7 @@ namespace Keebee.AAT.Administrator.Controllers
             {
                 var rules = new PublicProfileRules { OperationsClient = _opsClient };
 
-                errormessage = rules.CanDeleteMultiple(ids.Length, mediaPathTypeId, responseTypeId);
+                errormessage = rules.CanDeleteMultiple(ids.Length, mediaPathTypeId);
                 if (errormessage.Length > 0)
                     throw new Exception(errormessage);
 
@@ -242,7 +228,7 @@ namespace Keebee.AAT.Administrator.Controllers
             return File(info.OpenRead(), $"image/{info}");
         }
 
-        public JsonResult AddSharedMediaFiles(Guid[] streamIds, int mediaPathTypeId, int responseTypeId)
+        public JsonResult AddSharedMediaFiles(Guid[] streamIds, int mediaPathTypeId)
         {
             bool success;
             var errormessage = string.Empty;
@@ -254,7 +240,7 @@ namespace Keebee.AAT.Administrator.Controllers
                     var pmf = new PublicMediaFileEdit
                     {
                         StreamId = streamId,
-                        ResponseTypeId = responseTypeId,
+                        ResponseTypeId = PublicProfileRules.GetResponseTypeId(mediaPathTypeId),
                         MediaPathTypeId = mediaPathTypeId,
                         IsShared = true
                     };
@@ -277,7 +263,7 @@ namespace Keebee.AAT.Administrator.Controllers
             }, JsonRequestBehavior.AllowGet);
         }
 
-        private void AddPublicMediaFile(string filename, int responseTypeId, int mediaPathTypeId, string mediaPathType)
+        private void AddPublicMediaFile(string filename, int mediaPathTypeId, string mediaPathType)
         {
             var fileManager = new FileManager { EventLogger = _systemEventLogger };
             var streamId = fileManager.GetStreamId($@"{PublicMediaSource.Id}\{mediaPathType}", filename);
@@ -285,7 +271,7 @@ namespace Keebee.AAT.Administrator.Controllers
             var mf = new PublicMediaFileEdit
             {
                 StreamId = streamId,
-                ResponseTypeId = responseTypeId,
+                ResponseTypeId = PublicProfileRules.GetResponseTypeId(mediaPathTypeId),
                 MediaPathTypeId = mediaPathTypeId,
                 IsShared = false
             };
@@ -294,16 +280,14 @@ namespace Keebee.AAT.Administrator.Controllers
         }
 
         private PublicProfileViewModel LoadPublicProfileViewModel(
-                int? mediaPathTypeId,
-                int? responseTypeId)
+                int? mediaPathTypeId)
         {
             var rules = new PublicProfileRules { OperationsClient = _opsClient };
             var vm = new PublicProfileViewModel
             {
                 Title = PublicMediaSource.Description,
                 AddButtonText = $"Upload {rules.GetMediaPathDescription(mediaPathTypeId)}",
-                SelectedMediaPathType = mediaPathTypeId ?? MediaPathTypeId.Music,
-                SelectedResponseType = responseTypeId ?? ResponseTypeId.Radio
+                SelectedMediaPathType = mediaPathTypeId ?? MediaPathTypeId.Music
             };
 
             return vm;
@@ -359,8 +343,7 @@ namespace Keebee.AAT.Administrator.Controllers
                             FileSize = file.FileSize,
                             IsShared = file.IsShared,
                             Path = $@"{pathRoot}\{path.MediaPathType.Path}",
-                            MediaPathTypeId = path.MediaPathType.Id,
-                            ResponseTypeId = media.ResponseType.Id
+                            MediaPathTypeId = path.MediaPathType.Id
                         };
 
                         list.Add(vm);

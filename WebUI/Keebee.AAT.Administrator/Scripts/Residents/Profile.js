@@ -1,5 +1,5 @@
 ﻿/*!
- * Residents/Media.js
+ * Residents/Profile.js
  * Author: John Charlton
  * Date: 2016-08
  */
@@ -70,7 +70,7 @@ function DisableScreen() {
 ; (function ($) {
     var HIGHLIGHT_ROW_COLOUR = "#e3e8ff";
 
-    residents.media = {
+    residents.profile = {
         init: function (values) {
             var config = {
                 residentid: 0,
@@ -100,7 +100,7 @@ function DisableScreen() {
 
                 $.ajax({
                     type: "GET",
-                    url: site.url + "Residents/GetDataMedia/" + config.residentid
+                    url: site.url + "Residents/GetDataProfile/" + config.residentid
                         + "?mediaPathTypeId=" + mediaPathTypeId,
                     dataType: "json",
                     traditional: true,
@@ -123,6 +123,7 @@ function DisableScreen() {
                 self.totalFiles = ko.observable(0);
                 self.selectAllIsSelected = ko.observable(false);
                 self.selectedIds = ko.observable([]);
+                self.isPreviewable = ko.observable(false);
 
                 createFileArray(lists.FileList);
                 createMediaPathTypeArray(lists.MediaPathTypeList);
@@ -147,7 +148,13 @@ function DisableScreen() {
                 function createMediaPathTypeArray(list) {
                     self.mediaPathTypes.removeAll();
                     $(list).each(function (index, value) {
-                        self.mediaPathTypes.push({ id: value.Id, description: value.Description });
+                        self.mediaPathTypes.push(
+                            {
+                                id: value.Id,
+                                description: value.Description,
+                                shortdescription: value.ShortDescription,
+                                ispreviewable: value.IsPreviewable
+                            });
                     });
                 };
 
@@ -226,6 +233,8 @@ function DisableScreen() {
                     self.reloadUploaderHtml();
                     self.checkSelectAll(false);
                     self.selectAllRows();
+
+                    self.isPreviewable(self.mediaPathType().ispreviewable);
                 });
 
                 self.filteredFiles = ko.computed(function () {
@@ -261,6 +270,8 @@ function DisableScreen() {
                 self.showSharedLibrayAddDialog = function () {
                     var message;
                     var residentId = config.residentid;
+                    var title = "<span class='glyphicon glyphicon-cd' style='color: #fff'></span>";
+                    var mediaPathTypeDesc = self.mediaPathType().shortdescription;
 
                     $.ajax({
                         type: "GET",
@@ -277,7 +288,7 @@ function DisableScreen() {
                     });
 
                     BootstrapDialog.show({
-                        title: "Add From Shared Libaray",
+                        title: title + " Add <b>" + mediaPathTypeDesc + "</b> From Shared Library",
                         message: $("<div></div>").append(message),
                         
                         closable: false,
@@ -574,6 +585,13 @@ function DisableScreen() {
                     self.selectAllIsSelected(checked);
                     $("#chk_all").prop("checked", checked);
                 };
+
+                self.mediaPathType = function() {
+                    return self.mediaPathTypes()
+                        .filter(function(value) {
+                            return value.id === self.selectedMediaPathType();
+                        })[0];
+                }
             };
 
             //---------------------------------------------- VIEW MODEL (END) -----------------------------------------------------

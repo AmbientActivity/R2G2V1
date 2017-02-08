@@ -94,9 +94,8 @@ INSERT [dbo].[MediaPathTypes] ([Id], [Path], [Description], [ShortDescription]) 
 INSERT [dbo].[MediaPathTypes] ([Id], [Path], [Description], [ShortDescription]) VALUES (4, 'images\personal', 'Images (Personal)', 'Images')
 INSERT [dbo].[MediaPathTypes] ([Id], [Path], [Description], [ShortDescription]) VALUES (5, 'videos\tv-shows', 'Videos (TV Shows)', 'TV Shows')
 INSERT [dbo].[MediaPathTypes] ([Id], [Path], [Description], [ShortDescription]) VALUES (6, 'videos\home-movies', 'Videos (Home Movies)', 'Home Movies')
-INSERT [dbo].[MediaPathTypes] ([Id], [Path], [Description], [ShortDescription]) VALUES (7, 'videos\system', 'Videos (System)', 'Videos')
-INSERT [dbo].[MediaPathTypes] ([Id], [Path], [Description], [ShortDescription]) VALUES (8, 'activities\matching-game\shapes', 'Matching Game (Shapes)', 'Shapes')
-INSERT [dbo].[MediaPathTypes] ([Id], [Path], [Description], [ShortDescription]) VALUES (9, 'activities\matching-game\sounds', 'Matching Game (Sounds)', 'Sounds')
+INSERT [dbo].[MediaPathTypes] ([Id], [Path], [Description], [ShortDescription]) VALUES (7, 'activities\matching-game\shapes', 'Matching Game (Shapes)', 'Shapes')
+INSERT [dbo].[MediaPathTypes] ([Id], [Path], [Description], [ShortDescription]) VALUES (8, 'activities\matching-game\sounds', 'Matching Game (Sounds)', 'Sounds')
 SET IDENTITY_INSERT [dbo].[MediaPathTypes] OFF
 
 --- CONFIGURATION 1

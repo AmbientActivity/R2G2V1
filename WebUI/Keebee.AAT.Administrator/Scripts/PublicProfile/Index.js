@@ -74,23 +74,20 @@ function DisableScreen() {
         init: function (values) {
 
             var config = {
-                selectedMediaPathTypeId: 0,
-                selectedResponseTypeId: 0
+                selectedMediaPathTypeId: 0
             };
 
             $.extend(config, values);
 
             // buttons
             var cmdDelete = $("#delete");
-            var cmdAddShared = $("#add-shared");
 
             var _sortDescending = false;
             var _currentSortKey = "filename";
 
             var lists = {
                 FileList: [],
-                MediaPathTypeList: [],
-                ResponseTypeList: []
+                MediaPathTypeList: []
             };
 
             loadData();
@@ -119,17 +116,15 @@ function DisableScreen() {
 
                 self.files = ko.observableArray([]);
                 self.mediaPathTypes = ko.observableArray([]);
-                self.responseTypes = ko.observableArray([]);
                 self.selectedMediaPathType = ko.observable(config.selectedMediaPathTypeId);
-                self.selectedResponseType = ko.observable(config.selectedResponseTypeId);
                 self.filenameSearch = ko.observable("");
                 self.totalFilteredFiles = ko.observable(0);
                 self.selectAllIsSelected = ko.observable(false);
                 self.selectedIds = ko.observable([]);
+                self.isPreviewable = ko.observable(false);
 
                 createFileArray(lists.FileList);
                 createMediaPathTypeArray(lists.MediaPathTypeList);
-                createResponseTypeArray(lists.ResponseTypeList);
 
                 function createFileArray(list) {
                     self.files.removeAll();
@@ -143,7 +138,6 @@ function DisableScreen() {
                             isshared: value.IsShared,
                             path: value.Path,
                             mediapathtypeid: value.MediaPathTypeId,
-                            responsetypeid: value.ResponseTypeId,
                             isselected: false
                         });
                     });
@@ -152,14 +146,13 @@ function DisableScreen() {
                 function createMediaPathTypeArray(list) {
                     self.mediaPathTypes.removeAll();
                     $(list).each(function (index, value) {
-                        self.mediaPathTypes.push({ id: value.Id, description: value.Description });
-                    });
-                };
-
-                function createResponseTypeArray(list) {
-                    self.responseTypes.removeAll();
-                    $(list).each(function (index, value) {
-                        self.responseTypes.push({ id: value.Id, description: value.Description });
+                        self.mediaPathTypes.push(
+                        {
+                            id: value.Id,
+                            description: value.Description,
+                            shortdescription: value.ShortDescription,
+                            ispreviewable: value.IsPreviewable
+                        });
                     });
                 };
 
@@ -228,8 +221,6 @@ function DisableScreen() {
                         success: function (data) {
                             $("#uploader-html-container").html(data.UploaderHtml);
                             $("#uploadbutton").text(data.AddButtonText);
-                            lists.ResponseTypeList = data.ResponseTypeList;
-                            createResponseTypeArray(lists.ResponseTypeList);
                         }
                     });
                 };
@@ -238,12 +229,14 @@ function DisableScreen() {
                     if (typeof id === "undefined") return;
                     $("#mediaPathTypeId").val(id);
                     self.reloadUploaderHtml();
-                });
+                    self.checkSelectAll(false);
+                    self.selectAllRows();
 
-                self.selectedResponseType.subscribe(function (id) {
-                    if (typeof id === "undefined") return;
-                    $("#responseTypeId").val(id);
-                    self.enableDetail();
+                    var ispreviewable = self.mediaPathTypes().filter(function (value) {
+                        return value.id === self.selectedMediaPathType();
+                    })[0].ispreviewable;
+
+                    self.isPreviewable(ispreviewable);
                 });
 
                 self.filteredFiles = ko.computed(function () {
@@ -251,16 +244,13 @@ function DisableScreen() {
                         return (
                             self.filenameSearch().length === 0 ||
                             f.filename.toLowerCase().indexOf(self.filenameSearch().toLowerCase()) !== -1) &&
-                            f.responsetypeid === self.selectedResponseType() &&
                             f.mediapathtypeid === self.selectedMediaPathType();
                     });
                 });
 
                 self.filteredFilesBySelection = ko.computed(function () {
                     return ko.utils.arrayFilter(self.files(), function (f) {
-                        return (
-                            f.responsetypeid === self.selectedResponseType() &&
-                            f.mediapathtypeid === self.selectedMediaPathType());
+                        return (f.mediapathtypeid === self.selectedMediaPathType());
                     });
                 });
 
@@ -272,7 +262,6 @@ function DisableScreen() {
                 });
 
                 self.checkAllReset = ko.computed(function () {
-                    $("#responseTypeId").val(self.selectedResponseType());
                     $("#chk_all").prop("checked", false);
 
                     self.selectedIds([]);
@@ -300,6 +289,8 @@ function DisableScreen() {
 
                 self.showSharedLibrayAddDialog = function () {
                     var message;
+                    var title = "<span class='glyphicon glyphicon-cd' style='color: #fff'></span>";
+                    var mediaPathTypeDesc = self.mediaPathType().shortdescription;
 
                     $.ajax({
                         type: "GET",
@@ -312,7 +303,7 @@ function DisableScreen() {
                     });
 
                     BootstrapDialog.show({
-                        title: "Add From Shared Libaray",
+                        title: title + " Add <b>" + mediaPathTypeDesc + "</b> From Shared Library",
                         message: $("<div></div>").append(message),
 
                         closable: false,
@@ -446,7 +437,6 @@ function DisableScreen() {
 
                     var ids = self.selectedIds();
                     var mediaPathTypeId = $("#mediaPathTypeId").val();
-                    var responseTypeId = $("#responseTypeId").val();
 
                     BootstrapDialog.show({
                         type: BootstrapDialog.TYPE_INFO,
@@ -463,8 +453,7 @@ function DisableScreen() {
                                 data:
                                 {
                                     ids: ids,
-                                    mediaPathTypeId: mediaPathTypeId,
-                                    responseTypeId: responseTypeId
+                                    mediaPathTypeId: mediaPathTypeId
                                 },
                                 dataType: "json",
                                 success: function(data) {
@@ -513,7 +502,6 @@ function DisableScreen() {
                     });
 
                     var mediaPathTypeId = $("#mediaPathTypeId").val();
-                    var responseTypeId = $("#responseTypeId").val();
 
                     $.ajax({
                         type: "POST",
@@ -523,8 +511,7 @@ function DisableScreen() {
                         data:
                         {
                             streamIds: ids,
-                            mediaPathTypeId: mediaPathTypeId,
-                            responseTypeId: responseTypeId
+                            mediaPathTypeId: mediaPathTypeId
                         },
                         dataType: "json",
                         success: function (data) {
@@ -602,18 +589,19 @@ function DisableScreen() {
                             cmdDelete.removeAttr("disabled");
                         }
                     }
-
-                    var responseTypeId = $("#responseTypeId").val();
-                    if (responseTypeId === "3" || responseTypeId === "8") // cats, ambient
-                        cmdAddShared.attr("disabled", "disabled");
-                    else
-                        cmdAddShared.removeAttr("disabled");
                 };
 
                 self.checkSelectAll = function (checked) {
                     self.selectAllIsSelected(checked);
                     $("#chk_all").prop("checked", checked);
                 };
+
+                self.mediaPathType = function () {
+                    return self.mediaPathTypes()
+                        .filter(function (value) {
+                            return value.id === self.selectedMediaPathType();
+                        })[0];
+                }
             };
 
             //---------------------------------------------- VIEW MODEL (END) -----------------------------------------------------

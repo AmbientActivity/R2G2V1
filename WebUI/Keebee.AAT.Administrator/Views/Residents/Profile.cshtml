@@ -1,11 +1,11 @@
-﻿@model Keebee.AAT.Administrator.ViewModels.ResidentMediaViewModel
+﻿@model Keebee.AAT.Administrator.ViewModels.ResidentProfileViewModel
 
 @{
-    ViewBag.Title = "Resident Media";
+    ViewBag.Title = "Resident Profile";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h3>Manage media for <i><b>@Model.FullName</b></i></h3>
+<h3>Manage profile for <i><b>@Model.FullName</b></i></h3>
 
 <div class="pull-right back-to-residents-container">
     <a id="lnkGoBack" class="link-back-to-residents" href="#" onclick="location.href =
@@ -24,7 +24,7 @@
 <script type="text/javascript">
     $(document)
         .ready(function() {
-            residents.media.init({ residentid: @Model.ResidentId, selectedMediaPathTypeId: @Model.SelectedMediaPathType });
+            residents.profile.init({ residentid: @Model.ResidentId, selectedMediaPathTypeId: @Model.SelectedMediaPathType });
         });
 </script>
 
@@ -60,10 +60,9 @@
             <tr>
                 <th class="col-glyphicon"><input type="checkbox" id="chk_all" data-bind="checked: selectAllIsSelected, click: selectAllRows" /></th>
 
-                <!-- ko if: selectedMediaPathType() === 3 || selectedMediaPathType() === 4 || selectedMediaPathType() === 8 -->
+                <!-- ko if: isPreviewable() -->
                 <th class="col-glyphicon"></th>
                 <!-- /ko -->
-
                 <!-- ko foreach: columns -->
                 <!-- ko if: !sortable -->
                 <th data-bind="text: title"></th>
@@ -78,7 +77,7 @@
             <tbody data-bind="foreach: filesTable">
             <tr data-bind="attr: {id: 'row_' +  id}">
                 <td><input type="checkbox" data-bind="attr: { id: 'chk_' + id }, checked: isselected, click: $parent.selectFile" /></td>
-                <!-- ko if: $parent.selectedMediaPathType() === 3 || $parent.selectedMediaPathType() === 4 || $parent.selectedMediaPathType() === 8 -->
+                <!-- ko if: $parent.isPreviewable() -->
                 <td><a href="#" data-bind="click: $parent.showPreview, css: 'glyphicon glyphicon-eye-open'"></a></td>
                 <!-- /ko -->
                 <td data-bind="text: filename"></td>

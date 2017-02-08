@@ -49,7 +49,7 @@ namespace Keebee.AAT.Administrator.ViewModels
         public string NoAvailableMediaMessage { get; set; }
     }
 
-    public class ResidentMediaViewModel
+    public class ResidentProfileViewModel
     {
         public int ResidentId { get; set; }
         public string FullName { get; set; }

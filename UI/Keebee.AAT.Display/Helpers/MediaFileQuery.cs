@@ -15,6 +15,32 @@ namespace Keebee.AAT.Display.Helpers
 
         private readonly MediaSourcePath _mediaPath = new MediaSourcePath();
 
+        public string[] GetMediaFilesForSystemResponseType(int responseTypeId)
+        {
+            string mediaPath = null;
+            var files = new string[0];
+
+            switch (responseTypeId)
+            {
+                case ResponseTypeId.Cats:
+                    mediaPath = _mediaPath.Cats;
+                    break;
+                case ResponseTypeId.Ambient:
+                    mediaPath = _mediaPath.Ambient;
+                    break;
+            }
+
+            if (mediaPath != null)
+            {
+                files = _opsClient.GetMediaFilesForPath(mediaPath)
+                    .SelectMany(p => p.Files)
+                    .Select(f => $@"{_mediaPath.MediaRoot}\{mediaPath}\{f.Filename}")
+                    .ToArray();
+            }
+
+            return files;
+        }
+
         public string[] GetFilesForResponseType(int residentId, int responseTypeId, int mediaPatheTypeId = -1)
         {
             var files = new string[0];

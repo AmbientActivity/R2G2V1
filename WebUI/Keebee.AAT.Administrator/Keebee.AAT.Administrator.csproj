@@ -272,7 +272,7 @@
     <Content Include="Scripts\EventLogs\Index.js" />
     <Content Include="Scripts\modernizr-2.8.3.js" />
     <Content Include="Scripts\PublicProfile\Index.js" />
-    <Content Include="Scripts\Residents\Media.js" />
+    <Content Include="Scripts\Residents\Profile.js" />
     <Content Include="Scripts\Residents\Index.js" />
     <Content Include="Scripts\Maintenance\Index.js" />
     <Content Include="Scripts\Site\Namespaces.js" />
@@ -322,7 +322,7 @@
     <Content Include="Views\PhidgetConfig\Index.cshtml" />
     <Content Include="Views\PhidgetConfig\_ConfigDetailEdit.cshtml" />
     <Content Include="Views\PhidgetConfig\_ConfigEdit.cshtml" />
-    <Content Include="Views\Residents\Media.cshtml" />
+    <Content Include="Views\Residents\Profile.cshtml" />
     <Content Include="UploadHandler.ashx" />
     <Content Include="Views\PublicProfile\Index.cshtml" />
     <Content Include="Views\Maintenance\Index.cshtml" />

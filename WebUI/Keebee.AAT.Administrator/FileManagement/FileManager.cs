@@ -48,8 +48,7 @@ namespace Keebee.AAT.Administrator.FileManagement
             try
             {
                 var mediaRoot = $@"{_mediaPath.ProfileRoot}\{residentId}";
-                var paths = _opsClient.GetMediaPathTypes()
-                    .Where(p => p.Id != MediaPathTypeId.SystemVideos);
+                var paths = _opsClient.GetMediaPathTypes();
 
                 if (Directory.Exists(mediaRoot)) return;
 

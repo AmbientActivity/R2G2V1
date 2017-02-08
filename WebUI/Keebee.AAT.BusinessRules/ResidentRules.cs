@@ -244,9 +244,22 @@ namespace Keebee.AAT.BusinessRules
             var mediaPathType = GetMediaPathDescription(mediaPathTypeId);
 
             var hasHave = mediaPathType.EndsWith("s") ? "have" : "has";
-            var message = $"All available shared {mediaPathType} {hasHave} already been included in this profile.";
+            var message = $"All available {mediaPathType} {hasHave} already been included in this profile.";
 
             return message;
+        }
+
+        public static bool IsPreviewable(int mediaPathTypeId)
+        {
+            switch (mediaPathTypeId)
+            {
+                case MediaPathTypeId.GeneralImages:
+                case MediaPathTypeId.PersonalImages:
+                case MediaPathTypeId.MatchingGameShapes:
+                    return true;
+                default:
+                    return false;
+            }
         }
     }
 }

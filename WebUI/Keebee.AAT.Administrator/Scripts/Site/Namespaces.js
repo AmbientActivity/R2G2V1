@@ -9,11 +9,11 @@
 ; (function () {
     window.account = {};
     window.residents = {};
-    window.profiles = {};
     window.eventlogs = {};
     window.videocaptures = {};
     window.mediafiles = {};
     window.phidgetconfig = {};
-    window.publicprofile = {};
+    window.publicprofile =
+    window.sharedlibrary = {};
     window.maintenance = {};
 })();

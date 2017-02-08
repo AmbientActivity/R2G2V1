@@ -34,7 +34,6 @@ namespace Keebee.AAT.Display.Helpers
             var shapeCount = residentShapes.Length;
             if (shapeCount >= MatchingGameConfig.MinNumShapes) return residentShapes;
 
-            var pathRoot = $@"{_mediaPath.ProfileRoot}\{MediaSourceTypeId.Public}";
             var publicShapeMediaFiles = _opsClient.GetPublicMediaFilesForMediaPathType(MediaPathTypeId.MatchingGameShapes)
                 .MediaFiles.ToArray();
 
@@ -48,8 +47,14 @@ namespace Keebee.AAT.Display.Helpers
 
             var publicShapes = publicShapeMediaFiles.SelectMany(m => m.Paths)
                 .SelectMany(p => p.Files)
-                .Select(f => $@"{pathRoot}\{mediaPathType}\{f.Filename}")
-                .Except(residentShapes)
+                .Select(f =>
+                    {
+                        var pathRoot = f.IsShared
+                            ? $@"{_mediaPath.MediaRoot}\{_mediaPath.SharedMedia}"
+                            : $@"{_mediaPath.ProfileRoot}\{MediaSourceTypeId.Public}";
+
+                        return $@"{pathRoot}\{mediaPathType}\{f.Filename}";
+                    }).Except(residentShapes)
                 .ToArray();
 
             publicShapes.Shuffle();
@@ -64,7 +69,6 @@ namespace Keebee.AAT.Display.Helpers
             var soundCount = residentSounds.Length;
             if (soundCount >= MatchingGameConfig.MinNumSounds) return residentSounds;
 
-            var pathRoot = $@"{_mediaPath.ProfileRoot}\{PublicMediaSource.Id}";
             var mediaFiles = _opsClient.GetPublicMediaFilesForMediaPathType(MediaPathTypeId.MatchingGameSounds)
                 .MediaFiles.ToArray();
 
@@ -79,8 +83,14 @@ namespace Keebee.AAT.Display.Helpers
 
             var publicSounds = mediaFiles.SelectMany(m => m.Paths)
                 .SelectMany(p => p.Files)
-                .Select(f => $@"{pathRoot}\{mediaPathType}\{f.Filename}")
-                .ToArray();
+                .Select(f =>
+                {
+                    var pathRoot = f.IsShared
+                        ? $@"{_mediaPath.MediaRoot}\{_mediaPath.SharedMedia}"
+                        : $@"{_mediaPath.ProfileRoot}\{MediaSourceTypeId.Public}";
+
+                    return $@"{pathRoot}\{mediaPathType}\{f.Filename}";
+                }).ToArray();
 
             if (residentSounds.All(s => !s.Contains(MatchingGameConfig.WouldYouListToMatchThePictures)))
             {

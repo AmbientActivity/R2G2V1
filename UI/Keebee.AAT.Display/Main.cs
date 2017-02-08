@@ -434,7 +434,11 @@ namespace Keebee.AAT.Display
                 if (_isNewResponse)
                 {
                     var mediaFileQuery = new MediaFileQuery { OperationsClient = _opsClient };
-                    var mediaFiles = mediaFileQuery.GetFilesForResponseType(_activeResident.Id, responseTypeId);
+                       
+                    var mediaFiles = responseTypeId == ResponseTypeId.Television || responseTypeId == ResponseTypeId.Radio
+                        ? mediaFileQuery.GetFilesForResponseType(_activeResident.Id, responseTypeId) 
+                        : mediaFileQuery.GetMediaFilesForSystemResponseType(responseTypeId);
+
                     if (!mediaFiles.Any()) return;
 
                     mediaFiles.Shuffle();

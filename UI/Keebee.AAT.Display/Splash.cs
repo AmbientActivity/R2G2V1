@@ -2,6 +2,7 @@
 using Keebee.AAT.RESTClient;
 using Keebee.AAT.SystemEventLogging;
 using Keebee.AAT.Display.Extensions;
+using Keebee.AAT.Display.Helpers;
 using Keebee.AAT.Shared;
 using System;
 using System.Linq;
@@ -73,31 +74,16 @@ namespace Keebee.AAT.Display
                 using (var mediaPlayer = new AxWindowsMediaPlayer())
                 {
                     Controls.Add(mediaPlayer);
-                    var mediaResponseType = _opsClient.GetPublicMediaFilesForResponseType(ResponseTypeId.Ambient).MediaResponseType;
-                    if (mediaResponseType == null) return false;
-                    if (!mediaResponseType.Paths.Any()) return false;
 
-                    var mediaPath = mediaResponseType.Paths.First();
-                    var mediaPathType = mediaPath.MediaPathType.Path;
-
-                    var path = $@"{_mediaPath.ProfileRoot}\{PublicMediaSource.Id}\{mediaPathType}";
-
-                    var files = mediaPath.Files.ToArray();
+                    var mediaFileQuery = new MediaFileQuery { OperationsClient = _opsClient };
+                    var files = mediaFileQuery.GetMediaFilesForSystemResponseType(ResponseTypeId.Ambient);
 
                     if (files.Any())
                     {
-                        var ambientMediaFiles = files
-                            .OrderBy(x => x.Filename)
-                            .Select(x => $@"{path}\{x.Filename}")
-                            .ToArray();
+                        if (files.Length > 1)
+                        files.Shuffle();
 
-                        if (ambientMediaFiles.Any())
-                        {
-                            if (ambientMediaFiles.Length > 1)
-                                ambientMediaFiles.Shuffle();
-
-                            _ambientPlaylist = mediaPlayer.LoadPlaylist(PlaylistAmbient, ambientMediaFiles);
-                        }
+                        _ambientPlaylist = mediaPlayer.LoadPlaylist(PlaylistAmbient, files);
                     }
 
                     Controls.Remove(mediaPlayer);

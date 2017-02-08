@@ -15,13 +15,9 @@ SELECT 1, 1, 3, StreamId FROM MediaFiles WHERE [Path] = @pathSharedLibrary + 'im
 
 --- Activity 2 - ResponseType "MatchingGame" ---
 INSERT INTO PublicMediaFiles (IsShared, ResponseTypeId, MediaPathTypeId, StreamId)
-SELECT 1, 2, 8, StreamId FROM MediaFiles WHERE [Path] = @pathSharedLibrary + 'activities\matching-game\shapes\' AND [FileType] = 'png'
+SELECT 1, 2, 7, StreamId FROM MediaFiles WHERE [Path] = @pathSharedLibrary + 'activities\matching-game\shapes\' AND [FileType] = 'png'
 INSERT INTO PublicMediaFiles (IsShared, ResponseTypeId, MediaPathTypeId, StreamId)
-SELECT 1, 2, 9, StreamId FROM MediaFiles WHERE [Path] = @pathSharedLibrary + 'activities\matching-game\sounds\' AND [FileType] = 'mp3'
-
---- Activity 3 - ResponseType "Cats" ---
-INSERT INTO PublicMediaFiles (IsShared, ResponseTypeId, MediaPathTypeId, StreamId)
-SELECT 0, 3, 7, StreamId FROM MediaFiles WHERE [Path] = @pathProfiles + '0\videos\system\' AND [Filename] IN ('Cats.mp4')
+SELECT 1, 2, 8, StreamId FROM MediaFiles WHERE [Path] = @pathSharedLibrary + 'activities\matching-game\sounds\' AND [FileType] = 'mp3'
 
 --- Activity 5 - ResponseType "Radio" ---
 INSERT INTO PublicMediaFiles (IsShared, ResponseTypeId, MediaPathTypeId, StreamId)
@@ -33,10 +29,6 @@ SELECT 1, 5, 2, StreamId FROM MediaFiles WHERE [Path] = @pathSharedLibrary + 'au
 --- Activity 6 - ResponseType "Television" ---
 INSERT INTO PublicMediaFiles (IsShared, ResponseTypeId, MediaPathTypeId, StreamId)
 SELECT 1, 6, 5, StreamId FROM MediaFiles WHERE [Path] = @pathSharedLibrary + 'videos\tv-shows\'
-
---- ResponseType "Ambient" ---
-INSERT INTO PublicMediaFiles (IsShared, ResponseTypeId, MediaPathTypeId, StreamId)
-SELECT 0, 8, 7, StreamId FROM MediaFiles WHERE [Path] = @pathProfiles + '0\videos\system\'  AND [Filename] IN ('Bird-Feeding.mp4', 'Nature-Sounds.mp4')
 
 
 -- VIEW THE RESULTS --

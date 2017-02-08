@@ -46,7 +46,7 @@ namespace Keebee.AAT.Administrator.Controllers
         }
 
         [Authorize]
-        public ActionResult Media(
+        public new ActionResult Profile(
             int id, 
             string idsearch, 
             string firstname, 
@@ -59,7 +59,7 @@ namespace Keebee.AAT.Administrator.Controllers
             // first time loading
             if (mediaPathTypeId == null) mediaPathTypeId = MediaPathTypeId.Music;
 
-            var vm = LoadResidentMediaViewModel(id, idsearch, firstname, lastname, mediaPathTypeId, sortcolumn, sortdescending);
+            var vm = LoadResidentProfileViewModel(id, idsearch, firstname, lastname, mediaPathTypeId, sortcolumn, sortdescending);
 
             using (var uploader = new MvcUploader(System.Web.HttpContext.Current))
             {
@@ -118,7 +118,7 @@ namespace Keebee.AAT.Administrator.Controllers
 
         [HttpGet]
         [Authorize]
-        public JsonResult GetDataMedia(int id, int mediaPathTypeId)
+        public JsonResult GetDataProfile(int id, int mediaPathTypeId)
         {
             var mediaPathTypes = _opsClient.GetMediaPathTypes().OrderBy(p => p.Description);
             var fileList = GetFiles(id);
@@ -130,7 +130,9 @@ namespace Keebee.AAT.Administrator.Controllers
                 {
                     x.Id,
                     x.Description,
-                }).Where(p => p.Id != MediaPathTypeId.SystemVideos)
+                    x.ShortDescription,
+                    IsPreviewable = PublicProfileRules.IsPreviewable(x.Id)
+                })
             };
 
             return Json(vm, JsonRequestBehavior.AllowGet);
@@ -459,7 +461,7 @@ namespace Keebee.AAT.Administrator.Controllers
             return vm;
         }
 
-        private ResidentMediaViewModel LoadResidentMediaViewModel(
+        private ResidentProfileViewModel LoadResidentProfileViewModel(
             int id, 
             string idsearch, 
             string firstname, 
@@ -474,7 +476,7 @@ namespace Keebee.AAT.Administrator.Controllers
                 : resident.FirstName;
             var rules = new ResidentRules {OperationsClient = _opsClient};
 
-            var vm = new ResidentMediaViewModel
+            var vm = new ResidentProfileViewModel
             {
                 ResidentId = resident.Id,
                 FullName = fullName,

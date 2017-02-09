@@ -97,6 +97,7 @@ function DisableScreen() {
 
             function loadData() {
                 var mediaPathTypeId = $("#mediaPathTypeId").val();
+                var mediaPathTypeId = $("#isPreviewable").val();
 
                 $.ajax({
                     type: "GET",
@@ -127,6 +128,7 @@ function DisableScreen() {
 
                 createFileArray(lists.FileList);
                 createMediaPathTypeArray(lists.MediaPathTypeList);
+                enableDetail();
 
                 function createFileArray(list) {
                     self.files.removeAll();
@@ -156,6 +158,27 @@ function DisableScreen() {
                                 ispreviewable: value.IsPreviewable
                             });
                     });
+
+                    var ispreviewable = self.mediaPathTypes().filter(function (value) {
+                        return value.id === self.selectedMediaPathType();
+                    })[0].ispreviewable;
+                    self.isPreviewable(ispreviewable);
+                };
+
+                function enableDetail() {
+                    var selected = self.files()
+                        .filter(function (data) { return data.isselected; });
+
+                    if (selected.length > 0)
+                        cmdDelete.removeAttr("disabled");
+                    else
+                        cmdDelete.attr("disabled", "disabled");
+
+                    var mediaPathTypeId = $("#mediaPathTypeId").val();
+                    if (mediaPathTypeId !== "4" && mediaPathTypeId !== "6") // personal images, home movies
+                        cmdAddShared.removeAttr("disabled");
+                    else
+                        cmdAddShared.attr("disabled", "disabled");
                 };
 
                 self.columns = ko.computed(function () {
@@ -367,7 +390,7 @@ function DisableScreen() {
                     });
 
                     self.highlightSelectedRows();
-                    self.enableDetail();
+                    enableDetail();
 
                     return true;
                 };
@@ -382,7 +405,7 @@ function DisableScreen() {
                         self.removeSelectedId(row.id);
 
                     self.highlightSelectedRows();
-                    self.enableDetail();
+                    enableDetail();
 
                     self.checkSelectAll(self.selectedIds().length === self.filteredFiles().length);
 
@@ -448,12 +471,12 @@ function DisableScreen() {
                                         lists.FileList = data.FileList;
                                         createFileArray(lists.FileList);
                                         self.sort({ afterSave: true });
-                                        self.enableDetail();
                                         self.selectedIds([]);
                                         self.checkSelectAll(false);
+                                        enableDetail();
                                     } else {
                                         $("body").css("cursor", "default");
-                                        self.enableDetail();
+                                        enableDetail();
 
                                         BootstrapDialog.show({
                                             type: BootstrapDialog.TYPE_DANGER,
@@ -465,7 +488,7 @@ function DisableScreen() {
                                 error: function(data) {
                                     dialog.close();
                                     $("body").css("cursor", "default");
-                                    self.enableDetail();
+                                    enableDetail();
 
                                     BootstrapDialog.show({
                                         type: BootstrapDialog.TYPE_DANGER,
@@ -506,12 +529,12 @@ function DisableScreen() {
                                 lists.FileList = data.FileList;
                                 createFileArray(lists.FileList);
                                 self.sort({ afterSave: true });
-                                self.enableDetail();
                                 self.selectedIds([]);
                                 self.checkSelectAll(false);
+                                enableDetail();
                             } else {
                                 $("body").css("cursor", "default");
-                                self.enableDetail();
+                                enableDetail();
 
                                 BootstrapDialog.show({
                                     type: BootstrapDialog.TYPE_DANGER,
@@ -522,7 +545,7 @@ function DisableScreen() {
                         },
                         error: function(data) {
                             $("body").css("cursor", "default");
-                            self.enableDetail();
+                            enableDetail();
 
                             BootstrapDialog.show({
                                 type: BootstrapDialog.TYPE_DANGER,
@@ -565,22 +588,6 @@ function DisableScreen() {
                     });
                 };
 
-                self.enableDetail = function() {
-                    var selected = self.files()
-                        .filter(function(data) { return data.isselected; });
-
-                    if (selected.length > 0)
-                        cmdDelete.removeAttr("disabled");
-                    else
-                        cmdDelete.attr("disabled", "disabled");
-
-                    var mediaPathTypeId = $("#mediaPathTypeId").val();
-                    if (mediaPathTypeId !== "4" && mediaPathTypeId !== "6") // personal images, home movies
-                        cmdAddShared.removeAttr("disabled");
-                    else
-                        cmdAddShared.attr("disabled", "disabled");
-                };
-
                 self.checkSelectAll = function (checked) {
                     self.selectAllIsSelected(checked);
                     $("#chk_all").prop("checked", checked);
@@ -604,5 +611,3 @@ function DisableScreen() {
         }
     }
 })(jQuery);
-
-

@@ -125,6 +125,7 @@ function DisableScreen() {
 
                 createFileArray(lists.FileList);
                 createMediaPathTypeArray(lists.MediaPathTypeList);
+                enableDetail();
 
                 function createFileArray(list) {
                     self.files.removeAll();
@@ -154,6 +155,23 @@ function DisableScreen() {
                             ispreviewable: value.IsPreviewable
                         });
                     });
+
+                    var ispreviewable = self.mediaPathTypes().filter(function (value) {
+                        return value.id === self.selectedMediaPathType();
+                    })[0].ispreviewable;
+                    self.isPreviewable(ispreviewable);
+                };
+
+                function enableDetail () {
+                    var selected = self.files()
+                        .filter(function (data) { return data.isselected; });
+
+                    cmdDelete.attr("disabled", "disabled");
+                    if (selected.length > 0) {
+                        if (selected.length < self.filteredFilesBySelection().length) {
+                            cmdDelete.removeAttr("disabled");
+                        }
+                    }
                 };
 
                 self.columns = ko.computed(function () {
@@ -385,7 +403,7 @@ function DisableScreen() {
                     });
 
                     self.highlightSelectedRows();
-                    self.enableDetail();
+                    enableDetail();
 
                     return true;
                 };
@@ -400,8 +418,8 @@ function DisableScreen() {
                         self.removeSelectedId(row.id);
 
                     self.highlightSelectedRows();
-                    self.enableDetail();
                     self.checkSelectAll(self.selectedIds().length === self.filteredFiles().length);
+                    enableDetail();
 
                     return true;
                 };
@@ -463,12 +481,12 @@ function DisableScreen() {
                                         lists.FileList = data.FileList;
                                         createFileArray(lists.FileList);
                                         self.sort({ afterSave: true });
-                                        self.enableDetail();
                                         self.selectedIds([]);
                                         self.checkSelectAll(false);
+                                        enableDetail();
                                     } else {
                                         $("body").css("cursor", "default");
-                                        self.enableDetail();
+                                        enableDetail();
 
                                         BootstrapDialog.show({
                                             type: BootstrapDialog.TYPE_DANGER,
@@ -480,7 +498,7 @@ function DisableScreen() {
                                 error: function(data) {
                                     dialog.close();
                                     $("body").css("cursor", "default");
-                                    self.enableDetail();
+                                    enableDetail();
 
                                     BootstrapDialog.show({
                                         type: BootstrapDialog.TYPE_DANGER,
@@ -520,12 +538,12 @@ function DisableScreen() {
                                 lists.FileList = data.FileList;
                                 createFileArray(lists.FileList);
                                 self.sort({ afterSave: true });
-                                self.enableDetail();
                                 self.selectedIds([]);
                                 self.checkSelectAll(false);
+                                enableDetail();
                             } else {
                                 $("body").css("cursor", "default");
-                                self.enableDetail();
+                                enableDetail();
 
                                 BootstrapDialog.show({
                                     type: BootstrapDialog.TYPE_DANGER,
@@ -536,7 +554,7 @@ function DisableScreen() {
                         },
                         error: function (data) {
                             $("body").css("cursor", "default");
-                            self.enableDetail();
+                            enableDetail();
 
                             BootstrapDialog.show({
                                 type: BootstrapDialog.TYPE_DANGER,
@@ -577,18 +595,6 @@ function DisableScreen() {
                             }
                         }]
                     });
-                };
-
-                self.enableDetail = function () {
-                    var selected = self.files()
-                        .filter(function (data) { return data.isselected; });
-
-                    cmdDelete.attr("disabled", "disabled");
-                    if (selected.length > 0) {
-                        if (selected.length < self.filteredFilesBySelection().length) {
-                            cmdDelete.removeAttr("disabled");
-                        }
-                    }
                 };
 
                 self.checkSelectAll = function (checked) {

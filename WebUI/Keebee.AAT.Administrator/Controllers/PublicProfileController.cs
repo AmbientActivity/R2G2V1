@@ -97,7 +97,7 @@ namespace Keebee.AAT.Administrator.Controllers
                     x.Id,
                     x.Description,
                     x.ShortDescription,
-                    IsPreviewable = PublicProfileRules.IsPreviewable(x.Id)
+                    IsPreviewable = PublicProfileRules.IsMediaTypePreviewable(x.Id)
                 })
             };
 

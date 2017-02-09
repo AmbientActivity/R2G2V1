@@ -97,7 +97,6 @@ function DisableScreen() {
 
             function loadData() {
                 var mediaPathTypeId = $("#mediaPathTypeId").val();
-                var mediaPathTypeId = $("#isPreviewable").val();
 
                 $.ajax({
                     type: "GET",
@@ -125,6 +124,7 @@ function DisableScreen() {
                 self.selectAllIsSelected = ko.observable(false);
                 self.selectedIds = ko.observable([]);
                 self.isPreviewable = ko.observable(false);
+                self.isSharable = ko.observable(false);
 
                 createFileArray(lists.FileList);
                 createMediaPathTypeArray(lists.MediaPathTypeList);
@@ -155,14 +155,17 @@ function DisableScreen() {
                                 id: value.Id,
                                 description: value.Description,
                                 shortdescription: value.ShortDescription,
-                                ispreviewable: value.IsPreviewable
+                                ispreviewable: value.IsPreviewable,
+                                issharable: value.IsSharable
                             });
                     });
 
-                    var ispreviewable = self.mediaPathTypes().filter(function (value) {
+                    var mediaType = self.mediaPathTypes().filter(function (value) {
                         return value.id === self.selectedMediaPathType();
-                    })[0].ispreviewable;
-                    self.isPreviewable(ispreviewable);
+                    })[0];
+
+                    self.isPreviewable(mediaType.ispreviewable);
+                    self.isSharable(mediaType.issharable);
                 };
 
                 function enableDetail() {
@@ -174,8 +177,7 @@ function DisableScreen() {
                     else
                         cmdDelete.attr("disabled", "disabled");
 
-                    var mediaPathTypeId = $("#mediaPathTypeId").val();
-                    if (mediaPathTypeId !== "4" && mediaPathTypeId !== "6") // personal images, home movies
+                    if (self.isSharable())
                         cmdAddShared.removeAttr("disabled");
                     else
                         cmdAddShared.attr("disabled", "disabled");
@@ -258,6 +260,9 @@ function DisableScreen() {
                     self.selectAllRows();
 
                     self.isPreviewable(self.mediaPathType().ispreviewable);
+                    self.isSharable(self.mediaPathType().issharable);
+
+                    enableDetail();
                 });
 
                 self.filteredFiles = ko.computed(function () {

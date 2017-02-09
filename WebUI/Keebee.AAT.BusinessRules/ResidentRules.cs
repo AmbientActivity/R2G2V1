@@ -249,7 +249,7 @@ namespace Keebee.AAT.BusinessRules
             return message;
         }
 
-        public static bool IsPreviewable(int mediaPathTypeId)
+        public static bool IsMediaTypePreviewable(int mediaPathTypeId)
         {
             switch (mediaPathTypeId)
             {
@@ -259,6 +259,18 @@ namespace Keebee.AAT.BusinessRules
                     return true;
                 default:
                     return false;
+            }
+        }
+
+        public static bool IsMediaTypeSharable(int mediaPathTypeId)
+        {
+            switch (mediaPathTypeId)
+            {
+                case MediaPathTypeId.PersonalImages:
+                case MediaPathTypeId.HomeMovies:
+                    return false;
+                default:
+                    return true;
             }
         }
     }

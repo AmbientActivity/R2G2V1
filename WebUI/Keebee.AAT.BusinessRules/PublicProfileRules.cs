@@ -223,7 +223,7 @@ namespace Keebee.AAT.BusinessRules
             return message;
         }
     
-        public static bool IsPreviewable(int mediaPathTypeId)
+        public static bool IsMediaTypePreviewable(int mediaPathTypeId)
         {
             switch (mediaPathTypeId)
             {

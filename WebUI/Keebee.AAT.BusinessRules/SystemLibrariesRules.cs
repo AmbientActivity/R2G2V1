@@ -1,6 +1,6 @@
-﻿using System;
-using Keebee.AAT.RESTClient;
+﻿using Keebee.AAT.RESTClient;
 using Keebee.AAT.Shared;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;

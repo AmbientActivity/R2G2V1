@@ -228,8 +228,8 @@ namespace Keebee.AAT.BusinessRules
 
                 return p.Files.Select(f =>
                 {
-                    var numLinkedResidentProfiles = _opsClient.GetResidentMediaFileIdsForStreamId(f.StreamId).Length;
-                    var numLinkedPublicProfiles = _opsClient.GetPublicMediaFileIdsForStreamId(f.StreamId).Length;
+                    //var numLinkedResidentProfiles = _opsClient.GetResidentMediaFileIdsForStreamId(f.StreamId).Length;
+                    //var numLinkedPublicProfiles = _opsClient.GetPublicMediaFileIdsForStreamId(f.StreamId).Length;
                     return new
                     {
                         f.StreamId,
@@ -238,7 +238,7 @@ namespace Keebee.AAT.BusinessRules
                         f.FileType,
                         mediaPathType.Path,
                         MediaPathTypeId = mediaPathType.Id,
-                        NumLinkedProfiles = numLinkedResidentProfiles + numLinkedPublicProfiles
+                        NumLinkedProfiles = 0 //numLinkedResidentProfiles + numLinkedPublicProfiles
                     };
                 });
             });

@@ -63,8 +63,10 @@ namespace Keebee.AAT.Administrator.Controllers
                     if (!SystemLibrariesRules.IsValidFile(file.FileName, mediaPathTypeId)) continue;
 
                     var rules = new SystemLibrariesRules { OperationsClient = _opsClient };
-                    var mediaPath = rules.GetMediaPath(mediaPathTypeId);
-                    var filePath = $@"{_mediaPath.SharedLibrary}\{mediaPath}\{file.FileName}";
+                    var mediaPath = rules.GetMediaPathType(mediaPathTypeId);
+                    var filePath = mediaPathTypeId > 0
+                        ? $@"{_mediaPath.MediaRoot}\{_mediaPath.SharedLibrary}\{mediaPath.Path}\{file.FileName}"
+                        : $@"{_mediaPath.MediaRoot}\{mediaPath.Path}\{file.FileName}";
 
                     // delete it if it already exists
                     var msg = fileManager.DeleteFile(filePath);

@@ -39,7 +39,7 @@ namespace Keebee.AAT.BusinessRules
             }
         }
 
-        private MediaPathType GetMediaPathType(int? mediaPathTypeId)
+        public MediaPathType GetMediaPathType(int? mediaPathTypeId)
         {
             MediaPathType mediaPathType = null;
             var mediaSourcePath = new MediaSourcePath();
@@ -181,6 +181,10 @@ namespace Keebee.AAT.BusinessRules
                     break;
                 case MediaPathTypeId.MatchingGameShapes:
                     isValid = name.Contains("png");
+                    break;
+                case MediaPathTypeId.AmbientVideos:
+                case MediaPathTypeId.CatsVideos:
+                    isValid = name.Contains("mp4");
                     break;
             }
 

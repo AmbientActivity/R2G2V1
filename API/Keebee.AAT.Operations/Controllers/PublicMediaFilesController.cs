@@ -272,6 +272,25 @@ namespace Keebee.AAT.Operations.Controllers
             return new DynamicJsonObject(exObj);
         }
 
+        // GET: api/PublicMediaFiles/files?streamId=0d7434bc-cc81-e611-8aa6-90e6bac7161a=5
+        [HttpGet]
+        [Route("ids")]
+        public async Task<int[]> GetIdsForStreamId(Guid streamId)
+        {
+            IEnumerable<PublicMediaFile> media = new Collection<PublicMediaFile>();
+
+            await Task.Run(() =>
+            {
+                media = _publicMediaFileService.GetIdsForStreamId(streamId);
+            });
+
+            if (media == null) return new int[0];
+            if (!media.Any()) return new int[0];
+
+            return !media.Any()
+                ? new int[0]
+                : media.Select(x => x.Id).ToArray();
+        }
 
         // GET: api/PublicMediaFiles?responseTypeId=1&filename=photo.jpg
         [HttpGet]

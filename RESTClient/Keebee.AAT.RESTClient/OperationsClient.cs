@@ -46,7 +46,7 @@ namespace Keebee.AAT.RESTClient
         bool ResidentExists(int residentId);
         ActiveResident GetActiveResident();
 
-        // media
+        // media files
         MediaFileSingle GetMediaFile(Guid streamId);
         IEnumerable<Media> GetMediaFilesForPath(string path);
         MediaFileSingle GetMediaFileFromPath(string path, string filename);
@@ -55,18 +55,24 @@ namespace Keebee.AAT.RESTClient
 
         IEnumerable<MediaPathType> GetMediaPathTypes();
         MediaPathType GetMediaPathType(int mediaPathTypeId);
+
+        // public media files
         PublicMediaFile GetPublicMediaFile(int id);
         PublicMedia GetPublicMediaFiles();
         PublicMediaResponseType GetPublicMediaFilesForResponseType(int responseTypeId);
         PublicMedia GetPublicMediaFilesForMediaPathType(int mediaPathTypeId);
         IEnumerable<PublicMediaFile> GetPublicMediaFilesForStreamId(Guid streamId);
         PublicMediaFile GetPublicMediaFileForResponseTypeFilename(int responseTypeId, string filename);
+        int[] GetPublicMediaFileIdsForStreamId(Guid streamId);
 
+        // resident media files
         IEnumerable<ResidentMedia> GetResidentMediaFiles();
         ResidentMediaFile GetResidentMediaFile(int id);
         ResidentMedia GetResidentMediaFilesForResident(int residentId);
         ResidentMediaResponseType GetResidentMediaFilesForResidentResponseType(int residentId, int responseTypeId);
+        int[] GetResidentMediaFileIdsForStreamId(Guid streamId);
 
+        // event logs
         IEnumerable<ActivityEventLog> GetActivityEventLogsForDate(string date);
         IEnumerable<ActiveResidentEventLog> GetActiveResidentEventLogsForDate(string date);
         IEnumerable<InteractiveActivityEventLog> GetInteractiveActivityEventLogsForDate(string date);
@@ -157,18 +163,21 @@ namespace Keebee.AAT.RESTClient
         private const string UrlMediaPathTypes = "mediapathtypes";
         private const string UrlMediaPathType = "mediapathtypes/{0}";
 
+        // public media files
         private const string UrlPublicMediaFiles = "publicmediafiles";
         private const string UrlPublicMediaFile = "publicmediafiles/{0}";
         private const string UrlPublicMediaFilesForResponseType = "publicmediafiles?responseTypeId={0}";
         private const string UrlPublicMediaFilesForMediaPathType = "publicmediafiles?mediaPathTypeId={0}";
         private const string UrlPublicMediaFilesForMediaStreamId = "publicmediafiles?streamId={0}";
         private const string UrlPublicMediaFilesForResponseTypeIdFilename = "publicmediafiles?responseTypeId={0}&filename={1}";
+        private const string UrlPublicMediaFileIdsForStreamId = "publicmediafiles/ids?streamId={0}";
 
+        // resident media files
         private const string UrlResidentMediaFiles = "residentmediafiles";
         private const string UrlResidentMediaFile = "residentmediafiles/{0}";
         private const string UrlResidentMediaFilesForResident = "residentmediafiles?residentId={0}";
-        private const string UrlResidentMediaFilesForResponseType = "residentmediafiles?responseTypeId={0}";
         private const string UrlResidentMediaFilesForResidentResponseType = "residentmediafiles?residentId={0}&responseTypeId={1}";
+        private const string UrlResidentMediaFileIdsForStreamId = "residentmediafiles/ids?streamId={0}";
 
         // active resident event logs
         private const string UrlActiveResidentEventLogs = "activeresidenteventlogs";
@@ -693,6 +702,17 @@ namespace Keebee.AAT.RESTClient
             return mediaFile;
         }
 
+        public int[] GetPublicMediaFileIdsForStreamId(Guid streamId)
+        {
+            var data = Get(string.Format(UrlPublicMediaFileIdsForStreamId, streamId));
+            if (data == null) return null;
+
+            var serializer = new JavaScriptSerializer();
+            var ids = serializer.Deserialize<int[]>(data);
+
+            return ids;
+        }
+
         public IEnumerable<ResidentMedia> GetResidentMediaFiles()
         {
             var data = Get(UrlResidentMediaFiles);
@@ -735,6 +755,17 @@ namespace Keebee.AAT.RESTClient
             var mediaResponseType = serializer.Deserialize<ResidentMediaResponseTypeSingle>(data).ResidentMedia;
 
             return mediaResponseType;
+        }
+
+        public int[] GetResidentMediaFileIdsForStreamId(Guid streamId)
+        {
+            var data = Get(string.Format(UrlResidentMediaFileIdsForStreamId, streamId));
+            if (data == null) return null;
+
+            var serializer = new JavaScriptSerializer();
+            var ids = serializer.Deserialize<int[]>(data);
+
+            return ids;
         }
 
         // POST

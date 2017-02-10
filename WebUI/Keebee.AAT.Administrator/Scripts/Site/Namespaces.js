@@ -13,7 +13,7 @@
     window.videocaptures = {};
     window.mediafiles = {};
     window.phidgetconfig = {};
-    window.publicprofile =
-    window.sharedlibrary = {};
+    window.publicprofile = {};
+    window.systemlibraries = {};
     window.maintenance = {};
 })();

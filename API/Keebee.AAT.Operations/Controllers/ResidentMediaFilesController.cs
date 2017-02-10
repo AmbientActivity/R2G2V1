@@ -1,4 +1,5 @@
-﻿using Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models;
+﻿using System;
+using Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models;
 using Keebee.AAT.Operations.Service.Services;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -285,6 +286,25 @@ namespace Keebee.AAT.Operations.Controllers
                 }).SingleOrDefault();
 
             return new DynamicJsonObject(exObj);
+        }
+
+        // GET: api/ResidentMediaFiles?streamId=abaad215-95ed-e611-9cb8-98eecb38d473
+        [HttpGet]
+        [Route("ids")]
+        public async Task<int[]> GetIdsForStreamId(Guid streamId)
+        {
+            IEnumerable<ResidentMediaFile> media = new Collection<ResidentMediaFile>();
+
+            await Task.Run(() =>
+            {
+                media = _residentMediaFileService.GetIdsForStreamId(streamId);
+            });
+
+            if (media == null) return new int[0];
+
+            return !media.Any() 
+                ? new int[0] 
+                : media.Select(x => x.Id).ToArray();
         }
 
         // POST: api/ResidentMediaFiles

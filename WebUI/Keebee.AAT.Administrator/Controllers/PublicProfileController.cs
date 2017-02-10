@@ -131,7 +131,7 @@ namespace Keebee.AAT.Administrator.Controllers
                     x.Id,
                     x.Description
                 }),
-                AddButtonText = $"Upload {rules.GetMediaPathDescription(mediaPathTypeId)}",
+                AddButtonText = $"Upload {rules.GetMediaPathShortDescription(mediaPathTypeId)}",
             }, JsonRequestBehavior.AllowGet);
         }
 
@@ -161,19 +161,13 @@ namespace Keebee.AAT.Administrator.Controllers
                     }
                     else
                     {
-
                         var file = rules.GetMediaFile(id);
                         if (file == null) continue;
-
-                        var isMultipleResponseTypes = rules.IsMultipleReponseTypes(id);
 
                         // delete the link
                         errormessage = rules.DeletePublicMediaFile(id);
                         if (errormessage.Length > 0)
                             throw new Exception(errormessage);
-
-                        // if the file is used in multiple response types
-                        if (isMultipleResponseTypes) continue;
 
                         var fileManager = new FileManager {EventLogger = _systemEventLogger};
                         fileManager.DeleteFile($@"{file.Path}\{file.Filename}");
@@ -286,7 +280,7 @@ namespace Keebee.AAT.Administrator.Controllers
             var vm = new PublicProfileViewModel
             {
                 Title = PublicMediaSource.Description,
-                AddButtonText = $"Upload {rules.GetMediaPathDescription(mediaPathTypeId)}",
+                AddButtonText = $"Upload {rules.GetMediaPathShortDescription(mediaPathTypeId)}",
                 SelectedMediaPathType = mediaPathTypeId ?? MediaPathTypeId.Music
             };
 

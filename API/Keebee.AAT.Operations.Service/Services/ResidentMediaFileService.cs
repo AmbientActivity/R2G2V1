@@ -12,6 +12,7 @@ namespace Keebee.AAT.Operations.Service.Services
         ResidentMediaFile Get(int id);
         IEnumerable<ResidentMediaFile> GetForResident(int residentId);
         IEnumerable<ResidentMediaFile> GetForResidentResponseType(int residentId, int responseTypdId);
+        IEnumerable<ResidentMediaFile> GetIdsForStreamId(Guid streamId);
         int Post(ResidentMediaFile residentMediaFile);
         void Patch(int id, ResidentMediaFile residentMediaFile);
         void Delete(int id);
@@ -59,6 +60,17 @@ namespace Keebee.AAT.Operations.Service.Services
             var media = container.ResidentMediaFiles
                 .AddQueryOption("$filter", $"ResidentId eq {residentId} and ResponseTypeId eq {responseTypdId}")
                 .Expand("Resident,MediaFile,MediaPathType,ResponseType($expand=ResponseTypeCategory)")
+                .AsEnumerable();
+
+            return media;
+        }
+
+        public IEnumerable<ResidentMediaFile> GetIdsForStreamId(Guid streamId)
+        {
+            var container = new Container(new Uri(ODataHost.Url));
+
+            var media = container.ResidentMediaFiles
+                .AddQueryOption("$filter", $"StreamId eq {streamId}")
                 .AsEnumerable();
 
             return media;

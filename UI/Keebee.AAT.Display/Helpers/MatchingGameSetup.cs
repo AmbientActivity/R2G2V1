@@ -50,7 +50,7 @@ namespace Keebee.AAT.Display.Helpers
                 .Select(f =>
                     {
                         var pathRoot = f.IsShared
-                            ? $@"{_mediaPath.MediaRoot}\{_mediaPath.SharedMedia}"
+                            ? $@"{_mediaPath.MediaRoot}\{_mediaPath.SharedLibrary}"
                             : $@"{_mediaPath.ProfileRoot}\{MediaSourceTypeId.Public}";
 
                         return $@"{pathRoot}\{mediaPathType}\{f.Filename}";
@@ -86,7 +86,7 @@ namespace Keebee.AAT.Display.Helpers
                 .Select(f =>
                 {
                     var pathRoot = f.IsShared
-                        ? $@"{_mediaPath.MediaRoot}\{_mediaPath.SharedMedia}"
+                        ? $@"{_mediaPath.MediaRoot}\{_mediaPath.SharedLibrary}"
                         : $@"{_mediaPath.ProfileRoot}\{MediaSourceTypeId.Public}";
 
                     return $@"{pathRoot}\{mediaPathType}\{f.Filename}";

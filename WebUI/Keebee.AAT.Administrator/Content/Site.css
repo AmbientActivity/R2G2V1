@@ -214,6 +214,9 @@ a:hover, a:visited, a:link, a:active {
 .glyphicon-cd {
     color: #419641;
 }
+.glyphicon-user {
+    color: #6104f6;
+}
 .button-text {
     color: #fff;
 }

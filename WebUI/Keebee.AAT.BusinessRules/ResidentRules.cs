@@ -165,7 +165,7 @@ namespace Keebee.AAT.BusinessRules
                 : _opsClient.GetMediaPathType(MediaPathTypeId.GeneralImages).Path;
         }
 
-        public string GetMediaPathDescription(int? mediaPathTypeId)
+        public string GetMediaPathShortDescription(int? mediaPathTypeId)
         {
             return mediaPathTypeId != null
                 ? _opsClient.GetMediaPathType((int)mediaPathTypeId).ShortDescription
@@ -215,7 +215,7 @@ namespace Keebee.AAT.BusinessRules
         {
             var mediaSource = new MediaSourcePath();
             var mediaPath = GetMediaPath(mediaPathTypeId);
-            var sharedPaths = _opsClient.GetMediaFilesForPath($@"{mediaSource.SharedMedia}\{mediaPath}").ToArray();
+            var sharedPaths = _opsClient.GetMediaFilesForPath($@"{mediaSource.SharedLibrary}\{mediaPath}").ToArray();
             var responseTypeId = GetResponseTypeId(mediaPathTypeId);
             var existingSharedMediaPaths = _opsClient.GetResidentMediaFilesForResidentResponseType(residentId, responseTypeId);
             IEnumerable<Guid> existingStreamIds = new List<Guid>();
@@ -241,7 +241,7 @@ namespace Keebee.AAT.BusinessRules
 
         public string GetNoAvailableSharedMediaMessage(int mediaPathTypeId)
         {
-            var mediaPathType = GetMediaPathDescription(mediaPathTypeId);
+            var mediaPathType = GetMediaPathShortDescription(mediaPathTypeId);
 
             var hasHave = mediaPathType.EndsWith("s") ? "have" : "has";
             var message = $"All available {mediaPathType} {hasHave} already been included in this profile.";

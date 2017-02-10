@@ -51,7 +51,7 @@ namespace Keebee.AAT.Display.Caregiver.Helpers
                     .Single(f => f.StreamId == streamId);
 
                 var pathRoot = (selectedFile.IsShared)
-                    ? $@"{_mediaPath.MediaRoot}\{_mediaPath.SharedMedia}"
+                    ? $@"{_mediaPath.MediaRoot}\{_mediaPath.SharedLibrary}"
                     : $@"{_mediaPath.ProfileRoot}\{_currentResidentId}";
 
                 var selectedFilename = mediaPath.Files
@@ -64,7 +64,7 @@ namespace Keebee.AAT.Display.Caregiver.Helpers
                     .Select(f =>
                     {
                         var root = f.IsShared
-                            ? $@"{_mediaPath.MediaRoot}\{_mediaPath.SharedMedia}"
+                            ? $@"{_mediaPath.MediaRoot}\{_mediaPath.SharedLibrary}"
                             : $@"{_mediaPath.ProfileRoot}\{_currentResidentId}";
 
                         return $@"{root}\{mediaPathType}\{f.Filename}";
@@ -77,7 +77,7 @@ namespace Keebee.AAT.Display.Caregiver.Helpers
                         .Select(f =>
                         {
                             var root = f.IsShared
-                                ? $@"{_mediaPath.MediaRoot}\{_mediaPath.SharedMedia}"
+                                ? $@"{_mediaPath.MediaRoot}\{_mediaPath.SharedLibrary}"
                                 : $@"{_mediaPath.ProfileRoot}\{_currentResidentId}";
 
                             return $@"{root}\{mediaPathType}\{f.Filename}";
@@ -94,7 +94,7 @@ namespace Keebee.AAT.Display.Caregiver.Helpers
                     .Select(f =>
                     {
                         var pathRoot2 = f.IsShared
-                            ? $@"{_mediaPath.MediaRoot}\{_mediaPath.SharedMedia}"
+                            ? $@"{_mediaPath.MediaRoot}\{_mediaPath.SharedLibrary}"
                             : $@"{_mediaPath.ProfileRoot}\{_currentResidentId}";
 
                         return $@"{pathRoot2}\{mediaPath.MediaPathType.Path}\{f.Filename}";

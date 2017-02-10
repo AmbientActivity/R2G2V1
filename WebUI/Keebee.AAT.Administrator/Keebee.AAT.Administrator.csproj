@@ -275,6 +275,7 @@
     <Content Include="Scripts\Residents\Profile.js" />
     <Content Include="Scripts\Residents\Index.js" />
     <Content Include="Scripts\Maintenance\Index.js" />
+    <Content Include="Scripts\SystemLibraries\Index.js" />
     <Content Include="Scripts\Site\Namespaces.js" />
     <Content Include="Scripts\Site\Site.js" />
     <Content Include="Scripts\VideoCaptures\Index.js" />
@@ -292,6 +293,7 @@
     <Compile Include="Controllers\PublicProfileController.cs" />
     <Compile Include="Controllers\ResidentsController.cs" />
     <Compile Include="Controllers\MaintenanceController.cs" />
+    <Compile Include="Controllers\SystemLibrariesController.cs" />
     <Compile Include="Controllers\VideoCapturesController.cs" />
     <Compile Include="FileManagement\FileManager.cs" />
     <Compile Include="Global.asax.cs">
@@ -303,8 +305,9 @@
     <Compile Include="ViewModels\ImageViewerViewModel.cs" />
     <Compile Include="ViewModels\LoginViewModel.cs" />
     <Compile Include="ViewModels\MediaFileViewModel.cs" />
-    <Compile Include="ViewModels\PublicMediaViewModel.cs" />
+    <Compile Include="ViewModels\PublicProfileViewModel.cs" />
     <Compile Include="ViewModels\ResidentViewModel.cs" />
+    <Compile Include="ViewModels\SystemLibrariesViewModel.cs" />
     <Compile Include="ViewModels\VideoCaptureVidewModel.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -326,8 +329,7 @@
     <Content Include="UploadHandler.ashx" />
     <Content Include="Views\PublicProfile\Index.cshtml" />
     <Content Include="Views\Maintenance\Index.cshtml" />
-    <Content Include="Views\Residents\_ImageViewer.cshtml" />
-    <Content Include="Views\PublicProfile\_ImageViewer.cshtml" />
+    <Content Include="Views\Shared\_ImageViewer.cshtml" />
     <Content Include="Views\Account\_Login.cshtml" />
     <Content Include="Views\Shared\_LogOnPartial.cshtml" />
     <Content Include="Views\Account\_ChangePassword.cshtml" />
@@ -336,6 +338,7 @@
     <Content Include="Scripts\jquery-3.1.1.slim.min.map" />
     <Content Include="Scripts\jquery-3.1.1.min.map" />
     <Content Include="Views\Shared\_SharedLibraryAdd.cshtml" />
+    <Content Include="Views\SystemLibraries\Index.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

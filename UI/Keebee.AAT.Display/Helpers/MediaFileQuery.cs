@@ -119,7 +119,7 @@ namespace Keebee.AAT.Display.Helpers
                     .Select(f =>
                     {
                         var pathRoot = f.IsShared
-                            ? $@"{_mediaPath.MediaRoot}\{_mediaPath.SharedMedia}"
+                            ? $@"{_mediaPath.MediaRoot}\{_mediaPath.SharedLibrary}"
                             : $@"{_mediaPath.ProfileRoot}\{residentId}";
 
                         return $@"{pathRoot}\{mediaPath.MediaPathType.Path}\{f.Filename}";

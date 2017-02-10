@@ -1,6 +1,6 @@
 ﻿/*!
  * 1.0 Keebee AAT Copyright © 2016
- * PublicProfile/Index.js
+ * SystemLibraries/Index.js
  * Author: John Charlton
  * Date: 2016-09
  */
@@ -70,7 +70,7 @@ function DisableScreen() {
 ; (function ($) {
     var HIGHLIGHT_ROW_COLOUR = "#e3e8ff";
 
-    publicprofile.index = {
+    systemlibraries.index = {
         init: function (values) {
 
             var config = {
@@ -99,7 +99,7 @@ function DisableScreen() {
 
                 $.ajax({
                     type: "GET",
-                    url: site.url + "PublicProfile/GetData?" + "mediaPathTypeId=" + mediaPathTypeId,
+                    url: site.url + "SystemLibraries/GetData?" + "mediaPathTypeId=" + mediaPathTypeId,
                     dataType: "json",
                     traditional: true,
                     async: false,
@@ -120,8 +120,9 @@ function DisableScreen() {
                 self.filenameSearch = ko.observable("");
                 self.totalFilteredFiles = ko.observable(0);
                 self.selectAllIsSelected = ko.observable(false);
-                self.selectedIds = ko.observable([]);
+                self.selectedStreamIds = ko.observable([]);
                 self.isPreviewable = ko.observable(false);
+                self.isSharable = ko.observable(false);
 
                 createFileArray(lists.FileList);
                 createMediaPathTypeArray(lists.MediaPathTypeList);
@@ -130,15 +131,15 @@ function DisableScreen() {
                 function createFileArray(list) {
                     self.files.removeAll();
                     $(list).each(function (index, value) {
-                        self.files.push({ 
-                            id: value.Id,
+                        self.files.push({
+
                             streamid: value.StreamId,
                             filename: value.Filename,
                             filetype: value.FileType,
                             filesize: value.FileSize,
-                            isshared: value.IsShared,
                             path: value.Path,
                             mediapathtypeid: value.MediaPathTypeId,
+                            numlinked: value.NumLinkedProfiles,
                             isselected: false
                         });
                     });
@@ -152,17 +153,20 @@ function DisableScreen() {
                             id: value.Id,
                             description: value.Description,
                             shortdescription: value.ShortDescription,
-                            ispreviewable: value.IsPreviewable
+                            ispreviewable: value.IsPreviewable,
+                            issharable: value.IsSharable
                         });
                     });
 
-                    var ispreviewable = self.mediaPathTypes().filter(function (value) {
+                    var mediaPathType = self.mediaPathTypes().filter(function (value) {
                         return value.id === self.selectedMediaPathType();
-                    })[0].ispreviewable;
-                    self.isPreviewable(ispreviewable);
+                    })[0];
+
+                    self.isPreviewable(mediaPathType.ispreviewable);
+                    self.isSharable(mediaPathType.issharable);
                 };
 
-                function enableDetail () {
+                function enableDetail() {
                     var selected = self.files()
                         .filter(function (data) { return data.isselected; });
 
@@ -179,7 +183,6 @@ function DisableScreen() {
                     arr.push({ title: "Name", sortable: true, sortKey: "filename", numeric: false, cssClass: "" });
                     arr.push({ title: "Type", sortable: true, sortKey: "filetype", numeric: false, cssClass: "col-filetype" });
                     arr.push({ title: "Size", sortable: true, sortKey: "filesize", numeric: true, cssClass: "col-filesize" });
-                    arr.push({ title: "Shared", sortable: true, sortKey: "isshared", numeric: true, cssClass: "col-isshared" });
                     return arr;
                 });
 
@@ -232,7 +235,7 @@ function DisableScreen() {
 
                     $.ajax({
                         type: "GET",
-                        url: site.url + "PublicProfile/GetUploaderHtml?mediaPathTypeId=" + mediaPathTypeId,
+                        url: site.url + "SystemLibraries/GetUploaderHtml?mediaPathTypeId=" + mediaPathTypeId,
                         traditional: true,
                         async: true,
                         dataType: "json",
@@ -250,11 +253,12 @@ function DisableScreen() {
                     self.checkSelectAll(false);
                     self.selectAllRows();
 
-                    var ispreviewable = self.mediaPathTypes().filter(function (value) {
+                    var mediaPathType = self.mediaPathTypes().filter(function (value) {
                         return value.id === self.selectedMediaPathType();
-                    })[0].ispreviewable;
+                    })[0];
 
-                    self.isPreviewable(ispreviewable);
+                    self.isPreviewable(mediaPathType.ispreviewable);
+                    self.isSharable(mediaPathType.issharable);
                 });
 
                 self.filteredFiles = ko.computed(function () {
@@ -282,8 +286,8 @@ function DisableScreen() {
                 self.checkAllReset = ko.computed(function () {
                     $("#chk_all").prop("checked", false);
 
-                    self.selectedIds([]);
-                    $.each(self.filteredFiles(), function(item, value) {
+                    self.selectedStreamIds([]);
+                    $.each(self.filteredFiles(), function (item, value) {
                         value.isselected = false;
 
                         var chk = tblFile.find("#chk_" + value.id);
@@ -293,10 +297,6 @@ function DisableScreen() {
 
                 // ------------------
 
-                self.showAddFromSharedLibarayDialog = function () {
-                    self.showSharedLibrayAddDialog();
-                };
-
                 self.showDeleteSelectedDialog = function () {
                     self.showSelectedFileDeleteDialog();
                 };
@@ -305,42 +305,8 @@ function DisableScreen() {
                     self.showImagePreview(row);
                 };
 
-                self.showSharedLibrayAddDialog = function () {
-                    var message;
-                    var title = "<span class='glyphicon glyphicon-cd' style='color: #fff'></span>";
-                    var mediaPathTypeDesc = self.mediaPathType().shortdescription;
-
-                    $.ajax({
-                        type: "GET",
-                        async: false,
-                        data: {mediaPathTypeId: self.selectedMediaPathType()},
-                        url: site.url + "PublicProfile/GetSharedLibarayAddView/",
-                        success: function (data) {
-                            message = data;
-                        }
-                    });
-
-                    BootstrapDialog.show({
-                        title: title + " Add <b>" + mediaPathTypeDesc + "</b> From Shared Library",
-                        message: $("<div></div>").append(message),
-
-                        closable: false,
-                        buttons: [
-                            {
-                                label: "Cancel",
-                                action: function (dialog) {
-                                    dialog.close();
-                                }
-                            }, {
-                                label: "OK",
-                                cssClass: "btn-primary",
-                                action: function (dialog) {
-                                    self.addSharedFiles();
-                                    dialog.close();
-                                }
-                            }
-                        ]
-                    });
+                self.showLinkedProfiles = function (row) {
+                    self.showFeatureNotDoneYetDialog();
                 };
 
                 self.showSelectedFileDeleteDialog = function () {
@@ -385,13 +351,13 @@ function DisableScreen() {
                 };
 
                 self.selectAllRows = function () {
-                    self.selectedIds([]);
+                    self.selectedStreamIds([]);
 
                     $.each(self.filteredFiles(), function (item, value) {
-                        if (self.selectAllIsSelected()) 
-                            self.selectedIds().push(value.id);
+                        if (self.selectAllIsSelected())
+                            self.selectedStreamIds().push(value.id);
                         else
-                            self.selectedIds().pop(value.id);
+                            self.selectedStreamIds().pop(value.id);
 
                         value.isselected = self.selectAllIsSelected();
                         var chk = tblFile.find("#chk_" + value.id);
@@ -409,21 +375,21 @@ function DisableScreen() {
                     if (row === null) return false;
 
                     if (row.isselected)
-                        self.selectedIds().push(row.id);
+                        self.selectedStreamIds().push(row.streamid);
                     else
-                        self.removeSelectedId(row.id);
+                        self.removeSelectedStreamId(row.streamid);
 
                     self.highlightSelectedRows();
-                    self.checkSelectAll(self.selectedIds().length === self.filteredFiles().length);
+                    self.checkSelectAll(self.selectedStreamIds().length === self.filteredFiles().length);
                     enableDetail();
 
                     return true;
                 };
 
-                self.removeSelectedId = function (id) {
-                    for (var i = self.selectedIds().length - 1; i >= 0; i--) {
-                        if (self.selectedIds()[i] === id) {
-                            self.selectedIds().splice(i, 1);
+                self.removeSelectedStreamId = function (id) {
+                    for (var i = self.selectedStreamIds().length - 1; i >= 0; i--) {
+                        if (self.selectedStreamIds()[i] === id) {
+                            self.selectedStreamIds().splice(i, 1);
                         }
                     }
                 }
@@ -433,7 +399,7 @@ function DisableScreen() {
                     rows.each(function () {
                         $(this).css("background-color", "#ffffff");
                     });
-                    
+
                     var selected = self.files()
                         .filter(function (data) { return data.isselected; });
 
@@ -446,10 +412,10 @@ function DisableScreen() {
                     return true;
                 };
 
-                self.deleteSelected = function() {
+                self.deleteSelected = function () {
                     $("body").css("cursor", "wait");
 
-                    var ids = self.selectedIds();
+                    var streamIds = self.selectedStreamIds();
                     var mediaPathTypeId = $("#mediaPathTypeId").val();
 
                     BootstrapDialog.show({
@@ -457,27 +423,28 @@ function DisableScreen() {
                         title: "Delete Files",
                         message: "One moment...",
                         closable: false,
-                        onshown: function(dialog) {
+                        onshown: function (dialog) {
 
                             $.ajax({
                                 type: "POST",
                                 async: true,
                                 traditional: true,
-                                url: site.url + "PublicProfile/DeleteSelected/",
+                                url: site.url + "SystemLibraries/DeleteSelected/",
                                 data:
                                 {
-                                    ids: ids,
-                                    mediaPathTypeId: mediaPathTypeId
+                                    streamIds: streamIds,
+                                    mediaPathTypeId: mediaPathTypeId,
+                                    isSharable: self.isSharable()
                                 },
                                 dataType: "json",
-                                success: function(data) {
+                                success: function (data) {
                                     dialog.close();
                                     $("body").css("cursor", "default");
                                     if (data.Success) {
                                         lists.FileList = data.FileList;
                                         createFileArray(lists.FileList);
                                         self.sort({ afterSave: true });
-                                        self.selectedIds([]);
+                                        self.selectedStreamIds([]);
                                         self.checkSelectAll(false);
                                         enableDetail();
                                     } else {
@@ -491,7 +458,7 @@ function DisableScreen() {
                                         });
                                     }
                                 },
-                                error: function(data) {
+                                error: function (data) {
                                     dialog.close();
                                     $("body").css("cursor", "default");
                                     enableDetail();
@@ -507,61 +474,6 @@ function DisableScreen() {
                     });
                 };
 
-                self.addSharedFiles = function () {
-                    $("body").css("cursor", "wait");
-
-                    var ids = [];
-                    $("input[name='shared_files']:checked").each(function (item, value) {
-                        ids.push(value.id);
-                    });
-
-                    var mediaPathTypeId = $("#mediaPathTypeId").val();
-
-                    $.ajax({
-                        type: "POST",
-                        async: true,
-                        traditional: true,
-                        url: site.url + "PublicProfile/AddSharedMediaFiles/",
-                        data:
-                        {
-                            streamIds: ids,
-                            mediaPathTypeId: mediaPathTypeId
-                        },
-                        dataType: "json",
-                        success: function (data) {
-                            $("body").css("cursor", "default");
-                            if (data.Success) {
-                                lists.FileList = data.FileList;
-                                createFileArray(lists.FileList);
-                                self.sort({ afterSave: true });
-                                self.selectedIds([]);
-                                self.checkSelectAll(false);
-                                enableDetail();
-                            } else {
-                                $("body").css("cursor", "default");
-                                enableDetail();
-
-                                BootstrapDialog.show({
-                                    type: BootstrapDialog.TYPE_DANGER,
-                                    title: "Error Adding Shared Files",
-                                    message: data.ErrorMessage
-                                });
-                            }
-                        },
-                        error: function (data) {
-                            $("body").css("cursor", "default");
-                            enableDetail();
-
-                            BootstrapDialog.show({
-                                type: BootstrapDialog.TYPE_DANGER,
-                                title: "Error Adding Shared Files",
-                                message: "Unexpected Error\n" + data
-                            });
-                        }
-                    });
-
-                };
-
                 self.showImagePreview = function (row) {
                     $("body").css("cursor", "wait");
                     var message;
@@ -569,7 +481,7 @@ function DisableScreen() {
                     $.ajax({
                         type: "GET",
                         async: false,
-                        url: site.url + "PublicProfile/GetImageViewerView?streamId=" + row.streamid + "&fileType=" + row.filetype,
+                        url: site.url + "SystemLibraries/GetImageViewerView?streamId=" + row.streamid + "&fileType=" + row.filetype,
                         success: function (data) {
                             message = data;
                         },
@@ -583,7 +495,7 @@ function DisableScreen() {
                         title: "Image Viewer - " + row.filename + "." + row.filetype.toLowerCase(),
                         message: $("<div></div>").append(message),
                         closable: false,
-                        onshown: function() { $("body").css("cursor", "default"); },
+                        onshown: function () { $("body").css("cursor", "default"); },
                         buttons: [{
                             label: "Close",
                             action: function (dialog) {
@@ -597,13 +509,6 @@ function DisableScreen() {
                     self.selectAllIsSelected(checked);
                     $("#chk_all").prop("checked", checked);
                 };
-
-                self.mediaPathType = function () {
-                    return self.mediaPathTypes()
-                        .filter(function (value) {
-                            return value.id === self.selectedMediaPathType();
-                        })[0];
-                }
             };
 
             //---------------------------------------------- VIEW MODEL (END) -----------------------------------------------------

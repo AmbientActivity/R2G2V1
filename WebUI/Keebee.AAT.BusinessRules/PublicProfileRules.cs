@@ -45,7 +45,7 @@ namespace Keebee.AAT.BusinessRules
                 : _opsClient.GetMediaPathType(MediaPathTypeId.GeneralImages).Path;
         }
 
-        public string GetMediaPathDescription(int? mediaPathTypeId)
+        public string GetMediaPathShortDescription(int? mediaPathTypeId)
         {
             return mediaPathTypeId != null
                 ? _opsClient.GetMediaPathType((int)mediaPathTypeId).ShortDescription
@@ -79,15 +79,6 @@ namespace Keebee.AAT.BusinessRules
                 result = "Must have at least 1 media file for each respone type";
 
             return result;
-        }
-
-        // when doing a single delete, don't delete the file, just the link if it exists in another response type
-        public bool IsMultipleReponseTypes(int id)
-        {
-            var streamId = _opsClient.GetPublicMediaFile(id).MediaFile.StreamId;
-            var streamIds = _opsClient.GetPublicMediaFilesForStreamId(streamId).ToArray();
-
-            return streamIds.Count() > 1;
         }
 
         public string DeletePublicMediaFile(int id)
@@ -191,7 +182,7 @@ namespace Keebee.AAT.BusinessRules
         {
             var mediaSource = new MediaSourcePath();
             var mediaPath = GetMediaPath(mediaPathTypeId);
-            var sharedPaths = _opsClient.GetMediaFilesForPath($@"{mediaSource.SharedMedia}\{mediaPath}").ToArray();
+            var sharedPaths = _opsClient.GetMediaFilesForPath($@"{mediaSource.SharedLibrary}\{mediaPath}").ToArray();
             var existingSharedMediaPaths = _opsClient.GetPublicMediaFilesForMediaPathType(mediaPathTypeId);
             IEnumerable<Guid> existingStreamIds = new List<Guid>();
 
@@ -215,7 +206,7 @@ namespace Keebee.AAT.BusinessRules
 
         public string GetNoAvailableSharedMediaMessage(int mediaPathTypeId)
         {
-            var mediaPathType = GetMediaPathDescription(mediaPathTypeId);
+            var mediaPathType = GetMediaPathShortDescription(mediaPathTypeId);
 
             var hasHave = mediaPathType.EndsWith("s") ? "have" : "has";
             var message = $"All available {mediaPathType} {hasHave} already been included in this profile.";

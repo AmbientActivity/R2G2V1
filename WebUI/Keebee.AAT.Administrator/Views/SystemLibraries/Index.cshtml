@@ -49,7 +49,7 @@
                 <tr>
                     <th class="col-glyphicon"><input type="checkbox" id="chk_all" data-bind="checked: selectAllIsSelected, click: selectAllRows" /></th>
                     <!-- ko if: isSharable() -->
-                    <th class="col-glyphicon"></th>
+                    @*<th class="col-glyphicon"></th>*@
                     <!-- /ko -->
                     <!-- ko if: isPreviewable() -->
                     <th class="col-glyphicon"></th>
@@ -69,7 +69,7 @@
                 <tr data-bind="attr: { id: 'row_' + streamid }">
                     <td><input type="checkbox" data-bind="attr: { id: 'chk_' + streamid }, checked: isselected, click: $parent.selectFile" /></td>
                     <!-- ko if: $parent.isSharable() -->
-                    <td><a href="#" data-bind="click: $parent.showLinkedProfiles, css: 'glyphicon glyphicon-user', attr: {title: 'Linked profiles: ' + numlinked}"></a></td>
+                    @*<td><a href="#" data-bind="click: $parent.showLinkedProfiles, css: 'glyphicon glyphicon-user', attr: {title: 'Linked profiles: ' + numlinked}"></a></td>*@
                     <!-- /ko -->
                     <!-- ko if: $parent.isPreviewable() -->
                     <td><a href="#" data-bind="click: $parent.showPreview, css: 'glyphicon glyphicon-eye-open'"></a></td>

@@ -13,7 +13,7 @@ namespace Keebee.AAT.Administrator.ViewModels
 
     public class LinkedProfilesViewModel
     {
-        public IEnumerable<ResidentViewModel> Residents { get; set; }
+        public IEnumerable<ResidentViewModel> Profiles { get; set; }
         public string NoAvailableMediaMessage { get; set; }
     }
 }

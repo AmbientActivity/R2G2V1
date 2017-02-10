@@ -66,6 +66,8 @@ namespace Keebee.AAT.RESTClient
         PublicMediaResponseType GetPublicMediaFilesForResponseType(int responseTypeId);
         PublicMedia GetPublicMediaFilesForMediaPathType(int mediaPathTypeId);
         IEnumerable<PublicMediaFile> GetPublicMediaFilesForStreamId(Guid streamId);
+        PublicMedia GetLinkedPublicMedia();
+        PublicMedia GetLinkedPublicMediaForStreamId(Guid streamId);
         PublicMediaFile GetPublicMediaFileForResponseTypeFilename(int responseTypeId, string filename);
         int[] GetPublicMediaFileIdsForStreamId(Guid streamId);
 
@@ -75,7 +77,8 @@ namespace Keebee.AAT.RESTClient
         ResidentMediaFile GetResidentMediaFile(int id);
         ResidentMedia GetResidentMediaFilesForResident(int residentId);
         ResidentMediaResponseType GetResidentMediaFilesForResidentResponseType(int residentId, int responseTypeId);
-        IEnumerable<ResidentMediaResponseType> GetResidentMediaLinked();
+        IEnumerable<ResidentMediaResponseType> GetLinkedResidentMedia();
+        IEnumerable<ResidentMediaResponseType> GetLinkedResidentMediaForStreamId(Guid streamId);
         int[] GetResidentMediaFileIdsForStreamId(Guid streamId);
 
 
@@ -177,6 +180,8 @@ namespace Keebee.AAT.RESTClient
         private const string UrlPublicMediaFilesForMediaPathType = "publicmediafiles?mediaPathTypeId={0}";
         private const string UrlPublicMediaFilesForMediaStreamId = "publicmediafiles?streamId={0}";
         private const string UrlPublicMediaFilesForResponseTypeIdFilename = "publicmediafiles?responseTypeId={0}&filename={1}";
+        private const string UrlLinkedPublicMedia = "publicmediafiles/linked";
+        private const string UrlLinkedPublicMediaForStreamId = "publicmediafiles/linked?streamId={0}";
         private const string UrlPublicMediaFileIdsForStreamId = "publicmediafiles/ids?streamId={0}";
 
         // resident media files
@@ -184,7 +189,8 @@ namespace Keebee.AAT.RESTClient
         private const string UrlResidentMediaFile = "residentmediafiles/{0}";
         private const string UrlResidentMediaFilesForResident = "residentmediafiles?residentId={0}";
         private const string UrlResidentMediaFilesForResidentResponseType = "residentmediafiles?residentId={0}&responseTypeId={1}";
-        private const string UrlResidentMediaLinked = "residentmediafiles/linked";
+        private const string UrlLinkedResidentMedia = "residentmediafiles/linked";
+        private const string UrlLinkedResidentMediaForStreamId = "residentmediafiles/linked?streamId={0}";
         private const string UrlResidentMediaFileIdsForStreamId = "residentmediafiles/ids?streamId={0}";
 
         // active resident event logs
@@ -644,6 +650,7 @@ namespace Keebee.AAT.RESTClient
         }
 
 
+        // public media files
         public PublicMediaFile GetPublicMediaFile(int id)
         {
             var data = Get(string.Format(UrlPublicMediaFile, id));
@@ -699,6 +706,28 @@ namespace Keebee.AAT.RESTClient
             return mediaStreamIds;
         }
 
+        public PublicMedia GetLinkedPublicMedia()
+        {
+            var data = Get(UrlLinkedPublicMedia);
+            if (data == null) return null;
+
+            var serializer = new JavaScriptSerializer();
+            var media = serializer.Deserialize<PublicMedia>(data);
+
+            return media;
+        }
+
+        public PublicMedia GetLinkedPublicMediaForStreamId(Guid streamId)
+        {
+            var data = Get(string.Format(UrlLinkedPublicMediaForStreamId, streamId));
+            if (data == null) return null;
+
+            var serializer = new JavaScriptSerializer();
+            var media = serializer.Deserialize<PublicMedia>(data);
+
+            return media;
+        }
+
         public PublicMediaFile GetPublicMediaFileForResponseTypeFilename(int responseTypeId, string filename)
         {
             var data = Get(string.Format(UrlPublicMediaFilesForResponseTypeIdFilename, responseTypeId, filename));
@@ -721,6 +750,8 @@ namespace Keebee.AAT.RESTClient
             return ids;
         }
 
+
+        // resident media files
         public IEnumerable<ResidentMedia> GetResidentMediaFiles()
         {
             var data = Get(UrlResidentMediaFiles);
@@ -765,9 +796,20 @@ namespace Keebee.AAT.RESTClient
             return mediaResponseType;
         }
 
-        public IEnumerable<ResidentMediaResponseType> GetResidentMediaLinked()
+        public IEnumerable<ResidentMediaResponseType> GetLinkedResidentMedia()
         {
-            var data = Get(UrlResidentMediaLinked);
+            var data = Get(UrlLinkedResidentMedia);
+            if (data == null) return null;
+
+            var serializer = new JavaScriptSerializer();
+            var mediaResponseTypeList = serializer.Deserialize<ResidentMediaResponseTypeList>(data).ResidentMediaList;
+
+            return mediaResponseTypeList;
+        }
+
+        public IEnumerable<ResidentMediaResponseType> GetLinkedResidentMediaForStreamId(Guid streamId)
+        {
+            var data = Get(string.Format(UrlLinkedResidentMediaForStreamId, streamId));
             if (data == null) return null;
 
             var serializer = new JavaScriptSerializer();

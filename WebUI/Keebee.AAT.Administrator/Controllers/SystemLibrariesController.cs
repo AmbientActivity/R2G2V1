@@ -9,6 +9,7 @@ using System.Linq;
 using System.Web.Mvc;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 
 namespace Keebee.AAT.Administrator.Controllers
@@ -219,39 +220,42 @@ namespace Keebee.AAT.Administrator.Controllers
 
         private LinkedProfilesViewModel LoadLinkedResidentsViewModel(Guid streamId)
         {
-            var media = _opsClient.GetResidentMediaLinked();
+            var residentMedia = _opsClient.GetLinkedResidentMediaForStreamId(streamId);
+            var residentProfiles = new List<ResidentViewModel>();
 
-            var residents = media.GroupBy(m => m.Resident)
-                .Select(files => new { files.First().Resident, Files = files })
-                .Select(x => new
+            if (residentMedia != null)
+            {
+                var residents = residentMedia
+                    .Select(x => new ResidentViewModel
                 {
-                    Resident = new
-                    {
-                        x.Resident.Id,
-                        x.Resident.FirstName,
-                        x.Resident.LastName,
-                        x.Resident.Gender,
-                        x.Resident.GameDifficultyLevel
-                    },
-                    LinkedFiles = x.Files
-                        .GroupBy(rt => rt.MediaResponseType)
-                        .Select(mediaFiles => new { mediaFiles.First().MediaResponseType, MediaFiles = mediaFiles })
-                        .SelectMany(y => y.MediaFiles)
-                        .Select(y => y.MediaResponseType)
-                        .SelectMany(y => y.Paths)
-                        .SelectMany(y => y.Files)
-                        .Where(f => f.StreamId == streamId)
-                }).Where(r => r.LinkedFiles.Any());
+                    Id = x.Resident.Id,
+                    FirstName = x.Resident.FirstName,
+                    LastName = x.Resident.LastName
+                }).OrderBy(x => x.LastName).ThenBy(x => x.FirstName);
+                residentProfiles.AddRange(residents);
+            }
+
+            var publicMedia = _opsClient.GetLinkedPublicMediaForStreamId(streamId);
+            var publicProfile = new List<ResidentViewModel>();
+
+            if (publicMedia.MediaFiles != null)
+            {
+                publicProfile.Add(new ResidentViewModel
+                {
+                    Id = PublicMediaSource.Id,
+                    FirstName = PublicMediaSource.Description
+                });
+            }
 
             var vm = new LinkedProfilesViewModel
             {
-                Residents = residents
-                .Select(r => new ResidentViewModel
+                Profiles = publicProfile.Union(residentProfiles).Select(r => new 
+                ResidentViewModel
                 {
-                    FirstName = r.Resident.FirstName,
-                    LastName = r.Resident.LastName
+                    FirstName = r.FirstName,
+                    LastName = r.LastName
                 }),
-                NoAvailableMediaMessage = "No residents are linked to this file."
+                NoAvailableMediaMessage = "No profiles are linked to this file."
             };
 
             return vm;

@@ -307,7 +307,7 @@ namespace Keebee.AAT.Operations.Controllers
                 : media.Select(x => x.Id).ToArray();
         }
 
-        // GET: api/ResidentLinkedMediaFiles
+        // GET: api/ResidentMediaFiles/linked
         [HttpGet]
         [Route("linked")]
         public async Task<DynamicJsonObject> GetLinkedResidentMedia()
@@ -354,6 +354,78 @@ namespace Keebee.AAT.Operations.Controllers
                             Paths = mf.MediaFiles
                                 .GroupBy(pt => pt.MediaPathType)
                                 .Select(files => new {files.First().MediaPathType, Files = files})
+                                .Select(pt => new
+                                {
+                                    MediaPathType = new
+                                    {
+                                        pt.MediaPathType.Id,
+                                        pt.MediaPathType.Path,
+                                        pt.MediaPathType.Description,
+                                        pt.MediaPathType.ShortDescription
+                                    },
+                                    Files = pt.Files.Select(f => new
+                                    {
+                                        f.Id,
+                                        f.StreamId,
+                                        f.MediaFile.Filename,
+                                        f.MediaFile.FileType,
+                                        f.MediaFile.FileSize,
+                                        f.IsShared
+                                    })
+                                }).OrderBy(o => o.MediaPathType.Id)
+                        }).SingleOrDefault()
+                });
+
+            return new DynamicJsonObject(exObj);
+        }
+
+        // GET: api/ResidentMediaFiles/linked?streamId=46fda92e-6cee-e611-9cb8-98eecb38d473
+        [HttpGet]
+        [Route("linked")]
+        public async Task<DynamicJsonObject> GetLinkedResidentMedia(Guid streamId)
+        {
+            IEnumerable<ResidentMediaFile> media = new Collection<ResidentMediaFile>();
+
+            await Task.Run(() =>
+            {
+                media = _residentMediaFileService.GetLinkedResidentMedia(streamId);
+            });
+
+            if (media == null) return new DynamicJsonObject(new ExpandoObject());
+            if (!media.Any()) return new DynamicJsonObject(new ExpandoObject());
+
+            dynamic exObj = new ExpandoObject();
+
+            exObj.ResidentMediaList = media.GroupBy(m => m.Resident)
+                .Select(files => new { files.First().Resident, Files = files })
+                .Select(x => new
+                {
+                    Resident = new
+                    {
+                        x.Resident.Id,
+                        x.Resident.FirstName,
+                        x.Resident.LastName,
+                        x.Resident.Gender,
+                        x.Resident.GameDifficultyLevel
+                    },
+                    MediaResponseType = x.Files
+                        .GroupBy(rt => rt.ResponseType)
+                        .Select(mediaFiles => new { mediaFiles.First().ResponseType, MediaFiles = mediaFiles })
+                        .Select(mf => new
+                        {
+                            ResponseType = new
+                            {
+                                mf.ResponseType.Id,
+                                mf.ResponseType.Description,
+                                ResponseTypeCatgory = new
+                                {
+                                    mf.ResponseType.ResponseTypeCategory.Id,
+                                    mf.ResponseType.ResponseTypeCategory.Description
+                                }
+                            },
+                            Paths = mf.MediaFiles
+                                .GroupBy(pt => pt.MediaPathType)
+                                .Select(files => new { files.First().MediaPathType, Files = files })
                                 .Select(pt => new
                                 {
                                     MediaPathType = new

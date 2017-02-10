@@ -349,7 +349,7 @@ function DisableScreen() {
                     });
 
                     BootstrapDialog.show({
-                        title: title + " Residents linked to the file: \n" +
+                        title: title + " Profiles linked to the <b>" + mediaPathTypeDesc + "</b> file: \n" +
                             "<b>" + row.filename + "</b>",
                         message: $("<div></div>").append(message),
 

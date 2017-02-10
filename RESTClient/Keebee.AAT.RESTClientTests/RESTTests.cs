@@ -15,7 +15,7 @@ namespace Keebee.AAT.RESTClientTests
         public void GetLinkedResidentMedia()
         {
             // Act
-            var residentMedia = _client.GetResidentMediaLinked();
+            var residentMedia = _client.GetLinkedResidentMedia();
 
             // Assert
             Assert.IsNotNull(residentMedia);

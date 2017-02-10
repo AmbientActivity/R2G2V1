@@ -221,8 +221,13 @@ namespace Keebee.AAT.BusinessRules
             var sharedMedia = _opsClient.GetMediaFilesForPath(mediaSourcePath.SharedLibrary);
             var ambientMedia = _opsClient.GetMediaFilesForPath(mediaSourcePath.Ambient);
             var catsMedia = _opsClient.GetMediaFilesForPath(mediaSourcePath.Cats);
-            var linkedResidentFiles = _opsClient.GetResidentMediaLinked()
+
+            var linkedResidentMediaFiles = _opsClient.GetLinkedResidentMedia()
                 .SelectMany(x => x.MediaResponseType.Paths)
+                .SelectMany(x => x.Files);
+
+            var linkedPublicMediaFiles = _opsClient.GetLinkedPublicMedia().MediaFiles
+                .SelectMany(x => x.Paths)
                 .SelectMany(x => x.Files);
 
             var sharedFileList = sharedMedia.SelectMany(p =>
@@ -231,7 +236,9 @@ namespace Keebee.AAT.BusinessRules
 
                 return p.Files.Select(f =>
                 {
-                    var numLinkedResidentProfiles = linkedResidentFiles.Count(x => x.StreamId == f.StreamId);
+                    var numLinkedResidentProfiles = linkedResidentMediaFiles.Count(x => x.StreamId == f.StreamId);
+                    var isLinkedToPublicProfile = linkedPublicMediaFiles.Any(x => x.StreamId == f.StreamId);
+
                     return new
                     {
                         f.StreamId,
@@ -240,7 +247,7 @@ namespace Keebee.AAT.BusinessRules
                         f.FileType,
                         mediaPathType.Path,
                         MediaPathTypeId = mediaPathType.Id,
-                        NumLinkedProfiles = numLinkedResidentProfiles
+                        NumLinkedProfiles = numLinkedResidentProfiles + (isLinkedToPublicProfile ? 1 : 0)
                     };
                 });
             });

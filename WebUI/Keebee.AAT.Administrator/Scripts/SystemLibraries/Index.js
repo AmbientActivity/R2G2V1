@@ -305,8 +305,8 @@ function DisableScreen() {
                     self.showImagePreview(row);
                 };
 
-                self.showLinkedProfiles = function (row) {
-                    self.showFeatureNotDoneYetDialog();
+                self.showLinkedProfilesDialog = function (row) {
+                    self.showProfilesLinkedDialog(row);
                 };
 
                 self.showSelectedFileDeleteDialog = function () {
@@ -326,6 +326,39 @@ function DisableScreen() {
                                 cssClass: "btn-danger",
                                 action: function (dialog) {
                                     self.deleteSelected();
+                                    dialog.close();
+                                }
+                            }
+                        ]
+                    });
+                };
+
+                self.showProfilesLinkedDialog = function (row) {
+                    var message;
+                    var title = "<span class='glyphicon glyphicon-link' style='color: #fff'></span>";
+                    var mediaPathTypeDesc = self.mediaPathType().shortdescription;
+
+                    $.ajax({
+                        type: "GET",
+                        async: false,
+                        data: { streamId: row.streamid },
+                        url: site.url + "SystemLibraries/GetLinkedResidentsView/",
+                        success: function (data) {
+                            message = data;
+                        }
+                    });
+
+                    BootstrapDialog.show({
+                        title: title + " Residents linked to the file: \n" +
+                            "<b>" + row.filename + "</b>",
+                        message: $("<div></div>").append(message),
+
+                        closable: false,
+                        buttons: [
+                            {
+                                label: "OK",
+                                cssClass: "btn-primary",
+                                action: function (dialog) {
                                     dialog.close();
                                 }
                             }
@@ -509,6 +542,13 @@ function DisableScreen() {
                     self.selectAllIsSelected(checked);
                     $("#chk_all").prop("checked", checked);
                 };
+
+                self.mediaPathType = function () {
+                    return self.mediaPathTypes()
+                        .filter(function (value) {
+                            return value.id === self.selectedMediaPathType();
+                        })[0];
+                }
             };
 
             //---------------------------------------------- VIEW MODEL (END) -----------------------------------------------------

@@ -1,4 +1,6 @@
-﻿namespace Keebee.AAT.Administrator.ViewModels
+﻿using System.Collections.Generic;
+
+namespace Keebee.AAT.Administrator.ViewModels
 {
     public class SystemLibrariesViewModel
     {
@@ -7,5 +9,11 @@
         public int? SelectedMediaPathType { get; set; }
         public string UploaderHtml { get; set; }
         public string UploadedMessage { get; set; }
+    }
+
+    public class LinkedProfilesViewModel
+    {
+        public IEnumerable<ResidentViewModel> Residents { get; set; }
+        public string NoAvailableMediaMessage { get; set; }
     }
 }

@@ -33,10 +33,12 @@ namespace Keebee.AAT.RESTClient
         User GetUser(int userId);
         User GetUserByUsername(string username);
 
+
         // user roles
         IEnumerable<UserRole> GetUserRoles();
         UserRole GetUserRole(int userRoleId);
         IEnumerable<UserRoleSingle> GetRolesByUser(int userId);
+
 
         // resident
         IEnumerable<Resident> GetResidents();
@@ -45,6 +47,7 @@ namespace Keebee.AAT.RESTClient
         Resident GetResidentByNameGender(string firstName, string lastName, string gender);
         bool ResidentExists(int residentId);
         ActiveResident GetActiveResident();
+
 
         // media files
         MediaFileSingle GetMediaFile(Guid streamId);
@@ -56,6 +59,7 @@ namespace Keebee.AAT.RESTClient
         IEnumerable<MediaPathType> GetMediaPathTypes();
         MediaPathType GetMediaPathType(int mediaPathTypeId);
 
+
         // public media files
         PublicMediaFile GetPublicMediaFile(int id);
         PublicMedia GetPublicMediaFiles();
@@ -65,12 +69,15 @@ namespace Keebee.AAT.RESTClient
         PublicMediaFile GetPublicMediaFileForResponseTypeFilename(int responseTypeId, string filename);
         int[] GetPublicMediaFileIdsForStreamId(Guid streamId);
 
+
         // resident media files
         IEnumerable<ResidentMedia> GetResidentMediaFiles();
         ResidentMediaFile GetResidentMediaFile(int id);
         ResidentMedia GetResidentMediaFilesForResident(int residentId);
         ResidentMediaResponseType GetResidentMediaFilesForResidentResponseType(int residentId, int responseTypeId);
+        IEnumerable<ResidentMediaResponseType> GetResidentMediaLinked();
         int[] GetResidentMediaFileIdsForStreamId(Guid streamId);
+
 
         // event logs
         IEnumerable<ActivityEventLog> GetActivityEventLogsForDate(string date);
@@ -177,6 +184,7 @@ namespace Keebee.AAT.RESTClient
         private const string UrlResidentMediaFile = "residentmediafiles/{0}";
         private const string UrlResidentMediaFilesForResident = "residentmediafiles?residentId={0}";
         private const string UrlResidentMediaFilesForResidentResponseType = "residentmediafiles?residentId={0}&responseTypeId={1}";
+        private const string UrlResidentMediaLinked = "residentmediafiles/linked";
         private const string UrlResidentMediaFileIdsForStreamId = "residentmediafiles/ids?streamId={0}";
 
         // active resident event logs
@@ -757,6 +765,17 @@ namespace Keebee.AAT.RESTClient
             return mediaResponseType;
         }
 
+        public IEnumerable<ResidentMediaResponseType> GetResidentMediaLinked()
+        {
+            var data = Get(UrlResidentMediaLinked);
+            if (data == null) return null;
+
+            var serializer = new JavaScriptSerializer();
+            var mediaResponseTypeList = serializer.Deserialize<ResidentMediaResponseTypeList>(data).ResidentMediaList;
+
+            return mediaResponseTypeList;
+        }
+
         public int[] GetResidentMediaFileIdsForStreamId(Guid streamId)
         {
             var data = Get(string.Format(UrlResidentMediaFileIdsForStreamId, streamId));
@@ -768,6 +787,7 @@ namespace Keebee.AAT.RESTClient
             return ids;
         }
 
+        //
         // POST
 
         public int PostUser(User user)

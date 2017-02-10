@@ -8,6 +8,7 @@ using CuteWebUI;
 using System.Linq;
 using System.Web.Mvc;
 using System;
+using System.Collections.Generic;
 using System.IO;
 
 namespace Keebee.AAT.Administrator.Controllers
@@ -173,6 +174,13 @@ namespace Keebee.AAT.Administrator.Controllers
 
         [HttpGet]
         [Authorize]
+        public PartialViewResult GetLinkedResidentsView(Guid streamId)
+        {
+            return PartialView("_LinkedResidentMedia", LoadLinkedResidentsViewModel(streamId));
+        }
+
+        [HttpGet]
+        [Authorize]
         public PartialViewResult GetImageViewerView(Guid streamId, string fileType)
         {
             var rules = new ImageViewerRules { OperationsClient = _opsClient };
@@ -204,6 +212,46 @@ namespace Keebee.AAT.Administrator.Controllers
                 Title = "Shared/System Libraries",
                 AddButtonText = $"Upload {rules.GetMediaPathShortDescription(mediaPathTypeId)}",
                 SelectedMediaPathType = mediaPathTypeId ?? MediaPathTypeId.Music
+            };
+
+            return vm;
+        }
+
+        private LinkedProfilesViewModel LoadLinkedResidentsViewModel(Guid streamId)
+        {
+            var media = _opsClient.GetResidentMediaLinked();
+
+            var residents = media.GroupBy(m => m.Resident)
+                .Select(files => new { files.First().Resident, Files = files })
+                .Select(x => new
+                {
+                    Resident = new
+                    {
+                        x.Resident.Id,
+                        x.Resident.FirstName,
+                        x.Resident.LastName,
+                        x.Resident.Gender,
+                        x.Resident.GameDifficultyLevel
+                    },
+                    LinkedFiles = x.Files
+                        .GroupBy(rt => rt.MediaResponseType)
+                        .Select(mediaFiles => new { mediaFiles.First().MediaResponseType, MediaFiles = mediaFiles })
+                        .SelectMany(y => y.MediaFiles)
+                        .Select(y => y.MediaResponseType)
+                        .SelectMany(y => y.Paths)
+                        .SelectMany(y => y.Files)
+                        .Where(f => f.StreamId == streamId)
+                }).Where(r => r.LinkedFiles.Any());
+
+            var vm = new LinkedProfilesViewModel
+            {
+                Residents = residents
+                .Select(r => new ResidentViewModel
+                {
+                    FirstName = r.Resident.FirstName,
+                    LastName = r.Resident.LastName
+                }),
+                NoAvailableMediaMessage = "No residents are linked to this file."
             };
 
             return vm;

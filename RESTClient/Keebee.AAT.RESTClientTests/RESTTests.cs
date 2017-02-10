@@ -12,6 +12,16 @@ namespace Keebee.AAT.RESTClientTests
         readonly OperationsClient _client = new OperationsClient();
 
         [TestMethod]
+        public void GetLinkedResidentMedia()
+        {
+            // Act
+            var residentMedia = _client.GetResidentMediaLinked();
+
+            // Assert
+            Assert.IsNotNull(residentMedia);
+        }
+
+        [TestMethod]
         public void GetResidentWithMedia()
         {
             // Arrange

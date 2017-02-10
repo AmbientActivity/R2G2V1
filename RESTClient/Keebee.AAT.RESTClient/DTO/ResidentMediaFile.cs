@@ -17,6 +17,11 @@ namespace Keebee.AAT.RESTClient
         public ResidentMediaResponseType ResidentMedia;
     }
 
+    public class ResidentMediaResponseTypeList
+    {
+        public IEnumerable<ResidentMediaResponseType> ResidentMediaList;
+    }
+
     public class ResidentMediaResponseType
     {
         public Resident Resident { get; set; }

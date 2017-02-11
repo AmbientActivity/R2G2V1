@@ -7,12 +7,13 @@ TRUNCATE TABLE SystemMediaFiles
 DECLARE @pathSystemLibrary varchar(max)
 SET @pathSystemLibrary = FileTableRootPath() + '\Media\SystemLibrary\'
 
---- Activity 3 - ResponseType "Cats" ---
+--- ResponseType "Ambient" ---
 INSERT INTO SystemMediaFiles (ResponseTypeId, MediaPathTypeId, StreamId)
-SELECT 3, 9, StreamId FROM MediaFiles WHERE [Path] = @pathSystemLibrary + 'videos\cats\' AND [FileType] = 'mp4'
+SELECT 8, 9, StreamId FROM MediaFiles WHERE [Path] = @pathSystemLibrary + 'videos\ambient\' AND [FileType] = 'mp4'
 
+--- ResponseType "Cats" ---
 INSERT INTO SystemMediaFiles (ResponseTypeId, MediaPathTypeId, StreamId)
-SELECT 8, 10, StreamId FROM MediaFiles WHERE [Path] = @pathSystemLibrary + 'videos\ambient\' AND [FileType] = 'mp4'
+SELECT 3, 10, StreamId FROM MediaFiles WHERE [Path] = @pathSystemLibrary + 'videos\cats\' AND [FileType] = 'mp4'
 
 -- VIEW THE RESULTS --
 

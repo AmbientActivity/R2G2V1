@@ -1,5 +1,5 @@
 ﻿using Keebee.AAT.Administrator.ViewModels;
-using Keebee.AAT.RESTClient;
+using Keebee.AAT.ApiClient;
 using Keebee.AAT.MessageQueuing;
 using Keebee.AAT.BusinessRules;
 using Keebee.AAT.Shared;

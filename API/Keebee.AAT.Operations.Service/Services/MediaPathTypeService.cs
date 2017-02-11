@@ -10,6 +10,7 @@ namespace Keebee.AAT.Operations.Service.Services
     {
         IEnumerable<MediaPathType> Get();
         MediaPathType Get(int id);
+        IEnumerable<MediaPathType> Get(bool isSystem);
         void Post(MediaPathType mediaPathType);
         void Patch(int id, MediaPathType mediaPathType);
         void Delete(int id);
@@ -35,6 +36,21 @@ namespace Keebee.AAT.Operations.Service.Services
                 .GetValue();
 
             return mediaPathType;
+        }
+
+        public IEnumerable<MediaPathType> Get(bool isSystem)
+        {
+            var container = new Container(new Uri(ODataHost.Url));
+
+            var mediaPathTypes = (isSystem)
+                ? container.MediaPathTypes
+                    .AddQueryOption("$filter", "IsSystem")
+                    .AsEnumerable()
+                : container.MediaPathTypes
+                    .AddQueryOption("$filter", "IsSystem eq false")
+                    .AsEnumerable();
+
+            return mediaPathTypes;
         }
 
         public void Post(MediaPathType mediaPathType)

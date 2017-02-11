@@ -1,4 +1,4 @@
-﻿using Keebee.AAT.RESTClient;
+﻿using Keebee.AAT.ApiClient;
 using Keebee.AAT.Administrator.ViewModels;
 using Keebee.AAT.Shared;
 using Keebee.AAT.Administrator.FileManagement;
@@ -85,7 +85,7 @@ namespace Keebee.AAT.Administrator.Controllers
         public JsonResult GetData(int mediaPathTypeId)
         {
             var mediaPathTypes = _opsClient.GetMediaPathTypes()
-                .Where(x => x.Id != MediaPathTypeId.PersonalImages && x.Id != MediaPathTypeId.HomeMovies)
+                .Where(x => x.IsLinkable)
                 .OrderBy(p => p.Description);
             var fileList = GetMediaFiles();
 
@@ -97,7 +97,7 @@ namespace Keebee.AAT.Administrator.Controllers
                     x.Id,
                     x.Description,
                     x.ShortDescription,
-                    IsPreviewable = PublicProfileRules.IsMediaTypePreviewable(x.Id)
+                    x.IsPreviewable
                 })
             };
 
@@ -155,7 +155,7 @@ namespace Keebee.AAT.Administrator.Controllers
                     var publicMediaFile = _opsClient.GetPublicMediaFile(id);
                     if (publicMediaFile == null) continue;
 
-                    if (publicMediaFile.MediaFile.IsShared)
+                    if (publicMediaFile.MediaFile.IsLinked)
                     {
                         rules.DeletePublicMediaFile(id);
                     }
@@ -209,9 +209,9 @@ namespace Keebee.AAT.Administrator.Controllers
 
         [HttpGet]
         [Authorize]
-        public PartialViewResult GetSharedLibarayAddView(int mediaPathTypeId)
+        public PartialViewResult GetSharedLibarayLinkView(int mediaPathTypeId)
         {
-            return PartialView("_SharedLibraryAdd", LoadSharedLibaryAddViewModel(mediaPathTypeId));
+            return PartialView("_SharedLibraryLink", LoadSharedLibaryAddViewModel(mediaPathTypeId));
         }
 
         [HttpGet]
@@ -236,7 +236,7 @@ namespace Keebee.AAT.Administrator.Controllers
                         StreamId = streamId,
                         ResponseTypeId = PublicProfileRules.GetResponseTypeId(mediaPathTypeId),
                         MediaPathTypeId = mediaPathTypeId,
-                        IsShared = true
+                        IsLinked = true
                     };
 
                     _opsClient.PostPublicMediaFile(pmf);
@@ -267,7 +267,7 @@ namespace Keebee.AAT.Administrator.Controllers
                 StreamId = streamId,
                 ResponseTypeId = PublicProfileRules.GetResponseTypeId(mediaPathTypeId),
                 MediaPathTypeId = mediaPathTypeId,
-                IsShared = false
+                IsLinked = false
             };
 
             _opsClient.PostPublicMediaFile(mf);
@@ -287,12 +287,12 @@ namespace Keebee.AAT.Administrator.Controllers
             return vm;
         }
 
-        private SharedLibraryAddViewModel LoadSharedLibaryAddViewModel(int mediaPathTypeId)
+        private SharedLibraryLinkViewModel LoadSharedLibaryAddViewModel(int mediaPathTypeId)
         {
             var rules = new PublicProfileRules { OperationsClient = _opsClient };
             var files = rules.GetAvailableSharedMediaFiles(mediaPathTypeId);
 
-            var vm = new SharedLibraryAddViewModel
+            var vm = new SharedLibraryLinkViewModel
             {
                 SharedFiles = files
                 .Select(f => new SharedLibraryFileViewModel
@@ -335,7 +335,7 @@ namespace Keebee.AAT.Administrator.Controllers
                             Filename = file.Filename.Replace($".{file.FileType}", string.Empty),
                             FileType = file.FileType.ToUpper(),
                             FileSize = file.FileSize,
-                            IsShared = file.IsShared,
+                            IsLinked = file.IsLinked,
                             Path = $@"{pathRoot}\{path.MediaPathType.Path}",
                             MediaPathTypeId = path.MediaPathType.Id
                         };

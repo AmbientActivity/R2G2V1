@@ -26,6 +26,7 @@ namespace Keebee.AAT.DataAccess
             builder.EntitySet<MediaPathType>("MediaPathTypes");
             builder.EntitySet<ResidentMediaFile>("ResidentMediaFiles");
             builder.EntitySet<PublicMediaFile>("PublicMediaFiles");
+            builder.EntitySet<SystemMediaFile>("SystemMediaFiles");
             builder.EntitySet<Resident>("Residents");
             builder.EntitySet<ActiveResident>("ActiveResidents");
             builder.EntitySet<User>("Users");

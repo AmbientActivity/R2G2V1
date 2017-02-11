@@ -20,7 +20,7 @@ namespace Keebee.AAT.Administrator.ViewModels
         public int FileSize { get; set; }
         public string Path { get; set; }
         public int MediaPathTypeId { get; set; }
-        public bool IsShared { get; set; }
+        public bool IsLinked { get; set; }
     }
 
     public class PublicMediaFileViewModel
@@ -31,7 +31,7 @@ namespace Keebee.AAT.Administrator.ViewModels
         public string Filename { get; set; }
         public string FileType { get; set; }
         public int FileSize { get; set; }
-        public bool IsShared { get; set; }
+        public bool IsLinked { get; set; }
         public string Path { get; set; }
         public int MediaPathTypeId { get; set; }
     }

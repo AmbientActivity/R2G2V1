@@ -1,5 +1,5 @@
-﻿using Keebee.AAT.SystemEventLogging;
-using Keebee.AAT.RESTClient;
+﻿using Keebee.AAT.ApiClient;
+using Keebee.AAT.SystemEventLogging;
 using Keebee.AAT.MessageQueuing;
 using Keebee.AAT.Shared;
 using Keebee.AAT.BluetoothBeaconWatcherService.Beacon;
@@ -9,7 +9,6 @@ using System.Configuration;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Runtime.Remoting.Messaging;
 using System.ServiceProcess;
 using System.Timers;
 using System.Web.Script.Serialization;
@@ -29,7 +28,7 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
         private const int BeaconReadInterval = 1000;   // 1 second
 
         // operations api
-        private readonly IOperationsClient _opsClient;
+        private readonly IApiClient _opsClient;
 
         // event logger
         private readonly SystemEventLogger _systemEventLogger;

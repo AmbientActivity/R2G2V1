@@ -72,7 +72,7 @@ namespace Keebee.AAT.Operations.Controllers
                                 f.MediaFile.Filename,
                                 f.MediaFile.FileType,
                                 f.MediaFile.FileSize,
-                                f.IsShared
+                                f.IsLinked
                             })
                         }).OrderBy(o => o.MediaPathType.Id)
                 }).OrderBy(o => o.ResponseType.Id);
@@ -115,7 +115,7 @@ namespace Keebee.AAT.Operations.Controllers
                     publicMediaFile.MediaFile.Filename,
                     publicMediaFile.MediaFile.FileType,
                     publicMediaFile.MediaFile.FileSize,
-                    publicMediaFile.IsShared
+                    publicMediaFile.IsLinked
             };
 
             return new DynamicJsonObject(exObj);
@@ -171,7 +171,7 @@ namespace Keebee.AAT.Operations.Controllers
                                 f.MediaFile.Filename,
                                 f.MediaFile.FileType,
                                 f.MediaFile.FileSize,
-                                f.IsShared
+                                f.IsLinked
                             })
                         }).OrderBy(o => o.MediaPathType.Id)
                 }).SingleOrDefault();
@@ -224,7 +224,7 @@ namespace Keebee.AAT.Operations.Controllers
                                 f.MediaFile.Filename,
                                 f.MediaFile.FileType,
                                 f.MediaFile.FileSize,
-                                f.IsShared
+                                f.IsLinked
                             })
                         }).OrderBy(o => o.MediaPathType.Id)
                 });
@@ -265,7 +265,7 @@ namespace Keebee.AAT.Operations.Controllers
                                 x.MediaPathType.Path,
                                 x.MediaPathType.Description,
                                 x.MediaPathType.ShortDescription,
-                                x.IsShared
+                                x.IsLinked
                         }
                     });
 
@@ -343,7 +343,7 @@ namespace Keebee.AAT.Operations.Controllers
                                 f.MediaFile.Filename,
                                 f.MediaFile.FileType,
                                 f.MediaFile.FileSize,
-                                f.IsShared
+                                f.IsLinked
                             })
                         }).OrderBy(o => o.MediaPathType.Id)
                 }).OrderBy(o => o.ResponseType.Id);
@@ -385,7 +385,7 @@ namespace Keebee.AAT.Operations.Controllers
                             x.MediaPathType.Path,
                             x.MediaPathType.Description,
                             x.MediaPathType.ShortDescription,
-                            x.IsShared
+                            x.IsLinked
                         }
                     });
 

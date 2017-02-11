@@ -1,4 +1,4 @@
-﻿using Keebee.AAT.RESTClient;
+﻿using Keebee.AAT.ApiClient;
 using Keebee.AAT.Shared;
 using System;
 using System.Collections.Generic;
@@ -41,42 +41,9 @@ namespace Keebee.AAT.BusinessRules
 
         public MediaPathType GetMediaPathType(int? mediaPathTypeId)
         {
-            MediaPathType mediaPathType = null;
-            var mediaSourcePath = new MediaSourcePath();
-
-            if (mediaPathTypeId != null)
-            {
-                if (mediaPathTypeId > 0)
-                    mediaPathType = _opsClient.GetMediaPathType((int) mediaPathTypeId);
-                else
-                {
-                    switch (mediaPathTypeId)
-                    {
-                        case MediaPathTypeId.AmbientVideos:
-                            mediaPathType = new MediaPathType
-                            {
-                                Id = MediaPathTypeId.AmbientVideos,
-                                Description = SystemMediaPathType.AmbientDescription,
-                                ShortDescription = SystemMediaPathType.AmbientShortDescription,
-                                Path = mediaSourcePath.Ambient
-                            };
-                            break;
-                        case MediaPathTypeId.CatsVideos:
-                            mediaPathType = new MediaPathType
-                            {
-                                Id = MediaPathTypeId.CatsVideos,
-                                Description = SystemMediaPathType.CatsDescription,
-                                ShortDescription = SystemMediaPathType.CatsShortDescription,
-                                Path = mediaSourcePath.Cats
-                            };
-                            break;
-                    }
-                }
-            }
-            else
-            {
-                mediaPathType = _opsClient.GetMediaPathType(MediaPathTypeId.GeneralImages);
-            }
+            var mediaPathType = mediaPathTypeId != null 
+                ? _opsClient.GetMediaPathType((int) mediaPathTypeId) 
+                : _opsClient.GetMediaPathType(MediaPathTypeId.GeneralImages);
 
             return mediaPathType;
         }
@@ -182,8 +149,8 @@ namespace Keebee.AAT.BusinessRules
                 case MediaPathTypeId.MatchingGameShapes:
                     isValid = name.Contains("png");
                     break;
-                case MediaPathTypeId.AmbientVideos:
-                case MediaPathTypeId.CatsVideos:
+                case MediaPathTypeId.Ambient:
+                case MediaPathTypeId.Cats:
                     isValid = name.Contains("mp4");
                     break;
             }
@@ -217,27 +184,37 @@ namespace Keebee.AAT.BusinessRules
         public IEnumerable<object> GetFileList(IEnumerable<MediaPathType> mediaPathTypes)
         {
             var mediaSourcePath = new MediaSourcePath();
+            
+            // public linked media (for tooltip total linked)
+            var publicFilesLinked = new LinkedMediaFile[0];
+            var publicMediaLinked = _opsClient.GetLinkedPublicMedia();
+            if (publicMediaLinked != null)
+            {
+                publicFilesLinked = publicMediaLinked.MediaFiles
+                    .SelectMany(x => x.Paths)
+                    .SelectMany(x => x.Files).ToArray();
+            }
 
-            var sharedMedia = _opsClient.GetMediaFilesForPath(mediaSourcePath.SharedLibrary);
-            var ambientMedia = _opsClient.GetMediaFilesForPath(mediaSourcePath.Ambient);
-            var catsMedia = _opsClient.GetMediaFilesForPath(mediaSourcePath.Cats);
+            // resident linked media (for tooltip total linked)
+            var residentFilesLinked = new LinkedMediaFile[0];
+            var residentMediaLinked = _opsClient.GetLinkedResidentMedia();
+            if (residentMediaLinked != null)
+            {
+                residentFilesLinked = residentMediaLinked
+                    .SelectMany(x => x.MediaResponseType.Paths)
+                    .SelectMany(x => x.Files).ToArray();
+            }
 
-            var linkedResidentMediaFiles = _opsClient.GetLinkedResidentMedia()
-                .SelectMany(x => x.MediaResponseType.Paths)
-                .SelectMany(x => x.Files);
-
-            var linkedPublicMediaFiles = _opsClient.GetLinkedPublicMedia().MediaFiles
-                .SelectMany(x => x.Paths)
-                .SelectMany(x => x.Files);
-
+            // shared library
+            var sharedMedia = _opsClient.GetMediaFilesForPath(mediaSourcePath.SharedLibrary);   
             var sharedFileList = sharedMedia.SelectMany(p =>
             {
                 var mediaPathType = GetMediaPathTypeFromRawPath(p.Path, mediaPathTypes);
 
                 return p.Files.Select(f =>
                 {
-                    var numLinkedResidentProfiles = linkedResidentMediaFiles.Count(x => x.StreamId == f.StreamId);
-                    var isLinkedToPublicProfile = linkedPublicMediaFiles.Any(x => x.StreamId == f.StreamId);
+                    var numLinkedResidentProfiles = residentFilesLinked.Count(x => x.StreamId == f.StreamId);
+                    var isLinkedToPublicProfile = publicFilesLinked.Any(x => x.StreamId == f.StreamId);
 
                     return new
                     {
@@ -252,63 +229,70 @@ namespace Keebee.AAT.BusinessRules
                 });
             });
 
-            var ambientFileList = ambientMedia.SelectMany(p => p.Files.Select(f => new
+            // system library
+            var systemMedia = _opsClient.GetMediaFilesForPath(mediaSourcePath.SystemLibrary);
+            var systemFileList = systemMedia.SelectMany(p => p.Files.Select(f =>
             {
-                f.StreamId,
-                f.Filename,
-                f.FileSize,
-                f.FileType,
-                Path = mediaSourcePath.Ambient,
-                MediaPathTypeId = MediaPathTypeId.AmbientVideos,
-                NumLinkedProfiles = 0
+                var mediaPathType = GetMediaPathTypeFromRawPath(p.Path, mediaPathTypes);
+
+                return new
+                {
+                    f.StreamId,
+                    f.Filename,
+                    f.FileSize,
+                    f.FileType,
+                    mediaPathType.Path,
+                    MediaPathTypeId = mediaPathType.Id,
+                    NumLinkedProfiles = 0
+                };
             }));
 
-            var catsFileList = catsMedia.SelectMany(p => p.Files.Select(f => new
-            {
-                f.StreamId,
-                f.Filename,
-                f.FileSize,
-                f.FileType,
-                Path = mediaSourcePath.Ambient,
-                MediaPathTypeId = MediaPathTypeId.CatsVideos,
-                NumLinkedProfiles = 0
-            }));
-
-            return sharedFileList.Union(ambientFileList).Union(catsFileList);
+            return sharedFileList.Union(systemFileList);
         }
 
         public IEnumerable<object> GetMediaPathTypeList(IEnumerable<MediaPathType> mediaPathTypes)
         {
-            var mediaSourcePath = new MediaSourcePath();
-
             return mediaPathTypes.Select(x => new
             {
                 x.Id,
                 x.Description,
                 x.ShortDescription,
-                IsPreviewable = PublicProfileRules.IsMediaTypePreviewable(x.Id),
-                IsSharable = true
-            }).Union(new List<object>
-            {
-                new
-                {
-                    Id = MediaPathTypeId.AmbientVideos,
-                    Description = SystemMediaPathType.AmbientDescription,
-                    ShortDescription = SystemMediaPathType.AmbientShortDescription,
-                    Path = mediaSourcePath.Ambient,
-                    IsPreviewable = false,
-                    IsSharable = false
-                },
-                new
-                {
-                    Id = MediaPathTypeId.CatsVideos,
-                    Description = SystemMediaPathType.CatsDescription,
-                    ShortDescription = SystemMediaPathType.CatsShortDescription,
-                    Path = mediaSourcePath.Cats,
-                    IsPreviewable = false,
-                    IsSharable = false
-                }
+                x.IsPreviewable,
+                IsLinkable = true
             });
+        }
+
+        public IEnumerable<Resident> GetLinkedProfiles(Guid streamId)
+        {
+
+            var publicMedia = _opsClient.GetLinkedPublicMediaForStreamId(streamId);
+            var publicProfile = new List<Resident>();
+
+            if (publicMedia.MediaFiles != null)
+            {
+                publicProfile.Add(new Resident
+                {
+                    Id = PublicMediaSource.Id,
+                    FirstName = PublicMediaSource.Description
+                });
+            }
+
+            var residentMedia = _opsClient.GetLinkedResidentMediaForStreamId(streamId);
+            var residentProfiles = new List<Resident>();
+
+            if (residentMedia != null)
+            {
+                var residents = residentMedia
+                    .Select(x => new Resident
+                    {
+                        Id = x.Resident.Id,
+                        FirstName = x.Resident.FirstName,
+                        LastName = x.Resident.LastName
+                    }).OrderBy(x => x.LastName).ThenBy(x => x.FirstName);
+                residentProfiles.AddRange(residents);
+            }
+
+            return publicProfile.Union(residentProfiles);
         }
     }
 }

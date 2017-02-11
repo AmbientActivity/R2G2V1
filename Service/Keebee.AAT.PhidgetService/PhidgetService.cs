@@ -2,7 +2,7 @@
 using Keebee.AAT.Shared;
 using Keebee.AAT.SystemEventLogging;
 using Keebee.AAT.ServiceModels;
-using Keebee.AAT.RESTClient;
+using Keebee.AAT.ApiClient;
 using Phidgets;
 using Phidgets.Events;
 using System.Configuration;
@@ -42,7 +42,7 @@ namespace Keebee.AAT.PhidgetService
     {
 
         // operations REST client
-        private readonly IOperationsClient _opsClient;
+        private readonly IApiClient _opsClient;
 
 #if DEBUG
         private readonly CustomMessageQueue _messageQueuePhidgetMonitor;

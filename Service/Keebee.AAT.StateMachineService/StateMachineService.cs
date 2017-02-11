@@ -1,5 +1,5 @@
 ﻿using Keebee.AAT.ServiceModels;
-using Keebee.AAT.RESTClient;
+using Keebee.AAT.ApiClient;
 using Keebee.AAT.MessageQueuing;
 using Keebee.AAT.Shared;
 using Keebee.AAT.SystemEventLogging;
@@ -14,7 +14,7 @@ namespace Keebee.AAT.StateMachineService
     public partial class StateMachineService : ServiceBase
     {
         // operations REST client
-        private readonly IOperationsClient _opsClient;
+        private readonly IApiClient _opsClient;
 
         // message queue sender
         private readonly CustomMessageQueue _messageQueueResponse;

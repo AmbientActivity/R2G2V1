@@ -1,10 +1,10 @@
 ﻿using Keebee.AAT.Display.Properties;
-using Keebee.AAT.RESTClient;
+using Keebee.AAT.ApiClient;
 using Keebee.AAT.SystemEventLogging;
 using Keebee.AAT.Display.Extensions;
-using Keebee.AAT.Display.Helpers;
 using Keebee.AAT.Shared;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Diagnostics;
 using System.Drawing;
@@ -75,8 +75,13 @@ namespace Keebee.AAT.Display
                 {
                     Controls.Add(mediaPlayer);
 
-                    var mediaFileQuery = new MediaFileQuery { OperationsClient = _opsClient };
-                    var files = mediaFileQuery.GetMediaFilesForSystemResponseType(ResponseTypeId.Ambient);
+                    var mediaPathType = _opsClient.GetMediaPathType(MediaPathTypeId.Ambient);
+                    var ambientMediaPaths = _opsClient.GetSystemMediaFilesForResponseType(ResponseTypeId.Ambient)
+                        .MediaResponseType.Paths;
+
+                    var files = ambientMediaPaths.SelectMany(p => p.Files)
+                        .Select(f => $@"{_mediaPath.MediaRoot}\{_mediaPath.SystemLibrary}\{mediaPathType.Path}\{f.Filename}")
+                        .ToArray();
 
                     if (files.Any())
                     {

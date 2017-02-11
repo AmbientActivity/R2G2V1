@@ -1,4 +1,4 @@
-﻿using Keebee.AAT.RESTClient;
+﻿using Keebee.AAT.ApiClient;
 using Keebee.AAT.MessageQueuing;
 using Keebee.AAT.Shared;
 using Keebee.AAT.SystemEventLogging;
@@ -439,9 +439,9 @@ namespace Keebee.AAT.Display
                 {
                     var mediaFileQuery = new MediaFileQuery { OperationsClient = _opsClient };
                        
-                    var mediaFiles = responseTypeId == ResponseTypeId.Television || responseTypeId == ResponseTypeId.Radio
-                        ? mediaFileQuery.GetFilesForResponseType(_activeResident.Id, responseTypeId) 
-                        : mediaFileQuery.GetMediaFilesForSystemResponseType(responseTypeId);
+                    var mediaFiles = responseTypeId == ResponseTypeId.Cats
+                        ? mediaFileQuery.GetFilesForSystemResponseType(responseTypeId, MediaPathTypeId.Cats)
+                        : mediaFileQuery.GetFilesForResponseType(_activeResident.Id, responseTypeId);
 
                     if (!mediaFiles.Any()) return;
 

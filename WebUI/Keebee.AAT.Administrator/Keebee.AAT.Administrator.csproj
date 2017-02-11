@@ -337,7 +337,7 @@
     <Content Include="Views\VideoCaptures\Export.cshtml" />
     <Content Include="Scripts\jquery-3.1.1.slim.min.map" />
     <Content Include="Scripts\jquery-3.1.1.min.map" />
-    <Content Include="Views\Shared\_SharedLibraryAdd.cshtml" />
+    <Content Include="Views\Shared\_SharedLibraryLink.cshtml" />
     <Content Include="Views\SystemLibraries\Index.cshtml" />
     <Content Include="Views\SystemLibraries\_LinkedResidentMedia.cshtml" />
     <None Include="Web.Debug.config">
@@ -352,9 +352,9 @@
     <Folder Include="Content\themes\base\minified\images\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\RESTClient\Keebee.AAT.RESTClient\Keebee.AAT.RESTClient.csproj">
+    <ProjectReference Include="..\..\APIClient\Keebee.AAT.ApiClient\Keebee.AAT.ApiClient.csproj">
       <Project>{a1f90f14-bc01-4ef8-9b3e-a7fe4b1b7f9f}</Project>
-      <Name>Keebee.AAT.RESTClient</Name>
+      <Name>Keebee.AAT.ApiClient</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Shared\Keebee.AAT.Exporting\Keebee.AAT.Exporting.csproj">
       <Project>{97ca2119-5977-4de5-9c91-a64d97cb9035}</Project>

@@ -1,4 +1,4 @@
-﻿using Keebee.AAT.RESTClient;
+﻿using Keebee.AAT.ApiClient;
 using Keebee.AAT.Shared;
 using Keebee.AAT.Display.Extensions;
 using System.Linq;
@@ -49,7 +49,7 @@ namespace Keebee.AAT.Display.Helpers
                 .SelectMany(p => p.Files)
                 .Select(f =>
                     {
-                        var pathRoot = f.IsShared
+                        var pathRoot = f.IsLinked
                             ? $@"{_mediaPath.MediaRoot}\{_mediaPath.SharedLibrary}"
                             : $@"{_mediaPath.ProfileRoot}\{MediaSourceTypeId.Public}";
 
@@ -85,7 +85,7 @@ namespace Keebee.AAT.Display.Helpers
                 .SelectMany(p => p.Files)
                 .Select(f =>
                 {
-                    var pathRoot = f.IsShared
+                    var pathRoot = f.IsLinked
                         ? $@"{_mediaPath.MediaRoot}\{_mediaPath.SharedLibrary}"
                         : $@"{_mediaPath.ProfileRoot}\{MediaSourceTypeId.Public}";
 

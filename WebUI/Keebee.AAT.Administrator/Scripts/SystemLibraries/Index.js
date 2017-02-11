@@ -154,7 +154,7 @@ function DisableScreen() {
                             description: value.Description,
                             shortdescription: value.ShortDescription,
                             ispreviewable: value.IsPreviewable,
-                            issharable: value.IsSharable
+                            islinkable: value.IsLinkable
                         });
                     });
 
@@ -163,7 +163,7 @@ function DisableScreen() {
                     })[0];
 
                     self.isPreviewable(mediaPathType.ispreviewable);
-                    self.isSharable(mediaPathType.issharable);
+                    self.isSharable(mediaPathType.islinkable);
                 };
 
                 function enableDetail() {
@@ -258,7 +258,7 @@ function DisableScreen() {
                     })[0];
 
                     self.isPreviewable(mediaPathType.ispreviewable);
-                    self.isSharable(mediaPathType.issharable);
+                    self.isSharable(mediaPathType.islinkable);
                 });
 
                 self.filteredFiles = ko.computed(function () {

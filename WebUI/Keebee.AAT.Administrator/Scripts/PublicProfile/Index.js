@@ -136,7 +136,7 @@ function DisableScreen() {
                             filename: value.Filename,
                             filetype: value.FileType,
                             filesize: value.FileSize,
-                            isshared: value.IsShared,
+                            islinked: value.IsLinked,
                             path: value.Path,
                             mediapathtypeid: value.MediaPathTypeId,
                             isselected: false
@@ -179,7 +179,7 @@ function DisableScreen() {
                     arr.push({ title: "Name", sortable: true, sortKey: "filename", numeric: false, cssClass: "" });
                     arr.push({ title: "Type", sortable: true, sortKey: "filetype", numeric: false, cssClass: "col-filetype" });
                     arr.push({ title: "Size", sortable: true, sortKey: "filesize", numeric: true, cssClass: "col-filesize" });
-                    arr.push({ title: "Shared", sortable: true, sortKey: "isshared", numeric: true, cssClass: "col-isshared" });
+                    arr.push({ title: "Linked", sortable: true, sortKey: "islinked", numeric: true, cssClass: "col-islinked" });
                     return arr;
                 });
 
@@ -293,8 +293,8 @@ function DisableScreen() {
 
                 // ------------------
 
-                self.showAddFromSharedLibarayDialog = function () {
-                    self.showSharedLibrayAddDialog();
+                self.showLinkFromSharedLibarayDialog = function () {
+                    self.showSharedLibrayLinkDialog();
                 };
 
                 self.showDeleteSelectedDialog = function () {
@@ -305,16 +305,16 @@ function DisableScreen() {
                     self.showImagePreview(row);
                 };
 
-                self.showSharedLibrayAddDialog = function () {
+                self.showSharedLibrayLinkDialog = function () {
                     var message;
-                    var title = "<span class='glyphicon glyphicon-cd' style='color: #fff'></span>";
+                    var title = "<span class='glyphicon glyphicon-link' style='color: #fff'></span>";
                     var mediaPathTypeDesc = self.mediaPathType().shortdescription;
 
                     $.ajax({
                         type: "GET",
                         async: false,
                         data: {mediaPathTypeId: self.selectedMediaPathType()},
-                        url: site.url + "PublicProfile/GetSharedLibarayAddView/",
+                        url: site.url + "PublicProfile/GetSharedLibarayLinkView/",
                         success: function (data) {
                             message = data;
                         }

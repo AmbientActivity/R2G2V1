@@ -1,4 +1,4 @@
-﻿using Keebee.AAT.RESTClient;
+﻿using Keebee.AAT.ApiClient;
 using Keebee.AAT.Shared;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,30 +13,24 @@ namespace Keebee.AAT.Display.Helpers
             set { _opsClient = value; }
         }
 
+        private IEnumerable<MediaPathType> _mediaPathTypes;
+        public IEnumerable<MediaPathType> MediaPathTypes
+        {
+            set { _mediaPathTypes = value; }
+        }
+
         private readonly MediaSourcePath _mediaPath = new MediaSourcePath();
 
-        public string[] GetMediaFilesForSystemResponseType(int responseTypeId)
+        public string[] GetFilesForSystemResponseType(int responseTypeId, int mediaPathTypeId)
         {
-            string mediaPath = null;
-            var files = new string[0];
+            var mediaPathType = _mediaPathTypes.Single(x => x.Id == mediaPathTypeId);
+           var path = $@"{_mediaPath.SystemLibrary}\{mediaPathType.Path}";
 
-            switch (responseTypeId)
-            {
-                case ResponseTypeId.Cats:
-                    mediaPath = _mediaPath.Cats;
-                    break;
-                case ResponseTypeId.Ambient:
-                    mediaPath = _mediaPath.Ambient;
-                    break;
-            }
-
-            if (mediaPath != null)
-            {
-                files = _opsClient.GetMediaFilesForPath(mediaPath)
-                    .SelectMany(p => p.Files)
-                    .Select(f => $@"{_mediaPath.MediaRoot}\{mediaPath}\{f.Filename}")
-                    .ToArray();
-            }
+            var files = _opsClient.GetSystemMediaFilesForResponseType(responseTypeId)
+                .MediaResponseType.Paths
+                .SelectMany(p => p.Files)
+                .Select(f => $@"{_mediaPath.MediaRoot}\{path}\{f.Filename}")
+                .ToArray();
 
             return files;
         }
@@ -118,7 +112,7 @@ namespace Keebee.AAT.Display.Helpers
                     .OrderBy(f => f.Filename)
                     .Select(f =>
                     {
-                        var pathRoot = f.IsShared
+                        var pathRoot = f.IsLinked
                             ? $@"{_mediaPath.MediaRoot}\{_mediaPath.SharedLibrary}"
                             : $@"{_mediaPath.ProfileRoot}\{residentId}";
 

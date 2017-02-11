@@ -1,4 +1,4 @@
-﻿using Keebee.AAT.RESTClient;
+﻿using Keebee.AAT.ApiClient;
 using Keebee.AAT.Shared;
 using System;
 using System.Collections.Generic;
@@ -217,17 +217,17 @@ namespace Keebee.AAT.BusinessRules
             var mediaPath = GetMediaPath(mediaPathTypeId);
             var sharedPaths = _opsClient.GetMediaFilesForPath($@"{mediaSource.SharedLibrary}\{mediaPath}").ToArray();
             var responseTypeId = GetResponseTypeId(mediaPathTypeId);
-            var existingSharedMediaPaths = _opsClient.GetResidentMediaFilesForResidentResponseType(residentId, responseTypeId);
+            var existingLinkedMediaPaths = _opsClient.GetResidentMediaFilesForResidentResponseType(residentId, responseTypeId);
             IEnumerable<Guid> existingStreamIds = new List<Guid>();
 
-            if (existingSharedMediaPaths?.MediaResponseType != null)
+            if (existingLinkedMediaPaths?.MediaResponseType != null)
             {
-                if (existingSharedMediaPaths.MediaResponseType.Paths.Any())
+                if (existingLinkedMediaPaths.MediaResponseType.Paths.Any())
                 {
-                    existingStreamIds = existingSharedMediaPaths
+                    existingStreamIds = existingLinkedMediaPaths
                         .MediaResponseType.Paths
                         .SelectMany(f => f.Files)
-                        .Where(f => f.IsShared)
+                        .Where(f => f.IsLinked)
                         .Select(f => f.StreamId);
                 }
             }
@@ -247,31 +247,6 @@ namespace Keebee.AAT.BusinessRules
             var message = $"All available {mediaPathType} {hasHave} already been included in this profile.";
 
             return message;
-        }
-
-        public static bool IsMediaTypePreviewable(int mediaPathTypeId)
-        {
-            switch (mediaPathTypeId)
-            {
-                case MediaPathTypeId.GeneralImages:
-                case MediaPathTypeId.PersonalImages:
-                case MediaPathTypeId.MatchingGameShapes:
-                    return true;
-                default:
-                    return false;
-            }
-        }
-
-        public static bool IsMediaTypeSharable(int mediaPathTypeId)
-        {
-            switch (mediaPathTypeId)
-            {
-                case MediaPathTypeId.PersonalImages:
-                case MediaPathTypeId.HomeMovies:
-                    return false;
-                default:
-                    return true;
-            }
         }
     }
 }

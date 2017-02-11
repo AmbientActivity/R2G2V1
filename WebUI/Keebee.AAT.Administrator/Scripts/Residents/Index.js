@@ -219,10 +219,13 @@
                     if (r.gender === "M") messageGender = "his";
                     else messageGender = "her";
 
+                    var fullName = r.firstname;
+                    if (r.lastname != null) fullName = fullName + " " + r.lastname;
+
                     BootstrapDialog.show({
                         type: BootstrapDialog.TYPE_DANGER,
                         title: "Delete Resident?",
-                        message: "Permanently delete the resident <i><b>" + r.firstname + " " + r.lastname + "</b></i>?\n\n" +
+                        message: "Permanently delete the resident <i><b>" + fullName + "</b></i>?\n\n" +
                             "<b>Warning:</b> All " + messageGender + " personal media files will be removed!",
                         closable: false,
                         buttons: [
@@ -245,7 +248,7 @@
 
                 self.showResidentEditDialog = function (row) {
                     var id = (typeof row.id !== "undefined" ? row.id : 0);
-                    var title = "<span class='glyphicon glyphicon-pencil'></span>";
+                    var title = "<span class='glyphicon glyphicon-pencil' style='color: #fff'></span>";
                     var message;
 
                     if (id > 0) {

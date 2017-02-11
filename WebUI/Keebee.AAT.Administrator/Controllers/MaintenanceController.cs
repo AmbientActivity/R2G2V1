@@ -2,7 +2,7 @@
 using Keebee.AAT.BusinessRules;
 using Keebee.AAT.SystemEventLogging;
 using Keebee.AAT.MessageQueuing;
-using Keebee.AAT.RESTClient;
+using Keebee.AAT.ApiClient;
 using Keebee.AAT.Shared;
 using System.Diagnostics;
 using System.Linq;

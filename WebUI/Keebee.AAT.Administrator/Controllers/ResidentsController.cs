@@ -1,4 +1,4 @@
-﻿using Keebee.AAT.RESTClient;
+﻿using Keebee.AAT.ApiClient;
 using Keebee.AAT.Administrator.ViewModels;
 using Keebee.AAT.BusinessRules;
 using Keebee.AAT.Shared;
@@ -120,7 +120,10 @@ namespace Keebee.AAT.Administrator.Controllers
         [Authorize]
         public JsonResult GetDataProfile(int id, int mediaPathTypeId)
         {
-            var mediaPathTypes = _opsClient.GetMediaPathTypes().OrderBy(p => p.Description);
+            var mediaPathTypes = _opsClient.GetMediaPathTypes()
+                .Where(x => !x.IsSystem)
+                .OrderBy(p => p.Description);
+
             var fileList = GetFiles(id);
 
             var vm = new
@@ -131,8 +134,8 @@ namespace Keebee.AAT.Administrator.Controllers
                     x.Id,
                     x.Description,
                     x.ShortDescription,
-                    IsPreviewable = ResidentRules.IsMediaTypePreviewable(x.Id),
-                    IsSharable = ResidentRules.IsMediaTypeSharable(x.Id)
+                    x.IsPreviewable,
+                    x.IsLinkable
                 })
             };
 
@@ -171,9 +174,9 @@ namespace Keebee.AAT.Administrator.Controllers
 
         [HttpGet]
         [Authorize]
-        public PartialViewResult GetSharedLibarayAddView(int residentId, int mediaPathTypeId)
+        public PartialViewResult GetSharedLibarayLinkView(int residentId, int mediaPathTypeId)
         {
-            return PartialView("_SharedLibraryAdd", LoadSharedLibaryAddViewModel(residentId, mediaPathTypeId));
+            return PartialView("_SharedLibraryLink", LoadSharedLibaryLinkViewModel(residentId, mediaPathTypeId));
         }
 
         [HttpPost]
@@ -287,7 +290,7 @@ namespace Keebee.AAT.Administrator.Controllers
                             var resdientMediaFile = _opsClient.GetResidentMediaFile(id);
                             if (resdientMediaFile == null) continue;
 
-                            if (resdientMediaFile.MediaFile.IsShared)
+                            if (resdientMediaFile.MediaFile.IsLinked)
                             {
                                 rules.DeleteResidentMediaFile(id);
                             }
@@ -366,7 +369,7 @@ namespace Keebee.AAT.Administrator.Controllers
                         ResidentId = residentId,
                         ResponseTypeId = responseTypeId,
                         MediaPathTypeId = mediaPathTypeId,
-                        IsShared = true
+                        IsLinked = true
                     };
 
                     _opsClient.PostResidentMediaFile(mf);
@@ -443,12 +446,12 @@ namespace Keebee.AAT.Administrator.Controllers
             return vm;
         }
 
-        private SharedLibraryAddViewModel LoadSharedLibaryAddViewModel(int residentId, int mediaPathTypeId)
+        private SharedLibraryLinkViewModel LoadSharedLibaryLinkViewModel(int residentId, int mediaPathTypeId)
         {
             var rules = new ResidentRules {OperationsClient = _opsClient};
             var files = rules.GetAvailableSharedMediaFiles(residentId, mediaPathTypeId).ToArray();
 
-            var vm = new SharedLibraryAddViewModel
+            var vm = new SharedLibraryLinkViewModel
             {
                 SharedFiles = files
                 .Select(f => new SharedLibraryFileViewModel
@@ -560,7 +563,7 @@ namespace Keebee.AAT.Administrator.Controllers
                 ResidentId = residentId,
                 ResponseTypeId = responseTypeId,
                 MediaPathTypeId = mediaPathTypeId,
-                IsShared = false
+                IsLinked = false
             };
 
             _opsClient.PostResidentMediaFile(mf);
@@ -592,7 +595,7 @@ namespace Keebee.AAT.Administrator.Controllers
                         Filename = file.Filename.Replace($".{file.FileType}", string.Empty),
                         FileType = file.FileType.ToUpper(),
                         FileSize = file.FileSize,
-                        IsShared = file.IsShared,
+                        IsLinked = file.IsLinked,
                         Path = $@"{pathRoot}\{path.MediaPathType.Description}",
                         MediaPathTypeId = path.MediaPathType.Id
                     };

@@ -198,8 +198,8 @@ a:hover, a:visited, a:link, a:active {
 .col-filesize {
     width: 85px;
 }
-.col-isshared {
-    width: 60px;
+.col-islinked {
+    width: 10px;
 }
 /* bootstrap glyphicons*/
 .col-glyphicon {

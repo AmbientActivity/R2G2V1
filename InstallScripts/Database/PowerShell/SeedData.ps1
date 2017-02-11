@@ -8,7 +8,7 @@
     $pathSqlScript = "$pathDeployments\Install\Database\SQL Server\"
     $pathPublicProfile = "Profiles\0"
     $pathSharedLibrary = "SharedLibrary"
-    $pathSystemMedia = "System"
+    $pathSystemLibrary = "SystemLibrary"
     
     Write-Host -ForegroundColor yellow "`n--- Seed ---`n"
 
@@ -46,8 +46,8 @@
 
             Write-Host "Transferring startup media...” -NoNewline
             Copy-Item "$pathDeployments\Media\$pathSharedLibrary" $mediaDestination -recurse -Force
+            Copy-Item "$pathDeployments\Media\$pathSystemLibrary" $mediaDestination -recurse -Force
             Copy-Item "$pathDeployments\Media\$pathPublicProfile" "$mediaDestination\$pathPublicProfile" -recurse -Force
-            Copy-Item "$pathDeployments\Media\$pathSystemMedia" "$mediaDestination\$pathSystemMedia" -recurse -Force
             Copy-Item "$pathDeployments\Media\Exports" "$mediaDestination\Exports" -recurse -Force
             Write-Host "done.”
 
@@ -56,6 +56,11 @@
             Invoke-SqlQuery -File $queryFile -Server $server -Database $database
 
             $queryFile = $pathSqlScript + "SeedConfigurationData.sql"
+            Invoke-SqlQuery -File $queryFile -Server $server -Database $database
+            Write-Host "done.”
+
+            Write-Host "Seeding system library...” -NoNewline
+            $queryFile = $pathSqlScript + "SeedSystemLibrary.sql"
             Invoke-SqlQuery -File $queryFile -Server $server -Database $database
             Write-Host "done.”
 

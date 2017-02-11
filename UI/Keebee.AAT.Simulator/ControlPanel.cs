@@ -1,4 +1,4 @@
-﻿using Keebee.AAT.RESTClient;
+﻿using Keebee.AAT.ApiClient;
 using Keebee.AAT.MessageQueuing;
 using Keebee.AAT.Shared;
 using System.Collections;
@@ -23,7 +23,7 @@ namespace Keebee.AAT.Simulator
     public partial class ControlPanel : Form
     {
         // data
-        private readonly IOperationsClient _opsClient;
+        private readonly IApiClient _opsClient;
         private Resident[] _residents;
 
         // message queue sender
@@ -151,7 +151,7 @@ namespace Keebee.AAT.Simulator
 
         private void OffScreenButtonClick(object sender, EventArgs e)
         {
-            ExecuteResponse(ResponseTypeId.OffScreen, PhidgetTypeId.Sensor4, MaxValue - 1, false, new [] {ResponseTypeId.MatchingGame, ResponseTypeId.SlideShow});
+            ExecuteResponse(ResponseTypeId.OffScreen, PhidgetTypeId.Sensor4, MaxValue - 1, false, new [] {ResponseTypeId.MatchingGame, ResponseTypeId.SlideShow, ResponseTypeId.PaintingActivity});
         }
 
         private void RadioRightButtonClick(object sender, EventArgs e)

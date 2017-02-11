@@ -1,4 +1,4 @@
-﻿using Keebee.AAT.RESTClient;
+﻿using Keebee.AAT.ApiClient;
 using Keebee.AAT.SystemEventLogging;
 using System;
 using System.Diagnostics;
@@ -7,8 +7,8 @@ namespace Keebee.AAT.StateMachineService
 {
     public class ActiveResidentEventLogger
     {
-        private IOperationsClient _opsClient;
-        public IOperationsClient OperationsClient
+        private IApiClient _opsClient;
+        public IApiClient OperationsClient
         {
             set { _opsClient = value; }
         }

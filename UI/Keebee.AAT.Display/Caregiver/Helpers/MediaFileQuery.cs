@@ -1,4 +1,4 @@
-﻿using Keebee.AAT.RESTClient;
+﻿using Keebee.AAT.ApiClient;
 using Keebee.AAT.Shared;
 using System;
 using System.Collections.Generic;
@@ -50,7 +50,7 @@ namespace Keebee.AAT.Display.Caregiver.Helpers
                 var selectedFile = mediaPath.Files
                     .Single(f => f.StreamId == streamId);
 
-                var pathRoot = (selectedFile.IsShared)
+                var pathRoot = (selectedFile.IsLinked)
                     ? $@"{_mediaPath.MediaRoot}\{_mediaPath.SharedLibrary}"
                     : $@"{_mediaPath.ProfileRoot}\{_currentResidentId}";
 
@@ -63,7 +63,7 @@ namespace Keebee.AAT.Display.Caregiver.Helpers
                     .SkipWhile(f => f.Filename != selectedFilename)
                     .Select(f =>
                     {
-                        var root = f.IsShared
+                        var root = f.IsLinked
                             ? $@"{_mediaPath.MediaRoot}\{_mediaPath.SharedLibrary}"
                             : $@"{_mediaPath.ProfileRoot}\{_currentResidentId}";
 
@@ -72,11 +72,11 @@ namespace Keebee.AAT.Display.Caregiver.Helpers
                     .ToArray();
 
                 var filesBeforeSelected = mediaPath.Files
-                        .Where(f => f.IsShared == false || isPublic)
+                        .Where(f => f.IsLinked == false || isPublic)
                         .OrderBy(f => f.Filename)
                         .Select(f =>
                         {
-                            var root = f.IsShared
+                            var root = f.IsLinked
                                 ? $@"{_mediaPath.MediaRoot}\{_mediaPath.SharedLibrary}"
                                 : $@"{_mediaPath.ProfileRoot}\{_currentResidentId}";
 
@@ -93,7 +93,7 @@ namespace Keebee.AAT.Display.Caregiver.Helpers
                     .OrderBy(f => f.Filename)
                     .Select(f =>
                     {
-                        var pathRoot2 = f.IsShared
+                        var pathRoot2 = f.IsLinked
                             ? $@"{_mediaPath.MediaRoot}\{_mediaPath.SharedLibrary}"
                             : $@"{_mediaPath.ProfileRoot}\{_currentResidentId}";
 

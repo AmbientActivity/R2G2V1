@@ -52,9 +52,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\RESTClient\Keebee.AAT.RESTClient\Keebee.AAT.RESTClient.csproj">
+    <ProjectReference Include="..\..\APIClient\Keebee.AAT.ApiClient\Keebee.AAT.ApiClient.csproj">
       <Project>{a1f90f14-bc01-4ef8-9b3e-a7fe4b1b7f9f}</Project>
-      <Name>Keebee.AAT.RESTClient</Name>
+      <Name>Keebee.AAT.ApiClient</Name>
     </ProjectReference>
     <ProjectReference Include="..\Keebee.AAT.Shared\Keebee.AAT.Shared.csproj">
       <Project>{3cb12af2-7655-46f6-9969-990730f73964}</Project>

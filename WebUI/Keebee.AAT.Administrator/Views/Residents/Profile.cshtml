@@ -1,11 +1,11 @@
 ﻿@model Keebee.AAT.Administrator.ViewModels.ResidentProfileViewModel
 
 @{
-    ViewBag.Title = "Resident Profile";
+    ViewBag.Title = "Resident Profile Manager";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h3>Manage profile for <i><b>@Model.FullName</b></i></h3>
+<h3><span class="glyphicon glyphicon-user"></span>  Manage profile for <i><b>@Model.FullName</b></i></h3>
 
 <div class="pull-right back-to-residents-container">
     <a id="lnkGoBack" class="link-back-to-residents" href="#" onclick="location.href =
@@ -37,7 +37,7 @@
         <div class="add-button-container">
             <div class="upload-action-container">
                 <button id="uploadbutton" type="button" class="btn btn-md btn-success upload-media-button" onclick="return" false;">@Model.AddButtonText</button>
-                <button id="add-shared" type="button" class="btn btn-md btn-success" data-bind="click: showAddFromSharedLibarayDialog">Add From Shared Library</button>
+                <button id="add-shared" type="button" class="btn btn-md btn-success" data-bind="click: showLinkFromSharedLibarayDialog">Add From Shared Library</button>
                 <button id="delete" type="button" class="btn btn-md btn-danger" disabled data-bind="click: showDeleteSelectedDialog">Delete Selected</button>
             </div>
             <input id="mediaPathTypeId" name="mediaPathTypeId" type="hidden" value="@Model.SelectedMediaPathType"/>
@@ -64,6 +64,7 @@
                 <th class="col-glyphicon"></th>
                 <!-- /ko -->
                 <!-- ko foreach: columns -->
+                <!-- ko if: title !== 'Linked' -->
                 <!-- ko if: !sortable -->
                 <th data-bind="text: title"></th>
                 <!-- /ko -->
@@ -71,11 +72,15 @@
                 <th data-bind="click: $parent.sort, attr: { id: 'file-col-' + sortKey }, css: cssClass"><a href="#" data-bind="text: title"></a></th>
                 <!-- /ko -->
                 <!-- /ko -->
+                <!-- ko if: title === 'Linked' -->
+                <th data-bind="click: $parent.sort, attr: { id: 'file-col-' + sortKey }, css: cssClass"><a href="#" data-bind="css: 'glyphicon glyphicon-link'"></a></th>
+                <!-- /ko -->
+                <!-- /ko -->
             </tr>
             </thead>
 
             <tbody data-bind="foreach: filesTable">
-            <tr data-bind="attr: {id: 'row_' +  id}">
+            <tr data-bind="attr: { id: 'row_' + id }">
                 <td><input type="checkbox" data-bind="attr: { id: 'chk_' + id }, checked: isselected, click: $parent.selectFile" /></td>
                 <!-- ko if: $parent.isPreviewable() -->
                 <td><a href="#" data-bind="click: $parent.showPreview, css: 'glyphicon glyphicon-eye-open'"></a></td>
@@ -83,10 +88,10 @@
                 <td data-bind="text: filename"></td>
                 <td data-bind="text: filetype"></td>
                 <td data-bind="text: filesize"></td>
-                <!-- ko if: isshared -->
+                <!-- ko if: islinked -->
                 <td style="text-align: center"><span class="glyphicon glyphicon-ok"></span></td>
                 <!-- /ko -->
-                <!-- ko if: !isshared -->
+                <!-- ko if: !islinked -->
                 <td></td>
                 <!-- /ko -->
             </tr>

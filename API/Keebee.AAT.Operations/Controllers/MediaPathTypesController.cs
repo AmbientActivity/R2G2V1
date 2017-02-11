@@ -41,7 +41,10 @@ namespace Keebee.AAT.Operations.Controllers
                     x.Id,
                     x.Path,
                     x.Description,
-                    x.ShortDescription
+                    x.ShortDescription,
+                    x.IsPreviewable,
+                    x.IsSystem,
+                    x.IsLinkable
                 });
 
             return new DynamicJsonObject(exObj);
@@ -67,6 +70,38 @@ namespace Keebee.AAT.Operations.Controllers
             exObj.Path = mediaPathType.Path;
             exObj.Description = mediaPathType.Description;
             exObj.ShortDescription = mediaPathType.ShortDescription;
+            exObj.IsSystem = mediaPathType.IsPreviewable;
+            exObj.IsSystem = mediaPathType.IsSystem;
+            exObj.IsLinkable = mediaPathType.IsLinkable;
+
+            return new DynamicJsonObject(exObj);
+        }
+
+        // GET: api/MediaPathTypes?isSystem=false
+        [HttpGet]
+        public async Task<DynamicJsonObject> Get(bool isSystem)
+        {
+            IEnumerable<MediaPathType> mediaPathTypes = new Collection<MediaPathType>();
+
+            await Task.Run(() =>
+            {
+                mediaPathTypes = _mediaPathTypeService.Get(isSystem);
+            });
+
+            if (mediaPathTypes == null) return new DynamicJsonObject(new ExpandoObject());
+
+            dynamic exObj = new ExpandoObject();
+            exObj.MediaPathTypes = mediaPathTypes
+                .Select(x => new
+                {
+                    x.Id,
+                    x.Path,
+                    x.Description,
+                    x.ShortDescription,
+                    x.IsPreviewable,
+                    x.IsSystem,
+                    x.IsLinkable
+                });
 
             return new DynamicJsonObject(exObj);
         }

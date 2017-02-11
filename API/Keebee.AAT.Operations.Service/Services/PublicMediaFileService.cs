@@ -97,7 +97,7 @@ namespace Keebee.AAT.Operations.Service.Services
             var container = new Container(new Uri(ODataHost.Url));
 
             var media = container.PublicMediaFiles
-                .AddQueryOption("$filter", "IsShared")
+                .AddQueryOption("$filter", "IsLinked")
                 .Expand("MediaFile,MediaPathType,ResponseType($expand=ResponseTypeCategory)")
                 .AsEnumerable();
 
@@ -109,7 +109,7 @@ namespace Keebee.AAT.Operations.Service.Services
             var container = new Container(new Uri(ODataHost.Url));
 
             var media = container.PublicMediaFiles
-                .AddQueryOption("$filter", $"IsShared and StreamId eq {streamId}")
+                .AddQueryOption("$filter", $"IsLinked and StreamId eq {streamId}")
                 .Expand("MediaFile,MediaPathType,ResponseType($expand=ResponseTypeCategory)")
                 .AsEnumerable();
 

@@ -168,6 +168,7 @@
     <Compile Include="Controllers\ActiveResidentEventLogsController.cs" />
     <Compile Include="Controllers\RolesController.cs" />
     <Compile Include="Controllers\StatusController.cs" />
+    <Compile Include="Controllers\SystemMediaFilesController.cs" />
     <Compile Include="Controllers\UserRolesController.cs" />
     <Compile Include="Controllers\UsersController.cs" />
     <Compile Include="Global.asax.cs">
@@ -183,10 +184,6 @@
     <Content Include="apiapp.json" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\RESTClient\Keebee.AAT.RESTClient\Keebee.AAT.RESTClient.csproj">
-      <Project>{A1F90F14-BC01-4EF8-9B3E-A7FE4B1B7F9F}</Project>
-      <Name>Keebee.AAT.RESTClient</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\Shared\Keebee.AAT.Shared\Keebee.AAT.Shared.csproj">
       <Project>{3cb12af2-7655-46f6-9969-990730f73964}</Project>
       <Name>Keebee.AAT.Shared</Name>

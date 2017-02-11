@@ -1,4 +1,4 @@
-﻿using Keebee.AAT.RESTClient;
+﻿using Keebee.AAT.ApiClient;
 using Keebee.AAT.Administrator.ViewModels;
 using Keebee.AAT.Shared;
 using Keebee.AAT.Administrator.FileManagement;
@@ -86,7 +86,7 @@ namespace Keebee.AAT.Administrator.Controllers
         {
             var rules = new SystemLibrariesRules { OperationsClient = _opsClient };
             var mediaPathTypes = _opsClient.GetMediaPathTypes()
-                    .Where(mp => mp.Id != MediaPathTypeId.PersonalImages && mp.Id != MediaPathTypeId.HomeMovies).ToArray();
+                    .Where(mp => mp.IsLinkable || mp.IsSystem).ToArray();
 
             var vm = new
             {
@@ -177,7 +177,7 @@ namespace Keebee.AAT.Administrator.Controllers
         [Authorize]
         public PartialViewResult GetLinkedResidentsView(Guid streamId)
         {
-            return PartialView("_LinkedResidentMedia", LoadLinkedResidentsViewModel(streamId));
+            return PartialView("_LinkedResidentMedia", LoadLinkedProfilesViewModel(streamId));
         }
 
         [HttpGet]
@@ -218,38 +218,14 @@ namespace Keebee.AAT.Administrator.Controllers
             return vm;
         }
 
-        private LinkedProfilesViewModel LoadLinkedResidentsViewModel(Guid streamId)
+        private LinkedProfilesViewModel LoadLinkedProfilesViewModel(Guid streamId)
         {
-            var residentMedia = _opsClient.GetLinkedResidentMediaForStreamId(streamId);
-            var residentProfiles = new List<ResidentViewModel>();
-
-            if (residentMedia != null)
-            {
-                var residents = residentMedia
-                    .Select(x => new ResidentViewModel
-                {
-                    Id = x.Resident.Id,
-                    FirstName = x.Resident.FirstName,
-                    LastName = x.Resident.LastName
-                }).OrderBy(x => x.LastName).ThenBy(x => x.FirstName);
-                residentProfiles.AddRange(residents);
-            }
-
-            var publicMedia = _opsClient.GetLinkedPublicMediaForStreamId(streamId);
-            var publicProfile = new List<ResidentViewModel>();
-
-            if (publicMedia.MediaFiles != null)
-            {
-                publicProfile.Add(new ResidentViewModel
-                {
-                    Id = PublicMediaSource.Id,
-                    FirstName = PublicMediaSource.Description
-                });
-            }
+            var rules = new SystemLibrariesRules {OperationsClient = _opsClient};
+            var linkedProfiles = rules.GetLinkedProfiles(streamId);
 
             var vm = new LinkedProfilesViewModel
             {
-                Profiles = publicProfile.Union(residentProfiles).Select(r => new 
+                Profiles = linkedProfiles.Select(r => new 
                 ResidentViewModel
                 {
                     FirstName = r.FirstName,

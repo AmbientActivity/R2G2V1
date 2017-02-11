@@ -1,6 +1,6 @@
 ﻿using Keebee.AAT.SystemEventLogging;
 using Keebee.AAT.Display.Properties;
-using Keebee.AAT.RESTClient;
+using Keebee.AAT.ApiClient;
 using Keebee.AAT.Shared;
 using System;
 using System.Diagnostics;

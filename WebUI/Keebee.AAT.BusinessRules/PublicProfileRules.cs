@@ -1,5 +1,5 @@
 ﻿using System;
-using Keebee.AAT.RESTClient;
+using Keebee.AAT.ApiClient;
 using Keebee.AAT.Shared;
 using System.Collections.Generic;
 using System.Linq;
@@ -192,7 +192,7 @@ namespace Keebee.AAT.BusinessRules
                 {
                     existingStreamIds = existingSharedMediaPaths.MediaFiles.SelectMany(p => p.Paths)
                         .SelectMany(f => f.Files)
-                        .Where(f => f.IsShared)
+                        .Where(f => f.IsLinked)
                         .Select(f => f.StreamId);
                 }
             }
@@ -212,19 +212,6 @@ namespace Keebee.AAT.BusinessRules
             var message = $"All available {mediaPathType} {hasHave} already been included in this profile.";
 
             return message;
-        }
-    
-        public static bool IsMediaTypePreviewable(int mediaPathTypeId)
-        {
-            switch (mediaPathTypeId)
-            {
-                case MediaPathTypeId.GeneralImages:
-                case MediaPathTypeId.PersonalImages:
-                case MediaPathTypeId.MatchingGameShapes:
-                    return true;
-                default:
-                    return false;
-            }
         }
     }
 }

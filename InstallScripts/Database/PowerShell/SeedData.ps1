@@ -55,7 +55,7 @@
             Write-Host "done.”
             Write-Host "Creating export folders...” -NoNewline
             Copy-Item "$pathDeployments\Media\Exports" "$mediaDestination\Exports" -recurse -Force
-            Write-Host "done.”
+            Write-Host "done.`n”
 
             Write-Host "Seeding configuration data...” -NoNewline
             $queryFile = $pathSqlScript + "CreateMediaFilesView.sql"
@@ -70,7 +70,7 @@
             Invoke-SqlQuery -File $queryFile -Server $server -Database $database
             Write-Host "done.”
 
-            Write-Host "Seeding public library...” -NoNewline
+            Write-Host "Seeding public profile...” -NoNewline
             $queryFile = $pathSqlScript + "SeedPublicLibrary.sql"
             Invoke-SqlQuery -File $queryFile -Server $server -Database $database
             Write-Host "done.”

@@ -17,16 +17,34 @@ namespace Keebee.AAT.Display.Helpers
 
         public string[] GetFilesForSystemResponseType(int responseTypeId, int mediaPathTypeId)
         {
-            var mediaPathType = _opsClient.GetMediaPathType(MediaPathTypeId.Cats);
-            var path = $@"{_mediaPath.SystemLibrary}\{mediaPathType.Path}";
+            var fileList = new List<string>();
+            MediaResponseType mediaResponseType = null;
 
-            var files = _opsClient.GetSystemMediaFilesForResponseType(responseTypeId)
-                .MediaResponseType.Paths
-                .SelectMany(p => p.Files)
-                .Select(f => $@"{_mediaPath.MediaRoot}\{path}\{f.Filename}")
+            var media = _opsClient.GetPublicMediaFilesForResponseType(responseTypeId);
+
+            if (media != null)
+                mediaResponseType = media.MediaResponseType;
+
+            if (mediaResponseType == null) return fileList.ToArray();
+
+            var mediaPaths = mediaResponseType
+                .Paths.Where(p => p.MediaPathType.Id == mediaPathTypeId)
                 .ToArray();
 
-            return files;
+            foreach (var mediaPath in mediaPaths)
+            {
+                var list = mediaResponseType
+                    .Paths
+                    .Where(p => p.MediaPathType.Id == mediaPath.MediaPathType.Id)
+                    .SelectMany(p => p.Files)
+                    .OrderBy(f => f.Filename)
+                    .Select(f => $@"{_mediaPath.MediaRoot}\{_mediaPath.SystemLibrary}\{mediaPath.MediaPathType.Path}\{f.Filename}")
+                    .ToList();
+
+                fileList.AddRange(list);
+            }
+
+            return fileList.ToArray();
         }
 
         public string[] GetFilesForResponseType(int residentId, int responseTypeId, int mediaPatheTypeId = -1)
@@ -89,12 +107,12 @@ namespace Keebee.AAT.Display.Helpers
                 : files;
         }
 
-        private string[] GetAssembledFileList(MediaResponseType mediaResponseType, int residentId, int mediaPatheTypeId = -1)
+        private string[] GetAssembledFileList(MediaResponseType mediaResponseType, int residentId, int mediaPathTypeId = -1)
         {
             var fileList = new List<string>();
            
             var mediaPaths = mediaResponseType
-                .Paths.Where(p => mediaPatheTypeId < 0 ||  p.MediaPathType.Id == mediaPatheTypeId)
+                .Paths.Where(p => mediaPathTypeId < 0 ||  p.MediaPathType.Id == mediaPathTypeId)
                 .ToArray();
 
             foreach (var mediaPath in mediaPaths)

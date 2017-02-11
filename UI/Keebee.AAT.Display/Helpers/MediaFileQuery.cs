@@ -20,7 +20,7 @@ namespace Keebee.AAT.Display.Helpers
             var fileList = new List<string>();
             MediaResponseType mediaResponseType = null;
 
-            var media = _opsClient.GetPublicMediaFilesForResponseType(responseTypeId);
+            var media = _opsClient.GetSystemMediaFilesForResponseType(responseTypeId);
 
             if (media != null)
                 mediaResponseType = media.MediaResponseType;

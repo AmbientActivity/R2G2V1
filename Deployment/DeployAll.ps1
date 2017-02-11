@@ -39,7 +39,7 @@ $systemMediaPath = "Media\System\"
 $exportsPath = "Media\Exports\EventLog\"
 $publicProfileSource = "\\$env:COMPUTERNAME\SQLEXPRESS\KeebeeAATFilestream\Media\Profiles\0\*"
 $sharedLibrarySource = "\\$env:COMPUTERNAME\SQLEXPRESS\KeebeeAATFilestream\Media\SharedLibrary\*"
-$systemMediaSource = "\\$env:COMPUTERNAME\SQLEXPRESS\KeebeeAATFilestream\Media\System\*"
+$systemLibrarySource = "\\$env:COMPUTERNAME\SQLEXPRESS\KeebeeAATFilestream\Media\SystemLibrary\*"
 
 # documentation paths
 $documentationPath = "Install\Documentation\"
@@ -218,7 +218,7 @@ Try
         Remove-Item $path -recurse -Force
     } 
     New-Item -ItemType Directory -Force -Path $path | Out-Null
-    Copy-Item $systemMediaSource $path -recurse -Force
+    Copy-Item $systemLibrarySource $path -recurse -Force
     Write-Host "done.”
 
     # -------------------- SCHEDULED TASKS --------------------

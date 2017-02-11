@@ -13,18 +13,12 @@ namespace Keebee.AAT.Display.Helpers
             set { _opsClient = value; }
         }
 
-        private IEnumerable<MediaPathType> _mediaPathTypes;
-        public IEnumerable<MediaPathType> MediaPathTypes
-        {
-            set { _mediaPathTypes = value; }
-        }
-
         private readonly MediaSourcePath _mediaPath = new MediaSourcePath();
 
         public string[] GetFilesForSystemResponseType(int responseTypeId, int mediaPathTypeId)
         {
-            var mediaPathType = _mediaPathTypes.Single(x => x.Id == mediaPathTypeId);
-           var path = $@"{_mediaPath.SystemLibrary}\{mediaPathType.Path}";
+            var mediaPathType = _opsClient.GetMediaPathType(MediaPathTypeId.Cats);
+            var path = $@"{_mediaPath.SystemLibrary}\{mediaPathType.Path}";
 
             var files = _opsClient.GetSystemMediaFilesForResponseType(responseTypeId)
                 .MediaResponseType.Paths

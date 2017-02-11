@@ -44,10 +44,16 @@
                 Remove-Item $mediaExports -recurse -Force
             }
 
-            Write-Host "Transferring startup media...” -NoNewline
+            Write-Host "Transferring shared library...” -NoNewline
             Copy-Item "$pathDeployments\Media\$pathSharedLibrary" $mediaDestination -recurse -Force
+            Write-Host "done.”
+            Write-Host "Transferring system library...” -NoNewline
             Copy-Item "$pathDeployments\Media\$pathSystemLibrary" $mediaDestination -recurse -Force
+            Write-Host "done.”
+            Write-Host "Transferring public profile...” -NoNewline
             Copy-Item "$pathDeployments\Media\$pathPublicProfile" "$mediaDestination\$pathPublicProfile" -recurse -Force
+            Write-Host "done.”
+            Write-Host "Creating export folders...” -NoNewline
             Copy-Item "$pathDeployments\Media\Exports" "$mediaDestination\Exports" -recurse -Force
             Write-Host "done.”
 

@@ -186,11 +186,11 @@ namespace Keebee.AAT.BusinessRules
             var mediaSourcePath = new MediaSourcePath();
             
             // public linked media (for tooltip total linked)
-            var publicFilesLinked = new LinkedMediaFile[0];
-            var publicMediaLinked = _opsClient.GetLinkedPublicMedia();
-            if (publicMediaLinked != null)
+            var publicFiles = new LinkedMediaFile[0];
+            var publicMedia = _opsClient.GetPublicMediaFiles();
+            if (publicMedia != null)
             {
-                publicFilesLinked = publicMediaLinked.MediaFiles
+                publicFiles = publicMedia.MediaFiles
                     .SelectMany(x => x.Paths)
                     .SelectMany(x => x.Files).ToArray();
             }
@@ -214,7 +214,7 @@ namespace Keebee.AAT.BusinessRules
                 return p.Files.Select(f =>
                 {
                     var numLinkedResidentProfiles = residentFilesLinked.Count(x => x.StreamId == f.StreamId);
-                    var isLinkedToPublicProfile = publicFilesLinked.Any(x => x.StreamId == f.StreamId);
+                    var isLinkedToPublicProfile = publicFiles.Any(x => x.StreamId == f.StreamId);
 
                     return new
                     {
@@ -246,11 +246,10 @@ namespace Keebee.AAT.BusinessRules
 
         public IEnumerable<Resident> GetLinkedProfiles(Guid streamId)
         {
-
-            var publicMedia = _opsClient.GetLinkedPublicMediaForStreamId(streamId);
+            var publicMedia = _opsClient.GetPublicMediaFilesForStreamId(streamId);
             var publicProfile = new List<Resident>();
 
-            if (publicMedia.MediaFiles != null)
+            if (publicMedia != null)
             {
                 publicProfile.Add(new Resident
                 {

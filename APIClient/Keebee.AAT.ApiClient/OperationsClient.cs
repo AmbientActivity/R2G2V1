@@ -71,8 +71,6 @@ namespace Keebee.AAT.ApiClient
         PublicMediaResponseType GetPublicMediaFilesForResponseType(int responseTypeId);
         PublicMedia GetPublicMediaFilesForMediaPathType(int mediaPathTypeId);
         IEnumerable<PublicMediaFile> GetPublicMediaFilesForStreamId(Guid streamId);
-        PublicMedia GetLinkedPublicMedia();
-        PublicMedia GetLinkedPublicMediaForStreamId(Guid streamId);
         PublicMediaFile GetPublicMediaFileForResponseTypeFilename(int responseTypeId, string filename);
         int[] GetPublicMediaFileIdsForStreamId(Guid streamId);
 
@@ -187,8 +185,6 @@ namespace Keebee.AAT.ApiClient
         private const string UrlPublicMediaFilesForMediaPathType = "publicmediafiles?mediaPathTypeId={0}";
         private const string UrlPublicMediaFilesForMediaStreamId = "publicmediafiles?streamId={0}";
         private const string UrlPublicMediaFilesForResponseTypeIdFilename = "publicmediafiles?responseTypeId={0}&filename={1}";
-        private const string UrlLinkedPublicMedia = "publicmediafiles/linked";
-        private const string UrlLinkedPublicMediaForStreamId = "publicmediafiles/linked?streamId={0}";
         private const string UrlPublicMediaFileIdsForStreamId = "publicmediafiles/ids?streamId={0}";
 
         // resident media files
@@ -726,28 +722,6 @@ namespace Keebee.AAT.ApiClient
             var mediaStreamIds = serializer.Deserialize<PublicMediaStreamIdList>(data).MediaFiles;
 
             return mediaStreamIds;
-        }
-
-        public PublicMedia GetLinkedPublicMedia()
-        {
-            var data = Get(UrlLinkedPublicMedia);
-            if (data == null) return null;
-
-            var serializer = new JavaScriptSerializer();
-            var media = serializer.Deserialize<PublicMedia>(data);
-
-            return media;
-        }
-
-        public PublicMedia GetLinkedPublicMediaForStreamId(Guid streamId)
-        {
-            var data = Get(string.Format(UrlLinkedPublicMediaForStreamId, streamId));
-            if (data == null) return null;
-
-            var serializer = new JavaScriptSerializer();
-            var media = serializer.Deserialize<PublicMedia>(data);
-
-            return media;
         }
 
         public PublicMediaFile GetPublicMediaFileForResponseTypeFilename(int responseTypeId, string filename)

@@ -11,23 +11,17 @@
 <script type="text/javascript">
     $(document)
         .ready(function() {
-            publicprofile.index.init({ selectedMediaPathTypeId: @Model.SelectedMediaPathType });
+            publicprofile.index.init();
         });
 </script>
 
-@{Html.BeginForm();}
-<div id="uploader-html-container" hidden="hidden">
-    @Html.Raw(@Model.UploaderHtml)
-</div>
 <div class="panel panel-default">
     <div class="panel-heading">
         <div class="add-button-container">
             <div class="upload-action-container">
-                <button id="uploadbutton" type="button" class="btn btn-md btn-success upload-media-button" onclick="return" false;">@Model.AddButtonText</button>
-                <button id="add-shared" type="button" class="btn btn-md btn-success" data-bind="click: showLinkFromSharedLibarayDialog">Add From Shared Library</button>
+                <button id="add-shared" type="button" class="btn btn-md btn-success add-media-button" data-bind="click: showLinkFromSharedLibarayDialog">@Model.AddButtonText</button>
                 <button id="delete" disabled type="button" class="btn btn-md btn-danger" data-bind="click: showDeleteSelectedDialog">Delete Selected</button>
             </div>
-            <input id="mediaPathTypeId" name="mediaPathTypeId" type="hidden" value="@Model.SelectedMediaPathType" />
         </div>
         <ul class="nav nav-pills">
             <li>
@@ -54,16 +48,11 @@
                 <th class="col-glyphicon"></th>
                 <!-- /ko -->
                 <!-- ko foreach: columns -->
-                <!-- ko if: title !== 'Linked' -->
                 <!-- ko if: !sortable -->
                 <th data-bind="text: title"></th>
                 <!-- /ko -->
                 <!-- ko if: sortable -->
                 <th data-bind="click: $parent.sort, attr: { id: 'file-col-' + sortKey }, css: cssClass"><a href="#" data-bind="text: title"></a></th>
-                <!-- /ko -->
-                <!-- /ko -->
-                <!-- ko if: title === 'Linked' -->
-                <th data-bind="click: $parent.sort, attr: { id: 'file-col-' + sortKey }, css: cssClass"><a href="#" data-bind="css: 'glyphicon glyphicon-link'"></a></th>
                 <!-- /ko -->
                 <!-- /ko -->
             </tr>
@@ -78,15 +67,9 @@
                 <td data-bind="text: filename"></td>
                 <td data-bind="text: filetype"></td>
                 <td data-bind="text: filesize"></td>
-                <!-- ko if: islinked -->
-                <td style="text-align: center"><span class="glyphicon glyphicon-ok"></span></td>
-                <!-- /ko -->
-                <!-- ko if: !islinked -->
-                <td></td>
                 <!-- /ko -->
             </tr>
             </tbody>
         </table>
     </div>
 </div>
-@{Html.EndForm();}

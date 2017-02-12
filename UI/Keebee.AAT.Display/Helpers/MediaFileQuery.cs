@@ -15,38 +15,6 @@ namespace Keebee.AAT.Display.Helpers
 
         private readonly MediaSourcePath _mediaPath = new MediaSourcePath();
 
-        public string[] GetFilesForSystemResponseType(int responseTypeId, int mediaPathTypeId)
-        {
-            var fileList = new List<string>();
-            MediaResponseType mediaResponseType = null;
-
-            var media = _opsClient.GetSystemMediaFilesForResponseType(responseTypeId);
-
-            if (media != null)
-                mediaResponseType = media.MediaResponseType;
-
-            if (mediaResponseType == null) return fileList.ToArray();
-
-            var mediaPaths = mediaResponseType
-                .Paths.Where(p => p.MediaPathType.Id == mediaPathTypeId)
-                .ToArray();
-
-            foreach (var mediaPath in mediaPaths)
-            {
-                var list = mediaResponseType
-                    .Paths
-                    .Where(p => p.MediaPathType.Id == mediaPath.MediaPathType.Id)
-                    .SelectMany(p => p.Files)
-                    .OrderBy(f => f.Filename)
-                    .Select(f => $@"{_mediaPath.MediaRoot}\{_mediaPath.SystemLibrary}\{mediaPath.MediaPathType.Path}\{f.Filename}")
-                    .ToList();
-
-                fileList.AddRange(list);
-            }
-
-            return fileList.ToArray();
-        }
-
         public string[] GetFilesForResponseType(int residentId, int responseTypeId, int mediaPatheTypeId = -1)
         {
             var files = new string[0];
@@ -124,9 +92,11 @@ namespace Keebee.AAT.Display.Helpers
                     .OrderBy(f => f.Filename)
                     .Select(f =>
                     {
-                        var pathRoot = f.IsLinked
+                        var pathRoot = (residentId == 0)
                             ? $@"{_mediaPath.MediaRoot}\{_mediaPath.SharedLibrary}"
-                            : $@"{_mediaPath.ProfileRoot}\{residentId}";
+                            : (f.IsLinked) 
+                                ? $@"{_mediaPath.ProfileRoot}\{residentId}"
+                                : $@"{_mediaPath.MediaRoot}\{_mediaPath.SharedLibrary}";
 
                         return $@"{pathRoot}\{mediaPath.MediaPathType.Path}\{f.Filename}";
                     })

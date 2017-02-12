@@ -156,7 +156,7 @@ function DisableScreen() {
                                 description: value.Description,
                                 shortdescription: value.ShortDescription,
                                 ispreviewable: value.IsPreviewable,
-                                islinkable: value.IsLinkable
+                                issharable: value.IsSharable
                             });
                     });
 
@@ -165,7 +165,7 @@ function DisableScreen() {
                     })[0];
 
                     self.isPreviewable(mediaType.ispreviewable);
-                    self.isSharable(mediaType.islinkable);
+                    self.isSharable(mediaType.issharable);
                 };
 
                 function enableDetail() {
@@ -260,7 +260,7 @@ function DisableScreen() {
                     self.selectAllRows();
 
                     self.isPreviewable(self.mediaPathType().ispreviewable);
-                    self.isSharable(self.mediaPathType().islinkable);
+                    self.isSharable(self.mediaPathType().issharable);
 
                     enableDetail();
                 });

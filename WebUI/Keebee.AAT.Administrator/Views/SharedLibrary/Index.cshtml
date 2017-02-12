@@ -1,8 +1,8 @@
 ﻿
-@model Keebee.AAT.Administrator.ViewModels.SystemLibrariesViewModel
+@model Keebee.AAT.Administrator.ViewModels.SharedLibraryViewModel
 
 @{
-    ViewBag.Title = "Shared/System Libraries";
+    ViewBag.Title = "Shared Library";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -11,7 +11,7 @@
 <script type="text/javascript">
     $(document)
         .ready(function() {
-            systemlibraries.index.init({ selectedMediaPathTypeId: @Model.SelectedMediaPathType });
+            sharedlibrary.index.init({ selectedMediaPathTypeId: @Model.SelectedMediaPathType });
         });
 </script>
 

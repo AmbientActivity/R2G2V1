@@ -220,8 +220,10 @@ a:hover, a:visited, a:link, a:active {
 .button-text {
     color: #fff;
 }
+.add-media-button {
+    width: 160px;
+}
 .upload-media-button {
     width: 165px;
 }
-
 

@@ -2,7 +2,7 @@
 
 namespace Keebee.AAT.Administrator.ViewModels
 {
-    public class SystemLibrariesViewModel
+    public class SharedLibraryViewModel
     {
         public string Title { get; set; }
         public string AddButtonText { get; set; }

@@ -6,9 +6,7 @@
     $mediaDestination = "\\$server\KeebeeAATFilestream\Media\"
     $pathDeployments = "C:\Deployments"
     $pathSqlScript = "$pathDeployments\Install\Database\SQL Server\"
-    $pathPublicProfile = "Profiles\0"
     $pathSharedLibrary = "SharedLibrary"
-    $pathSystemLibrary = "SystemLibrary"
     
     Write-Host -ForegroundColor yellow "`n--- Seed ---`n"
 
@@ -47,12 +45,7 @@
             Write-Host "Transferring shared library...” -NoNewline
             Copy-Item "$pathDeployments\Media\$pathSharedLibrary" $mediaDestination -recurse -Force
             Write-Host "done.”
-            Write-Host "Transferring system library...” -NoNewline
-            Copy-Item "$pathDeployments\Media\$pathSystemLibrary" $mediaDestination -recurse -Force
-            Write-Host "done.”
-            Write-Host "Transferring public profile...” -NoNewline
-            Copy-Item "$pathDeployments\Media\$pathPublicProfile" "$mediaDestination\$pathPublicProfile" -recurse -Force
-            Write-Host "done.”
+
             Write-Host "Creating export folders...” -NoNewline
             Copy-Item "$pathDeployments\Media\Exports" "$mediaDestination\Exports" -recurse -Force
             Write-Host "done.`n”
@@ -62,11 +55,6 @@
             Invoke-SqlQuery -File $queryFile -Server $server -Database $database
 
             $queryFile = $pathSqlScript + "SeedConfigurationData.sql"
-            Invoke-SqlQuery -File $queryFile -Server $server -Database $database
-            Write-Host "done.”
-
-            Write-Host "Seeding system library...” -NoNewline
-            $queryFile = $pathSqlScript + "SeedSystemLibrary.sql"
             Invoke-SqlQuery -File $queryFile -Server $server -Database $database
             Write-Host "done.”
 

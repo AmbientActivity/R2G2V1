@@ -140,7 +140,6 @@
     <Compile Include="Controllers\ResponseTypesController.cs" />
     <Compile Include="Controllers\ActiveResidentEventLogsController.cs" />
     <Compile Include="Controllers\RolesController.cs" />
-    <Compile Include="Controllers\SystemMediaFilesController.cs" />
     <Compile Include="Controllers\UserRolesController.cs" />
     <Compile Include="Controllers\UsersController.cs" />
     <Compile Include="Global.asax.cs">
@@ -165,7 +164,6 @@
     <Compile Include="Models\ResponseTypeCategory.cs" />
     <Compile Include="Models\ActiveResidentEventLog.cs" />
     <Compile Include="Models\Role.cs" />
-    <Compile Include="Models\SystemMediaFile.cs" />
     <Compile Include="Models\User.cs" />
     <Compile Include="Models\UserRole.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

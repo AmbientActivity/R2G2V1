@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-// Generation date: 2017-02-11 4:54:43 PM
+// Generation date: 2017-02-11 8:43:43 PM
 namespace Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models
 {
     /// <summary>
@@ -2616,7 +2616,7 @@ namespace Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models
         /// <param name="shortDescription">Initial value of ShortDescription.</param>
         /// <param name="isPreviewable">Initial value of IsPreviewable.</param>
         /// <param name="isSystem">Initial value of IsSystem.</param>
-        /// <param name="isLinkable">Initial value of IsLinkable.</param>
+        /// <param name="isSharable">Initial value of IsSharable.</param>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
         public static MediaPathType CreateMediaPathType(int ID, 
                     string path, 
@@ -2624,7 +2624,7 @@ namespace Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models
                     string shortDescription, 
                     bool isPreviewable, 
                     bool isSystem, 
-                    bool isLinkable)
+                    bool isSharable)
         {
             MediaPathType mediaPathType = new MediaPathType();
             mediaPathType.Id = ID;
@@ -2633,7 +2633,7 @@ namespace Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models
             mediaPathType.ShortDescription = shortDescription;
             mediaPathType.IsPreviewable = isPreviewable;
             mediaPathType.IsSystem = isSystem;
-            mediaPathType.IsLinkable = isLinkable;
+            mediaPathType.IsSharable = isSharable;
             return mediaPathType;
         }
         /// <summary>
@@ -2775,28 +2775,28 @@ namespace Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models
         partial void OnIsSystemChanging(bool value);
         partial void OnIsSystemChanged();
         /// <summary>
-        /// There are no comments for Property IsLinkable in the schema.
+        /// There are no comments for Property IsSharable in the schema.
         /// </summary>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        [global::Microsoft.OData.Client.OriginalNameAttribute("IsLinkable")]
-        public bool IsLinkable
+        [global::Microsoft.OData.Client.OriginalNameAttribute("IsSharable")]
+        public bool IsSharable
         {
             get
             {
-                return this._IsLinkable;
+                return this._IsSharable;
             }
             set
             {
-                this.OnIsLinkableChanging(value);
-                this._IsLinkable = value;
-                this.OnIsLinkableChanged();
-                this.OnPropertyChanged("IsLinkable");
+                this.OnIsSharableChanging(value);
+                this._IsSharable = value;
+                this.OnIsSharableChanged();
+                this.OnPropertyChanged("IsSharable");
             }
         }
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private bool _IsLinkable;
-        partial void OnIsLinkableChanging(bool value);
-        partial void OnIsLinkableChanged();
+        private bool _IsSharable;
+        partial void OnIsSharableChanging(bool value);
+        partial void OnIsSharableChanged();
         /// <summary>
         /// This event is raised when the value of the property is changed
         /// </summary>
@@ -3304,328 +3304,12 @@ namespace Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models
         /// Create a new PublicMediaFile object.
         /// </summary>
         /// <param name="ID">Initial value of Id.</param>
-        /// <param name="isLinked">Initial value of IsLinked.</param>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        public static PublicMediaFile CreatePublicMediaFile(int ID, bool isLinked)
+        public static PublicMediaFile CreatePublicMediaFile(int ID)
         {
             PublicMediaFile publicMediaFile = new PublicMediaFile();
             publicMediaFile.Id = ID;
-            publicMediaFile.IsLinked = isLinked;
             return publicMediaFile;
-        }
-        /// <summary>
-        /// There are no comments for Property Id in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        [global::Microsoft.OData.Client.OriginalNameAttribute("Id")]
-        public int Id
-        {
-            get
-            {
-                return this._Id;
-            }
-            set
-            {
-                this.OnIdChanging(value);
-                this._Id = value;
-                this.OnIdChanged();
-                this.OnPropertyChanged("Id");
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private int _Id;
-        partial void OnIdChanging(int value);
-        partial void OnIdChanged();
-        /// <summary>
-        /// There are no comments for Property IsLinked in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        [global::Microsoft.OData.Client.OriginalNameAttribute("IsLinked")]
-        public bool IsLinked
-        {
-            get
-            {
-                return this._IsLinked;
-            }
-            set
-            {
-                this.OnIsLinkedChanging(value);
-                this._IsLinked = value;
-                this.OnIsLinkedChanged();
-                this.OnPropertyChanged("IsLinked");
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private bool _IsLinked;
-        partial void OnIsLinkedChanging(bool value);
-        partial void OnIsLinkedChanged();
-        /// <summary>
-        /// There are no comments for Property StreamId in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        [global::Microsoft.OData.Client.OriginalNameAttribute("StreamId")]
-        public global::System.Nullable<global::System.Guid> StreamId
-        {
-            get
-            {
-                return this._StreamId;
-            }
-            set
-            {
-                this.OnStreamIdChanging(value);
-                this._StreamId = value;
-                this.OnStreamIdChanged();
-                this.OnPropertyChanged("StreamId");
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private global::System.Nullable<global::System.Guid> _StreamId;
-        partial void OnStreamIdChanging(global::System.Nullable<global::System.Guid> value);
-        partial void OnStreamIdChanged();
-        /// <summary>
-        /// There are no comments for Property ResponseTypeId in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        [global::Microsoft.OData.Client.OriginalNameAttribute("ResponseTypeId")]
-        public global::System.Nullable<int> ResponseTypeId
-        {
-            get
-            {
-                return this._ResponseTypeId;
-            }
-            set
-            {
-                this.OnResponseTypeIdChanging(value);
-                this._ResponseTypeId = value;
-                this.OnResponseTypeIdChanged();
-                this.OnPropertyChanged("ResponseTypeId");
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private global::System.Nullable<int> _ResponseTypeId;
-        partial void OnResponseTypeIdChanging(global::System.Nullable<int> value);
-        partial void OnResponseTypeIdChanged();
-        /// <summary>
-        /// There are no comments for Property MediaPathTypeId in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        [global::Microsoft.OData.Client.OriginalNameAttribute("MediaPathTypeId")]
-        public global::System.Nullable<int> MediaPathTypeId
-        {
-            get
-            {
-                return this._MediaPathTypeId;
-            }
-            set
-            {
-                this.OnMediaPathTypeIdChanging(value);
-                this._MediaPathTypeId = value;
-                this.OnMediaPathTypeIdChanged();
-                this.OnPropertyChanged("MediaPathTypeId");
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private global::System.Nullable<int> _MediaPathTypeId;
-        partial void OnMediaPathTypeIdChanging(global::System.Nullable<int> value);
-        partial void OnMediaPathTypeIdChanged();
-        /// <summary>
-        /// There are no comments for Property MediaFile in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        [global::Microsoft.OData.Client.OriginalNameAttribute("MediaFile")]
-        public global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.MediaFile MediaFile
-        {
-            get
-            {
-                return this._MediaFile;
-            }
-            set
-            {
-                this.OnMediaFileChanging(value);
-                this._MediaFile = value;
-                this.OnMediaFileChanged();
-                this.OnPropertyChanged("MediaFile");
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.MediaFile _MediaFile;
-        partial void OnMediaFileChanging(global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.MediaFile value);
-        partial void OnMediaFileChanged();
-        /// <summary>
-        /// There are no comments for Property ResponseType in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        [global::Microsoft.OData.Client.OriginalNameAttribute("ResponseType")]
-        public global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ResponseType ResponseType
-        {
-            get
-            {
-                return this._ResponseType;
-            }
-            set
-            {
-                this.OnResponseTypeChanging(value);
-                this._ResponseType = value;
-                this.OnResponseTypeChanged();
-                this.OnPropertyChanged("ResponseType");
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ResponseType _ResponseType;
-        partial void OnResponseTypeChanging(global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ResponseType value);
-        partial void OnResponseTypeChanged();
-        /// <summary>
-        /// There are no comments for Property MediaPathType in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        [global::Microsoft.OData.Client.OriginalNameAttribute("MediaPathType")]
-        public global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.MediaPathType MediaPathType
-        {
-            get
-            {
-                return this._MediaPathType;
-            }
-            set
-            {
-                this.OnMediaPathTypeChanging(value);
-                this._MediaPathType = value;
-                this.OnMediaPathTypeChanged();
-                this.OnPropertyChanged("MediaPathType");
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.MediaPathType _MediaPathType;
-        partial void OnMediaPathTypeChanging(global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.MediaPathType value);
-        partial void OnMediaPathTypeChanged();
-        /// <summary>
-        /// This event is raised when the value of the property is changed
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        public event global::System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
-        /// <summary>
-        /// The value of the property is changed
-        /// </summary>
-        /// <param name="property">property name</param>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        protected virtual void OnPropertyChanged(string property)
-        {
-            if ((this.PropertyChanged != null))
-            {
-                this.PropertyChanged(this, new global::System.ComponentModel.PropertyChangedEventArgs(property));
-            }
-        }
-    }
-    /// <summary>
-    /// There are no comments for SystemMediaFileSingle in the schema.
-    /// </summary>
-    [global::Microsoft.OData.Client.OriginalNameAttribute("SystemMediaFileSingle")]
-    public partial class SystemMediaFileSingle : global::Microsoft.OData.Client.DataServiceQuerySingle<SystemMediaFile>
-    {
-        /// <summary>
-        /// Initialize a new SystemMediaFileSingle object.
-        /// </summary>
-        public SystemMediaFileSingle(global::Microsoft.OData.Client.DataServiceContext context, string path)
-            : base(context, path) {}
-
-        /// <summary>
-        /// Initialize a new SystemMediaFileSingle object.
-        /// </summary>
-        public SystemMediaFileSingle(global::Microsoft.OData.Client.DataServiceContext context, string path, bool isComposable)
-            : base(context, path, isComposable) {}
-
-        /// <summary>
-        /// Initialize a new SystemMediaFileSingle object.
-        /// </summary>
-        public SystemMediaFileSingle(global::Microsoft.OData.Client.DataServiceQuerySingle<SystemMediaFile> query)
-            : base(query) {}
-
-        /// <summary>
-        /// There are no comments for MediaFile in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        [global::Microsoft.OData.Client.OriginalNameAttribute("MediaFile")]
-        public global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.MediaFileSingle MediaFile
-        {
-            get
-            {
-                if (!this.IsComposable)
-                {
-                    throw new global::System.NotSupportedException("The previous function is not composable.");
-                }
-                if ((this._MediaFile == null))
-                {
-                    this._MediaFile = new global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.MediaFileSingle(this.Context, GetPath("MediaFile"));
-                }
-                return this._MediaFile;
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.MediaFileSingle _MediaFile;
-        /// <summary>
-        /// There are no comments for ResponseType in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        [global::Microsoft.OData.Client.OriginalNameAttribute("ResponseType")]
-        public global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ResponseTypeSingle ResponseType
-        {
-            get
-            {
-                if (!this.IsComposable)
-                {
-                    throw new global::System.NotSupportedException("The previous function is not composable.");
-                }
-                if ((this._ResponseType == null))
-                {
-                    this._ResponseType = new global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ResponseTypeSingle(this.Context, GetPath("ResponseType"));
-                }
-                return this._ResponseType;
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ResponseTypeSingle _ResponseType;
-        /// <summary>
-        /// There are no comments for MediaPathType in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        [global::Microsoft.OData.Client.OriginalNameAttribute("MediaPathType")]
-        public global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.MediaPathTypeSingle MediaPathType
-        {
-            get
-            {
-                if (!this.IsComposable)
-                {
-                    throw new global::System.NotSupportedException("The previous function is not composable.");
-                }
-                if ((this._MediaPathType == null))
-                {
-                    this._MediaPathType = new global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.MediaPathTypeSingle(this.Context, GetPath("MediaPathType"));
-                }
-                return this._MediaPathType;
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.MediaPathTypeSingle _MediaPathType;
-    }
-    /// <summary>
-    /// There are no comments for SystemMediaFile in the schema.
-    /// </summary>
-    /// <KeyProperties>
-    /// Id
-    /// </KeyProperties>
-    [global::Microsoft.OData.Client.Key("Id")]
-    [global::Microsoft.OData.Client.OriginalNameAttribute("SystemMediaFile")]
-    public partial class SystemMediaFile : global::Microsoft.OData.Client.BaseEntityType, global::System.ComponentModel.INotifyPropertyChanged
-    {
-        /// <summary>
-        /// Create a new SystemMediaFile object.
-        /// </summary>
-        /// <param name="ID">Initial value of Id.</param>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        public static SystemMediaFile CreateSystemMediaFile(int ID)
-        {
-            SystemMediaFile systemMediaFile = new SystemMediaFile();
-            systemMediaFile.Id = ID;
-            return systemMediaFile;
         }
         /// <summary>
         /// There are no comments for Property Id in the schema.
@@ -5095,29 +4779,6 @@ namespace Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models
             return new global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.PublicMediaFileSingle(source.Context, source.GetKeyPath(global::Microsoft.OData.Client.Serializer.GetKeyString(source.Context, keys)));
         }
         /// <summary>
-        /// Get an entity of type global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.SystemMediaFile as global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.SystemMediaFileSingle specified by key from an entity set
-        /// </summary>
-        /// <param name="source">source entity set</param>
-        /// <param name="keys">dictionary with the names and values of keys</param>
-        public static global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.SystemMediaFileSingle ByKey(this global::Microsoft.OData.Client.DataServiceQuery<global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.SystemMediaFile> source, global::System.Collections.Generic.Dictionary<string, object> keys)
-        {
-            return new global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.SystemMediaFileSingle(source.Context, source.GetKeyPath(global::Microsoft.OData.Client.Serializer.GetKeyString(source.Context, keys)));
-        }
-        /// <summary>
-        /// Get an entity of type global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.SystemMediaFile as global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.SystemMediaFileSingle specified by key from an entity set
-        /// </summary>
-        /// <param name="source">source entity set</param>
-        /// <param name="id">The value of id</param>
-        public static global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.SystemMediaFileSingle ByKey(this global::Microsoft.OData.Client.DataServiceQuery<global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.SystemMediaFile> source,
-            int id)
-        {
-            global::System.Collections.Generic.Dictionary<string, object> keys = new global::System.Collections.Generic.Dictionary<string, object>
-            {
-                { "Id", id }
-            };
-            return new global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.SystemMediaFileSingle(source.Context, source.GetKeyPath(global::Microsoft.OData.Client.Serializer.GetKeyString(source.Context, keys)));
-        }
-        /// <summary>
         /// Get an entity of type global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.Resident as global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ResidentSingle specified by key from an entity set
         /// </summary>
         /// <param name="source">source entity set</param>
@@ -5574,24 +5235,6 @@ namespace Keebee.AAT.Operations.Service.KeebeeAAT
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
         private global::Microsoft.OData.Client.DataServiceQuery<global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.PublicMediaFile> _PublicMediaFiles;
         /// <summary>
-        /// There are no comments for SystemMediaFiles in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        [global::Microsoft.OData.Client.OriginalNameAttribute("SystemMediaFiles")]
-        public global::Microsoft.OData.Client.DataServiceQuery<global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.SystemMediaFile> SystemMediaFiles
-        {
-            get
-            {
-                if ((this._SystemMediaFiles == null))
-                {
-                    this._SystemMediaFiles = base.CreateQuery<global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.SystemMediaFile>("SystemMediaFiles");
-                }
-                return this._SystemMediaFiles;
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private global::Microsoft.OData.Client.DataServiceQuery<global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.SystemMediaFile> _SystemMediaFiles;
-        /// <summary>
         /// There are no comments for Residents in the schema.
         /// </summary>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
@@ -5802,14 +5445,6 @@ namespace Keebee.AAT.Operations.Service.KeebeeAAT
             base.AddObject("PublicMediaFiles", publicMediaFile);
         }
         /// <summary>
-        /// There are no comments for SystemMediaFiles in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        public void AddToSystemMediaFiles(global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.SystemMediaFile systemMediaFile)
-        {
-            base.AddObject("SystemMediaFiles", systemMediaFile);
-        }
-        /// <summary>
         /// There are no comments for Residents in the schema.
         /// </summary>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
@@ -6015,7 +5650,7 @@ namespace Keebee.AAT.Operations.Service.KeebeeAAT
         <Property Name=""ShortDescription"" Type=""Edm.String"" Nullable=""false"" />
         <Property Name=""IsPreviewable"" Type=""Edm.Boolean"" Nullable=""false"" />
         <Property Name=""IsSystem"" Type=""Edm.Boolean"" Nullable=""false"" />
-        <Property Name=""IsLinkable"" Type=""Edm.Boolean"" Nullable=""false"" />
+        <Property Name=""IsSharable"" Type=""Edm.Boolean"" Nullable=""false"" />
       </EntityType>
       <EntityType Name=""ResidentMediaFile"">
         <Key>
@@ -6041,25 +5676,6 @@ namespace Keebee.AAT.Operations.Service.KeebeeAAT
         </NavigationProperty>
       </EntityType>
       <EntityType Name=""PublicMediaFile"">
-        <Key>
-          <PropertyRef Name=""Id"" />
-        </Key>
-        <Property Name=""Id"" Type=""Edm.Int32"" Nullable=""false"" />
-        <Property Name=""IsLinked"" Type=""Edm.Boolean"" Nullable=""false"" />
-        <Property Name=""StreamId"" Type=""Edm.Guid"" />
-        <Property Name=""ResponseTypeId"" Type=""Edm.Int32"" />
-        <Property Name=""MediaPathTypeId"" Type=""Edm.Int32"" />
-        <NavigationProperty Name=""MediaFile"" Type=""Keebee.AAT.DataAccess.Models.MediaFile"">
-          <ReferentialConstraint Property=""StreamId"" ReferencedProperty=""StreamId"" />
-        </NavigationProperty>
-        <NavigationProperty Name=""ResponseType"" Type=""Keebee.AAT.DataAccess.Models.ResponseType"">
-          <ReferentialConstraint Property=""ResponseTypeId"" ReferencedProperty=""Id"" />
-        </NavigationProperty>
-        <NavigationProperty Name=""MediaPathType"" Type=""Keebee.AAT.DataAccess.Models.MediaPathType"">
-          <ReferentialConstraint Property=""MediaPathTypeId"" ReferencedProperty=""Id"" />
-        </NavigationProperty>
-      </EntityType>
-      <EntityType Name=""SystemMediaFile"">
         <Key>
           <PropertyRef Name=""Id"" />
         </Key>
@@ -6171,11 +5787,6 @@ namespace Keebee.AAT.Operations.Service.KeebeeAAT
           <NavigationPropertyBinding Path=""MediaPathType"" Target=""MediaPathTypes"" />
         </EntitySet>
         <EntitySet Name=""PublicMediaFiles"" EntityType=""Keebee.AAT.DataAccess.Models.PublicMediaFile"">
-          <NavigationPropertyBinding Path=""MediaFile"" Target=""MediaFiles"" />
-          <NavigationPropertyBinding Path=""ResponseType"" Target=""ResponseTypes"" />
-          <NavigationPropertyBinding Path=""MediaPathType"" Target=""MediaPathTypes"" />
-        </EntitySet>
-        <EntitySet Name=""SystemMediaFiles"" EntityType=""Keebee.AAT.DataAccess.Models.SystemMediaFile"">
           <NavigationPropertyBinding Path=""MediaFile"" Target=""MediaFiles"" />
           <NavigationPropertyBinding Path=""ResponseType"" Target=""ResponseTypes"" />
           <NavigationPropertyBinding Path=""MediaPathType"" Target=""MediaPathTypes"" />

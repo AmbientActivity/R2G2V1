@@ -44,7 +44,7 @@ namespace Keebee.AAT.Operations.Controllers
                     x.ShortDescription,
                     x.IsPreviewable,
                     x.IsSystem,
-                    x.IsLinkable
+                    x.IsSharable
                 });
 
             return new DynamicJsonObject(exObj);
@@ -72,7 +72,7 @@ namespace Keebee.AAT.Operations.Controllers
             exObj.ShortDescription = mediaPathType.ShortDescription;
             exObj.IsSystem = mediaPathType.IsPreviewable;
             exObj.IsSystem = mediaPathType.IsSystem;
-            exObj.IsLinkable = mediaPathType.IsLinkable;
+            exObj.IsSharable = mediaPathType.IsSharable;
 
             return new DynamicJsonObject(exObj);
         }
@@ -100,7 +100,7 @@ namespace Keebee.AAT.Operations.Controllers
                     x.ShortDescription,
                     x.IsPreviewable,
                     x.IsSystem,
-                    x.IsLinkable
+                    x.IsSharable
                 });
 
             return new DynamicJsonObject(exObj);

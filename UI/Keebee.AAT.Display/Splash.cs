@@ -76,11 +76,11 @@ namespace Keebee.AAT.Display
                     Controls.Add(mediaPlayer);
 
                     var mediaPathType = _opsClient.GetMediaPathType(MediaPathTypeId.Ambient);
-                    var ambientMediaPaths = _opsClient.GetSystemMediaFilesForResponseType(ResponseTypeId.Ambient)
+                    var ambientMediaPaths = _opsClient.GetPublicMediaFilesForResponseType(ResponseTypeId.Ambient)
                         .MediaResponseType.Paths;
 
                     var files = ambientMediaPaths.SelectMany(p => p.Files)
-                        .Select(f => $@"{_mediaPath.MediaRoot}\{_mediaPath.SystemLibrary}\{mediaPathType.Path}\{f.Filename}")
+                        .Select(f => $@"{_mediaPath.MediaRoot}\{_mediaPath.SharedLibrary}\{mediaPathType.Path}\{f.Filename}")
                         .ToArray();
 
                     if (files.Any())

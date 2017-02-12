@@ -135,7 +135,7 @@ namespace Keebee.AAT.Administrator.Controllers
                     x.Description,
                     x.ShortDescription,
                     x.IsPreviewable,
-                    x.IsLinkable
+                    x.IsSharable
                 })
             };
 
@@ -361,18 +361,21 @@ namespace Keebee.AAT.Administrator.Controllers
             {
                 var responseTypeId = ResidentRules.GetResponseTypeId(mediaPathTypeId);
 
-                foreach (var streamId in streamIds)
+                if (streamIds != null)
                 {
-                    var mf = new ResidentMediaFileEdit
+                    foreach (var streamId in streamIds)
                     {
-                        StreamId = streamId,
-                        ResidentId = residentId,
-                        ResponseTypeId = responseTypeId,
-                        MediaPathTypeId = mediaPathTypeId,
-                        IsLinked = true
-                    };
+                        var mf = new ResidentMediaFileEdit
+                        {
+                            StreamId = streamId,
+                            ResidentId = residentId,
+                            ResponseTypeId = responseTypeId,
+                            MediaPathTypeId = mediaPathTypeId,
+                            IsLinked = true
+                        };
 
-                    _opsClient.PostResidentMediaFile(mf);
+                        _opsClient.PostResidentMediaFile(mf);
+                    }
                 }
                 success = true;
             }

@@ -25,7 +25,6 @@ namespace Keebee.AAT.Shared
         public string MediaRoot = $@"\\{Environment.MachineName}\{SqlServerFilestream}";
         public string ProfileRoot = $@"\\{Environment.MachineName}\{SqlServerFilestream}\Profiles";
         public string SharedLibrary = @"SharedLibrary";
-        public string SystemLibrary = @"SystemLibrary";
         public string ExportEventLogRoot = $@"\\{Environment.MachineName}\{SqlServerFilestream}\Exports\EventLog";
     }
 

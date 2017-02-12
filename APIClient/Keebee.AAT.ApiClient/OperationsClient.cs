@@ -65,12 +65,6 @@ namespace Keebee.AAT.ApiClient
         IEnumerable<MediaPathType> GetMediaPathTypes(bool isSystem);
 
 
-        // system media files
-        SystemMediaFile GetSystemMediaFile(int id);
-        SystemMedia GetSystemMediaFiles();
-        SystemMediaResponseType GetSystemMediaFilesForResponseType(int responseTypeId);
-
-
         // public media files
         PublicMediaFile GetPublicMediaFile(int id);
         PublicMedia GetPublicMediaFiles();
@@ -185,11 +179,6 @@ namespace Keebee.AAT.ApiClient
         private const string UrlMediaPathTypes = "mediapathtypes";
         private const string UrlMediaPathType = "mediapathtypes/{0}";
         private const string UrlMediaPathTypesSystem = "mediapathtypes?isSystem={0}";
-
-        // system media files
-        private const string UrlSystemMediaFiles = "systemmediafiles";
-        private const string UrlSystemMediaFile = "systemmediafiles/{0}";
-        private const string UrlSystemMediaFilesForResponseType = "systemmediafiles?responseTypeId={0}";
 
         // public media files
         private const string UrlPublicMediaFiles = "publicmediafiles";
@@ -680,41 +669,6 @@ namespace Keebee.AAT.ApiClient
             var pathTypes = serializer.Deserialize<MediaPathTypeList>(data).MediaPathTypes;
 
             return pathTypes;
-        }
-
-
-        // system media files
-        public SystemMediaFile GetSystemMediaFile(int id)
-        {
-            var data = Get(string.Format(UrlSystemMediaFile, id));
-            if (data == null) return null;
-
-            var serializer = new JavaScriptSerializer();
-            var mediaFile = serializer.Deserialize<SystemMediaFile>(data);
-
-            return mediaFile;
-        }
-
-        public SystemMedia GetSystemMediaFiles()
-        {
-            var data = Get(UrlSystemMediaFiles);
-            if (data == null) return null;
-
-            var serializer = new JavaScriptSerializer();
-            var publicMedia = serializer.Deserialize<SystemMedia>(data);
-
-            return publicMedia;
-        }
-
-        public SystemMediaResponseType GetSystemMediaFilesForResponseType(int responseTypeId)
-        {
-            var data = Get(string.Format(UrlSystemMediaFilesForResponseType, responseTypeId));
-            if (data == null) return null;
-
-            var serializer = new JavaScriptSerializer();
-            var publicMedia = serializer.Deserialize<SystemMediaResponseType>(data);
-
-            return publicMedia;
         }
 
 

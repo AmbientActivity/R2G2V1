@@ -192,7 +192,6 @@ namespace Keebee.AAT.BusinessRules
                 {
                     existingStreamIds = existingSharedMediaPaths.MediaFiles.SelectMany(p => p.Paths)
                         .SelectMany(f => f.Files)
-                        .Where(f => f.IsLinked)
                         .Select(f => f.StreamId);
                 }
             }
@@ -206,10 +205,23 @@ namespace Keebee.AAT.BusinessRules
 
         public string GetNoAvailableSharedMediaMessage(int mediaPathTypeId)
         {
-            var mediaPathType = GetMediaPathShortDescription(mediaPathTypeId);
+            string mediaPathType;
 
-            var hasHave = mediaPathType.EndsWith("s") ? "have" : "has";
-            var message = $"All available {mediaPathType} {hasHave} already been included in this profile.";
+            switch (mediaPathTypeId)
+            {
+                case MediaPathTypeId.Ambient:
+                    mediaPathType = "Ambient Videos";
+                    break;
+                case MediaPathTypeId.Cats:
+                    mediaPathType = "Cats Videos";
+                    break;
+                default:
+                    mediaPathType = GetMediaPathShortDescription(mediaPathTypeId);
+                    break;
+            }
+
+            var isAre = mediaPathType.EndsWith("s") ? "are" : "is";
+            var message = $"All available {mediaPathType} {isAre} already included in the public profile.";
 
             return message;
         }

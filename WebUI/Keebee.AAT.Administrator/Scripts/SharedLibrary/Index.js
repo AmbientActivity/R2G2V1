@@ -1,6 +1,6 @@
 ﻿/*!
  * 1.0 Keebee AAT Copyright © 2016
- * SystemLibraries/Index.js
+ * SharedLibrary/Index.js
  * Author: John Charlton
  * Date: 2016-09
  */
@@ -70,7 +70,7 @@ function DisableScreen() {
 ; (function ($) {
     var HIGHLIGHT_ROW_COLOUR = "#e3e8ff";
 
-    systemlibraries.index = {
+    sharedlibrary.index = {
         init: function (values) {
 
             var config = {
@@ -99,7 +99,7 @@ function DisableScreen() {
 
                 $.ajax({
                     type: "GET",
-                    url: site.url + "SystemLibraries/GetData?" + "mediaPathTypeId=" + mediaPathTypeId,
+                    url: site.url + "SharedLibrary/GetData?" + "mediaPathTypeId=" + mediaPathTypeId,
                     dataType: "json",
                     traditional: true,
                     async: false,
@@ -154,7 +154,7 @@ function DisableScreen() {
                             description: value.Description,
                             shortdescription: value.ShortDescription,
                             ispreviewable: value.IsPreviewable,
-                            islinkable: value.IsLinkable
+                            issharable: value.IsSharable
                         });
                     });
 
@@ -163,7 +163,7 @@ function DisableScreen() {
                     })[0];
 
                     self.isPreviewable(mediaPathType.ispreviewable);
-                    self.isSharable(mediaPathType.islinkable);
+                    self.isSharable(mediaPathType.issharable);
                 };
 
                 function enableDetail() {
@@ -235,7 +235,7 @@ function DisableScreen() {
 
                     $.ajax({
                         type: "GET",
-                        url: site.url + "SystemLibraries/GetUploaderHtml?mediaPathTypeId=" + mediaPathTypeId,
+                        url: site.url + "SharedLibrary/GetUploaderHtml?mediaPathTypeId=" + mediaPathTypeId,
                         traditional: true,
                         async: true,
                         dataType: "json",
@@ -258,7 +258,7 @@ function DisableScreen() {
                     })[0];
 
                     self.isPreviewable(mediaPathType.ispreviewable);
-                    self.isSharable(mediaPathType.islinkable);
+                    self.isSharable(mediaPathType.issharable);
                 });
 
                 self.filteredFiles = ko.computed(function () {
@@ -342,7 +342,7 @@ function DisableScreen() {
                         type: "GET",
                         async: false,
                         data: { streamId: row.streamid },
-                        url: site.url + "SystemLibraries/GetLinkedResidentsView/",
+                        url: site.url + "SharedLibrary/GetLinkedResidentsView/",
                         success: function (data) {
                             message = data;
                         }
@@ -462,7 +462,7 @@ function DisableScreen() {
                                 type: "POST",
                                 async: true,
                                 traditional: true,
-                                url: site.url + "SystemLibraries/DeleteSelected/",
+                                url: site.url + "SharedLibrary/DeleteSelected/",
                                 data:
                                 {
                                     streamIds: streamIds,
@@ -514,7 +514,7 @@ function DisableScreen() {
                     $.ajax({
                         type: "GET",
                         async: false,
-                        url: site.url + "SystemLibraries/GetImageViewerView?streamId=" + row.streamid + "&fileType=" + row.filetype,
+                        url: site.url + "SharedLibrary/GetImageViewerView?streamId=" + row.streamid + "&fileType=" + row.filetype,
                         success: function (data) {
                             message = data;
                         },

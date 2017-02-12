@@ -35,11 +35,9 @@ $installUtilityPath = "Install\Utility\"
 $profilesPath = "Media\Profiles\"
 $profilesPublicPath = "Media\Profiles\0\"
 $sharedLibraryPath = "Media\SharedLibrary\"
-$systemMediaPath = "Media\System\"
 $exportsPath = "Media\Exports\EventLog\"
 $publicProfileSource = "\\$env:COMPUTERNAME\SQLEXPRESS\KeebeeAATFilestream\Media\Profiles\0\*"
 $sharedLibrarySource = "\\$env:COMPUTERNAME\SQLEXPRESS\KeebeeAATFilestream\Media\SharedLibrary\*"
-$systemLibrarySource = "\\$env:COMPUTERNAME\SQLEXPRESS\KeebeeAATFilestream\Media\SystemLibrary\*"
 
 # documentation paths
 $documentationPath = "Install\Documentation\"
@@ -210,16 +208,6 @@ Try
     } 
     New-Item -ItemType Directory -Force -Path $path | Out-Null
     Copy-Item $sharedLibrarySource $path -recurse -Force
-
-    # system media
-    $path = $destPath + $systemMediaPath
-    If(test-path $path)
-    {
-        Remove-Item $path -recurse -Force
-    } 
-    New-Item -ItemType Directory -Force -Path $path | Out-Null
-    Copy-Item $systemLibrarySource $path -recurse -Force
-    Write-Host "done.”
 
     # -------------------- SCHEDULED TASKS --------------------
 

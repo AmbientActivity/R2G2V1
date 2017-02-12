@@ -27,7 +27,6 @@ namespace Keebee.AAT.ApiClient
         public Guid StreamId { get; set; }
         public int MediaPathTypeId { get; set; }
         public int ResponseTypeId { get; set; }
-        public bool IsLinked { get; set; }
     }
 
     public class PublicMediaStreamIdList

@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace Keebee.AAT.BusinessRules
 {
-    public class SystemLibrariesRules
+    public class SharedLibraryRules
     {
         private OperationsClient _opsClient;
         public OperationsClient OperationsClient
@@ -229,25 +229,7 @@ namespace Keebee.AAT.BusinessRules
                 });
             });
 
-            // system library
-            var systemMedia = _opsClient.GetMediaFilesForPath(mediaSourcePath.SystemLibrary);
-            var systemFileList = systemMedia.SelectMany(p => p.Files.Select(f =>
-            {
-                var mediaPathType = GetMediaPathTypeFromRawPath(p.Path, mediaPathTypes);
-
-                return new
-                {
-                    f.StreamId,
-                    f.Filename,
-                    f.FileSize,
-                    f.FileType,
-                    mediaPathType.Path,
-                    MediaPathTypeId = mediaPathType.Id,
-                    NumLinkedProfiles = 0
-                };
-            }));
-
-            return sharedFileList.Union(systemFileList);
+            return sharedFileList;
         }
 
         public IEnumerable<object> GetMediaPathTypeList(IEnumerable<MediaPathType> mediaPathTypes)
@@ -258,8 +240,8 @@ namespace Keebee.AAT.BusinessRules
                 x.Description,
                 x.ShortDescription,
                 x.IsPreviewable,
-                IsLinkable = true
-            });
+                IsSharable = true
+            }).OrderBy(x => x.Description);
         }
 
         public IEnumerable<Resident> GetLinkedProfiles(Guid streamId)

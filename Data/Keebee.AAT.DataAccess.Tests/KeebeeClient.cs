@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-// Generation date: 2017-02-11 2:53:42 PM
+// Generation date: 2017-02-11 8:43:36 PM
 namespace Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models
 {
     /// <summary>
@@ -2616,7 +2616,7 @@ namespace Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models
         /// <param name="shortDescription">Initial value of ShortDescription.</param>
         /// <param name="isPreviewable">Initial value of IsPreviewable.</param>
         /// <param name="isSystem">Initial value of IsSystem.</param>
-        /// <param name="isLinkable">Initial value of IsLinkable.</param>
+        /// <param name="isSharable">Initial value of IsSharable.</param>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
         public static MediaPathType CreateMediaPathType(int ID, 
                     string path, 
@@ -2624,7 +2624,7 @@ namespace Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models
                     string shortDescription, 
                     bool isPreviewable, 
                     bool isSystem, 
-                    bool isLinkable)
+                    bool isSharable)
         {
             MediaPathType mediaPathType = new MediaPathType();
             mediaPathType.Id = ID;
@@ -2633,7 +2633,7 @@ namespace Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models
             mediaPathType.ShortDescription = shortDescription;
             mediaPathType.IsPreviewable = isPreviewable;
             mediaPathType.IsSystem = isSystem;
-            mediaPathType.IsLinkable = isLinkable;
+            mediaPathType.IsSharable = isSharable;
             return mediaPathType;
         }
         /// <summary>
@@ -2775,28 +2775,28 @@ namespace Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models
         partial void OnIsSystemChanging(bool value);
         partial void OnIsSystemChanged();
         /// <summary>
-        /// There are no comments for Property IsLinkable in the schema.
+        /// There are no comments for Property IsSharable in the schema.
         /// </summary>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        [global::Microsoft.OData.Client.OriginalNameAttribute("IsLinkable")]
-        public bool IsLinkable
+        [global::Microsoft.OData.Client.OriginalNameAttribute("IsSharable")]
+        public bool IsSharable
         {
             get
             {
-                return this._IsLinkable;
+                return this._IsSharable;
             }
             set
             {
-                this.OnIsLinkableChanging(value);
-                this._IsLinkable = value;
-                this.OnIsLinkableChanged();
-                this.OnPropertyChanged("IsLinkable");
+                this.OnIsSharableChanging(value);
+                this._IsSharable = value;
+                this.OnIsSharableChanged();
+                this.OnPropertyChanged("IsSharable");
             }
         }
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private bool _IsLinkable;
-        partial void OnIsLinkableChanging(bool value);
-        partial void OnIsLinkableChanged();
+        private bool _IsSharable;
+        partial void OnIsSharableChanging(bool value);
+        partial void OnIsSharableChanged();
         /// <summary>
         /// This event is raised when the value of the property is changed
         /// </summary>
@@ -3304,13 +3304,11 @@ namespace Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models
         /// Create a new PublicMediaFile object.
         /// </summary>
         /// <param name="ID">Initial value of Id.</param>
-        /// <param name="isLinked">Initial value of IsLinked.</param>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        public static PublicMediaFile CreatePublicMediaFile(int ID, bool isLinked)
+        public static PublicMediaFile CreatePublicMediaFile(int ID)
         {
             PublicMediaFile publicMediaFile = new PublicMediaFile();
             publicMediaFile.Id = ID;
-            publicMediaFile.IsLinked = isLinked;
             return publicMediaFile;
         }
         /// <summary>
@@ -3336,29 +3334,6 @@ namespace Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models
         private int _Id;
         partial void OnIdChanging(int value);
         partial void OnIdChanged();
-        /// <summary>
-        /// There are no comments for Property IsLinked in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        [global::Microsoft.OData.Client.OriginalNameAttribute("IsLinked")]
-        public bool IsLinked
-        {
-            get
-            {
-                return this._IsLinked;
-            }
-            set
-            {
-                this.OnIsLinkedChanging(value);
-                this._IsLinked = value;
-                this.OnIsLinkedChanged();
-                this.OnPropertyChanged("IsLinked");
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private bool _IsLinked;
-        partial void OnIsLinkedChanging(bool value);
-        partial void OnIsLinkedChanged();
         /// <summary>
         /// There are no comments for Property StreamId in the schema.
         /// </summary>
@@ -5675,7 +5650,7 @@ namespace Keebee.AAT.DataAccess.Tests.KeebeeAAT
         <Property Name=""ShortDescription"" Type=""Edm.String"" Nullable=""false"" />
         <Property Name=""IsPreviewable"" Type=""Edm.Boolean"" Nullable=""false"" />
         <Property Name=""IsSystem"" Type=""Edm.Boolean"" Nullable=""false"" />
-        <Property Name=""IsLinkable"" Type=""Edm.Boolean"" Nullable=""false"" />
+        <Property Name=""IsSharable"" Type=""Edm.Boolean"" Nullable=""false"" />
       </EntityType>
       <EntityType Name=""ResidentMediaFile"">
         <Key>
@@ -5705,7 +5680,6 @@ namespace Keebee.AAT.DataAccess.Tests.KeebeeAAT
           <PropertyRef Name=""Id"" />
         </Key>
         <Property Name=""Id"" Type=""Edm.Int32"" Nullable=""false"" />
-        <Property Name=""IsLinked"" Type=""Edm.Boolean"" Nullable=""false"" />
         <Property Name=""StreamId"" Type=""Edm.Guid"" />
         <Property Name=""ResponseTypeId"" Type=""Edm.Int32"" />
         <Property Name=""MediaPathTypeId"" Type=""Edm.Int32"" />

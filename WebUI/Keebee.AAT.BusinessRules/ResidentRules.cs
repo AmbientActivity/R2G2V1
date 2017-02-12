@@ -243,8 +243,8 @@ namespace Keebee.AAT.BusinessRules
         {
             var mediaPathType = GetMediaPathShortDescription(mediaPathTypeId);
 
-            var hasHave = mediaPathType.EndsWith("s") ? "have" : "has";
-            var message = $"All available {mediaPathType} {hasHave} already been included in this profile.";
+            var isAre = mediaPathType.EndsWith("s") ? "are" : "is";
+            var message = $"All available {mediaPathType} {isAre} already included in this profile.";
 
             return message;
         }

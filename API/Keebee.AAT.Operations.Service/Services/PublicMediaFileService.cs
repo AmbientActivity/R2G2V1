@@ -14,8 +14,6 @@ namespace Keebee.AAT.Operations.Service.Services
         IEnumerable<PublicMediaFile> GetForMediaPathType(int mediaPathTypdId);
         IEnumerable<PublicMediaFile> GetForStreamId(Guid streamId);
         IEnumerable<PublicMediaFile> GetIdsForStreamId(Guid streamId);
-        IEnumerable<PublicMediaFile> GetLinkedPublicMedia();
-        IEnumerable<PublicMediaFile> GetLinkedPublicMedia(Guid streamId);
         PublicMediaFile GetForResponseTypeFilename(int responseTypdId, string filename);
         void Post(PublicMediaFile publicMediaFile);
         void Patch(int id, PublicMediaFile publicMediaFile);
@@ -87,30 +85,6 @@ namespace Keebee.AAT.Operations.Service.Services
 
             var media = container.PublicMediaFiles
                 .AddQueryOption("$filter", $"StreamId eq {streamId}")
-                .AsEnumerable();
-
-            return media;
-        }
-
-        public IEnumerable<PublicMediaFile> GetLinkedPublicMedia()
-        {
-            var container = new Container(new Uri(ODataHost.Url));
-
-            var media = container.PublicMediaFiles
-                .AddQueryOption("$filter", "IsLinked")
-                .Expand("MediaFile,MediaPathType,ResponseType($expand=ResponseTypeCategory)")
-                .AsEnumerable();
-
-            return media;
-        }
-
-        public IEnumerable<PublicMediaFile> GetLinkedPublicMedia(Guid streamId)
-        {
-            var container = new Container(new Uri(ODataHost.Url));
-
-            var media = container.PublicMediaFiles
-                .AddQueryOption("$filter", $"IsLinked and StreamId eq {streamId}")
-                .Expand("MediaFile,MediaPathType,ResponseType($expand=ResponseTypeCategory)")
                 .AsEnumerable();
 
             return media;

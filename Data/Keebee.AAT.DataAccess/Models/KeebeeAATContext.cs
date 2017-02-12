@@ -45,8 +45,6 @@ namespace Keebee.AAT.DataAccess.Models
 
         public DbSet<PublicMediaFile> PublicMediaFiles { get; set; }
 
-        public DbSet<SystemMediaFile> SystemMediaFiles { get; set; }
-
         public DbSet<Resident> Residents { get; set; }
 
         public DbSet<ActiveResident> ActiveResidents { get; set; }

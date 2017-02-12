@@ -10,7 +10,7 @@ namespace Keebee.AAT.ApiClient
         public string ShortDescription { get; set; }
         public bool IsPreviewable { get; set; }
         public bool IsSystem { get; set; }
-        public bool IsLinkable { get; set; }
+        public bool IsSharable { get; set; }
     }
 
     public class MediaPathTypeList

@@ -8,20 +8,18 @@ using CuteWebUI;
 using System.Linq;
 using System.Web.Mvc;
 using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.IO;
 
 namespace Keebee.AAT.Administrator.Controllers
 {
-    public class SystemLibrariesController : Controller
+    public class SharedLibraryController : Controller
     {
         private readonly OperationsClient _opsClient;
         private readonly SystemEventLogger _systemEventLogger;
 
         private readonly MediaSourcePath _mediaPath = new MediaSourcePath();
 
-        public SystemLibrariesController()
+        public SharedLibraryController()
         {
             _systemEventLogger = new SystemEventLogger(SystemEventLogType.AdminInterface);
             _opsClient = new OperationsClient { SystemEventLogger = _systemEventLogger };
@@ -36,13 +34,13 @@ namespace Keebee.AAT.Administrator.Controllers
             // first time loading
             if (mediaPathTypeId == null) mediaPathTypeId = MediaPathTypeId.Music;
 
-            var vm = LoadSystemLibrariesViewModel(mediaPathTypeId);
+            var vm = LoadSharedLibraryViewModel(mediaPathTypeId);
 
             using (var uploader = new MvcUploader(System.Web.HttpContext.Current))
             {
                 uploader.UploadUrl = Response.ApplyAppPathModifier("~/UploadHandler.ashx");
                 uploader.Name = "myuploader";
-                uploader.AllowedFileExtensions = SystemLibrariesRules.GetAllowedExtensions(mediaPathTypeId);
+                uploader.AllowedFileExtensions = SharedLibraryRules.GetAllowedExtensions(mediaPathTypeId);
                 uploader.MultipleFilesUpload = true;
                 uploader.InsertButtonID = "uploadbutton";
                 vm.UploaderHtml = uploader.Render();
@@ -61,9 +59,9 @@ namespace Keebee.AAT.Administrator.Controllers
                     var file = uploader.GetUploadedFile(fileguid);
                     if (file?.FileName == null) continue;
 
-                    if (!SystemLibrariesRules.IsValidFile(file.FileName, mediaPathTypeId)) continue;
+                    if (!SharedLibraryRules.IsValidFile(file.FileName, mediaPathTypeId)) continue;
 
-                    var rules = new SystemLibrariesRules { OperationsClient = _opsClient };
+                    var rules = new SharedLibraryRules { OperationsClient = _opsClient };
                     var mediaPath = rules.GetMediaPathType(mediaPathTypeId);
                     var filePath = mediaPathTypeId > 0
                         ? $@"{_mediaPath.MediaRoot}\{_mediaPath.SharedLibrary}\{mediaPath.Path}\{file.FileName}"
@@ -84,9 +82,9 @@ namespace Keebee.AAT.Administrator.Controllers
         [Authorize]
         public JsonResult GetData(int mediaPathTypeId)
         {
-            var rules = new SystemLibrariesRules { OperationsClient = _opsClient };
+            var rules = new SharedLibraryRules { OperationsClient = _opsClient };
             var mediaPathTypes = _opsClient.GetMediaPathTypes()
-                    .Where(mp => mp.IsLinkable || mp.IsSystem).ToArray();
+                    .Where(mp => mp.IsSharable).ToArray();
 
             var vm = new
             {
@@ -106,13 +104,13 @@ namespace Keebee.AAT.Administrator.Controllers
             {
                 uploader.UploadUrl = Response.ApplyAppPathModifier("~/UploadHandler.ashx");
                 uploader.Name = "myuploader";
-                uploader.AllowedFileExtensions = SystemLibrariesRules.GetAllowedExtensions(mediaPathTypeId); ;
+                uploader.AllowedFileExtensions = SharedLibraryRules.GetAllowedExtensions(mediaPathTypeId); ;
                 uploader.MultipleFilesUpload = true;
                 uploader.InsertButtonID = "uploadbutton";
                 html = uploader.Render();
             }
 
-            var rules = new SystemLibrariesRules { OperationsClient = _opsClient };
+            var rules = new SharedLibraryRules { OperationsClient = _opsClient };
             var responseTypes = rules.GetValidResponseTypes(mediaPathTypeId)
                 .OrderBy(r => r.Description);
             ;
@@ -134,7 +132,7 @@ namespace Keebee.AAT.Administrator.Controllers
         {
             bool success;
             var errormessage = string.Empty;
-            var rules = new SystemLibrariesRules { OperationsClient = _opsClient };
+            var rules = new SharedLibraryRules { OperationsClient = _opsClient };
             var mediaPathTypes = _opsClient.GetMediaPathTypes()
                     .Where(mp => mp.Id != MediaPathTypeId.PersonalImages && mp.Id != MediaPathTypeId.HomeMovies).ToArray();
 
@@ -205,12 +203,12 @@ namespace Keebee.AAT.Administrator.Controllers
             return File(info.OpenRead(), $"image/{info}");
         }
 
-        private SystemLibrariesViewModel LoadSystemLibrariesViewModel(int? mediaPathTypeId)
+        private SharedLibraryViewModel LoadSharedLibraryViewModel(int? mediaPathTypeId)
         {
-            var rules = new SystemLibrariesRules { OperationsClient = _opsClient };
-            var vm = new SystemLibrariesViewModel
+            var rules = new SharedLibraryRules { OperationsClient = _opsClient };
+            var vm = new SharedLibraryViewModel
             {
-                Title = "Shared/System Libraries",
+                Title = "Shared Library",
                 AddButtonText = $"Upload {rules.GetMediaPathShortDescription(mediaPathTypeId)}",
                 SelectedMediaPathType = mediaPathTypeId ?? MediaPathTypeId.Music
             };
@@ -220,7 +218,7 @@ namespace Keebee.AAT.Administrator.Controllers
 
         private LinkedProfilesViewModel LoadLinkedProfilesViewModel(Guid streamId)
         {
-            var rules = new SystemLibrariesRules {OperationsClient = _opsClient};
+            var rules = new SharedLibraryRules {OperationsClient = _opsClient};
             var linkedProfiles = rules.GetLinkedProfiles(streamId);
 
             var vm = new LinkedProfilesViewModel

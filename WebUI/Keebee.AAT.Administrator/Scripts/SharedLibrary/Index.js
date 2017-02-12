@@ -72,9 +72,11 @@ function DisableScreen() {
 
     sharedlibrary.index = {
         init: function (values) {
-
+            
             var config = {
-                selectedMediaPathTypeId: 0
+                selectedMediaPathTypeId: 0,
+                askToAddToPublicProfile: "False",
+                streamIds: []
             };
 
             $.extend(config, values);
@@ -91,6 +93,71 @@ function DisableScreen() {
             };
 
             loadData();
+
+            if (config.askToAddToPublicProfile === "True") {
+                showAddToPublicProfileDialog();
+            }
+
+            function showAddToPublicProfileDialog() {
+                BootstrapDialog.show({
+                    title: "Auto-Link to Public Profile",
+                    message: "Automatically link the new files to the public profile?",
+                    closable: false,
+                    buttons: [
+                        {
+                            label: "Yes",
+                            cssClass: "btn-primary",
+                            action: function (dialog) {
+                                addSharedFilesToPublicProfile();
+                                dialog.close();
+                            }
+                        },
+                        {
+                            label: "No",
+                            action: function (dialog) {
+                                dialog.close();
+                            }
+                        }
+                    ]
+                });
+            };
+
+            function addSharedFilesToPublicProfile() {
+                $("body").css("cursor", "wait");
+
+                $.ajax({
+                    type: "POST",
+                    async: true,
+                    traditional: true,
+                    url: site.url + "SharedLibrary/AddSharedMediaFiles/",
+                    data:
+                    {
+                        streamIds: config.streamIds,
+                        mediaPathTypeId: config.selectedMediaPathTypeId
+                    },
+                    dataType: "json",
+                    success: function (data) {
+                        $("body").css("cursor", "default");
+                        if (data.Success) {
+                        } else {
+                            $("body").css("cursor", "default");
+                            BootstrapDialog.show({
+                                type: BootstrapDialog.TYPE_DANGER,
+                                title: "Error Adding Shared Files",
+                                message: data.ErrorMessage
+                            });
+                        }
+                    },
+                    error: function (data) {
+                        $("body").css("cursor", "default");
+                        BootstrapDialog.show({
+                            type: BootstrapDialog.TYPE_DANGER,
+                            title: "Error Adding Shared Files",
+                            message: "Unexpected Error\n" + data
+                        });
+                    }
+                });
+            };
 
             ko.applyBindings(new FileViewModel());
 
@@ -336,7 +403,7 @@ function DisableScreen() {
                 self.showProfilesLinkedDialog = function (row) {
                     var message;
                     var title = "<span class='glyphicon glyphicon-link' style='color: #fff'></span>";
-                    var mediaPathTypeDesc = self.mediaPathType().shortdescription;
+                    //var mediaPathTypeDesc = self.mediaPathType().shortdescription;
 
                     $.ajax({
                         type: "GET",
@@ -349,8 +416,9 @@ function DisableScreen() {
                     });
 
                     BootstrapDialog.show({
-                        title: title + " Profiles linked to the <b>" + mediaPathTypeDesc + "</b> file: \n" +
-                            "<b>" + row.filename + "</b>",
+                        //title: title + " Profiles linked to the <b>" + mediaPathTypeDesc + "</b> file: \n" +
+                        //    "<b>" + row.filename + "</b>",
+                        title: title + " Linked Profiles",
                         message: $("<div></div>").append(message),
 
                         closable: false,

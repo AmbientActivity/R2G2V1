@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Keebee.AAT.Administrator.ViewModels
 {
@@ -9,6 +10,8 @@ namespace Keebee.AAT.Administrator.ViewModels
         public int? SelectedMediaPathType { get; set; }
         public string UploaderHtml { get; set; }
         public string UploadedMessage { get; set; }
+        public bool AskToAddToPublicProfile { get; set; }
+        public string UploadedStreamIds { get; set; }
     }
 
     public class LinkedProfilesViewModel

@@ -9,7 +9,6 @@ IF OBJECT_ID('ConfigDetails', 'U') IS NOT NULL DROP TABLE ConfigDetails
 IF OBJECT_ID('Configs', 'U') IS NOT NULL DROP TABLE [Configs]
 IF OBJECT_ID('ResidentMediaFiles', 'U') IS NOT NULL DROP TABLE [ResidentMediaFiles]
 IF OBJECT_ID('PublicMediaFiles', 'U') IS NOT NULL DROP TABLE [PublicMediaFiles]
-IF OBJECT_ID('SystemMediaFiles', 'U') IS NOT NULL DROP TABLE [SystemMediaFiles]
 IF OBJECT_ID('ResponseTypes', 'U') IS NOT NULL DROP TABLE ResponseTypes
 IF OBJECT_ID('ResponseTypeCategories', 'U') IS NOT NULL DROP TABLE ResponseTypeCategories
 IF OBJECT_ID('InteractiveActivityTypes', 'U') IS NOT NULL DROP TABLE InteractiveActivityTypes

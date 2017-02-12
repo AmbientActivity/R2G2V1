@@ -254,7 +254,7 @@ namespace Keebee.AAT.BusinessRules
                 publicProfile.Add(new Resident
                 {
                     Id = PublicMediaSource.Id,
-                    FirstName = PublicMediaSource.Description
+                    FirstName = PublicMediaSource.Name
                 });
             }
 

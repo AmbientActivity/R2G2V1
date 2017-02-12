@@ -470,7 +470,6 @@
                             });
                         }
                     });
-
                 };
 
                 self.showImagePreview = function (row) {

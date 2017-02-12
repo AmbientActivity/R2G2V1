@@ -5,17 +5,22 @@
     {
          <h4>Create a duplicate of: <b>@Model.SourceConfigName</b></h4>
     }
-
-    <div class="label label-default">Name</div>
-    <input type="text" id="txtDescription" class="form-control" value="@Model.Description" maxlength="50"/>
-    <div class="label label-default">Turn On Event Logging</div>
-    @if (Model.IsActiveEventLog)
-    {
-        <input type="checkbox" id="chkIsActiveEventLog" checked/>
-    }
-    else
-    {
-        <input type="checkbox" id="chkIsActiveEventLog" />
-    }
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="label label-default">Name</div>
+            <input type="text" id="txtDescription" class="form-control" value="@Model.Description" maxlength="50" />
+        </div>
+        <div class="col-sm-12">
+            <div class="label label-default">Turn On Event Logging</div>
+            @if (Model.IsActiveEventLog)
+            {
+                <div><input type="checkbox" id="chkIsActiveEventLog" checked /></div>
+            }
+            else
+            {
+                <div><input type="checkbox" id="chkIsActiveEventLog" /></div>
+            }
+        </div>
+    </div>
     <div class="validation-container" id="validation-container"></div>
 </div>

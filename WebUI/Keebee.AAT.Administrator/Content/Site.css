@@ -106,23 +106,25 @@ a:hover, a:visited, a:link, a:active {
 .modal-content {
     width: 470px;
 }
-
+.col-sm-12 {
+    margin-bottom: 10px;
+}
 /* video capture */
-    #tblVideoCapture > tbody > tr > th, #tblVideoCapture > tbody > tr > td {
+#tblVideoCapture > tbody > tr > th, #tblVideoCapture > tbody > tr > td {
     font-size: 13px;
-    padding: 8px 5px 5px 8px;
+    padding: 8px 5px 3px 8px;
 }
 
 /* event logs */
-    #tblEventLog > tbody > tr > th, #tblEventLog > tbody > tr > td {
+#tblEventLog > tbody > tr > th, #tblEventLog > tbody > tr > td {
     font-size: 13px;
-    padding: 8px 5px 5px 8px;
+    padding: 8px 5px 3px 8px;
 }
 
 /* media files */
 #tblFile > tbody > tr > th, #tblFile > tbody > tr > td {
     font-size: 13px;
-    padding: 8px 5px 5px 8px;
+    padding: 8px 5px 3px 8px;
 }
 
 /* residents */
@@ -130,10 +132,20 @@ a:hover, a:visited, a:link, a:active {
     font-size: 13px;
     padding: 8px 5px 5px 8px;
 }
+
+#tblSharedFile > tbody > tr > th, #tblSharedFile > tbody > tr > td {
+    font-size: 13px;
+    padding: 8px 5px 5px 8px;
+}
+
 .resident-edit {
     width: 400px;
 }
 
+/* turn off bootstrap vertical-align: top */
+.table tbody > tr > td.vert-align {
+    vertical-align: middle;
+}
 /* filter */
 .select-filter {
     min-width: 200px;
@@ -199,11 +211,11 @@ a:hover, a:visited, a:link, a:active {
     width: 85px;
 }
 .col-islinked {
-    width: 10px;
+    width: 20px;
 }
 /* bootstrap glyphicons*/
 .col-glyphicon {
-    width: 20px;
+    width: 30px;
 }
 .glyphicon-remove {
     color: #c12e2a;

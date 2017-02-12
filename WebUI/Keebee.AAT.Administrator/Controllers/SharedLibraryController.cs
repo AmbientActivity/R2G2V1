@@ -8,7 +8,9 @@ using CuteWebUI;
 using System.Linq;
 using System.Web.Mvc;
 using System;
+using System.Collections.ObjectModel;
 using System.IO;
+using System.Text;
 
 namespace Keebee.AAT.Administrator.Controllers
 {
@@ -51,6 +53,7 @@ namespace Keebee.AAT.Administrator.Controllers
 
                 // POST:
                 var fileManager = new FileManager { EventLogger = _systemEventLogger };
+                var streamIds = new StringBuilder();
 
                 // for multiple files the value is string : guid/guid/guid 
                 foreach (var strguid in myuploader.Split('/'))
@@ -72,7 +75,11 @@ namespace Keebee.AAT.Administrator.Controllers
 
                     if (msg.Length == 0)
                         file.MoveTo(filePath);
+
+                    streamIds.Append($"{strguid}/");
                 }
+                vm.UploadedStreamIds = streamIds.ToString().TrimEnd('/');
+                vm.AskToAddToPublicProfile = true;
             }
 
             return View(vm);
@@ -203,6 +210,42 @@ namespace Keebee.AAT.Administrator.Controllers
             return File(info.OpenRead(), $"image/{info}");
         }
 
+        public JsonResult AddSharedMediaFiles(string streamIds, int mediaPathTypeId)
+        {
+            bool success;
+            var errormessage = string.Empty;
+
+            try
+            {
+                if (streamIds != null)
+                {
+                    foreach (var streamId in streamIds.Split('/'))
+                    {
+                        var pmf = new PublicMediaFileEdit
+                        {
+                            StreamId = new Guid(streamId),
+                            ResponseTypeId = PublicProfileRules.GetResponseTypeId(mediaPathTypeId),
+                            MediaPathTypeId = mediaPathTypeId
+                        };
+
+                        _opsClient.PostPublicMediaFile(pmf);
+                    }
+                }
+                success = true;
+            }
+            catch (Exception ex)
+            {
+                success = false;
+                errormessage = ex.Message;
+            }
+
+            return Json(new
+            {
+                Success = success,
+                ErrorMessage = errormessage
+            }, JsonRequestBehavior.AllowGet);
+        }
+
         private SharedLibraryViewModel LoadSharedLibraryViewModel(int? mediaPathTypeId)
         {
             var rules = new SharedLibraryRules { OperationsClient = _opsClient };
@@ -210,7 +253,8 @@ namespace Keebee.AAT.Administrator.Controllers
             {
                 Title = "Shared Library",
                 AddButtonText = $"Upload {rules.GetMediaPathShortDescription(mediaPathTypeId)}",
-                SelectedMediaPathType = mediaPathTypeId ?? MediaPathTypeId.Music
+                SelectedMediaPathType = mediaPathTypeId ?? MediaPathTypeId.Music,
+                AskToAddToPublicProfile = false
             };
 
             return vm;

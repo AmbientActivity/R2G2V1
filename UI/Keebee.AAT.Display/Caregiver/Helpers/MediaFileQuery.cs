@@ -50,11 +50,9 @@ namespace Keebee.AAT.Display.Caregiver.Helpers
                 var selectedFile = mediaPath.Files
                     .Single(f => f.StreamId == streamId);
 
-                var pathRoot = (_currentResidentId == 0)
+                var pathRoot = (selectedFile.IsLinked)
                     ? $@"{_mediaPath.MediaRoot}\{_mediaPath.SharedLibrary}"
-                    : (selectedFile.IsLinked)
-                        ? $@"{_mediaPath.MediaRoot}\{_mediaPath.SharedLibrary}"
-                        : $@"{_mediaPath.ProfileRoot}\{_currentResidentId}";
+                    : $@"{_mediaPath.ProfileRoot}\{_currentResidentId}";
 
                 var selectedFilename = mediaPath.Files
                     .Single(f => f.StreamId == streamId).Filename;
@@ -65,11 +63,9 @@ namespace Keebee.AAT.Display.Caregiver.Helpers
                     .SkipWhile(f => f.Filename != selectedFilename)
                     .Select(f =>
                     {
-                        var root = (_currentResidentId == 0)
+                        var root = (f.IsLinked)
                             ? $@"{_mediaPath.MediaRoot}\{_mediaPath.SharedLibrary}"
-                            : (f.IsLinked)
-                                ? $@"{_mediaPath.MediaRoot}\{_mediaPath.SharedLibrary}"
-                                : $@"{_mediaPath.ProfileRoot}\{_currentResidentId}";
+                            : $@"{_mediaPath.ProfileRoot}\{_currentResidentId}";
 
                         return $@"{root}\{mediaPathType}\{f.Filename}";
                     }))
@@ -80,11 +76,9 @@ namespace Keebee.AAT.Display.Caregiver.Helpers
                         .OrderBy(f => f.Filename)
                         .Select(f =>
                         {
-                            var root = (_currentResidentId == 0)
+                            var root = (f.IsLinked)
                                 ? $@"{_mediaPath.MediaRoot}\{_mediaPath.SharedLibrary}"
-                                : (f.IsLinked)
-                                    ? $@"{_mediaPath.MediaRoot}\{_mediaPath.SharedLibrary}"
-                                    : $@"{_mediaPath.ProfileRoot}\{_currentResidentId}";
+                                : $@"{_mediaPath.ProfileRoot}\{_currentResidentId}";
 
                             return $@"{root}\{mediaPathType}\{f.Filename}";
                         })
@@ -99,11 +93,9 @@ namespace Keebee.AAT.Display.Caregiver.Helpers
                     .OrderBy(f => f.Filename)
                     .Select(f =>
                     {
-                        var pathRoot = (_currentResidentId == 0)
+                        var pathRoot = (f.IsLinked)
                             ? $@"{_mediaPath.MediaRoot}\{_mediaPath.SharedLibrary}"
-                            : (f.IsLinked)
-                                ? $@"{_mediaPath.MediaRoot}\{_mediaPath.SharedLibrary}"
-                                : $@"{_mediaPath.ProfileRoot}\{_currentResidentId}";
+                            : $@"{_mediaPath.ProfileRoot}\{_currentResidentId}";
 
                         return $@"{pathRoot}\{mediaPath.MediaPathType.Path}\{f.Filename}";
                     })

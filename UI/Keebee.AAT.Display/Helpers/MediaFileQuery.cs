@@ -92,11 +92,9 @@ namespace Keebee.AAT.Display.Helpers
                     .OrderBy(f => f.Filename)
                     .Select(f =>
                     {
-                        var pathRoot = (residentId == 0)
+                        var pathRoot = (f.IsLinked)
                             ? $@"{_mediaPath.MediaRoot}\{_mediaPath.SharedLibrary}"
-                            : (f.IsLinked) 
-                                ? $@"{_mediaPath.ProfileRoot}\{residentId}"
-                                : $@"{_mediaPath.MediaRoot}\{_mediaPath.SharedLibrary}";
+                            : $@"{_mediaPath.ProfileRoot}\{residentId}";
 
                         return $@"{pathRoot}\{mediaPath.MediaPathType.Path}\{f.Filename}";
                     })

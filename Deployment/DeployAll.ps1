@@ -186,6 +186,7 @@ Try
         Remove-Item $path -recurse -Force
     }
     New-Item -ItemType Directory -Force -Path $path | Out-Null
+    Write-Host "done.”
 
     Write-Host "Deploying Shared Library...” -NoNewline
     # shared library

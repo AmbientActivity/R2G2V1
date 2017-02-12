@@ -16,7 +16,7 @@ namespace Keebee.AAT.Administrator.Controllers
     {
         private readonly OperationsClient _opsClient;
 
-        private readonly MediaSourcePath _mediaPath = new MediaSourcePath();
+        private readonly MediaSourcePath _mediaSourcePath = new MediaSourcePath();
 
         public PublicProfileController()
         {
@@ -250,7 +250,7 @@ namespace Keebee.AAT.Administrator.Controllers
 
             if (!mediaPaths.Any()) return list;
 
-            var pathRoot = $@"{_mediaPath.ProfileRoot}\{PublicMediaSource.Id}";
+            var pathRoot = $@"{_mediaSourcePath.ProfileRoot}\{PublicMediaSource.Id}";
 
             foreach (var media in publicMedia.MediaFiles)
             {

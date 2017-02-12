@@ -8,7 +8,6 @@ using CuteWebUI;
 using System.Linq;
 using System.Web.Mvc;
 using System;
-using System.Collections.ObjectModel;
 using System.IO;
 using System.Text;
 
@@ -19,7 +18,7 @@ namespace Keebee.AAT.Administrator.Controllers
         private readonly OperationsClient _opsClient;
         private readonly SystemEventLogger _systemEventLogger;
 
-        private readonly MediaSourcePath _mediaPath = new MediaSourcePath();
+        private readonly MediaSourcePath _mediaSourcePath = new MediaSourcePath();
 
         public SharedLibraryController()
         {
@@ -66,9 +65,8 @@ namespace Keebee.AAT.Administrator.Controllers
 
                     var rules = new SharedLibraryRules { OperationsClient = _opsClient };
                     var mediaPath = rules.GetMediaPathType(mediaPathTypeId);
-                    var filePath = mediaPathTypeId > 0
-                        ? $@"{_mediaPath.MediaRoot}\{_mediaPath.SharedLibrary}\{mediaPath.Path}\{file.FileName}"
-                        : $@"{_mediaPath.MediaRoot}\{mediaPath.Path}\{file.FileName}";
+                    var path = $@"{_mediaSourcePath.MediaRoot}\{_mediaSourcePath.SharedLibrary}\{mediaPath.Path}\";
+                    var filePath = $@"{path}\{file.FileName}";
 
                     // delete it if it already exists
                     var msg = fileManager.DeleteFile(filePath);
@@ -76,7 +74,8 @@ namespace Keebee.AAT.Administrator.Controllers
                     if (msg.Length == 0)
                         file.MoveTo(filePath);
 
-                    streamIds.Append($"{strguid}/");
+                    var mediaFile = _opsClient.GetMediaFileFromPath($@"{_mediaSourcePath.SharedLibrary}\{mediaPath.Path}\", file.FileName);
+                    streamIds.Append($"{mediaFile.StreamId.ToString()}/");
                 }
                 vm.UploadedStreamIds = streamIds.ToString().TrimEnd('/');
                 vm.AskToAddToPublicProfile = true;
@@ -262,12 +261,12 @@ namespace Keebee.AAT.Administrator.Controllers
 
         private LinkedProfilesViewModel LoadLinkedProfilesViewModel(Guid streamId)
         {
-            var rules = new SharedLibraryRules {OperationsClient = _opsClient};
+            var rules = new SharedLibraryRules { OperationsClient = _opsClient };
             var linkedProfiles = rules.GetLinkedProfiles(streamId);
 
             var vm = new LinkedProfilesViewModel
             {
-                Profiles = linkedProfiles.Select(r => new 
+                Profiles = linkedProfiles.Select(r => new
                 ResidentViewModel
                 {
                     FirstName = r.FirstName,

@@ -21,7 +21,7 @@ namespace Keebee.AAT.Administrator.Controllers
     {
         private readonly OperationsClient _opsClient;
         private readonly SystemEventLogger _systemEventLogger;
-        private readonly MediaSourcePath _mediaPath = new MediaSourcePath();
+        private readonly MediaSourcePath _mediaSourcePath = new MediaSourcePath();
         private readonly CustomMessageQueue _messageQueueBluetoothBeaconWatcherReload;
 
         public ResidentsController()
@@ -88,7 +88,7 @@ namespace Keebee.AAT.Administrator.Controllers
                     if (!ResidentRules.IsValidFile(file.FileName, mediaPathTypeId)) continue;
 
                     var mediaPath = rules.GetMediaPath(mediaPathTypeId);
-                    var filePath = $@"{_mediaPath.ProfileRoot}\{id}\{mediaPath}\{file.FileName}";
+                    var filePath = $@"{_mediaSourcePath.ProfileRoot}\{id}\{mediaPath}\{file.FileName}";
 
                     // delete it if it already exists
                     var msg = fileManager.DeleteFile(filePath);
@@ -583,7 +583,7 @@ namespace Keebee.AAT.Administrator.Controllers
 
             if (!mediaPaths.Any()) return list;
 
-            var pathRoot = $@"{_mediaPath.ProfileRoot}\{id}";
+            var pathRoot = $@"{_mediaSourcePath.ProfileRoot}\{id}";
 
             foreach (var path in mediaPaths)
             {

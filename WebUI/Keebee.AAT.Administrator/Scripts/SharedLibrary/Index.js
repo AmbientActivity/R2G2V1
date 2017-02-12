@@ -127,7 +127,7 @@ function DisableScreen() {
 
                 $.ajax({
                     type: "POST",
-                    async: true,
+                    async: false,
                     traditional: true,
                     url: site.url + "SharedLibrary/AddSharedMediaFiles/",
                     data:

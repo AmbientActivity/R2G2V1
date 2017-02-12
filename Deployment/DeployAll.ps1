@@ -32,11 +32,8 @@ $installPowerShellPath = "Install\PowerShell\"
 $installUtilityPath = "Install\Utility\"
 
 # media
-$profilesPath = "Media\Profiles\"
-$profilesPublicPath = "Media\Profiles\0\"
 $sharedLibraryPath = "Media\SharedLibrary\"
 $exportsPath = "Media\Exports\EventLog\"
-$publicProfileSource = "\\$env:COMPUTERNAME\SQLEXPRESS\KeebeeAATFilestream\Media\Profiles\0\*"
 $sharedLibrarySource = "\\$env:COMPUTERNAME\SQLEXPRESS\KeebeeAATFilestream\Media\SharedLibrary\*"
 
 # documentation paths
@@ -182,7 +179,7 @@ Try
 
     # -------------------- MEDIA --------------------
     # export folder
-    Write-Host "Deploying Media...” -NoNewline
+    Write-Host "Deploying Export Folders...” -NoNewline
     $path = $destPath + $exportsPath
     If(test-path $path)
     {
@@ -190,16 +187,7 @@ Try
     }
     New-Item -ItemType Directory -Force -Path $path | Out-Null
 
-    # public profile
-    $path = $destPath + $profilesPath
-    If(test-path $path)
-    {
-        Remove-Item $path -recurse -Force
-    }
-    $path = $destPath + $profilesPublicPath
-    New-Item -ItemType Directory -Force -Path $path | Out-Null
-    Copy-Item $publicProfileSource $path -recurse -Force
-
+    Write-Host "Deploying Shared Library...” -NoNewline
     # shared library
     $path = $destPath + $sharedLibraryPath
     If(test-path $path)
@@ -208,6 +196,7 @@ Try
     } 
     New-Item -ItemType Directory -Force -Path $path | Out-Null
     Copy-Item $sharedLibrarySource $path -recurse -Force
+    Write-Host "done.”
 
     # -------------------- SCHEDULED TASKS --------------------
 

@@ -179,7 +179,7 @@ Try
 
     # -------------------- MEDIA --------------------
     # export folder
-    Write-Host "Deploying Export Folders...” -NoNewline
+    Write-Host "Deploying Export folders...” -NoNewline
     $path = $destPath + $exportsPath
     If(test-path $path)
     {

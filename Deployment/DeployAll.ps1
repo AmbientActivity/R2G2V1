@@ -33,7 +33,9 @@ $installUtilityPath = "Install\Utility\"
 
 # media
 $sharedLibraryPath = "Media\SharedLibrary\"
+$profilesPublicPath = "Media\Profiles\0\"
 $exportsPath = "Media\Exports\EventLog\"
+$publicProfileSource = "\\$env:COMPUTERNAME\SQLEXPRESS\KeebeeAATFilestream\Media\Profiles\0\*"
 $sharedLibrarySource = "\\$env:COMPUTERNAME\SQLEXPRESS\KeebeeAATFilestream\Media\SharedLibrary\*"
 
 # documentation paths
@@ -188,8 +190,8 @@ Try
     New-Item -ItemType Directory -Force -Path $path | Out-Null
     Write-Host "done.”
 
-    Write-Host "Deploying Shared Library...” -NoNewline
     # shared library
+    Write-Host "Deploying Shared Library...” -
     $path = $destPath + $sharedLibraryPath
     If(test-path $path)
     {
@@ -198,6 +200,16 @@ Try
     New-Item -ItemType Directory -Force -Path $path | Out-Null
     Copy-Item $sharedLibrarySource $path -recurse -Force
     Write-Host "done.”
+
+    # public profile
+    $path = $destPath + $profilesPath
+    If(test-path $path)
+    {
+        Remove-Item $path -recurse -Force
+    }
+    $path = $destPath + $profilesPublicPath
+    New-Item -ItemType Directory -Force -Path $path | Out-Null
+    Copy-Item $publicProfileSource $path -recurse -Force
 
     # -------------------- SCHEDULED TASKS --------------------
 

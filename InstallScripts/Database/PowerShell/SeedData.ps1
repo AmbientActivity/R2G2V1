@@ -48,7 +48,7 @@
             Write-Host "done.”
 
             Write-Host "Transferring Public Profile...” -NoNewline
-            Copy-Item "$pathDeployments\Media\$pathProfilesPublic" $mediaDestination\$mediaDestination -recurse -Force
+            Copy-Item "$pathDeployments\Media\$pathProfilesPublic" $mediaDestination\$pathProfilesPublic -recurse -Force
             Write-Host "done.”
 
             Write-Host "Creating Export folders...” -NoNewline
@@ -63,7 +63,7 @@
             Invoke-SqlQuery -File $queryFile -Server $server -Database $database
             Write-Host "done.”
 
-            Write-Host "Seeding public profile...” -NoNewline
+            Write-Host "Seeding Public Profile...” -NoNewline
             $queryFile = $pathSqlScript + "SeedPublicProfile.sql"
             Invoke-SqlQuery -File $queryFile -Server $server -Database $database
             Write-Host "done.”

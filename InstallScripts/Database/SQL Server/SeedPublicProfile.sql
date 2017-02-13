@@ -15,7 +15,7 @@ SELECT 1, 3, StreamId FROM MediaFiles WHERE [Path] = @pathSharedLibrary + 'image
 
 --- Activity 2 - ResponseType "MatchingGame" ---
 INSERT INTO PublicMediaFiles (IsLinked, ResponseTypeId, MediaPathTypeId, StreamId)
-SELECT 2, 7, StreamId FROM MediaFiles WHERE [Path] = @pathSharedLibrary + 'activities\matching-game\shapes\' AND [FileType] = 'png'
+SELECT 1, 2, 7, StreamId FROM MediaFiles WHERE [Path] = @pathSharedLibrary + 'activities\matching-game\shapes\' AND [FileType] = 'png'
 INSERT INTO PublicMediaFiles (IsLinked, ResponseTypeId, MediaPathTypeId, StreamId)
 SELECT 1, 2, 8, StreamId FROM MediaFiles WHERE [Path] = @pathSharedLibrary + 'activities\matching-game\sounds\' AND [FileType] = 'mp3'
 

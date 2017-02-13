@@ -11,7 +11,7 @@ SET @pathSharedLibrary = FileTableRootPath() + '\Media\SharedLibrary\'
 
 --- Activity 1 - ResponseType "SlideShow" ---
 INSERT INTO PublicMediaFiles (IsLinked, ResponseTypeId, MediaPathTypeId, StreamId)
-SELECT 1, 3, StreamId FROM MediaFiles WHERE [Path] = @pathSharedLibrary + 'images\general\' AND [FileType] IN ('jpg', 'jpeg', 'png', 'bmp', 'gif')
+SELECT 1, 1, 3, StreamId FROM MediaFiles WHERE [Path] = @pathSharedLibrary + 'images\general\' AND [FileType] IN ('jpg', 'jpeg', 'png', 'bmp', 'gif')
 
 --- Activity 2 - ResponseType "MatchingGame" ---
 INSERT INTO PublicMediaFiles (IsLinked, ResponseTypeId, MediaPathTypeId, StreamId)

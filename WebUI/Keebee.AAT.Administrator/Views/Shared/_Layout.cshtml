@@ -35,7 +35,13 @@
                     {
                         if (User.IsInRole("Caregiver"))
                         {
-                            <li><a href="#" onclick="location.href = '@Url.Action("Index", "Residents")'">Residents</a></li>
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Manage<b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    <li>@Html.ActionLink("Residents", "Index", "Residents")</li>
+                                    <li>@Html.ActionLink("Public Profile", "Index", "PublicProfile")</li>
+                                </ul>
+                            </li>
                             <li class="dropdown">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">Data Capture<b class="caret"></b></a>
                                 <ul class="dropdown-menu">
@@ -52,8 +58,8 @@
                             <li class="dropdown">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">System<b class="caret"></b></a>
                                 <ul class="dropdown-menu">
-                                    <li>@Html.ActionLink("Public Profile", "Index", "PublicProfile")</li>
                                     <li>@Html.ActionLink("Shared Library", "Index", "SharedLibrary")</li>
+                                    <li>@Html.ActionLink("System Profile", "Index", "SystemProfile")</li>
                                     <li>@Html.ActionLink("Phidget Configuration", "Index", "PhidgetConfig")</li>
                                     <li>@Html.ActionLink("Maintenance", "Index", "Maintenance")</li>
                                 </ul>

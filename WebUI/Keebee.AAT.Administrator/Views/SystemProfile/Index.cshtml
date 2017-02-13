@@ -1,8 +1,8 @@
 ﻿
-@model Keebee.AAT.Administrator.ViewModels.SharedLibraryViewModel
+@model Keebee.AAT.Administrator.ViewModels.PublicProfileViewModel
 
 @{
-    ViewBag.Title = "Shared Library";
+    ViewBag.Title = "System Profile";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -11,28 +11,17 @@
 <script type="text/javascript">
     $(document)
         .ready(function() {
-            sharedlibrary.index.init({
-                selectedMediaPathTypeId: @Model.SelectedMediaPathType });
+            systemprofile.index.init();
         });
 </script>
 
-@{Html.BeginForm();}
-<div id="uploader-html-container" hidden="hidden">
-    @Html.Raw(@Model.UploaderHtml)
-</div>
 <div class="panel panel-default">
     <div class="panel-heading">
         <div class="add-button-container">
-            <div class="upload-action-container">
-                <button id="uploadbutton" type="button" class="btn btn-md btn-success upload-media-button" onclick="return" false;">@Model.AddButtonText</button>
-                <button id="delete" disabled type="button" class="btn btn-md btn-danger" data-bind="click: showDeleteSelectedDialog">Delete Selected</button>
-            </div>
-            <input id="mediaPathTypeId" name="mediaPathTypeId" type="hidden" value="@Model.SelectedMediaPathType" />
+            <button id="add-shared" type="button" class="btn btn-md btn-success" data-bind="click: showLinkFromSharedLibarayDialog">Add From Shared Library</button>
+            <button id="delete" disabled type="button" class="btn btn-md btn-danger" data-bind="click: showDeleteSelectedDialog">Delete Selected</button>
         </div>
         <ul class="nav nav-pills">
-            <li>
-
-            </li>
             <li>
                 <input id="txtSearchFilename" type="text" class="form-control" placeholder="Name" data-bind="value: filenameSearch, valueUpdate: 'keyup'" />
             </li>
@@ -49,9 +38,7 @@
             <thead>
                 <tr>
                     <th class="col-glyphicon"><input type="checkbox" id="chk_all" data-bind="checked: selectAllIsSelected, click: selectAllRows" /></th>
-                    <!-- ko if: isSharable() -->
-                    <th class="col-glyphicon"></th>
-                    <!-- /ko -->
+
                     <!-- ko if: isPreviewable() -->
                     <th class="col-glyphicon"></th>
                     <!-- /ko -->
@@ -67,11 +54,8 @@
             </thead>
 
             <tbody data-bind="foreach: filesTable">
-                <tr data-bind="attr: { id: 'row_' + streamid }">
-                    <td><input type="checkbox" data-bind="attr: { id: 'chk_' + streamid }, checked: isselected, click: $parent.selectFile" /></td>
-                    <!-- ko if: $parent.isSharable() -->
-                    <td><a href="#" data-bind="click: $parent.showLinkedProfilesDialog, css: 'glyphicon glyphicon-link', attr: {title: 'Linked profiles: ' + numlinked}"></a></td>
-                    <!-- /ko -->
+                <tr data-bind="attr: { id: 'row_' + id }">
+                    <td><input type="checkbox" data-bind="attr: { id: 'chk_' + id }, checked: isselected, click: $parent.selectFile" /></td>
                     <!-- ko if: $parent.isPreviewable() -->
                     <td><a href="#" data-bind="click: $parent.showPreview, css: 'glyphicon glyphicon-eye-open'"></a></td>
                     <!-- /ko -->
@@ -83,4 +67,3 @@
         </table>
     </div>
 </div>
-@{Html.EndForm();}

@@ -75,7 +75,6 @@ function DisableScreen() {
             
             var config = {
                 selectedMediaPathTypeId: 0,
-                askToAddToPublicProfile: "False",
                 streamIds: []
             };
 
@@ -93,71 +92,6 @@ function DisableScreen() {
             };
 
             loadData();
-
-            if (config.askToAddToPublicProfile === "True") {
-                showAddToPublicProfileDialog();
-            }
-
-            function showAddToPublicProfileDialog() {
-                BootstrapDialog.show({
-                    title: "Auto-Link to Public Profile",
-                    message: "Automatically link the new files to the public profile?",
-                    closable: false,
-                    buttons: [
-                        {
-                            label: "Yes",
-                            cssClass: "btn-primary",
-                            action: function (dialog) {
-                                addSharedFilesToPublicProfile();
-                                dialog.close();
-                            }
-                        },
-                        {
-                            label: "No",
-                            action: function (dialog) {
-                                dialog.close();
-                            }
-                        }
-                    ]
-                });
-            };
-
-            function addSharedFilesToPublicProfile() {
-                $("body").css("cursor", "wait");
-
-                $.ajax({
-                    type: "POST",
-                    async: false,
-                    traditional: true,
-                    url: site.url + "SharedLibrary/AddSharedMediaFiles/",
-                    data:
-                    {
-                        streamIds: config.streamIds,
-                        mediaPathTypeId: config.selectedMediaPathTypeId
-                    },
-                    dataType: "json",
-                    success: function (data) {
-                        $("body").css("cursor", "default");
-                        if (data.Success) {
-                        } else {
-                            $("body").css("cursor", "default");
-                            BootstrapDialog.show({
-                                type: BootstrapDialog.TYPE_DANGER,
-                                title: "Error Adding Shared Files",
-                                message: data.ErrorMessage
-                            });
-                        }
-                    },
-                    error: function (data) {
-                        $("body").css("cursor", "default");
-                        BootstrapDialog.show({
-                            type: BootstrapDialog.TYPE_DANGER,
-                            title: "Error Adding Shared Files",
-                            message: "Unexpected Error\n" + data
-                        });
-                    }
-                });
-            };
 
             ko.applyBindings(new FileViewModel());
 

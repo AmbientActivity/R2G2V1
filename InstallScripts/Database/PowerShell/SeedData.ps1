@@ -59,7 +59,7 @@
             Write-Host "done.”
 
             Write-Host "Seeding public profile...” -NoNewline
-            $queryFile = $pathSqlScript + "SeedPublicLibrary.sql"
+            $queryFile = $pathSqlScript + "SeedPublicProfile.sql"
             Invoke-SqlQuery -File $queryFile -Server $server -Database $database
             Write-Host "done.”
         }

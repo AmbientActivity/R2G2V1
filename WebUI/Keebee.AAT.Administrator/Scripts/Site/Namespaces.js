@@ -14,7 +14,7 @@
     window.mediafiles = {};
     window.phidgetconfig = {};
     window.publicprofile = {};
+    window.systemprofile = {};
     window.sharedlibrary = {};
-    window.systemlibrary = {};
     window.maintenance = {};
 })();

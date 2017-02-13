@@ -1,83 +1,15 @@
 ﻿/*!
  * 1.0 Keebee AAT Copyright © 2016
- * PublicProfile/Index.js
+ * SystemProfile/Index.js
  * Author: John Charlton
  * Date: 2016-09
  */
 
-function CuteWebUI_AjaxUploader_OnPostback() {
-    BootstrapDialog.show({
-        type: BootstrapDialog.TYPE_INFO,
-        title: "Saving Media",
-        message: "One moment...",
-        closable: false
-    });
-    document.forms[0].submit();
-}
-
-function CuteWebUI_AjaxUploader_OnError(msg) {
-    BootstrapDialog.show({
-        type: BootstrapDialog.TYPE_DANGER,
-        title: "File Error",
-        message: msg
-    });
-
-    EnableScreen();
-    return false;
-}
-
-function CuteWebUI_AjaxUploader_OnTaskError(obj, msg, reason) {
-    BootstrapDialog.show({
-        type: BootstrapDialog.TYPE_DANGER,
-        title: "Task Error",
-        message: "Error uploading file <b>" + obj.FileName + "</b>.\nMessage: " + msg
-    });
-
-    EnableScreen();
-    return false;
-}
-
-function CuteWebUI_AjaxUploader_OnStop() {
-    EnableScreen();
-}
-
-function CuteWebUI_AjaxUploader_OnSelect() {
-    DisableScreen();
-}
-
-function EnableScreen() {
-    $("#uploader-html-container").attr("hidden", "hidden");
-    $("#lnkGoBack").removeAttr("hidden");
-    $("#lblGoBackDisabled").attr("hidden", "hidden");
-    $("#txtSearchFilename").removeAttr("disabled");
-    $("#uploadbutton").removeAttr("disabled");
-    $("select").removeAttr("disabled");
-    $("#main-menu").removeAttr("hidden");
-    $("#menu-login").removeAttr("hidden");
-}
-
-function DisableScreen() {
-    $("#uploader-html-container").removeAttr("hidden");
-    $("#lnkGoBack").attr("hidden", "hidden");
-    $("#lblGoBackDisabled").removeAttr("hidden");
-    $("#txtSearchFilename").attr("disabled", "disabled");
-    $("#uploadbutton").attr("disabled", "disabled");
-    $("select").attr("disabled", "disabled");
-    $("#main-menu").attr("hidden", "hidden");
-    $("#menu-login").attr("hidden", "hidden");
-}
-
 ; (function ($) {
     var HIGHLIGHT_ROW_COLOUR = "#e3e8ff";
 
-    publicprofile.index = {
-        init: function (values) {
-
-            var config = {
-                selectedMediaPathTypeId: 0
-            };
-
-            $.extend(config, values);
+    systemprofile.index = {
+        init: function () {
 
             // buttons
             var cmdDelete = $("#delete");
@@ -95,11 +27,9 @@ function DisableScreen() {
             ko.applyBindings(new FileViewModel());
 
             function loadData() {
-                var mediaPathTypeId = $("#mediaPathTypeId").val();
-
                 $.ajax({
                     type: "GET",
-                    url: site.url + "PublicProfile/GetData?" + "mediaPathTypeId=" + mediaPathTypeId,
+                    url: site.url + "SystemProfile/GetData",
                     dataType: "json",
                     traditional: true,
                     async: false,
@@ -116,7 +46,7 @@ function DisableScreen() {
 
                 self.files = ko.observableArray([]);
                 self.mediaPathTypes = ko.observableArray([]);
-                self.selectedMediaPathType = ko.observable(config.selectedMediaPathTypeId);
+                self.selectedMediaPathType = ko.observable();
                 self.filenameSearch = ko.observable("");
                 self.totalFilteredFiles = ko.observable(0);
                 self.selectAllIsSelected = ko.observable(false);
@@ -125,7 +55,6 @@ function DisableScreen() {
 
                 createFileArray(lists.FileList);
                 createMediaPathTypeArray(lists.MediaPathTypeList);
-                enableDetail();
 
                 function createFileArray(list) {
                     self.files.removeAll();
@@ -136,8 +65,8 @@ function DisableScreen() {
                             filename: value.Filename,
                             filetype: value.FileType,
                             filesize: value.FileSize,
-                            islinked: value.IsLinked,
                             path: value.Path,
+                            islinked: value.IsLinked,
                             mediapathtypeid: value.MediaPathTypeId,
                             isselected: false
                         });
@@ -155,23 +84,7 @@ function DisableScreen() {
                             ispreviewable: value.IsPreviewable
                         });
                     });
-
-                    var ispreviewable = self.mediaPathTypes().filter(function (value) {
-                        return value.id === self.selectedMediaPathType();
-                    })[0].ispreviewable;
-                    self.isPreviewable(ispreviewable);
-                };
-
-                function enableDetail() {
-                    var selected = self.files()
-                        .filter(function (data) { return data.isselected; });
-
-                    cmdDelete.attr("disabled", "disabled");
-                    if (selected.length > 0) {
-                        if (selected.length < self.filteredFilesBySelection().length) {
-                            cmdDelete.removeAttr("disabled");
-                        }
-                    }
+                    self.selectedMediaPathType(self.mediaPathTypes()[0].id);
                 };
 
                 self.columns = ko.computed(function () {
@@ -179,7 +92,6 @@ function DisableScreen() {
                     arr.push({ title: "Name", sortable: true, sortKey: "filename", numeric: false, cssClass: "" });
                     arr.push({ title: "Type", sortable: true, sortKey: "filetype", numeric: false, cssClass: "col-filetype" });
                     arr.push({ title: "Size", sortable: true, sortKey: "filesize", numeric: true, cssClass: "col-filesize" });
-                    arr.push({ title: "Linked", sortable: true, sortKey: "islinked", numeric: true, cssClass: "col-islinked" });
                     return arr;
                 });
 
@@ -227,26 +139,24 @@ function DisableScreen() {
                     });
                 };
 
-                self.reloadUploaderHtml = function () {
-                    var mediaPathTypeId = self.selectedMediaPathType();
+                //self.getButtonText = function () {
+                //    var mediaPathTypeId = self.selectedMediaPathType();
 
-                    $.ajax({
-                        type: "GET",
-                        url: site.url + "PublicProfile/GetUploaderHtml?mediaPathTypeId=" + mediaPathTypeId,
-                        traditional: true,
-                        async: true,
-                        dataType: "json",
-                        success: function (data) {
-                            $("#uploader-html-container").html(data.UploaderHtml);
-                            $("#uploadbutton").text(data.AddButtonText);
-                        }
-                    });
-                };
+                //    $.ajax({
+                //        type: "GET",
+                //        url: site.url + "SystemProfile/GetButtonText?mediaPathTypeId=" + mediaPathTypeId,
+                //        traditional: true,
+                //        async: true,
+                //        dataType: "json",
+                //        success: function (data) {
+                //            $("#add-shared").text(data.AddButtonText);
+                //        }
+                //    });
+                //};
 
                 self.selectedMediaPathType.subscribe(function (id) {
                     if (typeof id === "undefined") return;
-                    $("#mediaPathTypeId").val(id);
-                    self.reloadUploaderHtml();
+                    //self.getButtonText();
                     self.checkSelectAll(false);
                     self.selectAllRows();
 
@@ -314,7 +224,7 @@ function DisableScreen() {
                         type: "GET",
                         async: false,
                         data: { mediaPathTypeId: self.selectedMediaPathType() },
-                        url: site.url + "PublicProfile/GetSharedLibarayLinkView/",
+                        url: site.url + "SystemProfile/GetSharedLibarayLinkView/",
                         success: function (data) {
                             message = data;
                         }
@@ -399,7 +309,7 @@ function DisableScreen() {
                     });
 
                     self.highlightSelectedRows();
-                    enableDetail();
+                    self.enableDetail();
 
                     return true;
                 };
@@ -415,7 +325,7 @@ function DisableScreen() {
 
                     self.highlightSelectedRows();
                     self.checkSelectAll(self.selectedIds().length === self.filteredFiles().length);
-                    enableDetail();
+                    self.enableDetail();
 
                     return true;
                 };
@@ -450,7 +360,6 @@ function DisableScreen() {
                     $("body").css("cursor", "wait");
 
                     var ids = self.selectedIds();
-                    var mediaPathTypeId = $("#mediaPathTypeId").val();
 
                     BootstrapDialog.show({
                         type: BootstrapDialog.TYPE_INFO,
@@ -463,11 +372,11 @@ function DisableScreen() {
                                 type: "POST",
                                 async: true,
                                 traditional: true,
-                                url: site.url + "PublicProfile/DeleteSelected/",
+                                url: site.url + "SystemProfile/DeleteSelected/",
                                 data:
                                 {
                                     ids: ids,
-                                    mediaPathTypeId: mediaPathTypeId
+                                    mediaPathTypeId: self.selectedMediaPathType()
                                 },
                                 dataType: "json",
                                 success: function (data) {
@@ -494,7 +403,7 @@ function DisableScreen() {
                                 error: function (data) {
                                     dialog.close();
                                     $("body").css("cursor", "default");
-                                    enableDetail();
+                                    self.enableDetail();
 
                                     BootstrapDialog.show({
                                         type: BootstrapDialog.TYPE_DANGER,
@@ -515,17 +424,15 @@ function DisableScreen() {
                         ids.push(value.id);
                     });
 
-                    var mediaPathTypeId = $("#mediaPathTypeId").val();
-
                     $.ajax({
                         type: "POST",
                         async: true,
                         traditional: true,
-                        url: site.url + "PublicProfile/AddSharedMediaFiles/",
+                        url: site.url + "SystemProfile/AddSharedMediaFiles/",
                         data:
                         {
                             streamIds: ids,
-                            mediaPathTypeId: mediaPathTypeId
+                            mediaPathTypeId: self.selectedMediaPathType()
                         },
                         dataType: "json",
                         success: function (data) {
@@ -536,10 +443,10 @@ function DisableScreen() {
                                 self.sort({ afterSave: true });
                                 self.selectedIds([]);
                                 self.checkSelectAll(false);
-                                enableDetail();
+                                self.enableDetail();
                             } else {
                                 $("body").css("cursor", "default");
-                                enableDetail();
+                                self.enableDetail();
 
                                 BootstrapDialog.show({
                                     type: BootstrapDialog.TYPE_DANGER,
@@ -550,7 +457,7 @@ function DisableScreen() {
                         },
                         error: function (data) {
                             $("body").css("cursor", "default");
-                            enableDetail();
+                            self.enableDetail();
 
                             BootstrapDialog.show({
                                 type: BootstrapDialog.TYPE_DANGER,
@@ -559,7 +466,6 @@ function DisableScreen() {
                             });
                         }
                     });
-
                 };
 
                 self.showImagePreview = function (row) {
@@ -569,7 +475,7 @@ function DisableScreen() {
                     $.ajax({
                         type: "GET",
                         async: false,
-                        url: site.url + "PublicProfile/GetImageViewerView?streamId=" + row.streamid + "&fileType=" + row.filetype,
+                        url: site.url + "SystemProfile/GetImageViewerView?streamId=" + row.streamid + "&fileType=" + row.filetype,
                         success: function (data) {
                             message = data;
                         },
@@ -604,6 +510,18 @@ function DisableScreen() {
                             return value.id === self.selectedMediaPathType();
                         })[0];
                 }
+
+                self.enableDetail = function () {
+                    var selected = self.files()
+                        .filter(function (data) { return data.isselected; });
+
+                    cmdDelete.attr("disabled", "disabled");
+                    if (selected.length > 0) {
+                        if (selected.length < self.filteredFilesBySelection().length) {
+                            cmdDelete.removeAttr("disabled");
+                        }
+                    }
+                };
             };
 
             //---------------------------------------------- VIEW MODEL (END) -----------------------------------------------------

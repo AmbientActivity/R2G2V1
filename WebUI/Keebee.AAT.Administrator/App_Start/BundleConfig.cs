@@ -52,6 +52,7 @@ namespace Keebee.AAT.Administrator
                 "~/Scripts/VideoCaptures/Index.js",
                 "~/Scripts/PhidgetConfig/Index.js",
                 "~/Scripts/SharedLibrary/Index.js",
+                "~/Scripts/SystemProfile/Index.js",
                 "~/Scripts/PublicProfile/Index.js",
                 "~/Scripts/Maintenance/Index.js");
             customScriptBundle.Builder = nullBuilder;

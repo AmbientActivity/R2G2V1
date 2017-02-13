@@ -9,11 +9,14 @@ namespace Keebee.AAT.Operations.Service.Services
     public interface IPublicMediaFileService
     {
         IEnumerable<PublicMediaFile> Get();
+        IEnumerable<PublicMediaFile> Get(bool isSystem);
         PublicMediaFile Get(int id);
         IEnumerable<PublicMediaFile> GetForResponseType(int responseTypdId);
         IEnumerable<PublicMediaFile> GetForMediaPathType(int mediaPathTypdId);
         IEnumerable<PublicMediaFile> GetForStreamId(Guid streamId);
         IEnumerable<PublicMediaFile> GetIdsForStreamId(Guid streamId);
+        IEnumerable<PublicMediaFile> GetLinkedPublicMedia();
+        IEnumerable<PublicMediaFile> GetLinkedPublicMedia(Guid streamId);
         PublicMediaFile GetForResponseTypeFilename(int responseTypdId, string filename);
         void Post(PublicMediaFile publicMediaFile);
         void Patch(int id, PublicMediaFile publicMediaFile);
@@ -85,6 +88,46 @@ namespace Keebee.AAT.Operations.Service.Services
 
             var media = container.PublicMediaFiles
                 .AddQueryOption("$filter", $"StreamId eq {streamId}")
+                .AsEnumerable();
+
+            return media;
+        }
+
+        public IEnumerable<PublicMediaFile> Get(bool isSystem)
+        {
+            var container = new Container(new Uri(ODataHost.Url));
+
+            if (isSystem)
+                return container.PublicMediaFiles
+                    .AddQueryOption("$filter", "MediaPathType/IsSystem")
+                    .Expand("MediaFile,MediaPathType,ResponseType($expand=ResponseTypeCategory)")
+                    .AsEnumerable();
+            else
+                return container.PublicMediaFiles
+                    .AddQueryOption("$filter", "MediaPathType/IsSystem eq false")
+                    .Expand("MediaFile,MediaPathType,ResponseType($expand=ResponseTypeCategory)")
+                    .AsEnumerable();
+        }
+
+        public IEnumerable<PublicMediaFile> GetLinkedPublicMedia()
+        {
+            var container = new Container(new Uri(ODataHost.Url));
+
+            var media = container.PublicMediaFiles
+                .AddQueryOption("$filter", "IsLinked")
+                .Expand("MediaFile,MediaPathType,ResponseType($expand=ResponseTypeCategory)")
+                .AsEnumerable();
+
+            return media;
+        }
+
+        public IEnumerable<PublicMediaFile> GetLinkedPublicMedia(Guid streamId)
+        {
+            var container = new Container(new Uri(ODataHost.Url));
+
+            var media = container.PublicMediaFiles
+                .AddQueryOption("$filter", $"IsLinked and StreamId eq {streamId}")
+                .Expand("MediaFile,MediaPathType,ResponseType($expand=ResponseTypeCategory)")
                 .AsEnumerable();
 
             return media;

@@ -7,7 +7,8 @@ namespace Keebee.AAT.DataAccess.Models
     public class PublicMediaFile
     {
         [Key]
-        public int Id { get; set; }
+        public int Id { get; set; } 
+        public bool IsLinked { get; set; }
 
         [ForeignKey("MediaFile")]
         public Guid StreamId { get; set; }

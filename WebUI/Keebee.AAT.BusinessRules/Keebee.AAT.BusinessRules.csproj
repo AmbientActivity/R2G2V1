@@ -61,6 +61,7 @@
     <Compile Include="AccountRules.cs" />
     <Compile Include="MaintenanceRules.cs" />
     <Compile Include="SharedLibraryRules.cs" />
+    <Compile Include="SystemProfileRules.cs" />
     <Compile Include="VideoCaptureRules.cs" />
   </ItemGroup>
   <ItemGroup>

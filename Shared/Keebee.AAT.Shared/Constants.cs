@@ -113,6 +113,7 @@ namespace Keebee.AAT.Shared
         public const int Id = 0;
         public const string Name = "Public";
         public const string Description = "Public Profile";
+        public const string DescriptionSystem = "System Profile";
     }
 
     public static class InteractiveActivityTypeId

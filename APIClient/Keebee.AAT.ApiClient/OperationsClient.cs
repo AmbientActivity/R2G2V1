@@ -68,9 +68,12 @@ namespace Keebee.AAT.ApiClient
         // public media files
         PublicMediaFile GetPublicMediaFile(int id);
         PublicMedia GetPublicMediaFiles();
+        PublicMedia GetPublicMediaFiles(bool isSystem);
         PublicMediaResponseType GetPublicMediaFilesForResponseType(int responseTypeId);
         PublicMedia GetPublicMediaFilesForMediaPathType(int mediaPathTypeId);
         IEnumerable<PublicMediaFile> GetPublicMediaFilesForStreamId(Guid streamId);
+        PublicMedia GetLinkedPublicMedia();
+        PublicMedia GetLinkedPublicMediaForStreamId(Guid streamId);
         PublicMediaFile GetPublicMediaFileForResponseTypeFilename(int responseTypeId, string filename);
         int[] GetPublicMediaFileIdsForStreamId(Guid streamId);
 
@@ -180,10 +183,13 @@ namespace Keebee.AAT.ApiClient
 
         // public media files
         private const string UrlPublicMediaFiles = "publicmediafiles";
+        private const string UrlPublicMediaFilesSystem = "publicmediafiles?isSystem={0}";
         private const string UrlPublicMediaFile = "publicmediafiles/{0}";
         private const string UrlPublicMediaFilesForResponseType = "publicmediafiles?responseTypeId={0}";
         private const string UrlPublicMediaFilesForMediaPathType = "publicmediafiles?mediaPathTypeId={0}";
         private const string UrlPublicMediaFilesForMediaStreamId = "publicmediafiles?streamId={0}";
+        private const string UrlLinkedPublicMedia = "publicmediafiles/linked";
+        private const string UrlLinkedPublicMediaForStreamId = "publicmediafiles/linked?streamId={0}";
         private const string UrlPublicMediaFilesForResponseTypeIdFilename = "publicmediafiles?responseTypeId={0}&filename={1}";
         private const string UrlPublicMediaFileIdsForStreamId = "publicmediafiles/ids?streamId={0}";
 
@@ -691,6 +697,17 @@ namespace Keebee.AAT.ApiClient
             return publicMedia;
         }
 
+        public PublicMedia GetPublicMediaFiles(bool isSystem)
+        {
+            var data = Get(string.Format(UrlPublicMediaFilesSystem, isSystem));
+            if (data == null) return null;
+
+            var serializer = new JavaScriptSerializer();
+            var publicMedia = serializer.Deserialize<PublicMedia>(data);
+
+            return publicMedia;
+        }
+
         public PublicMediaResponseType GetPublicMediaFilesForResponseType(int responseTypeId)
         {
             var data = Get(string.Format(UrlPublicMediaFilesForResponseType, responseTypeId));
@@ -733,6 +750,28 @@ namespace Keebee.AAT.ApiClient
             var mediaFile = serializer.Deserialize<PublicMediaFile>(data);
 
             return mediaFile;
+        }
+
+        public PublicMedia GetLinkedPublicMedia()
+        {
+            var data = Get(UrlLinkedPublicMedia);
+            if (data == null) return null;
+
+            var serializer = new JavaScriptSerializer();
+            var media = serializer.Deserialize<PublicMedia>(data);
+
+            return media;
+        }
+
+        public PublicMedia GetLinkedPublicMediaForStreamId(Guid streamId)
+        {
+            var data = Get(string.Format(UrlLinkedPublicMediaForStreamId, streamId));
+            if (data == null) return null;
+
+            var serializer = new JavaScriptSerializer();
+            var media = serializer.Deserialize<PublicMedia>(data);
+
+            return media;
         }
 
         public int[] GetPublicMediaFileIdsForStreamId(Guid streamId)

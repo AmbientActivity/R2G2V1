@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace Keebee.AAT.BusinessRules
 {
-    public class PublicProfileRules
+    public class SystemProfileRules
     {
         private OperationsClient _opsClient;
         public OperationsClient OperationsClient
@@ -172,12 +172,6 @@ namespace Keebee.AAT.BusinessRules
                 case MediaPathTypeId.MatchingGameShapes:
                 case MediaPathTypeId.MatchingGameSounds:
                     responseTypeId = ResponseTypeId.MatchingGame;
-                    break;
-                case MediaPathTypeId.Ambient:
-                    responseTypeId = ResponseTypeId.Ambient;
-                    break;
-                case MediaPathTypeId.Cats:
-                    responseTypeId = ResponseTypeId.Cats;
                     break;
             }
 

@@ -63,7 +63,10 @@ namespace Keebee.AAT.Operations.Controllers
                                 pt.MediaPathType.Id,
                                 pt.MediaPathType.Path,
                                 pt.MediaPathType.Description,
-                                pt.MediaPathType.ShortDescription
+                                pt.MediaPathType.ShortDescription,
+                                pt.MediaPathType.IsSystem,
+                                pt.MediaPathType.IsSharable,
+                                pt.MediaPathType.IsPreviewable
                             },
                             Files = pt.Files.Select(f => new
                             {
@@ -72,7 +75,7 @@ namespace Keebee.AAT.Operations.Controllers
                                 f.MediaFile.Filename,
                                 f.MediaFile.FileType,
                                 f.MediaFile.FileSize,
-                                IsLinked = true
+                                f.IsLinked
                             })
                         }).OrderBy(o => o.MediaPathType.Id)
                 }).OrderBy(o => o.ResponseType.Id);
@@ -98,24 +101,27 @@ namespace Keebee.AAT.Operations.Controllers
 
             exObj.Id = publicMediaFile.Id;
             exObj.ResponseType = new
-                {
-                    publicMediaFile.ResponseType.Id,
-                    publicMediaFile.ResponseType.Description
-                };
+            {
+                publicMediaFile.ResponseType.Id,
+                publicMediaFile.ResponseType.Description
+            };
             exObj.MediaPathType = new
             {
                 publicMediaFile.MediaPathType.Id,
                 publicMediaFile.MediaPathType.Path,
                 publicMediaFile.MediaPathType.Description,
-                publicMediaFile.MediaPathType.ShortDescription
+                publicMediaFile.MediaPathType.ShortDescription,
+                publicMediaFile.MediaPathType.IsSystem,
+                publicMediaFile.MediaPathType.IsSharable,
+                publicMediaFile.MediaPathType.IsPreviewable
             };
             exObj.MediaFile = new
-                {
-                    publicMediaFile.MediaFile.StreamId,
-                    publicMediaFile.MediaFile.Filename,
-                    publicMediaFile.MediaFile.FileType,
-                    publicMediaFile.MediaFile.FileSize,
-                    IsLinked = true
+            {
+                publicMediaFile.MediaFile.StreamId,
+                publicMediaFile.MediaFile.Filename,
+                publicMediaFile.MediaFile.FileType,
+                publicMediaFile.MediaFile.FileSize,
+                publicMediaFile.IsLinked
             };
 
             return new DynamicJsonObject(exObj);
@@ -162,7 +168,10 @@ namespace Keebee.AAT.Operations.Controllers
                                 pt.MediaPathType.Id,
                                 pt.MediaPathType.Path,
                                 pt.MediaPathType.Description,
-                                pt.MediaPathType.ShortDescription
+                                pt.MediaPathType.ShortDescription,
+                                pt.MediaPathType.IsSystem,
+                                pt.MediaPathType.IsSharable,
+                                pt.MediaPathType.IsPreviewable
                             },
                             Files = pt.Files.Select(f => new
                             {
@@ -171,7 +180,7 @@ namespace Keebee.AAT.Operations.Controllers
                                 f.MediaFile.Filename,
                                 f.MediaFile.FileType,
                                 f.MediaFile.FileSize,
-                                IsLinked = true
+                                f.IsLinked
                             })
                         }).OrderBy(o => o.MediaPathType.Id)
                 }).SingleOrDefault();
@@ -215,7 +224,10 @@ namespace Keebee.AAT.Operations.Controllers
                                 pt.MediaPathType.Id,
                                 pt.MediaPathType.Path,
                                 pt.MediaPathType.Description,
-                                pt.MediaPathType.ShortDescription
+                                pt.MediaPathType.ShortDescription,
+                                pt.MediaPathType.IsSystem,
+                                pt.MediaPathType.IsSharable,
+                                pt.MediaPathType.IsPreviewable
                             },
                             Files = pt.Files.Select(f => new
                             {
@@ -224,7 +236,7 @@ namespace Keebee.AAT.Operations.Controllers
                                 f.MediaFile.Filename,
                                 f.MediaFile.FileType,
                                 f.MediaFile.FileSize,
-                                IsLinked = true
+                                f.IsLinked
                             })
                         }).OrderBy(o => o.MediaPathType.Id)
                 });
@@ -255,16 +267,17 @@ namespace Keebee.AAT.Operations.Controllers
                         x.Id,
                         x.StreamId,
                         ResponseType = new
-                            {
-                                x.ResponseType.Id,
-                                x.ResponseType.Description
-                            },
+                        {
+                            x.ResponseType.Id,
+                            x.ResponseType.Description
+                        },
                         MediaPathType = new
-                            {
-                                x.MediaPathType.Id,
-                                x.MediaPathType.Path,
-                                x.MediaPathType.Description,
-                                x.MediaPathType.ShortDescription
+                        {
+                            x.MediaPathType.Id,
+                            x.MediaPathType.Path,
+                            x.MediaPathType.Description,
+                            x.MediaPathType.ShortDescription,
+                            x.IsLinked
                         }
                     });
 
@@ -289,6 +302,170 @@ namespace Keebee.AAT.Operations.Controllers
             return !media.Any()
                 ? new int[0]
                 : media.Select(x => x.Id).ToArray();
+        }
+
+        // GET: api/PublicMediaFiles?isSystem=true
+        [HttpGet]
+        public async Task<DynamicJsonObject> Get(bool isSystem)
+        {
+            IEnumerable<PublicMediaFile> mediaList = new Collection<PublicMediaFile>();
+
+            await Task.Run(() =>
+            {
+                mediaList = _publicMediaFileService.Get(isSystem);
+            });
+
+            if (mediaList == null) return new DynamicJsonObject(new ExpandoObject());
+            if (!mediaList.Any()) return new DynamicJsonObject(new ExpandoObject());
+
+            dynamic exObj = new ExpandoObject();
+
+            exObj.MediaFiles = mediaList
+                .GroupBy(rt => rt.ResponseType)
+                .Select(mediaFiles => new { mediaFiles.First().ResponseType, MediaFiles = mediaFiles })
+                .Select(mf => new
+                {
+                    ResponseType = new
+                    {
+                        mf.ResponseType.Id,
+                        mf.ResponseType.Description,
+                        ResponseTypeCatgory = new
+                        {
+                            mf.ResponseType.ResponseTypeCategory.Id,
+                            mf.ResponseType.ResponseTypeCategory.Description
+                        }
+                    },
+                    Paths = mf.MediaFiles
+                        .GroupBy(pt => pt.MediaPathType)
+                        .Select(files => new { files.First().MediaPathType, Files = files })
+                        .Select(pt => new
+                        {
+                            MediaPathType = new
+                            {
+                                pt.MediaPathType.Id,
+                                pt.MediaPathType.Path,
+                                pt.MediaPathType.Description,
+                                pt.MediaPathType.ShortDescription,
+                                pt.MediaPathType.IsSystem,
+                                pt.MediaPathType.IsSharable,
+                                pt.MediaPathType.IsPreviewable
+                            },
+                            Files = pt.Files.Select(f => new
+                            {
+                                f.Id,
+                                f.StreamId,
+                                f.MediaFile.Filename,
+                                f.MediaFile.FileType,
+                                f.MediaFile.FileSize,
+                                f.IsLinked
+                            })
+                        }).OrderBy(o => o.MediaPathType.Id)
+                }).OrderBy(o => o.ResponseType.Id);
+
+            return new DynamicJsonObject(exObj);
+        }
+
+        // GET: api/PublicMediaFiles/linked
+        [HttpGet]
+        [Route("linked")]
+        public async Task<DynamicJsonObject> GetLinkedPublicMedia()
+        {
+            IEnumerable<PublicMediaFile> mediaList = new Collection<PublicMediaFile>();
+
+            await Task.Run(() =>
+            {
+                mediaList = _publicMediaFileService.GetLinkedPublicMedia();
+            });
+
+            if (mediaList == null) return new DynamicJsonObject(new ExpandoObject());
+            if (!mediaList.Any()) return new DynamicJsonObject(new ExpandoObject());
+
+            dynamic exObj = new ExpandoObject();
+
+            exObj.MediaFiles = mediaList
+                .GroupBy(rt => rt.ResponseType)
+                .Select(mediaFiles => new { mediaFiles.First().ResponseType, MediaFiles = mediaFiles })
+                .Select(mf => new
+                {
+                    ResponseType = new
+                    {
+                        mf.ResponseType.Id,
+                        mf.ResponseType.Description,
+                        ResponseTypeCatgory = new
+                        {
+                            mf.ResponseType.ResponseTypeCategory.Id,
+                            mf.ResponseType.ResponseTypeCategory.Description
+                        }
+                    },
+                    Paths = mf.MediaFiles
+                        .GroupBy(pt => pt.MediaPathType)
+                        .Select(files => new { files.First().MediaPathType, Files = files })
+                        .Select(pt => new
+                        {
+                            MediaPathType = new
+                            {
+                                pt.MediaPathType.Id,
+                                pt.MediaPathType.Path,
+                                pt.MediaPathType.Description,
+                                pt.MediaPathType.ShortDescription,
+                                pt.MediaPathType.IsSystem,
+                                pt.MediaPathType.IsSharable,
+                                pt.MediaPathType.IsPreviewable
+                            },
+                            Files = pt.Files.Select(f => new
+                            {
+                                f.Id,
+                                f.StreamId,
+                                f.MediaFile.Filename,
+                                f.MediaFile.FileType,
+                                f.MediaFile.FileSize,
+                                f.IsLinked
+                            })
+                        }).OrderBy(o => o.MediaPathType.Id)
+                }).OrderBy(o => o.ResponseType.Id);
+
+            return new DynamicJsonObject(exObj);
+        }
+
+        // GET: api/PublicMediaFiles/linked?streamId=46fda92e-6cee-e611-9cb8-98eecb38d473
+        [HttpGet]
+        [Route("linked")]
+        public async Task<DynamicJsonObject> GetLinkedPublicMedia(Guid streamId)
+        {
+            IEnumerable<PublicMediaFile> media = new Collection<PublicMediaFile>();
+
+            await Task.Run(() =>
+            {
+                media = _publicMediaFileService.GetLinkedPublicMedia(streamId);
+            });
+
+            if (media == null) return new DynamicJsonObject(new ExpandoObject());
+            if (media.All(x => x.StreamId != streamId)) return new DynamicJsonObject(new ExpandoObject());
+
+            dynamic exObj = new ExpandoObject();
+
+            exObj.MediaFiles = media
+                .Select(x =>
+                    new
+                    {
+                        x.Id,
+                        x.StreamId,
+                        ResponseType = new
+                        {
+                            x.ResponseType.Id,
+                            x.ResponseType.Description
+                        },
+                        MediaPathType = new
+                        {
+                            x.MediaPathType.Id,
+                            x.MediaPathType.Path,
+                            x.MediaPathType.Description,
+                            x.MediaPathType.ShortDescription,
+                            x.IsLinked
+                        }
+                    });
+
+            return new DynamicJsonObject(exObj);
         }
 
         // GET: api/PublicMediaFiles?responseTypeId=1&filename=photo.jpg

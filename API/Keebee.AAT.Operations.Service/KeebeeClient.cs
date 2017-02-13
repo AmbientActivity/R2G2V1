@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-// Generation date: 2017-02-11 8:43:43 PM
+// Generation date: 2017-02-13 1:44:43 PM
 namespace Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models
 {
     /// <summary>
@@ -3304,11 +3304,13 @@ namespace Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models
         /// Create a new PublicMediaFile object.
         /// </summary>
         /// <param name="ID">Initial value of Id.</param>
+        /// <param name="isLinked">Initial value of IsLinked.</param>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        public static PublicMediaFile CreatePublicMediaFile(int ID)
+        public static PublicMediaFile CreatePublicMediaFile(int ID, bool isLinked)
         {
             PublicMediaFile publicMediaFile = new PublicMediaFile();
             publicMediaFile.Id = ID;
+            publicMediaFile.IsLinked = isLinked;
             return publicMediaFile;
         }
         /// <summary>
@@ -3334,6 +3336,29 @@ namespace Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models
         private int _Id;
         partial void OnIdChanging(int value);
         partial void OnIdChanged();
+        /// <summary>
+        /// There are no comments for Property IsLinked in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        [global::Microsoft.OData.Client.OriginalNameAttribute("IsLinked")]
+        public bool IsLinked
+        {
+            get
+            {
+                return this._IsLinked;
+            }
+            set
+            {
+                this.OnIsLinkedChanging(value);
+                this._IsLinked = value;
+                this.OnIsLinkedChanged();
+                this.OnPropertyChanged("IsLinked");
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private bool _IsLinked;
+        partial void OnIsLinkedChanging(bool value);
+        partial void OnIsLinkedChanged();
         /// <summary>
         /// There are no comments for Property StreamId in the schema.
         /// </summary>
@@ -5680,6 +5705,7 @@ namespace Keebee.AAT.Operations.Service.KeebeeAAT
           <PropertyRef Name=""Id"" />
         </Key>
         <Property Name=""Id"" Type=""Edm.Int32"" Nullable=""false"" />
+        <Property Name=""IsLinked"" Type=""Edm.Boolean"" Nullable=""false"" />
         <Property Name=""StreamId"" Type=""Edm.Guid"" />
         <Property Name=""ResponseTypeId"" Type=""Edm.Int32"" />
         <Property Name=""MediaPathTypeId"" Type=""Edm.Int32"" />

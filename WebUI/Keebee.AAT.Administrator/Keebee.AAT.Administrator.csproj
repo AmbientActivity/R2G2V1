@@ -278,6 +278,7 @@
     <Content Include="Scripts\SharedLibrary\Index.js" />
     <Content Include="Scripts\Site\Namespaces.js" />
     <Content Include="Scripts\Site\Site.js" />
+    <Content Include="Scripts\SystemProfile\Index.js" />
     <Content Include="Scripts\VideoCaptures\Index.js" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
@@ -294,6 +295,7 @@
     <Compile Include="Controllers\ResidentsController.cs" />
     <Compile Include="Controllers\MaintenanceController.cs" />
     <Compile Include="Controllers\SharedLibraryController.cs" />
+    <Compile Include="Controllers\SystemProfileController.cs" />
     <Compile Include="Controllers\VideoCapturesController.cs" />
     <Compile Include="FileManagement\FileManager.cs" />
     <Compile Include="Global.asax.cs">
@@ -340,6 +342,7 @@
     <Content Include="Views\Shared\_SharedLibraryLink.cshtml" />
     <Content Include="Views\SharedLibrary\Index.cshtml" />
     <Content Include="Views\SharedLibrary\_LinkedResidentMedia.cshtml" />
+    <Content Include="Views\SystemProfile\Index.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

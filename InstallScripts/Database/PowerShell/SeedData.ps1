@@ -7,7 +7,8 @@
     $pathDeployments = "C:\Deployments"
     $pathSqlScript = "$pathDeployments\Install\Database\SQL Server\"
     $pathSharedLibrary = "SharedLibrary"
-    
+    $pathProfilesPublic = "Profiles\0"
+
     Write-Host -ForegroundColor yellow "`n--- Seed ---`n"
 
     # check if the database exists
@@ -42,15 +43,19 @@
                 Remove-Item $mediaExports -recurse -Force
             }
 
-            Write-Host "Transferring shared library...” -NoNewline
+            Write-Host "Transferring Shared Library...” -NoNewline
             Copy-Item "$pathDeployments\Media\$pathSharedLibrary" $mediaDestination -recurse -Force
             Write-Host "done.”
 
-            Write-Host "Creating export folders...” -NoNewline
+            Write-Host "Transferring Public Profile...” -NoNewline
+            Copy-Item "$pathDeployments\Media\$pathProfilesPublic" $mediaDestination -recurse -Force
+            Write-Host "done.”
+
+            Write-Host "Creating Export folders...” -NoNewline
             Copy-Item "$pathDeployments\Media\Exports" "$mediaDestination\Exports" -recurse -Force
             Write-Host "done.`n”
 
-            Write-Host "Seeding configuration data...” -NoNewline
+            Write-Host "Seeding Configuration Data...” -NoNewline
             $queryFile = $pathSqlScript + "CreateMediaFilesView.sql"
             Invoke-SqlQuery -File $queryFile -Server $server -Database $database
 

@@ -191,7 +191,7 @@ Try
     Write-Host "done.”
 
     # shared library
-    Write-Host "Deploying Shared Library...”
+    Write-Host "Deploying Shared Library...” -NoNewline
     $path = $destPath + $sharedLibraryPath
     If(test-path $path)
     {
@@ -202,8 +202,8 @@ Try
     Write-Host "done.”
 
     # public profile
-    Write-Host "Deploying Public Profile...”
-    $path = $destPath + $profilesPath
+    Write-Host "Deploying Public Profile...” -NoNewline
+    $path = $destPath + $profilesPublicPath
     If(test-path $path)
     {
         Remove-Item $path -recurse -Force

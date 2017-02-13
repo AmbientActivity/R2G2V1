@@ -230,17 +230,20 @@ namespace Keebee.AAT.Administrator.Controllers
 
             try
             {
-                foreach (var streamId in streamIds)
+                if (streamIds != null)
                 {
-                    var pmf = new PublicMediaFileEdit
+                    foreach (var streamId in streamIds)
                     {
-                        StreamId = streamId,
-                        ResponseTypeId = PublicProfileRules.GetResponseTypeId(mediaPathTypeId),
-                        MediaPathTypeId = mediaPathTypeId,
-                        IsLinked = true
-                    };
+                        var pmf = new PublicMediaFileEdit
+                        {
+                            StreamId = streamId,
+                            ResponseTypeId = PublicProfileRules.GetResponseTypeId(mediaPathTypeId),
+                            MediaPathTypeId = mediaPathTypeId,
+                            IsLinked = true
+                        };
 
-                    _opsClient.PostPublicMediaFile(pmf);
+                        _opsClient.PostPublicMediaFile(pmf);
+                    }
                 }
                 success = true;
             }

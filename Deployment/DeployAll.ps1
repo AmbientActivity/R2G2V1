@@ -211,6 +211,7 @@ Try
     $path = $destPath + $profilesPublicPath
     New-Item -ItemType Directory -Force -Path $path | Out-Null
     Copy-Item $publicProfileSource $path -recurse -Force
+    Write-Host "done.”
 
     # -------------------- SCHEDULED TASKS --------------------
 

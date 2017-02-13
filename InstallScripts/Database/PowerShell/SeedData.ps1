@@ -48,7 +48,7 @@
             Write-Host "done.”
 
             Write-Host "Transferring Public Profile...” -NoNewline
-            Copy-Item "$pathDeployments\Media\$pathProfilesPublic" $mediaDestination -recurse -Force
+            Copy-Item "$pathDeployments\Media\$pathProfilesPublic" $mediaDestination\$mediaDestination -recurse -Force
             Write-Host "done.”
 
             Write-Host "Creating Export folders...” -NoNewline

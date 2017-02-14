@@ -727,6 +727,7 @@ namespace Keebee.AAT.Display
             else
             {
                 StopCurrentResponse();
+                _ambientPlaylist.clear();
                 // alert the State Machine Service that the display is no longer active or idle
                 _messageQueueDisplaySms.Send(CreateDisplayMessageBody(false));
                 _messageQueueDisplayPhidget.Send(CreateDisplayMessageBody(false));

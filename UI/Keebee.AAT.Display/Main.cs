@@ -183,9 +183,9 @@ namespace Keebee.AAT.Display
 
         private void ConfigureUserControls()
         {
-            ambient1.Dock = DockStyle.Fill;
-            ambient1.BringToFront();
-            ambient1.Show();
+            ambientPlayer1.Dock = DockStyle.Fill;
+            ambientPlayer1.BringToFront();
+            ambientPlayer1.Show();
 
             mediaPlayer1.Dock = DockStyle.Fill;
             mediaPlayer1.SendToBack();
@@ -236,7 +236,7 @@ namespace Keebee.AAT.Display
             _activityEventLogger.OperationsClient = _opsClient;
             _activityEventLogger.EventLogger = _systemEventLogger;
 
-            ambient1.SystemEventLogger = _systemEventLogger;
+            ambientPlayer1.SystemEventLogger = _systemEventLogger;
             mediaPlayer1.SystemEventLogger = _systemEventLogger;
             slideViewerFlash1.SystemEventLogger = _systemEventLogger;
             matchingGame1.SystemEventLogger = _systemEventLogger;
@@ -352,9 +352,9 @@ namespace Keebee.AAT.Display
                         mediaPlayer1.Stop();
                         break;
                     case ResponseTypeId.Ambient:
-                        ambient1.Hide();
-                        ambient1.SendToBack();
-                        ambient1.Pause();
+                        ambientPlayer1.Hide();
+                        ambientPlayer1.SendToBack();
+                        ambientPlayer1.Pause();
                         break;
                     case ResponseTypeId.OffScreen:
                         offScreen1.Hide();
@@ -627,9 +627,9 @@ namespace Keebee.AAT.Display
             else
             {
                 StopCurrentResponse();
-                ambient1.BringToFront();
-                ambient1.Show();
-                ambient1.Resume();
+                ambientPlayer1.BringToFront();
+                ambientPlayer1.Show();
+                ambientPlayer1.Resume();
 
                 _currentResponseTypeId = ResponseTypeId.Ambient;
             }
@@ -906,8 +906,8 @@ namespace Keebee.AAT.Display
                 _messageQueueDisplayVideoCapture.Send(CreateDisplayMessageBody(true));
                 _messageQueueDisplayBluetoothBeaconWatcher.Send(CreateDisplayMessageBody(true));
 
-                ambient1.Show();
-                ambient1.Play(_ambientPlaylist);
+                ambientPlayer1.Show();
+                ambientPlayer1.Play(_ambientPlaylist);
             }
             catch (Exception ex)
             {
@@ -917,7 +917,7 @@ namespace Keebee.AAT.Display
 
         private void MainFormClosing(object sender, FormClosingEventArgs e)
         {
-            ambient1.Dock = DockStyle.None;
+            ambientPlayer1.Dock = DockStyle.None;
             slideViewerFlash1.Dock = DockStyle.None;
             matchingGame1.Dock = DockStyle.None;
             paintingActivity1.Dock = DockStyle.None;

@@ -46,7 +46,6 @@ namespace Keebee.AAT.Administrator.ViewModels
     public class SharedLibraryLinkViewModel
     {
         public IEnumerable<SharedLibraryFileViewModel> SharedFiles { get; set; }
-        public string NoAvailableMediaMessage { get; set; }
     }
 
     public class ResidentProfileViewModel

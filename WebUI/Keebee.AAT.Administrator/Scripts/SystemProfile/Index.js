@@ -139,24 +139,9 @@
                     });
                 };
 
-                //self.getButtonText = function () {
-                //    var mediaPathTypeId = self.selectedMediaPathType();
-
-                //    $.ajax({
-                //        type: "GET",
-                //        url: site.url + "SystemProfile/GetButtonText?mediaPathTypeId=" + mediaPathTypeId,
-                //        traditional: true,
-                //        async: true,
-                //        dataType: "json",
-                //        success: function (data) {
-                //            $("#add-shared").text(data.AddButtonText);
-                //        }
-                //    });
-                //};
-
                 self.selectedMediaPathType.subscribe(function (id) {
                     if (typeof id === "undefined") return;
-                    //self.getButtonText();
+
                     self.checkSelectAll(false);
                     self.selectAllRows();
 
@@ -230,27 +215,49 @@
                         }
                     });
 
-                    BootstrapDialog.show({
-                        title: title + " Add <b>" + mediaPathTypeDesc + "</b> From Shared Library",
-                        message: $("<div></div>").append(message),
+                    if (message.length === 0) {
+                        var hasHave = "has";
+                        if (mediaPathTypeDesc.endsWith("s"))
+                            hasHave = "have";
 
-                        closable: false,
-                        buttons: [
-                            {
-                                label: "Cancel",
-                                action: function (dialog) {
-                                    dialog.close();
+                        BootstrapDialog.show({
+                            title: title + " Add <b>" + mediaPathTypeDesc + "</b> From Shared Library",
+                            message: $("<div></div>").append("All available " + mediaPathTypeDesc + " " + hasHave + " already been added to the system profile."),
+
+                            closable: false,
+                            buttons: [
+                                {
+                                    label: "OK",
+                                    cssClass: "btn-primary",
+                                    action: function (dialog) {
+                                        dialog.close();
+                                    }
                                 }
-                            }, {
-                                label: "OK",
-                                cssClass: "btn-primary",
-                                action: function (dialog) {
-                                    self.addSharedFiles();
-                                    dialog.close();
+                            ]
+                        });
+                    } else {
+                        BootstrapDialog.show({
+                            title: title + " Add <b>" + mediaPathTypeDesc + "</b> From Shared Library",
+                            message: $("<div></div>").append(message),
+
+                            closable: false,
+                            buttons: [
+                                {
+                                    label: "Cancel",
+                                    action: function(dialog) {
+                                        dialog.close();
+                                    }
+                                }, {
+                                    label: "OK",
+                                    cssClass: "btn-primary",
+                                    action: function(dialog) {
+                                        self.addSharedFiles();
+                                        dialog.close();
+                                    }
                                 }
-                            }
-                        ]
-                    });
+                            ]
+                        });
+                    }
                 };
 
                 self.showSelectedFileDeleteDialog = function () {
@@ -525,12 +532,6 @@
             };
 
             //---------------------------------------------- VIEW MODEL (END) -----------------------------------------------------
-
-            ko.utils.stringStartsWith = function (string, startsWith) {
-                string = string || "";
-                if (startsWith.length > string.length) return false;
-                return string.substring(0, startsWith.length) === startsWith;
-            };
         }
     }
 })(jQuery);

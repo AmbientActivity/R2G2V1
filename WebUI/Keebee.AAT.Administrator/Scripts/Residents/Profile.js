@@ -314,28 +314,49 @@ function DisableScreen() {
                             message = data;
                         }
                     });
+                    var hasHave = "has";
+                    if (mediaPathTypeDesc.endsWith("s"))
+                        hasHave = "have";
 
-                    BootstrapDialog.show({
-                        title: title + " Add <b>" + mediaPathTypeDesc + "</b> From Shared Library",
-                        message: $("<div></div>").append(message),
-                        
-                        closable: false,
-                        buttons: [
-                            {
-                                label: "Cancel",
-                                action: function (dialog) {
-                                    dialog.close();
+                    if (message.length === 0) {
+                        BootstrapDialog.show({
+                            title: title + " Add <b>" + mediaPathTypeDesc + "</b> From Shared Library",
+                            message: $("<div></div>").append("All available " + mediaPathTypeDesc + " " + hasHave + " already been added to this profile."),
+
+                            closable: false,
+                            buttons: [
+                                {
+                                    label: "OK",
+                                    cssClass: "btn-primary",
+                                    action: function (dialog) {
+                                        dialog.close();
+                                    }
                                 }
-                            }, {
-                                label: "OK",
-                                cssClass: "btn-primary",
-                                action: function (dialog) {
-                                    self.addSharedFiles();
-                                    dialog.close();
+                            ]
+                        });
+                    } else {
+                        BootstrapDialog.show({
+                            title: title + " Add <b>" + mediaPathTypeDesc + "</b> From Shared Library",
+                            message: $("<div></div>").append(message),
+
+                            closable: false,
+                            buttons: [
+                                {
+                                    label: "Cancel",
+                                    action: function(dialog) {
+                                        dialog.close();
+                                    }
+                                }, {
+                                    label: "OK",
+                                    cssClass: "btn-primary",
+                                    action: function(dialog) {
+                                        self.addSharedFiles();
+                                        dialog.close();
+                                    }
                                 }
-                            }
-                        ]
-                    });
+                            ]
+                        });
+                    }
                 };
 
                 self.showSelectedFileDeleteDialog = function () {
@@ -607,12 +628,6 @@ function DisableScreen() {
             };
 
             //---------------------------------------------- VIEW MODEL (END) -----------------------------------------------------
-
-            ko.utils.stringStartsWith = function (string, startsWith) {
-                string = string || "";
-                if (startsWith.length > string.length) return false;
-                return string.substring(0, startsWith.length) === startsWith;
-            };
         }
     }
 })(jQuery);

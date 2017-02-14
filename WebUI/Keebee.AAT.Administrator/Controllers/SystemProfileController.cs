@@ -127,7 +127,11 @@ namespace Keebee.AAT.Administrator.Controllers
         [Authorize]
         public PartialViewResult GetSharedLibarayLinkView(int mediaPathTypeId)
         {
-            return PartialView("_SharedLibraryLink", LoadSharedLibaryAddViewModel(mediaPathTypeId));
+            var vm = LoadSharedLibaryAddViewModel(mediaPathTypeId);
+
+            return vm.SharedFiles.Any()
+                ? PartialView("_SharedLibraryLink", vm)
+                : null;
         }
 
         [HttpGet]
@@ -199,8 +203,7 @@ namespace Keebee.AAT.Administrator.Controllers
                 {
                     StreamId = f.StreamId,
                     Filename = f.Filename
-                }),
-                NoAvailableMediaMessage = rules.GetNoAvailableSharedMediaMessage(mediaPathTypeId)
+                })
             };
 
             return vm;

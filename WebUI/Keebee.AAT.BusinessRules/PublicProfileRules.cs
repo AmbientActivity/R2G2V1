@@ -209,15 +209,5 @@ namespace Keebee.AAT.BusinessRules
 
             return availableFiles;
         }
-
-        public string GetNoAvailableSharedMediaMessage(int mediaPathTypeId)
-        {
-            var mediaPathType = GetMediaPathShortDescription(mediaPathTypeId);
-
-            var isAre = mediaPathType.EndsWith("s") ? "are" : "is";
-            var message = $"All available {mediaPathType} {isAre} already included in the public profile.";
-
-            return message;
-        }
     }
 }

@@ -96,8 +96,8 @@ INSERT [dbo].[MediaPathTypes] ([Id], [Path], [Description], [ShortDescription], 
 INSERT [dbo].[MediaPathTypes] ([Id], [Path], [Description], [ShortDescription], [IsPreviewable], [IsSystem], [IsSharable]) VALUES (6, 'videos\home-movies', 'Videos (Home Movies)', 'Home Movies', 0, 0, 0)
 INSERT [dbo].[MediaPathTypes] ([Id], [Path], [Description], [ShortDescription], [IsPreviewable], [IsSystem], [IsSharable]) VALUES (7, 'activities\matching-game\shapes', 'Matching Game (Shapes)', 'Shapes', 1, 0, 1)
 INSERT [dbo].[MediaPathTypes] ([Id], [Path], [Description], [ShortDescription], [IsPreviewable], [IsSystem], [IsSharable]) VALUES (8, 'activities\matching-game\sounds', 'Matching Game (Sounds)', 'Sounds', 0, 0, 1)
-INSERT [dbo].[MediaPathTypes] ([Id], [Path], [Description], [ShortDescription], [IsPreviewable], [IsSystem], [IsSharable]) VALUES (9, 'videos\ambient', 'Videos (Ambient)', 'Videos', 0, 1, 1)
-INSERT [dbo].[MediaPathTypes] ([Id], [Path], [Description], [ShortDescription], [IsPreviewable], [IsSystem], [IsSharable]) VALUES (10, 'videos\cats', 'Videos (Cats)', 'Videos', 0, 1, 1)
+INSERT [dbo].[MediaPathTypes] ([Id], [Path], [Description], [ShortDescription], [IsPreviewable], [IsSystem], [IsSharable]) VALUES (9, 'videos\ambient', 'Videos (Ambient)', 'Ambient Videos', 0, 1, 1)
+INSERT [dbo].[MediaPathTypes] ([Id], [Path], [Description], [ShortDescription], [IsPreviewable], [IsSystem], [IsSharable]) VALUES (10, 'videos\cats', 'Videos (Cats)', 'Cats Videos', 0, 1, 1)
 SET IDENTITY_INSERT [dbo].[MediaPathTypes] OFF
 
 --- CONFIGURATION 1

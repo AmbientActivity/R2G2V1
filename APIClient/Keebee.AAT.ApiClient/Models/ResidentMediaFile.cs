@@ -19,7 +19,7 @@ namespace Keebee.AAT.ApiClient
 
     public class ResidentMediaResponseTypeList
     {
-        public IEnumerable<ResidentMediaResponseType> ResidentMediaList;
+        public IEnumerable<ResidentMedia> ResidentMediaList;
     }
 
     public class ResidentMediaResponseType

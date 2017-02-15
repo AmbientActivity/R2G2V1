@@ -38,7 +38,7 @@ namespace Keebee.AAT.Operations.Controllers
 
             dynamic exObj = new ExpandoObject();
 
-            exObj.ResidentMedia = media.GroupBy(m => m.Resident)
+            exObj.ResidentMediaList = media.GroupBy(m => m.Resident)
                 .Select(files => new { files.First().Resident, Files = files })
                 .Select(x => new
                 {
@@ -50,7 +50,7 @@ namespace Keebee.AAT.Operations.Controllers
                         x.Resident.Gender,
                         x.Resident.GameDifficultyLevel
                     },
-                    MediaFiles = x.Files
+                    MediaResponseTypes = x.Files
                         .GroupBy(rt => rt.ResponseType)
                         .Select(mediaFiles => new { mediaFiles.First().ResponseType, MediaFiles = mediaFiles })
                         .Select(mf => new
@@ -336,7 +336,7 @@ namespace Keebee.AAT.Operations.Controllers
                         x.Resident.Gender,
                         x.Resident.GameDifficultyLevel
                     },
-                    MediaResponseType = x.Files
+                    MediaResponseTypes = x.Files
                         .GroupBy(rt => rt.ResponseType)
                         .Select(mediaFiles => new {mediaFiles.First().ResponseType, MediaFiles = mediaFiles})
                         .Select(mf => new
@@ -373,8 +373,8 @@ namespace Keebee.AAT.Operations.Controllers
                                         f.IsLinked
                                     })
                                 }).OrderBy(o => o.MediaPathType.Id)
-                        }).SingleOrDefault()
-                });
+                        }).OrderBy(o => o.ResponseType.Id)
+                    }).OrderBy(o => o.Resident.Id);
 
             return new DynamicJsonObject(exObj);
         }
@@ -408,7 +408,7 @@ namespace Keebee.AAT.Operations.Controllers
                         x.Resident.Gender,
                         x.Resident.GameDifficultyLevel
                     },
-                    MediaResponseType = x.Files
+                    MediaResponseTypes = x.Files
                         .GroupBy(rt => rt.ResponseType)
                         .Select(mediaFiles => new { mediaFiles.First().ResponseType, MediaFiles = mediaFiles })
                         .Select(mf => new
@@ -445,8 +445,8 @@ namespace Keebee.AAT.Operations.Controllers
                                         f.IsLinked
                                     })
                                 }).OrderBy(o => o.MediaPathType.Id)
-                        }).SingleOrDefault()
-                });
+                        }).OrderBy(o => o.ResponseType.Id)
+                }).OrderBy(o => o.Resident.Id);
 
             return new DynamicJsonObject(exObj);
         }

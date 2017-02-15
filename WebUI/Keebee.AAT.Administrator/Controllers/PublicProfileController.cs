@@ -64,7 +64,7 @@ namespace Keebee.AAT.Administrator.Controllers
 
                     var rules = new PublicProfileRules { OperationsClient = _opsClient };
                     var mediaPath = rules.GetMediaPath(mediaPathTypeId);
-                    var filePath = $@"{_mediaPath.ProfileRoot}\{PublicMediaSource.Id}\{mediaPath}\{file.FileName}";
+                    var filePath = $@"{_mediaPath.ProfileRoot}\{PublicProfileSource.Id}\{mediaPath}\{file.FileName}";
 
                     // delete it if it already exists
                     var msg = fileManager.DeleteFile(filePath);
@@ -268,7 +268,7 @@ namespace Keebee.AAT.Administrator.Controllers
         private void AddPublicMediaFile(string filename, int mediaPathTypeId, string mediaPathType)
         {
             var fileManager = new FileManager { EventLogger = _systemEventLogger };
-            var streamId = fileManager.GetStreamId($@"{PublicMediaSource.Id}\{mediaPathType}", filename);
+            var streamId = fileManager.GetStreamId($@"{PublicProfileSource.Id}\{mediaPathType}", filename);
 
             var mf = new PublicMediaFileEdit
             {
@@ -287,7 +287,7 @@ namespace Keebee.AAT.Administrator.Controllers
             var rules = new PublicProfileRules { OperationsClient = _opsClient };
             var vm = new PublicProfileViewModel
             {
-                Title = PublicMediaSource.Description,
+                Title = PublicProfileSource.Description,
                 AddButtonText = $"Upload {rules.GetMediaPathShortDescription(mediaPathTypeId)}",
                 SelectedMediaPathType = mediaPathTypeId ?? MediaPathTypeId.Music
             };
@@ -325,7 +325,7 @@ namespace Keebee.AAT.Administrator.Controllers
 
             if (!mediaPaths.Any()) return list;
 
-            var pathRoot = $@"{_mediaPath.ProfileRoot}\{PublicMediaSource.Id}";
+            var pathRoot = $@"{_mediaPath.ProfileRoot}\{PublicProfileSource.Id}";
 
             foreach (var media in publicMedia.MediaFiles)
             {

@@ -171,8 +171,8 @@ namespace Keebee.AAT.StateMachineService
                 }
                 else
                 {
-                    if (_activeResident?.Id == PublicMediaSource.Id) return;
-                    LogActiveResidentEvent(PublicMediaSource.Id, "Active resident is public");
+                    if (_activeResident?.Id == PublicProfileSource.Id) return;
+                    LogActiveResidentEvent(PublicProfileSource.Id, "Active resident is public");
                     SetActiveResident(null);
                 }
 
@@ -200,8 +200,8 @@ namespace Keebee.AAT.StateMachineService
 
                 _activeResident = new ResidentMessage
                 {
-                    Id = PublicMediaSource.Id,
-                    Name = PublicMediaSource.Name,
+                    Id = PublicProfileSource.Id,
+                    Name = PublicProfileSource.Name,
                     GameDifficultyLevel = 1,
                     AllowVideoCapturing = false
                 };

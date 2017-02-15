@@ -134,7 +134,7 @@ namespace Keebee.AAT.Administrator.Controllers
             var errormessage = string.Empty;
             var rules = new SharedLibraryRules { OperationsClient = _opsClient };
             var mediaPathTypes = _opsClient.GetMediaPathTypes()
-                    .Where(mp => mp.Id != MediaPathTypeId.PersonalImages && mp.Id != MediaPathTypeId.HomeMovies).ToArray();
+                    .Where(mp => mp.Id != MediaPathTypeId.ImagesPersonal && mp.Id != MediaPathTypeId.HomeMovies).ToArray();
 
             try
             {

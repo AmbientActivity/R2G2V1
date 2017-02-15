@@ -12,13 +12,13 @@ namespace Keebee.AAT.ApiClientTests
         readonly OperationsClient _client = new OperationsClient();
 
         [TestMethod]
-        public void GetLinkedResidentMedia()
+        public void GetLinkedResidentMediaList()
         {
             // Act
-            var residentMedia = _client.GetLinkedResidentMedia();
+            var mediaList = _client.GetLinkedResidentMedia();
 
             // Assert
-            Assert.IsNotNull(residentMedia);
+            Assert.IsNotNull(mediaList);
         }
 
         [TestMethod]
@@ -37,7 +37,19 @@ namespace Keebee.AAT.ApiClientTests
         }
 
         [TestMethod]
-        public void GetResidentMedia()
+        public void GetResidentMediaList()
+        {
+            // Arrange
+
+            // Act
+            var media = _client.GetResidentMediaFiles();
+
+            // Assert
+            Assert.IsNotNull(media);
+        }
+
+        [TestMethod]
+        public void GetResidentMediaForResident()
         {
             // Arrange
             const int residentId = 1;
@@ -55,6 +67,17 @@ namespace Keebee.AAT.ApiClientTests
         {
             // Act
             var media = _client.GetPublicMediaFiles();
+
+            // Assert
+            Assert.IsNotNull(media);
+            Assert.IsTrue(media.MediaFiles.Any());
+        }
+
+        [TestMethod]
+        public void GetLinkedPublicMedia()
+        {
+            // Act
+            var media = _client.GetLinkedPublicMedia();
 
             // Assert
             Assert.IsNotNull(media);

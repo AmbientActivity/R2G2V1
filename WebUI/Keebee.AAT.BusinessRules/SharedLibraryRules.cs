@@ -21,7 +21,7 @@ namespace Keebee.AAT.BusinessRules
 
             switch (mediaPathTypeId)
             {
-                case MediaPathTypeId.GeneralImages:
+                case MediaPathTypeId.ImagesGeneral:
                     return responseTypes.Where(x => x.Id == ResponseTypeId.SlideShow);
 
                 case MediaPathTypeId.TVShows:
@@ -43,7 +43,7 @@ namespace Keebee.AAT.BusinessRules
         {
             var mediaPathType = mediaPathTypeId != null 
                 ? _opsClient.GetMediaPathType((int) mediaPathTypeId) 
-                : _opsClient.GetMediaPathType(MediaPathTypeId.GeneralImages);
+                : _opsClient.GetMediaPathType(MediaPathTypeId.ImagesGeneral);
 
             return mediaPathType;
         }
@@ -106,7 +106,7 @@ namespace Keebee.AAT.BusinessRules
 
             switch (mediaPathTypeId)
             {
-                case MediaPathTypeId.GeneralImages:
+                case MediaPathTypeId.ImagesGeneral:
                     extensions = "*.jpg,*.jpeg,*.png,*.gif";
                     break;
                 case MediaPathTypeId.TVShows:
@@ -134,8 +134,8 @@ namespace Keebee.AAT.BusinessRules
 
             switch (mediaPathTypeId)
             {
-                case MediaPathTypeId.PersonalImages:
-                case MediaPathTypeId.GeneralImages:
+                case MediaPathTypeId.ImagesPersonal:
+                case MediaPathTypeId.ImagesGeneral:
                     isValid = name.Contains("jpg") || name.Contains("jpeg") || name.Contains("png") || name.Contains("gif");
                     break;
                 case MediaPathTypeId.TVShows:
@@ -162,8 +162,8 @@ namespace Keebee.AAT.BusinessRules
         {
             switch (mediaPathTypeId)
             {
-                case MediaPathTypeId.GeneralImages:
-                case MediaPathTypeId.PersonalImages:
+                case MediaPathTypeId.ImagesGeneral:
+                case MediaPathTypeId.ImagesPersonal:
                 case MediaPathTypeId.MatchingGameShapes:
                     return true;
                 default:
@@ -187,7 +187,7 @@ namespace Keebee.AAT.BusinessRules
             
             // public linked media (for tooltip total linked)
             var publicFiles = new LinkedMediaFile[0];
-            var publicMedia = _opsClient.GetPublicMediaFiles();
+            var publicMedia = _opsClient.GetLinkedPublicMedia();
             if (publicMedia != null)
             {
                 publicFiles = publicMedia.MediaFiles
@@ -201,7 +201,8 @@ namespace Keebee.AAT.BusinessRules
             if (residentMediaLinked != null)
             {
                 residentFilesLinked = residentMediaLinked
-                    .SelectMany(x => x.MediaResponseType.Paths)
+                    .SelectMany(x => x.MediaResponseTypes)
+                    .SelectMany(x => x.Paths)
                     .SelectMany(x => x.Files).ToArray();
             }
 
@@ -253,8 +254,8 @@ namespace Keebee.AAT.BusinessRules
             {
                 publicProfile.Add(new Resident
                 {
-                    Id = PublicMediaSource.Id,
-                    FirstName = PublicMediaSource.Name
+                    Id = PublicProfileSource.Id,
+                    FirstName = PublicProfileSource.Name
                 });
             }
 

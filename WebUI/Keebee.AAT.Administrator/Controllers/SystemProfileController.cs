@@ -184,7 +184,7 @@ namespace Keebee.AAT.Administrator.Controllers
         {
             var vm = new PublicProfileViewModel
             {
-                Title = PublicMediaSource.DescriptionSystem,
+                Title = PublicProfileSource.DescriptionSystem,
                 AddButtonText = "Add"
             };
 

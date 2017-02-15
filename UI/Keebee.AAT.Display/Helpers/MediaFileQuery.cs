@@ -22,7 +22,7 @@ namespace Keebee.AAT.Display.Helpers
             var numFiles = 0;
 
             // get media from public library for the response type
-            if (residentId == PublicMediaSource.Id)
+            if (residentId == PublicProfileSource.Id)
             {
                 var media = _opsClient.GetPublicMediaFilesForResponseType(responseTypeId);
 
@@ -55,7 +55,7 @@ namespace Keebee.AAT.Display.Helpers
                 // if no files then look in public library
                 if (numFiles == 0)
                 {
-                    residentId = PublicMediaSource.Id;
+                    residentId = PublicProfileSource.Id;
                     var publicMedia = _opsClient.GetPublicMediaFilesForResponseType(responseTypeId);
 
                     if (publicMedia != null)

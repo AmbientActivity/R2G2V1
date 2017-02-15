@@ -83,8 +83,8 @@ namespace Keebee.AAT.ApiClient
         ResidentMediaFile GetResidentMediaFile(int id);
         ResidentMedia GetResidentMediaFilesForResident(int residentId);
         ResidentMediaResponseType GetResidentMediaFilesForResidentResponseType(int residentId, int responseTypeId);
-        IEnumerable<ResidentMediaResponseType> GetLinkedResidentMedia();
-        IEnumerable<ResidentMediaResponseType> GetLinkedResidentMediaForStreamId(Guid streamId);
+        IEnumerable<ResidentMedia> GetLinkedResidentMedia();
+        IEnumerable<ResidentMedia> GetLinkedResidentMediaForStreamId(Guid streamId);
         int[] GetResidentMediaFileIdsForStreamId(Guid streamId);
 
 
@@ -793,7 +793,7 @@ namespace Keebee.AAT.ApiClient
             if (data == null) return null;
 
             var serializer = new JavaScriptSerializer();
-            var residentMedia = serializer.Deserialize<ResidentMediaList>(data).Media;
+            var residentMedia = serializer.Deserialize<ResidentMediaResponseTypeList>(data).ResidentMediaList;
 
             return residentMedia;
         }
@@ -831,26 +831,26 @@ namespace Keebee.AAT.ApiClient
             return mediaResponseType;
         }
 
-        public IEnumerable<ResidentMediaResponseType> GetLinkedResidentMedia()
+        public IEnumerable<ResidentMedia> GetLinkedResidentMedia()
         {
             var data = Get(UrlLinkedResidentMedia);
             if (data == null) return null;
 
             var serializer = new JavaScriptSerializer();
-            var mediaResponseTypeList = serializer.Deserialize<ResidentMediaResponseTypeList>(data).ResidentMediaList;
+            var mediaList = serializer.Deserialize<ResidentMediaResponseTypeList>(data).ResidentMediaList;
 
-            return mediaResponseTypeList;
+            return mediaList;
         }
 
-        public IEnumerable<ResidentMediaResponseType> GetLinkedResidentMediaForStreamId(Guid streamId)
+        public IEnumerable<ResidentMedia> GetLinkedResidentMediaForStreamId(Guid streamId)
         {
             var data = Get(string.Format(UrlLinkedResidentMediaForStreamId, streamId));
             if (data == null) return null;
 
             var serializer = new JavaScriptSerializer();
-            var mediaResponseTypeList = serializer.Deserialize<ResidentMediaResponseTypeList>(data).ResidentMediaList;
+            var mediaList = serializer.Deserialize<ResidentMediaResponseTypeList>(data).ResidentMediaList;
 
-            return mediaResponseTypeList;
+            return mediaList;
         }
 
         public int[] GetResidentMediaFileIdsForStreamId(Guid streamId)

@@ -20,7 +20,7 @@ namespace Keebee.AAT.BusinessRules
 
             switch (mediaPathTypeId)
             {
-                case MediaPathTypeId.GeneralImages:
+                case MediaPathTypeId.ImagesGeneral:
                     return responseTypes.Where(x => x.Id == ResponseTypeId.SlideShow);
 
                 case MediaPathTypeId.TVShows:
@@ -42,14 +42,14 @@ namespace Keebee.AAT.BusinessRules
         {
             return mediaPathTypeId != null
                 ? _opsClient.GetMediaPathType((int)mediaPathTypeId).Path
-                : _opsClient.GetMediaPathType(MediaPathTypeId.GeneralImages).Path;
+                : _opsClient.GetMediaPathType(MediaPathTypeId.ImagesGeneral).Path;
         }
 
         public string GetMediaPathShortDescription(int? mediaPathTypeId)
         {
             return mediaPathTypeId != null
                 ? _opsClient.GetMediaPathType((int)mediaPathTypeId).ShortDescription
-                : _opsClient.GetMediaPathType(MediaPathTypeId.GeneralImages).ShortDescription;
+                : _opsClient.GetMediaPathType(MediaPathTypeId.ImagesGeneral).ShortDescription;
         }
 
         public bool FileExists(string path, string filename)
@@ -103,7 +103,7 @@ namespace Keebee.AAT.BusinessRules
 
             switch (mediaPathTypeId)
             {
-                case MediaPathTypeId.GeneralImages:
+                case MediaPathTypeId.ImagesGeneral:
                     extensions = "*.jpg,*.jpeg,*.png,*.gif";
                     break;
                 case MediaPathTypeId.TVShows:
@@ -131,8 +131,8 @@ namespace Keebee.AAT.BusinessRules
 
             switch (mediaPathTypeId)
             {
-                case MediaPathTypeId.PersonalImages:
-                case MediaPathTypeId.GeneralImages:
+                case MediaPathTypeId.ImagesPersonal:
+                case MediaPathTypeId.ImagesGeneral:
                     isValid = name.Contains("jpg") || name.Contains("jpeg") || name.Contains("png") || name.Contains("gif");
                     break;
                 case MediaPathTypeId.TVShows:
@@ -157,8 +157,8 @@ namespace Keebee.AAT.BusinessRules
 
             switch (mediaPathTypeId)
             {
-                case MediaPathTypeId.PersonalImages:
-                case MediaPathTypeId.GeneralImages:
+                case MediaPathTypeId.ImagesPersonal:
+                case MediaPathTypeId.ImagesGeneral:
                     responseTypeId = ResponseTypeId.SlideShow;
                     break;
                 case MediaPathTypeId.HomeMovies:

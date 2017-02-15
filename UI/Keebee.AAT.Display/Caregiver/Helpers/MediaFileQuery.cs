@@ -27,7 +27,7 @@ namespace Keebee.AAT.Display.Caregiver.Helpers
         {
             string[] files = null;
 
-            var isPublic = _currentResidentId == PublicMediaSource.Id;
+            var isPublic = _currentResidentId == PublicProfileSource.Id;
             var mediaFiles = _mediaFiles.ToArray();
 
             var paths = mediaFiles

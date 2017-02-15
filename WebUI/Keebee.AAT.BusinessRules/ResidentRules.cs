@@ -99,8 +99,8 @@ namespace Keebee.AAT.BusinessRules
 
             switch (mediaPathTypeId)
             {
-                case MediaPathTypeId.PersonalImages:
-                case MediaPathTypeId.GeneralImages:
+                case MediaPathTypeId.ImagesPersonal:
+                case MediaPathTypeId.ImagesGeneral:
                     isValid = name.Contains("jpg") || name.Contains("jpeg") || name.Contains("png") || name.Contains("gif");
                     break;
                 case MediaPathTypeId.HomeMovies:
@@ -137,8 +137,8 @@ namespace Keebee.AAT.BusinessRules
 
             switch (mediaPathTypeId)
             {
-                case MediaPathTypeId.PersonalImages:
-                case MediaPathTypeId.GeneralImages:
+                case MediaPathTypeId.ImagesPersonal:
+                case MediaPathTypeId.ImagesGeneral:
                     extensions = "*.jpg,*.png,*.gif";
                     break;
                 case MediaPathTypeId.HomeMovies:
@@ -162,14 +162,14 @@ namespace Keebee.AAT.BusinessRules
         {
             return mediaPathTypeId != null
                 ? _opsClient.GetMediaPathType((int)mediaPathTypeId).Path
-                : _opsClient.GetMediaPathType(MediaPathTypeId.GeneralImages).Path;
+                : _opsClient.GetMediaPathType(MediaPathTypeId.ImagesGeneral).Path;
         }
 
         public string GetMediaPathShortDescription(int? mediaPathTypeId)
         {
             return mediaPathTypeId != null
                 ? _opsClient.GetMediaPathType((int)mediaPathTypeId).ShortDescription
-                : _opsClient.GetMediaPathType(MediaPathTypeId.GeneralImages).ShortDescription;
+                : _opsClient.GetMediaPathType(MediaPathTypeId.ImagesGeneral).ShortDescription;
         }
 
         public static int GetResponseTypeId(int mediaPathTypeId)
@@ -178,8 +178,8 @@ namespace Keebee.AAT.BusinessRules
 
             switch (mediaPathTypeId)
             {
-                case MediaPathTypeId.PersonalImages:
-                case MediaPathTypeId.GeneralImages:
+                case MediaPathTypeId.ImagesPersonal:
+                case MediaPathTypeId.ImagesGeneral:
                     responseTypeId = ResponseTypeId.SlideShow;
                     break;
                 case MediaPathTypeId.HomeMovies:

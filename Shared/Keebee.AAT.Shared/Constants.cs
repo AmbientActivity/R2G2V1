@@ -74,8 +74,8 @@ namespace Keebee.AAT.Shared
     {
         public const int Music = 1;
         public const int RadioShows = 2;
-        public const int GeneralImages = 3;
-        public const int PersonalImages = 4;
+        public const int ImagesGeneral = 3;
+        public const int ImagesPersonal = 4;
         public const int TVShows = 5;
         public const int HomeMovies = 6;
         public const int MatchingGameShapes = 7;
@@ -108,7 +108,7 @@ namespace Keebee.AAT.Shared
         public const int Default = 1;
     }
 
-    public static class PublicMediaSource
+    public static class PublicProfileSource
     {
         public const int Id = 0;
         public const string Name = "Public";

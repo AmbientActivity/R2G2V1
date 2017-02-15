@@ -48,8 +48,8 @@ namespace Keebee.AAT.Display.Caregiver
 
         private readonly Resident _publicProfile = new Resident
         {
-            Id = PublicMediaSource.Id,
-            FirstName = PublicMediaSource.Description,
+            Id = PublicProfileSource.Id,
+            FirstName = PublicProfileSource.Description,
             GameDifficultyLevel = 1
         };
 
@@ -334,11 +334,11 @@ namespace Keebee.AAT.Display.Caregiver
 
         private void LoadResidentMedia(int residentId)
         {
-            _currentResident = residentId == PublicMediaSource.Id
+            _currentResident = residentId == PublicProfileSource.Id
                 ? _publicProfile
                 : _opsClient.GetResident(residentId);
 
-            if (residentId == PublicMediaSource.Id)
+            if (residentId == PublicProfileSource.Id)
             {
                 _mediaFiles = _publicMediaFiles;
             }
@@ -459,7 +459,7 @@ namespace Keebee.AAT.Display.Caregiver
             {
                 lvImagesGeneral.Items.Clear();
 
-                var files = GetMediaFiles(MediaPathTypeId.GeneralImages, ResponseTypeId.SlideShow).ToArray();
+                var files = GetMediaFiles(MediaPathTypeId.ImagesGeneral, ResponseTypeId.SlideShow).ToArray();
                 
                 var rowIndex = 0;
                 foreach (var f in files)
@@ -476,7 +476,7 @@ namespace Keebee.AAT.Display.Caregiver
                     rowIndex++;
                 }
 
-                _currentImageGeneralFiles = GetFilePaths(MediaPathTypeId.GeneralImages, ResponseTypeId.SlideShow);
+                _currentImageGeneralFiles = GetFilePaths(MediaPathTypeId.ImagesGeneral, ResponseTypeId.SlideShow);
 
                 if (_bgwImageGeneralThumbnails.IsBusy) return;
                 lvImagesGeneral.SmallImageList?.Images.Clear();
@@ -558,7 +558,7 @@ namespace Keebee.AAT.Display.Caregiver
             {
                 lvImagesPersonal.Items.Clear();
 
-                var files = GetMediaFiles(MediaPathTypeId.PersonalImages);
+                var files = GetMediaFiles(MediaPathTypeId.ImagesPersonal);
 
                 var rowIndex = 0;
 
@@ -577,7 +577,7 @@ namespace Keebee.AAT.Display.Caregiver
                     rowIndex++;
                 }
 
-                _currentImagePersonalFiles = GetFilePaths(MediaPathTypeId.PersonalImages);
+                _currentImagePersonalFiles = GetFilePaths(MediaPathTypeId.ImagesPersonal);
 
                 if (_bgwImagePersonalThumbnails.IsBusy) return;
 
@@ -1040,7 +1040,7 @@ namespace Keebee.AAT.Display.Caregiver
             {
                 var selectedStreamId = new Guid(lvImagesGeneral.SelectedItems[0].SubItems[ListViewColumnStreamId].Text);
 
-                DisplayImages(MediaPathTypeId.GeneralImages, selectedStreamId, ResponseTypeId.SlideShow);
+                DisplayImages(MediaPathTypeId.ImagesGeneral, selectedStreamId, ResponseTypeId.SlideShow);
             }
             catch (Exception ex)
             {
@@ -1054,7 +1054,7 @@ namespace Keebee.AAT.Display.Caregiver
             {
                 var selectedStreamId = new Guid(lvImagesPersonal.SelectedItems[0].SubItems[ListViewColumnStreamId].Text);
 
-                DisplayImages(MediaPathTypeId.PersonalImages, selectedStreamId);
+                DisplayImages(MediaPathTypeId.ImagesPersonal, selectedStreamId);
             }
             catch (Exception ex)
             {

@@ -6,9 +6,9 @@
     $mediaDestination = "\\$server\KeebeeAATFilestream\Media\"
     $pathDeployments = "C:\Deployments"
     $pathSqlScript = "$pathDeployments\Install\Database\SQL Server\"
-    $pathSharedLibrary = "SharedLibrary"
+    $pathProfilesPublic = "Profiles\0"
 
-    Write-Host -ForegroundColor yellow "`n--- Seed ---`n"
+    Write-Host -ForegroundColor yellow "`n--- Public Profile ---`n"
 
     # check if the database exists
     $query = Invoke-SqlQuery -Query "SELECT COUNT(*) AS DatabaseCount FROM master.sys.databases WHERE name = N'$database'" -Server $server -Database "master"
@@ -21,12 +21,12 @@
     else
     {
         # check if there are any configurations
-        $query = Invoke-SqlQuery -Query "SELECT COUNT(*) AS ConfigCount FROM Configs" -Server $server -Database $database
-        $configCount = $query.ConfigCount
+        $query = Invoke-SqlQuery -Query "SELECT COUNT(*) AS FileCount FROM PublicMediaFiles" -Server $server -Database $database
+        $configCount = $query.FileCount
 
         # if there is already data, don't rerun
         if ($configCount -gt 0) {
-            Write-Host "Data has already been seeded."
+            Write-Host "Public Profile has already been seeded."
         } 
         else {
             
@@ -36,25 +36,12 @@
                 Remove-Item $mediaProfiles -recurse -Force
             }
 
-            $mediaExports = $mediaDestination + "\Exports\*"
-            If(test-path $mediaExports)
-            {
-                Remove-Item $mediaExports -recurse -Force
-            }
-
-            Write-Host "Transferring Shared Library...” -NoNewline
-            Copy-Item "$pathDeployments\Media\$pathSharedLibrary" $mediaDestination -recurse -Force
+            Write-Host "Transferring...” -NoNewline
+            Copy-Item "$pathDeployments\Media\$pathProfilesPublic" $mediaDestination\$pathProfilesPublic -recurse -Force
             Write-Host "done.”
 
-            Write-Host "Creating Export folders...” -NoNewline
-            Copy-Item "$pathDeployments\Media\Exports" "$mediaDestination\Exports" -recurse -Force
-            Write-Host "done.”
-
-            Write-Host "Seeding Configuration Data...” -NoNewline
-            $queryFile = $pathSqlScript + "CreateMediaFilesView.sql"
-            Invoke-SqlQuery -File $queryFile -Server $server -Database $database
-
-            $queryFile = $pathSqlScript + "SeedConfigurationData.sql"
+            Write-Host "Seeding...” -NoNewline
+            $queryFile = $pathSqlScript + "SeedPublicProfile.sql"
             Invoke-SqlQuery -File $queryFile -Server $server -Database $database
             Write-Host "done.”
         }

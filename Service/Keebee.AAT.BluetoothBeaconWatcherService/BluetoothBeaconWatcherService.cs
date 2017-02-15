@@ -57,8 +57,8 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
 
         private readonly ResidentMessage _publicResident = new ResidentMessage
         {
-            Id = PublicMediaSource.Id,
-            Name = PublicMediaSource.Name,
+            Id = PublicProfileSource.Id,
+            Name = PublicProfileSource.Name,
             GameDifficultyLevel = 1,
             AllowVideoCapturing = false
         };
@@ -169,7 +169,7 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
 
                 if (!_beaconManager.BluetoothBeacons.Any())
                 {
-                    if (_activeResidentId == PublicMediaSource.Id)
+                    if (_activeResidentId == PublicProfileSource.Id)
                     {
                         _timer.Start();
                         StartWatcher();
@@ -177,10 +177,10 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
                     }
 
                     _messageQueueBeaconWatcher.Send(GetSerializedResident(_publicResident));
-                    _activeResidentId = PublicMediaSource.Id;
+                    _activeResidentId = PublicProfileSource.Id;
 #if DEBUG
                     if (_beaconMonitorIsActive)
-                        _messageQueueBeaconMonitorResident.Send(GetSerializedBeaconWatcherMonitorResidentMessage(_activeResidentId, PublicMediaSource.Name, 0));
+                        _messageQueueBeaconMonitorResident.Send(GetSerializedBeaconWatcherMonitorResidentMessage(_activeResidentId, PublicProfileSource.Name, 0));
 #endif
                 }
 
@@ -345,7 +345,7 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
                     AllowVideoCapturing = r.AllowVideoCapturing
                 }).ToArray();
 
-                _activeResidentId = PublicMediaSource.Id;
+                _activeResidentId = PublicProfileSource.Id;
                 return _residents.Any();
 
             }
@@ -407,7 +407,7 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
 #if DEBUG
                 _messageQueueBeaconMonitorResident.Send(GetSerializedResident(_publicResident));
 #endif
-                _activeResidentId = PublicMediaSource.Id;
+                _activeResidentId = PublicProfileSource.Id;
             }
             catch (Exception ex)
             {

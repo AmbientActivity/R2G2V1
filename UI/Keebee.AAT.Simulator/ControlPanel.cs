@@ -48,8 +48,8 @@ namespace Keebee.AAT.Simulator
         private Resident _currentResident;
         private readonly Resident _publicResident = new Resident
         {
-            Id = PublicMediaSource.Id,
-            FirstName = PublicMediaSource.Description,
+            Id = PublicProfileSource.Id,
+            FirstName = PublicProfileSource.Description,
             GameDifficultyLevel = 1,
             AllowVideoCapturing = false
         };
@@ -126,7 +126,7 @@ namespace Keebee.AAT.Simulator
             cboResident.DataSource = arrayList;
 
             // make public library active
-            _messageQueueBluetoothBeaconWatcher.Send(CreateMessageBodyForBluetoothBeaconWatcher(new Resident { Id = PublicMediaSource.Id, GameDifficultyLevel =  1}));
+            _messageQueueBluetoothBeaconWatcher.Send(CreateMessageBodyForBluetoothBeaconWatcher(new Resident { Id = PublicProfileSource.Id, GameDifficultyLevel =  1}));
         }
 
         private void KillDisplayButtonClick(object sender, EventArgs e)
@@ -259,8 +259,8 @@ namespace Keebee.AAT.Simulator
         {
             var id = Convert.ToInt32(cboResident.SelectedValue.ToString());
 
-            var resident = (id == PublicMediaSource.Id)
-                ? new Resident { Id = PublicMediaSource.Id, GameDifficultyLevel = 1, AllowVideoCapturing = false }
+            var resident = (id == PublicProfileSource.Id)
+                ? new Resident { Id = PublicProfileSource.Id, GameDifficultyLevel = 1, AllowVideoCapturing = false }
                 : _residents.Single(x => x.Id == id);
 
             CreateMessageBodyForBluetoothBeaconWatcher(resident);
@@ -306,7 +306,7 @@ namespace Keebee.AAT.Simulator
 
             var id = _residents[_currentResidentIndex].Id;
 
-            var resident = (id == PublicMediaSource.Id)
+            var resident = (id == PublicProfileSource.Id)
                 ? _publicResident
                 : _residents.Single(x => x.Id == id);
 
@@ -403,8 +403,8 @@ namespace Keebee.AAT.Simulator
                 Resident = new ResidentMessage
                 {
                     Id = _currentResident.Id,
-                    Name = _currentResident.Id == PublicMediaSource.Id 
-                            ? PublicMediaSource.Name
+                    Name = _currentResident.Id == PublicProfileSource.Id 
+                            ? PublicProfileSource.Name
                             : $"{_currentResident.FirstName} {_currentResident.LastName}".Trim(),
                     GameDifficultyLevel = _currentResident.GameDifficultyLevel,
                     AllowVideoCapturing = _currentResident.AllowVideoCapturing

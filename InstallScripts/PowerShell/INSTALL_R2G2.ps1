@@ -13,6 +13,7 @@ Try
     invoke-expression -Command $installPathData\CreateDatabase.ps1
     invoke-expression -Command $installPathData\DropAndCreateTables.ps1
     invoke-expression -Command $installPathData\SeedData.ps1
+    invoke-expression -Command $installPathData\SeedPublicProfile.ps1
     invoke-expression -Command $installPathData\CreatePreloadedResidents.ps1
     invoke-expression -Command $installPath\InstallServices.ps1
 

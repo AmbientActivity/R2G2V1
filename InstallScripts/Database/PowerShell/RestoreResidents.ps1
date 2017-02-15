@@ -20,13 +20,13 @@ Try
     }
     else
     {
-        # check if there are any configurations
+        # check if there are any resident profiles
         $query = Invoke-SqlQuery -Query "SELECT COUNT(*) AS FileCount FROM ResidentMediaFiles" -Server $server -Database $database
         $fileCount = $query.FileCount
 
         # if there is already data, don't rerun
         if ($fileCount -gt 0) {
-            Write-Host "Resident Profiles have already been seeded."
+            Write-Host "Resident Profiles have already been restored."
         } 
         else {
             #read folder names (residentIds)

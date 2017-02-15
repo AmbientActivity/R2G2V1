@@ -3,11 +3,12 @@ using Keebee.AAT.ApiClient;
 using Keebee.AAT.SystemEventLogging;
 using Keebee.AAT.Display.Extensions;
 using Keebee.AAT.Shared;
+using Keebee.AAT.Display.Helpers;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Diagnostics;
 using System.Drawing;
+using System.Runtime.InteropServices.ComTypes;
 using System.ServiceProcess;
 using System.Windows.Forms;
 using AxWMPLib;
@@ -74,22 +75,20 @@ namespace Keebee.AAT.Display
                 using (var mediaPlayer = new AxWindowsMediaPlayer())
                 {
                     Controls.Add(mediaPlayer);
-
-                    var mediaPathType = _opsClient.GetMediaPathType(MediaPathTypeId.Ambient);
-                    var ambientMediaPaths = _opsClient.GetPublicMediaFilesForResponseType(ResponseTypeId.Ambient)
-                        .MediaResponseType.Paths;
-
-                    var files = ambientMediaPaths.SelectMany(p => p.Files)
-                        .Select(f => $@"{_mediaPath.MediaRoot}\{_mediaPath.SharedLibrary}\{mediaPathType.Path}\{f.Filename}")
-                        .ToArray();
-
-                    if (files.Any())
+                    var mediaFileQuery = new MediaFileQuery {OperationsClient = _opsClient};
+                    var ambientFiles = mediaFileQuery.GetFilesForResponseType(PublicProfileSource.Id, ResponseTypeId.Ambient, MediaPathTypeId.Ambient);
+                    if (!ambientFiles.Any())
                     {
-                        if (files.Length > 1)
-                        files.Shuffle();
-
-                        _ambientPlaylist = mediaPlayer.LoadPlaylist(PlaylistAmbient, files);
+                        Hide();
+                        MessageBox.Show("No Ambient Video content found", "No Content Found", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        Close();
                     }
+
+                    if (ambientFiles.Length > 1)
+                    ambientFiles.Shuffle();
+
+                    _ambientPlaylist = mediaPlayer.LoadPlaylist(PlaylistAmbient, ambientFiles);
+
 
                     Controls.Remove(mediaPlayer);
 

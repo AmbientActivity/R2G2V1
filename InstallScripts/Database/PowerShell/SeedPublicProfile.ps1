@@ -36,11 +36,11 @@
                 Remove-Item $mediaProfiles -recurse -Force
             }
 
-            Write-Host "Transferring...” -NoNewline
+            Write-Host "Transferring profile...” -NoNewline
             Copy-Item "$pathDeployments\Media\$pathProfilesPublic" $mediaDestination\$pathProfilesPublic -recurse -Force
             Write-Host "done.”
 
-            Write-Host "Seeding...” -NoNewline
+            Write-Host "Seeding profile...” -NoNewline
             $queryFile = $pathSqlScript + "SeedPublicProfile.sql"
             Invoke-SqlQuery -File $queryFile -Server $server -Database $database
             Write-Host "done.”

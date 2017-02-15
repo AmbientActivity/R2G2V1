@@ -1,52 +1,52 @@
 ﻿# setup
-$destPath = "C:\Deployments\"
-$versionPath = "1.0.0.0\"
+$pathDeployments = "C:\Deployments\"
+$pathVersion = "1.0.0.0\"
 
 # service paths
-$stateMachinePath = "Services\StateMachineService\"
-$bluetoothBeaconWatcherPath = "Services\BluetoothBeaconWatcherService\"
-$phidgetPath = "Services\PhidgetService\"
-$videoCapturePath = "Services\VideoCaptureService\"
-$keepIISAlivePath = "Services\KeepIISAliveService\"
+$pathServicesRoot = $pathDeployments + "Services"
+$pathStateMachine = "Services\StateMachineService\"
+$pathBluetoothBeacon = "Services\BluetoothBeaconWatcherService\"
+$pathPhidget= "Services\PhidgetService\"
+$pathVideoCapture = "Services\VideoCaptureService\"
+$pathKeepIISAlive = "Services\KeepIISAliveService\"
 
 # web paths
-$dataPath = "Web\Data\"
-$apiPath = "Web\API\"
-$administratorPath = "Web\Administrator\"
+$pathDataAccess = "Web\Data\"
+$pathAPI = "Web\API\"
+$pathAdministator = "Web\Administrator\"
 
 # ui paths
-$displayReleasePath = "UI\Display\"
-$displayDebugPath = "UI\Display\"
-$simulatorPath = "UI\Simulator\"
+$pathDisplayRelease = "UI\Display\"
+$pathDisplayDebug = "UI\Display\"
+$pathSimulator = "UI\Simulator\"
 
 # scheduled tasks
-$scheduledTasksPath = "ScheduledTasks\"
-$eventLogExportPath = "EventLogExporter\"
-$videoCaptureCleanupPath = "VideoCaptureFileCleanup\"
-$backupPath = "Backup\"
+$pathScheduledTasks = "ScheduledTasks\"
+$pathEventLogExporter = "EventLogExporter\"
+$pathVideoCaptureCleanup = "VideoCaptureFileCleanup\"
+$pathBackup = "Backup\"
 
-# install
-$installRoot = "Install\"
-$installDatabasePath = "Install\Database\"
-$installPowerShellPath = "Install\PowerShell\"
-$installUtilityPath = "Install\Utility\"
+# install scripts
+$pathInstallRoot = "Install\"
+$pathDatabaseInstall = "Install\Database\"
+$pathInstallPowerShell = "Install\PowerShell\"
+$pathInstallUtility = "Install\Utility\"
 
 # media
-$sharedLibraryPath = "Media\SharedLibrary\"
-$profilesPublicPath = "Media\Profiles\0\"
-$exportsPath = "Media\Exports\EventLog\"
-$publicProfileSource = "\\$env:COMPUTERNAME\SQLEXPRESS\KeebeeAATFilestream\Media\Profiles\0\*"
-$sharedLibrarySource = "\\$env:COMPUTERNAME\SQLEXPRESS\KeebeeAATFilestream\Media\SharedLibrary\*"
+$pathSharedLibrary = "Media\SharedLibrary\"
+$pathProfiles = "Media\Profiles\"
+$pathPublicProfile = "0\"
+$pathExportEventLog = "Media\Exports\EventLog\"
+$pathSourcePublicProfile = "\\$env:COMPUTERNAME\SQLEXPRESS\KeebeeAATFilestream\Media\Profiles\0\*"
+$pathSourceSharedLibrary = "\\$env:COMPUTERNAME\SQLEXPRESS\KeebeeAATFilestream\Media\SharedLibrary\*"
 
 # documentation paths
-$documentationPath = "Install\Documentation\"
+$pathDocumentation = "Install\Documentation\"
 
 # source code
-$sourceCode = "C:\Users\$env:USERNAME\Source\Repos\R2G2V1\"
-$solutionFile = "Keebee.AAT.sln"
+$pathSourceCode = "C:\Users\$env:USERNAME\Source\Repos\R2G2V1\"
+$filenameVSSolution = "Keebee.AAT.sln"
 
-# services
-$servicesRoot = "C:\Deployments\Services"
 
 Try
 {
@@ -93,7 +93,7 @@ Try
 
     Get-Module Build-VisualStudioSolution
     # build debug
-    $buildResult = Build-VisualStudioSolution -SourceCodePath $sourceCode -SolutionFile $solutionFile -BuildLogFile "R2G2BuildDebug.log" -Configuration "Debug" -CleanFirst;
+    $buildResult = Build-VisualStudioSolution -SourceCodePath $pathSourceCode -SolutionFile $filenameVSSolution -BuildLogFile "R2G2BuildDebug.log" -Configuration "Debug" -CleanFirst;
 
     If (!$buildResult)
     {
@@ -101,7 +101,7 @@ Try
     }
 
     # build release
-    $buildResult = Build-VisualStudioSolution -SourceCodePath $sourceCode -SolutionFile $solutionFile -BuildLogFile "R2G2BuildRelease.log" -Configuration "Release" -CleanFirst;
+    $buildResult = Build-VisualStudioSolution -SourceCodePath $pathSourceCode -SolutionFile $filenameVSSolution -BuildLogFile "R2G2BuildRelease.log" -Configuration "Release" -CleanFirst;
 
     If (!$buildResult)
     {
@@ -113,15 +113,15 @@ Try
     # -------------------- ROOT --------------------
 
     # create the root directory
-    If(!(test-path $destPath))
+    If(!(test-path $pathDeployments))
     {
-        New-Item -ItemType Directory -Force -Path $destPath | Out-Null
+        New-Item -ItemType Directory -Force -Path $pathDeployments | Out-Null
     }
 
     # -------------------- UI --------------------
     # display
     Write-Host "Deploying UI Components...” -NoNewline
-    $path = $destPath + $displayReleasePath + $versionPath + "Release\"
+    $path = $pathDeployments + $pathDisplayRelease + $pathVersion + "Release\"
     If(test-path $path)
     {
         Remove-Item $path -recurse -Force
@@ -129,7 +129,7 @@ Try
     New-Item -ItemType Directory -Force -Path $path | Out-Null
     Copy-Item C:\Users\$env:USERNAME\Source\Repos\R2G2V1\UI\Keebee.AAT.Display\bin\Release\* $path -recurse -Force
 
-    $path = $destPath + $displayDebugPath + $versionPath + "Debug\"
+    $path = $pathDeployments + $pathDisplayDebug + $pathVersion + "Debug\"
     If(test-path $path)
     {
         Remove-Item $path -recurse -Force
@@ -138,7 +138,7 @@ Try
     Copy-Item C:\Users\$env:USERNAME\Source\Repos\R2G2V1\UI\Keebee.AAT.Display\bin\Debug\* $path -recurse -Force
 
     # simulator
-    $path = $destPath + $simulatorPath + $versionPath
+    $path = $pathDeployments + $pathSimulator + $pathVersion
     If(test-path $path)
     {
         Remove-Item $path -recurse -Force
@@ -151,7 +151,7 @@ Try
     # -------------------- WEB --------------------
     # data access
     Write-Host "Deploying Web Components...” -NoNewline
-    $path = $destPath + $dataPath + $versionPath
+    $path = $pathDeployments + $pathDataAccess + $pathVersion
     If(test-path $path)
     {
         Remove-Item $path -recurse -Force
@@ -160,7 +160,7 @@ Try
     Copy-Item C:\Users\$env:USERNAME\Source\Repos\R2G2V1\Data\Keebee.AAT.DataAccess\* $path -recurse -Force
 
     # api
-    $path = $destPath + $apiPath + $versionPath
+    $path = $pathDeployments + $pathAPI + $pathVersion
     If(test-path $path)
     {
         Remove-Item $path -recurse -Force
@@ -169,7 +169,7 @@ Try
     Copy-Item C:\Users\$env:USERNAME\Source\Repos\R2G2V1\API\Keebee.AAT.Operations\* $path -recurse -Force
 
     # administrator
-    $path = $destPath + $administratorPath + $versionPath
+    $path = $pathDeployments + $pathAdministator + $pathVersion
     If(test-path $path)
     {
         Remove-Item $path -recurse -Force
@@ -182,7 +182,7 @@ Try
     # -------------------- MEDIA --------------------
     # export folder
     Write-Host "Deploying Export folders...” -NoNewline
-    $path = $destPath + $exportsPath
+    $path = $pathDeployments + $pathExportEventLog
     If(test-path $path)
     {
         Remove-Item $path -recurse -Force
@@ -192,31 +192,38 @@ Try
 
     # shared library
     Write-Host "Deploying Shared Library...” -NoNewline
-    $path = $destPath + $sharedLibraryPath
+    $path = $pathDeployments + $pathSharedLibrary
     If(test-path $path)
     {
         Remove-Item $path -recurse -Force
     } 
     New-Item -ItemType Directory -Force -Path $path | Out-Null
-    Copy-Item $sharedLibrarySource $path -recurse -Force
+    Copy-Item $pathSourceSharedLibrary $path -recurse -Force
     Write-Host "done.”
 
-    # public profile
-    Write-Host "Deploying Public Profile...” -NoNewline
-    $path = $destPath + $profilesPublicPath
+    # clear out existing profiles
+    $path = $pathDeployments + $pathProfiles
     If(test-path $path)
     {
         Remove-Item $path -recurse -Force
     }
-    $path = $destPath + $profilesPublicPath
+
+    # public profile
+    Write-Host "Deploying Public Profile...” -NoNewline
+    $path = $pathDeployments + $pathProfiles + $pathPublicProfile
+    If(test-path $path)
+    {
+        Remove-Item $path -recurse -Force
+    }
+    $path = $pathDeployments + $pathProfiles + $pathPublicProfile
     New-Item -ItemType Directory -Force -Path $path | Out-Null
-    Copy-Item $publicProfileSource $path -recurse -Force
+    Copy-Item $pathSourcePublicProfile $path -recurse -Force
     Write-Host "done.”
 
     # -------------------- SCHEDULED TASKS --------------------
 
-    # scheduled tasks root
-    $path = $destPath + $scheduledTasksPath
+    # create scheduled tasks root
+    $path = $pathDeployments + $pathScheduledTasks
     If(test-path $path)
     {
         Remove-Item $path -recurse -Force
@@ -225,7 +232,7 @@ Try
 
     # event log exporter
     Write-Host "Deploying Scheduled Tasks...” -NoNewline
-    $path = $destPath + $scheduledTasksPath + $eventLogExportPath + $versionPath
+    $path = $pathDeployments + $pathScheduledTasks + $pathEventLogExporter + $pathVersion
     If(test-path $path)
     {
         Remove-Item $path -recurse -Force
@@ -234,7 +241,7 @@ Try
     Copy-Item C:\Users\$env:USERNAME\Source\Repos\R2G2V1\ScheduledTasks\Keebee.AAT.EventLogExporter\bin\Release\* $path -recurse -Force
 
     # video capture file cleanup
-    $path = $destPath + $scheduledTasksPath + $videoCaptureCleanupPath + $versionPath
+    $path = $pathDeployments + $pathScheduledTasks + $pathVideoCaptureCleanup + $pathVersion
     If(test-path $path)
     {
         Remove-Item $path -recurse -Force
@@ -243,7 +250,7 @@ Try
     Copy-Item C:\Users\$env:USERNAME\Source\Repos\R2G2V1\ScheduledTasks\Keebee.AAT.VideoCaptureFileCleanup\bin\Release\* $path -recurse -Force
 
     # backup
-    $path = $destPath + $scheduledTasksPath + $backupPath + $versionPath
+    $path = $pathDeployments + $pathScheduledTasks + $pathBackup + $pathVersion
     If(test-path $path)
     {
         Remove-Item $path -recurse -Force
@@ -255,9 +262,12 @@ Try
 
 
     # -------------------- INSTALL SCRIPTS --------------------
+
     # install
     Write-Host "Deploying Install Scripts...” -NoNewline
-    $path = $destPath + $installRoot
+
+    # root
+    $path = $pathDeployments + $pathInstallRoot
     If(test-path $path)
     {
         Remove-Item $path -recurse -Force
@@ -265,7 +275,7 @@ Try
     New-Item -ItemType Directory -Force -Path $path | Out-Null
     Copy-Item C:\Users\$env:USERNAME\Source\Repos\R2G2V1\InstallScripts\* $path -recurse -Force
 
-    $path = $destPath + $installDatabasePath
+    $path = $pathDeployments + $pathInstallRoot + $pathDatabaseInstall
     If(test-path $path)
     {
         Remove-Item $path -recurse -Force
@@ -273,14 +283,14 @@ Try
     New-Item -ItemType Directory -Force -Path $path | Out-Null
     Copy-Item C:\Users\$env:USERNAME\Source\Repos\R2G2V1\InstallScripts\Database\* $path -recurse -Force
 
-    $path = $destPath + $installPowerShellPath
+    $path = $pathDeployments + $pathInstallRoot + $pathInstallPowerShell
     If(!(test-path $path))
     {
         New-Item -ItemType Directory -Force -Path $path | Out-Null
     }
     Copy-Item C:\Users\$env:USERNAME\Source\Repos\R2G2V1\InstallScripts\PowerShell\* $path -recurse -Force
 
-    $path = $destPath + $installUtilityPath
+    $path = $pathDeployments + $pathInstallRoot + $pathInstallUtility
     If(test-path $path)
     {
         Remove-Item $path -recurse -Force
@@ -295,7 +305,7 @@ Try
 
     # state machine service
     Write-Host "Deploying Services...” -NoNewline
-    $path = $destPath + $stateMachinePath + $versionPath
+    $path = $pathDeployments + $pathStateMachine + $pathVersion
     If(test-path $path)
     {
         Remove-Item $path -recurse -Force
@@ -304,7 +314,7 @@ Try
     Copy-Item C:\Users\$env:USERNAME\Source\Repos\R2G2V1\Service\Keebee.AAT.StateMachineService\bin\Release\* $path -recurse -Force 
 
     # phidget service
-    $path = $destPath + $phidgetPath + $versionPath
+    $path = $pathDeployments + $pathPhidget+ $pathVersion
     If(test-path $path)
     {
         Remove-Item $path -recurse -Force
@@ -313,7 +323,7 @@ Try
     Copy-Item C:\Users\$env:USERNAME\Source\Repos\R2G2V1\Service\Keebee.AAT.PhidgetService\bin\Release\* $path -recurse -Force
 
     # bluetooth beacon watcher service
-    $path = $destPath + $bluetoothBeaconWatcherPath + $versionPath
+    $path = $pathDeployments + $pathBluetoothBeacon + $pathVersion
     If(test-path $path)
     {
         Remove-Item $path -recurse -Force
@@ -322,7 +332,7 @@ Try
     Copy-Item C:\Users\$env:USERNAME\Source\Repos\R2G2V1\Service\Keebee.AAT.BluetoothBeaconWatcherService\bin\Release\* $path -recurse -Force
 
     # video capture service
-    $path = $destPath + $videoCapturePath + $versionPath
+    $path = $pathDeployments + $pathVideoCapture + $pathVersion
     If(test-path $path)
     {
         Remove-Item $path -recurse -Force
@@ -331,7 +341,7 @@ Try
     Copy-Item C:\Users\$env:USERNAME\Source\Repos\R2G2V1\Service\Keebee.AAT.VideoCaptureService\bin\Release\* $path -recurse -Force
 
     # keep iis alive service
-    $path = $destPath + $keepIISAlivePath + $versionPath
+    $path = $pathDeployments + $pathKeepIISAlive + $pathVersion
     If(test-path $path)
     {
         Remove-Item $path -recurse -Force
@@ -342,7 +352,7 @@ Try
 
     # documentation
     Write-Host "Deploying Setup Documentation...” -NoNewline
-    $path = $destPath + $documentationPath
+    $path = $pathDeployments + $pathDocumentation
     If(test-path $path)
     {
         Remove-Item $path -recurse -Force

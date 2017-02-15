@@ -4,6 +4,8 @@ $path = "C:\Deployments\Install\Database\SQL Server\"
 
 Try
 {
+    Write-Host -ForegroundColor yellow "`n--- Restore Configurations ---`n"
+
     # check if the database exists
     $query = Invoke-SqlQuery -Query "SELECT COUNT(*) AS DatabaseCount FROM master.sys.databases WHERE name = N'$database'" -Server $server -Database "master"
     $databaseCount = $query.DatabaseCount

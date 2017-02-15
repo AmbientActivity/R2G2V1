@@ -20,13 +20,13 @@
     } 
     else
     {
-        # check if there is a public profile
+        # check if there is already a public profile
         $query = Invoke-SqlQuery -Query "SELECT COUNT(*) AS FileCount FROM PublicMediaFiles" -Server $server -Database $database
         $fileCount = $query.FileCount
 
         # if there is already data, don't rerun
         if ($fileCount -gt 0) {
-            Write-Host "Public Profile has already been seeded."
+            Write-Host "Public Profile has already been restored."
         } 
         else {
             
@@ -36,11 +36,11 @@
                 Remove-Item $mediaProfiles -recurse -Force
             }
 
-            Write-Host "Transferring...” -NoNewline
+            Write-Host "Transferring Profile...” -NoNewline
             Copy-Item "$pathDeployments\Media\$pathProfilesPublic" $mediaDestination\$pathProfilesPublic -recurse -Force
             Write-Host "done.”
 
-            Write-Host "Seeding...” -NoNewline
+            Write-Host "Restoring Profile...” -NoNewline
             $queryFile = $pathSqlScript + "RestorePublicProfile.sql"
             Invoke-SqlQuery -File $queryFile -Server $server -Database $database
             Write-Host "done.”

@@ -8,7 +8,7 @@
     $pathSqlScript = "$pathDeployments\Install\Database\SQL Server\"
     $pathProfilesPublic = "Profiles\0"
 
-    Write-Host -ForegroundColor yellow "`n--- Public Profile ---`n"
+    Write-Host -ForegroundColor yellow "`n--- Restore Public Profile ---`n"
 
     # check if the database exists
     $query = Invoke-SqlQuery -Query "SELECT COUNT(*) AS DatabaseCount FROM master.sys.databases WHERE name = N'$database'" -Server $server -Database "master"

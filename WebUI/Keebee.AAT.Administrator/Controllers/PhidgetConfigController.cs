@@ -68,7 +68,7 @@ namespace Keebee.AAT.Administrator.Controllers
         {
             var c = JsonConvert.DeserializeObject<ConfigEditViewModel>(config);
             var configid = c.Id;
-            var rules = new ConfigRules {OperationsClient = _opsClient};
+            var rules = new PhidgetConfigRules {OperationsClient = _opsClient};
 
             var msgs = rules.Validate(c.Description, configid == 0);
 
@@ -109,7 +109,7 @@ namespace Keebee.AAT.Administrator.Controllers
         {
             var cd = JsonConvert.DeserializeObject<ConfigDetailEditViewModel>(configDetail);
             var configDetailid = cd.Id;
-            var configurationRules = new ConfigRules();
+            var configurationRules = new PhidgetConfigRules();
 
             var msgs = configurationRules.ValidateDetail(cd.Description, cd.PhidgetTypeId, cd.PhidgetStyleTypeId);
 
@@ -248,7 +248,7 @@ namespace Keebee.AAT.Administrator.Controllers
 
         private ConfigDetailEditViewModel LoadConfigDetailEditViewModel(int id, int configId)
         {
-            var configurationRules = new ConfigRules {OperationsClient = _opsClient};
+            var configurationRules = new PhidgetConfigRules {OperationsClient = _opsClient};
             var configEdit = configurationRules.GetConfigEditViewModel(id, configId);
             var configDetail = configEdit.ConfigDetail;
 
@@ -281,6 +281,7 @@ namespace Keebee.AAT.Administrator.Controllers
 
         private int AddConfig(ConfigEditViewModel config, int selectedConfigId)
         {
+            // config
             var newConfig = new ConfigEdit
             {
                 Description = config.Description,
@@ -288,21 +289,11 @@ namespace Keebee.AAT.Administrator.Controllers
             };
 
             var newId = _opsClient.PostConfig(newConfig);
-            var selectedConfig = _opsClient.GetConfigWithDetails(selectedConfigId);
 
-            foreach (var detail in selectedConfig.ConfigDetails)
-            {
-                _opsClient.PostConfigDetail(new ConfigDetailEdit
-                        {
-                            ConfigId = newId,
-                            Description = detail.Description,
-                            Location = detail.Location,
-                            PhidgetTypeId = detail.PhidgetType.Id,
-                            PhidgetStyleTypeId = detail.PhidgetStyleType.Id,
-                            ResponseTypeId = detail.ResponseType.Id
-                        });
-            }
-            
+            // config details
+            var rules = new PhidgetConfigRules {OperationsClient = _opsClient};
+            rules.DuplicateConfigDetails(selectedConfigId, newId);
+
             return newId;
         }
 
@@ -345,7 +336,7 @@ namespace Keebee.AAT.Administrator.Controllers
 
         private void SendNewConfiguration(int configId)
         {
-            var rules = new ConfigRules { OperationsClient = _opsClient };
+            var rules = new PhidgetConfigRules { OperationsClient = _opsClient };
             _messageQueueConfigSms.Send(rules.GetMessageBody(configId));
         }
     }

@@ -7,12 +7,6 @@ namespace Keebee.AAT.Shared
         public const string DisplayApp = "Keebee.AAT.Display";
     }
 
-    public static class KeepAliveUrl
-    {
-        public const string OperationsApi = "http://localhost/Keebee.AAT.Operations/api/status";
-        public const string AdministratorHome = "http://localhost/Keebee.AAT.Administrator";
-    }
-
     public static class VideoCaptures
     {
         public const string Path = @"C:\VideoCaptures";

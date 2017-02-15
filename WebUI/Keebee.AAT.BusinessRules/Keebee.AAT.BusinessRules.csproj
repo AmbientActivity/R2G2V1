@@ -50,7 +50,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ConfigRules.cs" />
+    <Compile Include="PhidgetConfigRules.cs" />
     <Compile Include="Models\ConfigEditModel.cs" />
     <Compile Include="Models\ImageViewerModel.cs" />
     <Compile Include="Models\UserModel.cs" />

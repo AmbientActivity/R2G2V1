@@ -103,7 +103,7 @@ namespace Keebee.AAT.Administrator.Controllers
                 // send active config update
                 var opsClient = new OperationsClient { SystemEventLogger = _systemEventLogger };
                 var activeConfigId = opsClient.GetActiveConfig().Id;
-                var configRules = new ConfigRules { OperationsClient = opsClient };
+                var configRules = new PhidgetConfigRules { OperationsClient = opsClient };
                 var message = configRules.GetMessageBody(activeConfigId);
                 _messageQueueConfigSms.Send(message);
             }
@@ -159,7 +159,7 @@ namespace Keebee.AAT.Administrator.Controllers
                 // inform the state machine to reload the current config
                 var opsClient = new OperationsClient {SystemEventLogger = _systemEventLogger};
                 var activeConfigId = opsClient.GetActiveConfig().Id;
-                var configRules = new ConfigRules {OperationsClient = opsClient};
+                var configRules = new PhidgetConfigRules {OperationsClient = opsClient};
                 var message = configRules.GetMessageBody(activeConfigId);
                 _messageQueueConfigSms.Send(message);
             }

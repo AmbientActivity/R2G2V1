@@ -8,7 +8,7 @@ using System.Web.Script.Serialization;
 
 namespace Keebee.AAT.BusinessRules
 {
-    public class ConfigRules
+    public class PhidgetConfigRules
     {
         private OperationsClient _opsClient;
         public OperationsClient OperationsClient
@@ -83,6 +83,24 @@ namespace Keebee.AAT.BusinessRules
             return msgs.Count > 0 ? msgs : null;
         }
 
+        // duplicate
+        public void DuplicateConfigDetails(int selectedConfigId, int newConfigId)
+        {
+            var selectedConfig = _opsClient.GetConfigWithDetails(selectedConfigId);
+
+            foreach (var detail in selectedConfig.ConfigDetails)
+            {
+                _opsClient.PostConfigDetail(new ConfigDetailEdit
+                {
+                    ConfigId = newConfigId,
+                    Description = detail.Description,
+                    Location = detail.Location,
+                    PhidgetTypeId = detail.PhidgetType.Id,
+                    PhidgetStyleTypeId = detail.PhidgetStyleType.Id,
+                    ResponseTypeId = detail.ResponseType.Id
+                });
+            }
+        }
         // view model
         public ConfigEditModel GetConfigEditViewModel(int id, int configId)
         {
@@ -161,5 +179,6 @@ namespace Keebee.AAT.BusinessRules
         {
             return Process.GetProcessesByName(processName).Any();
         }
+
     }
 }

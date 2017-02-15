@@ -7,6 +7,12 @@ using System.Threading;
 
 namespace Keebee.AAT.KeepIISAliveService
 {
+    internal static class KeepAliveUrl
+    {
+        public const string OperationsApi = "http://localhost/Keebee.AAT.Operations/api/status";
+        public const string AdministratorHome = "http://localhost/Keebee.AAT.Administrator";
+    }
+
     partial class KeepIISAliveService : ServiceBase
     {
         // event logger

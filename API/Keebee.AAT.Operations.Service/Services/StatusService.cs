@@ -14,8 +14,8 @@ namespace Keebee.AAT.Operations.Service.Services
         public int Get()
         {
             var container = new Container(new Uri(ODataHost.Url));
-            // keep the state machine service responsive for when a new resident id gets read
-            return container.Configs.Count();
+            // get a count of users just to keep the api responsive
+            return container.Users.Count();
         }
     }
 }

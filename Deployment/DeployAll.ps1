@@ -85,8 +85,6 @@ Try
     Invoke-Command -ScriptBlock { C:\WINDOWS\Microsoft.NET\Framework\v4.0.30319\InstallUtil.exe /uninstall $path} | Out-Null
     Write-Host "done."
 
-    exit
-
     # build the solution
     Write-Host -ForegroundColor yellow "`n--- Build Solution ---`n”
 

@@ -33,7 +33,7 @@ $pathVideoCaptureCleanup = "VideoCaptureFileCleanup\"
 $pathBackup = "Backup\"
 
 # install scripts
-$pathInstallRoot = "Install\"
+$pathInstallRoot = $pathDeployments + "Install\"
 
 # media
 $pathSharedLibrary = "Media\SharedLibrary\"
@@ -283,13 +283,12 @@ Try
     Write-Host "Deploying Install Scripts...” -NoNewline
 
     # root
-    $path = Join-Path $pathDeployments $pathInstallRoot
-    If(test-path $path)
+    If(test-path $pathInstallRoot)
     {
-        Remove-Item $path -recurse -Force
+        Remove-Item  $pathInstallRoot -recurse -Force
     }
-    New-Item -ItemType Directory -Force -Path $path | Out-Null
-    Copy-Item C:\Users\$env:USERNAME\Source\Repos\R2G2V1\InstallScripts\* $path -recurse -Force
+    New-Item -ItemType Directory -Force -Path $pathInstallRoot | Out-Null
+    Copy-Item C:\Users\$env:USERNAME\Source\Repos\R2G2V1\InstallScripts\* $pathInstallRoot -recurse -Force
 
     Write-Host "done.”
 

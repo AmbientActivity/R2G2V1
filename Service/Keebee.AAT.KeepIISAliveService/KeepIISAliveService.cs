@@ -17,6 +17,8 @@ namespace Keebee.AAT.KeepIISAliveService
     {
         // event logger
         private readonly SystemEventLogger _systemEventLogger;
+        private readonly Thread _keepAliveThread;
+        private readonly Thread _keepAliveThreadAdmin;
 
         public KeepIISAliveService()
         {
@@ -24,11 +26,11 @@ namespace Keebee.AAT.KeepIISAliveService
 
             _systemEventLogger = new SystemEventLogger(SystemEventLogType.KeepIISAliveService);
 
-            var keepAliveThread = new Thread(KeepAliveOperations);
-            keepAliveThread.Start();
+            _keepAliveThread = new Thread(KeepAliveOperations);
+            _keepAliveThread.Start();
 
-            var keepAliveThreadAdmin = new Thread(KeepAliveAdministrator);
-            keepAliveThreadAdmin.Start();
+            _keepAliveThreadAdmin = new Thread(KeepAliveAdministrator);
+            _keepAliveThreadAdmin.Start();
         }
 
         private void KeepAliveOperations()
@@ -103,6 +105,8 @@ namespace Keebee.AAT.KeepIISAliveService
         protected override void OnStop()
         {
             _systemEventLogger.WriteEntry("In OnStop");
+            _keepAliveThread.Abort();
+            _keepAliveThreadAdmin.Abort();
         }
     }
 }

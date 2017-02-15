@@ -3,11 +3,11 @@ $pathDeployments = "C:\Deployments\"
 $pathVersion = "1.0.0.0\"
 
 # service paths
-$pathPhidgetServiceExe = "PhidgetService\1.0.0.0\Keebee.AAT.PhidgetService.exe"
-$pathStateMachineServiceExe = "StateMachineService\1.0.0.0\Keebee.AAT.StateMachineService.exe"
-$pathBluetoothBeaconServiceExe = "BluetoothBeaconWatcherService\1.0.0.0\Keebee.AAT.BluetoothBeaconWatcherService.exe"
-$pathVideoCaptureServiceExe = "VideoCaptureService\1.0.0.0\Keebee.AAT.VideoCaptureService.exe"
-$pathKeepIISAliveServiceExe = "KeepIISAliveService\1.0.0.0\Keebee.AAT.KeepIISAliveService.exe"
+$pathPhidgetServiceExe = "C:\Deployments\Services\PhidgetService\1.0.0.0\Keebee.AAT.PhidgetService.exe"
+$pathStateMachineServiceExe = "C:\Deployments\Services\StateMachineService\1.0.0.0\Keebee.AAT.StateMachineService.exe"
+$pathBluetoothBeaconServiceExe = "C:\Deployments\Services\BluetoothBeaconWatcherService\1.0.0.0\Keebee.AAT.BluetoothBeaconWatcherService.exe"
+$pathVideoCaptureServiceExe = "C:\Deployments\Services\VideoCaptureService\1.0.0.0\Keebee.AAT.VideoCaptureService.exe"
+$pathKeepIISAliveServiceExe = "C:\Deployments\Services\KeepIISAliveService\1.0.0.0\Keebee.AAT.KeepIISAliveService.exe"
 
 $pathServicesRoot = $pathDeployments + "Services\"
 $pathStateMachine = "Services\StateMachineService\"
@@ -34,9 +34,6 @@ $pathBackup = "Backup\"
 
 # install scripts
 $pathInstallRoot = "Install\"
-$pathDatabaseInstall = "Install\Database\"
-$pathInstallPowerShell = "Install\PowerShell\"
-$pathInstallUtility = "Install\Utility\"
 
 # media
 $pathSharedLibrary = "Media\SharedLibrary\"
@@ -61,28 +58,38 @@ Try
     Write-Host -ForegroundColor yellow "--- Uninstall Services ---`n”
 
     Write-Host "Uninstalling Phidget Service..." -NoNewline
-    $path = Join-Path $pathServicesRoot $pathPhidgetServiceExe  -Resolve
-    Invoke-Command -ScriptBlock { C:\WINDOWS\Microsoft.NET\Framework\v4.0.30319\InstallUtil.exe /uninstall $path} | Out-Null
+    If(test-path $pathPhidgetServiceExe)
+    { 
+        Invoke-Command -ScriptBlock { C:\WINDOWS\Microsoft.NET\Framework\v4.0.30319\InstallUtil.exe /uninstall $pathPhidgetServiceExe} | Out-Null
+    }
     Write-Host "done."
 
     Write-Host "Uninstalling Video Capture Service..." -NoNewline
-    $path = Join-Path $pathServicesRoot $pathVideoCaptureServiceExe  -Resolve
-    Invoke-Command -ScriptBlock { C:\WINDOWS\Microsoft.NET\Framework\v4.0.30319\InstallUtil.exe /uninstall $path} | Out-Null
+    If(test-path $pathVideoCaptureServiceExe)
+    { 
+        Invoke-Command -ScriptBlock { C:\WINDOWS\Microsoft.NET\Framework\v4.0.30319\InstallUtil.exe /uninstall $pathVideoCaptureServiceExe} | Out-Null
+    }
     Write-Host "done."
 
     Write-Host "Uninstalling Bluetooth Beacon Watcher Service..." -NoNewline
-    $path = Join-Path $pathServicesRoot $pathBluetoothBeaconServiceExe  -Resolve
-    Invoke-Command -ScriptBlock { C:\WINDOWS\Microsoft.NET\Framework\v4.0.30319\InstallUtil.exe /uninstall $path} | Out-Null
+    If(test-path $pathBluetoothBeaconServiceExe)
+    { 
+        Invoke-Command -ScriptBlock { C:\WINDOWS\Microsoft.NET\Framework\v4.0.30319\InstallUtil.exe /uninstall $pathBluetoothBeaconServiceExe} | Out-Null
+    }
     Write-Host "done."
 
     Write-Host "Uninstalling State Machine Service..." -NoNewline
-    $path = Join-Path $pathServicesRoot $pathStateMachineServiceExe  -Resolve
-    Invoke-Command -ScriptBlock { C:\WINDOWS\Microsoft.NET\Framework\v4.0.30319\InstallUtil.exe /uninstall $path} | Out-Null
+    If(test-path $pathStateMachineServiceExe)
+    { 
+        Invoke-Command -ScriptBlock { C:\WINDOWS\Microsoft.NET\Framework\v4.0.30319\InstallUtil.exe /uninstall $pathStateMachineServiceExe } | Out-Null
+    }
     Write-Host "done."
 
     Write-Host "Uninstalling Keep IIS Alive Service..." -NoNewline
-    $path = Join-Path $pathServicesRoot $pathKeepIISAliveServiceExe  -Resolve
-    Invoke-Command -ScriptBlock { C:\WINDOWS\Microsoft.NET\Framework\v4.0.30319\InstallUtil.exe /uninstall $path} | Out-Null
+    If(test-path $pathKeepIISAliveServiceExe)
+    { 
+        Invoke-Command -ScriptBlock { C:\WINDOWS\Microsoft.NET\Framework\v4.0.30319\InstallUtil.exe /uninstall $pathKeepIISAliveServiceExe} | Out-Null
+    }
     Write-Host "done."
 
     # build the solution
@@ -276,36 +283,13 @@ Try
     Write-Host "Deploying Install Scripts...” -NoNewline
 
     # root
-    $path = $pathDeployments + $pathInstallRoot
+    $path = Join-Path $pathDeployments $pathInstallRoot
     If(test-path $path)
     {
         Remove-Item $path -recurse -Force
     }
     New-Item -ItemType Directory -Force -Path $path | Out-Null
     Copy-Item C:\Users\$env:USERNAME\Source\Repos\R2G2V1\InstallScripts\* $path -recurse -Force
-
-    $path = $pathDeployments + $pathInstallRoot + $pathDatabaseInstall
-    If(test-path $path)
-    {
-        Remove-Item $path -recurse -Force
-    }
-    New-Item -ItemType Directory -Force -Path $path | Out-Null
-    Copy-Item C:\Users\$env:USERNAME\Source\Repos\R2G2V1\InstallScripts\Database\* $path -recurse -Force
-
-    $path = $pathDeployments + $pathInstallRoot + $pathInstallPowerShell
-    If(!(test-path $path))
-    {
-        New-Item -ItemType Directory -Force -Path $path | Out-Null
-    }
-    Copy-Item C:\Users\$env:USERNAME\Source\Repos\R2G2V1\InstallScripts\PowerShell\* $path -recurse -Force
-
-    $path = $pathDeployments + $pathInstallRoot + $pathInstallUtility
-    If(test-path $path)
-    {
-        Remove-Item $path -recurse -Force
-    }
-    New-Item -ItemType Directory -Force -Path $path | Out-Null
-    Copy-Item C:\Users\$env:USERNAME\Source\Repos\R2G2V1\InstallScripts\Utility\* $path -recurse -Force
 
     Write-Host "done.”
 
@@ -323,7 +307,7 @@ Try
     Copy-Item C:\Users\$env:USERNAME\Source\Repos\R2G2V1\Service\Keebee.AAT.StateMachineService\bin\Release\* $path -recurse -Force 
 
     # phidget service
-    $path = $pathDeployments + $pathPhidget+ $pathVersion
+    $path = $pathDeployments + $pathPhidget + $pathVersion
     If(test-path $path)
     {
         Remove-Item $path -recurse -Force

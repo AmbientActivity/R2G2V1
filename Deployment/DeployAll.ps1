@@ -3,7 +3,7 @@ $pathDeployments = "C:\Deployments\"
 $pathVersion = "1.0.0.0\"
 
 # service paths
-$pathServicesRoot = $pathDeployments + "Services"
+$pathServicesRoot = $pathDeployments + "Services\"
 $pathStateMachine = "Services\StateMachineService\"
 $pathBluetoothBeacon = "Services\BluetoothBeaconWatcherService\"
 $pathPhidget= "Services\PhidgetService\"
@@ -56,23 +56,23 @@ Try
     Write-Host -ForegroundColor yellow "--- Uninstall Services ---`n”
 
     Write-Host "Uninstalling Phidget Service..." -NoNewline
-    Invoke-Command -ScriptBlock { C:\WINDOWS\Microsoft.NET\Framework\v4.0.30319\InstallUtil.exe /uninstall "$servicesRoot\PhidgetService\1.0.0.0\Keebee.AAT.PhidgetService.exe"} | Out-Null
+    Invoke-Command -ScriptBlock { C:\WINDOWS\Microsoft.NET\Framework\v4.0.30319\InstallUtil.exe /uninstall $pathServicesRoot + "PhidgetService\1.0.0.0\Keebee.AAT.PhidgetService.exe"} | Out-Null
     Write-Host "done."
 
     Write-Host "Uninstalling Video Capture Service..." -NoNewline
-    Invoke-Command -ScriptBlock { C:\WINDOWS\Microsoft.NET\Framework\v4.0.30319\InstallUtil.exe /uninstall "$servicesRoot\VideoCaptureService\1.0.0.0\Keebee.AAT.VideoCaptureService.exe"} | Out-Null
+    Invoke-Command -ScriptBlock { C:\WINDOWS\Microsoft.NET\Framework\v4.0.30319\InstallUtil.exe /uninstall $pathServicesRoot + "VideoCaptureService\1.0.0.0\Keebee.AAT.VideoCaptureService.exe"} | Out-Null
     Write-Host "done."
 
     Write-Host "Uninstalling Bluetooth Beacon Watcher Service..." -NoNewline
-    Invoke-Command -ScriptBlock { C:\WINDOWS\Microsoft.NET\Framework\v4.0.30319\InstallUtil.exe /uninstall "$servicesRoot\BluetoothBeaconWatcherService\1.0.0.0\Keebee.AAT.BluetoothBeaconWatcherService.exe"} | Out-Null
+    Invoke-Command -ScriptBlock { C:\WINDOWS\Microsoft.NET\Framework\v4.0.30319\InstallUtil.exe /uninstall $pathServicesRoot + "BluetoothBeaconWatcherService\1.0.0.0\Keebee.AAT.BluetoothBeaconWatcherService.exe"} | Out-Null
     Write-Host "done."
 
     Write-Host "Uninstalling State Machine Service..." -NoNewline
-    Invoke-Command -ScriptBlock { C:\WINDOWS\Microsoft.NET\Framework\v4.0.30319\InstallUtil.exe /uninstall "$servicesRoot\StateMachineService\1.0.0.0\Keebee.AAT.StateMachineService.exe"} | Out-Null
+    Invoke-Command -ScriptBlock { C:\WINDOWS\Microsoft.NET\Framework\v4.0.30319\InstallUtil.exe /uninstall $pathServicesRoot + "StateMachineService\1.0.0.0\Keebee.AAT.StateMachineService.exe"} | Out-Null
     Write-Host "done."
 
     Write-Host "Uninstalling Keep IIS Alive Service..." -NoNewline
-    Invoke-Command -ScriptBlock { C:\WINDOWS\Microsoft.NET\Framework\v4.0.30319\InstallUtil.exe /uninstall "$servicesRoot\KeepIISAliveService\1.0.0.0\Keebee.AAT.KeepIISAliveService.exe"} | Out-Null
+    Invoke-Command -ScriptBlock { C:\WINDOWS\Microsoft.NET\Framework\v4.0.30319\InstallUtil.exe /uninstall $pathServicesRoot + "KeepIISAliveService\1.0.0.0\Keebee.AAT.KeepIISAliveService.exe"} | Out-Null
     Write-Host "done."
 
 

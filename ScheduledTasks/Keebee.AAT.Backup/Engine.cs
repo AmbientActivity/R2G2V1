@@ -811,7 +811,7 @@ namespace Keebee.AAT.Backup
                     }
 
                     sw.WriteLine();
-                    // Cats Videos
+                    // Cats Videos Linked
                     mediaPathType = mediaPathTypes.Single(x => x.Id == MediaPathTypeId.Cats);
                     sw.WriteLine("--- Activity 3 - ResponseType 'Cats' ---");
                     sw.WriteLine(
@@ -886,13 +886,13 @@ namespace Keebee.AAT.Backup
                     }
 
                     sw.WriteLine();
-                    // Ambient Videos
+                    // Ambient Videos Linked
                     mediaPathType = mediaPathTypes.Single(x => x.Id == MediaPathTypeId.Ambient);
                     sw.WriteLine("--- Activity 7 - ResponseType 'Ambient' ---");
                     sw.WriteLine(
                         "INSERT INTO PublicMediaFiles (IsLinked, ResponseTypeId, MediaPathTypeId, StreamId)");
                     sw.WriteLine(
-                        $"SELECT 0, {ResponseTypeId.Ambient}, {mediaPathType.Id}, StreamId FROM MediaFiles WHERE [Path] = @pathSharedLibrary + " +
+                        $"SELECT 1, {ResponseTypeId.Ambient}, {mediaPathType.Id}, StreamId FROM MediaFiles WHERE [Path] = @pathSharedLibrary + " +
                         $@"'{mediaPathType.Path}\' AND [FileType] = 'mp4'");
 
                     sw.WriteLine();

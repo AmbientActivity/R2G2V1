@@ -1,6 +1,6 @@
 ﻿Try
 {
-    Write-Host -ForegroundColor yellow "`n--- Reemove Local webuser ---`n"
+    Write-Host -ForegroundColor yellow "`n--- Remove Local webuser ---`n"
 
     $computername = $env:COMPUTERNAME
     $ADSIComp = [adsi]"WinNT://$computername"

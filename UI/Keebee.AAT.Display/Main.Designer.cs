@@ -95,7 +95,7 @@ namespace Keebee.AAT.Display
             // 
             // ambientPlayer1
             // 
-            this.ambientPlayer1.BackColor = System.Drawing.Color.Yellow;
+            this.ambientPlayer1.BackColor = System.Drawing.SystemColors.ControlText;
             this.ambientPlayer1.Location = new System.Drawing.Point(133, 77);
             this.ambientPlayer1.Name = "ambientPlayer1";
             this.ambientPlayer1.Size = new System.Drawing.Size(116, 62);

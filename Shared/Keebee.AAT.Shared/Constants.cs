@@ -108,6 +108,7 @@ namespace Keebee.AAT.Shared
         public const string Name = "Public";
         public const string Description = "Public Profile";
         public const string DescriptionSystem = "System Profile";
+        public const int GameDifficultyLevel = 1;
     }
 
     public static class InteractiveActivityTypeId

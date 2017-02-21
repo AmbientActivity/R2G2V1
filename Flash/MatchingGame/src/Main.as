@@ -274,6 +274,7 @@ package
 				loadMainImage();
 				drawLine();
 			} else {
+				soundWouldYouLikeToMatchThePairs.play();
 				loadImagesMatchThePairs();
 			}
 		}

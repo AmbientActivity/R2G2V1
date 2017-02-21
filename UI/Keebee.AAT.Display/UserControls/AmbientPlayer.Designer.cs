@@ -32,6 +32,7 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AmbientPlayer));
             this.axWindowsMediaPlayer1 = new AxWMPLib.AxWindowsMediaPlayer();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.lblInvitation = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.axWindowsMediaPlayer1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -44,14 +45,28 @@
             this.axWindowsMediaPlayer1.Size = new System.Drawing.Size(111, 57);
             this.axWindowsMediaPlayer1.TabIndex = 0;
             // 
+            // lblInvitation
+            // 
+            this.lblInvitation.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lblInvitation.Font = new System.Drawing.Font("Microsoft Sans Serif", 36F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblInvitation.ForeColor = System.Drawing.Color.White;
+            this.lblInvitation.Location = new System.Drawing.Point(0, 0);
+            this.lblInvitation.Name = "lblInvitation";
+            this.lblInvitation.Size = new System.Drawing.Size(574, 316);
+            this.lblInvitation.TabIndex = 1;
+            this.lblInvitation.Text = "Invitation Message";
+            this.lblInvitation.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.lblInvitation.Click += new System.EventHandler(this.InvitationClick);
+            // 
             // AmbientPlayer
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.BackColor = System.Drawing.Color.Yellow;
+            this.BackColor = System.Drawing.SystemColors.ControlText;
+            this.Controls.Add(this.lblInvitation);
             this.Controls.Add(this.axWindowsMediaPlayer1);
             this.Name = "AmbientPlayer";
-            this.Size = new System.Drawing.Size(299, 184);
+            this.Size = new System.Drawing.Size(574, 316);
             ((System.ComponentModel.ISupportInitialize)(this.axWindowsMediaPlayer1)).EndInit();
             this.ResumeLayout(false);
 
@@ -61,5 +76,6 @@
 
         private AxWMPLib.AxWindowsMediaPlayer axWindowsMediaPlayer1;
         private System.Windows.Forms.Timer timer1;
+        private System.Windows.Forms.Label lblInvitation;
     }
 }

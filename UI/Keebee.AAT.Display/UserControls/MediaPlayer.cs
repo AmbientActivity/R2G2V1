@@ -42,9 +42,6 @@ namespace Keebee.AAT.Display.UserControls
         private bool _isPlayPrevious;
         private bool _isLoop;
         private IWMPPlaylist _playlist;
-        private IWMPMedia _lastMedia;
-
-        private int _responseTypeId;
 
         public MediaPlayer()
         {
@@ -54,14 +51,13 @@ namespace Keebee.AAT.Display.UserControls
             axWindowsMediaPlayer1.PlayStateChange += PlayStateChange;
         }
 
-        public void Play(int responseTypeId, int responseValue, string[] files, bool isActiveEventLog, bool isLoop)
+        public void Play(int responseValue, string[] files, bool isActiveEventLog, bool isLoop)
         {
             try
             {
                 _isNewPlaylist = true;
                 _isPlaylistComplete = false;
                 _isLoop = isLoop;
-                _responseTypeId = responseTypeId;
                 _maxIndex = files.Length - 1;
                 _isActiveEventLog = isActiveEventLog;
 
@@ -124,14 +120,15 @@ namespace Keebee.AAT.Display.UserControls
         private void ConfigureMediaPlayer()
         {
 
-#if DEBUG
-            axWindowsMediaPlayer1.uiMode = "full";
-#elif !DEBUG
-            axWindowsMediaPlayer1.uiMode = _responseTypeId == ResponseTypeId.Radio 
-                ? "invisible" 
-                : "none";
+//#if DEBUG
+//            axWindowsMediaPlayer1.uiMode = "full";
+//#elif !DEBUG
+//            axWindowsMediaPlayer1.uiMode = _responseTypeId == ResponseTypeId.Radio 
+//                ? "invisible" 
+//                : "none";
+//            axWindowsMediaPlayer1.Ctlenabled = false;
+//#endif
             axWindowsMediaPlayer1.Ctlenabled = false;
-#endif
             axWindowsMediaPlayer1.settings.volume = MediaPlayerControl.DefaultVolume;
             axWindowsMediaPlayer1.settings.mute = false;
             axWindowsMediaPlayer1.settings.setMode("loop", _isLoop);
@@ -152,7 +149,6 @@ namespace Keebee.AAT.Display.UserControls
                         axWindowsMediaPlayer1.Ctlcontrols.stop();
 
                     _playlist = axWindowsMediaPlayer1.LoadPlaylist(PlaylistProfile, files);
-                    _lastMedia = _playlist.Item[_maxIndex];
 
                     axWindowsMediaPlayer1.currentPlaylist = _playlist;
                 }
@@ -231,7 +227,6 @@ namespace Keebee.AAT.Display.UserControls
 
                             _playlist.removeItem(axWindowsMediaPlayer1.currentMedia);
                             _maxIndex--;
-                            _lastMedia = _playlist.Item[_maxIndex];
                         }
                     }
                     break;

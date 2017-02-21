@@ -48,6 +48,7 @@ namespace Keebee.AAT.Display
 
         // delegate
         private delegate void ResumeAmbientDelegate();
+        private delegate void AmbientScreenTouchedDelegate();
         private delegate void PlayMediaDelegate(int responseTypeId, int responseValue);
         private delegate void PlaySlideShowDelegate();
         private delegate void PlayMatchingGameDelegate();
@@ -112,6 +113,8 @@ namespace Keebee.AAT.Display
             _residentDisplayTimer = new Timer { Interval = 3000 };
             _residentDisplayTimer.Tick += ActiveResidentTimerTick;
 
+            #region message queue inititialization
+
             // display-sms message queue sender
             _messageQueueDisplaySms = new CustomMessageQueue(new CustomMessageQueueArgs
             {
@@ -143,11 +146,14 @@ namespace Keebee.AAT.Display
                 MessageReceivedCallback = MessageReceivedResponse
             });
 
+            #endregion
+
             // custom event loggers
             _interactiveActivityEventLogger = new InteractiveActivityEventLogger();
             _activityEventLogger = new ActivityEventLogger();
 
             // response complete event handlers
+            ambientPlayer1.ScreenTouchedEvent += AmbientScreenTouched;
             slideViewerFlash1.SlideShowCompleteEvent += SlideShowComplete;
             mediaPlayer1.MediaPlayerCompleteEvent += MediaPlayerComplete;
             offScreen1.OffScreenCompleteEvent += OffScreenComplete;
@@ -462,7 +468,7 @@ namespace Keebee.AAT.Display
                             break;
                     }
 
-                    mediaPlayer1.Play(responseTypeId, responseValue, mediaFiles, _currentIsActiveEventLog, false);
+                    mediaPlayer1.Play(responseValue, mediaFiles, _currentIsActiveEventLog, false);
                     DisplayActiveResident();
 
                     _currentResponseTypeId = responseTypeId;  // radio or television
@@ -543,7 +549,7 @@ namespace Keebee.AAT.Display
                 slideViewerFlash1.Play(images, autoStart: true);
 
                 music.Shuffle();
-                mediaPlayer1.Play(ResponseTypeId.Radio, 0, new[] { music.First() }, false, false);
+                mediaPlayer1.Play(0, new[] { music.First() }, false, false);
 
                 DisplayActiveResident();
 
@@ -779,6 +785,27 @@ namespace Keebee.AAT.Display
             }
         }
 
+        private void AmbientScreenTouched(object sender, EventArgs e)
+        {
+            try
+            {
+                var args = (AmbientPlayer.ScreenTouchedEventEventArgs)e;
+                var responseTypeId = args.ResponseTypeId;
+
+                StopCurrentResponse();
+                switch (responseTypeId)
+                {
+                    case ResponseTypeId.MatchingGame:
+                        PlayMatchingGame();
+                        break;
+                }
+            }
+            catch (Exception ex)
+            {
+                _systemEventLogger.WriteEntry($"Main.AmbientScreenTouched: {ex.Message}", EventLogEntryType.Error);
+            }
+        }
+
         private void SlideShowComplete(object sender, EventArgs e)
         {
             try
@@ -906,6 +933,14 @@ namespace Keebee.AAT.Display
                 _messageQueueDisplayPhidget.Send(CreateDisplayMessageBody(true));
                 _messageQueueDisplayVideoCapture.Send(CreateDisplayMessageBody(true));
                 _messageQueueDisplayBluetoothBeaconWatcher.Send(CreateDisplayMessageBody(true));
+
+                _activeResident = new ResidentMessage
+                {
+                    Id = PublicProfileSource.Id,
+                    Name = PublicProfileSource.Name,
+                    AllowVideoCapturing = false,
+                    GameDifficultyLevel = PublicProfileSource.GameDifficultyLevel
+                };
 
                 ambientPlayer1.Show();
                 ambientPlayer1.Play(_ambientPlaylist);

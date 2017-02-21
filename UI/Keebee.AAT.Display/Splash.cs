@@ -32,9 +32,6 @@ namespace Keebee.AAT.Display
         // event logger
         private readonly SystemEventLogger _systemEventLogger;
 
-        // media path
-        private readonly MediaSourcePath _mediaPath = new MediaSourcePath();
-
         public Splash()
         {
             InitializeComponent();
@@ -88,7 +85,6 @@ namespace Keebee.AAT.Display
                     ambientFiles.Shuffle();
 
                     _ambientPlaylist = mediaPlayer.LoadPlaylist(PlaylistAmbient, ambientFiles);
-
 
                     Controls.Remove(mediaPlayer);
 

@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Diagnostics;
+using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using WMPLib;
@@ -67,8 +68,8 @@ namespace Keebee.AAT.Display.UserControls
         public AmbientPlayer()
         {
             InitializeComponent();
-            lblInvitation.Hide();
             ConfigureMediaPlayer();
+            ConfigureInvitationMessage();
 
             var durationInvitation = Convert.ToInt32(ConfigurationManager.AppSettings["AmbientInvitationDuration"].Trim());
             _timerInvitation = new Timer { Interval = durationInvitation };
@@ -133,6 +134,16 @@ namespace Keebee.AAT.Display.UserControls
             axWindowsMediaPlayer1.Ctlenabled = false;
         }
 
+        private void ConfigureInvitationMessage()
+        {
+            lblInvitation.Hide();
+#if DEBUG
+            lblInvitation.Font = new Font("Microsoft Sans Serif", 36);
+#elif !DEBUG
+            lblInvitation.Font = new Font("Microsoft Sans Serif", 72);
+#endif
+        }
+
         private void PlayAmbient()
         {
             if (InvokeRequired)
@@ -194,6 +205,25 @@ namespace Keebee.AAT.Display.UserControls
             }
         }
 
+        private static int ValidateResponseType(int responseTypeId)
+        {
+            switch (responseTypeId)
+            {
+                case ResponseTypeId.SlideShow:
+                    return ResponseTypeId.SlideShow;
+                case ResponseTypeId.MatchingGame:
+                    return ResponseTypeId.MatchingGame;
+                case ResponseTypeId.Cats:
+                    return ResponseTypeId.Cats;
+                case ResponseTypeId.Radio:
+                    return ResponseTypeId.Radio;
+                case ResponseTypeId.Television:
+                    return ResponseTypeId.Television;
+                default:
+                    return 0;
+            }
+        }
+
         private void LoadInvitationMessages()
         {
            _invitationMessages = new List<InvitationMessage>();
@@ -203,7 +233,7 @@ namespace Keebee.AAT.Display.UserControls
                 {
                     Id = 1,
                     Message = _invitationMessage1,
-                    ResponseTypeId = _invitation1ResponseTypeId
+                    ResponseTypeId = ValidateResponseType(_invitation1ResponseTypeId)
                 });
 
             if (_invitationMessage2.Length > 0)
@@ -211,7 +241,7 @@ namespace Keebee.AAT.Display.UserControls
                 {
                     Id = 2,
                     Message = _invitationMessage2,
-                    ResponseTypeId = _invitation2ResponseTypeId
+                    ResponseTypeId = ValidateResponseType(_invitation2ResponseTypeId)
                 });
 
             if (_invitationMessage3.Length > 0)
@@ -219,7 +249,7 @@ namespace Keebee.AAT.Display.UserControls
                 {
                     Id = 3,
                     Message = _invitationMessage3,
-                    ResponseTypeId = _invitation3ResponseTypeId
+                    ResponseTypeId = ValidateResponseType(_invitation3ResponseTypeId)
                 });
 
             if (_invitationMessage4.Length > 0)
@@ -227,7 +257,7 @@ namespace Keebee.AAT.Display.UserControls
                 {
                     Id = 4,
                     Message = _invitationMessage4,
-                    ResponseTypeId = _invitation4ResponseTypeId
+                    ResponseTypeId = ValidateResponseType(_invitation4ResponseTypeId)
                 });
 
             if (_invitationMessage5.Length > 0)
@@ -235,7 +265,7 @@ namespace Keebee.AAT.Display.UserControls
                 {
                     Id = 5,
                     Message = _invitationMessage5,
-                    ResponseTypeId = _invitation5ResponseTypeId
+                    ResponseTypeId = ValidateResponseType(_invitation5ResponseTypeId)
                 });
         }
 

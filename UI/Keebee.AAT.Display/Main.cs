@@ -795,8 +795,17 @@ namespace Keebee.AAT.Display
                 StopCurrentResponse();
                 switch (responseTypeId)
                 {
+                    case ResponseTypeId.SlideShow:
+                        PlaySlideShow();
+                        break;
                     case ResponseTypeId.MatchingGame:
                         PlayMatchingGame();
+                        break;
+                    case ResponseTypeId.Cats:
+                    case ResponseTypeId.Radio:
+                    case ResponseTypeId.Television:
+                        _isNewResponse = true;
+                        PlayMedia(responseTypeId, 0);
                         break;
                 }
             }

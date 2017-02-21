@@ -18,6 +18,8 @@ namespace Keebee.AAT.Display.UserControls
             public int Id { get; set; }
             public string Message { get; set; }
             public int ResponseTypeId { get; set; }
+            public Color BackColor { get; set; }
+            public Color ForeColor { get; set; }
         }
 
         // event logger
@@ -187,9 +189,14 @@ namespace Keebee.AAT.Display.UserControls
                     _currentInvitationMessageIndex++;
 
                 var  message = _invitationMessages[_currentInvitationMessageIndex].Message;
+                var backColor = _invitationMessages[_currentInvitationMessageIndex].BackColor;
+                var foreColor = _invitationMessages[_currentInvitationMessageIndex].ForeColor;
 
                 axWindowsMediaPlayer1.Ctlcontrols.pause();
                 axWindowsMediaPlayer1.Hide();
+
+                BackColor = backColor;
+                lblInvitation.ForeColor = foreColor;
                 lblInvitation.Text = message;
                 lblInvitation.Show();
 
@@ -233,7 +240,9 @@ namespace Keebee.AAT.Display.UserControls
                 {
                     Id = 1,
                     Message = _invitationMessage1,
-                    ResponseTypeId = ValidateResponseType(_invitation1ResponseTypeId)
+                    ResponseTypeId = ValidateResponseType(_invitation1ResponseTypeId),
+                    BackColor = Color.Black,
+                    ForeColor = Color.White
                 });
 
             if (_invitationMessage2.Length > 0)
@@ -241,7 +250,9 @@ namespace Keebee.AAT.Display.UserControls
                 {
                     Id = 2,
                     Message = _invitationMessage2,
-                    ResponseTypeId = ValidateResponseType(_invitation2ResponseTypeId)
+                    ResponseTypeId = ValidateResponseType(_invitation2ResponseTypeId),
+                    BackColor = Color.Yellow,
+                    ForeColor = Color.Black
                 });
 
             if (_invitationMessage3.Length > 0)
@@ -249,7 +260,9 @@ namespace Keebee.AAT.Display.UserControls
                 {
                     Id = 3,
                     Message = _invitationMessage3,
-                    ResponseTypeId = ValidateResponseType(_invitation3ResponseTypeId)
+                    ResponseTypeId = ValidateResponseType(_invitation3ResponseTypeId),
+                    BackColor = Color.Black,
+                    ForeColor = Color.White
                 });
 
             if (_invitationMessage4.Length > 0)
@@ -257,7 +270,9 @@ namespace Keebee.AAT.Display.UserControls
                 {
                     Id = 4,
                     Message = _invitationMessage4,
-                    ResponseTypeId = ValidateResponseType(_invitation4ResponseTypeId)
+                    ResponseTypeId = ValidateResponseType(_invitation4ResponseTypeId),
+                    BackColor = Color.Yellow,
+                    ForeColor = Color.Black
                 });
 
             if (_invitationMessage5.Length > 0)
@@ -265,7 +280,9 @@ namespace Keebee.AAT.Display.UserControls
                 {
                     Id = 5,
                     Message = _invitationMessage5,
-                    ResponseTypeId = ValidateResponseType(_invitation5ResponseTypeId)
+                    ResponseTypeId = ValidateResponseType(_invitation5ResponseTypeId),
+                    BackColor = Color.Black,
+                    ForeColor = Color.White
                 });
         }
 

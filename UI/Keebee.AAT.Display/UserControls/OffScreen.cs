@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 using System.Windows.Forms;
 
 namespace Keebee.AAT.Display.UserControls
@@ -20,6 +21,11 @@ namespace Keebee.AAT.Display.UserControls
 
             _timer = new Timer { Interval = WaitInterval };
             _timer.Tick += TimerTick;
+#if DEBUG
+            lblOff.Font = new Font("Microsoft Sans Serif", 36);
+#elif !DEBUG
+            lblOff.Font = new Font("Microsoft Sans Serif", 120);
+#endif
         }
 
         public void Play()

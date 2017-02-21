@@ -12,7 +12,9 @@ using System.Web.Script.Serialization;
 using System.Diagnostics;
 using System.Drawing;
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Windows.Forms;
 using System.Linq;
 using WMPLib;
@@ -28,6 +30,8 @@ namespace Keebee.AAT.Display
 
     public partial class Main : Form
     {
+        #region declaration
+
         private OperationsClient _opsClient;
         public OperationsClient OperationsClient
         {
@@ -48,7 +52,6 @@ namespace Keebee.AAT.Display
 
         // delegate
         private delegate void ResumeAmbientDelegate();
-        private delegate void AmbientScreenTouchedDelegate();
         private delegate void PlayMediaDelegate(int responseTypeId, int responseValue);
         private delegate void PlaySlideShowDelegate();
         private delegate void PlayMatchingGameDelegate();
@@ -63,6 +66,9 @@ namespace Keebee.AAT.Display
         private readonly CustomMessageQueue _messageQueueDisplayPhidget;
         private readonly CustomMessageQueue _messageQueueDisplayVideoCapture;
         private readonly CustomMessageQueue _messageQueueDisplayBluetoothBeaconWatcher;
+
+        // ambient message list
+        private readonly IList<AmbientInvitationMessage> _ambientInvitationMessages;
 
         // message queue listener
         private readonly CustomMessageQueue _messageQueueResponse;
@@ -104,6 +110,8 @@ namespace Keebee.AAT.Display
 
         // active resident display timer
         private readonly Timer _residentDisplayTimer;
+
+        #endregion
 
         public Main()
         {
@@ -148,6 +156,31 @@ namespace Keebee.AAT.Display
 
             #endregion
 
+            #region ambient invitation messages
+
+            // ambient invitation messages
+            var durationInvitation = Convert.ToInt32(ConfigurationManager.AppSettings["AmbientInvitationDuration"].Trim());
+            var durationVideo = Convert.ToInt32(ConfigurationManager.AppSettings["AmbientVideoDuration"].Trim());
+
+            var invitationMessage1 = ConfigurationManager.AppSettings["InvitationMessage1"].Trim();
+            var invitationMessage2 = ConfigurationManager.AppSettings["InvitationMessage2"].Trim();
+            var invitationMessage3 = ConfigurationManager.AppSettings["InvitationMessage3"].Trim();
+            var invitationMessage4 = ConfigurationManager.AppSettings["InvitationMessage4"].Trim();
+            var invitationMessage5 = ConfigurationManager.AppSettings["InvitationMessage5"].Trim();
+
+            // ambient invitation response types
+            var invitation1ResponseTypeId = Convert.ToInt32(ConfigurationManager.AppSettings["Invitation1ResponseTypeId"].Trim());
+            var invitation2ResponseTypeId = Convert.ToInt32(ConfigurationManager.AppSettings["Invitation2ResponseTypeId"].Trim());
+            var invitation3ResponseTypeId = Convert.ToInt32(ConfigurationManager.AppSettings["Invitation3ResponseTypeId"].Trim());
+            var invitation4ResponseTypeId = Convert.ToInt32(ConfigurationManager.AppSettings["Invitation4ResponseTypeId"].Trim());
+            var invitation5ResponseTypeId = Convert.ToInt32(ConfigurationManager.AppSettings["Invitation5ResponseTypeId"].Trim());
+
+            InistializeAmbientPlayer(new[] { invitationMessage1, invitationMessage2, invitationMessage3, invitationMessage4, invitationMessage5 },
+                                   new[] { invitation1ResponseTypeId, invitation2ResponseTypeId, invitation3ResponseTypeId, invitation4ResponseTypeId, invitation5ResponseTypeId },
+                                   durationInvitation, durationVideo);
+
+            #endregion
+
             // custom event loggers
             _interactiveActivityEventLogger = new InteractiveActivityEventLogger();
             _activityEventLogger = new ActivityEventLogger();
@@ -185,6 +218,12 @@ namespace Keebee.AAT.Display
 #elif !DEBUG
             WindowState = FormWindowState.Maximized;
 #endif
+        }
+
+        private void InistializeAmbientPlayer(string[] messages, int[] responseTypeIds, int durationInvitation, int durationVideo)
+        {
+            ambientPlayer1.InvitationMessages = AmbientInvitationMessages.Load(messages, responseTypeIds);
+            ambientPlayer1.InitializeTimers(durationInvitation, durationVideo);
         }
 
         private void ConfigureUserControls()

@@ -31,13 +31,13 @@ namespace Keebee.AAT.Display
         private void InitializeComponent()
         {
             this.lblActiveResident = new System.Windows.Forms.Label();
+            this.mediaPlayer1 = new Keebee.AAT.Display.UserControls.MediaPlayer();
+            this.paintingActivity1 = new Keebee.AAT.Display.UserControls.PaintingActivity();
             this.radioControl1 = new Keebee.AAT.Display.UserControls.RadioControl();
             this.offScreen1 = new Keebee.AAT.Display.UserControls.OffScreen();
             this.slideViewerFlash1 = new Keebee.AAT.Display.UserControls.SlideViewer();
             this.matchingGame1 = new Keebee.AAT.Display.UserControls.MatchingGame();
-            this.paintingActivity1 = new Keebee.AAT.Display.UserControls.PaintingActivity();
             this.ambientPlayer1 = new Keebee.AAT.Display.UserControls.AmbientPlayer();
-            this.mediaPlayer1 = new Keebee.AAT.Display.UserControls.MediaPlayer();
             this.SuspendLayout();
             // 
             // lblActiveResident
@@ -52,6 +52,22 @@ namespace Keebee.AAT.Display
             this.lblActiveResident.Size = new System.Drawing.Size(88, 31);
             this.lblActiveResident.TabIndex = 15;
             this.lblActiveResident.Text = "Public";
+            // 
+            // mediaPlayer1
+            // 
+            this.mediaPlayer1.BackColor = System.Drawing.SystemColors.ActiveCaptionText;
+            this.mediaPlayer1.Location = new System.Drawing.Point(0, 77);
+            this.mediaPlayer1.Name = "mediaPlayer1";
+            this.mediaPlayer1.Size = new System.Drawing.Size(116, 62);
+            this.mediaPlayer1.TabIndex = 19;
+            // 
+            // paintingActivity1
+            // 
+            this.paintingActivity1.BackColor = System.Drawing.Color.Yellow;
+            this.paintingActivity1.Location = new System.Drawing.Point(0, 154);
+            this.paintingActivity1.Name = "paintingActivity1";
+            this.paintingActivity1.Size = new System.Drawing.Size(116, 55);
+            this.paintingActivity1.TabIndex = 17;
             // 
             // radioControl1
             // 
@@ -85,29 +101,13 @@ namespace Keebee.AAT.Display
             this.matchingGame1.Size = new System.Drawing.Size(116, 62);
             this.matchingGame1.TabIndex = 2;
             // 
-            // paintingActivity1
-            // 
-            this.paintingActivity1.BackColor = System.Drawing.Color.Yellow;
-            this.paintingActivity1.Location = new System.Drawing.Point(0, 154);
-            this.paintingActivity1.Name = "paintingActivity1";
-            this.paintingActivity1.Size = new System.Drawing.Size(116, 55);
-            this.paintingActivity1.TabIndex = 17;
-            // 
             // ambientPlayer1
             // 
-            this.ambientPlayer1.BackColor = System.Drawing.SystemColors.ControlText;
+            this.ambientPlayer1.BackColor = System.Drawing.Color.Yellow;
             this.ambientPlayer1.Location = new System.Drawing.Point(133, 77);
             this.ambientPlayer1.Name = "ambientPlayer1";
             this.ambientPlayer1.Size = new System.Drawing.Size(116, 62);
-            this.ambientPlayer1.TabIndex = 18;
-            // 
-            // mediaPlayer1
-            // 
-            this.mediaPlayer1.BackColor = System.Drawing.SystemColors.ActiveCaptionText;
-            this.mediaPlayer1.Location = new System.Drawing.Point(0, 77);
-            this.mediaPlayer1.Name = "mediaPlayer1";
-            this.mediaPlayer1.Size = new System.Drawing.Size(116, 62);
-            this.mediaPlayer1.TabIndex = 19;
+            this.ambientPlayer1.TabIndex = 20;
             // 
             // Main
             // 
@@ -116,8 +116,8 @@ namespace Keebee.AAT.Display
             this.BackColor = System.Drawing.Color.Yellow;
             this.ClientSize = new System.Drawing.Size(408, 221);
             this.ControlBox = false;
-            this.Controls.Add(this.mediaPlayer1);
             this.Controls.Add(this.ambientPlayer1);
+            this.Controls.Add(this.mediaPlayer1);
             this.Controls.Add(this.paintingActivity1);
             this.Controls.Add(this.lblActiveResident);
             this.Controls.Add(this.radioControl1);
@@ -145,8 +145,8 @@ namespace Keebee.AAT.Display
         private RadioControl radioControl1;
         private System.Windows.Forms.Label lblActiveResident;
         private PaintingActivity paintingActivity1;
-        private AmbientPlayer ambientPlayer1;
         private MediaPlayer mediaPlayer1;
+        private AmbientPlayer ambientPlayer1;
     }
 }
 

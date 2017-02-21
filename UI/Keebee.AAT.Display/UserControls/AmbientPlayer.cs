@@ -1,8 +1,8 @@
 ﻿using Keebee.AAT.SystemEventLogging;
+using Keebee.AAT.Display.Helpers;
 using Keebee.AAT.Shared;
 using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
@@ -13,15 +13,6 @@ namespace Keebee.AAT.Display.UserControls
 {
     public partial class AmbientPlayer : UserControl
     {
-        internal class InvitationMessage
-        {
-            public int Id { get; set; }
-            public string Message { get; set; }
-            public int ResponseTypeId { get; set; }
-            public Color BackColor { get; set; }
-            public Color ForeColor { get; set; }
-        }
-
         // event logger
         private SystemEventLogger _systemEventLogger;
         public SystemEventLogger SystemEventLogger
@@ -36,25 +27,15 @@ namespace Keebee.AAT.Display.UserControls
         private delegate void PlayAmbientDelegate();
         private delegate void RaiseScreenTouchedEventDelegate(int responseTypeId);
 
-        // invitation message
+        // invitation messages
         private int _currentInvitationMessageIndex = -1;
-        private IList<InvitationMessage> _invitationMessages;
+        private IList<AmbientInvitationMessage> _invitationMessages;
+        public IList<AmbientInvitationMessage> InvitationMessages
+        {
+            set { _invitationMessages = value; }
+        }
 
         private bool _isInvitaionShown;
-
-        // invitation messages
-        private readonly string _invitationMessage1;
-        private readonly string _invitationMessage2;
-        private readonly string _invitationMessage3;
-        private readonly string _invitationMessage4;
-        private readonly string _invitationMessage5;
-
-        // invitation response types
-        private readonly int _invitation1ResponseTypeId;
-        private readonly int _invitation2ResponseTypeId;
-        private readonly int _invitation3ResponseTypeId;
-        private readonly int _invitation4ResponseTypeId;
-        private readonly int _invitation5ResponseTypeId;
 
         public class ScreenTouchedEventEventArgs : EventArgs
         {
@@ -62,8 +43,8 @@ namespace Keebee.AAT.Display.UserControls
         }
 
         // timers
-        private readonly Timer _timerInvitation;
-        private readonly Timer _timerVideo;
+        private Timer _timerInvitation;
+        private Timer _timerVideo;
 
         private IWMPPlaylist _playlist;
 
@@ -72,30 +53,6 @@ namespace Keebee.AAT.Display.UserControls
             InitializeComponent();
             ConfigureMediaPlayer();
             ConfigureInvitationMessage();
-
-            var durationInvitation = Convert.ToInt32(ConfigurationManager.AppSettings["AmbientInvitationDuration"].Trim());
-            _timerInvitation = new Timer { Interval = durationInvitation };
-            _timerInvitation.Tick += TimerMessageTick;
-
-            var durationVideo = Convert.ToInt32(ConfigurationManager.AppSettings["AmbientVideoDuration"].Trim());
-            _timerVideo = new Timer { Interval = durationVideo };
-            _timerVideo.Tick += TimerVideoTick;
-
-            // invitation messages
-            _invitationMessage1 = ConfigurationManager.AppSettings["InvitationMessage1"].Trim();
-            _invitationMessage2 = ConfigurationManager.AppSettings["InvitationMessage2"].Trim();
-            _invitationMessage3 = ConfigurationManager.AppSettings["InvitationMessage3"].Trim();
-            _invitationMessage4 = ConfigurationManager.AppSettings["InvitationMessage4"].Trim();
-            _invitationMessage5 = ConfigurationManager.AppSettings["InvitationMessage5"].Trim();
-
-            // invitation response types
-            _invitation1ResponseTypeId = Convert.ToInt32(ConfigurationManager.AppSettings["Invitation1ResponseTypeId"].Trim());
-            _invitation2ResponseTypeId = Convert.ToInt32(ConfigurationManager.AppSettings["Invitation2ResponseTypeId"].Trim());
-            _invitation3ResponseTypeId = Convert.ToInt32(ConfigurationManager.AppSettings["Invitation3ResponseTypeId"].Trim());
-            _invitation4ResponseTypeId = Convert.ToInt32(ConfigurationManager.AppSettings["Invitation4ResponseTypeId"].Trim());
-            _invitation5ResponseTypeId = Convert.ToInt32(ConfigurationManager.AppSettings["Invitation5ResponseTypeId"].Trim());
-
-            LoadInvitationMessages();
         }
 
         public void Play(IWMPPlaylist playlist)
@@ -142,8 +99,17 @@ namespace Keebee.AAT.Display.UserControls
 #if DEBUG
             lblInvitation.Font = new Font("Microsoft Sans Serif", 36);
 #elif !DEBUG
-            lblInvitation.Font = new Font("Microsoft Sans Serif", 72);
+            lblInvitation.Font = new Font("Microsoft Sans Serif", 120);
 #endif
+        }
+
+        public void InitializeTimers(int durationInvitation, int durationVideo)
+        {
+            _timerInvitation = new Timer { Interval = durationInvitation };
+            _timerInvitation.Tick += TimerMessageTick;
+
+            _timerVideo = new Timer { Interval = durationVideo };
+            _timerVideo.Tick += TimerVideoTick;
         }
 
         private void PlayAmbient()
@@ -189,14 +155,10 @@ namespace Keebee.AAT.Display.UserControls
                     _currentInvitationMessageIndex++;
 
                 var  message = _invitationMessages[_currentInvitationMessageIndex].Message;
-                var backColor = _invitationMessages[_currentInvitationMessageIndex].BackColor;
-                var foreColor = _invitationMessages[_currentInvitationMessageIndex].ForeColor;
 
                 axWindowsMediaPlayer1.Ctlcontrols.pause();
                 axWindowsMediaPlayer1.Hide();
 
-                BackColor = backColor;
-                lblInvitation.ForeColor = foreColor;
                 lblInvitation.Text = message;
                 lblInvitation.Show();
 
@@ -210,80 +172,6 @@ namespace Keebee.AAT.Display.UserControls
 
                 _isInvitaionShown = false;
             }
-        }
-
-        private static int ValidateResponseType(int responseTypeId)
-        {
-            switch (responseTypeId)
-            {
-                case ResponseTypeId.SlideShow:
-                    return ResponseTypeId.SlideShow;
-                case ResponseTypeId.MatchingGame:
-                    return ResponseTypeId.MatchingGame;
-                case ResponseTypeId.Cats:
-                    return ResponseTypeId.Cats;
-                case ResponseTypeId.Radio:
-                    return ResponseTypeId.Radio;
-                case ResponseTypeId.Television:
-                    return ResponseTypeId.Television;
-                default:
-                    return 0;
-            }
-        }
-
-        private void LoadInvitationMessages()
-        {
-           _invitationMessages = new List<InvitationMessage>();
-
-            if (_invitationMessage1.Length > 0)
-                _invitationMessages.Add(new InvitationMessage
-                {
-                    Id = 1,
-                    Message = _invitationMessage1,
-                    ResponseTypeId = ValidateResponseType(_invitation1ResponseTypeId),
-                    BackColor = Color.Black,
-                    ForeColor = Color.White
-                });
-
-            if (_invitationMessage2.Length > 0)
-                _invitationMessages.Add(new InvitationMessage
-                {
-                    Id = 2,
-                    Message = _invitationMessage2,
-                    ResponseTypeId = ValidateResponseType(_invitation2ResponseTypeId),
-                    BackColor = Color.Yellow,
-                    ForeColor = Color.Black
-                });
-
-            if (_invitationMessage3.Length > 0)
-                _invitationMessages.Add(new InvitationMessage
-                {
-                    Id = 3,
-                    Message = _invitationMessage3,
-                    ResponseTypeId = ValidateResponseType(_invitation3ResponseTypeId),
-                    BackColor = Color.Black,
-                    ForeColor = Color.White
-                });
-
-            if (_invitationMessage4.Length > 0)
-                _invitationMessages.Add(new InvitationMessage
-                {
-                    Id = 4,
-                    Message = _invitationMessage4,
-                    ResponseTypeId = ValidateResponseType(_invitation4ResponseTypeId),
-                    BackColor = Color.Yellow,
-                    ForeColor = Color.Black
-                });
-
-            if (_invitationMessage5.Length > 0)
-                _invitationMessages.Add(new InvitationMessage
-                {
-                    Id = 5,
-                    Message = _invitationMessage5,
-                    ResponseTypeId = ValidateResponseType(_invitation5ResponseTypeId),
-                    BackColor = Color.Black,
-                    ForeColor = Color.White
-                });
         }
 
         private void RaiseScreenTouchedEvent(int responseTypeId)

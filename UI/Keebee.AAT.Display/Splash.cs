@@ -8,7 +8,6 @@ using System;
 using System.Linq;
 using System.Diagnostics;
 using System.Drawing;
-using System.Runtime.InteropServices.ComTypes;
 using System.ServiceProcess;
 using System.Windows.Forms;
 using AxWMPLib;

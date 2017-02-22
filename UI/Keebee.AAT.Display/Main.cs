@@ -117,6 +117,8 @@ namespace Keebee.AAT.Display
         {
             InitializeComponent();
             ConfigureUserControls();
+            InitializeAmbientPlayer();
+
             _opaqueLayer = new OpaqueLayer { Dock = DockStyle.Fill };
             _residentDisplayTimer = new Timer { Interval = 3000 };
             _residentDisplayTimer.Tick += ActiveResidentTimerTick;
@@ -153,31 +155,6 @@ namespace Keebee.AAT.Display
                 QueueName = MessageQueueType.Response,
                 MessageReceivedCallback = MessageReceivedResponse
             });
-
-            #endregion
-
-            #region ambient invitation messages
-
-            // ambient invitation messages
-            var durationInvitation = Convert.ToInt32(ConfigurationManager.AppSettings["AmbientInvitationDuration"].Trim());
-            var durationVideo = Convert.ToInt32(ConfigurationManager.AppSettings["AmbientVideoDuration"].Trim());
-
-            var invitationMessage1 = ConfigurationManager.AppSettings["InvitationMessage1"].Trim();
-            var invitationMessage2 = ConfigurationManager.AppSettings["InvitationMessage2"].Trim();
-            var invitationMessage3 = ConfigurationManager.AppSettings["InvitationMessage3"].Trim();
-            var invitationMessage4 = ConfigurationManager.AppSettings["InvitationMessage4"].Trim();
-            var invitationMessage5 = ConfigurationManager.AppSettings["InvitationMessage5"].Trim();
-
-            // ambient invitation response types
-            var invitation1ResponseTypeId = Convert.ToInt32(ConfigurationManager.AppSettings["Invitation1ResponseTypeId"].Trim());
-            var invitation2ResponseTypeId = Convert.ToInt32(ConfigurationManager.AppSettings["Invitation2ResponseTypeId"].Trim());
-            var invitation3ResponseTypeId = Convert.ToInt32(ConfigurationManager.AppSettings["Invitation3ResponseTypeId"].Trim());
-            var invitation4ResponseTypeId = Convert.ToInt32(ConfigurationManager.AppSettings["Invitation4ResponseTypeId"].Trim());
-            var invitation5ResponseTypeId = Convert.ToInt32(ConfigurationManager.AppSettings["Invitation5ResponseTypeId"].Trim());
-
-            InistializeAmbientPlayer(new[] { invitationMessage1, invitationMessage2, invitationMessage3, invitationMessage4, invitationMessage5 },
-                                   new[] { invitation1ResponseTypeId, invitation2ResponseTypeId, invitation3ResponseTypeId, invitation4ResponseTypeId, invitation5ResponseTypeId },
-                                   durationInvitation, durationVideo);
 
             #endregion
 
@@ -220,9 +197,29 @@ namespace Keebee.AAT.Display
 #endif
         }
 
-        private void InistializeAmbientPlayer(string[] messages, int[] responseTypeIds, int durationInvitation, int durationVideo)
+        private void InitializeAmbientPlayer()
         {
-            ambientPlayer1.InvitationMessages = AmbientInvitationMessages.Load(messages, responseTypeIds);
+            // ambient invitation messages
+            var durationInvitation = Convert.ToInt32(ConfigurationManager.AppSettings["AmbientInvitationDuration"].Trim());
+            var durationVideo = Convert.ToInt32(ConfigurationManager.AppSettings["AmbientVideoDuration"].Trim());
+
+            var invitationMessage1 = ConfigurationManager.AppSettings["InvitationMessage1"].Trim();
+            var invitationMessage2 = ConfigurationManager.AppSettings["InvitationMessage2"].Trim();
+            var invitationMessage3 = ConfigurationManager.AppSettings["InvitationMessage3"].Trim();
+            var invitationMessage4 = ConfigurationManager.AppSettings["InvitationMessage4"].Trim();
+            var invitationMessage5 = ConfigurationManager.AppSettings["InvitationMessage5"].Trim();
+
+            // ambient invitation response types
+            var invitation1ResponseTypeId = Convert.ToInt32(ConfigurationManager.AppSettings["Invitation1ResponseTypeId"].Trim());
+            var invitation2ResponseTypeId = Convert.ToInt32(ConfigurationManager.AppSettings["Invitation2ResponseTypeId"].Trim());
+            var invitation3ResponseTypeId = Convert.ToInt32(ConfigurationManager.AppSettings["Invitation3ResponseTypeId"].Trim());
+            var invitation4ResponseTypeId = Convert.ToInt32(ConfigurationManager.AppSettings["Invitation4ResponseTypeId"].Trim());
+            var invitation5ResponseTypeId = Convert.ToInt32(ConfigurationManager.AppSettings["Invitation5ResponseTypeId"].Trim());
+
+            ambientPlayer1.InvitationMessages = AmbientInvitationMessages.Load(
+                new[] { invitationMessage1, invitationMessage2, invitationMessage3, invitationMessage4, invitationMessage5 },
+                new[] { invitation1ResponseTypeId, invitation2ResponseTypeId, invitation3ResponseTypeId, invitation4ResponseTypeId, invitation5ResponseTypeId });
+
             ambientPlayer1.InitializeTimers(durationInvitation, durationVideo);
         }
 

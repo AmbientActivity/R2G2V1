@@ -208,17 +208,35 @@ namespace Keebee.AAT.Display
             var invitationMessage3 = ConfigurationManager.AppSettings["InvitationMessage3"].Trim();
             var invitationMessage4 = ConfigurationManager.AppSettings["InvitationMessage4"].Trim();
             var invitationMessage5 = ConfigurationManager.AppSettings["InvitationMessage5"].Trim();
+            var invitationMessage6 = ConfigurationManager.AppSettings["InvitationMessage6"].Trim();
+            var invitationMessage7 = ConfigurationManager.AppSettings["InvitationMessage7"].Trim();
+            var invitationMessage8 = ConfigurationManager.AppSettings["InvitationMessage8"].Trim();
+            var invitationMessage9 = ConfigurationManager.AppSettings["InvitationMessage9"].Trim();
+            var invitationMessage10 = ConfigurationManager.AppSettings["InvitationMessage10"].Trim();
 
             // ambient invitation response types
-            var invitation1ResponseTypeId = Convert.ToInt32(ConfigurationManager.AppSettings["Invitation1ResponseTypeId"].Trim());
-            var invitation2ResponseTypeId = Convert.ToInt32(ConfigurationManager.AppSettings["Invitation2ResponseTypeId"].Trim());
-            var invitation3ResponseTypeId = Convert.ToInt32(ConfigurationManager.AppSettings["Invitation3ResponseTypeId"].Trim());
-            var invitation4ResponseTypeId = Convert.ToInt32(ConfigurationManager.AppSettings["Invitation4ResponseTypeId"].Trim());
-            var invitation5ResponseTypeId = Convert.ToInt32(ConfigurationManager.AppSettings["Invitation5ResponseTypeId"].Trim());
+            var invitationResponse1 = Convert.ToInt32(ConfigurationManager.AppSettings["InvitationResponse1"].Trim());
+            var invitationResponse2 = Convert.ToInt32(ConfigurationManager.AppSettings["InvitationResponse2"].Trim());
+            var invitationResponse3 = Convert.ToInt32(ConfigurationManager.AppSettings["InvitationResponse3"].Trim());
+            var invitationResponse4 = Convert.ToInt32(ConfigurationManager.AppSettings["InvitationResponse4"].Trim());
+            var invitationResponse5 = Convert.ToInt32(ConfigurationManager.AppSettings["InvitationResponse5"].Trim());
+            var invitationResponse6 = Convert.ToInt32(ConfigurationManager.AppSettings["InvitationResponse6"].Trim());
+            var invitationResponse7 = Convert.ToInt32(ConfigurationManager.AppSettings["InvitationResponse7"].Trim());
+            var invitationResponse8 = Convert.ToInt32(ConfigurationManager.AppSettings["InvitationResponse8"].Trim());
+            var invitationResponse9 = Convert.ToInt32(ConfigurationManager.AppSettings["InvitationResponse9"].Trim());
+            var invitationResponse10 = Convert.ToInt32(ConfigurationManager.AppSettings["InvitationResponse10"].Trim());
 
             ambientPlayer1.InvitationMessages = AmbientInvitationMessages.Load(
-                new[] { invitationMessage1, invitationMessage2, invitationMessage3, invitationMessage4, invitationMessage5 },
-                new[] { invitation1ResponseTypeId, invitation2ResponseTypeId, invitation3ResponseTypeId, invitation4ResponseTypeId, invitation5ResponseTypeId });
+                new[]
+                {
+                    invitationMessage1, invitationMessage2, invitationMessage3, invitationMessage4, invitationMessage5,
+                    invitationMessage6, invitationMessage7, invitationMessage8, invitationMessage9, invitationMessage10
+                },
+                new[]
+                {
+                    invitationResponse1, invitationResponse2, invitationResponse3, invitationResponse4, invitationResponse5,
+                    invitationResponse6, invitationResponse7, invitationResponse8, invitationResponse9, invitationResponse10
+                });
 
             ambientPlayer1.InitializeTimers(durationInvitation, durationVideo);
         }

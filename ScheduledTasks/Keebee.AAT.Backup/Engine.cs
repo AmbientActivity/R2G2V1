@@ -62,7 +62,7 @@ namespace Keebee.AAT.Backup
 
                     if (driveBackup.IsReady)
                     {
-                        
+
                         // backup deployment folders (except media)
                         logText.Append(BackupFiles(_pathDeployments, _pathBackup,
                             excludeFolders: new[] { Path.Combine(_pathDeployments, "Media") }));
@@ -92,7 +92,7 @@ namespace Keebee.AAT.Backup
 
                         // delete obsolete video capture files
                         logText.Append(RemoveObsoleteFiles(_pathVideoCaptures, _pathBackup));
-                        
+
                         // create the database scripts
                         logText.Append(CreateScriptRestorePublicProfile($@"{_pathBackup}\{_deploymentsFolder}"));
                         logText.Append(CreateScriptRestoreResidents($@"{_pathBackup}\{_deploymentsFolder}"));
@@ -670,7 +670,7 @@ namespace Keebee.AAT.Backup
 
         private static string GetPublicProfileLinkedFilenames(int responseTypeId, int mediaPathTypeId, MediaResponseType[] linkedMedia)
         {
-            if (!linkedMedia.Any()) return string.Empty;
+            if (linkedMedia == null) return string.Empty;
 
             // get response type
             if (linkedMedia.All(x => x.ResponseType.Id != responseTypeId)) return string.Empty;
@@ -694,7 +694,7 @@ namespace Keebee.AAT.Backup
 
         private static string GetResidentLinkedFilenames(int residentId, int responseTypeId, int mediaPathTypeId, ResidentMedia[] linkedMedia)
         {
-            if (!linkedMedia.Any()) return string.Empty;
+            if (linkedMedia == null) return string.Empty;
 
             // get resident
             if (linkedMedia.All(x => x.Resident.Id != residentId)) return string.Empty;
@@ -730,7 +730,7 @@ namespace Keebee.AAT.Backup
                 var mediaPathTypes = mediaPathTypesClient.Get().ToArray();
 
                 var publicMediaFilesClient = new PublicMediaFilesClient();
-                var linkedMedia = publicMediaFilesClient.GetLinked().MediaFiles.ToArray();
+                var linkedMedia = publicMediaFilesClient.GetLinked()?.MediaFiles.ToArray();
 
                 var pathScript = $@"{path}\Install\Database\SQL Server\{RestorePublicProfileFilename}.sql";
 
@@ -927,7 +927,7 @@ namespace Keebee.AAT.Backup
 
                 var residents = residentsClient.Get().ToArray();            
                 var mediaPathTypes = mediaPathTypesClient.Get().ToArray();          
-                var linkedMedia = residentMediaFilesClient.GetLinked().ToArray();
+                var linkedMedia = residentMediaFilesClient.GetLinked()?.ToArray();
 
                 if (!residents.Any())
                 {

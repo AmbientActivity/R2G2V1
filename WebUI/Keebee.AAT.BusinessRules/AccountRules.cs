@@ -9,7 +9,7 @@ namespace Keebee.AAT.BusinessRules
 {
     public class AccountRules
     {
-        private readonly UsersClient _usersClient;
+        private readonly IUsersClient _usersClient;
 
         public AccountRules()
         {

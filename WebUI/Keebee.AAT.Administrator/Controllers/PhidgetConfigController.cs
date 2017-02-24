@@ -13,8 +13,10 @@ namespace Keebee.AAT.Administrator.Controllers
 {
     public class PhidgetConfigController : Controller
     {
-        private readonly ConfigsClient _configsClient;
-        private readonly ActivityEventLogsClient _activityEventLogsClient;
+        // api client
+        private readonly IConfigsClient _configsClient;
+        private readonly IActivityEventLogsClient _activityEventLogsClient;
+
         private readonly CustomMessageQueue _messageQueueConfigSms;
 
         public PhidgetConfigController()

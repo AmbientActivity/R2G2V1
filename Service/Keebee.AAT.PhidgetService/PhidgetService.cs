@@ -41,8 +41,8 @@ namespace Keebee.AAT.PhidgetService
     internal partial class PhidgetService : ServiceBase
     {
 
-        // REST client
-        private readonly ConfigsClient _configsClient;
+        // api client
+        private readonly IConfigsClient _configsClient;
 
 #if DEBUG
         private readonly CustomMessageQueue _messageQueuePhidgetMonitor;

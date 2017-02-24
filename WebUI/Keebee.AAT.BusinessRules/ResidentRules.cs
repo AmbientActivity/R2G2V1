@@ -9,15 +9,17 @@ namespace Keebee.AAT.BusinessRules
 {
     public class ResidentRules
     {
-        private readonly ResidentsClient _residentsClient;
-        private readonly ResidentMediaFilesClient _residentMediaFilesClient;
-        private readonly MediaFilesClient _mediaFilesClient;
+        private readonly IResidentsClient _residentsClient;
+        private readonly IResidentMediaFilesClient _residentMediaFilesClient;
+        private readonly IMediaFilesClient _mediaFilesClient;
+        private readonly IMediaPathTypesClient _mediaPathTypesClient;
 
         public ResidentRules()
         {
             _residentsClient = new ResidentsClient();
             _residentMediaFilesClient = new ResidentMediaFilesClient();
             _mediaFilesClient = new MediaFilesClient();
+            _mediaPathTypesClient = new MediaPathTypesClient();
         }
 
         // validation
@@ -170,20 +172,16 @@ namespace Keebee.AAT.BusinessRules
 
         public string GetMediaPath(int? mediaPathTypeId)
         {
-            var mediaPathTypesClient = new MediaPathTypesClient();
-
             return mediaPathTypeId != null
-                ? mediaPathTypesClient.Get((int)mediaPathTypeId).Path
-                : mediaPathTypesClient.Get(MediaPathTypeId.ImagesGeneral).Path;
+                ? _mediaPathTypesClient.Get((int)mediaPathTypeId).Path
+                : _mediaPathTypesClient.Get(MediaPathTypeId.ImagesGeneral).Path;
         }
 
         public string GetMediaPathShortDescription(int? mediaPathTypeId)
         {
-            var mediaPathTypesClient = new MediaPathTypesClient();
-
             return mediaPathTypeId != null
-                ? mediaPathTypesClient.Get((int)mediaPathTypeId).ShortDescription
-                : mediaPathTypesClient.Get(MediaPathTypeId.ImagesGeneral).ShortDescription;
+                ? _mediaPathTypesClient.Get((int)mediaPathTypeId).ShortDescription
+                : _mediaPathTypesClient.Get(MediaPathTypeId.ImagesGeneral).ShortDescription;
         }
 
         public static int GetResponseTypeId(int mediaPathTypeId)
@@ -215,8 +213,7 @@ namespace Keebee.AAT.BusinessRules
 
         public byte[] GetFile(string path, string filename)
         {
-            var mediaFilesClient = new MediaFilesClient();
-            var file = mediaFilesClient.GetFileStreamFromPath(path, filename);
+            var file = _mediaFilesClient.GetFileStreamFromPath(path, filename);
 
             return file;
         }
@@ -226,12 +223,10 @@ namespace Keebee.AAT.BusinessRules
             var mediaSource = new MediaSourcePath();
             var mediaPath = GetMediaPath(mediaPathTypeId);
 
-            var mediaFilesClient = new MediaFilesClient();
-            var sharedPaths = mediaFilesClient.GetForPath($@"{mediaSource.SharedLibrary}\{mediaPath}").ToArray();
+            var sharedPaths = _mediaFilesClient.GetForPath($@"{mediaSource.SharedLibrary}\{mediaPath}").ToArray();
             var responseTypeId = GetResponseTypeId(mediaPathTypeId);
 
-            var residentMediaFilesClient = new ResidentMediaFilesClient();
-            var existingLinkedMediaPaths = residentMediaFilesClient.GetForResidentResponseType(residentId, responseTypeId);
+            var existingLinkedMediaPaths = _residentMediaFilesClient.GetForResidentResponseType(residentId, responseTypeId);
             IEnumerable<Guid> existingStreamIds = new List<Guid>();
 
             if (existingLinkedMediaPaths?.MediaResponseType != null)

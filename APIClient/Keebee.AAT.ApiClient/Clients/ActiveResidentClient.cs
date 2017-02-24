@@ -6,6 +6,7 @@ namespace Keebee.AAT.ApiClient.Clients
     public interface IActiveResidentClient
     {
         ActiveResident Get();
+        void Patch(ActiveResidentEdit resident);
     }
 
     public class ActiveResidentClient : IActiveResidentClient

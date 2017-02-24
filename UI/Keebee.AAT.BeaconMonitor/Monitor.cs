@@ -24,6 +24,7 @@ namespace Keebee.AAT.BeaconMonitor
         private readonly CustomMessageQueue _messageQueueDisplayBluetoothBeaconWatcher;
 
         private readonly ICollection<ulong> _beaconAddresses = new Collection<ulong>();
+
         public Monitor()
         {
             InitializeComponent();

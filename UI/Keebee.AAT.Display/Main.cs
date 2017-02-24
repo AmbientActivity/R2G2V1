@@ -29,10 +29,11 @@ namespace Keebee.AAT.Display
 
     public partial class Main : Form
     {
-        #region declaration
+        // api client
+        private readonly IPublicMediaFilesClient _publicMediaFilesClient;
+        private readonly IConfigsClient _configsClient;
 
-        private readonly PublicMediaFilesClient _publicMediaFilesClient;
-        private readonly ConfigsClient _configsClient;
+        #region declaration
 
         private SystemEventLogger _systemEventLogger;
         public SystemEventLogger EventLogger

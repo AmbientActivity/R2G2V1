@@ -221,7 +221,6 @@ namespace Keebee.AAT.BusinessRules
 
         private static class ServiceInstaller
         {
-
             public static string Install(string exePath)
             {
                 try

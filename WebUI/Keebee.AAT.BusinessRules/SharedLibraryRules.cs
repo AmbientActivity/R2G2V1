@@ -10,10 +10,10 @@ namespace Keebee.AAT.BusinessRules
 {
     public class SharedLibraryRules
     {
-        private readonly PublicMediaFilesClient _publicMediaFilesClient;
-        private readonly ResidentMediaFilesClient _residentMediaFilesClient;
-        private readonly MediaPathTypesClient _mediaPathTypesClient;
-        private readonly MediaFilesClient _mediaFilesClient;
+        private readonly IPublicMediaFilesClient _publicMediaFilesClient;
+        private readonly IResidentMediaFilesClient _residentMediaFilesClient;
+        private readonly IMediaPathTypesClient _mediaPathTypesClient;
+        private readonly IMediaFilesClient _mediaFilesClient;
 
         public SharedLibraryRules()
         {

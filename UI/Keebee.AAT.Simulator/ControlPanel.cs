@@ -24,7 +24,7 @@ namespace Keebee.AAT.Simulator
     public partial class ControlPanel : Form
     {
         // data
-        private readonly ResidentsClient _residentsClient;
+        private readonly IResidentsClient _residentsClient;
         private Resident[] _residents;
 
         // message queue sender

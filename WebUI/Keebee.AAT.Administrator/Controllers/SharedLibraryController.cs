@@ -14,13 +14,19 @@ namespace Keebee.AAT.Administrator.Controllers
 {
     public class SharedLibraryController : Controller
     {
-        private readonly SystemEventLogger _systemEventLogger;
+        // api client
+        private readonly IMediaFilesClient _mediaFilesClient;
+        private readonly IMediaPathTypesClient _mediaPathTypesClient;
 
+        private readonly SystemEventLogger _systemEventLogger;
         private readonly MediaSourcePath _mediaSourcePath = new MediaSourcePath();
 
         public SharedLibraryController()
         {
             _systemEventLogger = new SystemEventLogger(SystemEventLogType.AdminInterface);
+
+            _mediaFilesClient = new MediaFilesClient();
+            _mediaPathTypesClient = new MediaPathTypesClient();
         }
 
         // GET: SystemLibraries
@@ -79,9 +85,8 @@ namespace Keebee.AAT.Administrator.Controllers
         [Authorize]
         public JsonResult GetData(int mediaPathTypeId)
         {
-            var mediaPathTypesClient = new MediaPathTypesClient();
             var rules = new SharedLibraryRules();
-            var mediaPathTypes = mediaPathTypesClient.Get()
+            var mediaPathTypes = _mediaPathTypesClient.Get()
                     .Where(mp => mp.IsSharable).ToArray();
 
             var vm = new
@@ -131,16 +136,14 @@ namespace Keebee.AAT.Administrator.Controllers
             bool success;
             var errormessage = string.Empty;
             var rules = new SharedLibraryRules();
-            var mediaPathTypesClient = new MediaPathTypesClient();
-            var mediaFilesClient = new MediaFilesClient();
-            var mediaPathTypes = mediaPathTypesClient.Get()
-                    .Where(mp => mp.Id != MediaPathTypeId.ImagesPersonal && mp.Id != MediaPathTypeId.HomeMovies).ToArray();
 
+            var mediaPathTypes = _mediaPathTypesClient.Get()
+                    .Where(mp => mp.Id != MediaPathTypeId.ImagesPersonal && mp.Id != MediaPathTypeId.HomeMovies).ToArray();
             try
             {
                 foreach (var streamId in streamIds)
                 {
-                    var file = mediaFilesClient.Get(streamId);
+                    var file = _mediaFilesClient.Get(streamId);
                     if (file == null) continue;
 
                     // delete all the linkage if it's sharable media (non-system)
@@ -203,7 +206,7 @@ namespace Keebee.AAT.Administrator.Controllers
             return File(info.OpenRead(), $"image/{info}");
         }
 
-        private SharedLibraryViewModel LoadSharedLibraryViewModel(int? mediaPathTypeId)
+        private static SharedLibraryViewModel LoadSharedLibraryViewModel(int? mediaPathTypeId)
         {
             var rules = new SharedLibraryRules();
             var vm = new SharedLibraryViewModel

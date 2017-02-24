@@ -9,13 +9,15 @@ namespace Keebee.AAT.BusinessRules
 {
     public class SystemProfileRules
     {
-        private readonly PublicMediaFilesClient _publicMediaFilesClient;
-        private readonly MediaFilesClient _mediaFilesClient;
+        private readonly IPublicMediaFilesClient _publicMediaFilesClient;
+        private readonly IMediaFilesClient _mediaFilesClient;
+        private readonly IMediaPathTypesClient _mediaPathTypesClient;
 
         public SystemProfileRules()
         {
             _publicMediaFilesClient = new PublicMediaFilesClient();
             _mediaFilesClient = new MediaFilesClient();
+            _mediaPathTypesClient = new MediaPathTypesClient();
         }
 
         public IEnumerable<ResponseType> GetValidResponseTypes(int mediaPathTypeId)
@@ -45,24 +47,21 @@ namespace Keebee.AAT.BusinessRules
 
         public string GetMediaPath(int? mediaPathTypeId)
         {
-            var mediaPathTypesClient = new MediaPathTypesClient();
             return mediaPathTypeId != null
-                ? mediaPathTypesClient.Get((int)mediaPathTypeId).Path
-                : mediaPathTypesClient.Get(MediaPathTypeId.ImagesGeneral).Path;
+                ? _mediaPathTypesClient.Get((int)mediaPathTypeId).Path
+                : _mediaPathTypesClient.Get(MediaPathTypeId.ImagesGeneral).Path;
         }
 
         public string GetMediaPathShortDescription(int? mediaPathTypeId)
         {
-            var mediaPathTypesClient = new MediaPathTypesClient();
             return mediaPathTypeId != null
-                ? mediaPathTypesClient.Get((int)mediaPathTypeId).ShortDescription
-                : mediaPathTypesClient.Get(MediaPathTypeId.ImagesGeneral).ShortDescription;
+                ? _mediaPathTypesClient.Get((int)mediaPathTypeId).ShortDescription
+                : _mediaPathTypesClient.Get(MediaPathTypeId.ImagesGeneral).ShortDescription;
         }
 
         public bool FileExists(string path, string filename)
         {
-            var mediaFIlesClient = new MediaFilesClient();
-            var file = mediaFIlesClient.GetFromPath(path, filename);
+            var file = _mediaFilesClient.GetFromPath(path, filename);
 
             return (file != null);
         }

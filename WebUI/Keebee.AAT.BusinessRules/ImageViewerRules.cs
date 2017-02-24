@@ -20,11 +20,17 @@ namespace Keebee.AAT.BusinessRules
             public int Height;
         }
 
+        private readonly IMediaFilesClient _mediaFilesClient;
+
+        public ImageViewerRules()
+        {
+            _mediaFilesClient = new MediaFilesClient();
+        }
+
         public ImageViewerModel GetImageViewerModel(Guid streamId, string fileType)
         {
-            const int maxWidth = PreviewConstants.MaxImagePreviewgWidth;
-            var mediaFilesClient = new MediaFilesClient();
-            var file = mediaFilesClient.Get(streamId);
+            const int maxWidth = PreviewConstants.MaxImagePreviewgWidth;        
+            var file = _mediaFilesClient.Get(streamId);
 
             var originalSize = GetOriginalSize(file);
             var size = GetImageSize(originalSize.Width, originalSize.Height);

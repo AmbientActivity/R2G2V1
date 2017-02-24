@@ -5,7 +5,7 @@ using System.Web.Script.Serialization;
 
 namespace Keebee.AAT.ApiClient.Clients
 {
-    public interface IResidentClient
+    public interface IResidentsClient
     {
         IEnumerable<Resident> Get();
         Resident Get(int residentId);
@@ -16,7 +16,7 @@ namespace Keebee.AAT.ApiClient.Clients
         int Post(ResidentEdit resident);
     }
 
-    public class ResidentsClient : IResidentClient
+    public class ResidentsClient : IResidentsClient
     {
         private readonly ClientBase _clientBase;
 

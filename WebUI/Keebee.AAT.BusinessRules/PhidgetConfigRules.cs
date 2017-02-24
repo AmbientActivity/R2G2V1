@@ -11,11 +11,17 @@ namespace Keebee.AAT.BusinessRules
 {
     public class PhidgetConfigRules
     {
-        private readonly ConfigsClient _configsClient;
+        private readonly IConfigsClient _configsClient;
+        private readonly IResponseTypesClient _responseTypesClient;
+        private readonly IPhidgetTypesClient _phidgetTypesClient;
+        private readonly IPhidgetStyleTypesClient _phidgetStyleTypesClient;
 
         public PhidgetConfigRules()
         {
             _configsClient = new ConfigsClient();
+            _responseTypesClient = new ResponseTypesClient();
+            _phidgetTypesClient = new PhidgetTypesClient();
+            _phidgetStyleTypesClient = new PhidgetStyleTypesClient();
         }
 
         // validation
@@ -106,14 +112,9 @@ namespace Keebee.AAT.BusinessRules
         // view model
         public ConfigEditModel GetConfigEditViewModel(int id, int configId)
         {
-            var responseTypesClient = new ResponseTypesClient();
-            var availableResponseTypes = responseTypesClient.Get();
-
-            var phidgetTypesClient = new PhidgetTypesClient();
-            var allPhidgetTypes = phidgetTypesClient.Get().ToArray();
-
-            var phidgetStyleTypesClient = new PhidgetStyleTypesClient();
-            var availablePhidgetStyleTypes = phidgetStyleTypesClient.Get().ToArray();
+            var availableResponseTypes = _responseTypesClient.Get();
+            var allPhidgetTypes = _phidgetTypesClient.Get().ToArray();
+            var availablePhidgetStyleTypes = _phidgetStyleTypesClient.Get().ToArray();
 
             ConfigDetail configDetail = null;
 

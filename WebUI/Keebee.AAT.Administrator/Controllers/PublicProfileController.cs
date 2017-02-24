@@ -16,15 +16,19 @@ namespace Keebee.AAT.Administrator.Controllers
 {
     public class PublicProfileController : Controller
     {
-        private readonly PublicMediaFilesClient _publicMediaFilesClient;
-        private readonly SystemEventLogger _systemEventLogger;
+        // api client
+        private readonly IPublicMediaFilesClient _publicMediaFilesClient;
+        private readonly IMediaPathTypesClient _mediaPathTypesClient;
 
+        private readonly SystemEventLogger _systemEventLogger;
         private readonly MediaSourcePath _mediaPath = new MediaSourcePath();
 
         public PublicProfileController()
         {
             _systemEventLogger = new SystemEventLogger(SystemEventLogType.AdminInterface);
+
             _publicMediaFilesClient = new PublicMediaFilesClient();
+            _mediaPathTypesClient = new MediaPathTypesClient();
         }
 
         // GET: PublicProfile
@@ -85,8 +89,7 @@ namespace Keebee.AAT.Administrator.Controllers
         [Authorize]
         public JsonResult GetData(int mediaPathTypeId)
         {
-            var mediaPathTypesClient = new MediaPathTypesClient();
-            var mediaPathTypes = mediaPathTypesClient.Get()
+            var mediaPathTypes = _mediaPathTypesClient.Get()
                 .Where(x => x.IsSharable)
                 .Where(x => !x.IsSystem)
                 .OrderBy(p => p.Description);
@@ -160,7 +163,7 @@ namespace Keebee.AAT.Administrator.Controllers
 
                     if (publicMediaFile.MediaFile.IsLinked)
                     {
-                        rules.DeletePublicMediaFile(id);
+                        _publicMediaFilesClient.Delete(id);
                     }
                     else
                     {
@@ -168,7 +171,7 @@ namespace Keebee.AAT.Administrator.Controllers
                         if (file == null) continue;
 
                         // delete the link
-                        errormessage = rules.DeletePublicMediaFile(id);
+                        errormessage = _publicMediaFilesClient.Delete(id);
                         if (errormessage.Length > 0)
                             throw new Exception(errormessage);
 

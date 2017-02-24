@@ -1,13 +1,13 @@
-﻿using System;
+﻿using Keebee.AAT.MessageQueuing;
+using System;
 using System.Windows.Forms;
-using Keebee.AAT.MessageQueuing;
 using System.Web.Script.Serialization;
 
 namespace Keebee.AAT.PhidgetMonitor
 {
     public partial class Monitor : Form
     {
-        delegate void UpdateLabelDelegate(int sensorId, string text);
+        private delegate void UpdateLabelDelegate(int sensorId, string text);
 
 #if DEBUG
         private readonly CustomMessageQueue _messageQueuePhidgetMonitorState;

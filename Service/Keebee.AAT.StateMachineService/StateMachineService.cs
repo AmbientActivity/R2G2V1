@@ -14,9 +14,9 @@ namespace Keebee.AAT.StateMachineService
 {
     public partial class StateMachineService : ServiceBase
     {
-        // REST client
-        private readonly ActiveResidentClient _activeResidentClient;
-        private readonly ConfigsClient _configsClient;
+        // api client
+        private readonly IActiveResidentClient _activeResidentClient;
+        private readonly IConfigsClient _configsClient;
 
         // message queue sender
         private readonly CustomMessageQueue _messageQueueResponse;

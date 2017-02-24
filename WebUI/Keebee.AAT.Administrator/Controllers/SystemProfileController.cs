@@ -13,13 +13,16 @@ namespace Keebee.AAT.Administrator.Controllers
 {
     public class SystemProfileController : Controller
     {
-        private readonly PublicMediaFilesClient _publicMediaFilesClient;
+        // api client
+        private readonly IPublicMediaFilesClient _publicMediaFilesClient;
+        private readonly IMediaPathTypesClient _mediaPathTypesClient;
 
         private readonly MediaSourcePath _mediaSourcePath = new MediaSourcePath();
 
         public SystemProfileController()
         {
             _publicMediaFilesClient = new PublicMediaFilesClient();
+            _mediaPathTypesClient = new MediaPathTypesClient();
         }
 
         // GET: SystemProfile
@@ -33,9 +36,7 @@ namespace Keebee.AAT.Administrator.Controllers
         [Authorize]
         public JsonResult GetData()
         {
-            var mediaPathTypesClient = new MediaPathTypesClient();
-
-            var mediaPathTypes = mediaPathTypesClient.Get()
+            var mediaPathTypes = _mediaPathTypesClient.Get()
                 .Where(x => x.IsSystem)
                 .OrderBy(p => p.Description);
             var fileList = GetMediaFiles();
@@ -77,7 +78,7 @@ namespace Keebee.AAT.Administrator.Controllers
 
                     if (publicMediaFile.MediaFile.IsLinked)
                     {
-                        rules.DeletePublicMediaFile(id);
+                        _publicMediaFilesClient.Delete(id);
                     }
                     else
                     {
@@ -213,8 +214,7 @@ namespace Keebee.AAT.Administrator.Controllers
         private IEnumerable<PublicMediaFileViewModel> GetMediaFiles()
         {
             var list = new List<PublicMediaFileViewModel>();
-            var publicMediaFIlesClient = new PublicMediaFilesClient();
-            var publicMedia = publicMediaFIlesClient.Get(isSystem: true); // system only
+            var publicMedia = _publicMediaFilesClient.Get(isSystem: true); // system only
 
             if (publicMedia == null) return list;
 

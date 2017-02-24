@@ -8,7 +8,7 @@ namespace Keebee.AAT.StateMachineService
 {
     public class ActiveResidentEventLogger
     {
-        private readonly ActiveResidentEventLogsClient _activeReisdentEventLogsClient;
+        private readonly IActiveResidentEventLogsClient _activeReisdentEventLogsClient;
 
         private SystemEventLogger _systemEventLogger;
         public SystemEventLogger SystemEventLogger

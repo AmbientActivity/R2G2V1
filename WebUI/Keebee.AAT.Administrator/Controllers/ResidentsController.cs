@@ -20,9 +20,11 @@ namespace Keebee.AAT.Administrator.Controllers
 {
     public class ResidentsController : Controller
     {
-        private readonly ResidentsClient _residentsClient;
-        private readonly ResidentMediaFilesClient _residentMediaFilesClient;
-        private readonly ActiveResidentClient _activeResidentClient;
+        // api client
+        private readonly IResidentsClient _residentsClient;
+        private readonly IResidentMediaFilesClient _residentMediaFilesClient;
+        private readonly IActiveResidentClient _activeResidentClient;
+        private readonly IMediaPathTypesClient _mediaPathTypesClient;
 
         private readonly SystemEventLogger _systemEventLogger;
         private readonly MediaSourcePath _mediaSourcePath = new MediaSourcePath();
@@ -31,9 +33,11 @@ namespace Keebee.AAT.Administrator.Controllers
         public ResidentsController()
         {
             _systemEventLogger = new SystemEventLogger(SystemEventLogType.AdminInterface);
+
             _residentsClient = new ResidentsClient();
             _residentMediaFilesClient = new ResidentMediaFilesClient();
             _activeResidentClient = new ActiveResidentClient();
+            _mediaPathTypesClient = new MediaPathTypesClient();
 
             // bluetooth beacon watcher reload message queue sender
             _messageQueueBluetoothBeaconWatcherReload = new CustomMessageQueue(new CustomMessageQueueArgs
@@ -126,8 +130,7 @@ namespace Keebee.AAT.Administrator.Controllers
         [Authorize]
         public JsonResult GetDataProfile(int id, int mediaPathTypeId)
         {
-            var mediaPathTypesClient = new MediaPathTypesClient();
-            var mediaPathTypes = mediaPathTypesClient.Get()
+            var mediaPathTypes = _mediaPathTypesClient.Get()
                 .Where(x => !x.IsSystem)
                 .OrderBy(p => p.Description);
 

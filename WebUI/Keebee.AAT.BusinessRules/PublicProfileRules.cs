@@ -9,19 +9,22 @@ namespace Keebee.AAT.BusinessRules
 {
     public class PublicProfileRules
     {
-        private readonly PublicMediaFilesClient _publicMediaFilesClient;
-        private readonly MediaFilesClient _mediaFilesClient;
+        private readonly IPublicMediaFilesClient _publicMediaFilesClient;
+        private readonly IMediaFilesClient _mediaFilesClient;
+        private readonly IResponseTypesClient _responseTypesClient;
+        private readonly IMediaPathTypesClient _mediaPathTypesClient;
 
         public PublicProfileRules()
         {
             _publicMediaFilesClient = new PublicMediaFilesClient();
             _mediaFilesClient = new MediaFilesClient();
+            _responseTypesClient = new ResponseTypesClient();
+            _mediaPathTypesClient = new MediaPathTypesClient();
         }
 
         public IEnumerable<ResponseType> GetValidResponseTypes(int mediaPathTypeId)
         {
-            var responseTypesClient = new ResponseTypesClient();
-            var responseTypes = responseTypesClient.Get();
+            var responseTypes = _responseTypesClient.Get();
 
             switch (mediaPathTypeId)
             {
@@ -45,24 +48,21 @@ namespace Keebee.AAT.BusinessRules
 
         public string GetMediaPath(int? mediaPathTypeId)
         {
-            var mediaPathTypesClient = new MediaPathTypesClient();
             return mediaPathTypeId != null
-                ? mediaPathTypesClient.Get((int)mediaPathTypeId).Path
-                : mediaPathTypesClient.Get(MediaPathTypeId.ImagesGeneral).Path;
+                ? _mediaPathTypesClient.Get((int)mediaPathTypeId).Path
+                : _mediaPathTypesClient.Get(MediaPathTypeId.ImagesGeneral).Path;
         }
 
         public string GetMediaPathShortDescription(int? mediaPathTypeId)
         {
-            var mediaPathTypesClient = new MediaPathTypesClient();
             return mediaPathTypeId != null
-                ? mediaPathTypesClient.Get((int)mediaPathTypeId).ShortDescription
-                : mediaPathTypesClient.Get(MediaPathTypeId.ImagesGeneral).ShortDescription;
+                ? _mediaPathTypesClient.Get((int)mediaPathTypeId).ShortDescription
+                : _mediaPathTypesClient.Get(MediaPathTypeId.ImagesGeneral).ShortDescription;
         }
 
         public bool FileExists(string path, string filename)
         {
-            var mediaFilesClient = new MediaFilesClient();
-            var file = mediaFilesClient.GetFromPath(path, filename);
+            var file = _mediaFilesClient.GetFromPath(path, filename);
 
             return (file != null);
         }
@@ -87,11 +87,6 @@ namespace Keebee.AAT.BusinessRules
                 result = "Must have at least 1 media file for each respone type";
 
             return result;
-        }
-
-        public string DeletePublicMediaFile(int id)
-        {
-            return _publicMediaFilesClient.Delete(id);
         }
 
         public MediaFileSingle GetMediaFile(int id)

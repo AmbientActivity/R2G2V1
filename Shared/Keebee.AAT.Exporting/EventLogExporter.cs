@@ -1,5 +1,4 @@
-﻿using Keebee.AAT.ApiClient;
-using Keebee.AAT.SystemEventLogging;
+﻿using Keebee.AAT.SystemEventLogging;
 using Keebee.AAT.Shared;
 using Keebee.AAT.ApiClient.Clients;
 using ExcelLibrary.SpreadSheet;
@@ -12,9 +11,9 @@ namespace Keebee.AAT.Exporting
 {
     public class EventLogExporter
     {
-        private readonly ActivityEventLogsClient _activityEventLogsClient;
-        private readonly InteractiveActivityEventLogsClient _interactiveActivityEventLogsClient;
-        private readonly ActiveResidentEventLogsClient _activeResidentEventLogsClient;
+        private readonly IActivityEventLogsClient _activityEventLogsClient;
+        private readonly IInteractiveActivityEventLogsClient _interactiveActivityEventLogsClient;
+        private readonly IActiveResidentEventLogsClient _activeResidentEventLogsClient;
 
         private readonly SystemEventLogger _systemEventLogger;
 

@@ -1,9 +1,9 @@
 ﻿using Keebee.AAT.Administrator.ViewModels;
-using Keebee.AAT.ApiClient;
 using Keebee.AAT.MessageQueuing;
 using Keebee.AAT.BusinessRules;
 using Keebee.AAT.Shared;
-using Keebee.AAT.SystemEventLogging;
+using Keebee.AAT.ApiClient.Clients;
+using Keebee.AAT.ApiClient.Models;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
@@ -13,14 +13,14 @@ namespace Keebee.AAT.Administrator.Controllers
 {
     public class PhidgetConfigController : Controller
     {
-        private readonly OperationsClient _opsClient;
-        private readonly SystemEventLogger _systemEventLogger;
+        private readonly ConfigsClient _configsClient;
+        private readonly ActivityEventLogsClient _activityEventLogsClient;
         private readonly CustomMessageQueue _messageQueueConfigSms;
 
         public PhidgetConfigController()
         {
-            _systemEventLogger = new SystemEventLogger(SystemEventLogType.AdminInterface);
-            _opsClient = new OperationsClient { SystemEventLogger = _systemEventLogger };
+            _configsClient = new ConfigsClient();
+            _activityEventLogsClient = new ActivityEventLogsClient();
 
             _messageQueueConfigSms = new CustomMessageQueue(new CustomMessageQueueArgs
             {
@@ -68,7 +68,7 @@ namespace Keebee.AAT.Administrator.Controllers
         {
             var c = JsonConvert.DeserializeObject<ConfigEditViewModel>(config);
             var configid = c.Id;
-            var rules = new PhidgetConfigRules {OperationsClient = _opsClient};
+            var rules = new PhidgetConfigRules();
 
             var msgs = rules.Validate(c.Description, configid == 0);
 
@@ -94,7 +94,7 @@ namespace Keebee.AAT.Administrator.Controllers
         [Authorize]
         public JsonResult Delete(int id)
         {
-            _opsClient.DeleteConfig(id);
+            _configsClient.Delete(id);
 
             return Json(new
             {
@@ -134,7 +134,7 @@ namespace Keebee.AAT.Administrator.Controllers
         [Authorize]
         public JsonResult DeleteDetail(int id, int configId, bool isActive)
         {
-            _opsClient.DeleteConfigDetail(id);
+            _configsClient.DeleteDetail(id);
 
             if (isActive)
                 SendNewConfiguration(configId);
@@ -150,7 +150,7 @@ namespace Keebee.AAT.Administrator.Controllers
         [Authorize]
         public JsonResult Activate(int configId)
         {
-            _opsClient.PostActivateConfig(configId);
+            _configsClient.Activate(configId);
             SendNewConfiguration(configId);
 
             var vm = new
@@ -165,7 +165,7 @@ namespace Keebee.AAT.Administrator.Controllers
 
         private IEnumerable<ConfigViewModel> GetConfigList()
         {
-            var configs = _opsClient.GetConfigs().ToArray();
+            var configs = _configsClient.Get().ToArray();
 
             var defaultConfig = configs.Where(x => x.Id == ConfigId.Default).ToArray();
             var customConfigs = configs.Where(x => x.Id != ConfigId.Default).OrderBy(x => x.Description).ToArray();
@@ -175,7 +175,7 @@ namespace Keebee.AAT.Administrator.Controllers
                 .Select(config => 
                 {
                     {
-                        var activityLogs = _opsClient.GetActivityEventLogsForConfig(config.Id);
+                        var activityLogs = _activityEventLogsClient.GetForConfig(config.Id);
                         var vm = new ConfigViewModel
                                 {
                                     Id = config.Id,
@@ -196,13 +196,13 @@ namespace Keebee.AAT.Administrator.Controllers
 
         private IEnumerable<ConfigDetailViewModel> GetConfigDetailList()
         {
-            var configs = _opsClient.GetConfigs();
+            var configs = _configsClient.Get();
 
             var list = configs
                 .SelectMany(config => config.ConfigDetails
                     .Select(cd =>
                             {
-                                var activityLogs = _opsClient.GetActivityEventLogsForConfigDetail(cd.Id);
+                                var activityLogs = _activityEventLogsClient.GetForConfigDetail(cd.Id);
                                 var vm = new ConfigDetailViewModel
                                          {
                                              Id = cd.Id,
@@ -228,11 +228,11 @@ namespace Keebee.AAT.Administrator.Controllers
 
             if (id > 0)
             {
-                config = _opsClient.GetConfig(id);
+                config = _configsClient.Get(id);
             }
             else
             {
-                selectedConfig = _opsClient.GetConfig(selectedConfigId);
+                selectedConfig = _configsClient.Get(selectedConfigId);
             }
 
             var vm = new ConfigEditViewModel
@@ -248,7 +248,7 @@ namespace Keebee.AAT.Administrator.Controllers
 
         private ConfigDetailEditViewModel LoadConfigDetailEditViewModel(int id, int configId)
         {
-            var configurationRules = new PhidgetConfigRules {OperationsClient = _opsClient};
+            var configurationRules = new PhidgetConfigRules();
             var configEdit = configurationRules.GetConfigEditViewModel(id, configId);
             var configDetail = configEdit.ConfigDetail;
 
@@ -273,7 +273,7 @@ namespace Keebee.AAT.Administrator.Controllers
                 IsActiveEventLog = config.IsActiveEventLog
             };
 
-            _opsClient.PatchConfig(config.Id, c);
+            _configsClient.Patch(config.Id, c);
 
             if(config.IsActive)
                 SendNewConfiguration(config.Id);
@@ -288,10 +288,10 @@ namespace Keebee.AAT.Administrator.Controllers
                 IsActiveEventLog = config.IsActiveEventLog
             };
 
-            var newId = _opsClient.PostConfig(newConfig);
+            var newId = _configsClient.Post(newConfig);
 
             // config details
-            var rules = new PhidgetConfigRules {OperationsClient = _opsClient};
+            var rules = new PhidgetConfigRules();
             rules.DuplicateConfigDetails(selectedConfigId, newId);
 
             return newId;
@@ -308,7 +308,7 @@ namespace Keebee.AAT.Administrator.Controllers
                 ResponseTypeId = configDetail.ResponseTypeId
             };
 
-            _opsClient.PatchConfigDetail(configDetail.Id, cd);
+            _configsClient.PatchDetail(configDetail.Id, cd);
 
             if (configDetail.IsActive)
                 SendNewConfiguration(configDetail.ConfigId);
@@ -326,7 +326,7 @@ namespace Keebee.AAT.Administrator.Controllers
                 ResponseTypeId = configDetail.ResponseTypeId
             };
 
-            var id = _opsClient.PostConfigDetail(cd);
+            var id = _configsClient.PostDetail(cd);
 
             if (configDetail.IsActive)
                 SendNewConfiguration(configDetail.ConfigId);
@@ -336,7 +336,7 @@ namespace Keebee.AAT.Administrator.Controllers
 
         private void SendNewConfiguration(int configId)
         {
-            var rules = new PhidgetConfigRules { OperationsClient = _opsClient };
+            var rules = new PhidgetConfigRules();
             _messageQueueConfigSms.Send(rules.GetMessageBody(configId));
         }
     }

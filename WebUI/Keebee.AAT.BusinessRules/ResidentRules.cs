@@ -1,5 +1,6 @@
-﻿using Keebee.AAT.ApiClient;
-using Keebee.AAT.Shared;
+﻿using Keebee.AAT.Shared;
+using Keebee.AAT.ApiClient.Clients;
+using Keebee.AAT.ApiClient.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,10 +9,15 @@ namespace Keebee.AAT.BusinessRules
 {
     public class ResidentRules
     {
-        private OperationsClient _opsClient;
-        public OperationsClient OperationsClient
+        private readonly ResidentsClient _residentsClient;
+        private readonly ResidentMediaFilesClient _residentMediaFilesClient;
+        private readonly MediaFilesClient _mediaFilesClient;
+
+        public ResidentRules()
         {
-            set { _opsClient = value; }
+            _residentsClient = new ResidentsClient();
+            _residentMediaFilesClient = new ResidentMediaFilesClient();
+            _mediaFilesClient = new MediaFilesClient();
         }
 
         // validation
@@ -27,7 +33,7 @@ namespace Keebee.AAT.BusinessRules
 
             if (!addnew) return msgs.Count > 0 ? msgs : null;
 
-            var resident = _opsClient.GetResidentByNameGender(firstName, lastName, gender);
+            var resident = _residentsClient.GetByNameGender(firstName, lastName, gender);
             if (resident == null) return msgs.Count > 0 ? msgs : null;
             if (resident.Id == 0) return msgs.Count > 0 ? msgs : null;
 
@@ -44,39 +50,43 @@ namespace Keebee.AAT.BusinessRules
             string result;
 
             try
-            {
+            {               
                 // delete active resident event logs
-                var activeResidentEventLogs = _opsClient.GetActiveResidentEventLogsForResident(id).ToArray();
+                var activeResidentEventLogsClient = new ActiveResidentEventLogsClient();
+                var activeResidentEventLogs = activeResidentEventLogsClient.GetForResident(id).ToArray();
                 foreach (var eventLog in activeResidentEventLogs)
                 {
-                    result = _opsClient.DeleteActiveResidentEventLog(eventLog.Id);
+                    result = activeResidentEventLogsClient.Delete(eventLog.Id);
 
                     if (result.Length > 0)
                         throw new Exception($"Error deleting Active Resident Event Logs{Environment.NewLine}{result}");
                 }
 
                 // delete activity event logs
-                var activityEventLogs = _opsClient.GetActivityEventLogsForResident(id).ToArray();
+                var activityEventLogsClient = new ActivityEventLogsClient();
+                var activityEventLogs = activityEventLogsClient.GetForResident(id).ToArray();
                 foreach (var eventLog in activityEventLogs)
                 {
-                    result = _opsClient.DeleteActivityEventLog(eventLog.Id);
+                    result = activityEventLogsClient.Delete(eventLog.Id);
 
                     if (result.Length > 0)
                         throw new Exception($"Error deleting Activity Event Logs{Environment.NewLine}{result}");
                 }
 
                 // delete interactive activity event logs
-                var interactiveActivityEventLogs = _opsClient.GetInteractiveActivityEventLogsForResident(id).ToArray();
+                var interactiveActivityEventLogsClient = new InteractiveActivityEventLogsClient();
+                var interactiveActivityEventLogs = interactiveActivityEventLogsClient.GetForResident(id).ToArray();
                 foreach (var eventLog in interactiveActivityEventLogs)
                 {
-                    result = _opsClient.DeleteInteractiveActivityEventLog(eventLog.Id);
+                    result = interactiveActivityEventLogsClient.Delete(eventLog.Id);
 
                     if (result.Length > 0)
                         throw new Exception($"Error deleting Interactive Activity Event Logs{Environment.NewLine}{result}");
                 }
 
                 // delete resident
-                result = _opsClient.DeleteResident(id);
+                var residentsClient = new ResidentsClient();
+                result = residentsClient.Delete(id);
 
                 if (result.Length > 0)
                     throw new Exception($"Error deleting Resident{Environment.NewLine}{result}");
@@ -122,11 +132,11 @@ namespace Keebee.AAT.BusinessRules
 
         public MediaFileSingle GetMediaFile(int id)
         {
-            var mediaFile = _opsClient.GetResidentMediaFile(id);
+            var mediaFile = _residentMediaFilesClient.Get(id);
 
             return mediaFile == null
                 ? null
-                : _opsClient.GetMediaFile(mediaFile.MediaFile.StreamId);
+                : _mediaFilesClient.Get(mediaFile.MediaFile.StreamId);
         }
 
         public static string GetAllowedExtensions(int? mediaPathTypeId)
@@ -160,16 +170,20 @@ namespace Keebee.AAT.BusinessRules
 
         public string GetMediaPath(int? mediaPathTypeId)
         {
+            var mediaPathTypesClient = new MediaPathTypesClient();
+
             return mediaPathTypeId != null
-                ? _opsClient.GetMediaPathType((int)mediaPathTypeId).Path
-                : _opsClient.GetMediaPathType(MediaPathTypeId.ImagesGeneral).Path;
+                ? mediaPathTypesClient.Get((int)mediaPathTypeId).Path
+                : mediaPathTypesClient.Get(MediaPathTypeId.ImagesGeneral).Path;
         }
 
         public string GetMediaPathShortDescription(int? mediaPathTypeId)
         {
+            var mediaPathTypesClient = new MediaPathTypesClient();
+
             return mediaPathTypeId != null
-                ? _opsClient.GetMediaPathType((int)mediaPathTypeId).ShortDescription
-                : _opsClient.GetMediaPathType(MediaPathTypeId.ImagesGeneral).ShortDescription;
+                ? mediaPathTypesClient.Get((int)mediaPathTypeId).ShortDescription
+                : mediaPathTypesClient.Get(MediaPathTypeId.ImagesGeneral).ShortDescription;
         }
 
         public static int GetResponseTypeId(int mediaPathTypeId)
@@ -201,23 +215,23 @@ namespace Keebee.AAT.BusinessRules
 
         public byte[] GetFile(string path, string filename)
         {
-            var file = _opsClient.GetMediaFileStreamFromPath(path, filename);
+            var mediaFilesClient = new MediaFilesClient();
+            var file = mediaFilesClient.GetFileStreamFromPath(path, filename);
 
             return file;
-        }
-
-        public string DeleteResidentMediaFile(int id)
-        {
-            return _opsClient.DeleteResidentMediaFile(id);
         }
 
         public IEnumerable<MediaFile> GetAvailableSharedMediaFiles(int residentId, int mediaPathTypeId)
         {
             var mediaSource = new MediaSourcePath();
             var mediaPath = GetMediaPath(mediaPathTypeId);
-            var sharedPaths = _opsClient.GetMediaFilesForPath($@"{mediaSource.SharedLibrary}\{mediaPath}").ToArray();
+
+            var mediaFilesClient = new MediaFilesClient();
+            var sharedPaths = mediaFilesClient.GetForPath($@"{mediaSource.SharedLibrary}\{mediaPath}").ToArray();
             var responseTypeId = GetResponseTypeId(mediaPathTypeId);
-            var existingLinkedMediaPaths = _opsClient.GetResidentMediaFilesForResidentResponseType(residentId, responseTypeId);
+
+            var residentMediaFilesClient = new ResidentMediaFilesClient();
+            var existingLinkedMediaPaths = residentMediaFilesClient.GetForResidentResponseType(residentId, responseTypeId);
             IEnumerable<Guid> existingStreamIds = new List<Guid>();
 
             if (existingLinkedMediaPaths?.MediaResponseType != null)

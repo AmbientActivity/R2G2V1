@@ -1,5 +1,6 @@
-﻿using Keebee.AAT.BusinessRules.DTO;
-using Keebee.AAT.ApiClient;
+﻿using Keebee.AAT.BusinessRules.Models;
+using Keebee.AAT.ApiClient.Clients;
+using Keebee.AAT.ApiClient.Models;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
@@ -8,10 +9,11 @@ namespace Keebee.AAT.BusinessRules
 {
     public class AccountRules
     {
-        private OperationsClient _opsClient;
-        public OperationsClient OperationsClient
+        private readonly UsersClient _usersClient;
+
+        public AccountRules()
         {
-            set { _opsClient = value; }
+            _usersClient = new UsersClient();
         }
 
         public int CreateUser(UserModel user)
@@ -23,14 +25,14 @@ namespace Keebee.AAT.BusinessRules
                 Password = GeneratePasswordHash(user.Password)
             };
 
-            var id = _opsClient.PostUser(u);
+            var id = _usersClient.Post(u);
 
             return id;
         }
 
         public int AttemptToLogin(string username, string password, out string errmsg)
         {
-            var user = _opsClient.GetUserByUsername(username);
+            var user = _usersClient.GetByUsername(username);
             errmsg = null;
 
             if (user.Id == 0)
@@ -53,7 +55,8 @@ namespace Keebee.AAT.BusinessRules
 
         public string GetUserRoles(int userId)
         {
-            var user = _opsClient.GetRolesByUser(userId).Single();
+            var userRolesClient = new UserRolesClient();
+            var user = userRolesClient.GetByUser(userId).Single();
             var s = new StringBuilder();
 
             foreach (var r in user.Roles)
@@ -67,7 +70,7 @@ namespace Keebee.AAT.BusinessRules
         public string ValidatePasswordChange(string username, string oldPassword, string newPassword, string retypeNewPassword, out int userId)
         {
             string errmsg = null;
-            var user = _opsClient.GetUserByUsername(username);
+            var user = _usersClient.GetByUsername(username);
             var passwordHash = user.Password.Trim();
 
             userId = user.Id;
@@ -95,7 +98,7 @@ namespace Keebee.AAT.BusinessRules
             var passwordHash = GeneratePasswordHash(password);
 
             var user = new User {Password = passwordHash};
-            _opsClient.PatchUser(userId, user);
+            _usersClient.Patch(userId, user);
         }
 
         private static bool VerifyHashPassword(string password, string hash)

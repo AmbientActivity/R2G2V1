@@ -1,9 +1,10 @@
-﻿using Keebee.AAT.ApiClient;
-using Keebee.AAT.Administrator.ViewModels;
+﻿using Keebee.AAT.Administrator.ViewModels;
 using Keebee.AAT.Shared;
 using Keebee.AAT.Administrator.FileManagement;
 using Keebee.AAT.BusinessRules;
 using Keebee.AAT.SystemEventLogging;
+using Keebee.AAT.ApiClient.Clients;
+using Keebee.AAT.ApiClient.Models;
 using CuteWebUI;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,7 +16,7 @@ namespace Keebee.AAT.Administrator.Controllers
 {
     public class PublicProfileController : Controller
     {
-        private readonly OperationsClient _opsClient;
+        private readonly PublicMediaFilesClient _publicMediaFilesClient;
         private readonly SystemEventLogger _systemEventLogger;
 
         private readonly MediaSourcePath _mediaPath = new MediaSourcePath();
@@ -23,7 +24,7 @@ namespace Keebee.AAT.Administrator.Controllers
         public PublicProfileController()
         {
             _systemEventLogger = new SystemEventLogger(SystemEventLogType.AdminInterface);
-            _opsClient = new OperationsClient { SystemEventLogger = _systemEventLogger };
+            _publicMediaFilesClient = new PublicMediaFilesClient();
         }
 
         // GET: PublicProfile
@@ -62,7 +63,7 @@ namespace Keebee.AAT.Administrator.Controllers
 
                     if (!PublicProfileRules.IsValidFile(file.FileName, mediaPathTypeId)) continue;
 
-                    var rules = new PublicProfileRules { OperationsClient = _opsClient };
+                    var rules = new PublicProfileRules();
                     var mediaPath = rules.GetMediaPath(mediaPathTypeId);
                     var filePath = $@"{_mediaPath.ProfileRoot}\{PublicProfileSource.Id}\{mediaPath}\{file.FileName}";
 
@@ -84,7 +85,8 @@ namespace Keebee.AAT.Administrator.Controllers
         [Authorize]
         public JsonResult GetData(int mediaPathTypeId)
         {
-            var mediaPathTypes = _opsClient.GetMediaPathTypes()
+            var mediaPathTypesClient = new MediaPathTypesClient();
+            var mediaPathTypes = mediaPathTypesClient.Get()
                 .Where(x => x.IsSharable)
                 .Where(x => !x.IsSystem)
                 .OrderBy(p => p.Description);
@@ -120,7 +122,7 @@ namespace Keebee.AAT.Administrator.Controllers
                 html = uploader.Render();
             }
 
-            var rules = new PublicProfileRules { OperationsClient = _opsClient };
+            var rules = new PublicProfileRules();
             var responseTypes = rules.GetValidResponseTypes(mediaPathTypeId)
                 .OrderBy(r => r.Description);
             ;
@@ -145,7 +147,7 @@ namespace Keebee.AAT.Administrator.Controllers
 
             try
             {
-                var rules = new PublicProfileRules { OperationsClient = _opsClient };
+                var rules = new PublicProfileRules();
 
                 errormessage = rules.CanDeleteMultiple(ids.Length, mediaPathTypeId);
                 if (errormessage.Length > 0)
@@ -153,7 +155,7 @@ namespace Keebee.AAT.Administrator.Controllers
 
                 foreach (var id in ids)
                 {
-                    var publicMediaFile = _opsClient.GetPublicMediaFile(id);
+                    var publicMediaFile = _publicMediaFilesClient.Get(id);
                     if (publicMediaFile == null) continue;
 
                     if (publicMediaFile.MediaFile.IsLinked)
@@ -195,7 +197,7 @@ namespace Keebee.AAT.Administrator.Controllers
         [Authorize]
         public PartialViewResult GetImageViewerView(Guid streamId, string fileType)
         {
-            var rules = new ImageViewerRules { OperationsClient = _opsClient };
+            var rules = new ImageViewerRules();
             var m = rules.GetImageViewerModel(streamId, fileType);
 
             return PartialView("_ImageViewer", new ImageViewerViewModel
@@ -246,7 +248,7 @@ namespace Keebee.AAT.Administrator.Controllers
                             IsLinked = true
                         };
 
-                        _opsClient.PostPublicMediaFile(pmf);
+                        _publicMediaFilesClient.Post(pmf);
                     }
                 }
                 success = true;
@@ -278,13 +280,13 @@ namespace Keebee.AAT.Administrator.Controllers
                 IsLinked = false
             };
 
-            _opsClient.PostPublicMediaFile(mf);
+            _publicMediaFilesClient.Post(mf);
         }
 
         private PublicProfileViewModel LoadPublicProfileViewModel(
                 int? mediaPathTypeId)
         {
-            var rules = new PublicProfileRules { OperationsClient = _opsClient };
+            var rules = new PublicProfileRules();
             var vm = new PublicProfileViewModel
             {
                 Title = PublicProfileSource.Description,
@@ -297,7 +299,7 @@ namespace Keebee.AAT.Administrator.Controllers
 
         private SharedLibraryLinkViewModel LoadSharedLibaryAddViewModel(int mediaPathTypeId)
         {
-            var rules = new PublicProfileRules { OperationsClient = _opsClient };
+            var rules = new PublicProfileRules();
             var files = rules.GetAvailableSharedMediaFiles(mediaPathTypeId);
 
             var vm = new SharedLibraryLinkViewModel
@@ -316,7 +318,7 @@ namespace Keebee.AAT.Administrator.Controllers
         private IEnumerable<PublicMediaFileViewModel> GetMediaFiles()
         {
             var list = new List<PublicMediaFileViewModel>();
-            var publicMedia = _opsClient.GetPublicMediaFiles(isSystem: false);
+            var publicMedia = _publicMediaFilesClient.Get(isSystem: false);
 
             if (publicMedia == null) return list;
 

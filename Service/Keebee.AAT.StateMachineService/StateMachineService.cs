@@ -1,8 +1,9 @@
 ﻿using Keebee.AAT.ServiceModels;
-using Keebee.AAT.ApiClient;
 using Keebee.AAT.MessageQueuing;
 using Keebee.AAT.Shared;
 using Keebee.AAT.SystemEventLogging;
+using Keebee.AAT.ApiClient.Clients;
+using Keebee.AAT.ApiClient.Models;
 using System;
 using System.Web.Script.Serialization;
 using System.ServiceProcess;
@@ -13,8 +14,9 @@ namespace Keebee.AAT.StateMachineService
 {
     public partial class StateMachineService : ServiceBase
     {
-        // operations REST client
-        private readonly IApiClient _opsClient;
+        // REST client
+        private readonly ActiveResidentClient _activeResidentClient;
+        private readonly ConfigsClient _configsClient;
 
         // message queue sender
         private readonly CustomMessageQueue _messageQueueResponse;
@@ -38,7 +40,8 @@ namespace Keebee.AAT.StateMachineService
             InitializeComponent();
 
             _systemEventLogger = new SystemEventLogger(SystemEventLogType.StateMachineService);
-            _opsClient = new OperationsClient { SystemEventLogger = _systemEventLogger };
+            _activeResidentClient = new ActiveResidentClient();
+            _configsClient = new ConfigsClient();
 
             InitializeMessageQueueListeners();
 
@@ -265,7 +268,7 @@ namespace Keebee.AAT.StateMachineService
             if (_activeConfig != null) return;
             try
             {
-                var config = _opsClient.GetActiveConfigDetails();
+                var config = _configsClient.GetActiveDetails();
                 _activeConfig = new ConfigMessage
                 {
                     Id = config.Id,
@@ -316,7 +319,6 @@ namespace Keebee.AAT.StateMachineService
 
                 var activeResdientEventLogger = new ActiveResidentEventLogger()
                 {
-                    OperationsClient = _opsClient,
                     SystemEventLogger = _systemEventLogger
                 };
                 activeResdientEventLogger.Add(residentId, description);
@@ -332,7 +334,7 @@ namespace Keebee.AAT.StateMachineService
             try
             {
                 var resident = new ActiveResidentEdit { ResidentId = residentId };
-                _opsClient.PatchActiveResident(resident);
+                _activeResidentClient.Patch(resident);
             }
             catch (Exception ex)
             {

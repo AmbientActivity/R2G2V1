@@ -42,6 +42,22 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Clients\ActiveResidentClient.cs" />
+    <Compile Include="Clients\ActivityEventLogsClient.cs" />
+    <Compile Include="Clients\ClientBase.cs" />
+    <Compile Include="Clients\ConfigsClient.cs" />
+    <Compile Include="Clients\InteractiveActivityEventLogsClient.cs" />
+    <Compile Include="Clients\MediaFilesClient.cs" />
+    <Compile Include="Clients\MediaPathTypesClient.cs" />
+    <Compile Include="Clients\ActiveResidentEventLogsClient.cs" />
+    <Compile Include="Clients\PhidgetStyleTypesClient.cs" />
+    <Compile Include="Clients\PhidgetTypesClient.cs" />
+    <Compile Include="Clients\PublicMediaFilesClient.cs" />
+    <Compile Include="Clients\ResidentMediaFilesClient.cs" />
+    <Compile Include="Clients\ResidentsClient.cs" />
+    <Compile Include="Clients\ResponseTypesClient.cs" />
+    <Compile Include="Clients\UserRolesClient.cs" />
+    <Compile Include="Clients\UsersClient.cs" />
     <Compile Include="Models\ActiveResident.cs" />
     <Compile Include="Models\InteractiveActivityType.cs" />
     <Compile Include="Models\MediaFile.cs" />
@@ -62,7 +78,6 @@
     <Compile Include="Models\Role.cs" />
     <Compile Include="Models\User.cs" />
     <Compile Include="Models\UserRole.cs" />
-    <Compile Include="OperationsClient.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

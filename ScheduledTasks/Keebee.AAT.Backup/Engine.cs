@@ -1,11 +1,12 @@
-﻿using Keebee.AAT.ApiClient;
+﻿using Keebee.AAT.ApiClient.Clients;
+using Keebee.AAT.ApiClient.Models;
+using Keebee.AAT.Shared;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Text;
-using Keebee.AAT.Shared;
 
 namespace Keebee.AAT.Backup
 {
@@ -725,15 +726,18 @@ namespace Keebee.AAT.Backup
 
             try
             {
-                var opsClient = new OperationsClient();
-                var mediaPathTypes = opsClient.GetMediaPathTypes().ToArray();
-                var mediaSourcePath = new MediaSourcePath();
-                var linkedMedia = opsClient.GetLinkedPublicMedia().MediaFiles.ToArray();
+                var mediaPathTypesClient = new MediaPathTypesClient();
+                var mediaPathTypes = mediaPathTypesClient.Get().ToArray();
+
+                var publicMediaFilesClient = new PublicMediaFilesClient();
+                var linkedMedia = publicMediaFilesClient.GetLinked().MediaFiles.ToArray();
 
                 var pathScript = $@"{path}\Install\Database\SQL Server\{RestorePublicProfileFilename}.sql";
 
                 if (File.Exists(pathScript))
                     File.Delete(pathScript);
+
+                var mediaSourcePath = new MediaSourcePath();
 
                 using (var sw = new StreamWriter(pathScript))
                 {
@@ -916,11 +920,14 @@ namespace Keebee.AAT.Backup
 
             try
             {
-                var opsClient = new OperationsClient();
-                var residents = opsClient.GetResidents().ToArray();
-                var mediaPathTypes = opsClient.GetMediaPathTypes().ToArray();
                 var mediaSourcePath = new MediaSourcePath();
-                var linkedMedia = opsClient.GetLinkedResidentMedia().ToArray();
+                var residentsClient = new ResidentsClient();
+                var mediaPathTypesClient = new MediaPathTypesClient();
+                var residentMediaFilesClient = new ResidentMediaFilesClient();
+
+                var residents = residentsClient.Get().ToArray();            
+                var mediaPathTypes = mediaPathTypesClient.Get().ToArray();          
+                var linkedMedia = residentMediaFilesClient.GetLinked().ToArray();
 
                 if (!residents.Any())
                 {
@@ -1137,8 +1144,8 @@ namespace Keebee.AAT.Backup
 
             try
             {
-                var opsClient = new OperationsClient();
-                var configs = opsClient.GetConfigs().ToArray();
+                var configsClient = new ConfigsClient();
+                var configs = configsClient.Get().ToArray();
 
                 if (!configs.Any())
                 {
@@ -1176,7 +1183,7 @@ namespace Keebee.AAT.Backup
                         sw.WriteLine("SET IDENTITY_INSERT [dbo].[Configs] OFF");
 
                         // insert config details
-                        var configDetails = opsClient.GetConfigWithDetails(c.Id).ConfigDetails;
+                        var configDetails = configsClient.GetWithDetails(c.Id).ConfigDetails;
                         sw.WriteLine();
                         sw.WriteLine("SET IDENTITY_INSERT [dbo].[ConfigDetails] ON");
                         foreach (var cd in configDetails)

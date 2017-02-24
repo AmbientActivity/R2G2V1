@@ -140,6 +140,8 @@ namespace Keebee.AAT.Display.UserControls
 
         private void TimerVideoTick(object sender, EventArgs e)
         {
+            if (_invitationMessages.Count == 0) return;
+
             _timerVideo.Stop();
             DisplayContent(showInvitation: !_isInvitaionShown);
             _timerInvitation.Start();

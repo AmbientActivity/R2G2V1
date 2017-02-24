@@ -1,7 +1,7 @@
-﻿using System;
-using Keebee.AAT.Administrator.ViewModels;
-using Keebee.AAT.ApiClient;
+﻿using Keebee.AAT.Administrator.ViewModels;
 using Keebee.AAT.Shared;
+using Keebee.AAT.ApiClient.Clients;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Keebee.AAT.Exporting;
@@ -11,13 +11,6 @@ namespace Keebee.AAT.Administrator.Controllers
 {
     public class EventLogsController : Controller
     {
-        private readonly OperationsClient _opsClient;
-
-        public EventLogsController()
-        {
-            _opsClient = new OperationsClient();
-        }
-
         [HttpGet]
         [Authorize]
         public ActionResult Index()
@@ -49,7 +42,8 @@ namespace Keebee.AAT.Administrator.Controllers
         [Authorize]
         public FileResult Download(string streamId)
         {
-            var mediaFile = _opsClient.GetMediaFile(new Guid(streamId));
+            var mediaFilesCLient = new MediaFilesClient();
+            var mediaFile = mediaFilesCLient.Get(new Guid(streamId));
             var file = System.IO.File.ReadAllBytes($@"{mediaFile.Path}/{mediaFile.Filename}");
 
             //TODO: figure out why this doesn't return the same thing as above
@@ -70,9 +64,10 @@ namespace Keebee.AAT.Administrator.Controllers
             return Json(vm, JsonRequestBehavior.AllowGet);
         }
 
-        private IEnumerable<EventLogViewModel> GetEventLogList()
+        private static IEnumerable<EventLogViewModel> GetEventLogList()
         {
-            var media = _opsClient.GetMediaFilesForPath(Exports.EventLogPath).Single();
+            var mediaFilesCLient = new MediaFilesClient();
+            var media = mediaFilesCLient.GetForPath(Exports.EventLogPath).Single();
 
             var list = media.Files
                 .Select(mediaFile => new EventLogViewModel

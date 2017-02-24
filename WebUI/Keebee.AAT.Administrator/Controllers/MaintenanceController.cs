@@ -1,13 +1,13 @@
-﻿using System.Configuration;
-using Keebee.AAT.BusinessRules;
+﻿using Keebee.AAT.BusinessRules;
 using Keebee.AAT.SystemEventLogging;
 using Keebee.AAT.MessageQueuing;
-using Keebee.AAT.ApiClient;
 using Keebee.AAT.Shared;
+using Keebee.AAT.ApiClient.Clients;
 using System.Diagnostics;
 using System.Linq;
 using System.Web.Mvc;
 using System.Web.Script.Serialization;
+using System.Configuration;
 
 namespace Keebee.AAT.Administrator.Controllers
 {
@@ -101,9 +101,9 @@ namespace Keebee.AAT.Administrator.Controllers
             else
             {
                 // send active config update
-                var opsClient = new OperationsClient { SystemEventLogger = _systemEventLogger };
-                var activeConfigId = opsClient.GetActiveConfig().Id;
-                var configRules = new PhidgetConfigRules { OperationsClient = opsClient };
+                var configsClient = new ConfigsClient();
+                var activeConfigId = configsClient.GetActive().Id;
+                var configRules = new PhidgetConfigRules();
                 var message = configRules.GetMessageBody(activeConfigId);
                 _messageQueueConfigSms.Send(message);
             }
@@ -157,9 +157,9 @@ namespace Keebee.AAT.Administrator.Controllers
             else
             {
                 // inform the state machine to reload the current config
-                var opsClient = new OperationsClient {SystemEventLogger = _systemEventLogger};
-                var activeConfigId = opsClient.GetActiveConfig().Id;
-                var configRules = new PhidgetConfigRules {OperationsClient = opsClient};
+                var configsClient = new ConfigsClient();
+                var activeConfigId = configsClient.GetActive().Id;
+                var configRules = new PhidgetConfigRules();
                 var message = configRules.GetMessageBody(activeConfigId);
                 _messageQueueConfigSms.Send(message);
             }

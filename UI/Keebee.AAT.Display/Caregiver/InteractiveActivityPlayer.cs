@@ -20,12 +20,6 @@ namespace Keebee.AAT.Display.Caregiver
             set { _systemEventLogger = value; }
         }
 
-        private OperationsClient _opsClient;
-        public OperationsClient OperationsClient
-        {
-            set { _opsClient = value; }
-        }
-
         // matching game shapes
         private string[] _shapes;
         public string[] Shapes
@@ -125,7 +119,6 @@ namespace Keebee.AAT.Display.Caregiver
         private void InteractiveActivityPlayerShown(object sender, EventArgs e)
         {
             _interactiveActivityEventLogger.SystemEventLogger = _systemEventLogger;
-            _interactiveActivityEventLogger.OperationsClient = _opsClient;
 
             switch (_interactiveActivityTypeId)
             {

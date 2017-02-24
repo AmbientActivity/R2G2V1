@@ -1,5 +1,6 @@
-﻿using Keebee.AAT.ApiClient;
-using Keebee.AAT.BusinessRules.DTO;
+﻿using Keebee.AAT.ApiClient.Clients;
+using Keebee.AAT.ApiClient.Models;
+using Keebee.AAT.BusinessRules.Models;
 using System;
 using System.Drawing;
 
@@ -13,12 +14,6 @@ namespace Keebee.AAT.BusinessRules
             public const int MaxImagePreviewHeight = 333;
         }
 
-        private OperationsClient _opsClient;
-        public OperationsClient OperationsClient
-        {
-            set { _opsClient = value; }
-        }
-
         private struct ImageSize
         {
             public int Width;
@@ -28,9 +23,8 @@ namespace Keebee.AAT.BusinessRules
         public ImageViewerModel GetImageViewerModel(Guid streamId, string fileType)
         {
             const int maxWidth = PreviewConstants.MaxImagePreviewgWidth;
-
-            var rules = new ImageViewerRules();
-            var file = _opsClient.GetMediaFile(streamId);
+            var mediaFilesClient = new MediaFilesClient();
+            var file = mediaFilesClient.Get(streamId);
 
             var originalSize = GetOriginalSize(file);
             var size = GetImageSize(originalSize.Width, originalSize.Height);
@@ -103,7 +97,5 @@ namespace Keebee.AAT.BusinessRules
 
             return new ImageSize { Width = newWidth, Height = newHeight };
         }
-
-
     }
 }

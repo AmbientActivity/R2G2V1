@@ -1,4 +1,4 @@
-﻿using Keebee.AAT.ApiClient;
+﻿using Keebee.AAT.ApiClient.Clients;
 using Keebee.AAT.SystemEventLogging;
 using Keebee.AAT.MessageQueuing;
 using Keebee.AAT.Shared;
@@ -28,7 +28,7 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
         private const int BeaconReadInterval = 1000;   // 1 second
 
         // operations api
-        private readonly IApiClient _opsClient;
+        private readonly ResidentsClient _residentsClient;
 
         // event logger
         private readonly SystemEventLogger _systemEventLogger;
@@ -70,7 +70,7 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
         {
             InitializeComponent();
             _systemEventLogger = new SystemEventLogger(SystemEventLogType.BluetoothBeaconWatcherService);
-            _opsClient = new OperationsClient();
+            _residentsClient = new ResidentsClient();
 
             // app settings
             _companyUuid = ConfigurationManager.AppSettings["CompanyUUID"];
@@ -334,8 +334,8 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
             try
             {
                 if (_residents != null) return true;
-                var residents = _opsClient.GetResidents().ToArray();
-                if (residents == null) return false;
+                var residents = _residentsClient.Get().ToArray();
+                if (!residents.Any()) return false;
 
                 _residents = residents.Select(r => new ResidentMessage
                 {

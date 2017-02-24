@@ -1,7 +1,7 @@
-﻿using Keebee.AAT.ApiClient;
+﻿using Keebee.AAT.ApiClient.Models;
 using System.Collections.Generic;
 
-namespace Keebee.AAT.BusinessRules.DTO
+namespace Keebee.AAT.BusinessRules.Models
 {
     public class ConfigEditModel
     {

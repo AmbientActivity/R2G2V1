@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Keebee.AAT.ApiClient
+namespace Keebee.AAT.ApiClient.Models
 {
     public class PhidgetType
     {

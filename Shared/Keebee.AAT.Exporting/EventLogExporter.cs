@@ -1,6 +1,7 @@
 ﻿using Keebee.AAT.ApiClient;
 using Keebee.AAT.SystemEventLogging;
 using Keebee.AAT.Shared;
+using Keebee.AAT.ApiClient.Clients;
 using ExcelLibrary.SpreadSheet;
 using System;
 using System.Diagnostics;
@@ -11,12 +12,18 @@ namespace Keebee.AAT.Exporting
 {
     public class EventLogExporter
     {
-        private readonly OperationsClient _opsClient;
+        private readonly ActivityEventLogsClient _activityEventLogsClient;
+        private readonly InteractiveActivityEventLogsClient _interactiveActivityEventLogsClient;
+        private readonly ActiveResidentEventLogsClient _activeResidentEventLogsClient;
+
         private readonly SystemEventLogger _systemEventLogger;
 
         public EventLogExporter()
         {
-            _opsClient = new OperationsClient();
+            _activityEventLogsClient = new ActivityEventLogsClient();
+            _activeResidentEventLogsClient = new ActiveResidentEventLogsClient();
+            _interactiveActivityEventLogsClient = new InteractiveActivityEventLogsClient();
+
             _systemEventLogger = new SystemEventLogger(SystemEventLogType.EventLog);
         }
 
@@ -49,9 +56,9 @@ namespace Keebee.AAT.Exporting
 
             try
             {
-                var activityEventLogs = _opsClient.GetActivityEventLogsForDate(date).ToArray();
-                var interactiveActivityEventLogs = _opsClient.GetInteractiveActivityEventLogsForDate(date).ToArray();
-                var activeResidentEventLogs = _opsClient.GetActiveResidentEventLogsForDate(date).ToArray();
+                var activityEventLogs = _activityEventLogsClient.GetForDate(date).ToArray();
+                var interactiveActivityEventLogs = _interactiveActivityEventLogsClient.GetForDate(date).ToArray();
+                var activeResidentEventLogs = _activeResidentEventLogsClient.GetForDate(date).ToArray();
 
                 // -------------------- Active Resident Log------------------------
 

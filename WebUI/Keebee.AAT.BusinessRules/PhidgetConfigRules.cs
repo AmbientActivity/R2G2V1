@@ -1,6 +1,7 @@
-﻿using Keebee.AAT.ApiClient;
-using Keebee.AAT.BusinessRules.DTO;
+﻿using Keebee.AAT.BusinessRules.Models;
 using Keebee.AAT.Shared;
+using Keebee.AAT.ApiClient.Clients;
+using Keebee.AAT.ApiClient.Models;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -10,10 +11,11 @@ namespace Keebee.AAT.BusinessRules
 {
     public class PhidgetConfigRules
     {
-        private OperationsClient _opsClient;
-        public OperationsClient OperationsClient
+        private readonly ConfigsClient _configsClient;
+
+        public PhidgetConfigRules()
         {
-            set { _opsClient = value; }
+            _configsClient = new ConfigsClient();
         }
 
         // validation
@@ -27,7 +29,7 @@ namespace Keebee.AAT.BusinessRules
             if (!addnew) return msgs.Count > 0 ? msgs : null;
             if (description?.Length == 0) return msgs;
 
-            var config = _opsClient.GetConfigByDescription(description);
+            var config = _configsClient.GetByDescription(description);
 
             if (config.Description != null)
                 msgs.Add($"A configuration with the name '{description}' already exists");
@@ -86,11 +88,11 @@ namespace Keebee.AAT.BusinessRules
         // duplicate
         public void DuplicateConfigDetails(int selectedConfigId, int newConfigId)
         {
-            var selectedConfig = _opsClient.GetConfigWithDetails(selectedConfigId);
+            var selectedConfig = _configsClient.GetWithDetails(selectedConfigId);
 
             foreach (var detail in selectedConfig.ConfigDetails)
             {
-                _opsClient.PostConfigDetail(new ConfigDetailEdit
+                _configsClient.PostDetail(new ConfigDetailEdit
                 {
                     ConfigId = newConfigId,
                     Description = detail.Description,
@@ -104,9 +106,15 @@ namespace Keebee.AAT.BusinessRules
         // view model
         public ConfigEditModel GetConfigEditViewModel(int id, int configId)
         {
-            var availableResponseTypes = _opsClient.GetResponseTypes();
-            var allPhidgetTypes = _opsClient.GetPhidgetTypes().ToArray();
-            var availablePhidgetStyleTypes = _opsClient.GetPhidgetStyleTypes().ToArray();
+            var responseTypesClient = new ResponseTypesClient();
+            var availableResponseTypes = responseTypesClient.Get();
+
+            var phidgetTypesClient = new PhidgetTypesClient();
+            var allPhidgetTypes = phidgetTypesClient.Get().ToArray();
+
+            var phidgetStyleTypesClient = new PhidgetStyleTypesClient();
+            var availablePhidgetStyleTypes = phidgetStyleTypesClient.Get().ToArray();
+
             ConfigDetail configDetail = null;
 
             IEnumerable<int> usedPhidgetIds;
@@ -114,10 +122,10 @@ namespace Keebee.AAT.BusinessRules
             // edit mode
             if (id > 0)
             {
-                configDetail = _opsClient.GetConfigDetail(id);
+                configDetail = _configsClient.GetDetail(id);
 
                 // get all unused phidgets plus the one being edited
-                usedPhidgetIds = _opsClient.GetConfigWithDetails(configDetail.ConfigId)
+                usedPhidgetIds = _configsClient.GetWithDetails(configDetail.ConfigId)
                     .ConfigDetails
                     .Where(cd => cd.PhidgetType.Id != configDetail.PhidgetType.Id)
                     .Select(cd => cd.PhidgetType.Id);
@@ -127,7 +135,7 @@ namespace Keebee.AAT.BusinessRules
             else // add mode
             {
                 // get only unused phidgets
-                usedPhidgetIds = _opsClient.GetConfigWithDetails(configId)
+                usedPhidgetIds = _configsClient.GetWithDetails(configId)
                     .ConfigDetails
                     .Select(cd => cd.PhidgetType.Id);
 
@@ -148,7 +156,7 @@ namespace Keebee.AAT.BusinessRules
         // message queue
         public string GetMessageBody(int configId)
         {
-            var config = _opsClient.GetConfigWithDetails(configId);
+            var config = _configsClient.GetWithDetails(configId);
 
             var configMessage = new ConfigMessage
             {

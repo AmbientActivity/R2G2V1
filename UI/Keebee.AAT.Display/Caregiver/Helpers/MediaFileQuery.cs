@@ -1,4 +1,4 @@
-﻿using Keebee.AAT.ApiClient;
+﻿using Keebee.AAT.ApiClient.Models;
 using Keebee.AAT.Shared;
 using System;
 using System.Collections.Generic;

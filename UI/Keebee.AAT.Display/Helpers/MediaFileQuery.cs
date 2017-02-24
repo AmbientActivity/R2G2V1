@@ -1,5 +1,7 @@
-﻿using Keebee.AAT.ApiClient;
-using Keebee.AAT.Shared;
+﻿using Keebee.AAT.Shared;
+using Keebee.AAT.ApiClient.Clients;
+using Keebee.AAT.ApiClient.Models;
+
 using System.Collections.Generic;
 using System.Linq;
 
@@ -7,10 +9,13 @@ namespace Keebee.AAT.Display.Helpers
 {
     public class MediaFileQuery
     {
-        private OperationsClient _opsClient;
-        public OperationsClient OperationsClient
+        private readonly PublicMediaFilesClient _publicMediaFilesClient;
+        private readonly ResidentMediaFilesClient _residentMediaFilesClient;
+
+        public MediaFileQuery()
         {
-            set { _opsClient = value; }
+            _publicMediaFilesClient = new PublicMediaFilesClient();
+            _residentMediaFilesClient = new ResidentMediaFilesClient();
         }
 
         private readonly MediaSourcePath _mediaPath = new MediaSourcePath();
@@ -24,7 +29,7 @@ namespace Keebee.AAT.Display.Helpers
             // get media from public library for the response type
             if (residentId == PublicProfileSource.Id)
             {
-                var media = _opsClient.GetPublicMediaFilesForResponseType(responseTypeId);
+                var media = _publicMediaFilesClient.GetForResponseType(responseTypeId);
 
                 if (media != null)
                     mediaResponseType = media.MediaResponseType;
@@ -39,7 +44,7 @@ namespace Keebee.AAT.Display.Helpers
             else
             {
                 // get media from resident's profile for the response type
-                var media = _opsClient.GetResidentMediaFilesForResidentResponseType(residentId, responseTypeId);
+                var media = _residentMediaFilesClient.GetForResidentResponseType(residentId, responseTypeId);
 
                 if (media != null)
                     mediaResponseType = media.MediaResponseType;
@@ -56,7 +61,7 @@ namespace Keebee.AAT.Display.Helpers
                 if (numFiles == 0)
                 {
                     residentId = PublicProfileSource.Id;
-                    var publicMedia = _opsClient.GetPublicMediaFilesForResponseType(responseTypeId);
+                    var publicMedia = _publicMediaFilesClient.GetForResponseType(responseTypeId);
 
                     if (publicMedia != null)
                         mediaResponseType = publicMedia.MediaResponseType;

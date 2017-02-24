@@ -1,5 +1,4 @@
 ﻿using Keebee.AAT.Display.Properties;
-using Keebee.AAT.ApiClient;
 using Keebee.AAT.SystemEventLogging;
 using Keebee.AAT.Display.Extensions;
 using Keebee.AAT.Shared;
@@ -22,9 +21,6 @@ namespace Keebee.AAT.Display
 
         private Timer _timer;
 
-        // operations REST client
-        private readonly OperationsClient _opsClient;
-
         // ambient playlist
         private IWMPPlaylist _ambientPlaylist;
 
@@ -35,7 +31,6 @@ namespace Keebee.AAT.Display
         {
             InitializeComponent();
             _systemEventLogger = new SystemEventLogger(SystemEventLogType.Display);
-            _opsClient = new OperationsClient();
 
             Location = new Point(
                 (Screen.PrimaryScreen.WorkingArea.Width - Width) / 2,
@@ -47,8 +42,7 @@ namespace Keebee.AAT.Display
             var main = new Main()
             {
                 AmbientPlaylist = _ambientPlaylist,
-                EventLogger = _systemEventLogger,
-                OperationsClient = _opsClient
+                EventLogger = _systemEventLogger
             };
             main.Show();
             Hide();
@@ -71,7 +65,7 @@ namespace Keebee.AAT.Display
                 using (var mediaPlayer = new AxWindowsMediaPlayer())
                 {
                     Controls.Add(mediaPlayer);
-                    var mediaFileQuery = new MediaFileQuery {OperationsClient = _opsClient};
+                    var mediaFileQuery = new MediaFileQuery();
                     var ambientFiles = mediaFileQuery.GetFilesForResponseType(PublicProfileSource.Id, ResponseTypeId.Ambient, MediaPathTypeId.Ambient);
                     if (!ambientFiles.Any())
                     {

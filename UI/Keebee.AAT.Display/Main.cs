@@ -1,5 +1,4 @@
-﻿using Keebee.AAT.ApiClient;
-using Keebee.AAT.MessageQueuing;
+﻿using Keebee.AAT.MessageQueuing;
 using Keebee.AAT.Shared;
 using Keebee.AAT.SystemEventLogging;
 using Keebee.AAT.Display.UserControls;
@@ -8,11 +7,11 @@ using Keebee.AAT.Display.Helpers;
 using Keebee.AAT.Display.Volume;
 using Keebee.AAT.Display.Extensions;
 using Keebee.AAT.Display.Models;
+using Keebee.AAT.ApiClient.Clients;
 using System.Web.Script.Serialization;
 using System.Diagnostics;
 using System.Drawing;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Windows.Forms;
@@ -32,11 +31,8 @@ namespace Keebee.AAT.Display
     {
         #region declaration
 
-        private OperationsClient _opsClient;
-        public OperationsClient OperationsClient
-        {
-            set { _opsClient = value; }
-        }
+        private readonly PublicMediaFilesClient _publicMediaFilesClient;
+        private readonly ConfigsClient _configsClient;
 
         private SystemEventLogger _systemEventLogger;
         public SystemEventLogger EventLogger
@@ -66,9 +62,6 @@ namespace Keebee.AAT.Display
         private readonly CustomMessageQueue _messageQueueDisplayPhidget;
         private readonly CustomMessageQueue _messageQueueDisplayVideoCapture;
         private readonly CustomMessageQueue _messageQueueDisplayBluetoothBeaconWatcher;
-
-        // ambient message list
-        private readonly IList<AmbientInvitationMessage> _ambientInvitationMessages;
 
         // message queue listener
         private readonly CustomMessageQueue _messageQueueResponse;
@@ -122,6 +115,9 @@ namespace Keebee.AAT.Display
             _opaqueLayer = new OpaqueLayer { Dock = DockStyle.Fill };
             _residentDisplayTimer = new Timer { Interval = 3000 };
             _residentDisplayTimer.Tick += ActiveResidentTimerTick;
+
+            _publicMediaFilesClient = new PublicMediaFilesClient();
+            _configsClient = new ConfigsClient();
 
             #region message queue inititialization
 
@@ -286,14 +282,11 @@ namespace Keebee.AAT.Display
         private void SetPostLoadProperties()
         {
             // the _systemEventLogger is not available in the constructor - this gets called later in MainShown()
-            _opsClient.SystemEventLogger = _systemEventLogger;
             _messageQueueDisplaySms.SystemEventLogger = _systemEventLogger;
             _messageQueueDisplayPhidget.SystemEventLogger = _systemEventLogger;
             _messageQueueResponse.SystemEventLogger = _systemEventLogger;
 
-            _interactiveActivityEventLogger.OperationsClient = _opsClient;
             _interactiveActivityEventLogger.SystemEventLogger = _systemEventLogger;
-            _activityEventLogger.OperationsClient = _opsClient;
             _activityEventLogger.EventLogger = _systemEventLogger;
 
             ambientPlayer1.SystemEventLogger = _systemEventLogger;
@@ -497,7 +490,7 @@ namespace Keebee.AAT.Display
             {
                 if (_isNewResponse)
                 {
-                    var mediaFileQuery = new MediaFileQuery { OperationsClient = _opsClient };                      
+                    var mediaFileQuery = new MediaFileQuery();                      
                     var mediaFiles = mediaFileQuery.GetFilesForResponseType(_activeResident.Id, responseTypeId);
 
                     if (!mediaFiles.Any()) return;
@@ -588,7 +581,7 @@ namespace Keebee.AAT.Display
             }
             else
             {
-                var mediaFileQuery = new MediaFileQuery { OperationsClient = _opsClient };
+                var mediaFileQuery = new MediaFileQuery();
                 var images = mediaFileQuery.GetFilesForResponseType(_activeResident.Id, ResponseTypeId.SlideShow);
                 if (!images.Any()) return;
 
@@ -622,12 +615,12 @@ namespace Keebee.AAT.Display
             }
             else
             {
-                var mediaFileQuery = new MediaFileQuery { OperationsClient = _opsClient };
+                var mediaFileQuery = new MediaFileQuery();
                 var shapes = mediaFileQuery.GetFilesForResponseType(_activeResident.Id, ResponseTypeId.MatchingGame, MediaPathTypeId.MatchingGameShapes);
                 var sounds = mediaFileQuery.GetFilesForResponseType(_activeResident.Id, ResponseTypeId.MatchingGame, MediaPathTypeId.MatchingGameSounds);
 
                 // ensure there are enough shapes and sounds to play the game
-                var gameSetup = new MatchingGameSetup { OperationsClient = _opsClient };
+                var gameSetup = new MatchingGameSetup();
                 var totalShapes = gameSetup.GetTotalShapes(shapes);
                 var totalSounds = gameSetup.GetTotalSounds(sounds);
 
@@ -758,13 +751,12 @@ namespace Keebee.AAT.Display
                 var frmSplash = new Caregiver.Splash();
                 frmSplash.Show();
 
-                var publicMedia = _opsClient.GetPublicMediaFiles().MediaFiles;
-                var config = _opsClient.GetActiveConfigDetails();
+                var publicMedia = _publicMediaFilesClient.Get().MediaFiles;
+                var config = _configsClient.GetActiveDetails();
 
                 _caregiverInterface = new CaregiverInterface
                 {
                     EventLogger = _systemEventLogger,
-                    OperationsClient = _opsClient,
                     Config = config,
                     PublicMediaFiles = publicMedia
                 };

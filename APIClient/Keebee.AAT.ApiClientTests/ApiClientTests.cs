@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using Keebee.AAT.ApiClient;
+using Keebee.AAT.ApiClient.Clients;
 using Keebee.AAT.Shared;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -9,13 +10,14 @@ namespace Keebee.AAT.ApiClientTests
     [TestClass]
     public class ApiClientTests
     {
-        readonly OperationsClient _client = new OperationsClient();
-
         [TestMethod]
         public void GetLinkedResidentMediaList()
         {
+            // Arrange
+            var client = new ResidentMediaFilesClient();
+
             // Act
-            var mediaList = _client.GetLinkedResidentMedia();
+            var mediaList = client.GetLinked();
 
             // Assert
             Assert.IsNotNull(mediaList);
@@ -25,10 +27,11 @@ namespace Keebee.AAT.ApiClientTests
         public void GetResidentWithMedia()
         {
             // Arrange
+            var client = new ResidentsClient();
             const int residentId = 1;
 
             // Act
-            var resident = _client.GetResidentWithMedia(residentId);
+            var resident = client.GetWithMedia(residentId);
 
             // Assert
             Assert.IsNotNull(resident);
@@ -40,9 +43,10 @@ namespace Keebee.AAT.ApiClientTests
         public void GetResidentMediaList()
         {
             // Arrange
+            var client = new ResidentMediaFilesClient();
 
             // Act
-            var media = _client.GetResidentMediaFiles();
+            var media = client.Get();
 
             // Assert
             Assert.IsNotNull(media);
@@ -52,10 +56,11 @@ namespace Keebee.AAT.ApiClientTests
         public void GetResidentMediaForResident()
         {
             // Arrange
+            var client = new ResidentMediaFilesClient();
             const int residentId = 1;
 
             // Act
-            var media = _client.GetResidentMediaFilesForResident(residentId);
+            var media = client.GetForResident(residentId);
 
             // Assert
             Assert.IsNotNull(media);
@@ -66,7 +71,8 @@ namespace Keebee.AAT.ApiClientTests
         public void GetPublicMedia()
         {
             // Act
-            var media = _client.GetPublicMediaFiles();
+            var client = new PublicMediaFilesClient();
+            var media = client.Get();
 
             // Assert
             Assert.IsNotNull(media);
@@ -77,7 +83,8 @@ namespace Keebee.AAT.ApiClientTests
         public void GetLinkedPublicMedia()
         {
             // Act
-            var media = _client.GetLinkedPublicMedia();
+            var client = new PublicMediaFilesClient();
+            var media = client.GetLinked();
 
             // Assert
             Assert.IsNotNull(media);
@@ -88,10 +95,11 @@ namespace Keebee.AAT.ApiClientTests
         public void GetPublicMediaFilesForStreamId()
         {
             // Arrange
+            var client = new PublicMediaFilesClient();
             var streamId = new Guid("0d7434bc-cc81-e611-8aa6-90e6bac7161a");
 
             // Act
-            var streamIds = _client.GetPublicMediaFilesForStreamId(streamId);
+            var streamIds = client.GetForStreamId(streamId);
 
             // Assert
             Assert.IsNotNull(streamIds);
@@ -102,7 +110,8 @@ namespace Keebee.AAT.ApiClientTests
         public void GetMediaPathTypes()
         {
             // Act
-            var mediaPaths = _client.GetMediaPathTypes();
+            var client = new MediaPathTypesClient();
+            var mediaPaths = client.Get();
 
             // Assert
             Assert.IsNotNull(mediaPaths);
@@ -112,10 +121,11 @@ namespace Keebee.AAT.ApiClientTests
         [TestMethod]
         public void GetExportFiles()
         {
-            MediaSourcePath mediaPath = new MediaSourcePath();
+            var client = new MediaFilesClient();
+            var mediaPath = new MediaSourcePath();
 
             // Act
-            var mediaPaths = _client.GetMediaFilesForPath(mediaPath.ExportEventLogRoot);
+            var mediaPaths = client.GetForPath(mediaPath.ExportEventLogRoot);
 
             // Assert
             Assert.IsNotNull(mediaPaths);

@@ -1,9 +1,10 @@
-﻿using Keebee.AAT.ApiClient;
-using Keebee.AAT.SystemEventLogging;
+﻿using Keebee.AAT.SystemEventLogging;
 using Keebee.AAT.Shared;
 using Keebee.AAT.Display.Extensions;
 using Keebee.AAT.Display.Caregiver.CustomControls;
 using Keebee.AAT.Display.Helpers;
+using Keebee.AAT.ApiClient.Clients;
+using Keebee.AAT.ApiClient.Models;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -26,12 +27,6 @@ namespace Keebee.AAT.Display.Caregiver
         public SystemEventLogger EventLogger
         {
             set { _systemEventLogger = value; }
-        }
-
-        private OperationsClient _opsClient;
-        public OperationsClient OperationsClient
-        {
-            set { _opsClient = value; }
         }
 
         private IEnumerable<MediaResponseType> _publicMediaFiles;
@@ -158,6 +153,10 @@ namespace Keebee.AAT.Display.Caregiver
         private bool _formIsClosing;
 
         #endregion
+
+        private ResidentsClient _residentsClient = new ResidentsClient();
+        private ResidentMediaFilesClient _residentMediaFilesClient = new ResidentMediaFilesClient();
+        private PublicMediaFilesClient _publicMediaFilesClient = new PublicMediaFilesClient();
 
         public CaregiverInterface()
         {
@@ -336,7 +335,7 @@ namespace Keebee.AAT.Display.Caregiver
         {
             _currentResident = residentId == PublicProfileSource.Id
                 ? _publicProfile
-                : _opsClient.GetResident(residentId);
+                : _residentsClient.Get(residentId);
 
             if (residentId == PublicProfileSource.Id)
             {
@@ -344,10 +343,10 @@ namespace Keebee.AAT.Display.Caregiver
             }
             else
             {
-                var media = _opsClient.GetResidentMediaFilesForResident(_currentResident.Id);
+                var media = _residentMediaFilesClient.GetForResident(_currentResident.Id);
 
                 _mediaFiles = media != null 
-                    ? _opsClient.GetResidentMediaFilesForResident(_currentResident.Id).MediaResponseTypes 
+                    ? _residentMediaFilesClient.GetForResident(_currentResident.Id).MediaResponseTypes 
                     : new List<MediaResponseType>();
             }
         }
@@ -356,7 +355,7 @@ namespace Keebee.AAT.Display.Caregiver
         {
             try
             {
-                var residents = _opsClient.GetResidents().ToList();
+                var residents = _residentsClient.Get().ToList();
                 var arrayList = new ArrayList();
 
                 var residentList = new List<Resident> { _publicProfile }
@@ -859,7 +858,7 @@ namespace Keebee.AAT.Display.Caregiver
                         var sounds = GetFilePaths(MediaPathTypeId.MatchingGameSounds, ResponseTypeId.MatchingGame);
 
                         // ensure there are enough shapes and sounds to play the game
-                        var gameSetup = new MatchingGameSetup { OperationsClient = _opsClient };
+                        var gameSetup = new MatchingGameSetup();
                         var totalShapes = gameSetup.GetTotalShapes(shapes);
                         var totalSounds = gameSetup.GetTotalSounds(sounds);
 
@@ -868,7 +867,6 @@ namespace Keebee.AAT.Display.Caregiver
                             InteractiveActivityId = interactiveActivityId,
                             ResidentId = _currentResident.Id,
                             SystemEventLogger = _systemEventLogger,
-                            OperationsClient = _opsClient,
                             Shapes = totalShapes,
                             Sounds = totalSounds,
                             DifficultyLevel = difficultyLevel,
@@ -885,7 +883,6 @@ namespace Keebee.AAT.Display.Caregiver
                             InteractiveActivityId = interactiveActivityId,
                             ResidentId = _currentResident.Id,
                             SystemEventLogger = _systemEventLogger,
-                            OperationsClient = _opsClient,
                             ActivityName = interactiveActivityType,
                             IsActiveEventLog = _config.IsActiveEventLog
                         };

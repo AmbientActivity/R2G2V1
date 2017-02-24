@@ -1,5 +1,6 @@
 ﻿using Keebee.AAT.SystemEventLogging;
-using Keebee.AAT.ApiClient;
+using Keebee.AAT.ApiClient.Clients;
+using Keebee.AAT.ApiClient.Models;
 using System;
 using System.Diagnostics;
 
@@ -7,17 +8,17 @@ namespace Keebee.AAT.Display.Helpers
 {
     public class ActivityEventLogger
     {
-
-        private OperationsClient _opsClient;
-        public OperationsClient OperationsClient
-        {
-            set { _opsClient = value; }
-        }
+        private readonly ActivityEventLogsClient _activityEventLogsClient;
 
         private SystemEventLogger _systemEventLogger;
         public SystemEventLogger EventLogger
         {
             set { _systemEventLogger = value; }
+        }
+
+        public ActivityEventLogger()
+        {
+            _activityEventLogsClient = new ActivityEventLogsClient();
         }
 
         public void Add(int configId, int configDetailId, int residentId, string description = null)
@@ -32,7 +33,7 @@ namespace Keebee.AAT.Display.Helpers
                     Description = description
                 };
 
-                _opsClient.PostActivityEventLog(activityEventLog);
+                _activityEventLogsClient.Post(activityEventLog);
             }
             catch (Exception ex)
             {

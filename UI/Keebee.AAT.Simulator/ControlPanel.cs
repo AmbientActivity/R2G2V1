@@ -1,6 +1,7 @@
-﻿using Keebee.AAT.ApiClient;
-using Keebee.AAT.MessageQueuing;
+﻿using Keebee.AAT.MessageQueuing;
 using Keebee.AAT.Shared;
+using Keebee.AAT.ApiClient.Clients;
+using Keebee.AAT.ApiClient.Models;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,7 +24,7 @@ namespace Keebee.AAT.Simulator
     public partial class ControlPanel : Form
     {
         // data
-        private readonly IApiClient _opsClient;
+        private readonly ResidentsClient _residentsClient;
         private Resident[] _residents;
 
         // message queue sender
@@ -68,7 +69,7 @@ namespace Keebee.AAT.Simulator
             _autoResponseInterval = Convert.ToInt32(ConfigurationManager.AppSettings["AutoSensorInterval"]);
             _autoResidentInterval = Convert.ToInt32(ConfigurationManager.AppSettings["AutoResidentInterval"]);
 
-            _opsClient = new OperationsClient ();
+            _residentsClient = new ResidentsClient();
 
             // message queue senders
             _messageQueuePhidget = new CustomMessageQueue(new CustomMessageQueueArgs
@@ -103,7 +104,7 @@ namespace Keebee.AAT.Simulator
             var arrayList = new ArrayList();
             
             _residents = new List<Resident> { _publicResident }
-            .Union(_opsClient.GetResidents()
+            .Union(_residentsClient.Get()
                 .Select(r => new Resident
                     {
                         Id = r.Id,

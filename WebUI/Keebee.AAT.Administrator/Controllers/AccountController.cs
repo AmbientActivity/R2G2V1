@@ -1,7 +1,5 @@
 ﻿using Keebee.AAT.Administrator.ViewModels;
 using Keebee.AAT.BusinessRules;
-using Keebee.AAT.ApiClient;
-using Keebee.AAT.SystemEventLogging;
 using System;
 using System.Collections.ObjectModel;
 using System.Configuration;
@@ -13,20 +11,11 @@ namespace Keebee.AAT.Administrator.Controllers
 {
     public class AccountController : Controller
     {
-        private readonly OperationsClient _opsClient;
-        private readonly SystemEventLogger _systemEventLogger;
-
-        public AccountController()
-        {
-            _systemEventLogger = new SystemEventLogger(SystemEventLogType.AdminInterface);
-            _opsClient = new OperationsClient { SystemEventLogger = _systemEventLogger };
-        }
-
         public ActionResult Login(LoginViewModel vm)
         {
             Response.Cache.SetCacheability(HttpCacheability.NoCache);
 
-            var rules = new AccountRules { OperationsClient = _opsClient };
+            var rules = new AccountRules();
             string errmsg;
 
             var userId = rules.AttemptToLogin(vm.Username, vm.Password, out errmsg);
@@ -70,7 +59,7 @@ namespace Keebee.AAT.Administrator.Controllers
             var username = System.Web.HttpContext.Current.User.Identity.Name;
             int userId;
 
-            var rules = new AccountRules { OperationsClient = _opsClient };
+            var rules = new AccountRules();
             var errmsg = rules.ValidatePasswordChange(username, vm.OldPassword, vm.NewPassword, vm.RetypedNewPassword, out userId);
             var success = (userId > 0);
 
@@ -109,7 +98,7 @@ namespace Keebee.AAT.Administrator.Controllers
 
         private void CreateLoginAuthenticationTicket(string username, int userId)
         {
-            var rules = new AccountRules { OperationsClient = _opsClient };
+            var rules = new AccountRules();
             var roles = rules.GetUserRoles(userId);
 
             var cookieTimeoutMinutes = Convert.ToInt32(ConfigurationManager.AppSettings["CookieTimeoutMinutes"]);

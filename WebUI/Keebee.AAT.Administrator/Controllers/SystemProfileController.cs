@@ -1,8 +1,8 @@
-﻿using Keebee.AAT.ApiClient;
-using Keebee.AAT.Administrator.ViewModels;
+﻿using Keebee.AAT.Administrator.ViewModels;
 using Keebee.AAT.Shared;
 using Keebee.AAT.BusinessRules;
-using Keebee.AAT.SystemEventLogging;
+using Keebee.AAT.ApiClient.Clients;
+using Keebee.AAT.ApiClient.Models;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
@@ -13,14 +13,13 @@ namespace Keebee.AAT.Administrator.Controllers
 {
     public class SystemProfileController : Controller
     {
-        private readonly OperationsClient _opsClient;
+        private readonly PublicMediaFilesClient _publicMediaFilesClient;
 
         private readonly MediaSourcePath _mediaSourcePath = new MediaSourcePath();
 
         public SystemProfileController()
         {
-            var systemEventLogger = new SystemEventLogger(SystemEventLogType.AdminInterface);
-            _opsClient = new OperationsClient { SystemEventLogger = systemEventLogger };
+            _publicMediaFilesClient = new PublicMediaFilesClient();
         }
 
         // GET: SystemProfile
@@ -34,7 +33,9 @@ namespace Keebee.AAT.Administrator.Controllers
         [Authorize]
         public JsonResult GetData()
         {
-            var mediaPathTypes = _opsClient.GetMediaPathTypes()
+            var mediaPathTypesClient = new MediaPathTypesClient();
+
+            var mediaPathTypes = mediaPathTypesClient.Get()
                 .Where(x => x.IsSystem)
                 .OrderBy(p => p.Description);
             var fileList = GetMediaFiles();
@@ -63,7 +64,7 @@ namespace Keebee.AAT.Administrator.Controllers
 
             try
             {
-                var rules = new PublicProfileRules { OperationsClient = _opsClient };
+                var rules = new PublicProfileRules();
 
                 errormessage = rules.CanDeleteMultiple(ids.Length, mediaPathTypeId);
                 if (errormessage.Length > 0)
@@ -71,7 +72,7 @@ namespace Keebee.AAT.Administrator.Controllers
 
                 foreach (var id in ids)
                 {
-                    var publicMediaFile = _opsClient.GetPublicMediaFile(id);
+                    var publicMediaFile = _publicMediaFilesClient.Get(id);
                     if (publicMediaFile == null) continue;
 
                     if (publicMediaFile.MediaFile.IsLinked)
@@ -84,7 +85,7 @@ namespace Keebee.AAT.Administrator.Controllers
                         if (file == null) continue;
 
                         // delete the link
-                        errormessage = rules.DeletePublicMediaFile(id);
+                        errormessage = _publicMediaFilesClient.Delete(id);
                         if (errormessage.Length > 0)
                             throw new Exception(errormessage);
                     }
@@ -110,7 +111,7 @@ namespace Keebee.AAT.Administrator.Controllers
         [Authorize]
         public PartialViewResult GetImageViewerView(Guid streamId, string fileType)
         {
-            var rules = new ImageViewerRules { OperationsClient = _opsClient };
+            var rules = new ImageViewerRules();
             var m = rules.GetImageViewerModel(streamId, fileType);
 
             return PartialView("_ImageViewer", new ImageViewerViewModel
@@ -161,7 +162,7 @@ namespace Keebee.AAT.Administrator.Controllers
                             IsLinked = true
                         };
 
-                        _opsClient.PostPublicMediaFile(pmf);
+                        _publicMediaFilesClient.Post(pmf);
                     }
                 }
                 success = true;
@@ -191,9 +192,9 @@ namespace Keebee.AAT.Administrator.Controllers
             return vm;
         }
 
-        private SharedLibraryLinkViewModel LoadSharedLibaryAddViewModel(int mediaPathTypeId)
+        private static SharedLibraryLinkViewModel LoadSharedLibaryAddViewModel(int mediaPathTypeId)
         {
-            var rules = new PublicProfileRules { OperationsClient = _opsClient };
+            var rules = new PublicProfileRules();
             var files = rules.GetAvailableSharedMediaFiles(mediaPathTypeId);
 
             var vm = new SharedLibraryLinkViewModel
@@ -212,7 +213,8 @@ namespace Keebee.AAT.Administrator.Controllers
         private IEnumerable<PublicMediaFileViewModel> GetMediaFiles()
         {
             var list = new List<PublicMediaFileViewModel>();
-            var publicMedia = _opsClient.GetPublicMediaFiles(isSystem: true);
+            var publicMediaFIlesClient = new PublicMediaFilesClient();
+            var publicMedia = publicMediaFIlesClient.Get(isSystem: true); // system only
 
             if (publicMedia == null) return list;
 

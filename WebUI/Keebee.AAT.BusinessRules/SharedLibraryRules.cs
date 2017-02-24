@@ -1,5 +1,6 @@
-﻿using Keebee.AAT.ApiClient;
+﻿using Keebee.AAT.ApiClient.Models;
 using Keebee.AAT.Shared;
+using Keebee.AAT.ApiClient.Clients;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -9,15 +10,23 @@ namespace Keebee.AAT.BusinessRules
 {
     public class SharedLibraryRules
     {
-        private OperationsClient _opsClient;
-        public OperationsClient OperationsClient
+        private readonly PublicMediaFilesClient _publicMediaFilesClient;
+        private readonly ResidentMediaFilesClient _residentMediaFilesClient;
+        private readonly MediaPathTypesClient _mediaPathTypesClient;
+        private readonly MediaFilesClient _mediaFilesClient;
+
+        public SharedLibraryRules()
         {
-            set { _opsClient = value; }
+            _publicMediaFilesClient = new PublicMediaFilesClient();
+            _residentMediaFilesClient = new ResidentMediaFilesClient();
+            _mediaPathTypesClient = new MediaPathTypesClient();
+            _mediaFilesClient = new MediaFilesClient();
         }
 
         public IEnumerable<ResponseType> GetValidResponseTypes(int mediaPathTypeId)
         {
-            var responseTypes = _opsClient.GetResponseTypes();
+            var responseTypesClient = new ResponseTypesClient();
+            var responseTypes = responseTypesClient.Get();
 
             switch (mediaPathTypeId)
             {
@@ -42,8 +51,8 @@ namespace Keebee.AAT.BusinessRules
         public MediaPathType GetMediaPathType(int? mediaPathTypeId)
         {
             var mediaPathType = mediaPathTypeId != null 
-                ? _opsClient.GetMediaPathType((int) mediaPathTypeId) 
-                : _opsClient.GetMediaPathType(MediaPathTypeId.ImagesGeneral);
+                ? _mediaPathTypesClient.Get((int) mediaPathTypeId) 
+                : _mediaPathTypesClient.Get(MediaPathTypeId.ImagesGeneral);
 
             return mediaPathType;
         }
@@ -60,7 +69,7 @@ namespace Keebee.AAT.BusinessRules
 
         public bool FileExists(string path, string filename)
         {
-            var file = _opsClient.GetMediaFileFromPath(path, filename);
+            var file = _mediaFilesClient.GetFromPath(path, filename);
 
             return (file != null);
         }
@@ -69,16 +78,16 @@ namespace Keebee.AAT.BusinessRules
         {
             try
             {
-                var residentMediaFileIds = _opsClient.GetResidentMediaFileIdsForStreamId(streamId);
+                var residentMediaFileIds = _residentMediaFilesClient.GetIdsForStreamId(streamId);
                 foreach (var id in residentMediaFileIds)
                 {
-                    _opsClient.DeleteResidentMediaFile(id);
+                    _residentMediaFilesClient.Delete(id);
                 }
 
-                var publicMediaFileIds = _opsClient.GetPublicMediaFileIdsForStreamId(streamId);
+                var publicMediaFileIds = _publicMediaFilesClient.GetIdsForStreamId(streamId);
                 foreach (var id in publicMediaFileIds)
                 {
-                    _opsClient.DeletePublicMediaFile(id);
+                    _publicMediaFilesClient.Delete(id);
                 }
             }
             catch (Exception ex)
@@ -91,11 +100,11 @@ namespace Keebee.AAT.BusinessRules
 
         public MediaFileSingle GetMediaFile(int id)
         {
-            var mediaFile = _opsClient.GetPublicMediaFile(id);
+            var mediaFile = _publicMediaFilesClient.Get(id);
 
             return mediaFile == null
                 ? null
-                : _opsClient.GetMediaFile(mediaFile.MediaFile.StreamId);
+                : _mediaFilesClient.Get(mediaFile.MediaFile.StreamId);
         }
 
         public static string GetAllowedExtensions(int? mediaPathTypeId)
@@ -187,7 +196,7 @@ namespace Keebee.AAT.BusinessRules
             
             // public linked media (for tooltip total linked)
             var publicFiles = new LinkedMediaFile[0];
-            var publicMedia = _opsClient.GetLinkedPublicMedia();
+            var publicMedia = _publicMediaFilesClient.GetLinked();
             if (publicMedia != null)
             {
                 publicFiles = publicMedia.MediaFiles
@@ -197,7 +206,7 @@ namespace Keebee.AAT.BusinessRules
 
             // resident linked media (for tooltip total linked)
             var residentFilesLinked = new LinkedMediaFile[0];
-            var residentMediaLinked = _opsClient.GetLinkedResidentMedia();
+            var residentMediaLinked = _residentMediaFilesClient.GetLinked();
             if (residentMediaLinked != null)
             {
                 residentFilesLinked = residentMediaLinked
@@ -207,7 +216,7 @@ namespace Keebee.AAT.BusinessRules
             }
 
             // shared library
-            var sharedMedia = _opsClient.GetMediaFilesForPath(mediaSourcePath.SharedLibrary);   
+            var sharedMedia = _mediaFilesClient.GetForPath(mediaSourcePath.SharedLibrary);   
             var sharedFileList = sharedMedia.SelectMany(p =>
             {
                 var mediaPathType = GetMediaPathTypeFromRawPath(p.Path, mediaPathTypes);
@@ -247,7 +256,7 @@ namespace Keebee.AAT.BusinessRules
 
         public IEnumerable<Resident> GetLinkedProfiles(Guid streamId)
         {
-            var publicMedia = _opsClient.GetPublicMediaFilesForStreamId(streamId);
+            var publicMedia = _publicMediaFilesClient.GetLinkedForStreamId(streamId);
             var publicProfile = new List<Resident>();
 
             if (publicMedia != null)
@@ -259,7 +268,7 @@ namespace Keebee.AAT.BusinessRules
                 });
             }
 
-            var residentMedia = _opsClient.GetLinkedResidentMediaForStreamId(streamId);
+            var residentMedia = _residentMediaFilesClient.GetLinkedForStreamId(streamId);
             var residentProfiles = new List<Resident>();
 
             if (residentMedia != null)

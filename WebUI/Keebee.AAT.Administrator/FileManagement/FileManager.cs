@@ -1,16 +1,16 @@
-﻿using System;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using Keebee.AAT.ApiClient;
+﻿using Keebee.AAT.ApiClient.Clients;
 using Keebee.AAT.Shared;
 using Keebee.AAT.SystemEventLogging;
+using System;
+using System.Diagnostics;
+using System.IO;
 
 namespace Keebee.AAT.Administrator.FileManagement
 {
     public class FileManager
     {
-        private readonly OperationsClient _opsClient;
+        private readonly MediaPathTypesClient _mediaPathTypesClient;
+        private readonly MediaFilesClient _mediaFilesClient;
 
         private SystemEventLogger _systemEventLogger;
         public SystemEventLogger EventLogger
@@ -23,7 +23,8 @@ namespace Keebee.AAT.Administrator.FileManagement
 
         public FileManager()
         {
-            _opsClient = new OperationsClient();
+            _mediaPathTypesClient = new MediaPathTypesClient();
+            _mediaFilesClient  = new MediaFilesClient();
         }
 
         public string DeleteFile(string path)
@@ -48,7 +49,7 @@ namespace Keebee.AAT.Administrator.FileManagement
             try
             {
                 var mediaRoot = $@"{_mediaPath.ProfileRoot}\{residentId}";
-                var paths = _opsClient.GetMediaPathTypes();
+                var paths = _mediaPathTypesClient.Get();
 
                 if (Directory.Exists(mediaRoot)) return;
 
@@ -85,7 +86,7 @@ namespace Keebee.AAT.Administrator.FileManagement
 
         public Guid GetStreamId(string path, string filename)
         {
-            var file = _opsClient.GetMediaFileFromPath(path, filename.Replace("&", "%26"));
+            var file = _mediaFilesClient.GetFromPath(path, filename.Replace("&", "%26"));
             return file.StreamId;
         }
     }

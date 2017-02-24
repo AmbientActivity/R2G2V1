@@ -1,10 +1,11 @@
-﻿using Keebee.AAT.ApiClient;
-using Keebee.AAT.Administrator.ViewModels;
+﻿using Keebee.AAT.Administrator.ViewModels;
 using Keebee.AAT.BusinessRules;
 using Keebee.AAT.Shared;
 using Keebee.AAT.Administrator.FileManagement;
 using Keebee.AAT.SystemEventLogging;
 using Keebee.AAT.MessageQueuing;
+using Keebee.AAT.ApiClient.Clients;
+using Keebee.AAT.ApiClient.Models;
 using CuteWebUI;
 using Newtonsoft.Json;
 using System.Collections.Generic;
@@ -19,7 +20,10 @@ namespace Keebee.AAT.Administrator.Controllers
 {
     public class ResidentsController : Controller
     {
-        private readonly OperationsClient _opsClient;
+        private readonly ResidentsClient _residentsClient;
+        private readonly ResidentMediaFilesClient _residentMediaFilesClient;
+        private readonly ActiveResidentClient _activeResidentClient;
+
         private readonly SystemEventLogger _systemEventLogger;
         private readonly MediaSourcePath _mediaSourcePath = new MediaSourcePath();
         private readonly CustomMessageQueue _messageQueueBluetoothBeaconWatcherReload;
@@ -27,7 +31,9 @@ namespace Keebee.AAT.Administrator.Controllers
         public ResidentsController()
         {
             _systemEventLogger = new SystemEventLogger(SystemEventLogType.AdminInterface);
-            _opsClient = new OperationsClient { SystemEventLogger = _systemEventLogger };
+            _residentsClient = new ResidentsClient();
+            _residentMediaFilesClient = new ResidentMediaFilesClient();
+            _activeResidentClient = new ActiveResidentClient();
 
             // bluetooth beacon watcher reload message queue sender
             _messageQueueBluetoothBeaconWatcherReload = new CustomMessageQueue(new CustomMessageQueueArgs
@@ -76,7 +82,7 @@ namespace Keebee.AAT.Administrator.Controllers
 
                 // POST:
                 var fileManager = new FileManager { EventLogger = _systemEventLogger };
-                var rules = new ResidentRules {OperationsClient = _opsClient};
+                var rules = new ResidentRules();
 
                 // for multiple files the value is string : guid/guid/guid 
                 foreach (var strguid in myuploader.Split('/'))
@@ -120,7 +126,8 @@ namespace Keebee.AAT.Administrator.Controllers
         [Authorize]
         public JsonResult GetDataProfile(int id, int mediaPathTypeId)
         {
-            var mediaPathTypes = _opsClient.GetMediaPathTypes()
+            var mediaPathTypesClient = new MediaPathTypesClient();
+            var mediaPathTypes = mediaPathTypesClient.Get()
                 .Where(x => !x.IsSystem)
                 .OrderBy(p => p.Description);
 
@@ -157,7 +164,7 @@ namespace Keebee.AAT.Administrator.Controllers
                 html = uploader.Render();
             }
 
-            var rules = new ResidentRules { OperationsClient = _opsClient };
+            var rules = new ResidentRules();
             return Json(new
             {
                 UploaderHtml = html,
@@ -189,7 +196,7 @@ namespace Keebee.AAT.Administrator.Controllers
         {
             var r = JsonConvert.DeserializeObject<ResidentEditViewModel>(resident);
             var residentId = r.Id;
-            var rules = new ResidentRules { OperationsClient = _opsClient };
+            var rules = new ResidentRules();
             IEnumerable<ResidentViewModel> residentList = new Collection<ResidentViewModel>();
 
             IEnumerable<string> msgs = rules.Validate(r.FirstName, r.LastName, r.Gender, residentId == 0);
@@ -231,14 +238,14 @@ namespace Keebee.AAT.Administrator.Controllers
             
             try
             {
-                var activeResident = _opsClient.GetActiveResident();
+                var activeResident = _activeResidentClient.Get();
                 if (activeResident.Resident.Id == id)
                 {
                     errormessage = "The resident is currently engaging with R2G2 and cannot be deleted at this time.";
                 }
                 else
                 {
-                    var rules = new ResidentRules { OperationsClient = _opsClient };
+                    var rules = new ResidentRules();
                     errormessage = rules.DeleteResident(id);
 
                     if (errormessage.Length == 0)
@@ -279,7 +286,7 @@ namespace Keebee.AAT.Administrator.Controllers
 
             try
             {
-                var activeResident = _opsClient.GetActiveResident();
+                var activeResident = _activeResidentClient.Get();
                 if (activeResident.Resident.Id == residentId)
                 {
                     errormessage = "The resident is currently engaging with R2G2. Media cannot be deleted at this time.";
@@ -288,15 +295,15 @@ namespace Keebee.AAT.Administrator.Controllers
                 {
                     if (ids.Length > 0)
                     {
-                        var rules = new ResidentRules {OperationsClient = _opsClient};
+                        var rules = new ResidentRules();
                         foreach (var id in ids)
                         {
-                            var resdientMediaFile = _opsClient.GetResidentMediaFile(id);
+                            var resdientMediaFile = _residentMediaFilesClient.Get(id);
                             if (resdientMediaFile == null) continue;
 
                             if (resdientMediaFile.MediaFile.IsLinked)
                             {
-                                rules.DeleteResidentMediaFile(id);
+                                _residentMediaFilesClient.Delete(id);
                             }
                             else
                             {
@@ -307,7 +314,7 @@ namespace Keebee.AAT.Administrator.Controllers
                                 errormessage = fileManager.DeleteFile($@"{file.Path}\{file.Filename}");
 
                                 if (errormessage.Length == 0)
-                                    rules.DeleteResidentMediaFile(id);
+                                    _residentMediaFilesClient.Delete(id);
                                 else
                                     break;
                             }
@@ -334,7 +341,7 @@ namespace Keebee.AAT.Administrator.Controllers
         [Authorize]
         public PartialViewResult GetImageViewerView(Guid streamId, string fileType)
         {
-            var rules = new ImageViewerRules { OperationsClient = _opsClient };
+            var rules = new ImageViewerRules();
             var m = rules.GetImageViewerModel(streamId, fileType);
 
             return PartialView("_ImageViewer", new ImageViewerViewModel
@@ -378,7 +385,7 @@ namespace Keebee.AAT.Administrator.Controllers
                             IsLinked = true
                         };
 
-                        _opsClient.PostResidentMediaFile(mf);
+                        _residentMediaFilesClient.Post(mf);
                     }
                 }
                 success = true;
@@ -429,7 +436,7 @@ namespace Keebee.AAT.Administrator.Controllers
 
             if (id > 0)
             {
-                resident = _opsClient.GetResident(id);
+                resident = _residentsClient.Get(id);
             }
             var vm = new ResidentEditViewModel
             {
@@ -455,7 +462,7 @@ namespace Keebee.AAT.Administrator.Controllers
 
         private SharedLibraryLinkViewModel LoadSharedLibaryAddViewModel(int residentId, int mediaPathTypeId)
         {
-            var rules = new ResidentRules {OperationsClient = _opsClient};
+            var rules = new ResidentRules();
             var files = rules.GetAvailableSharedMediaFiles(residentId, mediaPathTypeId).ToArray();
 
             var vm = new SharedLibraryLinkViewModel
@@ -480,11 +487,11 @@ namespace Keebee.AAT.Administrator.Controllers
             string sortcolumn, 
             int? sortdescending)
         {
-            var resident = _opsClient.GetResident(id);
+            var resident = _residentsClient.Get(id);
             var fullName = (resident.LastName != null)
                 ? $"{resident.FirstName} {resident.LastName}"
                 : resident.FirstName;
-            var rules = new ResidentRules {OperationsClient = _opsClient};
+            var rules = new ResidentRules();
 
             var vm = new ResidentProfileViewModel
             {
@@ -504,7 +511,7 @@ namespace Keebee.AAT.Administrator.Controllers
 
         private IEnumerable<ResidentViewModel> GetResidentList()
         {
-            var residents = _opsClient.GetResidents();
+            var residents = _residentsClient.Get();
 
             var list = residents
                 .Select(resident => new ResidentViewModel
@@ -533,7 +540,7 @@ namespace Keebee.AAT.Administrator.Controllers
                 AllowVideoCapturing = residentDetail.AllowVideoCapturing
             };
 
-            _opsClient.PatchResident(residentDetail.Id, r);
+            _residentsClient.Patch(residentDetail.Id, r);
         }
 
         private int AddResident(ResidentEditViewModel residentDetail)
@@ -547,7 +554,7 @@ namespace Keebee.AAT.Administrator.Controllers
                 AllowVideoCapturing = residentDetail.AllowVideoCapturing
             };
 
-            var id = _opsClient.PostResident(r);
+            var id = _residentsClient.Post(r);
 
             if (id <= 0) return id;
 
@@ -572,13 +579,13 @@ namespace Keebee.AAT.Administrator.Controllers
                 IsLinked = false
             };
 
-            _opsClient.PostResidentMediaFile(mf);
+            _residentMediaFilesClient.Post(mf);
         }
 
         private IEnumerable<MediaFileViewModel> GetFiles(int id)
         {
             var list = new List<MediaFileViewModel>();
-            var residentMedia = _opsClient.GetResidentMediaFilesForResident(id);
+            var residentMedia = _residentMediaFilesClient.GetForResident(id);
 
             if (residentMedia == null) return list;
 

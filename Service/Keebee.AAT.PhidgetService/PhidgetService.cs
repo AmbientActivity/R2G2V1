@@ -2,7 +2,7 @@
 using Keebee.AAT.Shared;
 using Keebee.AAT.SystemEventLogging;
 using Keebee.AAT.ServiceModels;
-using Keebee.AAT.ApiClient;
+using Keebee.AAT.ApiClient.Clients;
 using Phidgets;
 using Phidgets.Events;
 using System.Configuration;
@@ -41,8 +41,8 @@ namespace Keebee.AAT.PhidgetService
     internal partial class PhidgetService : ServiceBase
     {
 
-        // operations REST client
-        private readonly IApiClient _opsClient;
+        // REST client
+        private readonly ConfigsClient _configsClient;
 
 #if DEBUG
         private readonly CustomMessageQueue _messageQueuePhidgetMonitor;
@@ -85,7 +85,7 @@ namespace Keebee.AAT.PhidgetService
             InitializeComponent();
 
             _systemEventLogger = new SystemEventLogger(SystemEventLogType.PhidgetService);
-            _opsClient = new OperationsClient { SystemEventLogger = _systemEventLogger };
+            _configsClient = new ConfigsClient();
             _sensorThreshold = ValidateSensorThreshold(ConfigurationManager.AppSettings["TouchSensorThreshold"]);
             _inputDebounceTime = int.Parse(ConfigurationManager.AppSettings["InputDebounceTime"]);
             _incrementalDebounceTime = int.Parse(ConfigurationManager.AppSettings["IncrementalDebounceTime"]);
@@ -425,7 +425,7 @@ namespace Keebee.AAT.PhidgetService
 
         private void LoadConfig()
         {
-            var config = _opsClient.GetActiveConfigDetails();
+            var config = _configsClient.GetActiveDetails();
             _activeConfig = new ConfigMessage
             {
                 Id = config.Id,

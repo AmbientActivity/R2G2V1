@@ -1,4 +1,4 @@
-﻿namespace Keebee.AAT.BusinessRules.DTO
+﻿namespace Keebee.AAT.BusinessRules.Models
 {
     public class ImageViewerModel
     {

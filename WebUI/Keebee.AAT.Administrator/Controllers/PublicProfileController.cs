@@ -224,14 +224,6 @@ namespace Keebee.AAT.Administrator.Controllers
                 : null;
         }
 
-        [HttpGet]
-        [Authorize]
-        public FileResult GetFileStream(string filePath, string fileType)
-        {
-            var info = new FileInfo(filePath);
-            return File(info.OpenRead(), $"image/{info}");
-        }
-
         public JsonResult AddSharedMediaFiles(Guid[] streamIds, int mediaPathTypeId)
         {
             bool success;
@@ -359,6 +351,5 @@ namespace Keebee.AAT.Administrator.Controllers
 
             return list;
         }
-
     }
 }

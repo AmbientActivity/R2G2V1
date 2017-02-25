@@ -272,7 +272,7 @@
     <Content Include="Scripts\EventLogs\Index.js" />
     <Content Include="Scripts\modernizr-2.8.3.js" />
     <Content Include="Scripts\PublicProfile\Index.js" />
-    <Content Include="Scripts\Residents\Profile.js" />
+    <Content Include="Scripts\ResidentProfile\Index.js" />
     <Content Include="Scripts\Residents\Index.js" />
     <Content Include="Scripts\Maintenance\Index.js" />
     <Content Include="Scripts\SharedLibrary\Index.js" />
@@ -288,10 +288,12 @@
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\ImageViewerController.cs" />
     <Compile Include="Controllers\PhidgetConfigController.cs" />
     <Compile Include="Controllers\EventLogsController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\PublicProfileController.cs" />
+    <Compile Include="Controllers\ResidentProfileController.cs" />
     <Compile Include="Controllers\ResidentsController.cs" />
     <Compile Include="Controllers\MaintenanceController.cs" />
     <Compile Include="Controllers\SharedLibraryController.cs" />
@@ -327,7 +329,6 @@
     <Content Include="Views\PhidgetConfig\Index.cshtml" />
     <Content Include="Views\PhidgetConfig\_ConfigDetailEdit.cshtml" />
     <Content Include="Views\PhidgetConfig\_ConfigEdit.cshtml" />
-    <Content Include="Views\Residents\Profile.cshtml" />
     <Content Include="UploadHandler.ashx" />
     <Content Include="Views\PublicProfile\Index.cshtml" />
     <Content Include="Views\Maintenance\Index.cshtml" />
@@ -343,6 +344,7 @@
     <Content Include="Views\SharedLibrary\Index.cshtml" />
     <Content Include="Views\SharedLibrary\_LinkedResidentMedia.cshtml" />
     <Content Include="Views\SystemProfile\Index.cshtml" />
+    <Content Include="Views\ResidentProfile\Index.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -353,6 +355,7 @@
   <ItemGroup>
     <Folder Include="Content\themes\base\images\" />
     <Folder Include="Content\themes\base\minified\images\" />
+    <Folder Include="Views\ImageViewer\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\APIClient\Keebee.AAT.ApiClient\Keebee.AAT.ApiClient.csproj">

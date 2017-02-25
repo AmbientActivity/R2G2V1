@@ -192,8 +192,8 @@
                     if (_sortDescending) sortdescending = "1";
 
                     if (id > 0) {
-                        window.location = site.url + "Residents/Profile/" + id
-                            + "?idsearch=" + self.idSearch()
+                        window.location = site.url + "ResidentProfile?id=" + id
+                            + "&idsearch=" + self.idSearch()
                             + "&firstname=" + self.firstNameSearch()
                             + "&lastname=" + self.lastNameSearch()
                             + "&sortcolumn=" + _currentSortKey

@@ -9,6 +9,7 @@
 ; (function () {
     window.account = {};
     window.residents = {};
+    window.residentprofile = {};
     window.eventlogs = {};
     window.videocaptures = {};
     window.mediafiles = {};

@@ -70,7 +70,7 @@ function DisableScreen() {
 ; (function ($) {
     var HIGHLIGHT_ROW_COLOUR = "#e3e8ff";
 
-    residents.profile = {
+    residentprofile.index = {
         init: function (values) {
             var config = {
                 residentid: 0,
@@ -100,7 +100,7 @@ function DisableScreen() {
 
                 $.ajax({
                     type: "GET",
-                    url: site.url + "Residents/GetDataProfile/" + config.residentid
+                    url: site.url + "ResidentProfile/GetData/" + config.residentid
                         + "?mediaPathTypeId=" + mediaPathTypeId,
                     dataType: "json",
                     traditional: true,
@@ -211,41 +211,41 @@ function DisableScreen() {
 
                     $(self.columns()).each(function (index, value) {
                         if (value.sortKey === sortKey) {
-                            self.files.sort(function (a, b) {    
+                            self.files.sort(function (a, b) {
                                 if (value.numeric) {
                                     if (_sortDescending) {
-                                          return a[sortKey] > b[sortKey]
-                                                ? -1 : a[sortKey] < b[sortKey] || a.filename > b.filename ? 1 : 0;
-                                        } else {
-                                            return a[sortKey] < b[sortKey]
-                                                ? -1 : a[sortKey] > b[sortKey] || a.filename > b.filename ? 1 : 0;
-                                        }
+                                        return a[sortKey] > b[sortKey]
+                                              ? -1 : a[sortKey] < b[sortKey] || a.filename > b.filename ? 1 : 0;
                                     } else {
-                                        if (_sortDescending) {
-                                            return a[sortKey].toString().toLowerCase() > b[sortKey].toString().toLowerCase()
-                                                ? -1 : a[sortKey].toString().toLowerCase() < b[sortKey].toString().toLowerCase()
-                                                || a.filename.toLowerCase() > b.filename.toLowerCase() ? 1 : 0;
-                                        } else {
-                                            return a[sortKey].toString().toLowerCase() < b[sortKey].toString().toLowerCase()
-                                                ? -1 : a[sortKey].toString().toLowerCase() > b[sortKey].toString().toLowerCase()
-                                                || a.filename.toLowerCase() > b.filename.toLowerCase() ? 1 : 0;
-                                        }
+                                        return a[sortKey] < b[sortKey]
+                                            ? -1 : a[sortKey] > b[sortKey] || a.filename > b.filename ? 1 : 0;
                                     }
+                                } else {
+                                    if (_sortDescending) {
+                                        return a[sortKey].toString().toLowerCase() > b[sortKey].toString().toLowerCase()
+                                            ? -1 : a[sortKey].toString().toLowerCase() < b[sortKey].toString().toLowerCase()
+                                            || a.filename.toLowerCase() > b.filename.toLowerCase() ? 1 : 0;
+                                    } else {
+                                        return a[sortKey].toString().toLowerCase() < b[sortKey].toString().toLowerCase()
+                                            ? -1 : a[sortKey].toString().toLowerCase() > b[sortKey].toString().toLowerCase()
+                                            || a.filename.toLowerCase() > b.filename.toLowerCase() ? 1 : 0;
+                                    }
+                                }
                             });
                         }
                     });
                 };
 
-                self.reloadUploaderHtml = function() {
+                self.reloadUploaderHtml = function () {
                     var mediaPathTypeId = self.selectedMediaPathType();
 
                     $.ajax({
                         type: "GET",
-                        url: site.url + "Residents/GetUploaderHtml?mediaPathTypeId=" + mediaPathTypeId,
+                        url: site.url + "ResidentProfile/GetUploaderHtml?mediaPathTypeId=" + mediaPathTypeId,
                         traditional: true,
                         async: true,
                         dataType: "json",
-                        success: function(data) {
+                        success: function (data) {
                             $("#uploader-html-container").html(data.UploaderHtml);
                             $("#uploadbutton").text(data.AddButtonText);
                         }
@@ -304,12 +304,12 @@ function DisableScreen() {
                     $.ajax({
                         type: "GET",
                         async: false,
-                        data: 
+                        data:
                         {
                             residentId: residentId,
                             mediaPathTypeId: self.selectedMediaPathType()
                         },
-                        url: site.url + "Residents/GetSharedLibarayLinkView/",
+                        url: site.url + "ResidentProfile/GetSharedLibarayLinkView/",
                         success: function (data) {
                             message = data;
                         }
@@ -343,13 +343,13 @@ function DisableScreen() {
                             buttons: [
                                 {
                                     label: "Cancel",
-                                    action: function(dialog) {
+                                    action: function (dialog) {
                                         dialog.close();
                                     }
                                 }, {
                                     label: "OK",
                                     cssClass: "btn-primary",
-                                    action: function(dialog) {
+                                    action: function (dialog) {
                                         self.addSharedFiles();
                                         dialog.close();
                                     }
@@ -405,7 +405,7 @@ function DisableScreen() {
 
                     $.each(self.filteredFiles(), function (item, value) {
 
-                        if (self.selectAllIsSelected()) 
+                        if (self.selectAllIsSelected())
                             self.selectedIds().push(value.id);
                         else
                             self.selectedIds().pop(value.id);
@@ -451,7 +451,7 @@ function DisableScreen() {
                     rows.each(function () {
                         $(this).css("background-color", "#ffffff");
                     });
-                    
+
                     var selected = self.files()
                         .filter(function (data) { return data.isselected; });
 
@@ -464,7 +464,7 @@ function DisableScreen() {
                     return true;
                 };
 
-                self.deleteSelected = function() {
+                self.deleteSelected = function () {
                     $("body").css("cursor", "wait");
 
                     var ids = self.selectedIds();
@@ -476,13 +476,13 @@ function DisableScreen() {
                         title: "Delete Files",
                         message: "One moment...",
                         closable: false,
-                        onshown: function(dialog) {
+                        onshown: function (dialog) {
 
                             $.ajax({
                                 type: "POST",
                                 async: true,
                                 traditional: true,
-                                url: site.url + "Residents/DeleteSelectedMediaFiles/",
+                                url: site.url + "ResidentProfile/DeleteSelected/",
                                 data:
                                 {
                                     ids: ids,
@@ -490,7 +490,7 @@ function DisableScreen() {
                                     mediaPathTypeId: mediaPathTypeId
                                 },
                                 dataType: "json",
-                                success: function(data) {
+                                success: function (data) {
                                     dialog.close();
                                     $("body").css("cursor", "default");
                                     if (data.Success) {
@@ -511,7 +511,7 @@ function DisableScreen() {
                                         });
                                     }
                                 },
-                                error: function(data) {
+                                error: function (data) {
                                     dialog.close();
                                     $("body").css("cursor", "default");
                                     enableDetail();
@@ -531,7 +531,7 @@ function DisableScreen() {
                     $("body").css("cursor", "wait");
 
                     var ids = [];
-                    $("input[name='shared_files']:checked").each(function(item, value) {
+                    $("input[name='shared_files']:checked").each(function (item, value) {
                         ids.push(value.id);
                     });
                     var residentId = config.residentid;
@@ -541,7 +541,7 @@ function DisableScreen() {
                         type: "POST",
                         async: true,
                         traditional: true,
-                        url: site.url + "Residents/AddSharedMediaFiles/",
+                        url: site.url + "ResidentProfile/AddFromSharedLibrary/",
                         data:
                         {
                             streamIds: ids,
@@ -549,7 +549,7 @@ function DisableScreen() {
                             mediaPathTypeId: mediaPathTypeId
                         },
                         dataType: "json",
-                        success: function(data) {
+                        success: function (data) {
                             $("body").css("cursor", "default");
                             if (data.Success) {
                                 lists.FileList = data.FileList;
@@ -569,7 +569,7 @@ function DisableScreen() {
                                 });
                             }
                         },
-                        error: function(data) {
+                        error: function (data) {
                             $("body").css("cursor", "default");
                             enableDetail();
 
@@ -590,7 +590,7 @@ function DisableScreen() {
                     $.ajax({
                         type: "GET",
                         async: false,
-                        url: site.url + "Residents/GetImageViewerView?streamId=" + row.streamid + "&fileType=" + row.filetype,
+                        url: site.url + "ResidentProfile/GetImageViewerView?streamId=" + row.streamid + "&fileType=" + row.filetype,
                         success: function (data) {
                             message = data;
                         },
@@ -604,7 +604,7 @@ function DisableScreen() {
                         title: "Image Viewer - " + row.filename + "." + row.filetype.toLowerCase(),
                         message: $("<div></div>").append(message),
                         closable: false,
-                        onshown: function() { $("body").css("cursor", "default"); },
+                        onshown: function () { $("body").css("cursor", "default"); },
                         buttons: [{
                             label: "Close",
                             action: function (dialog) {
@@ -619,9 +619,9 @@ function DisableScreen() {
                     $("#chk_all").prop("checked", checked);
                 };
 
-                self.mediaPathType = function() {
+                self.mediaPathType = function () {
                     return self.mediaPathTypes()
-                        .filter(function(value) {
+                        .filter(function (value) {
                             return value.id === self.selectedMediaPathType();
                         })[0];
                 }

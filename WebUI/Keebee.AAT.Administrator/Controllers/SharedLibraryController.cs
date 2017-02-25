@@ -198,14 +198,6 @@ namespace Keebee.AAT.Administrator.Controllers
             });
         }
 
-        [HttpGet]
-        [Authorize]
-        public FileResult GetFileStream(string filePath, string fileType)
-        {
-            var info = new FileInfo(filePath);
-            return File(info.OpenRead(), $"image/{info}");
-        }
-
         private static SharedLibraryViewModel LoadSharedLibraryViewModel(int? mediaPathTypeId)
         {
             var rules = new SharedLibraryRules();
@@ -219,7 +211,7 @@ namespace Keebee.AAT.Administrator.Controllers
             return vm;
         }
 
-        private LinkedProfilesViewModel LoadLinkedProfilesViewModel(Guid streamId)
+        private static LinkedProfilesViewModel LoadLinkedProfilesViewModel(Guid streamId)
         {
             var rules = new SharedLibraryRules();
             var linkedProfiles = rules.GetLinkedProfiles(streamId);

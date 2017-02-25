@@ -51,8 +51,12 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <Compile Include="ApiClientTests.cs" />
+    <Compile Include="MediaFilesClientTests.cs" />
+    <Compile Include="MediaPathTypesClientTests.cs" />
+    <Compile Include="PublicMediaFilesClientTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ResidentsClientTests.cs" />
+    <Compile Include="ResidentMediaFilesClientTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Shared\Keebee.AAT.Shared\Keebee.AAT.Shared.csproj">

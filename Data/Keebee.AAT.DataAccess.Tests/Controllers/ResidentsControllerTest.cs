@@ -74,28 +74,6 @@ namespace Keebee.AAT.DataAccess.Tests.Controllers
             Assert.AreEqual(resident.Id, residentId);
         }
 
-        [TestMethod]
-        public async Task OData_Client_GetResponse()
-        {
-            // Arrange
-            const int key = 1;   // Active Resident Id
-            const int phidgetTypeId = 1;
-
-            // Act
-            var result = await _client.For<Resident>()
-                .Key(key)
-                .Function("Keebee.GetResponse")
-                .Set(new { phidgetTypeId })
-                .Expand("ResponseType")
-                .ExecuteAsSingleAsync();
-
-            var resident = result;
-
-            // Assert
-            Assert.IsNotNull(result);
-            Assert.AreEqual(resident.Id, key);
-        }
-
         // --- HttpRequest ---
 
         [TestMethod]
@@ -104,7 +82,7 @@ namespace Keebee.AAT.DataAccess.Tests.Controllers
             // Arrange
             const int residentId = 1;
 
-            var url = string.Format("{0}/Residents({1})", OdataUri, residentId);
+            var url = $"{OdataUri}/Residents({residentId})";
             var request = (HttpWebRequest)WebRequest.Create(url);
 
             Resident resident;

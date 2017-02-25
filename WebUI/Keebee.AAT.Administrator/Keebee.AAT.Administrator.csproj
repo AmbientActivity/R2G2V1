@@ -355,7 +355,6 @@
   <ItemGroup>
     <Folder Include="Content\themes\base\images\" />
     <Folder Include="Content\themes\base\minified\images\" />
-    <Folder Include="Views\ImageViewer\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\APIClient\Keebee.AAT.ApiClient\Keebee.AAT.ApiClient.csproj">

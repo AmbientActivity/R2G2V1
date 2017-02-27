@@ -119,20 +119,13 @@ namespace Keebee.AAT.Display.UserControls
 
         private void ConfigureMediaPlayer()
         {
-
-//#if DEBUG
-//            axWindowsMediaPlayer1.uiMode = "full";
-//#elif !DEBUG
-//            axWindowsMediaPlayer1.uiMode = _responseTypeId == ResponseTypeId.Radio 
-//                ? "invisible" 
-//                : "none";
-//            axWindowsMediaPlayer1.Ctlenabled = false;
-//#endif
-            axWindowsMediaPlayer1.Ctlenabled = false;
-            axWindowsMediaPlayer1.settings.volume = MediaPlayerControl.DefaultVolume;
-            axWindowsMediaPlayer1.settings.mute = false;
+            axWindowsMediaPlayer1.stretchToFit = true;
+            axWindowsMediaPlayer1.Dock = DockStyle.Fill;
+            axWindowsMediaPlayer1.uiMode = "none";
             axWindowsMediaPlayer1.settings.setMode("loop", _isLoop);
+            axWindowsMediaPlayer1.settings.volume = MediaPlayerControl.DefaultVolume;
             axWindowsMediaPlayer1.enableContextMenu = false;
+            axWindowsMediaPlayer1.Ctlenabled = false;
         }
 
         private void PlayMedia(string[] files)

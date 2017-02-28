@@ -1,6 +1,8 @@
 ﻿using Keebee.AAT.ApiClient.Models;
+using System;
 using System.Collections.Generic;
-using System.Web.Script.Serialization;
+using Newtonsoft.Json;
+using RestSharp;
 
 namespace Keebee.AAT.ApiClient.Clients
 {
@@ -12,48 +14,41 @@ namespace Keebee.AAT.ApiClient.Clients
         string Delete(int id);
     }
 
-    public class ActiveResidentEventLogsClient : IActiveResidentEventLogsClient
+    public class ActiveResidentEventLogsClient : BaseClient, IActiveResidentEventLogsClient
     {
-        private readonly ClientBase _clientBase;
-
-        public ActiveResidentEventLogsClient()
-        {
-            _clientBase = new ClientBase();
-        }
-
         public IEnumerable<ActiveResidentEventLog> GetForDate(string date)
         {
-            var data = _clientBase.Get($"activeresidenteventlogs?date={date}");
-            if (data == null) return null;
-
-            var serializer = new JavaScriptSerializer();
-            var activeResidentEventLogs = serializer.Deserialize<ActiveResidentEventLogList>(data).ActiveResidentEventLogs;
+            var request = new RestRequest($"activeresidenteventlogs?date={date}", Method.GET);
+            var data = Execute(request);
+            var activeResidentEventLogs = JsonConvert.DeserializeObject<ActiveResidentEventLogList>(data.Content).ActiveResidentEventLogs;
 
             return activeResidentEventLogs;
         }
 
         public IEnumerable<ActiveResidentEventLog> GetForResident(int residentId)
         {
-            var data = _clientBase.Get($"activeresidenteventlogs?residentId={residentId}");
-            if (data == null) return null;
-
-            var serializer = new JavaScriptSerializer();
-            var activeResidentEventLogs = serializer.Deserialize<ActiveResidentEventLogList>(data).ActiveResidentEventLogs;
+            var request = new RestRequest($"activeresidenteventlogs?residentId={residentId}", Method.GET);
+            var data = Execute(request);
+            var activeResidentEventLogs = JsonConvert.DeserializeObject<ActiveResidentEventLogList>(data.Content).ActiveResidentEventLogs;
 
             return activeResidentEventLogs;
         }
 
         public int Post(ActiveResidentEventLog activeResidentEventLog)
         {
-            var serializer = new JavaScriptSerializer();
-            var el = serializer.Serialize(activeResidentEventLog);
+            var request = new RestRequest("activeresidenteventlogs", Method.POST);
+            var json = request.JsonSerializer.Serialize(activeResidentEventLog);
+            request.AddParameter("application/json", json, ParameterType.RequestBody);
+            var response = Execute(request);
 
-            return _clientBase.Post("activeresidenteventlogs", el);
+            var newId = Convert.ToInt32(response.Content);
+            return newId;
         }
 
         public string Delete(int id)
         {
-            return _clientBase.Delete($"activeresidenteventlogs/{id}");
+            var request = new RestRequest($"activeresidenteventlogs/{id}", Method.DELETE);
+            return Execute(request).Content;
         }
     }
 }

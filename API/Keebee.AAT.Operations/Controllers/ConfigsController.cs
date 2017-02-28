@@ -7,7 +7,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Helpers;
 using System.Web.Http;
-using System.Web.Script.Serialization;
 
 namespace Keebee.AAT.Operations.Controllers
 {
@@ -261,11 +260,8 @@ namespace Keebee.AAT.Operations.Controllers
 
         // POST: api/Configs
         [HttpPost]
-        public int Post([FromBody]string value)
+        public int Post([FromBody]Config config)
         {
-            var serializer = new JavaScriptSerializer();
-            var config = serializer.Deserialize<Config>(value);
-
             return _configService.Post(config);
         }
 
@@ -280,10 +276,8 @@ namespace Keebee.AAT.Operations.Controllers
         // PUT: api/Configs/5
         [HttpPatch]
         [Route("{id}")]
-        public void Patch(int id, [FromBody]string value)
+        public void Patch(int id, [FromBody]Config config)
         {
-            var serializer = new JavaScriptSerializer();
-            var config = serializer.Deserialize<Config>(value);
             _configService.Patch(id, config);
         }
 

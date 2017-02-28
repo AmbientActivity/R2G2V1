@@ -7,7 +7,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Helpers;
 using System.Web.Http;
-using System.Web.Script.Serialization;
 
 namespace Keebee.AAT.Operations.Controllers
 {
@@ -128,20 +127,16 @@ namespace Keebee.AAT.Operations.Controllers
 
         // POST: api/ActiveResidentEventLogs
         [HttpPost]
-        public int Post([FromBody]string value)
+        public int Post([FromBody]ActiveResidentEventLog activeResidentEventLog)
         {
-            var serializer = new JavaScriptSerializer();
-            var activeResidentEventLog = serializer.Deserialize<ActiveResidentEventLog>(value);
             return _activeResidentEventLogService.Post(activeResidentEventLog);
         }
 
         // PATCH: api/ActiveResidentEventLogs/5
         [HttpPatch]
         [Route("{id}")]
-        public void Patch(int id, [FromBody]string value)
+        public void Patch(int id, [FromBody]ActiveResidentEventLog activeResidentEventLog)
         {
-            var serializer = new JavaScriptSerializer();
-            var activeResidentEventLog = serializer.Deserialize<ActiveResidentEventLog>(value);
             _activeResidentEventLogService.Patch(id, activeResidentEventLog);
         }
 

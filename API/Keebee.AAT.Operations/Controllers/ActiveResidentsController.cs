@@ -73,20 +73,16 @@ namespace Keebee.AAT.Operations.Controllers
 
         // POST: api/ActiveResidents
         [HttpPost]
-        public int Post([FromBody]string value)
+        public int Post([FromBody]ActiveResident activeResident)
         {
-            var serializer = new JavaScriptSerializer();
-            var activeResident = serializer.Deserialize<ActiveResident>(value);
             return _activeResidentService.Post(activeResident);
         }
 
         // PATCH: api/ActiveResidents/1
         [HttpPatch]
         [Route("{id}")]
-        public void Patch(int id, [FromBody]string value)
+        public void Patch(int id, [FromBody]ActiveResident activeResident)
         {
-            var serializer = new JavaScriptSerializer();
-            var activeResident = serializer.Deserialize<ActiveResident>(value);
             _activeResidentService.Patch(id, activeResident);
         }
 

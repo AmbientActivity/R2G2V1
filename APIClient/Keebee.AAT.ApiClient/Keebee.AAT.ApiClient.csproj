@@ -31,6 +31,14 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="RestSharp, Version=105.2.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\RestSharp.105.2.3\lib\net46\RestSharp.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Net.Http" />
@@ -44,7 +52,7 @@
   <ItemGroup>
     <Compile Include="Clients\ActiveResidentClient.cs" />
     <Compile Include="Clients\ActivityEventLogsClient.cs" />
-    <Compile Include="Clients\ClientBase.cs" />
+    <Compile Include="Clients\BaseClient.cs" />
     <Compile Include="Clients\ConfigsClient.cs" />
     <Compile Include="Clients\InteractiveActivityEventLogsClient.cs" />
     <Compile Include="Clients\MediaFilesClient.cs" />
@@ -58,6 +66,7 @@
     <Compile Include="Clients\ResponseTypesClient.cs" />
     <Compile Include="Clients\UserRolesClient.cs" />
     <Compile Include="Clients\UsersClient.cs" />
+    <Compile Include="JsonSerializer.cs" />
     <Compile Include="Models\ActiveResident.cs" />
     <Compile Include="Models\InteractiveActivityType.cs" />
     <Compile Include="Models\MediaFile.cs" />
@@ -85,6 +94,9 @@
       <Project>{6f0a1aef-997e-4355-bb38-a4acf6710edf}</Project>
       <Name>Keebee.AAT.SystemEventLogging</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

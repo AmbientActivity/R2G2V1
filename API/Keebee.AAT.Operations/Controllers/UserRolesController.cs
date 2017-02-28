@@ -115,21 +115,16 @@ namespace Keebee.AAT.Operations.Controllers
 
         // POST: api/UserRoles
         [HttpPost]
-        public int Post([FromBody]string value)
+        public int Post([FromBody]UserRole userRole)
         {
-            var serializer = new JavaScriptSerializer();
-            var userRole = serializer.Deserialize<UserRole>(value);
-
             return _userRoleService.Post(userRole);
         }
 
         // PUT: api/UserRoles/5
         [HttpPatch]
         [Route("{id}")]
-        public void Patch(int id, [FromBody]string value)
+        public void Patch(int id, [FromBody]UserRole userRole)
         {
-            var serializer = new JavaScriptSerializer();
-            var userRole = serializer.Deserialize<UserRole>(value);
             _userRoleService.Patch(id, userRole);
         }
 

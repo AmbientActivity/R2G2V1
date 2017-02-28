@@ -10,7 +10,7 @@ namespace Keebee.AAT.Operations.Service.Services
     {
         IEnumerable<ResponseType> Get();
         ResponseType Get(int id);
-        void Post(ResponseType responseType);
+        int Post(ResponseType responseType);
         void Patch(int id, ResponseType responseType);
         void Delete(int id);
     }
@@ -39,12 +39,14 @@ namespace Keebee.AAT.Operations.Service.Services
             return responseType;
         }
 
-        public void Post(ResponseType responseType)
+        public int Post(ResponseType responseType)
         {
             var container = new Container(new Uri(ODataHost.Url));
 
             container.AddToResponseTypes(responseType);
             container.SaveChanges();
+
+            return responseType.Id;
         }
 
         public void Patch(int id, ResponseType responseType)

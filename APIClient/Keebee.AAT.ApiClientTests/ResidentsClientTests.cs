@@ -22,5 +22,19 @@ namespace Keebee.AAT.ApiClientTests
             Assert.IsTrue(resident.MediaFiles.Any());
             Assert.AreEqual(resident.Id, residentId);
         }
+
+        [TestMethod]
+        public void GetResidentDoesNotExist()
+        {
+            // Arrange
+            var client = new ResidentsClient();
+            const int residentId = 12;
+
+            // Act
+            var exists = client.Exists(residentId);
+
+            // Assert
+            Assert.IsFalse(exists);
+        }
     }
 }

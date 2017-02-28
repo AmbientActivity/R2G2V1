@@ -123,21 +123,16 @@ namespace Keebee.AAT.Operations.Controllers
 
         // POST: api/ConfigDetails
         [HttpPost]
-        public int Post([FromBody]string value)
+        public int Post([FromBody]ConfigDetail configDetail)
         {
-            var serializer = new JavaScriptSerializer();
-            var configDetail = serializer.Deserialize<ConfigDetail>(value);
-
             return _configDetailService.Post(configDetail);
         }
 
         // PUT: api/ConfigDetails/5
         [HttpPatch]
         [Route("{id}")]
-        public void Patch(int id, [FromBody]string value)
+        public void Patch(int id, [FromBody]ConfigDetail configDetail)
         {
-            var serializer = new JavaScriptSerializer();
-            var configDetail = serializer.Deserialize<ConfigDetail>(value);
             _configDetailService.Patch(id, configDetail);
         }
 

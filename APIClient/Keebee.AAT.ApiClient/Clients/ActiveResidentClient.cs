@@ -1,5 +1,6 @@
 ﻿using Keebee.AAT.ApiClient.Models;
-using System.Web.Script.Serialization;
+using Newtonsoft.Json;
+using RestSharp;
 
 namespace Keebee.AAT.ApiClient.Clients
 {
@@ -9,33 +10,23 @@ namespace Keebee.AAT.ApiClient.Clients
         void Patch(ActiveResidentEdit resident);
     }
 
-    public class ActiveResidentClient : IActiveResidentClient
+    public class ActiveResidentClient :  BaseClient, IActiveResidentClient
     {
-        private readonly ClientBase _clientBase;
-
-        public ActiveResidentClient()
-        {
-            _clientBase = new ClientBase();
-        }
-
         public ActiveResident Get()
         {
-            var data = _clientBase.Get($"activeresidents/{1}");
-            if (data == null) return null;
-
-            var serializer = new JavaScriptSerializer();
-            var resident = serializer.Deserialize<ActiveResident>(data);
+            var request = new RestRequest("activeresidents/1", Method.GET);
+            var data = Execute(request);
+            var resident = JsonConvert.DeserializeObject<ActiveResident>(data.Content);
 
             return resident;
         }
 
         public void Patch(ActiveResidentEdit resident)
         {
-            var serializer = new JavaScriptSerializer();
-            var el = serializer.Serialize(resident);
-
-            _clientBase.Patch("activeresidents/1", el);
+            var request = new RestRequest("activeresidents/1", Method.PATCH);
+            var json = request.JsonSerializer.Serialize(resident);
+            request.AddParameter("application/json", json, ParameterType.RequestBody);
+            Execute(request);
         }
-
     }
 }

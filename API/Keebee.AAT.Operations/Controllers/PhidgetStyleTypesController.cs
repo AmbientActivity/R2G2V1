@@ -7,7 +7,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Helpers;
 using System.Web.Http;
-using System.Web.Script.Serialization;
 
 namespace Keebee.AAT.Operations.Controllers
 {
@@ -69,20 +68,16 @@ namespace Keebee.AAT.Operations.Controllers
 
         // POST: api/PhidgetStyleTypes
         [HttpPost]
-        public void Post([FromBody]string value)
+        public void Post([FromBody]PhidgetStyleType phidgetStyleType)
         {
-            var serializer = new JavaScriptSerializer();
-            var phidgetStyleType = serializer.Deserialize<PhidgetStyleType>(value);
             _phidgetStyleTypeService.Post(phidgetStyleType);
         }
 
         // PATCH: api/PhidgetStyleTypes/5
         [HttpPatch]
         [Route("{id}")]
-        public void Patch(int id, [FromBody]string value)
+        public void Patch(int id, [FromBody]PhidgetStyleType phidgetStyleType)
         {
-            var serializer = new JavaScriptSerializer();
-            var phidgetStyleType = serializer.Deserialize<PhidgetStyleType>(value);
             _phidgetStyleTypeService.Patch(id, phidgetStyleType);
         }
 

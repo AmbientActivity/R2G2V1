@@ -1,7 +1,8 @@
-﻿using Keebee.AAT.ApiClient.Models;
+﻿using System;
+using Keebee.AAT.ApiClient.Models;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web.Script.Serialization;
+using Newtonsoft.Json;
+using RestSharp;
 
 namespace Keebee.AAT.ApiClient.Clients
 {
@@ -15,67 +16,58 @@ namespace Keebee.AAT.ApiClient.Clients
         string Delete(int id);
     }
 
-    public class UsersClient : IUsersClient
+    public class UsersClient : BaseClient, IUsersClient
     {
-        private readonly ClientBase _clientBase;
-
-        public UsersClient()
-        {
-            _clientBase = new ClientBase();
-        }
-
         public IEnumerable<User> Get()
         {
-            var data = _clientBase.Get("users");
-            if (data == null) return null;
-
-            var serializer = new JavaScriptSerializer();
-            var users = serializer.Deserialize<UserList>(data).Users.ToList();
+            var request = new RestRequest("users", Method.GET);
+            var data = Execute(request);
+            var users = JsonConvert.DeserializeObject<UserList>(data.Content).Users;
 
             return users;
         }
 
         public User Get(int id)
         {
-            var data = _clientBase.Get($"users/{id}");
-            if (data == null) return null;
-
-            var serializer = new JavaScriptSerializer();
-            var user = serializer.Deserialize<User>(data);
+            var request = new RestRequest($"users/{id}", Method.GET);
+            var data = Execute(request);
+            var user = JsonConvert.DeserializeObject<User>(data.Content);
 
             return user;
         }
 
         public User GetByUsername(string username)
         {
-            var data = _clientBase.Get($"users?username={username}");
-            if (data == null) return null;
-
-            var serializer = new JavaScriptSerializer();
-            var user = serializer.Deserialize<User>(data);
+            var request = new RestRequest($"users?username={username}", Method.GET);
+            var data = Execute(request);
+            var user = JsonConvert.DeserializeObject<User>(data.Content);
 
             return user;
         }
 
-        public int Post(User user)
-        {
-            var serializer = new JavaScriptSerializer();
-            var el = serializer.Serialize(user);
-
-            return _clientBase.Post("users", el);
-        }
-
         public void Patch(int id, User user)
         {
-            var serializer = new JavaScriptSerializer();
-            var el = serializer.Serialize(user);
+            var request = new RestRequest($"users/{id}", Method.PATCH);
+            var json = request.JsonSerializer.Serialize(user);
+            request.AddParameter("application/json", json, ParameterType.RequestBody);
+            Execute(request);
+        }
 
-            _clientBase.Patch(string.Format($"users/{id}"), el);
+        public int Post(User user)
+        {
+            var request = new RestRequest("users", Method.POST);
+            var json = request.JsonSerializer.Serialize(user);
+            request.AddParameter("application/json", json, ParameterType.RequestBody);
+            var response = Execute(request);
+
+            var newId = Convert.ToInt32(response.Content);
+            return newId;
         }
 
         public string Delete(int id)
         {
-            return _clientBase.Delete($"users/{id}");
+            var request = new RestRequest($"users/{id}", Method.DELETE);
+            return Execute(request).Content;
         }
     }
 }

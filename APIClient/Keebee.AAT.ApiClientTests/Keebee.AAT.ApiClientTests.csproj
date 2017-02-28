@@ -51,6 +51,7 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="ActiveResidentClientTests.cs" />
     <Compile Include="MediaFilesClientTests.cs" />
     <Compile Include="MediaPathTypesClientTests.cs" />
     <Compile Include="PublicMediaFilesClientTests.cs" />

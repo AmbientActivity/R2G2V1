@@ -7,7 +7,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Helpers;
 using System.Web.Http;
-using System.Web.Script.Serialization;
 
 namespace Keebee.AAT.Operations.Controllers
 {
@@ -108,20 +107,16 @@ namespace Keebee.AAT.Operations.Controllers
 
         // POST: api/MediaPathTypes
         [HttpPost]
-        public void Post([FromBody]string value)
+        public void Post([FromBody]MediaPathType mediaPathType)
         {
-            var serializer = new JavaScriptSerializer();
-            var mediaPathType = serializer.Deserialize<MediaPathType>(value);
             _mediaPathTypeService.Post(mediaPathType);
         }
 
         // PATCH: api/MediaPathTypes/5
         [HttpPatch]
         [Route("{id}")]
-        public void Patch(int id, [FromBody]string value)
+        public void Patch(int id, [FromBody]MediaPathType mediaPathType)
         {
-            var serializer = new JavaScriptSerializer();
-            var mediaPathType = serializer.Deserialize<MediaPathType>(value);
             _mediaPathTypeService.Patch(id, mediaPathType);
         }
 

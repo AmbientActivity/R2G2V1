@@ -453,20 +453,16 @@ namespace Keebee.AAT.Operations.Controllers
 
         // POST: api/ResidentMediaFiles
         [HttpPost]
-        public int Post([FromBody]string value)
+        public int Post([FromBody]ResidentMediaFile residentMediaFile)
         {
-            var serializer = new JavaScriptSerializer();
-            var residentMediaFile = serializer.Deserialize<ResidentMediaFile>(value);
             return _residentMediaFileService.Post(residentMediaFile);
         }
 
         // PATCH: api/ResidentMediaFiles/5
         [HttpPatch]
         [Route("{id}")]
-        public void Patch(int id, [FromBody]string value)
+        public void Patch(int id, [FromBody]ResidentMediaFile residentMediaFile)
         {
-            var serializer = new JavaScriptSerializer();
-            var residentMediaFile = serializer.Deserialize<ResidentMediaFile>(value);
             _residentMediaFileService.Patch(id, residentMediaFile);
         }
 

@@ -1,7 +1,8 @@
-﻿using Keebee.AAT.ApiClient.Models;
+﻿using System;
+using Keebee.AAT.ApiClient.Models;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web.Script.Serialization;
+using Newtonsoft.Json;
+using RestSharp;
 
 namespace Keebee.AAT.ApiClient.Clients
 {
@@ -16,83 +17,75 @@ namespace Keebee.AAT.ApiClient.Clients
         int Post(ResidentEdit resident);
     }
 
-    public class ResidentsClient : IResidentsClient
+    public class ResidentsClient : BaseClient, IResidentsClient
     {
-        private readonly ClientBase _clientBase;
-
-        public ResidentsClient()
-        {
-            _clientBase = new ClientBase();
-        }
-
         public IEnumerable<Resident> Get()
         {
-            var data = _clientBase.Get("residents");
-            if (data == null) return null;
-
-            var serializer = new JavaScriptSerializer();
-            var residents = serializer.Deserialize<ResidentList>(data).Residents.ToList();
+            var request = new RestRequest("residents", Method.GET);
+            var data = Execute(request);
+            var residents = JsonConvert.DeserializeObject<ResidentList>(data.Content).Residents;
 
             return residents;
         }
 
         public Resident Get(int residentId)
         {
-            var data = _clientBase.Get($"residents/{residentId}");
-            if (data == null) return null;
-
-            var serializer = new JavaScriptSerializer();
-            var resident = serializer.Deserialize<Resident>(data);
+            var request = new RestRequest($"residents/{residentId}", Method.GET);
+            var data = Execute(request);
+            var resident = JsonConvert.DeserializeObject<Resident>(data.Content);
 
             return resident;
         }
 
         public Resident GetByNameGender(string firstName, string lastName, string gender)
         {
-            var data = _clientBase.Get($"residents?firstName={firstName}&lastName={lastName}&gender={gender}");
-            if (data == null) return null;
-
-            var serializer = new JavaScriptSerializer();
-            var resident = serializer.Deserialize<Resident>(data);
+            var request = new RestRequest($"residents?firstName={firstName}&lastName={lastName}&gender={gender}", Method.GET);
+            var data = Execute(request);
+            var resident = JsonConvert.DeserializeObject<Resident>(data.Content);
 
             return resident;
         }
 
         public Resident GetWithMedia(int residentId)
         {
-            var data = _clientBase.Get($"residents/{residentId}/media");
-            if (data == null) return null;
-
-            var serializer = new JavaScriptSerializer();
-            var resident = serializer.Deserialize<Resident>(data);
+            var request = new RestRequest($"residents/{residentId}/media", Method.GET);
+            var data = Execute(request);
+            var resident = JsonConvert.DeserializeObject<Resident>(data.Content);
 
             return resident;
         }
 
         public bool Exists(int residentId)
         {
-            return _clientBase.Exists($"residents/{residentId}");
+            var request = new RestRequest($"residents/{residentId}/exists", Method.GET);
+            var data = Execute(request);
+
+            return Convert.ToBoolean(data.Content);
         }
 
-        public void Patch(int residentId, ResidentEdit resident)
+        public void Patch(int id, ResidentEdit resident)
         {
-            var serializer = new JavaScriptSerializer();
-            var el = serializer.Serialize(resident);
-
-            _clientBase.Patch($"residents/{residentId}", el);
+            var request = new RestRequest($"residents/{id}", Method.PATCH);
+            var json = request.JsonSerializer.Serialize(resident);
+            request.AddParameter("application/json", json, ParameterType.RequestBody);
+            Execute(request);
         }
 
         public int Post(ResidentEdit resident)
         {
-            var serializer = new JavaScriptSerializer();
-            var el = serializer.Serialize(resident);
+            var request = new RestRequest("residents", Method.POST);
+            var json = request.JsonSerializer.Serialize(resident);
+            request.AddParameter("application/json", json, ParameterType.RequestBody);
+            var response = Execute(request);
 
-            return _clientBase.Post("residents", el);
+            var newId = Convert.ToInt32(response.Content);
+            return newId;
         }
 
-        public string Delete(int residentId)
+        public string Delete(int id)
         {
-            return _clientBase.Delete($"residents/{residentId}");
+            var request = new RestRequest($"residents/{id}", Method.DELETE);
+            return Execute(request).Content;
         }
     }
 }

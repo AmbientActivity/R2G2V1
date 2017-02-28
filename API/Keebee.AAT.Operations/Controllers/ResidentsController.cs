@@ -1,6 +1,5 @@
 ﻿using Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models;
 using Keebee.AAT.Operations.Service.Services;
-using Keebee.AAT.Shared;
 using System.Collections.ObjectModel;
 using System.Collections.Generic;
 using System.Dynamic;
@@ -8,7 +7,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Helpers;
 using System.Web.Http;
-using System.Web.Script.Serialization;
 
 namespace Keebee.AAT.Operations.Controllers
 {
@@ -16,12 +14,10 @@ namespace Keebee.AAT.Operations.Controllers
     public class ResidentsController : ApiController
     {
         private readonly IResidentService _residentService;
-        private readonly IConfigService _configurationService;
 
-        public ResidentsController(IResidentService residentService, IConfigService configurationService)
+        public ResidentsController(IResidentService residentService)
         {
             _residentService = residentService;
-            _configurationService = configurationService;
         }
 
         [HttpGet]
@@ -167,22 +163,16 @@ namespace Keebee.AAT.Operations.Controllers
 
         // POST: api/Residents
         [HttpPost]
-        public int Post([FromBody]string value)
+        public int Post([FromBody]Resident resident)
         {
-            var serializer = new JavaScriptSerializer();
-            var resident = serializer.Deserialize<Resident>(value);
-            var residentId = _residentService.Post(resident);
-
-            return residentId;
+            return _residentService.Post(resident);
         }
 
         // PATCH: api/Residents/5
         [HttpPatch]
         [Route("{id}")]
-        public void Patch(int id, [FromBody]string value)
+        public void Patch(int id, [FromBody]Resident resident)
         {
-            var serializer = new JavaScriptSerializer();
-            var resident = serializer.Deserialize<Resident>(value);
             _residentService.Patch(id, resident);
         }
 
@@ -192,6 +182,14 @@ namespace Keebee.AAT.Operations.Controllers
         public void Delete(int id)
         {
             _residentService.Delete(id);
+        }
+
+        // GET: api/Residents/5
+        [HttpGet]
+        [Route("{id}/exists")]
+        public bool Exists(int id)
+        {
+            return _residentService.ResidentExists(id);
         }
     }
 }

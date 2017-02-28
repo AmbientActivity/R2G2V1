@@ -7,7 +7,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Helpers;
 using System.Web.Http;
-using System.Web.Script.Serialization;
 
 namespace Keebee.AAT.Operations.Controllers
 {
@@ -93,20 +92,16 @@ namespace Keebee.AAT.Operations.Controllers
 
         // POST: api/ResponseTypes
         [HttpPost]
-        public void Post([FromBody]string value)
+        public int Post([FromBody]ResponseType responseType)
         {
-            var serializer = new JavaScriptSerializer();
-            var responseType = serializer.Deserialize<ResponseType>(value);
-            _responseTypeService.Post(responseType);
+            return _responseTypeService.Post(responseType);
         }
 
         // PATCH: api/ResponseTypes/5
         [HttpPatch]
         [Route("{id}")]
-        public void Patch(int id, [FromBody]string value)
+        public void Patch(int id, [FromBody]ResponseType responseType)
         {
-            var serializer = new JavaScriptSerializer();
-            var responseType = serializer.Deserialize<ResponseType>(value);
             _responseTypeService.Patch(id, responseType);
         }
 

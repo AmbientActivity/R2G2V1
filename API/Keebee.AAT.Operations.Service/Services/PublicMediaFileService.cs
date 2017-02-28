@@ -18,7 +18,7 @@ namespace Keebee.AAT.Operations.Service.Services
         IEnumerable<PublicMediaFile> GetLinkedPublicMedia();
         IEnumerable<PublicMediaFile> GetLinkedPublicMedia(Guid streamId);
         PublicMediaFile GetForResponseTypeFilename(int responseTypdId, string filename);
-        void Post(PublicMediaFile publicMediaFile);
+        int Post(PublicMediaFile publicMediaFile);
         void Patch(int id, PublicMediaFile publicMediaFile);
         void Delete(int id);
     }
@@ -145,12 +145,14 @@ namespace Keebee.AAT.Operations.Service.Services
             return media.Any() ? media.Single() : null;
         }
 
-        public void Post(PublicMediaFile publicMediaFile)
+        public int Post(PublicMediaFile publicMediaFile)
         {
             var container = new Container(new Uri(ODataHost.Url));
 
             container.AddToPublicMediaFiles(publicMediaFile);
             container.SaveChanges();
+
+            return publicMediaFile.Id;
         }
 
         public void Patch(int id, PublicMediaFile publicMediaFile)

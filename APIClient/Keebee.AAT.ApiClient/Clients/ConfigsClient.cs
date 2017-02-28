@@ -1,6 +1,8 @@
-﻿using Keebee.AAT.ApiClient.Models;
+﻿using System;
+using Keebee.AAT.ApiClient.Models;
 using System.Collections.Generic;
-using System.Web.Script.Serialization;
+using Newtonsoft.Json;
+using RestSharp;
 
 namespace Keebee.AAT.ApiClient.Clients
 {
@@ -19,152 +21,141 @@ namespace Keebee.AAT.ApiClient.Clients
         int PostDetail(ConfigDetailEdit configDetail);
         void Patch(int id, ConfigEdit config);
         void PatchDetail(int detailId, ConfigDetailEdit configDetail);
-        void Delete(int id);
-        void DeleteDetail(int detailId);
+        string Delete(int id);
+        string DeleteDetail(int detailId);
     }
 
-    public class ConfigsClient : IConfigsClient
+    public class ConfigsClient : BaseClient, IConfigsClient
     {
-        private readonly ClientBase _clientBase;
-
-        public ConfigsClient()
-        {
-            _clientBase = new ClientBase();
-        }
-
         public IEnumerable<Config> Get()
         {
-            var data = _clientBase.Get("configs");
-            if (data == null) return null;
-
-            var serializer = new JavaScriptSerializer();
-            var configs = serializer.Deserialize<ConfigList>(data).Configs;
+            var request = new RestRequest("configs", Method.GET);
+            var data = Execute(request);
+            var configs = JsonConvert.DeserializeObject<ConfigList>(data.Content).Configs;
 
             return configs;
         }
 
         public Config Get(int id)
         {
-            var data = _clientBase.Get($"configs/{id}");
-            if (data == null) return null;
-
-            var serializer = new JavaScriptSerializer();
-            var config = serializer.Deserialize<Config>(data);
+            var request = new RestRequest($"configs/{id}", Method.GET);
+            var data = Execute(request);
+            var config = JsonConvert.DeserializeObject<Config>(data.Content);
 
             return config;
         }
 
         public Config GetActive()
         {
-            var data = _clientBase.Get("configs/active");
-            if (data == null) return null;
-
-            var serializer = new JavaScriptSerializer();
-            var config = serializer.Deserialize<Config>(data);
+            var request = new RestRequest("configs/active", Method.GET);
+            var data = Execute(request);
+            var config = JsonConvert.DeserializeObject<Config>(data.Content);
 
             return config;
         }
 
         public Config GetByDescription(string description)
         {
-            var data = _clientBase.Get($"configs?description={description}");
-            if (data == null) return null;
-
-            var serializer = new JavaScriptSerializer();
-            var config = serializer.Deserialize<Config>(data);
+            var request = new RestRequest($"configs?description={description}", Method.GET);
+            var data = Execute(request);
+            var config = JsonConvert.DeserializeObject<Config>(data.Content);
 
             return config;
         }
 
         public Config GetWithDetails(int id)
         {
-            var data = _clientBase.Get($"configs/{id}/details");
-            if (data == null) return null;
-
-            var serializer = new JavaScriptSerializer();
-            var config = serializer.Deserialize<Config>(data);
+            var request = new RestRequest($"configs/{id}/details", Method.GET);
+            var data = Execute(request);
+            var config = JsonConvert.DeserializeObject<Config>(data.Content);
 
             return config;
         }
 
         public Config GetActiveDetails()
         {
-            var data = _clientBase.Get("configs/active/details");
-            if (data == null) return null;
-
-            var serializer = new JavaScriptSerializer();
-            var config = serializer.Deserialize<Config>(data);
+            var request = new RestRequest("configs/active/details", Method.GET);
+            var data = Execute(request);
+            var config = JsonConvert.DeserializeObject<Config>(data.Content);
 
             return config;
         }
 
         public IEnumerable<ConfigDetail> GetDetails()
         {
-            var data = _clientBase.Get("configdetails");
-            if (data == null) return null;
-
-            var serializer = new JavaScriptSerializer();
-            var configDetails = serializer.Deserialize<ConfigDetailList>(data).ConfigDetails;
+            var request = new RestRequest("configdetails", Method.GET);
+            var data = Execute(request);
+            var configDetails = JsonConvert.DeserializeObject<ConfigDetailList>(data.Content).ConfigDetails;
 
             return configDetails;
         }
 
         public ConfigDetail GetDetail(int detailId)
         {
-            var data = _clientBase.Get($"configdetails/{detailId}");
-            if (data == null) return null;
-
-            var serializer = new JavaScriptSerializer();
-            var configDetail = serializer.Deserialize<ConfigDetail>(data);
+            var request = new RestRequest($"configdetails/{detailId}", Method.GET);
+            var data = Execute(request);
+            var configDetail = JsonConvert.DeserializeObject<ConfigDetail>(data.Content);
 
             return configDetail;
         }
 
         public int Activate(int id)
         {
-            return _clientBase.Post($"configs/{id}/activate", string.Empty);
+            var request = new RestRequest($"configs/{id}/activate", Method.POST);
+            var response = Execute(request);
+
+            var result = Convert.ToInt32(response.Content);
+            return result;
         }
 
         public int Post(ConfigEdit config)
         {
-            var serializer = new JavaScriptSerializer();
-            var el = serializer.Serialize(config);
+            var request = new RestRequest("configs", Method.POST);
+            var json = request.JsonSerializer.Serialize(config);
+            request.AddParameter("application/json", json, ParameterType.RequestBody);
+            var response = Execute(request);
 
-            return _clientBase.Post("configs", el);
+            var newId = Convert.ToInt32(response.Content);
+            return newId;
         }
 
         public int PostDetail(ConfigDetailEdit configDetail)
         {
-            var serializer = new JavaScriptSerializer();
-            var el = serializer.Serialize(configDetail);
+            var request = new RestRequest("configdetails", Method.POST);
+            var json = request.JsonSerializer.Serialize(configDetail);
+            request.AddParameter("application/json", json, ParameterType.RequestBody);
+            var response = Execute(request);
 
-            return _clientBase.Post("configdetails", el);
+            var newId = Convert.ToInt32(response.Content);
+            return newId;
         }
 
         public void Patch(int id, ConfigEdit config)
         {
-            var serializer = new JavaScriptSerializer();
-            var el = serializer.Serialize(config);
-
-            _clientBase.Patch($"configs/{id}", el);
+            var request = new RestRequest($"configs/{id}", Method.PATCH);
+            var json = request.JsonSerializer.Serialize(config);
+            request.AddParameter("application/json", json, ParameterType.RequestBody);
+            Execute(request);
         }
 
         public void PatchDetail(int detailId, ConfigDetailEdit configDetail)
         {
-            var serializer = new JavaScriptSerializer();
-            var el = serializer.Serialize(configDetail);
-
-            _clientBase.Patch($"configdetails/{detailId}", el);
+            var request = new RestRequest($"configdetails/{detailId}", Method.PATCH);
+            var json = request.JsonSerializer.Serialize(configDetail);
+            request.AddParameter("application/json", json, ParameterType.RequestBody);
+            Execute(request);
         }
 
-        public void Delete(int id)
+        public string Delete(int id)
         {
-            _clientBase.Delete($"configs/{id}");
+            var request = new RestRequest($"configs/{id}", Method.DELETE);
+            return Execute(request).Content;
         }
 
-        public void DeleteDetail(int detailId)
+        public string DeleteDetail(int detailId)
         {
-            _clientBase.Delete($"configdetails/{detailId}");
+            var request = new RestRequest($"configdetails/{detailId}", Method.DELETE);
+            return Execute(request).Content;
         }
     }
 }

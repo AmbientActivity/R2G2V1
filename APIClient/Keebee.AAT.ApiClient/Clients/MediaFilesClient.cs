@@ -1,7 +1,8 @@
 ﻿using Keebee.AAT.ApiClient.Models;
 using System;
 using System.Collections.Generic;
-using System.Web.Script.Serialization;
+using Newtonsoft.Json;
+using RestSharp;
 
 namespace Keebee.AAT.ApiClient.Clients
 {
@@ -10,68 +11,54 @@ namespace Keebee.AAT.ApiClient.Clients
         MediaFileSingle Get(Guid streamId);
         IEnumerable<Media> GetForPath(string path);
         MediaFileSingle GetFromPath(string path, string filename);
-        byte[] GetFileStream(Guid streamId);
+        byte[] GetFileBytes(Guid streamId);
         byte[] GetFileStreamFromPath(string path, string filename);
     }
 
-    public class MediaFilesClient : IMediaFilesClient
+    public class MediaFilesClient : BaseClient, IMediaFilesClient
     {
-        private readonly ClientBase _clientBase;
-
-        public MediaFilesClient()
-        {
-            _clientBase = new ClientBase();
-        }
-
         public MediaFileSingle Get(Guid streamId)
         {
-            var data = _clientBase.Get($"mediafiles/{streamId}");
-            if (data == null) return null;
-
-            var serializer = new JavaScriptSerializer();
-            var mediaFile = serializer.Deserialize<MediaFileSingle>(data);
+            var request = new RestRequest($"mediafiles/{streamId}", Method.GET);
+            var data = Execute(request);
+            var mediaFile = JsonConvert.DeserializeObject<MediaFileSingle>(data.Content);
 
             return mediaFile;
         }
 
         public IEnumerable<Media> GetForPath(string path)
         {
-            var data = _clientBase.Get($"mediafiles?path={path}");
-            if (data == null) return null;
+            var request = new RestRequest($"mediafiles?path={path}", Method.GET);
+            var data = Execute(request);
+            var media = JsonConvert.DeserializeObject<MediaList>(data.Content).Media;
 
-            var serializer = new JavaScriptSerializer();
-            var mediaList = serializer.Deserialize<MediaList>(data).Media;
-
-            return mediaList;
+            return media;
         }
 
         public MediaFileSingle GetFromPath(string path, string filename)
         {
-            var data = _clientBase.Get($"mediafiles?path={path}&filename={filename}");
-            if (data == null) return null;
+            var request = new RestRequest($"mediafiles?path={path}&filename={filename}", Method.GET);
+            var data = Execute(request);
+            var mediaFile = JsonConvert.DeserializeObject<MediaFileSingle>(data.Content);
 
-            var serializer = new JavaScriptSerializer();
-            var media = serializer.Deserialize<MediaFileSingle>(data);
-
-            return media;
+            return mediaFile;
         }
 
-        public byte[] GetFileStream(Guid streamId)
+        public byte[] GetFileBytes(Guid streamId)
         {
-            var data = _clientBase.GetBytes($"mediafilestreams/{streamId}");
+            var request = new RestRequest($"mediafilestreams/{streamId}", Method.GET);
+            var data = Execute(request);
 
-            return data;
+            return data.RawBytes;
         }
 
         public byte[] GetFileStreamFromPath(string path, string filename)
         {
-            var data = _clientBase.Get($"mediafilestreams?path={path}&filename={filename}");
-            if (data == null) return null;
+            var request = new RestRequest($"mediafilestreams?path={path}&filename={filename}", Method.GET);
+            var data = Execute(request);
+            var bytes = JsonConvert.DeserializeObject<MediaFileStreamSingle>(data.Content).Stream;
 
-            var serializer = new JavaScriptSerializer();
-            var media = serializer.Deserialize<MediaFileStreamSingle>(data).Stream;
-
-            return media;
+            return bytes;
         }
     }
 }

@@ -213,20 +213,16 @@ namespace Keebee.AAT.Operations.Controllers
 
         // POST: api/ActivityEventLogs
         [HttpPost]
-        public int Post([FromBody]string value)
+        public int Post([FromBody]ActivityEventLog activityEventLog)
         {
-            var serializer = new JavaScriptSerializer();
-            var activityEventLog = serializer.Deserialize<ActivityEventLog>(value);
             return _activityEventLogService.Post(activityEventLog);
         }
 
         // PATCH: api/ActivityEventLogs/5
         [HttpPatch]
         [Route("{id}")]
-        public void Patch(int id, [FromBody]string value)
+        public void Patch(int id, [FromBody]ActivityEventLog activityEventLog)
         {
-            var serializer = new JavaScriptSerializer();
-            var activityEventLog = serializer.Deserialize<ActivityEventLog>(value);
             _activityEventLogService.Patch(id, activityEventLog);
         }
 

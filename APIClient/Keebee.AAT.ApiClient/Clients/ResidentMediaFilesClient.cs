@@ -1,7 +1,8 @@
 ﻿using Keebee.AAT.ApiClient.Models;
 using System;
 using System.Collections.Generic;
-using System.Web.Script.Serialization;
+using Newtonsoft.Json;
+using RestSharp;
 
 namespace Keebee.AAT.ApiClient.Clients
 {
@@ -18,103 +19,86 @@ namespace Keebee.AAT.ApiClient.Clients
         string Delete(int id);
     }
 
-    public class ResidentMediaFilesClient : IResidentMediaFilesClient
+    public class ResidentMediaFilesClient : BaseClient, IResidentMediaFilesClient
     {
-        private readonly ClientBase _clientBase;
-
-        public ResidentMediaFilesClient()
-        {
-            _clientBase = new ClientBase();
-        }
-
         public IEnumerable<ResidentMedia> Get()
         {
-            var data = _clientBase.Get("residentmediafiles");
-            if (data == null) return null;
-
-            var serializer = new JavaScriptSerializer();
-            var residentMedia = serializer.Deserialize<ResidentMediaResponseTypeList>(data).ResidentMediaList;
+            var request = new RestRequest("residentmediafiles", Method.GET);
+            var data = Execute(request);
+            var residentMedia = JsonConvert.DeserializeObject<ResidentMediaResponseTypeList>(data.Content).ResidentMediaList;
 
             return residentMedia;
         }
 
         public ResidentMediaFile Get(int id)
         {
-            var data = _clientBase.Get($"residentmediafiles/{id}");
-            if (data == null) return null;
-
-            var serializer = new JavaScriptSerializer();
-            var residentMediaFile = serializer.Deserialize<ResidentMediaFile>(data);
+            var request = new RestRequest($"residentmediafiles/{id}", Method.GET);
+            var data = Execute(request);
+            var residentMediaFile = JsonConvert.DeserializeObject<ResidentMediaFile>(data.Content);
 
             return residentMediaFile;
         }
 
         public ResidentMedia GetForResident(int residentId)
         {
-            var data = _clientBase.Get($"residentmediafiles?residentId={residentId}");
-            if (data == null) return null;
-
-            var serializer = new JavaScriptSerializer();
-            var residentMedia = serializer.Deserialize<ResidentMediaSingle>(data).ResidentMedia;
+            var request = new RestRequest($"residentmediafiles?residentId={residentId}", Method.GET);
+            var data = Execute(request);
+            var residentMedia = JsonConvert.DeserializeObject<ResidentMediaSingle>(data.Content).ResidentMedia;
 
             return residentMedia;
         }
 
         public ResidentMediaResponseType GetForResidentResponseType(int residentId, int responseTypeId)
         {
-            var data = _clientBase.Get($"residentmediafiles?residentId={residentId}&responseTypeId={responseTypeId}");
-            if (data == null) return null;
-
-            var serializer = new JavaScriptSerializer();
-            var mediaResponseType = serializer.Deserialize<ResidentMediaResponseTypeSingle>(data).ResidentMedia;
+            var request = new RestRequest($"residentmediafiles?residentId={residentId}&responseTypeId={responseTypeId}", Method.GET);
+            var data = Execute(request);
+            var mediaResponseType = JsonConvert.DeserializeObject<ResidentMediaResponseTypeSingle>(data.Content).ResidentMedia;
 
             return mediaResponseType;
         }
 
         public IEnumerable<ResidentMedia> GetLinked()
         {
-            var data = _clientBase.Get("residentmediafiles/linked");
-            if (data == null) return null;
-
-            var serializer = new JavaScriptSerializer();
-            var mediaList = serializer.Deserialize<ResidentMediaResponseTypeList>(data).ResidentMediaList;
+            var request = new RestRequest("residentmediafiles/linked", Method.GET);
+            var data = Execute(request);
+            var mediaList = JsonConvert.DeserializeObject<ResidentMediaResponseTypeList>(data.Content).ResidentMediaList;
 
             return mediaList;
         }
 
         public IEnumerable<ResidentMedia> GetLinkedForStreamId(Guid streamId)
         {
-            var data = _clientBase.Get($"residentmediafiles/linked?streamId={streamId}");
-            if (data == null) return null;
-
-            var serializer = new JavaScriptSerializer();
-            var mediaList = serializer.Deserialize<ResidentMediaResponseTypeList>(data).ResidentMediaList;
+            var request = new RestRequest($"residentmediafiles/linked?streamId={streamId}", Method.GET);
+            var data = Execute(request);
+            var mediaList = JsonConvert.DeserializeObject<ResidentMediaResponseTypeList>(data.Content).ResidentMediaList;
 
             return mediaList;
         }
 
         public int[] GetIdsForStreamId(Guid streamId)
         {
-            var data = _clientBase.Get($"residentmediafiles/ids?streamId={streamId}");
-            if (data == null) return null;
-
-            var serializer = new JavaScriptSerializer();
-            var ids = serializer.Deserialize<int[]>(data);
+            var request = new RestRequest($"residentmediafiles/ids?streamId={streamId}", Method.GET);
+            var data = Execute(request);
+            var ids = JsonConvert.DeserializeObject<int[]>(data.Content);
 
             return ids;
         }
 
         public int Post(ResidentMediaFileEdit residenttMediaFile)
         {
-            var serializer = new JavaScriptSerializer();
-            var el = serializer.Serialize(residenttMediaFile);
+            var request = new RestRequest("residentmediafiles", Method.POST);
+            var json = request.JsonSerializer.Serialize(residenttMediaFile);
+            request.AddParameter("application/json", json, ParameterType.RequestBody);
+            var response = Execute(request);
 
-            return _clientBase.Post("residentmediafiles", el);
+            var newId = Convert.ToInt32(response.Content);
+            return newId;
         }
 
         public string Delete(int id)
         {
-            return _clientBase.Delete(string.Format($"residentmediafiles/{id}"));
+            var request = new RestRequest($"residentmediafiles/{id}", Method.DELETE);
+            return Execute(request).Content;
         }
     }
 }

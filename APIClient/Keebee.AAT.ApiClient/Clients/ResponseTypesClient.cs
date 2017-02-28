@@ -1,6 +1,7 @@
 ﻿using Keebee.AAT.ApiClient.Models;
 using System.Collections.Generic;
-using System.Web.Script.Serialization;
+using Newtonsoft.Json;
+using RestSharp;
 
 namespace Keebee.AAT.ApiClient.Clients
 {
@@ -9,22 +10,13 @@ namespace Keebee.AAT.ApiClient.Clients
         IEnumerable<ResponseType> Get();
     }
 
-    public class ResponseTypesClient : IResponseTypesClient
+    public class ResponseTypesClient : BaseClient, IResponseTypesClient
     {
-        private readonly ClientBase _clientBase;
-
-        public ResponseTypesClient()
-        {
-            _clientBase = new ClientBase();
-        }
-
         public IEnumerable<ResponseType> Get()
         {
-            var data = _clientBase.Get("responsetypes");
-            if (data == null) return null;
-
-            var serializer = new JavaScriptSerializer();
-            var responseTypes = serializer.Deserialize<ResponseTypeList>(data).ResponseTypes;
+            var request = new RestRequest("responsetypes", Method.GET);
+            var data = Execute(request);
+            var responseTypes = JsonConvert.DeserializeObject<ResponseTypeList>(data.Content).ResponseTypes;
 
             return responseTypes;
         }

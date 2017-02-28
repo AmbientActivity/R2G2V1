@@ -1,6 +1,8 @@
-﻿using Keebee.AAT.ApiClient.Models;
+﻿using System;
+using Keebee.AAT.ApiClient.Models;
 using System.Collections.Generic;
-using System.Web.Script.Serialization;
+using Newtonsoft.Json;
+using RestSharp;
 
 namespace Keebee.AAT.ApiClient.Clients
 {
@@ -12,48 +14,41 @@ namespace Keebee.AAT.ApiClient.Clients
         string Delete(int id);
     }
 
-    public class InteractiveActivityEventLogsClient : IInteractiveActivityEventLogsClient
+    public class InteractiveActivityEventLogsClient : BaseClient, IInteractiveActivityEventLogsClient
     {
-        private readonly ClientBase _clientBase;
-
-        public InteractiveActivityEventLogsClient()
-        {
-            _clientBase = new ClientBase();
-        }
-
         public IEnumerable<InteractiveActivityEventLog> GetForDate(string date)
         {
-            var data = _clientBase.Get($"interactiveactivityeventlogs?date={date}");
-            if (data == null) return null;
-
-            var serializer = new JavaScriptSerializer();
-            var interactiveActivityEventLogs = serializer.Deserialize<InteractiveActivityEventLogList>(data).InteractiveActivityEventLogs;
+            var request = new RestRequest($"interactiveactivityeventlogs?date={date}", Method.GET);
+            var data = Execute(request);
+            var interactiveActivityEventLogs = JsonConvert.DeserializeObject<InteractiveActivityEventLogList>(data.Content).InteractiveActivityEventLogs;
 
             return interactiveActivityEventLogs;
         }
 
         public IEnumerable<InteractiveActivityEventLog> GetForResident(int residentId)
         {
-            var data =_clientBase. Get($"interactiveactivityeventlogs?residentId={residentId}");
-            if (data == null) return null;
-
-            var serializer = new JavaScriptSerializer();
-            var interactiveActivityEventLogs = serializer.Deserialize<InteractiveActivityEventLogList>(data).InteractiveActivityEventLogs;
+            var request = new RestRequest($"interactiveactivityeventlogs?residentId={residentId}", Method.GET);
+            var data = Execute(request);
+            var interactiveActivityEventLogs = JsonConvert.DeserializeObject<InteractiveActivityEventLogList>(data.Content).InteractiveActivityEventLogs;
 
             return interactiveActivityEventLogs;
         }
 
         public int Post(InteractiveActivityEventLog interactiveActivityEventLog)
         {
-            var serializer = new JavaScriptSerializer();
-            var el = serializer.Serialize(interactiveActivityEventLog);
+            var request = new RestRequest("interactiveactivityeventlogs", Method.POST);
+            var json = request.JsonSerializer.Serialize(interactiveActivityEventLog);
+            request.AddParameter("application/json", json, ParameterType.RequestBody);
+            var response = Execute(request);
 
-            return _clientBase.Post("interactiveactivityeventlogs", el);
+            var newId = Convert.ToInt32(response.Content);
+            return newId;
         }
 
         public string Delete(int id)
         {
-            return _clientBase.Delete($"interactiveactivityeventlogs/{id}");
+            var request = new RestRequest($"interactiveactivityeventlogs/{id}", Method.DELETE);
+            return Execute(request).Content;
         }
     }
 }

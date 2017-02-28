@@ -1,6 +1,8 @@
 ﻿using Keebee.AAT.ApiClient.Models;
+using System;
 using System.Collections.Generic;
-using System.Web.Script.Serialization;
+using Newtonsoft.Json;
+using RestSharp;
 
 namespace Keebee.AAT.ApiClient.Clients
 {
@@ -15,70 +17,59 @@ namespace Keebee.AAT.ApiClient.Clients
 
     }
 
-    public class ActivityEventLogsClient : IActivityEventLogsClient
+    public class ActivityEventLogsClient : BaseClient, IActivityEventLogsClient
     {
-        private readonly ClientBase _clientBase;
-
-        public ActivityEventLogsClient()
-        {
-            _clientBase = new ClientBase();
-        }
-
         public IEnumerable<ActivityEventLog> GetForDate(string date)
         {
-            var data = _clientBase.Get($"activityeventlogs?date={date}");
-            if (data == null) return null;
-
-            var serializer = new JavaScriptSerializer();
-            var activityEventLogs = serializer.Deserialize<ActivityEventLogList>(data).ActivityEventLogs;
+            var request = new RestRequest($"activityeventlogs?date={date}", Method.GET);
+            var data = Execute(request);
+            var activityEventLogs = JsonConvert.DeserializeObject<ActivityEventLogList>(data.Content).ActivityEventLogs;
 
             return activityEventLogs;
         }
 
         public IEnumerable<ActivityEventLog> GetForConfig(int configId)
         {
-            var data = _clientBase.Get($"activityeventlogs?configId={configId}");
-            if (data == null) return null;
-
-            var serializer = new JavaScriptSerializer();
-            var activityEventLogs = serializer.Deserialize<ActivityEventLogList>(data).ActivityEventLogs;
+            var request = new RestRequest($"activityeventlogs?configId={configId}", Method.GET);
+            var data = Execute(request);
+            var activityEventLogs = JsonConvert.DeserializeObject<ActivityEventLogList>(data.Content).ActivityEventLogs;
 
             return activityEventLogs;
         }
 
         public IEnumerable<ActivityEventLog> GetForConfigDetail(int configDetailId)
         {
-            var data = _clientBase.Get($"activityeventlogs?configDetailId={configDetailId}");
-            if (data == null) return null;
-
-            var serializer = new JavaScriptSerializer();
-            var activityEventLogs = serializer.Deserialize<ActivityEventLogList>(data).ActivityEventLogs;
+            var request = new RestRequest($"activityeventlogs?configDetailId={configDetailId}", Method.GET);
+            var data = Execute(request);
+            var activityEventLogs = JsonConvert.DeserializeObject<ActivityEventLogList>(data.Content).ActivityEventLogs;
 
             return activityEventLogs;
         }
 
         public IEnumerable<ActivityEventLog> GetForResident(int residentId)
         {
-            var data = _clientBase.Get($"activityeventlogs?residentId={residentId}");
-            if (data == null) return null;
-
-            var serializer = new JavaScriptSerializer();
-            var activityEventLogs = serializer.Deserialize<ActivityEventLogList>(data).ActivityEventLogs;
+            var request = new RestRequest($"activityeventlogs?residentId={residentId}", Method.GET);
+            var data = Execute(request);
+            var activityEventLogs = JsonConvert.DeserializeObject<ActivityEventLogList>(data.Content).ActivityEventLogs;
 
             return activityEventLogs;
         }
 
         public int Post(ActivityEventLog activityEventLog)
         {
-            var serializer = new JavaScriptSerializer();
-            var el = serializer.Serialize(activityEventLog);
+            var request = new RestRequest("activityeventlogs", Method.POST);
+            var json = request.JsonSerializer.Serialize(activityEventLog);
+            request.AddParameter("application/json", json, ParameterType.RequestBody);
+            var response = Execute(request);
 
-            return _clientBase.Post("activityeventlogs", el);
+            var newId = Convert.ToInt32(response.Content);
+            return newId;
         }
 
         public string Delete(int id)
         {
-            return _clientBase.Delete($"activityeventlogs/{id}");
+            var request = new RestRequest($"activityeventlogs/{id}", Method.DELETE);
+            return Execute(request).Content;
         }
     }
 }

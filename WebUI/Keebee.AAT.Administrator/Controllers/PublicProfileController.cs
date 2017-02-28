@@ -292,7 +292,7 @@ namespace Keebee.AAT.Administrator.Controllers
             return vm;
         }
 
-        private SharedLibraryLinkViewModel LoadSharedLibaryAddViewModel(int mediaPathTypeId)
+        private static SharedLibraryLinkViewModel LoadSharedLibaryAddViewModel(int mediaPathTypeId)
         {
             var rules = new PublicProfileRules();
             var files = rules.GetAvailableSharedMediaFiles(mediaPathTypeId);

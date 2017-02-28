@@ -1,6 +1,7 @@
 ﻿using Keebee.AAT.ApiClient.Models;
 using System.Collections.Generic;
-using System.Web.Script.Serialization;
+using Newtonsoft.Json;
+using RestSharp;
 
 namespace Keebee.AAT.ApiClient.Clients
 {
@@ -12,44 +13,31 @@ namespace Keebee.AAT.ApiClient.Clients
         IEnumerable<MediaPathType> Get(bool isSystem);
     }
 
-    public class MediaPathTypesClient : IMediaPathTypesClient
+    public class MediaPathTypesClient : BaseClient, IMediaPathTypesClient
     {
-        private readonly ClientBase _clientBase;
-
-        public MediaPathTypesClient()
-        {
-            _clientBase = new ClientBase();
-        }
-
         public IEnumerable<MediaPathType> Get()
         {
-            var data = _clientBase.Get("mediapathtypes");
-            if (data == null) return null;
-
-            var serializer = new JavaScriptSerializer();
-            var pathTypes = serializer.Deserialize<MediaPathTypeList>(data).MediaPathTypes;
+            var request = new RestRequest("mediapathtypes", Method.GET);
+            var data = Execute(request);
+            var pathTypes = JsonConvert.DeserializeObject<MediaPathTypeList>(data.Content).MediaPathTypes;
 
             return pathTypes;
         }
 
         public MediaPathType Get(int mediaPathTypeId)
         {
-            var data = _clientBase.Get($"mediapathtypes/{mediaPathTypeId}");
-            if (data == null) return null;
-
-            var serializer = new JavaScriptSerializer();
-            var pathType = serializer.Deserialize<MediaPathType>(data);
+            var request = new RestRequest($"mediapathtypes/{mediaPathTypeId}", Method.GET);
+            var data = Execute(request);
+            var pathType = JsonConvert.DeserializeObject<MediaPathType>(data.Content);
 
             return pathType;
         }
 
         public IEnumerable<MediaPathType> Get(bool isSystem)
         {
-            var data = _clientBase.Get($"mediapathtypes?isSystem={isSystem}");
-            if (data == null) return null;
-
-            var serializer = new JavaScriptSerializer();
-            var pathTypes = serializer.Deserialize<MediaPathTypeList>(data).MediaPathTypes;
+            var request = new RestRequest($"mediapathtypes?isSystem={isSystem}", Method.GET);
+            var data = Execute(request);
+            var pathTypes = JsonConvert.DeserializeObject<MediaPathTypeList>(data.Content).MediaPathTypes;
 
             return pathTypes;
         }

@@ -1,7 +1,7 @@
 ﻿using Keebee.AAT.ApiClient.Models;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web.Script.Serialization;
+using Newtonsoft.Json;
+using RestSharp;
 
 namespace Keebee.AAT.ApiClient.Clients
 {
@@ -12,44 +12,31 @@ namespace Keebee.AAT.ApiClient.Clients
         IEnumerable<UserRoleSingle> GetByUser(int userId);
     }
 
-    public class UserRolesClient
+    public class UserRolesClient : BaseClient, IUserRolesClient
     {
-        private readonly ClientBase _clientBase;
-
-        public UserRolesClient()
-        {
-            _clientBase = new ClientBase();
-        }
-
         public IEnumerable<UserRole> Get()
         {
-            var data = _clientBase.Get("userroles");
-            if (data == null) return null;
+            var request = new RestRequest("userroles", Method.GET);
+            var data = Execute(request);
+            var userRoles = JsonConvert.DeserializeObject<UserRoleList>(data.Content).UserRoles;
 
-            var serializer = new JavaScriptSerializer();
-            var userroles = serializer.Deserialize<UserRoleList>(data).UserRoles.ToList();
-
-            return userroles;
+            return userRoles;
         }
 
-        public UserRole GetUserRole(int userRoleId)
+        public UserRole Get(int userRoleId)
         {
-            var data = _clientBase.Get($"userroles/{userRoleId}");
-            if (data == null) return null;
-
-            var serializer = new JavaScriptSerializer();
-            var userRole = serializer.Deserialize<UserRole>(data);
+            var request = new RestRequest($"userroles/{userRoleId}", Method.GET);
+            var data = Execute(request);
+            var userRole = JsonConvert.DeserializeObject<UserRole>(data.Content);
 
             return userRole;
         }
 
         public IEnumerable<UserRoleSingle> GetByUser(int userId)
         {
-            var data = _clientBase.Get($"userroles?userId={userId}");
-            if (data == null) return null;
-
-            var serializer = new JavaScriptSerializer();
-            var userRoles = serializer.Deserialize<UserRolesList>(data).UserRoles;
+            var request = new RestRequest($"userroles?userId={userId}", Method.GET);
+            var data = Execute(request);
+            var userRoles = JsonConvert.DeserializeObject<UserRolesList>(data.Content).UserRoles;
 
             return userRoles;
         }

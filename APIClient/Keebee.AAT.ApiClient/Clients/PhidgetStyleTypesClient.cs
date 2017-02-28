@@ -1,6 +1,7 @@
 ﻿using Keebee.AAT.ApiClient.Models;
 using System.Collections.Generic;
-using System.Web.Script.Serialization;
+using Newtonsoft.Json;
+using RestSharp;
 
 namespace Keebee.AAT.ApiClient.Clients
 {
@@ -9,22 +10,13 @@ namespace Keebee.AAT.ApiClient.Clients
         IEnumerable<PhidgetStyleType> Get();
     }
 
-    public class PhidgetStyleTypesClient : IPhidgetStyleTypesClient
+    public class PhidgetStyleTypesClient : BaseClient, IPhidgetStyleTypesClient
     {
-        private readonly ClientBase _clientBase;
-
-        public PhidgetStyleTypesClient()
-        {
-            _clientBase = new ClientBase();
-        }
-
         public IEnumerable<PhidgetStyleType> Get()
         {
-            var data = _clientBase.Get("phidgetstyletypes");
-            if (data == null) return null;
-
-            var serializer = new JavaScriptSerializer();
-            var phidgetTypes = serializer.Deserialize<PhidgetStyleTypeList>(data).PhidgetStyleTypes;
+            var request = new RestRequest("phidgetstyletypes", Method.GET);
+            var data = Execute(request);
+            var phidgetTypes = JsonConvert.DeserializeObject<PhidgetStyleTypeList>(data.Content).PhidgetStyleTypes;
 
             return phidgetTypes;
         }

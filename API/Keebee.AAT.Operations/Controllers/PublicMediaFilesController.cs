@@ -8,7 +8,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Helpers;
 using System.Web.Http;
-using System.Web.Script.Serialization;
 
 namespace Keebee.AAT.Operations.Controllers
 {
@@ -491,20 +490,16 @@ namespace Keebee.AAT.Operations.Controllers
 
         // POST: api/PublicMediaFiles
         [HttpPost]
-        public void Post([FromBody]string value)
+        public int Post([FromBody]PublicMediaFile publicMediaFile)
         {
-            var serializer = new JavaScriptSerializer();
-            var publicMediaFile = serializer.Deserialize<PublicMediaFile>(value);
-            _publicMediaFileService.Post(publicMediaFile);
+            return _publicMediaFileService.Post(publicMediaFile);
         }
 
         // PATCH: api/PublicMediaFiles/5
         [HttpPatch]
         [Route("{id}")]
-        public void Patch(int id, [FromBody]string value)
+        public void Patch(int id, [FromBody]PublicMediaFile publicMediaFile)
         {
-            var serializer = new JavaScriptSerializer();
-            var publicMediaFile = serializer.Deserialize<PublicMediaFile>(value);
             _publicMediaFileService.Patch(id, publicMediaFile);
         }
 

@@ -79,9 +79,8 @@ namespace Keebee.AAT.Display.UserControls
             try
             {
                 if (_maxIndex == 0) return;
-                _playlist.clear();
                 _currentPlaylisIndex = (_currentPlaylisIndex >= _maxIndex) ? 0 : _currentPlaylisIndex + 1;
-                _playlist = axWindowsMediaPlayer1.LoadPlaylist(PlaylistProfile, new[] { _files[_currentPlaylisIndex] });
+                axWindowsMediaPlayer1.currentMedia = _playlist.Item[_currentPlaylisIndex];
 
                 axWindowsMediaPlayer1.Ctlcontrols.play();
             }
@@ -97,8 +96,7 @@ namespace Keebee.AAT.Display.UserControls
             {
                 if (_maxIndex == 0) return;
                 _currentPlaylisIndex = (_currentPlaylisIndex <= 0) ? _maxIndex : _currentPlaylisIndex - 1;
-                _playlist.clear();
-                _playlist = axWindowsMediaPlayer1.LoadPlaylist(PlaylistProfile, new[] { _files[_currentPlaylisIndex] });
+                axWindowsMediaPlayer1.currentMedia = _playlist.Item[_currentPlaylisIndex];
 
                 axWindowsMediaPlayer1.Ctlcontrols.play();
             }
@@ -111,6 +109,7 @@ namespace Keebee.AAT.Display.UserControls
         public void Stop()
         {
             axWindowsMediaPlayer1.Ctlcontrols.stop();
+            _playlist.clear();
         }
 
         private void ConfigureComponents()
@@ -150,9 +149,9 @@ namespace Keebee.AAT.Display.UserControls
                     if (axWindowsMediaPlayer1.playState == WMPPlayState.wmppsPlaying)
                         axWindowsMediaPlayer1.Ctlcontrols.stop();
 
-                    _playlist = axWindowsMediaPlayer1.LoadPlaylist(PlaylistProfile, new [] { _files.First() });
+                    _playlist = axWindowsMediaPlayer1.LoadPlaylist(PlaylistProfile, _files);
 
-                    axWindowsMediaPlayer1.currentPlaylist = _playlist;
+                    axWindowsMediaPlayer1.currentMedia = _playlist.Item[0];
                     axWindowsMediaPlayer1.Ctlcontrols.play();
                 }
                 catch (Exception ex)
@@ -172,7 +171,6 @@ namespace Keebee.AAT.Display.UserControls
             }
             else
             {
-                _playlist.clear();
                 MediaPlayerCompleteEvent?.Invoke(new object(), new EventArgs());
             }
         }

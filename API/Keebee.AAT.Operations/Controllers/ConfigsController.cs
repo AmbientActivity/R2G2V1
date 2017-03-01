@@ -201,6 +201,7 @@ namespace Keebee.AAT.Operations.Controllers
             return new DynamicJsonObject(exObj);
         }
 
+        // GET: api/Configs/2/details
         [Route("{id}/details")]
         [HttpGet]
         public async Task<DynamicJsonObject> GetDetails(int id)
@@ -258,6 +259,14 @@ namespace Keebee.AAT.Operations.Controllers
             return new DynamicJsonObject(exObj);
         }
 
+        // GET: api/Configs/2/activate
+        [Route("{id}/activate")]
+        [HttpGet]
+        public void Activate(int id)
+        {
+            _configService.Activate(id);
+        }
+
         // POST: api/Configs
         [HttpPost]
         public int Post([FromBody]Config config)
@@ -265,15 +274,7 @@ namespace Keebee.AAT.Operations.Controllers
             return _configService.Post(config);
         }
 
-        // POST: api/Configs/2/activate
-        [Route("{id}/activate")]
-        [HttpPost]
-        public void Activate(int id)
-        {
-            _configService.Activate(id);
-        }
-
-        // PUT: api/Configs/5
+        // PATCH: api/Configs/5
         [HttpPatch]
         [Route("{id}")]
         public void Patch(int id, [FromBody]Config config)

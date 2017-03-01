@@ -12,6 +12,7 @@ namespace Keebee.AAT.ApiClient.Clients
         IEnumerable<ActivityEventLog> GetForConfig(int configId);
         IEnumerable<ActivityEventLog> GetForConfigDetail(int configDetailId);
         IEnumerable<ActivityEventLog> GetForResident(int residentId);
+        IEnumerable<ActivityEventLog> GetIds();
         int Post(ActivityEventLog activityEventLog);
         string Delete(int id);
 
@@ -53,6 +54,15 @@ namespace Keebee.AAT.ApiClient.Clients
             var activityEventLogs = JsonConvert.DeserializeObject<ActivityEventLogList>(data.Content).ActivityEventLogs;
 
             return activityEventLogs;
+        }
+
+        public IEnumerable<ActivityEventLog> GetIds()
+        {
+            var request = new RestRequest($"activityeventlogs/ids", Method.GET);
+            var data = Execute(request);
+            var activityEventLogIds = JsonConvert.DeserializeObject<ActivityEventLogList>(data.Content).ActivityEventLogs;
+
+            return activityEventLogIds;
         }
 
         public int Post(ActivityEventLog activityEventLog)

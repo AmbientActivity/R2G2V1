@@ -158,7 +158,7 @@ namespace Keebee.AAT.Operations.Controllers
             return new DynamicJsonObject(exObj);
         }
 
-        // GET: api/ActivityEventLogs?configDetailId
+        // GET: api/ActivityEventLogs?configDetailId=6
         [HttpGet]
         public async Task<DynamicJsonObject> GetForConfigPhidgetResponseType(int configDetailId)
         {
@@ -206,6 +206,32 @@ namespace Keebee.AAT.Operations.Controllers
                 {
                     x.Id,
                    x.Description
+                });
+
+            return new DynamicJsonObject(exObj);
+        }
+
+        // GET: api/ActivityEventLogs/ids?configId=1
+        [HttpGet]
+        [Route("ids")]
+        public async Task<DynamicJsonObject> GetIds()
+        {
+            IEnumerable<ActivityEventLog> activityEventLogs = new Collection<ActivityEventLog>();
+
+            await Task.Run(() =>
+            {
+                activityEventLogs = _activityEventLogService.Get();
+            });
+
+            if (activityEventLogs == null) return new DynamicJsonObject(new ExpandoObject());
+
+            dynamic exObj = new ExpandoObject();
+            exObj.ActivityEventLogs = activityEventLogs
+                .Select(x => new
+                {
+                    x.Id,
+                    x.ConfigDetail.ConfigId,
+                    x.ConfigDetailId
                 });
 
             return new DynamicJsonObject(exObj);

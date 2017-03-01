@@ -112,7 +112,6 @@
                 };
 
                 function initializeScreen() {
-                    //cmdActivate.attr("disabled", "disabled");
                     cmdDelete.attr("disabled", "disabled");
                 }
 
@@ -625,7 +624,7 @@
                     var result;
 
                     $.ajax({
-                        type: "POST",
+                        type: "GET",
                         async: false,
                         url: site.url + "PhidgetConfig/Activate/",
                         data: { configId: configId },

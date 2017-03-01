@@ -83,7 +83,7 @@ namespace Keebee.AAT.Display.UserControls
                 _currentPlaylisIndex = (_currentPlaylisIndex >= _maxIndex) ? 0 : _currentPlaylisIndex + 1;
                 _playlist = axWindowsMediaPlayer1.LoadPlaylist(PlaylistProfile, new[] { _files[_currentPlaylisIndex] });
 
-                axWindowsMediaPlayer1.Ctlcontrols.next();
+                axWindowsMediaPlayer1.Ctlcontrols.play();
             }
             catch (Exception ex)
             {
@@ -100,7 +100,7 @@ namespace Keebee.AAT.Display.UserControls
                 _playlist.clear();
                 _playlist = axWindowsMediaPlayer1.LoadPlaylist(PlaylistProfile, new[] { _files[_currentPlaylisIndex] });
 
-                axWindowsMediaPlayer1.Ctlcontrols.previous();
+                axWindowsMediaPlayer1.Ctlcontrols.play();
             }
             catch (Exception ex)
             {
@@ -125,6 +125,7 @@ namespace Keebee.AAT.Display.UserControls
             axWindowsMediaPlayer1.Dock = DockStyle.Fill;
             axWindowsMediaPlayer1.settings.setMode("loop", _isLoop);
             axWindowsMediaPlayer1.settings.volume = MediaPlayerControl.DefaultVolume;
+
 #if DEBUG
             axWindowsMediaPlayer1.uiMode = "full";
             axWindowsMediaPlayer1.Ctlenabled = true;
@@ -152,6 +153,7 @@ namespace Keebee.AAT.Display.UserControls
                     _playlist = axWindowsMediaPlayer1.LoadPlaylist(PlaylistProfile, new [] { _files.First() });
 
                     axWindowsMediaPlayer1.currentPlaylist = _playlist;
+                    axWindowsMediaPlayer1.Ctlcontrols.play();
                 }
                 catch (Exception ex)
                 {

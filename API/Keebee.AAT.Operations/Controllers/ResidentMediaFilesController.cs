@@ -316,7 +316,7 @@ namespace Keebee.AAT.Operations.Controllers
 
             await Task.Run(() =>
             {
-                media = _residentMediaFileService.GetLinkedResidentMedia();
+                media = _residentMediaFileService.GetLinked();
             });
 
             if (media == null) return new DynamicJsonObject(new ExpandoObject());
@@ -388,7 +388,7 @@ namespace Keebee.AAT.Operations.Controllers
 
             await Task.Run(() =>
             {
-                media = _residentMediaFileService.GetLinkedResidentMedia(streamId);
+                media = _residentMediaFileService.GetLinked(streamId);
             });
 
             if (media == null) return new DynamicJsonObject(new ExpandoObject());

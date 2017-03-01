@@ -180,7 +180,7 @@ namespace Keebee.AAT.BusinessRules
             }
         }
 
-        private static MediaPathType GetMediaPathTypeFromRawPath(string path, IEnumerable<MediaPathType> mediaPathTypes)
+        public static MediaPathType GetMediaPathTypeFromRawPath(string path, IEnumerable<MediaPathType> mediaPathTypes)
         {
             var folderName = path.Split(Path.DirectorySeparatorChar)
                 .GetValue((path.Split(Path.DirectorySeparatorChar).Length - 2)).ToString();
@@ -188,58 +188,6 @@ namespace Keebee.AAT.BusinessRules
             var mediaPathType = mediaPathTypes.Single(x => x.Path.Contains(folderName));
 
             return mediaPathType;
-        }
-
-        public IEnumerable<object> GetFileList(IEnumerable<MediaPathType> mediaPathTypes)
-        {
-            var mediaSourcePath = new MediaSourcePath();
-            
-            // public linked media (for tooltip total linked)
-            var publicFiles = new LinkedMediaFile[0];
-            var publicMedia = _publicMediaFilesClient.GetLinked();
-            if (publicMedia != null)
-            {
-                publicFiles = publicMedia.MediaFiles
-                    .SelectMany(x => x.Paths)
-                    .SelectMany(x => x.Files).ToArray();
-            }
-
-            // resident linked media (for tooltip total linked)
-            var residentFilesLinked = new LinkedMediaFile[0];
-            var residentMediaLinked = _residentMediaFilesClient.GetLinked();
-            if (residentMediaLinked != null)
-            {
-                residentFilesLinked = residentMediaLinked
-                    .SelectMany(x => x.MediaResponseTypes)
-                    .SelectMany(x => x.Paths)
-                    .SelectMany(x => x.Files).ToArray();
-            }
-
-            // shared library
-            var sharedMedia = _mediaFilesClient.GetForPath(mediaSourcePath.SharedLibrary);   
-            var sharedFileList = sharedMedia.SelectMany(p =>
-            {
-                var mediaPathType = GetMediaPathTypeFromRawPath(p.Path, mediaPathTypes);
-
-                return p.Files.Select(f =>
-                {
-                    var numLinkedResidentProfiles = residentFilesLinked.Count(x => x.StreamId == f.StreamId);
-                    var isLinkedToPublicProfile = publicFiles.Any(x => x.StreamId == f.StreamId);
-
-                    return new
-                    {
-                        f.StreamId,
-                        f.Filename,
-                        f.FileSize,
-                        f.FileType,
-                        mediaPathType.Path,
-                        MediaPathTypeId = mediaPathType.Id,
-                        NumLinkedProfiles = numLinkedResidentProfiles + (isLinkedToPublicProfile ? 1 : 0)
-                    };
-                });
-            });
-
-            return sharedFileList;
         }
 
         public IEnumerable<object> GetMediaPathTypeList(IEnumerable<MediaPathType> mediaPathTypes)
@@ -259,7 +207,7 @@ namespace Keebee.AAT.BusinessRules
             var publicMedia = _publicMediaFilesClient.GetLinkedForStreamId(streamId);
             var publicProfile = new List<Resident>();
 
-            if (publicMedia != null)
+            if (publicMedia.MediaFiles != null)
             {
                 publicProfile.Add(new Resident
                 {

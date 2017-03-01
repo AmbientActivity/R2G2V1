@@ -4,11 +4,12 @@ using Keebee.AAT.Administrator.FileManagement;
 using Keebee.AAT.BusinessRules;
 using Keebee.AAT.SystemEventLogging;
 using Keebee.AAT.ApiClient.Clients;
+using Keebee.AAT.ApiClient.Models;
 using CuteWebUI;
 using System.Linq;
 using System.Web.Mvc;
 using System;
-using System.IO;
+using System.Collections.Generic;
 
 namespace Keebee.AAT.Administrator.Controllers
 {
@@ -29,7 +30,6 @@ namespace Keebee.AAT.Administrator.Controllers
             _mediaPathTypesClient = new MediaPathTypesClient();
         }
 
-        // GET: SystemLibraries
         [Authorize]
         public ActionResult Index(
             int? mediaPathTypeId,
@@ -54,7 +54,7 @@ namespace Keebee.AAT.Administrator.Controllers
                     return View(vm);
 
                 // POST:
-                var fileManager = new FileManager { EventLogger = _systemEventLogger };
+                var fileManager = new FileManager {EventLogger = _systemEventLogger};
 
                 // for multiple files the value is string : guid/guid/guid 
                 foreach (var strguid in myuploader.Split('/'))
@@ -86,12 +86,11 @@ namespace Keebee.AAT.Administrator.Controllers
         public JsonResult GetData(int mediaPathTypeId)
         {
             var rules = new SharedLibraryRules();
-            var mediaPathTypes = _mediaPathTypesClient.Get()
-                    .Where(mp => mp.IsSharable).ToArray();
+            var mediaPathTypes = _mediaPathTypesClient.Get().Where(mp => mp.IsSharable).ToArray();
 
             var vm = new
             {
-                FileList = rules.GetFileList(mediaPathTypes),
+                FileList = GetFileList(mediaPathTypes),
                 MediaPathTypeList = rules.GetMediaPathTypeList(mediaPathTypes)
             };
 
@@ -107,7 +106,8 @@ namespace Keebee.AAT.Administrator.Controllers
             {
                 uploader.UploadUrl = Response.ApplyAppPathModifier("~/UploadHandler.ashx");
                 uploader.Name = "myuploader";
-                uploader.AllowedFileExtensions = SharedLibraryRules.GetAllowedExtensions(mediaPathTypeId); ;
+                uploader.AllowedFileExtensions = SharedLibraryRules.GetAllowedExtensions(mediaPathTypeId);
+                ;
                 uploader.MultipleFilesUpload = true;
                 uploader.InsertButtonID = "uploadbutton";
                 html = uploader.Render();
@@ -138,7 +138,7 @@ namespace Keebee.AAT.Administrator.Controllers
             var rules = new SharedLibraryRules();
 
             var mediaPathTypes = _mediaPathTypesClient.Get()
-                    .Where(mp => mp.Id != MediaPathTypeId.ImagesPersonal && mp.Id != MediaPathTypeId.HomeMovies).ToArray();
+                .Where(mp => mp.Id != MediaPathTypeId.ImagesPersonal && mp.Id != MediaPathTypeId.HomeMovies).ToArray();
             try
             {
                 foreach (var streamId in streamIds)
@@ -154,7 +154,7 @@ namespace Keebee.AAT.Administrator.Controllers
                             throw new Exception(errormessage);
                     }
 
-                    var fileManager = new FileManager { EventLogger = _systemEventLogger };
+                    var fileManager = new FileManager {EventLogger = _systemEventLogger};
                     fileManager.DeleteFile($@"{file.Path}\{file.Filename}");
                 }
 
@@ -170,7 +170,7 @@ namespace Keebee.AAT.Administrator.Controllers
             {
                 Success = success,
                 ErrorMessage = errormessage,
-                FileList = rules.GetFileList(mediaPathTypes)
+                FileList = GetFileList(mediaPathTypes)
             }, JsonRequestBehavior.AllowGet);
         }
 
@@ -219,15 +219,37 @@ namespace Keebee.AAT.Administrator.Controllers
             var vm = new LinkedProfilesViewModel
             {
                 Profiles = linkedProfiles.Select(r => new
-                ResidentViewModel
-                {
-                    FirstName = r.FirstName,
-                    LastName = r.LastName
-                }),
+                    ResidentViewModel
+                    {
+                        FirstName = r.FirstName,
+                        LastName = r.LastName
+                    }),
                 NoAvailableMediaMessage = "No profiles are linked to this file."
             };
 
             return vm;
+        }
+
+        private IEnumerable<object> GetFileList(IEnumerable<MediaPathType> mediaPathTypes)
+        {
+            var sharedMedia = _mediaFilesClient.GetWithLinkedData(_mediaSourcePath.SharedLibrary);
+
+            return sharedMedia.SelectMany(p =>
+            {
+                var mediaPathType = SharedLibraryRules.GetMediaPathTypeFromRawPath(p.Path, mediaPathTypes);
+
+                return p.Files.Select(f =>
+                    new
+                    {
+                        f.StreamId,
+                        f.Filename,
+                        f.FileSize,
+                        f.FileType,
+                        mediaPathType.Path,
+                        MediaPathTypeId = mediaPathType.Id,
+                        f.NumLinkedProfiles
+                    });
+            });
         }
     }
 }

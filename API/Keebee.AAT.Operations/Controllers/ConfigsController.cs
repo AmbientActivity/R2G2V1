@@ -26,8 +26,7 @@ namespace Keebee.AAT.Operations.Controllers
         [HttpGet]
         public async Task<DynamicJsonObject> Get()
         {
-            IEnumerable<Config> configs = new Collection<Config>();
-            var activityEventLogs = _activityEventLogService.GetWithConfigDetail().ToArray();
+            IEnumerable<Config> configs = new Collection<Config>();    
 
             await Task.Run(() =>
             {
@@ -36,6 +35,7 @@ namespace Keebee.AAT.Operations.Controllers
 
             if (configs == null) return new DynamicJsonObject(new ExpandoObject());
 
+            var activityEventLogs = _activityEventLogService.GetWithConfigDetail().ToArray();
             dynamic exObj = new ExpandoObject();
             exObj.Configs = configs.Select(c => new
             {

@@ -11,13 +11,20 @@ using System.Web.Http;
 
 namespace Keebee.AAT.Operations.Controllers
 {
+    [RoutePrefix("api/mediafiles")]
     public class MediaFilesController : ApiController
     {
        private readonly IMediaFileService _mediaFileService;
+       private readonly IPublicMediaFileService _publicMediaFileService;
+       private readonly IResidentMediaFileService _residentMediaFileService;
 
-       public MediaFilesController(IMediaFileService mediaService)
+        public MediaFilesController(IMediaFileService mediaService,
+            IPublicMediaFileService publicMediaFileService,
+            IResidentMediaFileService residentMediaFileService)
         {
             _mediaFileService = mediaService;
+            _publicMediaFileService = publicMediaFileService;
+            _residentMediaFileService = residentMediaFileService;
         }
 
         // GET: api/MediaFiles
@@ -195,6 +202,67 @@ namespace Keebee.AAT.Operations.Controllers
             exObj.Filename = media.Filename;
             exObj.FileType = media.FileType;
             exObj.FileSize = media.FileSize;
+
+            return new DynamicJsonObject(exObj);
+        }
+
+        // GET: api/MediaFiles/linked?path=SharedLibrary
+        [Route("linked")]
+        [HttpGet]
+        public async Task<DynamicJsonObject> GetWithLinkedData(string path)
+        {
+            IEnumerable<MediaFile> media = new Collection<MediaFile>();
+
+            await Task.Run(() =>
+            {
+                media = _mediaFileService.GetForPath(path);
+            });
+
+            if (media == null) return new DynamicJsonObject(new ExpandoObject());
+            if (!media.Any()) return new DynamicJsonObject(new ExpandoObject());
+
+            var publicMedia = _publicMediaFileService.GetLinked();
+            var residentMedia = _residentMediaFileService.GetLinked();
+
+            var publicLinkedStreamIds = new Guid?[0];
+            if (publicMedia != null)
+            {
+                publicLinkedStreamIds = publicMedia
+                    .Select(x => x.StreamId).ToArray();
+            }
+
+            var residentLinkedStreamIds = new Guid?[0];
+            if (publicMedia != null)
+            {
+                residentLinkedStreamIds = residentMedia
+                    .Select(x => x.StreamId).ToArray();
+            }
+
+            dynamic exObj = new ExpandoObject();
+
+            exObj.Media = media.GroupBy(m => m.Path)
+                .Select(files => new { files.First().Path, Files = files })
+                .Select(x =>
+                {
+                    return new
+                    {
+                        x.Path,
+                        Files = x.Files.Select(f =>
+                        {
+                            var numLinkedResidentProfiles = residentLinkedStreamIds.Count(s => s == f.StreamId);
+                            var isLinkedToPublicProfile = publicLinkedStreamIds.Any(s => s == f.StreamId);
+                            return new
+                            {
+                                f.StreamId,
+                                f.IsFolder,
+                                f.Filename,
+                                f.FileType,
+                                f.FileSize,
+                                NumLinkedProfiles = numLinkedResidentProfiles + (isLinkedToPublicProfile ? 1 : 0)
+                            };
+                        })
+                    };
+                });
 
             return new DynamicJsonObject(exObj);
         }

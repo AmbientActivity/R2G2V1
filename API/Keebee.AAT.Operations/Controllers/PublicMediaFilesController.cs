@@ -373,7 +373,7 @@ namespace Keebee.AAT.Operations.Controllers
 
             await Task.Run(() =>
             {
-                mediaList = _publicMediaFileService.GetLinkedPublicMedia();
+                mediaList = _publicMediaFileService.GetLinked();
             });
 
             if (mediaList == null) return new DynamicJsonObject(new ExpandoObject());
@@ -435,7 +435,7 @@ namespace Keebee.AAT.Operations.Controllers
 
             await Task.Run(() =>
             {
-                media = _publicMediaFileService.GetLinkedPublicMedia(streamId);
+                media = _publicMediaFileService.GetLinked(streamId);
             });
 
             if (media == null) return new DynamicJsonObject(new ExpandoObject());

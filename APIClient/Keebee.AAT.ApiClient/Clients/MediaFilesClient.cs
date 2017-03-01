@@ -13,6 +13,7 @@ namespace Keebee.AAT.ApiClient.Clients
         MediaFileSingle GetFromPath(string path, string filename);
         byte[] GetFileBytes(Guid streamId);
         byte[] GetFileStreamFromPath(string path, string filename);
+        IEnumerable<Media> GetWithLinkedData(string path);
     }
 
     public class MediaFilesClient : BaseClient, IMediaFilesClient
@@ -59,6 +60,15 @@ namespace Keebee.AAT.ApiClient.Clients
             var bytes = JsonConvert.DeserializeObject<MediaFileStreamSingle>(data.Content).Stream;
 
             return bytes;
+        }
+
+        public IEnumerable<Media> GetWithLinkedData(string path)
+        {
+            var request = new RestRequest($"mediafiles/linked?path={path}", Method.GET);
+            var data = Execute(request);
+            var media = JsonConvert.DeserializeObject<MediaList>(data.Content).Media;
+
+            return media;
         }
     }
 }

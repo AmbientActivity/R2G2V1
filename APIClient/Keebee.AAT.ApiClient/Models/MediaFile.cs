@@ -11,6 +11,7 @@ namespace Keebee.AAT.ApiClient.Models
         public string FileType { get; set; }
         public int FileSize { get; set; }
         public bool IsLinked { get; set; }
+        public int NumLinkedProfiles { get; set; }
     }
 
     public class LinkedMediaFile : MediaFile

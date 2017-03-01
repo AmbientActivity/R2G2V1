@@ -12,8 +12,8 @@ namespace Keebee.AAT.Operations.Service.Services
         ResidentMediaFile Get(int id);
         IEnumerable<ResidentMediaFile> GetForResident(int residentId);
         IEnumerable<ResidentMediaFile> GetForResidentResponseType(int residentId, int responseTypdId);
-        IEnumerable<ResidentMediaFile> GetLinkedResidentMedia();
-        IEnumerable<ResidentMediaFile> GetLinkedResidentMedia(Guid streamId);
+        IEnumerable<ResidentMediaFile> GetLinked();
+        IEnumerable<ResidentMediaFile> GetLinked(Guid streamId);
         IEnumerable<ResidentMediaFile> GetIdsForStreamId(Guid streamId);
         int Post(ResidentMediaFile residentMediaFile);
         void Patch(int id, ResidentMediaFile residentMediaFile);
@@ -67,7 +67,7 @@ namespace Keebee.AAT.Operations.Service.Services
             return media;
         }
 
-        public IEnumerable<ResidentMediaFile> GetLinkedResidentMedia()
+        public IEnumerable<ResidentMediaFile> GetLinked()
         {
             var container = new Container(new Uri(ODataHost.Url));
 
@@ -79,7 +79,7 @@ namespace Keebee.AAT.Operations.Service.Services
             return media;
         }
 
-        public IEnumerable<ResidentMediaFile> GetLinkedResidentMedia(Guid streamId)
+        public IEnumerable<ResidentMediaFile> GetLinked(Guid streamId)
         {
             var container = new Container(new Uri(ODataHost.Url));
 

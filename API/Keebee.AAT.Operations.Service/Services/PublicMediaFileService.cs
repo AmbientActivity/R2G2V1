@@ -15,8 +15,8 @@ namespace Keebee.AAT.Operations.Service.Services
         IEnumerable<PublicMediaFile> GetForMediaPathType(int mediaPathTypdId);
         IEnumerable<PublicMediaFile> GetForStreamId(Guid streamId);
         IEnumerable<PublicMediaFile> GetIdsForStreamId(Guid streamId);
-        IEnumerable<PublicMediaFile> GetLinkedPublicMedia();
-        IEnumerable<PublicMediaFile> GetLinkedPublicMedia(Guid streamId);
+        IEnumerable<PublicMediaFile> GetLinked();
+        IEnumerable<PublicMediaFile> GetLinked(Guid streamId);
         PublicMediaFile GetForResponseTypeFilename(int responseTypdId, string filename);
         int Post(PublicMediaFile publicMediaFile);
         void Patch(int id, PublicMediaFile publicMediaFile);
@@ -109,7 +109,7 @@ namespace Keebee.AAT.Operations.Service.Services
                     .AsEnumerable();
         }
 
-        public IEnumerable<PublicMediaFile> GetLinkedPublicMedia()
+        public IEnumerable<PublicMediaFile> GetLinked()
         {
             var container = new Container(new Uri(ODataHost.Url));
 
@@ -121,7 +121,7 @@ namespace Keebee.AAT.Operations.Service.Services
             return media;
         }
 
-        public IEnumerable<PublicMediaFile> GetLinkedPublicMedia(Guid streamId)
+        public IEnumerable<PublicMediaFile> GetLinked(Guid streamId)
         {
             var container = new Container(new Uri(ODataHost.Url));
 

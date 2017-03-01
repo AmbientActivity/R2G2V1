@@ -8,6 +8,7 @@ namespace Keebee.AAT.ApiClient.Models
         public int ConfigId { get; set; }
         public string Description { get; set; }
         public string Location { get; set; }
+        public bool IsEventLogs { get; set; }
         public PhidgetType PhidgetType { get; set; }
         public PhidgetStyleType PhidgetStyleType { get; set; }
         public ResponseType ResponseType { get; set; }

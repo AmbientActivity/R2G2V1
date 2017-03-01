@@ -14,10 +14,12 @@ namespace Keebee.AAT.Operations.Controllers
     public class ConfigsController : ApiController
     {
         private readonly IConfigService _configService;
+        private readonly IActivityEventLogService _activityEventLogService;
 
-        public ConfigsController(IConfigService configService)
+        public ConfigsController(IConfigService configService, IActivityEventLogService activityEventLogService)
         {
             _configService = configService;
+            _activityEventLogService = activityEventLogService;
         }
 
         // GET: api/Configs
@@ -25,6 +27,7 @@ namespace Keebee.AAT.Operations.Controllers
         public async Task<DynamicJsonObject> Get()
         {
             IEnumerable<Config> configs = new Collection<Config>();
+            var activityEventLogs = _activityEventLogService.GetWithConfigDetail().ToArray();
 
             await Task.Run(() =>
             {
@@ -40,12 +43,14 @@ namespace Keebee.AAT.Operations.Controllers
                 c.Description,
                 c.IsActive,
                 c.IsActiveEventLog,
+                IsEventLogs = activityEventLogs.Any(x => x.ConfigDetail.ConfigId == c.Id),
                 ConfigDetails = c.ConfigDetails.Select(cd => new
                     {
                         cd.Id,
                         cd.ConfigId,
                         cd.Description,
                         cd.Location,
+                        IsEventLogs = activityEventLogs.Any(x => x.ConfigDetail.Id == cd.Id),
                         PhidgetType = new
                         {
                             cd.PhidgetType.Id,
@@ -83,7 +88,7 @@ namespace Keebee.AAT.Operations.Controllers
 
             await Task.Run(() =>
             {
-                config = _configService.Get(id);
+                config = _configService.Get(id);               
             });
 
             if (config == null) return new DynamicJsonObject(new ExpandoObject());

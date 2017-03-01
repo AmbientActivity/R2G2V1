@@ -8,6 +8,7 @@ namespace Keebee.AAT.ApiClient.Models
         public string Description { get; set; }
         public bool IsActive { get; set; }
         public bool IsActiveEventLog { get; set; }
+        public bool IsEventLogs { get; set; }
         public virtual IList<ConfigDetail> ConfigDetails { get; set; }
     }
 

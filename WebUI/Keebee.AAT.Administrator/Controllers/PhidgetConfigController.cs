@@ -15,14 +15,12 @@ namespace Keebee.AAT.Administrator.Controllers
     {
         // api client
         private readonly IConfigsClient _configsClient;
-        private readonly IActivityEventLogsClient _activityEventLogsClient;
 
         private readonly CustomMessageQueue _messageQueueConfigSms;
 
         public PhidgetConfigController()
         {
             _configsClient = new ConfigsClient();
-            _activityEventLogsClient = new ActivityEventLogsClient();
 
             _messageQueueConfigSms = new CustomMessageQueue(new CustomMessageQueueArgs
             {
@@ -41,11 +39,10 @@ namespace Keebee.AAT.Administrator.Controllers
         [Authorize]
         public JsonResult GetData()
         {
-            var activityLogs = _activityEventLogsClient.GetIds().ToArray();
             var vm = new
             {
-                ConfigList = GetConfigList(activityLogs),
-                ConfigDetailList = GetConfigDetailList(activityLogs)
+                ConfigList = GetConfigList(),
+                ConfigDetailList = GetConfigDetailList()
             };
 
             return Json(vm, JsonRequestBehavior.AllowGet);
@@ -83,12 +80,11 @@ namespace Keebee.AAT.Administrator.Controllers
                     configid = AddConfig(c, selectedConfigId);
             }
 
-            var activityLogs = _activityEventLogsClient.GetIds().ToArray();
             return Json(new
             {
                 SelectedId = configid,
-                ConfigList = GetConfigList(activityLogs),
-                ConfigDetailList = GetConfigDetailList(activityLogs),
+                ConfigList = GetConfigList(),
+                ConfigDetailList = GetConfigDetailList(),
                 Success = (null == msgs),
                 ErrorMessages = msgs
             }, JsonRequestBehavior.AllowGet);
@@ -100,10 +96,9 @@ namespace Keebee.AAT.Administrator.Controllers
         {
             _configsClient.Delete(id);
 
-            var activityLogs = _activityEventLogsClient.GetIds().ToArray();
             return Json(new
             {
-                ConfigList = GetConfigList(activityLogs),
+                ConfigList = GetConfigList(),
                 Success = true,
             }, JsonRequestBehavior.AllowGet);
         }
@@ -126,10 +121,9 @@ namespace Keebee.AAT.Administrator.Controllers
                     configDetailid = AddConfigDetail(cd);
             }
 
-            var activityLogs = _activityEventLogsClient.GetIds().ToArray();
             return Json(new
             {
-                ConfigDetailList = GetConfigDetailList(activityLogs),
+                ConfigDetailList = GetConfigDetailList(),
                 SelectedId = configDetailid,
                 Success = (null == msgs),
                 ErrorMessages = msgs
@@ -145,10 +139,9 @@ namespace Keebee.AAT.Administrator.Controllers
             if (isActive)
                 SendNewConfiguration(configId);
 
-            var activityLogs = _activityEventLogsClient.GetIds().ToArray();
             return Json(new
             {
-                ConfigDetailList = GetConfigDetailList(activityLogs),
+                ConfigDetailList = GetConfigDetailList(),
                 Success = true,
             }, JsonRequestBehavior.AllowGet);
         }
@@ -159,18 +152,18 @@ namespace Keebee.AAT.Administrator.Controllers
         {
             _configsClient.Activate(configId);
             SendNewConfiguration(configId);
-            var activityLogs = _activityEventLogsClient.GetIds().ToArray();
+
             var vm = new
             {
                 SelectedId = configId,
-                ConfigList = GetConfigList(activityLogs),
-                ConfigDetailList = GetConfigDetailList(activityLogs)
+                ConfigList = GetConfigList(),
+                ConfigDetailList = GetConfigDetailList()
             };
 
             return Json(vm, JsonRequestBehavior.AllowGet);
         }
 
-        private IEnumerable<ConfigViewModel> GetConfigList(IEnumerable<ActivityEventLog> eventLogs)
+        private IEnumerable<ConfigViewModel> GetConfigList()
         {
             var configs = _configsClient.Get().ToArray();
             var defaultConfig = configs.Where(x => x.Id == ConfigId.Default).ToArray();
@@ -181,14 +174,13 @@ namespace Keebee.AAT.Administrator.Controllers
                 .Select(config => 
                 {
                     {
-                        var eventLogsExist = eventLogs.Any(x => x.ConfigId == config.Id);
                         var vm = new ConfigViewModel
                                 {
                                     Id = config.Id,
                                     Description = config.Description,
                                     IsActive = config.IsActive,
                                     IsActiveEventLog = config.IsActiveEventLog,
-                                    CanDelete = eventLogsExist
+                                    CanDelete = config.IsEventLogs
                                                 && !config.IsActive
                                                 && ConfigId.Default != config.Id
                                 };
@@ -200,7 +192,7 @@ namespace Keebee.AAT.Administrator.Controllers
             return list;
         }
 
-        private IEnumerable<ConfigDetailViewModel> GetConfigDetailList(IEnumerable<ActivityEventLog> eventLogs)
+        private IEnumerable<ConfigDetailViewModel> GetConfigDetailList()
         {
             var configs = _configsClient.Get();
 
@@ -208,7 +200,6 @@ namespace Keebee.AAT.Administrator.Controllers
                 .SelectMany(config => config.ConfigDetails
                     .Select(cd =>
                             {
-                                var eventLogsExist = eventLogs.Any(x => x.ConfigDetailId == cd.Id); 
                                 var vm = new ConfigDetailViewModel
                                          {
                                              Id = cd.Id,
@@ -220,7 +211,7 @@ namespace Keebee.AAT.Administrator.Controllers
                                              Location = cd.Location,
                                              ResponseType = cd.ResponseType.Description,
                                              IsSystem = cd.ResponseType.IsSystem,
-                                             CanEdit = !eventLogsExist
+                                             CanEdit = !cd.IsEventLogs
                                 };
                                 return vm;
                             })).ToArray();
@@ -252,7 +243,7 @@ namespace Keebee.AAT.Administrator.Controllers
             return vm;
         }
 
-        private ConfigDetailEditViewModel LoadConfigDetailEditViewModel(int id, int configId)
+        private static ConfigDetailEditViewModel LoadConfigDetailEditViewModel(int id, int configId)
         {
             var configurationRules = new PhidgetConfigRules();
             var configEdit = configurationRules.GetConfigEditViewModel(id, configId);

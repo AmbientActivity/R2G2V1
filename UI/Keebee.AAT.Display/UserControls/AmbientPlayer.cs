@@ -159,7 +159,7 @@ namespace Keebee.AAT.Display.UserControls
                 var  message = _invitationMessages[_currentInvitationMessageIndex].Message;
 
                 //axWindowsMediaPlayer1.Ctlcontrols.pause();
-                axWindowsMediaPlayer1.settings.volume = 0;
+                axWindowsMediaPlayer1.settings.mute = true;
                 axWindowsMediaPlayer1.Hide();
 
                 lblInvitation.Text = message;
@@ -172,7 +172,7 @@ namespace Keebee.AAT.Display.UserControls
                 lblInvitation.Hide();
                 axWindowsMediaPlayer1.Show();
                 //axWindowsMediaPlayer1.Ctlcontrols.play();
-                axWindowsMediaPlayer1.settings.volume = MediaPlayerControl.DefaultVolume;
+                axWindowsMediaPlayer1.settings.mute = false;
 
                 _isInvitaionShown = false;
             }

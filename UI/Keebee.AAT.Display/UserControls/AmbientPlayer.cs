@@ -79,7 +79,8 @@ namespace Keebee.AAT.Display.UserControls
         public void Resume()
         {
             DisplayContent(showInvitation: false);
-            _timerVideo.Start();
+            axWindowsMediaPlayer1.Ctlcontrols.play();
+            _timerVideo.Start();         
         }
 
         private void ConfigureMediaPlayer()

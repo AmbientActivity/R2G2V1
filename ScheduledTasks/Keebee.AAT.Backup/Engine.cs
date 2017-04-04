@@ -358,8 +358,16 @@ namespace Keebee.AAT.Backup
 
                             if (File.Exists(destFilePath))
                             {
-                                if (IsFileIdentical(fiSource.FullName, destFilePath))
-                                    continue;
+                                if (destFilePath.ToLower().EndsWith(".mp4"))
+                                {
+                                    if (IsFileIdenticalMp4(fiSource.FullName, destFilePath))
+                                        continue;
+                                }
+                                else
+                                {
+                                    if (IsFileIdentical(fiSource.FullName, destFilePath))
+                                        continue;
+                                }
                             }
 
                             File.Copy(fiSource.FullName, Path.Combine(pathDest, fiSource.Name), true);
@@ -399,7 +407,13 @@ namespace Keebee.AAT.Backup
         private static bool IsFileIdentical(string file1, string file2)
         {
             return new FileInfo(file1).Length == new FileInfo(file2).Length
-                && (File.ReadAllBytes(file1).SequenceEqual(File.ReadAllBytes(file2)));
+            && (File.ReadAllBytes(file1).SequenceEqual(File.ReadAllBytes(file2)));
+        }
+
+        private static bool IsFileIdenticalMp4(string file1, string file2)
+        {
+            return new FileInfo(file1).Length == new FileInfo(file2).Length;
+            //&& (File.ReadAllBytes(file1).SequenceEqual(File.ReadAllBytes(file2))); // causes OutOfMemory exception for large files
         }
 
         private string RemoveObsoleteFolders(string source, string destination, string[] excludeFolders = null)

@@ -3,7 +3,6 @@ using Keebee.AAT.SystemEventLogging;
 using Keebee.AAT.Display.Extensions;
 using System;
 using System.Diagnostics;
-using System.Linq;
 using System.Windows.Forms;
 using WMPLib;
 

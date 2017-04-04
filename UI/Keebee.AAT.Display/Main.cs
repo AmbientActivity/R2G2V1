@@ -16,6 +16,7 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Windows.Forms;
 using System.Linq;
+using AxWMPLib;
 using WMPLib;
 
 namespace Keebee.AAT.Display

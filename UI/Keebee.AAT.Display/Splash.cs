@@ -44,6 +44,7 @@ namespace Keebee.AAT.Display
                 AmbientPlaylist = _ambientPlaylist,
                 EventLogger = _systemEventLogger
             };
+            InitializeMediaPlayerLibrary();
             main.Show();
             Hide();
         }
@@ -162,6 +163,20 @@ namespace Keebee.AAT.Display
             catch (Exception ex)
             {
                 _systemEventLogger.WriteEntry($"Splash.SplashShown: {ex.Message}", EventLogEntryType.Error);
+            }
+        }
+
+        private static void InitializeMediaPlayerLibrary()
+        {
+            var wmpInstance = new WindowsMediaPlayer();
+            var lib = wmpInstance.mediaCollection;
+            var allItems = lib.getAll();
+            var count = allItems.count;
+
+            for (var i = 0; i < count; i++)
+            {
+                var item = allItems.Item[i];
+                lib.remove(item, true);
             }
         }
     }

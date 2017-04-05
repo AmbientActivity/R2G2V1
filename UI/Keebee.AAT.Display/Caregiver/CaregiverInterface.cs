@@ -77,9 +77,6 @@ namespace Keebee.AAT.Display.Caregiver
 
         private IEnumerable<MediaResponseType> _mediaFiles;
 
-        // media path
-        private readonly MediaSourcePath _mediaPath = new MediaSourcePath();
-
         // playlist
         private const string PlaylistCaregiver = PlaylistName.Caregiver;
         private IWMPPlaylist _musicPlaylist;
@@ -148,15 +145,15 @@ namespace Keebee.AAT.Display.Caregiver
         private const int TabFontSize = 26;
         private const int TabPageFontSize = 20;
 #endif
-
         // to prevent background workers from lingering
         private bool _formIsClosing;
+        private bool _isMusicPlaying;
+        private bool _isRadioShowPlaying;
 
         #endregion
 
-        private ResidentsClient _residentsClient = new ResidentsClient();
-        private ResidentMediaFilesClient _residentMediaFilesClient = new ResidentMediaFilesClient();
-        private PublicMediaFilesClient _publicMediaFilesClient = new PublicMediaFilesClient();
+        private readonly ResidentsClient _residentsClient = new ResidentsClient();
+        private readonly ResidentMediaFilesClient _residentMediaFilesClient = new ResidentMediaFilesClient();
 
         public CaregiverInterface()
         {
@@ -645,20 +642,40 @@ namespace Keebee.AAT.Display.Caregiver
 
         private void LoadMusicPlaylist()
         {
-            var music = GetFilePaths(MediaPathTypeId.Music, ResponseTypeId.Radio);
-            _musicPlaylist = axWindowsMediaPlayer1.LoadPlaylist(PlaylistCaregiver, music);
+            if (_isMusicPlaying)
+            {
+                lvMusic.Items[_currentMusicIndex].ImageIndex = ImageIndexPause;
+                lvMusic.Items[_currentMusicIndex].SubItems[ListViewAudioColumnStatus].Text = "Playing...";
+            }
+            else
+            {
+                var music = GetFilePaths(MediaPathTypeId.Music, ResponseTypeId.Radio);
+                _musicPlaylist = axWindowsMediaPlayer1.LoadPlaylist(PlaylistCaregiver, music);
+                _currentMusicIndex = 0;
 
-            axWindowsMediaPlayer1.currentPlaylist = _musicPlaylist;
-            axWindowsMediaPlayer1.Ctlcontrols.stop();
+                if (_isRadioShowPlaying) return;
+                axWindowsMediaPlayer1.currentPlaylist = _musicPlaylist;
+                axWindowsMediaPlayer1.Ctlcontrols.stop();
+            }
         }
 
         private void LoadRadioShowPlaylist()
         {
-            var radioShows = GetFilePaths(MediaPathTypeId.RadioShows, ResponseTypeId.Radio);
-            _radioShowPlaylist = axWindowsMediaPlayer1.LoadPlaylist(PlaylistCaregiver, radioShows);
+            if (_isRadioShowPlaying)
+            {
+                lvRadioShows.Items[_currentRadioShowIndex].ImageIndex = ImageIndexPause;
+                lvRadioShows.Items[_currentRadioShowIndex].SubItems[ListViewAudioColumnStatus].Text = "Playing...";
+            }
+            else
+            {
+                var radioShows = GetFilePaths(MediaPathTypeId.RadioShows, ResponseTypeId.Radio);
+                _radioShowPlaylist = axWindowsMediaPlayer1.LoadPlaylist(PlaylistCaregiver, radioShows);
+                _currentRadioShowIndex = 0;
 
-            axWindowsMediaPlayer1.currentPlaylist = _radioShowPlaylist;
-            axWindowsMediaPlayer1.Ctlcontrols.stop();
+                if (_isMusicPlaying) return;
+                axWindowsMediaPlayer1.currentPlaylist = _radioShowPlaylist;
+                axWindowsMediaPlayer1.Ctlcontrols.stop();
+            }
         }
 
         #endregion
@@ -737,6 +754,8 @@ namespace Keebee.AAT.Display.Caregiver
             {
                 lvMusic.Items[_currentMusicIndex].SubItems[ListViewAudioColumnStatus].Text = string.Empty;
                 lvMusic.Items[_currentMusicIndex].ImageIndex = ImageIndexPlay;
+
+                axWindowsMediaPlayer1.currentPlaylist = _musicPlaylist;
                 var media = _musicPlaylist.Item[selectedIndex];
                 axWindowsMediaPlayer1.Ctlcontrols.playItem(media);
             }
@@ -752,6 +771,8 @@ namespace Keebee.AAT.Display.Caregiver
             {
                 lvRadioShows.Items[_currentRadioShowIndex].SubItems[ListViewAudioColumnStatus].Text = string.Empty;
                 lvRadioShows.Items[_currentRadioShowIndex].ImageIndex = ImageIndexPlay;
+
+                axWindowsMediaPlayer1.currentPlaylist = _radioShowPlaylist;
                 var media = _radioShowPlaylist.Item[selectedIndex];
                 axWindowsMediaPlayer1.Ctlcontrols.playItem(media);
             }
@@ -823,6 +844,9 @@ namespace Keebee.AAT.Display.Caregiver
         {
             try
             {
+                _isMusicPlaying = false;
+                _isRadioShowPlaying = false;
+
                 if (axWindowsMediaPlayer1.playState != WMPPlayState.wmppsPlaying &&
                     axWindowsMediaPlayer1.playState != WMPPlayState.wmppsPaused)
                     return;
@@ -831,7 +855,7 @@ namespace Keebee.AAT.Display.Caregiver
                 {
                     case TabIndexMusic:
                         lvMusic.Items[_currentMusicIndex].ImageIndex = ImageIndexPlay;
-                        lvMusic.Items[_currentMusicIndex].SubItems[ListViewAudioColumnStatus].Text = string.Empty;
+                        lvMusic.Items[_currentMusicIndex].SubItems[ListViewAudioColumnStatus].Text = string.Empty;                     
                         break;
                     case TabIndexRadioShows:
                         lvRadioShows.Items[_currentRadioShowIndex].ImageIndex = ImageIndexPlay;
@@ -952,13 +976,14 @@ namespace Keebee.AAT.Display.Caregiver
                 var selectedIndex = lvMusic.SelectedIndices[0];
                 if (File.Exists(_musicPlaylist.Item[selectedIndex].sourceURL))
                 {
-                    if (_currentMusicIndex == selectedIndex)
+                    if ((_currentMusicIndex == selectedIndex) && !_isRadioShowPlaying)
                     {
-                        if (axWindowsMediaPlayer1.playState == WMPPlayState.wmppsPlaying)
+                        if (_isMusicPlaying)
                         {
                             axWindowsMediaPlayer1.Ctlcontrols.pause();
                             lvMusic.Items[_currentMusicIndex].ImageIndex = ImageIndexPlayActive;
                             lvMusic.Items[_currentMusicIndex].SubItems[ListViewAudioColumnStatus].Text = "Paused";
+                            _isMusicPlaying = false;
                         }
                         else
                         {
@@ -995,13 +1020,14 @@ namespace Keebee.AAT.Display.Caregiver
                 var selectedIndex = lvRadioShows.SelectedIndices[0];
                 if (File.Exists(_radioShowPlaylist.Item[selectedIndex].sourceURL))
                 {
-                    if (_currentRadioShowIndex == selectedIndex)
+                    if ((_currentRadioShowIndex == selectedIndex) && !_isMusicPlaying)
                     {
-                        if (axWindowsMediaPlayer1.playState == WMPPlayState.wmppsPlaying)
+                        if (_isRadioShowPlaying)
                         {
                             axWindowsMediaPlayer1.Ctlcontrols.pause();
                             lvRadioShows.Items[_currentRadioShowIndex].ImageIndex = ImageIndexPlayActive;
                             lvRadioShows.Items[_currentRadioShowIndex].SubItems[ListViewAudioColumnStatus].Text = "Paused";
+                            _isRadioShowPlaying = false;
                         }
                         else
                         {
@@ -1106,6 +1132,9 @@ namespace Keebee.AAT.Display.Caregiver
                         lv.Items[index].SubItems[ListViewAudioColumnStatus].Text = "Playing...";
                         lv.Items[index].ImageIndex = ImageIndexPause;
                         lv.Items[index].Selected = true;
+
+                        _isMusicPlaying = (tbMedia.SelectedIndex == TabIndexMusic);
+                        _isRadioShowPlaying = (tbMedia.SelectedIndex == TabIndexRadioShows);
                         break;
 
                     case (int)WMPPlayState.wmppsMediaEnded:

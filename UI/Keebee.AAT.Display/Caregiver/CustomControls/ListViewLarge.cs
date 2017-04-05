@@ -90,7 +90,7 @@ namespace Keebee.AAT.Display.Caregiver.CustomControls
             }
         }
 
-        private void AddStyle(IntPtr handle, uint addStyle)
+        private static void AddStyle(IntPtr handle, uint addStyle)
         {
             // Get current window style
             uint windowStyle = GetWindowLong(handle, GWL_STYLE);

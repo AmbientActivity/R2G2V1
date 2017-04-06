@@ -36,6 +36,8 @@ namespace Keebee.AAT.Display.Extensions
         public static int CurrentIndex(this AxWindowsMediaPlayer player, IWMPPlaylist playlist)
         {
             var index = 0;
+            if (player.currentMedia == null) return 0;
+
             for (var i = 0; i < playlist.count; i++)
             {
                 if (!player.currentMedia.isIdentical[playlist.Item[i]]) continue;

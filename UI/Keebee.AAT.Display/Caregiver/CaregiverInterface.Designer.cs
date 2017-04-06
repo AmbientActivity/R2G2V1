@@ -53,7 +53,8 @@ namespace Keebee.AAT.Display.Caregiver
             this.btnClose = new System.Windows.Forms.Button();
             this.cboResident = new Keebee.AAT.Display.Caregiver.CustomControls.ComboBoxLarge();
             this.lblMediaSource = new System.Windows.Forms.Label();
-            this.axWindowsMediaPlayer1 = new AxWMPLib.AxWindowsMediaPlayer();
+            this.musicPlayer = new AxWMPLib.AxWindowsMediaPlayer();
+            this.radioShowPlayer = new AxWMPLib.AxWindowsMediaPlayer();
             this.tableLayoutPanel1.SuspendLayout();
             this.tbMedia.SuspendLayout();
             this.tabImagesGeneral.SuspendLayout();
@@ -63,7 +64,8 @@ namespace Keebee.AAT.Display.Caregiver
             this.tabActivities.SuspendLayout();
             this.tabHomeMovies.SuspendLayout();
             this.tabImagesPersonal.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.axWindowsMediaPlayer1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.musicPlayer)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.radioShowPlayer)).BeginInit();
             this.SuspendLayout();
             // 
             // imageListMusic
@@ -351,16 +353,27 @@ namespace Keebee.AAT.Display.Caregiver
             this.lblMediaSource.TabIndex = 3;
             this.lblMediaSource.Text = "Media Source";
             // 
-            // axWindowsMediaPlayer1
+            // musicPlayer
             // 
-            this.axWindowsMediaPlayer1.Enabled = true;
-            this.axWindowsMediaPlayer1.Location = new System.Drawing.Point(3, 387);
-            this.axWindowsMediaPlayer1.Name = "axWindowsMediaPlayer1";
-            this.axWindowsMediaPlayer1.OcxState = ((System.Windows.Forms.AxHost.State)(resources.GetObject("axWindowsMediaPlayer1.OcxState")));
-            this.axWindowsMediaPlayer1.Size = new System.Drawing.Size(66, 14);
-            this.axWindowsMediaPlayer1.TabIndex = 4;
-            this.axWindowsMediaPlayer1.Visible = false;
-            this.axWindowsMediaPlayer1.PlayStateChange += new AxWMPLib._WMPOCXEvents_PlayStateChangeEventHandler(this.PlayStateChange);
+            this.musicPlayer.Enabled = true;
+            this.musicPlayer.Location = new System.Drawing.Point(3, 369);
+            this.musicPlayer.Name = "musicPlayer";
+            this.musicPlayer.OcxState = ((System.Windows.Forms.AxHost.State)(resources.GetObject("musicPlayer.OcxState")));
+            this.musicPlayer.Size = new System.Drawing.Size(92, 32);
+            this.musicPlayer.TabIndex = 4;
+            this.musicPlayer.Visible = false;
+            this.musicPlayer.PlayStateChange += new AxWMPLib._WMPOCXEvents_PlayStateChangeEventHandler(this.PlayStateChangeMusic);
+            // 
+            // radioShowPlayer
+            // 
+            this.radioShowPlayer.Enabled = true;
+            this.radioShowPlayer.Location = new System.Drawing.Point(101, 369);
+            this.radioShowPlayer.Name = "radioShowPlayer";
+            this.radioShowPlayer.OcxState = ((System.Windows.Forms.AxHost.State)(resources.GetObject("radioShowPlayer.OcxState")));
+            this.radioShowPlayer.Size = new System.Drawing.Size(94, 34);
+            this.radioShowPlayer.TabIndex = 8;
+            this.radioShowPlayer.Visible = false;
+            this.radioShowPlayer.PlayStateChange += new AxWMPLib._WMPOCXEvents_PlayStateChangeEventHandler(this.PlayStateChangeRadioShows);
             // 
             // CaregiverInterface
             // 
@@ -368,7 +381,8 @@ namespace Keebee.AAT.Display.Caregiver
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(694, 404);
             this.Controls.Add(this.tableLayoutPanel1);
-            this.Controls.Add(this.axWindowsMediaPlayer1);
+            this.Controls.Add(this.musicPlayer);
+            this.Controls.Add(this.radioShowPlayer);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
@@ -387,7 +401,8 @@ namespace Keebee.AAT.Display.Caregiver
             this.tabActivities.ResumeLayout(false);
             this.tabHomeMovies.ResumeLayout(false);
             this.tabImagesPersonal.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.axWindowsMediaPlayer1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.musicPlayer)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.radioShowPlayer)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -401,7 +416,7 @@ namespace Keebee.AAT.Display.Caregiver
         private CustomControls.ListViewLarge lvImagesGeneral;
         private TabPage tabMusic;
         private CustomControls.ListViewLarge lvMusic;
-        private AxWMPLib.AxWindowsMediaPlayer axWindowsMediaPlayer1;
+        private AxWMPLib.AxWindowsMediaPlayer musicPlayer;
         private TabPage tabTVShows;
         private CustomControls.ListViewLarge lvTVShows;
         private TabPage tabActivities;
@@ -415,5 +430,6 @@ namespace Keebee.AAT.Display.Caregiver
         private TabPage tabHomeMovies;
         private CustomControls.ListViewLarge lvHomeMovies;
         private CustomControls.ListViewLarge lvRadioShows;
+        private AxWMPLib.AxWindowsMediaPlayer radioShowPlayer;
     }
 }

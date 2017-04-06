@@ -652,6 +652,7 @@ namespace Keebee.AAT.Display.Caregiver
 
                 musicPlayer.currentPlaylist = _musicPlaylist;
                 musicPlayer.Ctlcontrols.stop();
+                _currentMusicIndex = 0;
             }
         }
 
@@ -669,6 +670,7 @@ namespace Keebee.AAT.Display.Caregiver
 
                 radioShowPlayer.currentPlaylist = _radioShowPlaylist;
                 radioShowPlayer.Ctlcontrols.stop();
+                _currentRadioShowIndex = 0;
             }
         }
 
@@ -748,8 +750,9 @@ namespace Keebee.AAT.Display.Caregiver
             {
                 lvMusic.Items[_currentMusicIndex].SubItems[ListViewAudioColumnStatus].Text = string.Empty;
                 lvMusic.Items[_currentMusicIndex].ImageIndex = ImageIndexPlay;
-
-                var media = _musicPlaylist.Item[selectedIndex];
+                _currentMusicIndex = selectedIndex;
+                
+                var media = _musicPlaylist.Item[_currentMusicIndex];
                 musicPlayer.Ctlcontrols.playItem(media);
             }
             catch (Exception ex)
@@ -764,8 +767,9 @@ namespace Keebee.AAT.Display.Caregiver
             {
                 lvRadioShows.Items[_currentRadioShowIndex].SubItems[ListViewAudioColumnStatus].Text = string.Empty;
                 lvRadioShows.Items[_currentRadioShowIndex].ImageIndex = ImageIndexPlay;
+                _currentRadioShowIndex = selectedIndex;
 
-                var media = _radioShowPlaylist.Item[selectedIndex];
+                var media = _radioShowPlaylist.Item[_currentRadioShowIndex];
                 radioShowPlayer.Ctlcontrols.playItem(media);
             }
             catch (Exception ex)
@@ -846,23 +850,14 @@ namespace Keebee.AAT.Display.Caregiver
                     musicPlayer.playState != WMPPlayState.wmppsPaused)
                     return;
 
-                switch (tbMedia.SelectedIndex)
-                {
-                    case TabIndexMusic:
-                        lvMusic.Items[_currentMusicIndex].ImageIndex = ImageIndexPlay;
-                        lvMusic.Items[_currentMusicIndex].SubItems[ListViewAudioColumnStatus].Text = string.Empty;
-                        break;
-                    case TabIndexRadioShows:
-                        lvRadioShows.Items[_currentRadioShowIndex].ImageIndex = ImageIndexPlay;
-                        lvRadioShows.Items[_currentRadioShowIndex].SubItems[ListViewAudioColumnStatus].Text = string.Empty;
-                        break;
-                }
+                lvMusic.Items[_currentMusicIndex].ImageIndex = ImageIndexPlay;
+                lvMusic.Items[_currentMusicIndex].SubItems[ListViewAudioColumnStatus].Text = string.Empty;
 
                 musicPlayer.Ctlcontrols.stop();
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"Caregiver.StopAudio: {ex.Message}", EventLogEntryType.Error);
+                _systemEventLogger.WriteEntry($"Caregiver.StopMusic: {ex.Message}", EventLogEntryType.Error);
             }
         }
 
@@ -874,23 +869,14 @@ namespace Keebee.AAT.Display.Caregiver
                     radioShowPlayer.playState != WMPPlayState.wmppsPaused)
                     return;
 
-                switch (tbMedia.SelectedIndex)
-                {
-                    case TabIndexMusic:
-                        lvMusic.Items[_currentMusicIndex].ImageIndex = ImageIndexPlay;
-                        lvMusic.Items[_currentMusicIndex].SubItems[ListViewAudioColumnStatus].Text = string.Empty;
-                        break;
-                    case TabIndexRadioShows:
-                        lvRadioShows.Items[_currentRadioShowIndex].ImageIndex = ImageIndexPlay;
-                        lvRadioShows.Items[_currentRadioShowIndex].SubItems[ListViewAudioColumnStatus].Text = string.Empty;
-                        break;
-                }
+                lvRadioShows.Items[_currentRadioShowIndex].ImageIndex = ImageIndexPlay;
+                lvRadioShows.Items[_currentRadioShowIndex].SubItems[ListViewAudioColumnStatus].Text = string.Empty;
 
                 radioShowPlayer.Ctlcontrols.stop();
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"Caregiver.StopAudio: {ex.Message}", EventLogEntryType.Error);
+                _systemEventLogger.WriteEntry($"Caregiver.StopRadioShows: {ex.Message}", EventLogEntryType.Error);
             }
         }
 

@@ -1337,40 +1337,6 @@ namespace Keebee.AAT.Display.Caregiver
             return tbMedia.TabPages.Cast<TabPage>().Contains(tabPage);
         }
 
-        private ListViewLarge GetListView(int tabIndex)
-        {
-            ListViewLarge lv = null;
-
-            //var currentTabIndex = tbMedia.SelectedIndex;
-
-            switch (tabIndex)
-            {
-                case TabIndexImagesGeneral:
-                    lv = lvImagesGeneral;
-                    break;
-                case TabIndexImagesPersonal:
-                    lv = lvImagesPersonal;
-                    break;
-                case TabIndexMusic:
-                    lv = lvMusic;
-                    break;
-                case TabIndexRadioShows:
-                    lv = lvRadioShows;
-                    break;
-                case TabIndexTVShows:
-                    lv = lvTVShows;
-                    break;
-                case TabIndexHomeMovies:
-                    lv = lvHomeMovies;
-                    break;
-                case TabIndexActivities:
-                    lv = lvActivities;
-                    break;
-            }
-
-            return lv;
-        }
-
         private void LoadAudioPlaylist()
         {
             switch (tbMedia.SelectedIndex)

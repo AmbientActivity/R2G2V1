@@ -24,7 +24,7 @@ namespace Keebee.AAT.Operations.Controllers
 
         // GET: api/Configs
         [HttpGet]
-        public async Task<DynamicJsonObject> Get()
+        public async Task<DynamicJsonArray> Get()
         {
             IEnumerable<Config> configs = new Collection<Config>();    
 
@@ -33,11 +33,10 @@ namespace Keebee.AAT.Operations.Controllers
                 configs = _configService.Get();
             });
 
-            if (configs == null) return new DynamicJsonObject(new ExpandoObject());
+            if (configs == null) return new DynamicJsonArray(new DynamicJsonArray(new object[0]));
 
             var activityEventLogs = _activityEventLogService.GetWithConfigDetail().ToArray();
-            dynamic exObj = new ExpandoObject();
-            exObj.Configs = configs.Select(c => new
+            var jArray = configs.Select(c => new
             {
                 c.Id,
                 c.Description,
@@ -74,9 +73,9 @@ namespace Keebee.AAT.Operations.Controllers
                             cd.ResponseType.IsSystem
                         }
                     }).OrderBy(o => o.PhidgetType.Id)
-            });
+            }).ToArray();
 
-            return new DynamicJsonObject(exObj);
+            return new DynamicJsonArray(jArray);
         }
 
         // GET: api/Configs/5

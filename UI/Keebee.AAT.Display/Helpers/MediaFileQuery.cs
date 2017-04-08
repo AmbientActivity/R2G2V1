@@ -1,7 +1,6 @@
 ﻿using Keebee.AAT.Shared;
 using Keebee.AAT.ApiClient.Clients;
 using Keebee.AAT.ApiClient.Models;
-
 using System.Collections.Generic;
 using System.Linq;
 
@@ -23,7 +22,7 @@ namespace Keebee.AAT.Display.Helpers
         public string[] GetFilesForResponseType(int residentId, int responseTypeId, int mediaPatheTypeId = -1)
         {
             var files = new string[0];
-            MediaResponseType mediaResponseType = null;
+            var pathTypeFiles = new MediaPathTypeFiles[0];
             var numFiles = 0;
 
             // get media from public library for the response type
@@ -32,11 +31,11 @@ namespace Keebee.AAT.Display.Helpers
                 var media = _publicMediaFilesClient.GetForResponseType(responseTypeId);
 
                 if (media != null)
-                    mediaResponseType = media.MediaResponseType;
+                    pathTypeFiles = media.Paths.ToArray();
 
-                if (mediaResponseType != null)
+                if (pathTypeFiles.Any())
                 {
-                    numFiles += mediaResponseType.Paths
+                    numFiles += pathTypeFiles
                         .Where(p => mediaPatheTypeId < 0 || p.MediaPathType.Id == mediaPatheTypeId)
                         .SelectMany(p => p.Files).Count();
                 }
@@ -47,12 +46,12 @@ namespace Keebee.AAT.Display.Helpers
                 var media = _residentMediaFilesClient.GetForResidentResponseType(residentId, responseTypeId);
 
                 if (media != null)
-                    mediaResponseType = media.MediaResponseType;
+                    pathTypeFiles = media.Paths.ToArray();
 
                 // get a count of files for the response type
-                if (mediaResponseType != null)
+                if (pathTypeFiles.Any())
                 {
-                    numFiles = mediaResponseType.Paths
+                    numFiles = pathTypeFiles
                         .Where(p => mediaPatheTypeId < 0 || p.MediaPathType.Id == mediaPatheTypeId)
                         .SelectMany(p => p.Files).Count();
                 }
@@ -64,34 +63,33 @@ namespace Keebee.AAT.Display.Helpers
                     var publicMedia = _publicMediaFilesClient.GetForResponseType(responseTypeId);
 
                     if (publicMedia != null)
-                        mediaResponseType = publicMedia.MediaResponseType;
+                        pathTypeFiles = publicMedia.Paths.ToArray();
 
                     if (publicMedia != null)
                     {
-                        numFiles = mediaResponseType.Paths
+                        numFiles = pathTypeFiles
                             .Where(p => mediaPatheTypeId < 0 || p.MediaPathType.Id == mediaPatheTypeId)
                             .SelectMany(p => p.Files).Count();
                     }
                 }
             }
 
-            return (mediaResponseType != null && numFiles > 0)
-                ? GetAssembledFileList(mediaResponseType, residentId, mediaPatheTypeId)
+            return (pathTypeFiles.Any() && numFiles > 0)
+                ? GetAssembledFileList(pathTypeFiles, residentId, mediaPatheTypeId)
                 : files;
         }
 
-        private string[] GetAssembledFileList(MediaResponseType mediaResponseType, int residentId, int mediaPathTypeId = -1)
+        private string[] GetAssembledFileList(MediaPathTypeFiles[] responseTypePaths, int residentId, int mediaPathTypeId = -1)
         {
             var fileList = new List<string>();
            
-            var mediaPaths = mediaResponseType
-                .Paths.Where(p => mediaPathTypeId < 0 ||  p.MediaPathType.Id == mediaPathTypeId)
+            var mediaPaths = responseTypePaths
+                .Where(p => mediaPathTypeId < 0 ||  p.MediaPathType.Id == mediaPathTypeId)
                 .ToArray();
 
             foreach (var mediaPath in mediaPaths)
             {
-                var list = mediaResponseType
-                    .Paths
+                var list = responseTypePaths
                     .Where(p => p.MediaPathType.Id == mediaPath.MediaPathType.Id)
                     .SelectMany(p => p.Files)
                     .OrderBy(f => f.Filename)

@@ -25,7 +25,7 @@ namespace Keebee.AAT.ApiClient.Clients
         {
             var request = new RestRequest("residentmediafiles", Method.GET);
             var data = Execute(request);
-            var residentMedia = JsonConvert.DeserializeObject<ResidentMediaResponseTypeList>(data.Content).ResidentMediaList;
+            var residentMedia = JsonConvert.DeserializeObject<IEnumerable<ResidentMedia>>(data.Content);
 
             return residentMedia;
         }
@@ -43,7 +43,7 @@ namespace Keebee.AAT.ApiClient.Clients
         {
             var request = new RestRequest($"residentmediafiles?residentId={residentId}", Method.GET);
             var data = Execute(request);
-            var residentMedia = JsonConvert.DeserializeObject<ResidentMediaSingle>(data.Content).ResidentMedia;
+            var residentMedia = JsonConvert.DeserializeObject<ResidentMedia>(data.Content);
 
             return residentMedia;
         }
@@ -52,7 +52,7 @@ namespace Keebee.AAT.ApiClient.Clients
         {
             var request = new RestRequest($"residentmediafiles?residentId={residentId}&responseTypeId={responseTypeId}", Method.GET);
             var data = Execute(request);
-            var mediaResponseType = JsonConvert.DeserializeObject<ResidentMediaResponseTypeSingle>(data.Content).ResidentMedia;
+            var mediaResponseType = JsonConvert.DeserializeObject<ResidentMediaResponseType>(data.Content);
 
             return mediaResponseType;
         }
@@ -61,7 +61,7 @@ namespace Keebee.AAT.ApiClient.Clients
         {
             var request = new RestRequest("residentmediafiles/linked", Method.GET);
             var data = Execute(request);
-            var mediaList = JsonConvert.DeserializeObject<ResidentMediaResponseTypeList>(data.Content).ResidentMediaList;
+            var mediaList = JsonConvert.DeserializeObject<IEnumerable<ResidentMedia>>(data.Content);
 
             return mediaList;
         }
@@ -70,7 +70,7 @@ namespace Keebee.AAT.ApiClient.Clients
         {
             var request = new RestRequest($"residentmediafiles/linked?streamId={streamId}", Method.GET);
             var data = Execute(request);
-            var mediaList = JsonConvert.DeserializeObject<ResidentMediaResponseTypeList>(data.Content).ResidentMediaList;
+            var mediaList = JsonConvert.DeserializeObject<IEnumerable<ResidentMedia>>(data.Content);
 
             return mediaList;
         }

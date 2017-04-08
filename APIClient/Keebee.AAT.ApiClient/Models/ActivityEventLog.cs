@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Keebee.AAT.ApiClient.Models
+﻿namespace Keebee.AAT.ApiClient.Models
 {
     public class ActivityEventLog
     {
@@ -19,10 +17,5 @@ namespace Keebee.AAT.ApiClient.Models
         public string ActivityType { get; set; }
         public string ResponseType { get; set; }
         public string ResponseTypeCategory { get; set; }
-    }
-
-    public class ActivityEventLogList
-    {
-        public IEnumerable<ActivityEventLog> ActivityEventLogs { get; set; }
     }
 }

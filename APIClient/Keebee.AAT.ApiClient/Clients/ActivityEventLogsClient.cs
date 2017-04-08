@@ -24,7 +24,7 @@ namespace Keebee.AAT.ApiClient.Clients
         {
             var request = new RestRequest($"activityeventlogs?date={date}", Method.GET);
             var data = Execute(request);
-            var activityEventLogs = JsonConvert.DeserializeObject<ActivityEventLogList>(data.Content).ActivityEventLogs;
+            var activityEventLogs = JsonConvert.DeserializeObject<IEnumerable<ActivityEventLog>>(data.Content);
 
             return activityEventLogs;
         }
@@ -33,7 +33,7 @@ namespace Keebee.AAT.ApiClient.Clients
         {
             var request = new RestRequest($"activityeventlogs?configId={configId}", Method.GET);
             var data = Execute(request);
-            var activityEventLogs = JsonConvert.DeserializeObject<ActivityEventLogList>(data.Content).ActivityEventLogs;
+            var activityEventLogs = JsonConvert.DeserializeObject<IEnumerable<ActivityEventLog>>(data.Content);
 
             return activityEventLogs;
         }
@@ -42,7 +42,7 @@ namespace Keebee.AAT.ApiClient.Clients
         {
             var request = new RestRequest($"activityeventlogs?configDetailId={configDetailId}", Method.GET);
             var data = Execute(request);
-            var activityEventLogs = JsonConvert.DeserializeObject<ActivityEventLogList>(data.Content).ActivityEventLogs;
+            var activityEventLogs = JsonConvert.DeserializeObject<IEnumerable<ActivityEventLog>>(data.Content);
 
             return activityEventLogs;
         }
@@ -51,18 +51,18 @@ namespace Keebee.AAT.ApiClient.Clients
         {
             var request = new RestRequest($"activityeventlogs?residentId={residentId}", Method.GET);
             var data = Execute(request);
-            var activityEventLogs = JsonConvert.DeserializeObject<ActivityEventLogList>(data.Content).ActivityEventLogs;
+            var activityEventLogs = JsonConvert.DeserializeObject<IEnumerable<ActivityEventLog>>(data.Content);
 
             return activityEventLogs;
         }
 
         public IEnumerable<ActivityEventLog> GetIds()
         {
-            var request = new RestRequest($"activityeventlogs/ids", Method.GET);
+            var request = new RestRequest("activityeventlogs/ids", Method.GET);
             var data = Execute(request);
-            var activityEventLogIds = JsonConvert.DeserializeObject<ActivityEventLogList>(data.Content).ActivityEventLogs;
+            var activityEventLogs = JsonConvert.DeserializeObject<IEnumerable<ActivityEventLog>>(data.Content);
 
-            return activityEventLogIds;
+            return activityEventLogs;
         }
 
         public int Post(ActivityEventLog activityEventLog)

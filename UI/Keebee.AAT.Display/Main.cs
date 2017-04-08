@@ -753,14 +753,14 @@ namespace Keebee.AAT.Display
                 var frmSplash = new Caregiver.Splash();
                 frmSplash.Show();
 
-                var publicMedia = _publicMediaFilesClient.Get().MediaFiles;
+                var mediaResponseTypes = _publicMediaFilesClient.Get();
                 var config = _configsClient.GetActiveDetails();
 
                 _caregiverInterface = new CaregiverInterface
                 {
                     EventLogger = _systemEventLogger,
                     Config = config,
-                    PublicMediaFiles = publicMedia
+                    PublicMediaFiles = mediaResponseTypes
                 };
 
                 _caregiverInterface.CaregiverCompleteEvent += CaregiverComplete;

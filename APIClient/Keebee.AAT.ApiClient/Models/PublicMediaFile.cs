@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace Keebee.AAT.ApiClient.Models
 {
@@ -11,16 +10,6 @@ namespace Keebee.AAT.ApiClient.Models
         public ResponseType ResponseType { get; set; }
     }
 
-    public class PublicMedia
-    {
-        public IEnumerable<MediaResponseType> MediaFiles;
-    }
-
-    public class PublicMediaResponseType
-    {
-        public MediaResponseType MediaResponseType;
-    }
-
     public class PublicMediaFileEdit
     {
         public int Id { get; set; }
@@ -28,10 +17,5 @@ namespace Keebee.AAT.ApiClient.Models
         public int MediaPathTypeId { get; set; }
         public int ResponseTypeId { get; set; }
         public bool IsLinked { get; set; }
-    }
-
-    public class PublicMediaStreamIdList
-    {
-        public IEnumerable<PublicMediaFile> MediaFiles;
     }
 }

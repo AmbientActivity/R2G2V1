@@ -19,31 +19,26 @@ namespace Keebee.AAT.ApiClient.Models
         public int Id { get; set; }
     }
 
-    public class MediaFileSingle : MediaFile
+    public class MediaFilePath : MediaFile
     {
         public string Path { get; set; }
     }
 
-    public class MediaFileStreamSingle : MediaFile
+    public class MediaFileStream : MediaFile
     {
         public byte[] Stream{ get; set; }
     }
 
-    public class MediaFilePath
+    public class MediaPathTypeFiles
     {
         public MediaPathType MediaPathType { get; set; }
         public IEnumerable<LinkedMediaFile> Files;
     }
 
-    public class MediaResponseType
+    public class ResponseTypePaths
     {
         public ResponseType ResponseType { get; set; }
-        public IEnumerable<MediaFilePath> Paths;
-    }
-
-    public class MediaResponseTypeList
-    {
-        public IEnumerable<MediaResponseType> Media;
+        public IEnumerable<MediaPathTypeFiles> Paths;
     }
 
     // when accessing the media files controller directly
@@ -51,10 +46,5 @@ namespace Keebee.AAT.ApiClient.Models
     {
         public string Path { get; set; }
         public IEnumerable<MediaFile> Files;
-    }
-
-    public class MediaList
-    {
-        public IEnumerable<Media> Media;
     }
 }

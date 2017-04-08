@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Keebee.AAT.ApiClient.Models
+﻿namespace Keebee.AAT.ApiClient.Models
 {
     public class ActiveResidentEventLog
     {
@@ -14,10 +12,5 @@ namespace Keebee.AAT.ApiClient.Models
         public string Date { get; set; }
         public string Time { get; set; }
         public string Resident { get; set; }
-    }
-
-    public class ActiveResidentEventLogList
-    {
-        public IEnumerable<ActiveResidentEventLog> ActiveResidentEventLogs { get; set; }
     }
 }

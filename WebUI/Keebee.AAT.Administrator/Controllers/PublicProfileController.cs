@@ -313,18 +313,16 @@ namespace Keebee.AAT.Administrator.Controllers
         private IEnumerable<PublicMediaFileViewModel> GetMediaFiles()
         {
             var list = new List<PublicMediaFileViewModel>();
-            var publicMedia = _publicMediaFilesClient.Get(isSystem: false);
+            var mediaResponseTypes = _publicMediaFilesClient.Get(isSystem: false).ToArray();
 
-            if (publicMedia == null) return list;
-
-            var mediaPaths = publicMedia.MediaFiles.SelectMany(x => x.Paths)
+            var mediaPaths = mediaResponseTypes.SelectMany(x => x.Paths)
                 .ToArray();
 
             if (!mediaPaths.Any()) return list;
 
             var pathRoot = $@"{_mediaPath.ProfileRoot}\{PublicProfileSource.Id}";
 
-            foreach (var media in publicMedia.MediaFiles)
+            foreach (var media in mediaResponseTypes)
             {
                 foreach (var path in media.Paths)
                 {

@@ -8,13 +8,13 @@ namespace Keebee.AAT.Display.Caregiver.Helpers
 {
     public class MediaFileQuery
     {
-        private readonly IEnumerable<MediaResponseType> _mediaFiles;
+        private readonly IEnumerable<ResponseTypePaths> _mediaFiles;
         private readonly int _currentResidentId;
         private readonly MediaSourcePath _mediaPath = new MediaSourcePath();
-        private readonly IEnumerable<MediaResponseType> _publicMediaFiles;
+        private readonly IEnumerable<ResponseTypePaths> _publicMediaFiles;
 
-        public MediaFileQuery(IEnumerable<MediaResponseType> mediaFiles, 
-            IEnumerable<MediaResponseType> publicMediaFiles, 
+        public MediaFileQuery(IEnumerable<ResponseTypePaths> mediaFiles, 
+            IEnumerable<ResponseTypePaths> publicMediaFiles, 
             int currentResidentId)
         {
             _mediaFiles = mediaFiles;

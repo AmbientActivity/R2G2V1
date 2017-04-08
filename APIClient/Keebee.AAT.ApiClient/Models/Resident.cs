@@ -12,10 +12,8 @@ namespace Keebee.AAT.ApiClient.Models
         public string Gender { get; set; }
         public int GameDifficultyLevel { get; set; }
         public bool AllowVideoCapturing { get; set; }
-        public IEnumerable<ConfigDetail> ConfigDetails { get; set; }
         public DateTime DateCreated { get; set; }
         public DateTime DateUpdated { get; set; }
-        public IEnumerable<MediaResponseType> MediaFiles;
     }
 
     public class ResidentEdit

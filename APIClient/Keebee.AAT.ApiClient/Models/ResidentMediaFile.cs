@@ -12,36 +12,17 @@ namespace Keebee.AAT.ApiClient.Models
         public ResponseType ResponseType { get; set; }
     }
 
-    public class ResidentMediaResponseTypeSingle
-    {
-        public ResidentMediaResponseType ResidentMedia;
-    }
-
-    public class ResidentMediaResponseTypeList
-    {
-        public IEnumerable<ResidentMedia> ResidentMediaList;
-    }
-
     public class ResidentMediaResponseType
     {
         public Resident Resident { get; set; }
-        public MediaResponseType MediaResponseType;
-    }
+        public ResponseType ResponseType { get; set; }
+        public IEnumerable<MediaPathTypeFiles> Paths { get; set; }
+}
 
     public class ResidentMedia
     {
         public Resident Resident { get; set; }
-        public IEnumerable<MediaResponseType> MediaResponseTypes;
-    }
-
-    public class ResidentMediaSingle
-    {
-        public ResidentMedia ResidentMedia;
-    }
-
-    public class ResidentMediaList
-    {
-        public IEnumerable<ResidentMedia> Media;
+        public IEnumerable<ResponseTypePaths> MediaResponseTypes;
     }
 
     public class ResidentMediaFileEdit

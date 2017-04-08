@@ -20,7 +20,7 @@ namespace Keebee.AAT.ApiClient.Clients
         {
             var request = new RestRequest($"activeresidenteventlogs?date={date}", Method.GET);
             var data = Execute(request);
-            var activeResidentEventLogs = JsonConvert.DeserializeObject<ActiveResidentEventLogList>(data.Content).ActiveResidentEventLogs;
+            var activeResidentEventLogs = JsonConvert.DeserializeObject<IEnumerable<ActiveResidentEventLog>>(data.Content);
 
             return activeResidentEventLogs;
         }
@@ -29,7 +29,7 @@ namespace Keebee.AAT.ApiClient.Clients
         {
             var request = new RestRequest($"activeresidenteventlogs?residentId={residentId}", Method.GET);
             var data = Execute(request);
-            var activeResidentEventLogs = JsonConvert.DeserializeObject<ActiveResidentEventLogList>(data.Content).ActiveResidentEventLogs;
+            var activeResidentEventLogs = JsonConvert.DeserializeObject<IEnumerable<ActiveResidentEventLog>>(data.Content);
 
             return activeResidentEventLogs;
         }

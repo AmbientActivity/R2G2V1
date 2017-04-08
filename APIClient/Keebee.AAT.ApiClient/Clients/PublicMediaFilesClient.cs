@@ -8,16 +8,16 @@ namespace Keebee.AAT.ApiClient.Clients
 {
     public interface IPublicMediaFilesClient
     {
-        PublicMedia Get();
+        IEnumerable<ResponseTypePaths> Get();
         PublicMediaFile Get(int id);
-        PublicMedia Get(bool isSystem);
-        PublicMediaResponseType GetForResponseType(int responseTypeId);
-        PublicMedia GetForMediaPathType(int mediaPathTypeId);
+        IEnumerable<ResponseTypePaths> Get(bool isSystem);
+        ResponseTypePaths GetForResponseType(int responseTypeId);
+        IEnumerable<ResponseTypePaths> GetForMediaPathType(int mediaPathTypeId);
         PublicMediaFile GetForResponseTypeFilename(int responseTypeId, string filename);
         IEnumerable<PublicMediaFile> GetForStreamId(Guid streamId);
-        PublicMedia GetLinkedForStreamId(Guid streamId);
+        IEnumerable<ResponseTypePaths> GetLinkedForStreamId(Guid streamId);
         int[] GetIdsForStreamId(Guid streamId);
-        PublicMedia GetLinked();
+        IEnumerable<ResponseTypePaths> GetLinked();
         int Post(PublicMediaFileEdit publicMediaFile);
         string Delete(int id);
     }
@@ -33,49 +33,49 @@ namespace Keebee.AAT.ApiClient.Clients
             return mediaFile;
         }
 
-        public PublicMedia Get()
+        public IEnumerable<ResponseTypePaths> Get()
         {
             var request = new RestRequest("publicmediafiles", Method.GET);
             var data = Execute(request);
-            var publicMedia = JsonConvert.DeserializeObject<PublicMedia>(data.Content);
+            var mediaResponseTypes = JsonConvert.DeserializeObject<IEnumerable<ResponseTypePaths>>(data.Content);
 
-            return publicMedia;
+            return mediaResponseTypes;
         }
 
-        public PublicMedia Get(bool isSystem)
+        public IEnumerable<ResponseTypePaths> Get(bool isSystem)
         {
             var request = new RestRequest($"publicmediafiles?isSystem={isSystem}", Method.GET);
             var data = Execute(request);
-            var publicMedia = JsonConvert.DeserializeObject<PublicMedia>(data.Content);
+            var mediaResponseTypes = JsonConvert.DeserializeObject<IEnumerable<ResponseTypePaths>>(data.Content);
 
-            return publicMedia;
+            return mediaResponseTypes;
         }
 
-        public PublicMediaResponseType GetForResponseType(int responseTypeId)
+        public ResponseTypePaths GetForResponseType(int responseTypeId)
         {
             var request = new RestRequest($"publicmediafiles?responseTypeId={responseTypeId}", Method.GET);
             var data = Execute(request);
-            var mediaResponseType = JsonConvert.DeserializeObject<PublicMediaResponseType>(data.Content);
+            var mediaResponseType = JsonConvert.DeserializeObject<ResponseTypePaths>(data.Content);
 
             return mediaResponseType;
         }
 
-        public PublicMedia GetForMediaPathType(int mediaPathTypeId)
+        public IEnumerable<ResponseTypePaths> GetForMediaPathType(int mediaPathTypeId)
         {
             var request = new RestRequest($"publicmediafiles?mediaPathTypeId={mediaPathTypeId}", Method.GET);
             var data = Execute(request);
-            var publicMedia = JsonConvert.DeserializeObject<PublicMedia>(data.Content);
+            var mediaResponseTypes = JsonConvert.DeserializeObject<IEnumerable<ResponseTypePaths>>(data.Content);
 
-            return publicMedia;
+            return mediaResponseTypes;
         }
 
         public IEnumerable<PublicMediaFile> GetForStreamId(Guid streamId)
         {
             var request = new RestRequest($"publicmediafiles?streamId={streamId}", Method.GET);
             var data = Execute(request);
-            var mediaFiles = JsonConvert.DeserializeObject<PublicMediaStreamIdList>(data.Content).MediaFiles;
+            var mediaResponseTypes = JsonConvert.DeserializeObject<IEnumerable<PublicMediaFile>>(data.Content);
 
-            return mediaFiles;
+            return mediaResponseTypes;
         }
 
         public PublicMediaFile GetForResponseTypeFilename(int responseTypeId, string filename)
@@ -87,22 +87,22 @@ namespace Keebee.AAT.ApiClient.Clients
             return mediaFile;
         }
 
-        public PublicMedia GetLinked()
+        public IEnumerable<ResponseTypePaths> GetLinked()
         {
             var request = new RestRequest("publicmediafiles/linked", Method.GET);
             var data = Execute(request);
-            var media = JsonConvert.DeserializeObject<PublicMedia>(data.Content);
+            var mediaResponseTypes = JsonConvert.DeserializeObject<IEnumerable<ResponseTypePaths>>(data.Content);
 
-            return media;
+            return mediaResponseTypes;
         }
 
-        public PublicMedia GetLinkedForStreamId(Guid streamId)
+        public IEnumerable<ResponseTypePaths> GetLinkedForStreamId(Guid streamId)
         {
             var request = new RestRequest($"publicmediafiles/linked?streamId={streamId}", Method.GET);
             var data = Execute(request);
-            var media = JsonConvert.DeserializeObject<PublicMedia>(data.Content);
+            var mediaResponseTypes = JsonConvert.DeserializeObject<IEnumerable<ResponseTypePaths>>(data.Content);
 
-            return media;
+            return mediaResponseTypes;
         }
 
         public int[] GetIdsForStreamId(Guid streamId)

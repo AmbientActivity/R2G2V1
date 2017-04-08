@@ -132,7 +132,7 @@ namespace Keebee.AAT.BusinessRules
             return isValid;
         }
 
-        public MediaFileSingle GetMediaFile(int id)
+        public MediaFilePath GetMediaFile(int id)
         {
             var mediaFile = _residentMediaFilesClient.Get(id);
 
@@ -226,19 +226,16 @@ namespace Keebee.AAT.BusinessRules
             var sharedPaths = _mediaFilesClient.GetForPath($@"{mediaSource.SharedLibrary}\{mediaPath}").ToArray();
             var responseTypeId = GetResponseTypeId(mediaPathTypeId);
 
-            var existingLinkedMediaPaths = _residentMediaFilesClient.GetForResidentResponseType(residentId, responseTypeId);
+            var mediaResponseType = _residentMediaFilesClient.GetForResidentResponseType(residentId, responseTypeId);
             IEnumerable<Guid> existingStreamIds = new List<Guid>();
 
-            if (existingLinkedMediaPaths?.MediaResponseType != null)
+            if (mediaResponseType.Paths.Any())
             {
-                if (existingLinkedMediaPaths.MediaResponseType.Paths.Any())
-                {
-                    existingStreamIds = existingLinkedMediaPaths
-                        .MediaResponseType.Paths
-                        .SelectMany(f => f.Files)
-                        .Where(f => f.IsLinked)
-                        .Select(f => f.StreamId);
-                }
+                existingStreamIds = mediaResponseType
+                    .Paths
+                    .SelectMany(f => f.Files)
+                    .Where(f => f.IsLinked)
+                    .Select(f => f.StreamId);
             }
 
             var availableFiles = sharedPaths

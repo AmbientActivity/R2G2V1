@@ -17,7 +17,7 @@ namespace Keebee.AAT.ApiClientTests
 
             // Assert
             Assert.IsNotNull(media);
-            Assert.IsTrue(media.MediaFiles.Any());
+            Assert.IsTrue(media.Any());
         }
 
         [TestMethod]
@@ -28,8 +28,7 @@ namespace Keebee.AAT.ApiClientTests
             var media = client.GetLinked();
 
             // Assert
-            Assert.IsNotNull(media);
-            Assert.IsTrue(media.MediaFiles.Any());
+            Assert.IsTrue(media.Any());
         }
 
         [TestMethod]

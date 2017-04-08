@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Keebee.AAT.ApiClient.Models
+﻿namespace Keebee.AAT.ApiClient.Models
 {
     public class MediaPathType
     {
@@ -11,10 +9,5 @@ namespace Keebee.AAT.ApiClient.Models
         public bool IsPreviewable { get; set; }
         public bool IsSystem { get; set; }
         public bool IsSharable { get; set; }
-    }
-
-    public class MediaPathTypeList
-    {
-        public IEnumerable<MediaPathType> MediaPathTypes;
     }
 }

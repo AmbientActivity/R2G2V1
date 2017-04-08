@@ -19,7 +19,6 @@ namespace Keebee.AAT.ApiClientTests
 
             // Assert
             Assert.IsNotNull(resident);
-            Assert.IsTrue(resident.MediaFiles.Any());
             Assert.AreEqual(resident.Id, residentId);
         }
 

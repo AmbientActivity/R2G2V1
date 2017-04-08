@@ -19,7 +19,7 @@ namespace Keebee.AAT.ApiClient.Clients
         {
             var request = new RestRequest("mediapathtypes", Method.GET);
             var data = Execute(request);
-            var pathTypes = JsonConvert.DeserializeObject<MediaPathTypeList>(data.Content).MediaPathTypes;
+            var pathTypes = JsonConvert.DeserializeObject<IEnumerable<MediaPathType>>(data.Content);
 
             return pathTypes;
         }
@@ -37,7 +37,7 @@ namespace Keebee.AAT.ApiClient.Clients
         {
             var request = new RestRequest($"mediapathtypes?isSystem={isSystem}", Method.GET);
             var data = Execute(request);
-            var pathTypes = JsonConvert.DeserializeObject<MediaPathTypeList>(data.Content).MediaPathTypes;
+            var pathTypes = JsonConvert.DeserializeObject<IEnumerable<MediaPathType>>(data.Content);
 
             return pathTypes;
         }

@@ -22,7 +22,7 @@ namespace Keebee.AAT.Operations.Controllers
 
         // GET: api/MediaPathTypes
         [HttpGet]
-        public async Task<DynamicJsonObject> Get()
+        public async Task<DynamicJsonArray> Get()
         {
             IEnumerable<MediaPathType> mediaPathTypes = new Collection<MediaPathType>();
 
@@ -31,10 +31,9 @@ namespace Keebee.AAT.Operations.Controllers
                 mediaPathTypes = _mediaPathTypeService.Get();
             });
 
-            if (mediaPathTypes == null) return new DynamicJsonObject(new ExpandoObject());
+            if (mediaPathTypes == null) return new DynamicJsonArray(new object[0]);
 
-            dynamic exObj = new ExpandoObject();
-            exObj.MediaPathTypes = mediaPathTypes
+            var jArray = mediaPathTypes
                 .Select(x => new
                 {
                     x.Id,
@@ -44,9 +43,9 @@ namespace Keebee.AAT.Operations.Controllers
                     x.IsPreviewable,
                     x.IsSystem,
                     x.IsSharable
-                });
+                }).ToArray();
 
-            return new DynamicJsonObject(exObj);
+            return new DynamicJsonArray(jArray);
         }
 
         // GET: api/MediaPathTypes/5
@@ -78,7 +77,7 @@ namespace Keebee.AAT.Operations.Controllers
 
         // GET: api/MediaPathTypes?isSystem=false
         [HttpGet]
-        public async Task<DynamicJsonObject> Get(bool isSystem)
+        public async Task<DynamicJsonArray> Get(bool isSystem)
         {
             IEnumerable<MediaPathType> mediaPathTypes = new Collection<MediaPathType>();
 
@@ -87,10 +86,9 @@ namespace Keebee.AAT.Operations.Controllers
                 mediaPathTypes = _mediaPathTypeService.Get(isSystem);
             });
 
-            if (mediaPathTypes == null) return new DynamicJsonObject(new ExpandoObject());
+            if (mediaPathTypes == null) return new DynamicJsonArray(new object[0]);
 
-            dynamic exObj = new ExpandoObject();
-            exObj.MediaPathTypes = mediaPathTypes
+            var jArray = mediaPathTypes
                 .Select(x => new
                 {
                     x.Id,
@@ -100,9 +98,9 @@ namespace Keebee.AAT.Operations.Controllers
                     x.IsPreviewable,
                     x.IsSystem,
                     x.IsSharable
-                });
+                }).ToArray();
 
-            return new DynamicJsonObject(exObj);
+            return new DynamicJsonArray(jArray);
         }
 
         // POST: api/MediaPathTypes

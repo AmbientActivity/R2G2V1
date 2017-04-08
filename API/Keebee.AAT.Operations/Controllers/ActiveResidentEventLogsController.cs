@@ -22,7 +22,7 @@ namespace Keebee.AAT.Operations.Controllers
 
         // GET: api/ActiveResidentEventLogs
         [HttpGet]
-        public async Task<DynamicJsonObject> Get()
+        public async Task<DynamicJsonArray> Get()
         {
             IEnumerable<ActiveResidentEventLog> activeResidentEventLogs = new Collection<ActiveResidentEventLog>();
 
@@ -32,10 +32,9 @@ namespace Keebee.AAT.Operations.Controllers
                     .OrderByDescending(o => o.DateEntry);
             });
 
-            if (activeResidentEventLogs == null) return new DynamicJsonObject(new ExpandoObject());
+            if (activeResidentEventLogs == null) return new DynamicJsonArray(new DynamicJsonArray(new object[0]));
 
-            dynamic exObj = new ExpandoObject();
-            exObj.ActiveResidentEventLogs = activeResidentEventLogs
+            var jArray = activeResidentEventLogs
                 .Select(x => new
                 {
                     Date = $"{x.DateEntry:D}",
@@ -43,9 +42,9 @@ namespace Keebee.AAT.Operations.Controllers
                     Resident = (x.Resident != null) ? $"{x.Resident.FirstName} {x.Resident.LastName}" : "N/A",
                     x.Description,
                     ResidentId = x.Resident?.Id ?? -1
-                });
+                }).ToArray();
 
-            return new DynamicJsonObject(exObj);
+            return new DynamicJsonArray(jArray);
         }
 
         // GET: api/ActiveResidentEventLogs/5
@@ -75,7 +74,7 @@ namespace Keebee.AAT.Operations.Controllers
 
         // GET: api/ActiveResidentEventLogs?date=08/26/2016
         [HttpGet]
-        public async Task<DynamicJsonObject> Get(string date)
+        public async Task<DynamicJsonArray> Get(string date)
         {
             IEnumerable<ActiveResidentEventLog> activeResidentEventLogs = new Collection<ActiveResidentEventLog>();
 
@@ -85,10 +84,9 @@ namespace Keebee.AAT.Operations.Controllers
                     .OrderBy(o => o.DateEntry);
             });
 
-            if (activeResidentEventLogs == null) return new DynamicJsonObject(new ExpandoObject());
+            if (activeResidentEventLogs == null) return new DynamicJsonArray(new DynamicJsonArray(new object[0]));
 
-            dynamic exObj = new ExpandoObject();
-            exObj.ActiveResidentEventLogs = activeResidentEventLogs
+            var jArray = activeResidentEventLogs
                 .Select(x => new
                 {
                     Date = $"{x.DateEntry:D}",
@@ -96,14 +94,14 @@ namespace Keebee.AAT.Operations.Controllers
                     Resident = (x.Resident != null) ? $"{x.Resident.FirstName} {x.Resident.LastName}" : "N/A",
                     x.Description,
                     ResidentId = x.Resident?.Id ?? -1
-                });
+                }).ToArray();
 
-            return new DynamicJsonObject(exObj);
+            return new DynamicJsonArray(jArray);
         }
 
         // GET: api/ActiveResidentEventLogs?residentId=6
         [HttpGet]
-        public async Task<DynamicJsonObject> GetForResident(int residentId)
+        public async Task<DynamicJsonArray> GetForResident(int residentId)
         {
             IEnumerable<ActiveResidentEventLog> activeResidentEventLogs = new Collection<ActiveResidentEventLog>();
 
@@ -112,17 +110,16 @@ namespace Keebee.AAT.Operations.Controllers
                 activeResidentEventLogs = _activeResidentEventLogService.GetForResident(residentId);
             });
 
-            if (activeResidentEventLogs == null) return new DynamicJsonObject(new ExpandoObject());
+            if (activeResidentEventLogs == null) return new DynamicJsonArray(new DynamicJsonArray(new object[0]));
 
-            dynamic exObj = new ExpandoObject();
-            exObj.ActiveResidentEventLogs = activeResidentEventLogs
+            var jArray = activeResidentEventLogs
                 .Select(x => new
                 {
                     x.Id,
                     x.Description
-                });
+                }).ToArray();
 
-            return new DynamicJsonObject(exObj);
+            return new DynamicJsonArray(jArray);
         }
 
         // POST: api/ActiveResidentEventLogs

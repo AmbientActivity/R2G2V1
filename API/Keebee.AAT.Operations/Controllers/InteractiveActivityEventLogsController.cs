@@ -22,20 +22,19 @@ namespace Keebee.AAT.Operations.Controllers
 
         // GET: api/InteractiveActivityEventLog
         [HttpGet]
-        public async Task<DynamicJsonObject> Get()
+        public async Task<DynamicJsonArray> Get()
         {
-            IEnumerable<InteractiveActivityEventLog> interactiveActivityEventLog = new Collection<InteractiveActivityEventLog>();
+            IEnumerable<InteractiveActivityEventLog> interactiveActivityEventLogs = new Collection<InteractiveActivityEventLog>();
 
             await Task.Run(() =>
             {
-                interactiveActivityEventLog = _interactiveActivityEventLogService.Get()
+                interactiveActivityEventLogs = _interactiveActivityEventLogService.Get()
                     .OrderByDescending(o => o.DateEntry);
             });
 
-            if (interactiveActivityEventLog == null) return new DynamicJsonObject(new ExpandoObject());
+            if (interactiveActivityEventLogs == null) return new DynamicJsonArray(new object[0]);
 
-            dynamic exObj = new ExpandoObject();
-            exObj.InteractiveActivityEventLog = interactiveActivityEventLog
+            var jArray = interactiveActivityEventLogs
                 .Select(x => new
                 {
                     Date = $"{x.DateEntry:D}",
@@ -46,9 +45,9 @@ namespace Keebee.AAT.Operations.Controllers
                     Success = x.IsSuccess,
                     x.Description,
                     ResidentId = x.Resident?.Id ?? -1
-                });
+                }).ToArray();
 
-            return new DynamicJsonObject(exObj);
+            return new DynamicJsonArray(jArray);
         }
 
         // GET: api/InteractiveActivityEventLog/5
@@ -81,7 +80,7 @@ namespace Keebee.AAT.Operations.Controllers
 
         // GET: api/InteractiveActivityEventLogs?date=08/26/2016
         [HttpGet]
-        public async Task<DynamicJsonObject> Get(string date)
+        public async Task<DynamicJsonArray> Get(string date)
         {
             IEnumerable<InteractiveActivityEventLog> interactiveActivityEventLogs = new Collection<InteractiveActivityEventLog>();
 
@@ -91,10 +90,9 @@ namespace Keebee.AAT.Operations.Controllers
                     .OrderBy(o => o.DateEntry);
             });
 
-            if (interactiveActivityEventLogs == null) return new DynamicJsonObject(new ExpandoObject());
+            if (interactiveActivityEventLogs == null) return new DynamicJsonArray(new object[0]);
 
-            dynamic exObj = new ExpandoObject();
-            exObj.InteractiveActivityEventLogs = interactiveActivityEventLogs
+            var jArray = interactiveActivityEventLogs
                 .Select(x => new
                 {
                     Date = $"{x.DateEntry:D}",
@@ -105,14 +103,14 @@ namespace Keebee.AAT.Operations.Controllers
                     x.IsSuccess,
                     x.Description,
                     ResidentId = x.Resident?.Id ?? -1
-                });
+                }).ToArray();
 
-            return new DynamicJsonObject(exObj);
+            return new DynamicJsonArray(jArray);
         }
 
         // GET: api/InteractiveActivityEventLogs?residentId=6
         [HttpGet]
-        public async Task<DynamicJsonObject> GetForResident(int residentId)
+        public async Task<DynamicJsonArray> GetForResident(int residentId)
         {
             IEnumerable<InteractiveActivityEventLog> interactiveActivityEventLogs = new Collection<InteractiveActivityEventLog>();
 
@@ -121,17 +119,16 @@ namespace Keebee.AAT.Operations.Controllers
                 interactiveActivityEventLogs = _interactiveActivityEventLogService.GetForResident(residentId);
             });
 
-            if (interactiveActivityEventLogs == null) return new DynamicJsonObject(new ExpandoObject());
+            if (interactiveActivityEventLogs == null) return new DynamicJsonArray(new object[0]);
 
-            dynamic exObj = new ExpandoObject();
-            exObj.InteractiveActivityEventLogs = interactiveActivityEventLogs
+            var jArray = interactiveActivityEventLogs
                 .Select(x => new
                 {
                     x.Id,
                     x.Description
-                });
+                }).ToArray();
 
-            return new DynamicJsonObject(exObj);
+            return new DynamicJsonArray(jArray);
         }
 
         // POST: api/InteractiveActivityEventLog

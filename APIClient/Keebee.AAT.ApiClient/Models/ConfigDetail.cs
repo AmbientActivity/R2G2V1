@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Keebee.AAT.ApiClient.Models
+﻿namespace Keebee.AAT.ApiClient.Models
 {
     public class ConfigDetail
     {
@@ -23,10 +21,5 @@ namespace Keebee.AAT.ApiClient.Models
         public int PhidgetTypeId { get; set; }
         public int PhidgetStyleTypeId { get; set; }
         public int ResponseTypeId { get; set; }
-    }
-
-    public class ConfigDetailList
-    {
-        public IEnumerable<ConfigDetail> ConfigDetails;
     }
 }

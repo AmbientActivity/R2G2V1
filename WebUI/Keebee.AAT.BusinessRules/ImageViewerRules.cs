@@ -48,7 +48,7 @@ namespace Keebee.AAT.BusinessRules
             };
         }
 
-        private static ImageSize GetOriginalSize(MediaFileSingle file)
+        private static ImageSize GetOriginalSize(MediaFilePath file)
         {
             int originalWidth;
             int originalHeight;

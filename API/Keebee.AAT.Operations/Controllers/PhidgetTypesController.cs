@@ -22,7 +22,7 @@ namespace Keebee.AAT.Operations.Controllers
 
         // GET: api/PhidgetTypes
         [HttpGet]
-        public async Task<DynamicJsonObject> Get()
+        public async Task<DynamicJsonArray> Get()
         {
             IEnumerable<PhidgetType> phidgetTypes = new Collection<PhidgetType>();
 
@@ -31,17 +31,16 @@ namespace Keebee.AAT.Operations.Controllers
                 phidgetTypes = _phidgetTypeService.Get();
             });
 
-            if (phidgetTypes == null) return new DynamicJsonObject(new ExpandoObject());
+            if (phidgetTypes == null) return new DynamicJsonArray(new object[0]);
 
-            dynamic exObj = new ExpandoObject();
-            exObj.PhidgetTypes = phidgetTypes
+            var jArray = phidgetTypes
                 .Select(x => new
                 {
                     x.Id,
                     x.Description
-                });
+                }).ToArray();
 
-            return new DynamicJsonObject(exObj);
+            return new DynamicJsonArray(jArray);
         }
 
         // GET: api/PhidgetTypes/5

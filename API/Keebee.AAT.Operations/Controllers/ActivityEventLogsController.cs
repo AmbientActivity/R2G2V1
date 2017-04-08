@@ -24,7 +24,7 @@ namespace Keebee.AAT.Operations.Controllers
 
         // GET: api/ActivityEventLogs
         [HttpGet]
-        public async Task<DynamicJsonObject> Get()
+        public async Task<DynamicJsonArray> Get()
         {
             IEnumerable<ActivityEventLog> activityEventLogs = new Collection<ActivityEventLog>();
 
@@ -34,12 +34,11 @@ namespace Keebee.AAT.Operations.Controllers
                     .OrderByDescending(o => o.DateEntry);
             });
 
-            if (activityEventLogs == null) return new DynamicJsonObject(new ExpandoObject());
+            if (activityEventLogs == null) return new DynamicJsonArray(new DynamicJsonArray(new object[0]));
 
             var configDetails = _configDetailService.GetDescriptions();
 
-            dynamic exObj = new ExpandoObject();
-            exObj.ActivityEventLogs = activityEventLogs
+            var jArray = activityEventLogs
                 .Join(configDetails, al => al.ConfigDetail.Id, cd => cd.Id,
                 (al, cd) => new { al, cd })
                 .Select(x => new
@@ -54,9 +53,9 @@ namespace Keebee.AAT.Operations.Controllers
                     ResponseType = x.al.ConfigDetail.ResponseType.Description,
                     x.al.Description,
                     ResidentId = x.al.Resident?.Id ?? -1
-                });
+                }).ToArray();
 
-            return new DynamicJsonObject(exObj);
+            return new DynamicJsonArray(jArray);
         }
 
         // GET: api/ActivityEventLogs/5
@@ -93,7 +92,7 @@ namespace Keebee.AAT.Operations.Controllers
 
         // GET: api/ActivityEventLogs?date=08/26/2016
         [HttpGet]
-        public async Task<DynamicJsonObject> Get(string date)
+        public async Task<DynamicJsonArray> Get(string date)
         {
             IEnumerable<ActivityEventLog> activityEventLogs = new Collection<ActivityEventLog>();
 
@@ -103,12 +102,11 @@ namespace Keebee.AAT.Operations.Controllers
                     .OrderBy(o => o.DateEntry);
             });
 
-            if (activityEventLogs == null) return new DynamicJsonObject(new ExpandoObject());
+            if (activityEventLogs == null) return new DynamicJsonArray(new object[0]);
 
             var configDetails = _configDetailService.GetDescriptions();
 
-            dynamic exObj = new ExpandoObject();
-            exObj.ActivityEventLogs = activityEventLogs
+            var jArray = activityEventLogs
                 .Join(configDetails, al => al.ConfigDetail.Id, cd => cd.Id,
                 (al, cd) => new { al, cd })
                 .Select(x => new
@@ -123,14 +121,14 @@ namespace Keebee.AAT.Operations.Controllers
                     ResponseType = x.al.ConfigDetail.ResponseType.Description,
                     x.al.Description,
                     ResidentId = x.al.Resident?.Id ?? -1
-                });
+                }).ToArray();
 
-            return new DynamicJsonObject(exObj);
+            return new DynamicJsonArray(jArray);
         }
 
         // GET: api/ActivityEventLogs?configId=1
         [HttpGet]
-        public async Task<DynamicJsonObject> GetForConfig(int configId)
+        public async Task<DynamicJsonArray> GetForConfig(int configId)
         {
             IEnumerable<ActivityEventLog> activityEventLogs = new Collection<ActivityEventLog>();
 
@@ -139,10 +137,9 @@ namespace Keebee.AAT.Operations.Controllers
                 activityEventLogs = _activityEventLogService.GetForConfig(configId);
             });
 
-            if (activityEventLogs == null) return new DynamicJsonObject(new ExpandoObject());
+            if (activityEventLogs == null) return new DynamicJsonArray(new DynamicJsonArray(new object[0]));
 
-            dynamic exObj = new ExpandoObject();
-            exObj.ActivityEventLogs = activityEventLogs
+            var jArray = activityEventLogs
                 .Select(x => new
                 {
                     x.ConfigDetail.ConfigId,
@@ -152,14 +149,14 @@ namespace Keebee.AAT.Operations.Controllers
                     x.ConfigDetail.ResponseTypeId,
                     x.Description,
                     ResidentId = x.Resident?.Id ?? -1
-                });
+                }).ToArray();
 
-            return new DynamicJsonObject(exObj);
+            return new DynamicJsonArray(jArray);
         }
 
         // GET: api/ActivityEventLogs?configDetailId=6
         [HttpGet]
-        public async Task<DynamicJsonObject> GetForConfigPhidgetResponseType(int configDetailId)
+        public async Task<DynamicJsonArray> GetForConfigPhidgetResponseType(int configDetailId)
         {
             IEnumerable<ActivityEventLog> activityEventLogs = new Collection<ActivityEventLog>();
 
@@ -168,10 +165,9 @@ namespace Keebee.AAT.Operations.Controllers
                 activityEventLogs = _activityEventLogService.GetForConfigDetail(configDetailId);
             });
 
-            if (activityEventLogs == null) return new DynamicJsonObject(new ExpandoObject());
+            if (activityEventLogs == null) return new DynamicJsonArray(new DynamicJsonArray(new object[0]));
 
-            dynamic exObj = new ExpandoObject();
-            exObj.ActivityEventLogs = activityEventLogs
+            var jArray = activityEventLogs
                 .Select(x => new
                 {
                     x.ConfigDetail.ConfigId,
@@ -181,14 +177,14 @@ namespace Keebee.AAT.Operations.Controllers
                     x.ConfigDetail.ResponseTypeId,
                     x.Description,
                     ResidentId = x.Resident?.Id ?? -1
-                });
+                }).ToArray();
 
-            return new DynamicJsonObject(exObj);
+            return new DynamicJsonArray(jArray);
         }
 
         // GET: api/ActivityEventLogs?residentId=6
         [HttpGet]
-        public async Task<DynamicJsonObject> GetForResident(int residentId)
+        public async Task<DynamicJsonArray> GetForResident(int residentId)
         {
             IEnumerable<ActivityEventLog> activityEventLogs = new Collection<ActivityEventLog>();
 
@@ -197,23 +193,22 @@ namespace Keebee.AAT.Operations.Controllers
                 activityEventLogs = _activityEventLogService.GetForResident(residentId);
             });
 
-            if (activityEventLogs == null) return new DynamicJsonObject(new ExpandoObject());
+            if (activityEventLogs == null) return new DynamicJsonArray(new DynamicJsonArray(new object[0]));
 
-            dynamic exObj = new ExpandoObject();
-            exObj.ActivityEventLogs = activityEventLogs
+            var jArray = activityEventLogs
                 .Select(x => new
                 {
                     x.Id,
                    x.Description
-                });
+                }).ToArray();
 
-            return new DynamicJsonObject(exObj);
+            return new DynamicJsonArray(jArray);
         }
 
         // GET: api/ActivityEventLogs/ids?configId=1
         [HttpGet]
         [Route("ids")]
-        public async Task<DynamicJsonObject> GetIds()
+        public async Task<DynamicJsonArray> GetIds()
         {
             IEnumerable<ActivityEventLog> activityEventLogs = new Collection<ActivityEventLog>();
 
@@ -222,18 +217,17 @@ namespace Keebee.AAT.Operations.Controllers
                 activityEventLogs = _activityEventLogService.Get();
             });
 
-            if (activityEventLogs == null) return new DynamicJsonObject(new ExpandoObject());
+            if (activityEventLogs == null) return new DynamicJsonArray(new object[0]);
 
-            dynamic exObj = new ExpandoObject();
-            exObj.ActivityEventLogs = activityEventLogs
+            var jArray = activityEventLogs
                 .Select(x => new
                 {
                     x.Id,
                     x.ConfigDetail.ConfigId,
                     x.ConfigDetailId
-                });
+                }).ToArray();
 
-            return new DynamicJsonObject(exObj);
+            return new DynamicJsonArray(jArray);
         }
 
         // POST: api/ActivityEventLogs

@@ -1,8 +1,7 @@
-﻿using Keebee.AAT.ApiClient;
-using Keebee.AAT.Shared;
+﻿using Keebee.AAT.Shared;
 using Keebee.AAT.Display.Extensions;
-using System.Linq;
 using Keebee.AAT.ApiClient.Clients;
+using System.Linq;
 
 namespace Keebee.AAT.Display.Helpers
 {
@@ -31,10 +30,10 @@ namespace Keebee.AAT.Display.Helpers
             var shapeCount = residentShapes.Length;
             if (shapeCount >= MatchingGameConfig.MinNumShapes) return residentShapes;
 
-            var publicShapeMediaFiles = _publicMediaFilesClient.GetForMediaPathType(MediaPathTypeId.MatchingGameShapes)
-                .MediaFiles.ToArray();
+            var mediaResponseTypes = _publicMediaFilesClient.GetForMediaPathType(MediaPathTypeId.MatchingGameShapes)
+                .ToArray();
 
-            var mediaPaths = publicShapeMediaFiles
+            var mediaPaths = mediaResponseTypes
                 .Single(x => x.ResponseType.Id == ResponseTypeId.MatchingGame)
                 .Paths.Where(p => p.MediaPathType.Id == MediaPathTypeId.MatchingGameShapes).ToArray();
 
@@ -42,7 +41,7 @@ namespace Keebee.AAT.Display.Helpers
                 .Single(x => x.MediaPathType.Id == MediaPathTypeId.MatchingGameShapes)
                 .MediaPathType.Path;
 
-            var publicShapes = publicShapeMediaFiles.SelectMany(m => m.Paths)
+            var publicShapes = mediaResponseTypes.SelectMany(m => m.Paths)
                 .SelectMany(p => p.Files)
                 .Select(f =>
                     {
@@ -67,7 +66,7 @@ namespace Keebee.AAT.Display.Helpers
             if (soundCount >= MatchingGameConfig.MinNumSounds) return residentSounds;
 
             var mediaFiles = _publicMediaFilesClient.GetForMediaPathType(MediaPathTypeId.MatchingGameSounds)
-                .MediaFiles.ToArray();
+                .ToArray();
 
             var mediaPaths = mediaFiles
                 .Single(x => x.ResponseType.Id == ResponseTypeId.MatchingGame).Paths

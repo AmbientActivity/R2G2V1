@@ -29,8 +29,8 @@ namespace Keebee.AAT.Display.Caregiver
             set { _systemEventLogger = value; }
         }
 
-        private IEnumerable<MediaResponseType> _publicMediaFiles;
-        public IEnumerable<MediaResponseType> PublicMediaFiles
+        private IEnumerable<ResponseTypePaths> _publicMediaFiles;
+        public IEnumerable<ResponseTypePaths> PublicMediaFiles
         {
             set { _publicMediaFiles = value; }
         }
@@ -75,7 +75,7 @@ namespace Keebee.AAT.Display.Caregiver
         private ImageList _imageListHomeMovies;
         private readonly ImageList _imageListAudio;
 
-        private IEnumerable<MediaResponseType> _mediaFiles;
+        private IEnumerable<ResponseTypePaths> _mediaFiles;
 
         // playlist
         private const string PlaylistCaregiver = PlaylistName.Caregiver;
@@ -342,7 +342,7 @@ namespace Keebee.AAT.Display.Caregiver
 
                 _mediaFiles = media != null 
                     ? _residentMediaFilesClient.GetForResident(_currentResident.Id).MediaResponseTypes 
-                    : new List<MediaResponseType>();
+                    : new List<ResponseTypePaths>();
             }
         }
 
@@ -645,6 +645,11 @@ namespace Keebee.AAT.Display.Caregiver
                 lvMusic.Items[_currentMusicIndex].ImageIndex = ImageIndexPause;
                 lvMusic.Items[_currentMusicIndex].SubItems[ListViewAudioColumnStatus].Text = "Playing...";
             }
+            else if (musicPlayer.playState == WMPPlayState.wmppsPaused)
+            {
+                lvMusic.Items[_currentMusicIndex].ImageIndex = ImageIndexPlayActive;
+                lvMusic.Items[_currentMusicIndex].SubItems[ListViewAudioColumnStatus].Text = "Paused";
+            }
             else
             {
                 var music = GetFilePaths(MediaPathTypeId.Music, ResponseTypeId.Radio);
@@ -662,6 +667,11 @@ namespace Keebee.AAT.Display.Caregiver
             {
                 lvRadioShows.Items[_currentRadioShowIndex].ImageIndex = ImageIndexPause;
                 lvRadioShows.Items[_currentRadioShowIndex].SubItems[ListViewAudioColumnStatus].Text = "Playing...";
+            }
+            else if (radioShowPlayer.playState == WMPPlayState.wmppsPaused)
+            {
+                lvRadioShows.Items[_currentRadioShowIndex].ImageIndex = ImageIndexPlayActive;
+                lvRadioShows.Items[_currentRadioShowIndex].SubItems[ListViewAudioColumnStatus].Text = "Paused";
             }
             else
             {
@@ -1360,6 +1370,7 @@ namespace Keebee.AAT.Display.Caregiver
         {
             try
             {
+                if (_formIsClosing) return;
                 if (_bgwImageGeneralThumbnails.CancellationPending) return;
 
                 _imageListImagesGeneral.Images.Add((Image) e.UserState);
@@ -1469,8 +1480,9 @@ namespace Keebee.AAT.Display.Caregiver
         {
             try
             {
+                if (_formIsClosing) return;
                 if (_bgwTVShowThumbnails.CancellationPending) return;
-
+                
                 _imageListTVShows.Images.Add((Image)e.UserState);
                 lvTVShows.Items[e.ProgressPercentage].ImageIndex = e.ProgressPercentage;
             }
@@ -1528,6 +1540,7 @@ namespace Keebee.AAT.Display.Caregiver
         {
             try
             {
+                if (_formIsClosing) return;
                 if (_bgwHomeMovieThumbnails.CancellationPending) return;
 
                 _imageListHomeMovies.Images.Add((Image)e.UserState);
@@ -1535,7 +1548,7 @@ namespace Keebee.AAT.Display.Caregiver
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"Caregiver.UpdatHomeMoviesListViewImage: {ex.Message}", EventLogEntryType.Error);
+                _systemEventLogger.WriteEntry($"Caregiver.UpdateHomeMoviesListViewImage: {ex.Message}", EventLogEntryType.Error);
             }
         }
 

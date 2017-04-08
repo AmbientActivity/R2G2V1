@@ -682,13 +682,13 @@ namespace Keebee.AAT.Backup
             return sb.ToString();
         }
 
-        private static string GetPublicProfileLinkedFilenames(int responseTypeId, int mediaPathTypeId, MediaResponseType[] linkedMedia)
+        private static string GetPublicProfileLinkedFilenames(int responseTypeId, int mediaPathTypeId, ResponseTypePaths[] linked)
         {
-            if (linkedMedia == null) return string.Empty;
+            if (linked == null) return string.Empty;
 
             // get response type
-            if (linkedMedia.All(x => x.ResponseType.Id != responseTypeId)) return string.Empty;
-            var mediaResponseType = linkedMedia.Single(x => x.ResponseType.Id == responseTypeId);
+            if (linked.All(x => x.ResponseType.Id != responseTypeId)) return string.Empty;
+            var mediaResponseType = linked.Single(x => x.ResponseType.Id == responseTypeId);
 
             // get media path type
             var paths = mediaResponseType.Paths.ToArray();
@@ -744,7 +744,7 @@ namespace Keebee.AAT.Backup
                 var mediaPathTypes = mediaPathTypesClient.Get().ToArray();
 
                 var publicMediaFilesClient = new PublicMediaFilesClient();
-                var linkedMedia = publicMediaFilesClient.GetLinked()?.MediaFiles.ToArray();
+                var linkedMedia = publicMediaFilesClient.GetLinked().ToArray();
 
                 var pathScript = $@"{path}\Install\Database\SQL Server\{RestorePublicProfileFilename}.sql";
 

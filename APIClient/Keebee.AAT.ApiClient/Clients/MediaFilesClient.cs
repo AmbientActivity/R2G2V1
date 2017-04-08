@@ -8,9 +8,9 @@ namespace Keebee.AAT.ApiClient.Clients
 {
     public interface IMediaFilesClient
     {
-        MediaFileSingle Get(Guid streamId);
+        MediaFilePath Get(Guid streamId);
         IEnumerable<Media> GetForPath(string path);
-        MediaFileSingle GetFromPath(string path, string filename);
+        MediaFilePath GetFromPath(string path, string filename);
         byte[] GetFileBytes(Guid streamId);
         byte[] GetFileStreamFromPath(string path, string filename);
         IEnumerable<Media> GetWithLinkedData(string path);
@@ -18,11 +18,11 @@ namespace Keebee.AAT.ApiClient.Clients
 
     public class MediaFilesClient : BaseClient, IMediaFilesClient
     {
-        public MediaFileSingle Get(Guid streamId)
+        public MediaFilePath Get(Guid streamId)
         {
             var request = new RestRequest($"mediafiles/{streamId}", Method.GET);
             var data = Execute(request);
-            var mediaFile = JsonConvert.DeserializeObject<MediaFileSingle>(data.Content);
+            var mediaFile = JsonConvert.DeserializeObject<MediaFilePath>(data.Content);
 
             return mediaFile;
         }
@@ -31,16 +31,16 @@ namespace Keebee.AAT.ApiClient.Clients
         {
             var request = new RestRequest($"mediafiles?path={path}", Method.GET);
             var data = Execute(request);
-            var media = JsonConvert.DeserializeObject<MediaList>(data.Content).Media;
+            var media = JsonConvert.DeserializeObject<IEnumerable<Media>>(data.Content);
 
             return media;
         }
 
-        public MediaFileSingle GetFromPath(string path, string filename)
+        public MediaFilePath GetFromPath(string path, string filename)
         {
             var request = new RestRequest($"mediafiles?path={path}&filename={filename}", Method.GET);
             var data = Execute(request);
-            var mediaFile = JsonConvert.DeserializeObject<MediaFileSingle>(data.Content);
+            var mediaFile = JsonConvert.DeserializeObject<MediaFilePath>(data.Content);
 
             return mediaFile;
         }
@@ -57,7 +57,7 @@ namespace Keebee.AAT.ApiClient.Clients
         {
             var request = new RestRequest($"mediafilestreams?path={path}&filename={filename}", Method.GET);
             var data = Execute(request);
-            var bytes = JsonConvert.DeserializeObject<MediaFileStreamSingle>(data.Content).Stream;
+            var bytes = JsonConvert.DeserializeObject<MediaFileStream>(data.Content).Stream;
 
             return bytes;
         }
@@ -66,7 +66,7 @@ namespace Keebee.AAT.ApiClient.Clients
         {
             var request = new RestRequest($"mediafiles/linked?path={path}", Method.GET);
             var data = Execute(request);
-            var media = JsonConvert.DeserializeObject<MediaList>(data.Content).Media;
+            var media = JsonConvert.DeserializeObject<IEnumerable<Media>>(data.Content);
 
             return media;
         }

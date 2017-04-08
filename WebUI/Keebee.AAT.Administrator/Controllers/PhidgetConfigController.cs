@@ -180,7 +180,7 @@ namespace Keebee.AAT.Administrator.Controllers
                                     Description = config.Description,
                                     IsActive = config.IsActive,
                                     IsActiveEventLog = config.IsActiveEventLog,
-                                    CanDelete = config.IsEventLogs
+                                    CanDelete = !config.IsEventLogs
                                                 && !config.IsActive
                                                 && ConfigId.Default != config.Id
                                 };

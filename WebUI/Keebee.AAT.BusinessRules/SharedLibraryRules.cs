@@ -98,7 +98,7 @@ namespace Keebee.AAT.BusinessRules
             return string.Empty;
         }
 
-        public MediaFileSingle GetMediaFile(int id)
+        public MediaFilePath GetMediaFile(int id)
         {
             var mediaFile = _publicMediaFilesClient.Get(id);
 
@@ -204,10 +204,10 @@ namespace Keebee.AAT.BusinessRules
 
         public IEnumerable<Resident> GetLinkedProfiles(Guid streamId)
         {
-            var publicMedia = _publicMediaFilesClient.GetLinkedForStreamId(streamId);
+            var mediaResponseTypes = _publicMediaFilesClient.GetLinkedForStreamId(streamId).ToArray();
             var publicProfile = new List<Resident>();
 
-            if (publicMedia.MediaFiles != null)
+            if (mediaResponseTypes.Any())
             {
                 publicProfile.Add(new Resident
                 {

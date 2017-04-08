@@ -72,12 +72,11 @@ namespace Keebee.AAT.BusinessRules
         {
             var result = string.Empty;
             var responseTypeId = GetResponseTypeId(mediaPathTypeId);
-            var publicMedia = _publicMediaFilesClient.GetForMediaPathType(mediaPathTypeId);
+            var mediaResponseTypes = _publicMediaFilesClient.GetForMediaPathType(mediaPathTypeId).ToArray();
 
-            if (publicMedia == null) return result;
-            if (!publicMedia.MediaFiles.Any()) return result;
+            if (!mediaResponseTypes.Any()) return result;
 
-            var files = publicMedia.MediaFiles
+            var files = mediaResponseTypes
                 .Where(x => x.ResponseType.Id == responseTypeId)
                 .SelectMany(x => x.Paths)
                 .Where(x => x.MediaPathType.Id == mediaPathTypeId)
@@ -89,7 +88,7 @@ namespace Keebee.AAT.BusinessRules
             return result;
         }
 
-        public MediaFileSingle GetMediaFile(int id)
+        public MediaFilePath GetMediaFile(int id)
         {
             var mediaFile = _publicMediaFilesClient.Get(id);
 
@@ -192,18 +191,15 @@ namespace Keebee.AAT.BusinessRules
             var mediaSource = new MediaSourcePath();
             var mediaPath = GetMediaPath(mediaPathTypeId);
             var sharedPaths = _mediaFilesClient.GetForPath($@"{mediaSource.SharedLibrary}\{mediaPath}").ToArray();
-            var existingSharedMediaPaths = _publicMediaFilesClient.GetForMediaPathType(mediaPathTypeId);
+            var mediaResponseTypes = _publicMediaFilesClient.GetForMediaPathType(mediaPathTypeId).ToArray();
             IEnumerable<Guid> existingStreamIds = new List<Guid>();
 
-            if (existingSharedMediaPaths != null)
+            if (mediaResponseTypes.Any())
             {
-                if (existingSharedMediaPaths.MediaFiles.Any())
-                {
-                    existingStreamIds = existingSharedMediaPaths.MediaFiles.SelectMany(p => p.Paths)
-                        .SelectMany(f => f.Files)
-                        .Where(f => f.IsLinked)
-                        .Select(f => f.StreamId);
-                }
+                existingStreamIds = mediaResponseTypes.SelectMany(p => p.Paths)
+                    .SelectMany(f => f.Files)
+                    .Where(f => f.IsLinked)
+                    .Select(f => f.StreamId);
             }
 
             var availableFiles = sharedPaths

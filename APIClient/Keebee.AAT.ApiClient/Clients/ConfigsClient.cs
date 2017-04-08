@@ -31,7 +31,7 @@ namespace Keebee.AAT.ApiClient.Clients
         {
             var request = new RestRequest("configs", Method.GET);
             var data = Execute(request);
-            var configs = JsonConvert.DeserializeObject<ConfigList>(data.Content).Configs;
+            var configs = JsonConvert.DeserializeObject<IEnumerable<Config>>(data.Content);
 
             return configs;
         }
@@ -85,7 +85,7 @@ namespace Keebee.AAT.ApiClient.Clients
         {
             var request = new RestRequest("configdetails", Method.GET);
             var data = Execute(request);
-            var configDetails = JsonConvert.DeserializeObject<ConfigDetailList>(data.Content).ConfigDetails;
+            var configDetails = JsonConvert.DeserializeObject<IEnumerable<ConfigDetail>>(data.Content);
 
             return configDetails;
         }

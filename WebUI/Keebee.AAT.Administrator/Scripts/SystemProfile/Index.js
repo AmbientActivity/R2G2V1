@@ -367,10 +367,10 @@
                                                 self.sort({ afterSave: true });
                                                 self.selectedIds([]);
                                                 self.checkSelectAll(false);
-                                                enableDetail();
+                                                self.enableDetail();
                                             } else {
                                                 $("body").css("cursor", "default");
-                                                enableDetail();
+                                                self.enableDetail();
 
                                                 BootstrapDialog.show({
                                                     type: BootstrapDialog.TYPE_DANGER,

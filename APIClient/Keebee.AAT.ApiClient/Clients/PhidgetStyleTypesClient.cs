@@ -16,7 +16,7 @@ namespace Keebee.AAT.ApiClient.Clients
         {
             var request = new RestRequest("phidgetstyletypes", Method.GET);
             var data = Execute(request);
-            var phidgetTypes = JsonConvert.DeserializeObject<PhidgetStyleTypeList>(data.Content).PhidgetStyleTypes;
+            var phidgetTypes = JsonConvert.DeserializeObject<IEnumerable<PhidgetStyleType>>(data.Content);
 
             return phidgetTypes;
         }

@@ -140,10 +140,7 @@
                     onshown: function(dialog) {
                         $("body").css("cursor", "wait");
 
-                        $.ajax({
-                            type: "GET",
-                            async: true,
-                            traditional: true,
+                        $.get({
                             url: site.url + "Maintenance/" + functionName,
                             success: function (data) {
                                 $("body").css("cursor", "default");
@@ -200,10 +197,7 @@
             };
 
             function killDisplay() {
-                $.ajax({
-                    type: "GET",
-                    async: true,
-                    traditional: true,
+                $.get({
                     url: site.url + "Maintenance/KillDisplay",
                     success: function (data) {
                         $("body").css("cursor", "default");
@@ -227,10 +221,7 @@
             }
 
             function clearServiceLogs() {
-                $.ajax({
-                    type: "GET",
-                    async: true,
-                    traditional: true,
+                $.get({
                     url: site.url + "Maintenance/ClearServiceLogs",
                     success: function(data) {
                         $("body").css("cursor", "default");

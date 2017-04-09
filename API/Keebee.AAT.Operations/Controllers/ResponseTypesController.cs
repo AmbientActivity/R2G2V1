@@ -22,7 +22,7 @@ namespace Keebee.AAT.Operations.Controllers
 
         // GET: api/ResponseTypes
         [HttpGet]
-        public async Task<DynamicJsonObject> Get()
+        public async Task<DynamicJsonArray> Get()
         {
             IEnumerable<ResponseType> responseTypes = new Collection<ResponseType>();
 
@@ -31,10 +31,9 @@ namespace Keebee.AAT.Operations.Controllers
                     responseTypes = _responseTypeService.Get();
                 });
 
-            if (responseTypes == null) return new DynamicJsonObject(new ExpandoObject());
+            if (responseTypes == null) return new DynamicJsonArray(new object[0]);
 
-            dynamic exObj = new ExpandoObject();
-            exObj.ResponseTypes = responseTypes
+            var jArray = responseTypes
                 .Select(x => new
                 {
                     x.Id,
@@ -51,9 +50,9 @@ namespace Keebee.AAT.Operations.Controllers
                         x.InteractiveActivityType.Description 
                    } : null,
                     x.IsSystem
-                });
+                }).ToArray();
 
-            return new DynamicJsonObject(exObj);
+            return new DynamicJsonArray(jArray);
         }
 
         // GET: api/ResponseTypes/5

@@ -16,7 +16,7 @@ namespace Keebee.AAT.ApiClient.Clients
         {
             var request = new RestRequest("responsetypes", Method.GET);
             var data = Execute(request);
-            var responseTypes = JsonConvert.DeserializeObject<ResponseTypeList>(data.Content).ResponseTypes;
+            var responseTypes = JsonConvert.DeserializeObject<IEnumerable<ResponseType>>(data.Content);
 
             return responseTypes;
         }

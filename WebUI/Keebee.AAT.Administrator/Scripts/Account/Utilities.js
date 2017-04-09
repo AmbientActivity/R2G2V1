@@ -14,24 +14,21 @@
             var cmdLogOff = $("#logoff");
 
             function attemptToLogin() {
-                var result;
-                var jsonData = getLoginDetailFromDialog();
+                return new Promise(function(resolve, reject) {
+                    var jsonData = getLoginDetailFromDialog();
 
-                $.ajax({
-                    type: "GET",
-                    async: false,
-                    data: jsonData,
-                    dataType: "json",
-                    url: site.url + "Account/Login",
-                    success: function (data) {
-                        result = data;
-                    },
-                    error: function (data) {
-                        result = data;
-                    }
+                    $.get({
+                        data: jsonData,
+                        dataType: "json",
+                        url: site.url + "Account/Login",
+                        success: function (result) {
+                            resolve(result);
+                        },
+                        error: function (result) {
+                            reject(result);
+                        }
+                    });
                 });
-
-                return result;
             }
 
             function getLoginDetailFromDialog() {
@@ -44,53 +41,47 @@
             };
 
             cmdLogin.click(function () {
-                var message;
-
-                $.ajax({
-                    type: "GET",
-                    async: false,
+                $.get({
                     url: site.url + "Account/GetLoginView",
-                    success: function (data) {
-                        message = data;
-                    }
-                });
-
-                BootstrapDialog.show({
-                    title: "R2G2 Login",
-                    message: $("<div></div>").append(message),
-                    onshown: function () {
-                        $("#txtPassword").focus();
-                    },
-                    closable: false,
-                    buttons: [
-                        {
-                            label: "Cancel",
-                            action: function (dialog) {
-                                dialog.close();
-                            }
-                        }, {
-                            label: "OK",
-                            cssClass: "btn-primary",
-                            hotkey: 13,  // enter
-                            action: function (dialog) {
-                                $("body").css("cursor", "wait");
-                                var result = attemptToLogin();
-
-                                if (result.Success) {
-                                    dialog.close();
-                                    location.reload();
-                                    $("body").css("cursor", "default");
-                                } else {
-                                    $("#validation-container").show();
-                                    $("#validation-container").html("");
-                                    $("body").css("cursor", "default");
-                                    var html = "<ul><li>" + result.ErrorMessage + "</li></ul>";
-                                    $("#validation-container").append(html);
-                                    $("body").css("cursor", "default");
+                    success: function (message) {
+                        BootstrapDialog.show({
+                            title: "R2G2 Login",
+                            message: $("<div></div>").append(message),
+                            onshown: function () {
+                                $("#txtPassword").focus();
+                            },
+                            closable: false,
+                            buttons: [
+                                {
+                                    label: "Cancel",
+                                    action: function (dialog) {
+                                        dialog.close();
+                                    }
+                                }, {
+                                    label: "OK",
+                                    cssClass: "btn-primary",
+                                    hotkey: 13,  // enter
+                                    action: function (dialog) {
+                                        $("body").css("cursor", "wait");
+                                        attemptToLogin().then(function(result) {
+                                            if (result.Success) {
+                                                dialog.close();
+                                                location.reload();
+                                                $("body").css("cursor", "default");
+                                            } else {
+                                                $("#validation-container").show();
+                                                $("#validation-container").html("");
+                                                $("body").css("cursor", "default");
+                                                var html = "<ul><li>" + result.ErrorMessage + "</li></ul>";
+                                                $("#validation-container").append(html);
+                                                $("body").css("cursor", "default");
+                                            }
+                                        });
+                                    }
                                 }
-                            }
-                        }
-                    ]
+                            ]
+                        });
+                    }
                 });
             });
 
@@ -106,88 +97,79 @@
 
             lnkChangePassword.click(function () {
                 var title = "<span class='glyphicon glyphicon-pencil'></span>";
-                var message;
 
-                $.ajax({
-                    type: "GET",
-                    async: false,
+                $.get({
                     url: site.url + "Account/GetChangePasswordView",
-                    success: function (data) {
-                        message = data;
-                    }
-                });
-
-                BootstrapDialog.show({
-                    title: title + " Change Password",
-                    message: $("<div></div>").append(message),
-                    onshown: function () {
-                        $("#txtOldPassword").focus();
-                        $("#txtOldPassword").val("");
-                    },
-                    closable: false,
-                    buttons: [
-                        {
-                            label: "Cancel",
-                            action: function (dialog) {
-                                dialog.close();
-                            }
-                        }, {
-                            label: "OK",
-                            cssClass: "btn-primary",
-                            action: function (dialog) {
-                                var result = attemptToChangePassword();
-
-                                if (result.Success) {
-                                    dialog.close();
-                                    $("body").css("cursor", "default");
-                                    BootstrapDialog.show({
-                                        title: "Success",
-                                        closable: false,
-                                        type: BootstrapDialog.TYPE_SUCCESS,
-                                        message: "Password successfully changed",
-                                        buttons: [
-                                        {
-                                            label: "Close",
-                                            action: function (d) {
-                                                d.close();
+                    success: function (message) {
+                        BootstrapDialog.show({
+                            title: title + " Change Password",
+                            message: $("<div></div>").append(message),
+                            onshown: function () {
+                                $("#txtOldPassword").focus();
+                                $("#txtOldPassword").val("");
+                            },
+                            closable: false,
+                            buttons: [
+                                {
+                                    label: "Cancel",
+                                    action: function (dialog) {
+                                        dialog.close();
+                                    }
+                                }, {
+                                    label: "OK",
+                                    cssClass: "btn-primary",
+                                    action: function (dialog) {
+                                        attemptToChangePassword().then(function(result) {
+                                            if (result.Success) {
+                                                dialog.close();
+                                                $("body").css("cursor", "default");
+                                                BootstrapDialog.show({
+                                                    title: "Success",
+                                                    closable: false,
+                                                    type: BootstrapDialog.TYPE_SUCCESS,
+                                                    message: "Password successfully changed",
+                                                    buttons: [
+                                                    {
+                                                        label: "Close",
+                                                        action: function (d) {
+                                                            d.close();
+                                                        }
+                                                    }]
+                                                });
+                                            } else {
+                                                $("#validation-container").show();
+                                                $("#validation-container").html("");
+                                                $("body").css("cursor", "default");
+                                                var html = "<ul><li>" + result.ErrorMessage + "</li></ul>";
+                                                $("#validation-container").append(html);
+                                                $("body").css("cursor", "default");
                                             }
-                                        }]
-                                    });
-                                } else {
-                                    $("#validation-container").show();
-                                    $("#validation-container").html("");
-                                    $("body").css("cursor", "default");
-                                    var html = "<ul><li>" + result.ErrorMessage + "</li></ul>";
-                                    $("#validation-container").append(html);
-                                    $("body").css("cursor", "default");
+                                        });
+                                    }
                                 }
-                            }
-                        }
-                    ]
+                            ]
+                        });
+                    }
                 });
             });
 
             function attemptToChangePassword() {
-                var result;
-                var jsonData = getChangePasswordDetailFromDialog();
+                return new Promise(function(resolve, reject) {
+                    var jsonData = getChangePasswordDetailFromDialog();
 
-                $.ajax({
-                    type: "GET",
-                    async: false,
-                    traditional: true,
-                    dataType: "json",
-                    data: jsonData,
-                    url: site.url + "Account/AttemptToChangePassword",
-                    success: function (data) {
-                        result = data;
+                    $.get({
+                        dataType: "json",
+                        data: jsonData,
+                        url: site.url + "Account/AttemptToChangePassword",
+                        success: function (result) {
+                            resolve(result);
 
-                    },
-                    error: function (data) {
-                        result = data;
-                    }
+                        },
+                        error: function (result) {
+                            reject(result);
+                        }
+                    });
                 });
-
-                return result;
             }
 
             function getChangePasswordDetailFromDialog() {

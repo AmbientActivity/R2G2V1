@@ -153,7 +153,7 @@ function DisableScreen() {
 
                         function enableDetail() {
                             var selected = self.files()
-                                .filter(function (data) { return data.isselected; });
+                                .filter(function (value) { return value.isselected; });
 
                             cmdDelete.attr("disabled", "disabled");
                             if (selected.length > 0) {
@@ -427,11 +427,13 @@ function DisableScreen() {
 
                             self.highlightSelectedRows();
                             enableDetail();
+
+                            return true;
                         };
 
                         self.selectFile = function (row) {
-                            if (typeof row === "undefined") return;
-                            if (row === null) return;
+                            if (typeof row === "undefined") return false;
+                            if (row === null) return false;
 
                             if (row.isselected)
                                 self.selectedIds().push(row.id);
@@ -441,6 +443,8 @@ function DisableScreen() {
                             self.highlightSelectedRows();
                             self.checkSelectAll(self.selectedIds().length === self.filteredFiles().length);
                             enableDetail();
+
+                            return true;
                         };
 
                         self.removeSelectedId = function (id) {
@@ -458,7 +462,7 @@ function DisableScreen() {
                             });
 
                             var selected = self.files()
-                                .filter(function (data) { return data.isselected; });
+                                .filter(function (value) { return value.isselected; });
 
                             $.each(selected, function (item, value) {
                                 var r = tblFile.find("#row_" + value.id);

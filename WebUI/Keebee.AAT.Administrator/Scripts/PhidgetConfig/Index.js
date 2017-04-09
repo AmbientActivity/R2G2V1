@@ -614,12 +614,6 @@
                                 [0].candelete;
                         };
 
-                        self.canAddDetailConfig = function (id) {
-                            return self.configs()
-                                .filter(function (value) { return value.id === id; })
-                                [0].canadddetail;
-                        };
-
                         self.selectedConfigDesc = function () {
                             return self.configs()
                                 .filter(function (value) { return value.id === self.selectedConfig(); })

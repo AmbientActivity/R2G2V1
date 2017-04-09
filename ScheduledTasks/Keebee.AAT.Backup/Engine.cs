@@ -715,8 +715,8 @@ namespace Keebee.AAT.Backup
             var resident = linkedMedia.Single(x => x.Resident.Id == residentId);
 
             // get response type
-            if (resident.MediaResponseTypes.All(x => x.ResponseType.Id != responseTypeId)) return string.Empty;
-            var mediaResponseType = resident.MediaResponseTypes.Single(x => x.ResponseType.Id == responseTypeId);
+            if (resident.ResponseTypePaths.All(x => x.ResponseType.Id != responseTypeId)) return string.Empty;
+            var mediaResponseType = resident.ResponseTypePaths.Single(x => x.ResponseType.Id == responseTypeId);
 
             // get media path type
             var paths = mediaResponseType.Paths.ToArray();

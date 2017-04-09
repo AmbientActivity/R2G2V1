@@ -68,7 +68,7 @@ function DisableScreen() {
 }
 
 ; (function ($) {
-    var HIGHLIGHT_ROW_COLOUR = "#e3e8ff";
+    var highlightRowColour = "#e3e8ff";
 
     sharedlibrary.index = {
         init: function (values) {
@@ -158,7 +158,7 @@ function DisableScreen() {
 
                         function enableDetail() {
                             var selected = self.files()
-                                .filter(function (data) { return data.isselected; });
+                                .filter(function (value) { return value.isselected; });
 
                             cmdDelete.attr("disabled", "disabled");
                             if (selected.length > 0) {
@@ -277,7 +277,7 @@ function DisableScreen() {
                             $.each(self.filteredFiles(), function (item, value) {
                                 value.isselected = false;
 
-                                var chk = tblFile.find("#chk_" + value.id);
+                                var chk = tblFile.find("#chk_" + value.streamid);
                                 chk.prop("checked", false);
                             });
                         });
@@ -392,22 +392,24 @@ function DisableScreen() {
 
                             $.each(self.filteredFiles(), function (item, value) {
                                 if (self.selectAllIsSelected())
-                                    self.selectedStreamIds().push(value.id);
+                                    self.selectedStreamIds().push(value.streamid);
                                 else
-                                    self.selectedStreamIds().pop(value.id);
+                                    self.selectedStreamIds().pop(value.streamid);
 
                                 value.isselected = self.selectAllIsSelected();
-                                var chk = tblFile.find("#chk_" + value.id);
+                                var chk = tblFile.find("#chk_" + value.streamid);
                                 chk.prop("checked", self.selectAllIsSelected());
                             });
 
                             self.highlightSelectedRows();
                             enableDetail();
+
+                            return true;
                         };
 
                         self.selectFile = function (row) {
-                            if (typeof row === "undefined") return;
-                            if (row === null) return;
+                            if (typeof row === "undefined") return false;
+                            if (row === null) return false;
 
                             if (row.isselected)
                                 self.selectedStreamIds().push(row.streamid);
@@ -417,6 +419,8 @@ function DisableScreen() {
                             self.highlightSelectedRows();
                             self.checkSelectAll(self.selectedStreamIds().length === self.filteredFiles().length);
                             enableDetail();
+
+                            return true;
                         };
 
                         self.removeSelectedStreamId = function (id) {
@@ -434,15 +438,13 @@ function DisableScreen() {
                             });
 
                             var selected = self.files()
-                                .filter(function (data) { return data.isselected; });
+                                .filter(function (value) { return value.isselected; });
 
                             $.each(selected, function (item, value) {
-                                var r = tblFile.find("#row_" + value.id);
-                                r.css("background-color", HIGHLIGHT_ROW_COLOUR);
-                                tblFile.attr("tr:hover", HIGHLIGHT_ROW_COLOUR);
+                                var r = tblFile.find("#row_" + value.streamid);
+                                r.css("background-color", highlightRowColour);
+                                tblFile.attr("tr:hover", highlightRowColour);
                             });
-
-                            return true;
                         };
 
                         self.deleteSelected = function () {

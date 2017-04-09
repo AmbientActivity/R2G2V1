@@ -1,10 +1,10 @@
 ﻿using Keebee.AAT.Administrator.ViewModels;
 using Keebee.AAT.Shared;
 using Keebee.AAT.ApiClient.Clients;
+using Keebee.AAT.Exporting;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Keebee.AAT.Exporting;
 using System.Web.Mvc;
 
 namespace Keebee.AAT.Administrator.Controllers
@@ -77,7 +77,7 @@ namespace Keebee.AAT.Administrator.Controllers
                     FileType = mediaFile.FileType,
                     FileSize = mediaFile.FileSize,
                     Path = Exports.EventLogPath
-                }).OrderBy(x => x.Filename);
+                }).OrderByDescending(x => x.Filename);
 
             return list;
         }

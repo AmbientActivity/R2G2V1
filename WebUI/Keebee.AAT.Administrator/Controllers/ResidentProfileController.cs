@@ -346,9 +346,9 @@ namespace Keebee.AAT.Administrator.Controllers
             var list = new List<MediaFileViewModel>();
             var residentMedia = _residentMediaFilesClient.GetForResident(id);
 
-            if (residentMedia == null) return list;
+            if (residentMedia.ResponseTypePaths == null) return list;
 
-            var mediaPaths = residentMedia.MediaResponseTypes.SelectMany(x => x.Paths).ToArray();
+            var mediaPaths = residentMedia.ResponseTypePaths.SelectMany(x => x.Paths).ToArray();
 
             if (!mediaPaths.Any()) return list;
 

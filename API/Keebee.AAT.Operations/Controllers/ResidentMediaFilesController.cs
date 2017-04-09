@@ -168,7 +168,7 @@ namespace Keebee.AAT.Operations.Controllers
                 residentMedia.First().Resident.GameDifficultyLevel
             };
 
-            exObj.MediaResponseTypes = residentMedia
+            exObj.ResponseTypePaths = residentMedia
                 .GroupBy(rt => rt.ResponseType)
                 .Select(mediaFiles => new { mediaFiles.First().ResponseType, MediaFiles = mediaFiles })
                 .Select(mf => new
@@ -225,15 +225,6 @@ namespace Keebee.AAT.Operations.Controllers
             if (!residentMedia.Any()) return new DynamicJsonObject(new ExpandoObject());
 
             dynamic exObj = new ExpandoObject();
-
-            exObj.Resident = new
-            {
-                residentMedia.First().Resident.Id,
-                residentMedia.First().Resident.FirstName,
-                residentMedia.First().Resident.LastName,
-                residentMedia.First().Resident.Gender,
-                residentMedia.First().Resident.GameDifficultyLevel
-            };
 
             exObj.ResponseType = new
             {
@@ -318,7 +309,7 @@ namespace Keebee.AAT.Operations.Controllers
                         x.Resident.Gender,
                         x.Resident.GameDifficultyLevel
                     },
-                    MediaResponseTypes = x.Files
+                    ResponseTypesPaths = x.Files
                         .GroupBy(rt => rt.ResponseType)
                         .Select(mediaFiles => new {mediaFiles.First().ResponseType, MediaFiles = mediaFiles})
                         .Select(mf => new
@@ -388,7 +379,7 @@ namespace Keebee.AAT.Operations.Controllers
                         x.Resident.Gender,
                         x.Resident.GameDifficultyLevel
                     },
-                    MediaResponseTypes = x.Files
+                    ResponseTypesPaths = x.Files
                         .GroupBy(rt => rt.ResponseType)
                         .Select(mediaFiles => new { mediaFiles.First().ResponseType, MediaFiles = mediaFiles })
                         .Select(mf => new

@@ -72,7 +72,7 @@
                                                 $("#validation-container").show();
                                                 $("#validation-container").html("");
                                                 $("body").css("cursor", "default");
-                                                var html = "<ul><li>" + result.ErrorMessage + "</li></ul>";
+                                                var html = "<br/><ul><li>" + result.ErrorMessage + "</li></ul>";
                                                 $("#validation-container").append(html);
                                                 $("body").css("cursor", "default");
                                             }

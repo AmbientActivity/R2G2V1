@@ -341,7 +341,7 @@ namespace Keebee.AAT.Display.Caregiver
                 var media = _residentMediaFilesClient.GetForResident(_currentResident.Id);
 
                 _mediaFiles = media != null 
-                    ? _residentMediaFilesClient.GetForResident(_currentResident.Id).MediaResponseTypes 
+                    ? _residentMediaFilesClient.GetForResident(_currentResident.Id).ResponseTypePaths 
                     : new List<ResponseTypePaths>();
             }
         }
@@ -1228,7 +1228,6 @@ namespace Keebee.AAT.Display.Caregiver
 
                 var frmSplash = new Splash();
                 frmSplash.Show();
-                frmSplash.BringToFront();
                 Application.DoEvents();
 
                 var residentId = Convert.ToInt32(cboResident.SelectedValue.ToString());
@@ -1617,6 +1616,7 @@ namespace Keebee.AAT.Display.Caregiver
             _bgwImageGeneralThumbnails?.Dispose();
             _bgwImagePersonalThumbnails?.Dispose();
             _bgwTVShowThumbnails?.Dispose();
+            _bgwHomeMovieThumbnails?.Dispose();
         }
 
         #endregion

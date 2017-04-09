@@ -229,7 +229,7 @@ namespace Keebee.AAT.BusinessRules
             var mediaResponseType = _residentMediaFilesClient.GetForResidentResponseType(residentId, responseTypeId);
             IEnumerable<Guid> existingStreamIds = new List<Guid>();
 
-            if (mediaResponseType.Paths.Any())
+            if (mediaResponseType.Paths != null)
             {
                 existingStreamIds = mediaResponseType
                     .Paths

@@ -293,6 +293,8 @@
 
                             self.highlightSelectedRows();
                             self.enableDetail();
+
+                            return true;
                         };
 
                         self.selectFile = function (row) {
@@ -307,6 +309,8 @@
                             self.highlightSelectedRows();
                             self.checkSelectAll(self.selectedIds().length === self.filteredFiles().length);
                             self.enableDetail();
+
+                            return true;
                         };
 
                         self.removeSelectedId = function (id) {
@@ -324,7 +328,7 @@
                             });
 
                             var selected = self.files()
-                                .filter(function (data) { return data.isselected; });
+                                .filter(function (value) { return value.isselected; });
 
                             $.each(selected, function (item, value) {
                                 var r = tblFile.find("#row_" + value.id);
@@ -492,7 +496,7 @@
 
                         self.enableDetail = function () {
                             var selected = self.files()
-                                .filter(function (result) { return result.isselected; });
+                                .filter(function (value) { return value.isselected; });
 
                             cmdDelete.attr("disabled", "disabled");
                             if (selected.length > 0) {

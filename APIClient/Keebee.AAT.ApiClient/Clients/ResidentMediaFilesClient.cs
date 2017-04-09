@@ -11,7 +11,7 @@ namespace Keebee.AAT.ApiClient.Clients
         IEnumerable<ResidentMedia> Get();
         ResidentMediaFile Get(int id);
         ResidentMedia GetForResident(int residentId);
-        ResidentMediaResponseType GetForResidentResponseType(int residentId, int responseTypeId);
+        ResponseTypePaths GetForResidentResponseType(int residentId, int responseTypeId);
         IEnumerable<ResidentMedia> GetLinked();
         IEnumerable<ResidentMedia> GetLinkedForStreamId(Guid streamId);
         int[] GetIdsForStreamId(Guid streamId);
@@ -48,13 +48,13 @@ namespace Keebee.AAT.ApiClient.Clients
             return residentMedia;
         }
 
-        public ResidentMediaResponseType GetForResidentResponseType(int residentId, int responseTypeId)
+        public ResponseTypePaths GetForResidentResponseType(int residentId, int responseTypeId)
         {
             var request = new RestRequest($"residentmediafiles?residentId={residentId}&responseTypeId={responseTypeId}", Method.GET);
             var data = Execute(request);
-            var mediaResponseType = JsonConvert.DeserializeObject<ResidentMediaResponseType>(data.Content);
+            var responseTypePaths = JsonConvert.DeserializeObject<ResponseTypePaths>(data.Content);
 
-            return mediaResponseType;
+            return responseTypePaths;
         }
 
         public IEnumerable<ResidentMedia> GetLinked()

@@ -75,7 +75,7 @@ namespace Keebee.AAT.Administrator.Controllers
                     Filename = video.Name,
                     Path = video.DirectoryName,
                     FileSize = video.Length
-                }).OrderBy(x => x.Filename);
+                }).OrderByDescending(x => x.Filename);
 
             return list;
         }

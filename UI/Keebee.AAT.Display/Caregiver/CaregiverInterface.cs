@@ -694,8 +694,11 @@ namespace Keebee.AAT.Display.Caregiver
             string[] filePaths = null;
             try
             {
-                var mediaFileQuery = new Helpers.MediaFileQuery(_mediaFiles, _publicMediaFiles, _currentResident.Id);
-                filePaths = mediaFileQuery.GetFilePaths(mediaPathTypeId, responseTypeId, streamId);
+                if (_mediaFiles != null)
+                {
+                    var mediaFileQuery = new Helpers.MediaFileQuery(_mediaFiles, _publicMediaFiles, _currentResident.Id);
+                    filePaths = mediaFileQuery.GetFilePaths(mediaPathTypeId, responseTypeId, streamId);
+                }
             }
             catch (Exception ex)
             {
@@ -711,8 +714,11 @@ namespace Keebee.AAT.Display.Caregiver
             IEnumerable<MediaFile> files = null;
             try
             {
-                var mediaFileQuery = new Helpers.MediaFileQuery(_mediaFiles, _publicMediaFiles, _currentResident.Id);
-                files = mediaFileQuery.GetMediaFiles(mediaPathTypeId, responseTypeId);  
+                if (_mediaFiles != null)
+                {
+                    var mediaFileQuery = new Helpers.MediaFileQuery(_mediaFiles, _publicMediaFiles, _currentResident.Id);
+                    files = mediaFileQuery.GetMediaFiles(mediaPathTypeId, responseTypeId);
+                }
             }
             catch (Exception ex)
             {

@@ -45,7 +45,7 @@ namespace Keebee.AAT.Display.Helpers
                 // get media from resident's profile for the response type
                 var media = _residentMediaFilesClient.GetForResidentResponseType(residentId, responseTypeId);
 
-                if (media != null)
+                if (media.Paths != null)
                     pathTypeFiles = media.Paths.ToArray();
 
                 // get a count of files for the response type
@@ -61,12 +61,11 @@ namespace Keebee.AAT.Display.Helpers
                 {
                     residentId = PublicProfileSource.Id;
                     var publicMedia = _publicMediaFilesClient.GetForResponseType(responseTypeId);
-
-                    if (publicMedia != null)
+                        
+                    if (publicMedia.Paths != null)
+                    {
                         pathTypeFiles = publicMedia.Paths.ToArray();
 
-                    if (publicMedia != null)
-                    {
                         numFiles = pathTypeFiles
                             .Where(p => mediaPatheTypeId < 0 || p.MediaPathType.Id == mediaPatheTypeId)
                             .SelectMany(p => p.Files).Count();

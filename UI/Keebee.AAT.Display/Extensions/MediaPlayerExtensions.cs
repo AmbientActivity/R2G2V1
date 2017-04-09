@@ -11,11 +11,22 @@ namespace Keebee.AAT.Display.Extensions
 
         public static IWMPPlaylist LoadPlaylist(this AxWindowsMediaPlayer player, string playlistName, IEnumerable<string> files)
         {
+            // clear the existing playlist
             var playlist = InitializePlaylist(player, playlistName);
-
             playlist.clear();
-            PurgeLibrary(player);
 
+            // clear the media player library 
+            var library = player.mediaCollection;
+            var allItems = library.getAll();
+            var countItems = allItems.count;
+
+            for (var i = 0; i < countItems; i++)
+            {
+                var item = allItems.Item[i];
+                library.remove(item, true);
+            }
+
+            // load the new playlist
             foreach (var media in files.Select(player.newMedia))
             {
                 playlist.appendItem(media);
@@ -29,8 +40,6 @@ namespace Keebee.AAT.Display.Extensions
             var playlist = InitializePlaylist(player, playlistName);
 
             playlist.clear();
-
-            PurgeLibrary(player);
         }
 
         public static int CurrentIndex(this AxWindowsMediaPlayer player, IWMPPlaylist playlist)
@@ -50,25 +59,11 @@ namespace Keebee.AAT.Display.Extensions
 
         private static IWMPPlaylist InitializePlaylist(AxWindowsMediaPlayer player, string playlistName)
         {
-
             _playlistCollection = player.playlistCollection.getByName(playlistName);
 
             return _playlistCollection.count == 0
                     ? player.playlistCollection.newPlaylist(playlistName)
                     : _playlistCollection.Item(0);
-        }
-
-        private static void PurgeLibrary(AxWindowsMediaPlayer player)
-        {
-            var library = player.mediaCollection;
-            var allItems = library.getAll();
-            var count = allItems.count;
-
-            for (var i = 0; i < count; i++)
-            {
-                var item = allItems.Item[i];
-                library.remove(item, true);
-            }
         }
     }
 }

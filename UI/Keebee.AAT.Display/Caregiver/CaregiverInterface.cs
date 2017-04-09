@@ -640,47 +640,47 @@ namespace Keebee.AAT.Display.Caregiver
 
         private void LoadMusicPlaylist()
         {
-            if (musicPlayer.playState == WMPPlayState.wmppsPlaying)
+            switch (musicPlayer.playState)
             {
-                lvMusic.Items[_currentMusicIndex].ImageIndex = ImageIndexPause;
-                lvMusic.Items[_currentMusicIndex].SubItems[ListViewAudioColumnStatus].Text = "Playing...";
-            }
-            else if (musicPlayer.playState == WMPPlayState.wmppsPaused)
-            {
-                lvMusic.Items[_currentMusicIndex].ImageIndex = ImageIndexPlayActive;
-                lvMusic.Items[_currentMusicIndex].SubItems[ListViewAudioColumnStatus].Text = "Paused";
-            }
-            else
-            {
-                var music = GetFilePaths(MediaPathTypeId.Music, ResponseTypeId.Radio);
-                _musicPlaylist = musicPlayer.LoadPlaylist(PlaylistCaregiver, music);
+                case WMPPlayState.wmppsPlaying:
+                    lvMusic.Items[_currentMusicIndex].ImageIndex = ImageIndexPause;
+                    lvMusic.Items[_currentMusicIndex].SubItems[ListViewAudioColumnStatus].Text = "Playing...";
+                    break;
+                case WMPPlayState.wmppsPaused:
+                    lvMusic.Items[_currentMusicIndex].ImageIndex = ImageIndexPlayActive;
+                    lvMusic.Items[_currentMusicIndex].SubItems[ListViewAudioColumnStatus].Text = "Paused";
+                    break;
+                default:
+                    var music = GetFilePaths(MediaPathTypeId.Music, ResponseTypeId.Radio);
+                    _musicPlaylist = musicPlayer.LoadPlaylist(PlaylistCaregiver, music);
 
-                musicPlayer.currentPlaylist = _musicPlaylist;
-                musicPlayer.Ctlcontrols.stop();
-                _currentMusicIndex = 0;
+                    musicPlayer.currentPlaylist = _musicPlaylist;
+                    musicPlayer.Ctlcontrols.stop();
+                    _currentMusicIndex = 0;
+                    break;
             }
         }
 
         private void LoadRadioShowPlaylist()
         {
-            if (radioShowPlayer.playState == WMPPlayState.wmppsPlaying)
+            switch (radioShowPlayer.playState)
             {
-                lvRadioShows.Items[_currentRadioShowIndex].ImageIndex = ImageIndexPause;
-                lvRadioShows.Items[_currentRadioShowIndex].SubItems[ListViewAudioColumnStatus].Text = "Playing...";
-            }
-            else if (radioShowPlayer.playState == WMPPlayState.wmppsPaused)
-            {
-                lvRadioShows.Items[_currentRadioShowIndex].ImageIndex = ImageIndexPlayActive;
-                lvRadioShows.Items[_currentRadioShowIndex].SubItems[ListViewAudioColumnStatus].Text = "Paused";
-            }
-            else
-            {
-                var radioShows = GetFilePaths(MediaPathTypeId.RadioShows, ResponseTypeId.Radio);
-                _radioShowPlaylist = radioShowPlayer.LoadPlaylist(PlaylistCaregiver, radioShows);
+                case WMPPlayState.wmppsPlaying:
+                    lvRadioShows.Items[_currentRadioShowIndex].ImageIndex = ImageIndexPause;
+                    lvRadioShows.Items[_currentRadioShowIndex].SubItems[ListViewAudioColumnStatus].Text = "Playing...";
+                    break;
+                case WMPPlayState.wmppsPaused:
+                    lvRadioShows.Items[_currentRadioShowIndex].ImageIndex = ImageIndexPlayActive;
+                    lvRadioShows.Items[_currentRadioShowIndex].SubItems[ListViewAudioColumnStatus].Text = "Paused";
+                    break;
+                default:
+                    var radioShows = GetFilePaths(MediaPathTypeId.RadioShows, ResponseTypeId.Radio);
+                    _radioShowPlaylist = radioShowPlayer.LoadPlaylist(PlaylistCaregiver, radioShows);
 
-                radioShowPlayer.currentPlaylist = _radioShowPlaylist;
-                radioShowPlayer.Ctlcontrols.stop();
-                _currentRadioShowIndex = 0;
+                    radioShowPlayer.currentPlaylist = _radioShowPlaylist;
+                    radioShowPlayer.Ctlcontrols.stop();
+                    _currentRadioShowIndex = 0;
+                    break;
             }
         }
 
@@ -1224,14 +1224,24 @@ namespace Keebee.AAT.Display.Caregiver
         {
             try
             {
+                CancelBackgroundWorkers();
+
+                var frmSplash = new Splash();
+                frmSplash.Show();
+                frmSplash.BringToFront();
+                Application.DoEvents();
+
                 var residentId = Convert.ToInt32(cboResident.SelectedValue.ToString());
 
                 LoadResidentMedia(residentId);
-
-                CancelBackgroundWorkers();
+                            
                 StopAudio();
                 LoadTabs(residentId);
-                LoadAudioPlaylist();
+
+                frmSplash.Close();
+
+                LoadMusicPlaylist();
+                LoadRadioShowPlaylist();
             }
             catch (Exception ex)
             {
@@ -1256,6 +1266,7 @@ namespace Keebee.AAT.Display.Caregiver
             CancelBackgroundWorkers(true);
             StopAudio();
             musicPlayer.ClearPlaylist(PlaylistCaregiver);
+            radioShowPlayer.ClearPlaylist(PlaylistCaregiver);
             RaiseCaregiverCompleteEvent();
         }
 
@@ -1302,12 +1313,6 @@ namespace Keebee.AAT.Display.Caregiver
             e.NewWidth = lvImagesPersonal.Columns[e.ColumnIndex].Width;
         }
 
-        private void MediaTabSelectedIndexChanged(object sender, EventArgs e)
-        {
-            ResetAudioListViews();
-            LoadAudioPlaylist();
-        }
-
         #endregion
 
         #region helpers
@@ -1331,34 +1336,6 @@ namespace Keebee.AAT.Display.Caregiver
         private bool TabPageExists(TabPage tabPage)
         {
             return tbMedia.TabPages.Cast<TabPage>().Contains(tabPage);
-        }
-
-        private void LoadAudioPlaylist()
-        {
-            switch (tbMedia.SelectedIndex)
-            {
-                case TabIndexMusic:
-                    LoadMusicPlaylist();
-                    break;
-                case TabIndexRadioShows:
-                    LoadRadioShowPlaylist();
-                    break;
-            }
-        }
-
-        private void ResetAudioListViews()
-        {
-            for (var index = 0; index < _totalSongs; index++)
-            {
-                lvMusic.Items[index].ImageIndex = ImageIndexPlay;
-                lvMusic.Items[index].SubItems[ListViewAudioColumnStatus].Text = string.Empty;
-            }
-
-            for (var index = 0; index < _totalRadioShows; index++)
-            {
-                lvRadioShows.Items[index].ImageIndex = ImageIndexPlay;
-                lvRadioShows.Items[index].SubItems[ListViewAudioColumnStatus].Text = string.Empty;
-            }
         }
 
         #endregion
@@ -1429,6 +1406,8 @@ namespace Keebee.AAT.Display.Caregiver
         {
             try
             {
+                if (_formIsClosing) return;
+
                 if (_bgwImagePersonalThumbnails.CancellationPending) return;
 
                 _imageListImagesPersonal.Images.Add((Image)e.UserState);
@@ -1543,8 +1522,12 @@ namespace Keebee.AAT.Display.Caregiver
                 if (_formIsClosing) return;
                 if (_bgwHomeMovieThumbnails.CancellationPending) return;
 
-                _imageListHomeMovies.Images.Add((Image)e.UserState);
-                lvHomeMovies.Items[e.ProgressPercentage].ImageIndex = e.ProgressPercentage;
+                _imageListHomeMovies.Images.Add((Image) e.UserState);
+
+                if (e.ProgressPercentage < lvHomeMovies.Items.Count)
+                {
+                    lvHomeMovies.Items[e.ProgressPercentage].ImageIndex = e.ProgressPercentage;
+                }
             }
             catch (Exception ex)
             {
@@ -1619,6 +1602,14 @@ namespace Keebee.AAT.Display.Caregiver
                 if (_bgwTVShowThumbnails.IsBusy)
                 {
                     _bgwTVShowThumbnails.CancelAsync();
+                }
+            }
+
+            if (_bgwHomeMovieThumbnails != null)
+            {
+                if (_bgwHomeMovieThumbnails.IsBusy)
+                {
+                    _bgwHomeMovieThumbnails.CancelAsync();
                 }
             }
 

@@ -39,7 +39,7 @@
             this.lblLoadingMedia.Name = "lblLoadingMedia";
             this.lblLoadingMedia.Size = new System.Drawing.Size(406, 103);
             this.lblLoadingMedia.TabIndex = 0;
-            this.lblLoadingMedia.Text = "Loading Caregiver...";
+            this.lblLoadingMedia.Text = "Loading media...";
             this.lblLoadingMedia.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // Splash

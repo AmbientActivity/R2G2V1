@@ -212,7 +212,7 @@ namespace Keebee.AAT.Operations.Controllers
 
         // GET: api/ResidentMediaFiles?residentId=2&responseTypeId=6
         [HttpGet]
-        public async Task<DynamicJsonObject> GetForResidentResponseType(int residentId, int responseTypeId)
+        public async Task<DynamicJsonArray> GetForResidentResponseType(int residentId, int responseTypeId)
         {
             IEnumerable<ResidentMediaFile> residentMedia = new Collection<ResidentMediaFile>();
 
@@ -221,23 +221,23 @@ namespace Keebee.AAT.Operations.Controllers
                 residentMedia = _residentMediaFileService.GetForResidentResponseType(residentId, responseTypeId);
             });
 
-            if (residentMedia == null) return new DynamicJsonObject(new ExpandoObject());
-            if (!residentMedia.Any()) return new DynamicJsonObject(new ExpandoObject());
+            if (residentMedia == null) return new DynamicJsonArray(new object[0]);
+            if (!residentMedia.Any()) return new DynamicJsonArray(new object[0]);
 
-            dynamic exObj = new ExpandoObject();
+            //dynamic exObj = new ExpandoObject();
 
-            exObj.ResponseType = new
-            {
-                residentMedia.First().ResponseType.Id,
-                residentMedia.First().ResponseType.Description,
-                ResponseTypeCatgory = new
-                {
-                    residentMedia.First().ResponseType.ResponseTypeCategory.Id,
-                    residentMedia.First().ResponseType.ResponseTypeCategory.Description
-                }
-            };
+            //exObj.ResponseType = new
+            //{
+            //    residentMedia.First().ResponseType.Id,
+            //    residentMedia.First().ResponseType.Description,
+            //    ResponseTypeCatgory = new
+            //    {
+            //        residentMedia.First().ResponseType.ResponseTypeCategory.Id,
+            //        residentMedia.First().ResponseType.ResponseTypeCategory.Description
+            //    }
+            //};
 
-            exObj.Paths = residentMedia
+            var jArray = residentMedia
                 .GroupBy(pt => pt.MediaPathType)
                 .Select(files => new { files.First().MediaPathType, Files = files })
                 .Select(pt => new
@@ -258,9 +258,9 @@ namespace Keebee.AAT.Operations.Controllers
                         f.MediaFile.FileSize,
                         f.IsLinked
                     })
-                }).OrderBy(o => o.MediaPathType.Id);
+                }).OrderBy(o => o.MediaPathType.Id).ToArray();
 
-            return new DynamicJsonObject(exObj);
+            return new DynamicJsonArray(jArray);
         }
 
         // GET: api/ResidentMediaFiles/ids?streamId=abaad215-95ed-e611-9cb8-98eecb38d473

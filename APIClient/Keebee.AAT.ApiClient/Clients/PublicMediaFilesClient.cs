@@ -11,7 +11,7 @@ namespace Keebee.AAT.ApiClient.Clients
         IEnumerable<ResponseTypePaths> Get();
         PublicMediaFile Get(int id);
         IEnumerable<ResponseTypePaths> Get(bool isSystem);
-        ResponseTypePaths GetForResponseType(int responseTypeId);
+        IEnumerable<MediaPathTypeFiles> GetForResponseType(int responseTypeId);
         IEnumerable<ResponseTypePaths> GetForMediaPathType(int mediaPathTypeId);
         PublicMediaFile GetForResponseTypeFilename(int responseTypeId, string filename);
         IEnumerable<PublicMediaFile> GetForStreamId(Guid streamId);
@@ -51,13 +51,13 @@ namespace Keebee.AAT.ApiClient.Clients
             return mediaResponseTypes;
         }
 
-        public ResponseTypePaths GetForResponseType(int responseTypeId)
+        public IEnumerable<MediaPathTypeFiles> GetForResponseType(int responseTypeId)
         {
             var request = new RestRequest($"publicmediafiles?responseTypeId={responseTypeId}", Method.GET);
             var data = Execute(request);
-            var mediaResponseType = JsonConvert.DeserializeObject<ResponseTypePaths>(data.Content);
+            var mediaPathTypeFiles = JsonConvert.DeserializeObject<IEnumerable<MediaPathTypeFiles>>(data.Content);
 
-            return mediaResponseType;
+            return mediaPathTypeFiles;
         }
 
         public IEnumerable<ResponseTypePaths> GetForMediaPathType(int mediaPathTypeId)

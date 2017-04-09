@@ -226,13 +226,12 @@ namespace Keebee.AAT.BusinessRules
             var sharedPaths = _mediaFilesClient.GetForPath($@"{mediaSource.SharedLibrary}\{mediaPath}").ToArray();
             var responseTypeId = GetResponseTypeId(mediaPathTypeId);
 
-            var mediaResponseType = _residentMediaFilesClient.GetForResidentResponseType(residentId, responseTypeId);
+            var paths = _residentMediaFilesClient.GetForResidentResponseType(residentId, responseTypeId);
             IEnumerable<Guid> existingStreamIds = new List<Guid>();
 
-            if (mediaResponseType.Paths != null)
+            if (paths != null)
             {
-                existingStreamIds = mediaResponseType
-                    .Paths
+                existingStreamIds = paths
                     .SelectMany(f => f.Files)
                     .Where(f => f.IsLinked)
                     .Select(f => f.StreamId);

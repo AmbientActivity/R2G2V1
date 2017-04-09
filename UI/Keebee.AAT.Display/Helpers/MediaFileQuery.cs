@@ -28,10 +28,10 @@ namespace Keebee.AAT.Display.Helpers
             // get media from public library for the response type
             if (residentId == PublicProfileSource.Id)
             {
-                var media = _publicMediaFilesClient.GetForResponseType(responseTypeId);
+                var paths = _publicMediaFilesClient.GetForResponseType(responseTypeId);
 
-                if (media != null)
-                    pathTypeFiles = media.Paths.ToArray();
+                if (paths != null)
+                    pathTypeFiles = paths.ToArray();
 
                 if (pathTypeFiles.Any())
                 {
@@ -43,10 +43,10 @@ namespace Keebee.AAT.Display.Helpers
             else
             {
                 // get media from resident's profile for the response type
-                var media = _residentMediaFilesClient.GetForResidentResponseType(residentId, responseTypeId);
+                var paths = _residentMediaFilesClient.GetForResidentResponseType(residentId, responseTypeId);
 
-                if (media.Paths != null)
-                    pathTypeFiles = media.Paths.ToArray();
+                if (paths != null)
+                    pathTypeFiles = paths.ToArray();
 
                 // get a count of files for the response type
                 if (pathTypeFiles.Any())
@@ -60,11 +60,11 @@ namespace Keebee.AAT.Display.Helpers
                 if (numFiles == 0)
                 {
                     residentId = PublicProfileSource.Id;
-                    var publicMedia = _publicMediaFilesClient.GetForResponseType(responseTypeId);
+                    var publicPaths = _publicMediaFilesClient.GetForResponseType(responseTypeId);
                         
-                    if (publicMedia.Paths != null)
+                    if (publicPaths != null)
                     {
-                        pathTypeFiles = publicMedia.Paths.ToArray();
+                        pathTypeFiles = publicPaths.ToArray();
 
                         numFiles = pathTypeFiles
                             .Where(p => mediaPatheTypeId < 0 || p.MediaPathType.Id == mediaPatheTypeId)

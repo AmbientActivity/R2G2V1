@@ -126,7 +126,7 @@ namespace Keebee.AAT.Operations.Controllers
 
         // GET: api/PublicMediaFiles?responseTypeId=1
         [HttpGet]
-        public async Task<DynamicJsonObject> GetForResponseType(int responseTypeId)
+        public async Task<DynamicJsonArray> GetForResponseType(int responseTypeId)
         {
             IEnumerable<PublicMediaFile> mediaList = new Collection<PublicMediaFile>();
 
@@ -135,23 +135,23 @@ namespace Keebee.AAT.Operations.Controllers
                 mediaList = _publicMediaFileService.GetForResponseType(responseTypeId);
             });
 
-            if (mediaList == null) return new DynamicJsonObject(new ExpandoObject());
-            if (!mediaList.Any()) return new DynamicJsonObject(new ExpandoObject());
+            if (mediaList == null) return new DynamicJsonArray(new object[0]);
+            if (!mediaList.Any()) return new DynamicJsonArray(new object[0]);
 
-            dynamic exObj = new ExpandoObject();
+            //dynamic exObj = new ExpandoObject();
 
-            exObj.ResponseType = new
-            {
-                mediaList.First().ResponseType.Id,
-                mediaList.First().ResponseType.Description,
-                ResponseTypeCatgory = new
-                {
-                    mediaList.First().ResponseType.ResponseTypeCategory.Id,
-                    mediaList.First().ResponseType.ResponseTypeCategory.Description
-                }
-            };
+            //exObj.ResponseType = new
+            //{
+            //    mediaList.First().ResponseType.Id,
+            //    mediaList.First().ResponseType.Description,
+            //    ResponseTypeCatgory = new
+            //    {
+            //        mediaList.First().ResponseType.ResponseTypeCategory.Id,
+            //        mediaList.First().ResponseType.ResponseTypeCategory.Description
+            //    }
+            //};
 
-            exObj.Paths = mediaList
+            var jArray = mediaList
                 .GroupBy(pt => pt.MediaPathType)
                 .Select(files => new { files.First().MediaPathType, Files = files })
                 .Select(pt => new
@@ -175,9 +175,9 @@ namespace Keebee.AAT.Operations.Controllers
                         f.MediaFile.FileSize,
                         f.IsLinked
                     })
-                }).OrderBy(o => o.MediaPathType.Id);
+                }).OrderBy(o => o.MediaPathType.Id).ToArray();
 
-            return new DynamicJsonObject(exObj);
+            return new DynamicJsonArray(jArray);
         }
 
         // GET: api/PublicMediaFiles?mediaPathTypeId=5

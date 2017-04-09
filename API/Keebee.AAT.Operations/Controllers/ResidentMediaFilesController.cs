@@ -146,7 +146,7 @@ namespace Keebee.AAT.Operations.Controllers
 
         // GET: api/ResidentMediaFiles?residentId=5
         [HttpGet]
-        public async Task<DynamicJsonObject> GetForResident(int residentId)
+        public async Task<DynamicJsonArray> GetForResident(int residentId)
         {
             IEnumerable<ResidentMediaFile> residentMedia = new Collection<ResidentMediaFile>();
 
@@ -155,20 +155,20 @@ namespace Keebee.AAT.Operations.Controllers
                 residentMedia = _residentMediaFileService.GetForResident(residentId);
             });
 
-            if (!residentMedia.Any()) return new DynamicJsonObject(new ExpandoObject());
+            if (!residentMedia.Any()) return new DynamicJsonArray(new object[0]);
 
-            dynamic exObj = new ExpandoObject();
+            //dynamic exObj = new ExpandoObject();
 
-            exObj.Resident = new
-            {
-                residentMedia.First().Resident.Id,
-                residentMedia.First().Resident.FirstName,
-                residentMedia.First().Resident.LastName,
-                residentMedia.First().Resident.Gender,
-                residentMedia.First().Resident.GameDifficultyLevel
-            };
+            //exObj.Resident = new
+            //{
+            //    residentMedia.First().Resident.Id,
+            //    residentMedia.First().Resident.FirstName,
+            //    residentMedia.First().Resident.LastName,
+            //    residentMedia.First().Resident.Gender,
+            //    residentMedia.First().Resident.GameDifficultyLevel
+            //};
 
-            exObj.ResponseTypePaths = residentMedia
+            var jArray = residentMedia
                 .GroupBy(rt => rt.ResponseType)
                 .Select(mediaFiles => new { mediaFiles.First().ResponseType, MediaFiles = mediaFiles })
                 .Select(mf => new
@@ -205,9 +205,9 @@ namespace Keebee.AAT.Operations.Controllers
                                 f.IsLinked
                             })
                         }).OrderBy(o => o.MediaPathType.Id)
-                }).OrderBy(o => o.ResponseType.Id);
+                }).OrderBy(o => o.ResponseType.Id).ToArray();
 
-            return new DynamicJsonObject(exObj);
+            return new DynamicJsonArray(jArray);
         }
 
         // GET: api/ResidentMediaFiles?residentId=2&responseTypeId=6

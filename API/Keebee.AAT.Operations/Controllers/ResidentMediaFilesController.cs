@@ -157,17 +157,6 @@ namespace Keebee.AAT.Operations.Controllers
 
             if (!residentMedia.Any()) return new DynamicJsonArray(new object[0]);
 
-            //dynamic exObj = new ExpandoObject();
-
-            //exObj.Resident = new
-            //{
-            //    residentMedia.First().Resident.Id,
-            //    residentMedia.First().Resident.FirstName,
-            //    residentMedia.First().Resident.LastName,
-            //    residentMedia.First().Resident.Gender,
-            //    residentMedia.First().Resident.GameDifficultyLevel
-            //};
-
             var jArray = residentMedia
                 .GroupBy(rt => rt.ResponseType)
                 .Select(mediaFiles => new { mediaFiles.First().ResponseType, MediaFiles = mediaFiles })

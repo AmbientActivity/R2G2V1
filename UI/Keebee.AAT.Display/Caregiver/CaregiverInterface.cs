@@ -29,10 +29,10 @@ namespace Keebee.AAT.Display.Caregiver
             set { _systemEventLogger = value; }
         }
 
-        private IEnumerable<ResponseTypePaths> _publicMediaFiles;
+        private IEnumerable<ResponseTypePaths> _publicMedia;
         public IEnumerable<ResponseTypePaths> PublicMediaFiles
         {
-            set { _publicMediaFiles = value; }
+            set { _publicMedia = value; }
         }
 
         private Config _config;
@@ -75,7 +75,7 @@ namespace Keebee.AAT.Display.Caregiver
         private ImageList _imageListHomeMovies;
         private readonly ImageList _imageListAudio;
 
-        private IEnumerable<ResponseTypePaths> _mediaFiles;
+        private IEnumerable<ResponseTypePaths> _media;
 
         // playlist
         private const string PlaylistCaregiver = PlaylistName.Caregiver;
@@ -334,14 +334,14 @@ namespace Keebee.AAT.Display.Caregiver
 
             if (residentId == PublicProfileSource.Id)
             {
-                _mediaFiles = _publicMediaFiles;
+                _media = _publicMedia;
             }
             else
             {
                 var media = _residentMediaFilesClient.GetForResident(_currentResident.Id);
 
-                _mediaFiles = media != null 
-                    ? _residentMediaFilesClient.GetForResident(_currentResident.Id).ResponseTypePaths 
+                _media = media != null 
+                    ? _residentMediaFilesClient.GetForResident(_currentResident.Id) 
                     : new List<ResponseTypePaths>();
             }
         }
@@ -694,9 +694,9 @@ namespace Keebee.AAT.Display.Caregiver
             string[] filePaths = null;
             try
             {
-                if (_mediaFiles != null)
+                if (_media != null)
                 {
-                    var mediaFileQuery = new Helpers.MediaFileQuery(_mediaFiles, _publicMediaFiles, _currentResident.Id);
+                    var mediaFileQuery = new Helpers.MediaFileQuery(_media, _publicMedia, _currentResident.Id);
                     filePaths = mediaFileQuery.GetFilePaths(mediaPathTypeId, responseTypeId, streamId);
                 }
             }
@@ -714,9 +714,9 @@ namespace Keebee.AAT.Display.Caregiver
             IEnumerable<MediaFile> files = null;
             try
             {
-                if (_mediaFiles != null)
+                if (_media != null)
                 {
-                    var mediaFileQuery = new Helpers.MediaFileQuery(_mediaFiles, _publicMediaFiles, _currentResident.Id);
+                    var mediaFileQuery = new Helpers.MediaFileQuery(_media, _publicMedia, _currentResident.Id);
                     files = mediaFileQuery.GetMediaFiles(mediaPathTypeId, responseTypeId);
                 }
             }

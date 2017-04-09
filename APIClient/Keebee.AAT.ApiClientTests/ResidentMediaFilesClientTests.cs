@@ -40,11 +40,10 @@ namespace Keebee.AAT.ApiClientTests
             const int residentId = 1;
 
             // Act
-            var media = client.GetForResident(residentId);
+            var paths = client.GetForResident(residentId);
 
             // Assert
-            Assert.IsNotNull(media);
-            Assert.AreEqual(media.Resident.Id, residentId);
+            Assert.IsNotNull(paths);
         }
     }
 }

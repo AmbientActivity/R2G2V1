@@ -344,11 +344,11 @@ namespace Keebee.AAT.Administrator.Controllers
         private IEnumerable<MediaFileViewModel> GetFiles(int id)
         {
             var list = new List<MediaFileViewModel>();
-            var residentMedia = _residentMediaFilesClient.GetForResident(id);
+            var paths = _residentMediaFilesClient.GetForResident(id);
 
-            if (residentMedia.ResponseTypePaths == null) return list;
+            if (paths == null) return list;
 
-            var mediaPaths = residentMedia.ResponseTypePaths.SelectMany(x => x.Paths).ToArray();
+            var mediaPaths = paths.SelectMany(x => x.Paths).ToArray();
 
             if (!mediaPaths.Any()) return list;
 

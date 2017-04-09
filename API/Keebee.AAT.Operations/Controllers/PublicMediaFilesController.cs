@@ -138,19 +138,6 @@ namespace Keebee.AAT.Operations.Controllers
             if (mediaList == null) return new DynamicJsonArray(new object[0]);
             if (!mediaList.Any()) return new DynamicJsonArray(new object[0]);
 
-            //dynamic exObj = new ExpandoObject();
-
-            //exObj.ResponseType = new
-            //{
-            //    mediaList.First().ResponseType.Id,
-            //    mediaList.First().ResponseType.Description,
-            //    ResponseTypeCatgory = new
-            //    {
-            //        mediaList.First().ResponseType.ResponseTypeCategory.Id,
-            //        mediaList.First().ResponseType.ResponseTypeCategory.Description
-            //    }
-            //};
-
             var jArray = mediaList
                 .GroupBy(pt => pt.MediaPathType)
                 .Select(files => new { files.First().MediaPathType, Files = files })

@@ -21,7 +21,7 @@ namespace Keebee.AAT.Operations.Controllers
         }
 
         [HttpGet]
-        public async Task<DynamicJsonObject> Get()
+        public async Task<DynamicJsonArray> Get()
         {
             IEnumerable<Resident> residents = new Collection<Resident>();
 
@@ -30,10 +30,9 @@ namespace Keebee.AAT.Operations.Controllers
                 residents = _residentService.Get();
             });
 
-            if (residents == null) return new DynamicJsonObject(new ExpandoObject());
+            if (residents == null) return new DynamicJsonArray(new object[0]);
 
-            dynamic exObj = new ExpandoObject();
-            exObj.Residents = residents
+            var jArray = residents
                 .Select(x => new
                 {
                     x.Id,
@@ -44,9 +43,9 @@ namespace Keebee.AAT.Operations.Controllers
                     x.AllowVideoCapturing,
                     x.DateCreated,
                     x.DateUpdated
-                });
+                }).ToArray();
 
-            return new DynamicJsonObject(exObj);
+            return new DynamicJsonArray(jArray);
         }
 
         [HttpGet]

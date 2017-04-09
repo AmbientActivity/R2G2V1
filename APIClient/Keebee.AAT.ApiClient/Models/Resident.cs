@@ -25,9 +25,4 @@ namespace Keebee.AAT.ApiClient.Models
         public int GameDifficultyLevel { get; set; }
         public bool AllowVideoCapturing { get; set; }
     }
-
-    public class ResidentList
-    {
-        public IEnumerable<Resident> Residents;
-    }
 }

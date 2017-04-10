@@ -26,6 +26,7 @@ namespace Keebee.AAT.VideoCaptureService
         // media capture
         private MediaCapture _capture;
         private bool _isRecording;
+        private bool _isStartCapture;
 
         // event logger
         private readonly SystemEventLogger _systemEventLogger;
@@ -98,6 +99,8 @@ namespace Keebee.AAT.VideoCaptureService
             {
                 if (_capture == null) return;
 
+                _isStartCapture = true;
+
                 var now = DateTime.Now.ToString("yyyy-MM-dd");
                 var rootFolder = $@"{VideoCaptures.Path}\{now}";
                 if (!Directory.Exists(rootFolder))
@@ -114,6 +117,7 @@ namespace Keebee.AAT.VideoCaptureService
                 await _capture.StartRecordToStorageFileAsync(recordProfile, recordStorageFile);
 
                 _isRecording = true;
+                _isStartCapture = false;
             }
             catch (Exception ex)
             {
@@ -132,10 +136,12 @@ namespace Keebee.AAT.VideoCaptureService
                 await _capture.StopRecordAsync();
 
                 _isRecording = false;
+                _isStartCapture = false;
             }
             catch (Exception ex)
             {
                 _isRecording = false;
+                _isStartCapture = false;
                 _systemEventLogger.WriteEntry($"StopCapture: {ex.Message}", EventLogEntryType.Error);
             }
         }
@@ -156,7 +162,7 @@ namespace Keebee.AAT.VideoCaptureService
         private void MessageReceivedVideoCapture(object source, MessageEventArgs e)
         {
             if (e.MessageBody != "1") return;
-            if (!_displayIsActive || _isRecording) return;
+            if (!_displayIsActive || _isRecording || _isStartCapture) return;
 
             StartCapture();
             _timer.Start();

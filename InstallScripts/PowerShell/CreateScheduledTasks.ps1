@@ -59,7 +59,7 @@
     Write-Host "Creating Video Capture Cleanup task..." -NoNewline
     $task_name = "R2G2 - Video Capture File Cleanup"
     $description = "Finds and deletes all 0KB video capture files."
-    $command = "$scheduledTasksPath\VideoCaptureCleanup\1.0.0.0\Keebee.AAT.VideoCaptureCleanup.exe"
+    $command = "$scheduledTasksPath\VideoCaptureFileCleanup\1.0.0.0\Keebee.AAT.VideoCaptureFileCleanup.exe"
     $start_time = "03:00"
     CreateScheduledTask $task_name $description $command $start_time
     Write-Host "done."

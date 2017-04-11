@@ -266,7 +266,7 @@ namespace Keebee.AAT.Backup
 #if DEBUG
                     Console.Write(message);
 #endif
-                    return message;
+                    return string.Empty;
                 }
 
                 dirs.Push(source);
@@ -450,7 +450,7 @@ namespace Keebee.AAT.Backup
 #if DEBUG
                     Console.Write(message);
 #endif
-                    return message;
+                    return string.Empty;
                 }
 
                 dirs.Push(pathDestination);
@@ -943,17 +943,17 @@ namespace Keebee.AAT.Backup
                 var mediaPathTypes = mediaPathTypesClient.Get().ToArray();          
                 var linkedMedia = residentMediaFilesClient.GetLinked()?.ToArray();
 
-                if (!residents.Any())
+                _residentsExist = residents.Any();
+
+                if (!_residentsExist)
                 {
                     var message = $"--- WARNING --- CreateScriptRestoreResidents: No residents found{Environment.NewLine}";
 #if DEBUG
                     Console.Write(message);
 #endif
-                    _residentsExist = false;
-                    return message;
+                    return string.Empty;
                 }
 
-                _residentsExist = true;
                 var pathScript = $@"{path}\Install\Database\SQL Server\{RestoreResidentsFilename}.sql";
 
                 if (File.Exists(pathScript))
@@ -1167,7 +1167,7 @@ namespace Keebee.AAT.Backup
 #if DEBUG
                     Console.Write(message);
 #endif
-                    return message;
+                    return string.Empty;
                 }
 
                 var pathScript = $@"{path}\Install\Database\SQL Server\{RestoreConfigurationsFilename}.sql";
@@ -1228,8 +1228,6 @@ namespace Keebee.AAT.Backup
 #endif
                 sb.Append(message);
             }
-
-            //sb.Append(CreatePowerShellScript(path, "RestoreConfigurations", "Configurations"));
 
             return sb.ToString();
         }

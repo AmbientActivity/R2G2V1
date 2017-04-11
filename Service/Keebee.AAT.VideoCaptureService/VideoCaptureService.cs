@@ -19,14 +19,12 @@ namespace Keebee.AAT.VideoCaptureService
     {
         private readonly Timer _timer;
 
-        // app.config settings
-        private readonly int _videoDuration;
+        // config settings
         private readonly VideoEncodingQuality _encodingQuality;
 
         // media capture
         private MediaCapture _capture;
-        private bool _isRecording;
-        private bool _isStartCapture;
+        private bool _isCapturing;
 
         // event logger
         private readonly SystemEventLogger _systemEventLogger;
@@ -56,10 +54,10 @@ namespace Keebee.AAT.VideoCaptureService
 
             InitializeMediaCapture();
 
-            _videoDuration = Convert.ToInt32(ConfigurationManager.AppSettings["VideoDuration"]);
+            var videoDuration = Convert.ToInt32(ConfigurationManager.AppSettings["VideoDuration"]);
             _encodingQuality = (VideoEncodingQuality)Convert.ToInt32(ConfigurationManager.AppSettings["VideoEncodingQuality"]);
 
-            _timer = new Timer(_videoDuration);
+            _timer = new Timer(videoDuration);
             _timer.Elapsed += OnTimerElapsed;
         }
 
@@ -99,7 +97,7 @@ namespace Keebee.AAT.VideoCaptureService
             {
                 if (_capture == null) return;
 
-                _isStartCapture = true;
+                _isCapturing = true;
 
                 var now = DateTime.Now.ToString("yyyy-MM-dd");
                 var rootFolder = $@"{VideoCaptures.Path}\{now}";
@@ -115,13 +113,10 @@ namespace Keebee.AAT.VideoCaptureService
                 var recordProfile = MediaEncodingProfile.CreateMp4(_encodingQuality);
 
                 await _capture.StartRecordToStorageFileAsync(recordProfile, recordStorageFile);
-
-                _isRecording = true;
-                _isStartCapture = false;
             }
             catch (Exception ex)
             {
-                _isRecording = false;
+                _isCapturing = false;
                 _systemEventLogger.WriteEntry($"StartCapture: {ex.Message}", EventLogEntryType.Warning);
             }
         }
@@ -131,17 +126,15 @@ namespace Keebee.AAT.VideoCaptureService
             try
             {
                 if (_capture == null) return;
-                if (!_isRecording) return;
+                if (!_isCapturing) return;
 
                 await _capture.StopRecordAsync();
 
-                _isRecording = false;
-                _isStartCapture = false;
+                _isCapturing = false;
             }
             catch (Exception ex)
             {
-                _isRecording = false;
-                _isStartCapture = false;
+                _isCapturing = false;
                 _systemEventLogger.WriteEntry($"StopCapture: {ex.Message}", EventLogEntryType.Error);
             }
         }
@@ -162,7 +155,7 @@ namespace Keebee.AAT.VideoCaptureService
         private void MessageReceivedVideoCapture(object source, MessageEventArgs e)
         {
             if (e.MessageBody != "1") return;
-            if (!_displayIsActive || _isRecording || _isStartCapture) return;
+            if (!_displayIsActive || _isCapturing) return;
 
             StartCapture();
             _timer.Start();
@@ -199,7 +192,7 @@ namespace Keebee.AAT.VideoCaptureService
             _systemEventLogger.WriteEntry("RecordLimitationExceeded", EventLogEntryType.Warning);
 
             if (_capture == null) return;
-            if (_isRecording)
+            if (_isCapturing)
             {
                 await _capture.StopRecordAsync();
             }
@@ -208,7 +201,7 @@ namespace Keebee.AAT.VideoCaptureService
         private void Failed(object sender, MediaCaptureFailedEventArgs e)
         {
             _systemEventLogger.WriteEntry("Failed", EventLogEntryType.Error);
-            if (_isRecording)
+            if (_isCapturing)
             {
                 StopCapture();
             }

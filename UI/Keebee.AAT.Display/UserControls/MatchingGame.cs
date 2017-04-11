@@ -26,12 +26,15 @@ namespace Keebee.AAT.Display.UserControls
         // event handler
         public event EventHandler MatchingGameTimeoutExpiredEvent;
         public event EventHandler LogInteractiveActivityEventEvent;
+        public event EventHandler StartVideoCaptureEvent;
 
         private bool _isActiveEventLog;
+        private bool _isAllowVideoCapture;
 
         // delegate
         private delegate void RaiseMatchingGameTimeoutExpiredDelegate();
         private delegate void RaiseLogInteractiveActivityEventEventDelegate(string description, int difficultyLevel, bool? success);
+        private delegate void RaiseStartVideoCaptureDelegate();
 
         private int _initialDifficultyLevel;
         private bool _enableGameTimeout;
@@ -47,10 +50,11 @@ namespace Keebee.AAT.Display.UserControls
             axShockwaveFlash1.Dock = DockStyle.Fill;
         }
 
-        public void Play(string[] shapes, string[] sounds, int initialDifficultyLevel, bool enableTimeout, bool isActiveEventLog)
+        public void Play(string[] shapes, string[] sounds, int initialDifficultyLevel, bool enableTimeout, bool isActiveEventLog, bool isAllowVideoCapture)
         {
             _initialDifficultyLevel = initialDifficultyLevel;
             _isActiveEventLog = isActiveEventLog;
+            _isAllowVideoCapture = isAllowVideoCapture;
             _enableGameTimeout = enableTimeout;
             PlayGame(shapes, sounds);
         }
@@ -189,16 +193,19 @@ namespace Keebee.AAT.Display.UserControls
 
                     var isGameHasExpired = request.Contains("<true/>");
                     if (isGameHasExpired)
-                        RaiseMatchingGameTimeoutExpired();
+                        RaiseMatchingGameTimeoutExpiredEvent();
 
                     if (_isActiveEventLog)
                         RaiseLogInteractiveActivityEventEvent(description, difficultyLevel, isSuccess);
+
+                    if (_isAllowVideoCapture)
+                        RaiseStartVideoCaptureEvent();
                 }
 
                 // no arguments implies "raise game complete event"
                 else
                 {
-                    RaiseMatchingGameTimeoutExpired();
+                    RaiseMatchingGameTimeoutExpiredEvent();
                 }
             }
 
@@ -208,13 +215,13 @@ namespace Keebee.AAT.Display.UserControls
             }
         }
 
-        private void RaiseMatchingGameTimeoutExpired()
+        private void RaiseMatchingGameTimeoutExpiredEvent()
         {
             if (IsDisposed) return;
 
             if (InvokeRequired)
             {
-                Invoke(new RaiseMatchingGameTimeoutExpiredDelegate(RaiseMatchingGameTimeoutExpired));
+                Invoke(new RaiseMatchingGameTimeoutExpiredDelegate(RaiseMatchingGameTimeoutExpiredEvent));
             }
             else
             {
@@ -241,6 +248,20 @@ namespace Keebee.AAT.Display.UserControls
                            };
 
                 LogInteractiveActivityEventEvent?.Invoke(new object(), args);
+            }
+        }
+
+        private void RaiseStartVideoCaptureEvent()
+        {
+            if (IsDisposed) return;
+
+            if (InvokeRequired)
+            {
+                Invoke(new RaiseStartVideoCaptureDelegate(RaiseStartVideoCaptureEvent));
+            }
+            else
+            {
+                StartVideoCaptureEvent?.Invoke(new object(), new EventArgs());
             }
         }
     }

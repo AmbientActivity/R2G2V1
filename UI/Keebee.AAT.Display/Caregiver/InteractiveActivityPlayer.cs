@@ -1,5 +1,4 @@
 ﻿using Keebee.AAT.SystemEventLogging;
-using Keebee.AAT.ApiClient;
 using Keebee.AAT.Display.Helpers;
 using Keebee.AAT.Display.Models;
 using Keebee.AAT.Shared;
@@ -125,13 +124,13 @@ namespace Keebee.AAT.Display.Caregiver
                 case InteractiveActivityTypeId.MatchingGame:
                     matchingGame1.Show();
                     matchingGame1.SystemEventLogger = _systemEventLogger;
-                    matchingGame1.Play(_shapes, _sounds, _difficultyLevel, false, _isActiveEventLog);
+                    matchingGame1.Play(_shapes, _sounds, _difficultyLevel, false, _isActiveEventLog, false);
                     break;
 
                 case InteractiveActivityTypeId.PaintingActivity:
                     paintingActivity1.Show();
                     paintingActivity1.SystemEventLogger = _systemEventLogger;
-                    paintingActivity1.Play(false, _isActiveEventLog);
+                    paintingActivity1.Play(false, _isActiveEventLog, false);
                     break;
             }
         }

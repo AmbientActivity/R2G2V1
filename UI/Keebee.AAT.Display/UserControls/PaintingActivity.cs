@@ -1,11 +1,11 @@
 ﻿using Keebee.AAT.SystemEventLogging;
 using Keebee.AAT.Display.Models;
+using Keebee.AAT.Shared;
 using System;
 using System.Diagnostics;
 using System.IO;
 using System.Windows.Forms;
 using AxShockwaveFlashObjects;
-using Keebee.AAT.Shared;
 
 namespace Keebee.AAT.Display.UserControls
 {
@@ -22,12 +22,15 @@ namespace Keebee.AAT.Display.UserControls
         // event handler
         public event EventHandler PaintingActivityTimeoutExpiredEvent;
         public event EventHandler LogInteractiveActivityEventEvent;
+        public event EventHandler StartVideoCaptureEvent;
 
         private bool _isActiveEventLog;
+        private bool _isAllowVideoCapture;
 
         // delegate
         private delegate void RaisePaintingActivityTimeoutExpiredDelegate();
         private delegate void RaiseLogInteractiveActvityEventEventDelegate(string description);
+        private delegate void RaiseStartVideoCaptureDelegate();
 
         private bool _enableGameTimeout;
 
@@ -42,10 +45,11 @@ namespace Keebee.AAT.Display.UserControls
             axShockwaveFlash1.Dock = DockStyle.Fill;
         }
 
-        public void Play(bool enableTimeout, bool isActiveEventLog)
+        public void Play(bool enableTimeout, bool isActiveEventLog, bool isAllowVideoCapture)
         {
             _enableGameTimeout = enableTimeout;
             _isActiveEventLog = isActiveEventLog;
+            _isAllowVideoCapture = isAllowVideoCapture;
             PlayGame();
         }
 
@@ -112,6 +116,9 @@ namespace Keebee.AAT.Display.UserControls
 
                     if (_isActiveEventLog)
                         RaiseLogInteractiveActivityEventEvent(description);
+
+                    if (_isAllowVideoCapture)
+                        RaiseStartVideoCaptureEvent();
                 }
 
                 // no arguments implies "raise game complete event"
@@ -158,6 +165,20 @@ namespace Keebee.AAT.Display.UserControls
                 };
 
                 LogInteractiveActivityEventEvent?.Invoke(new object(), args);
+            }
+        }
+
+        private void RaiseStartVideoCaptureEvent()
+        {
+            if (IsDisposed) return;
+
+            if (InvokeRequired)
+            {
+                Invoke(new RaiseStartVideoCaptureDelegate(RaiseStartVideoCaptureEvent));
+            }
+            else
+            {
+                StartVideoCaptureEvent?.Invoke(new object(), new EventArgs());
             }
         }
     }

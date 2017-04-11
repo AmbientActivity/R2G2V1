@@ -16,7 +16,6 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Windows.Forms;
 using System.Linq;
-using AxWMPLib;
 using WMPLib;
 
 namespace Keebee.AAT.Display
@@ -64,6 +63,7 @@ namespace Keebee.AAT.Display
         private readonly CustomMessageQueue _messageQueueDisplayPhidget;
         private readonly CustomMessageQueue _messageQueueDisplayVideoCapture;
         private readonly CustomMessageQueue _messageQueueDisplayBluetoothBeaconWatcher;
+        private readonly CustomMessageQueue _messageQueueVideoCapture;
 
         // message queue listener
         private readonly CustomMessageQueue _messageQueueResponse;
@@ -147,6 +147,12 @@ namespace Keebee.AAT.Display
                 QueueName = MessageQueueType.DisplayBluetoothBeaconWatcher
             });
 
+            // video-capture message queue sender
+            _messageQueueVideoCapture = new CustomMessageQueue(new CustomMessageQueueArgs
+            {
+                QueueName = MessageQueueType.VideoCapture
+            });
+
             // response message queue listener
             _messageQueueResponse = new CustomMessageQueue(new CustomMessageQueueArgs
             {
@@ -167,9 +173,11 @@ namespace Keebee.AAT.Display
             offScreen1.OffScreenCompleteEvent += OffScreenComplete;
             matchingGame1.MatchingGameTimeoutExpiredEvent += MatchingGameTimeoutExpired;
             matchingGame1.LogInteractiveActivityEventEvent += LogInteractiveActivityEvent;
+            matchingGame1.StartVideoCaptureEvent += StartVideoCaptureEvent;
             mediaPlayer1.LogVideoActivityEventEvent += LogVideoActivityEvent;
             paintingActivity1.PaintingActivityTimeoutExpiredEvent += PaintingActivityTimeoutExpired;
             paintingActivity1.LogInteractiveActivityEventEvent += LogInteractiveActivityEvent;
+            paintingActivity1.StartVideoCaptureEvent += StartVideoCaptureEvent;
 
             _currentResponseTypeId = ResponseTypeId.Ambient;
 
@@ -638,10 +646,10 @@ namespace Keebee.AAT.Display
                 if (_currentIsActiveEventLog)
                 {
                     _activityEventLogger.Add(_activeConfigDetail.ConfigId, _activeConfigDetail.Id, _activeResident.Id);
-                    _interactiveActivityEventLogger.Add(_activeResident.Id, InteractiveActivityTypeId.MatchingGame, "New game has been initiated", _activeResident.GameDifficultyLevel, null);
+                    _interactiveActivityEventLogger.Add(_activeResident.Id, InteractiveActivityTypeId.MatchingGame, "New game has been initiated", _activeResident.GameDifficultyLevel);
                 }
     
-                matchingGame1.Play(totalShapes, totalSounds, _activeResident.GameDifficultyLevel, true, _currentIsActiveEventLog);
+                matchingGame1.Play(totalShapes, totalSounds, _activeResident.GameDifficultyLevel, true, _currentIsActiveEventLog, _activeResident.AllowVideoCapturing);
 
                 _currentResponseTypeId = ResponseTypeId.MatchingGame;
             }
@@ -667,7 +675,7 @@ namespace Keebee.AAT.Display
                     _activityEventLogger.Add(_activeConfigDetail.ConfigId, _activeConfigDetail.Id, _activeResident.Id);
                 }
 
-                paintingActivity1.Play(true, _currentIsActiveEventLog);
+                paintingActivity1.Play(true, _currentIsActiveEventLog, _activeResident.AllowVideoCapturing);
 
                 _currentResponseTypeId = ResponseTypeId.PaintingActivity;
             }
@@ -935,6 +943,18 @@ namespace Keebee.AAT.Display
             catch (Exception ex)
             {
                 _systemEventLogger.WriteEntry($"Main.MatchingGameTimeoutExpiredEvent: {ex.Message}", EventLogEntryType.Error);
+            }
+        }
+
+        private void StartVideoCaptureEvent(object sender, EventArgs e)
+        {
+            try
+            {
+                _messageQueueVideoCapture.Send("1");
+            }
+            catch (Exception ex)
+            {
+                _systemEventLogger.WriteEntry($"Main.StartVideoCaptureEvent: {ex.Message}", EventLogEntryType.Error);
             }
         }
 

@@ -285,7 +285,7 @@ namespace Keebee.AAT.Operations.Controllers
                         x.Resident.Gender,
                         x.Resident.GameDifficultyLevel
                     },
-                    ResponseTypesPaths = x.Files
+                    ResponseTypePaths = x.Files
                         .GroupBy(rt => rt.ResponseType)
                         .Select(mediaFiles => new {mediaFiles.First().ResponseType, MediaFiles = mediaFiles})
                         .Select(mf => new
@@ -355,7 +355,7 @@ namespace Keebee.AAT.Operations.Controllers
                         x.Resident.Gender,
                         x.Resident.GameDifficultyLevel
                     },
-                    ResponseTypesPaths = x.Files
+                    ResponseTypePaths = x.Files
                         .GroupBy(rt => rt.ResponseType)
                         .Select(mediaFiles => new { mediaFiles.First().ResponseType, MediaFiles = mediaFiles })
                         .Select(mf => new

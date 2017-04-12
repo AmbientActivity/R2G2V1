@@ -66,6 +66,9 @@ namespace Keebee.AAT.Administrator.Controllers
         private static IEnumerable<VideoCaptureViewModel> GetVideoCaptureList()
         {
             var root = new DirectoryInfo(VideoCaptures.Path);
+
+            if (!root.Exists) return null;
+
             var folders = root.EnumerateDirectories().OrderBy(x => x.Name);
 
             var list = folders.SelectMany(x => x.EnumerateFiles()

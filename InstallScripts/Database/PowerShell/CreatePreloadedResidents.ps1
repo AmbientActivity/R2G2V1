@@ -22,7 +22,7 @@ Try
     else
     {
         #read folder names (residentIds)
-        $residentIds = Get-ChildItem "$pathDeployments\$pathProfiles" | Where-Object {$_.Mode -match "d"}
+        $residentIds = Get-ChildItem "$pathDeployments\$pathProfiles" | Where {$_.Mode -match "d"} | Sort @{Expression = {[int]$_.Name}}
 
         #copy media to sql server
         foreach($residentId in $residentIds)

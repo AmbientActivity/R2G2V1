@@ -11,9 +11,6 @@ namespace Keebee.AAT.Display.Extensions
 
         public static IWMPPlaylist LoadPlaylist(this AxWindowsMediaPlayer player, string playlistName, IEnumerable<string> files)
         {
-            // clear the existing playlist
-            var playlist = InitializePlaylist(player, playlistName);
-
             // clear the media player library 
             var library = player.mediaCollection;
             var allItems = library.getAll();
@@ -26,6 +23,7 @@ namespace Keebee.AAT.Display.Extensions
             }
 
             // load the new playlist
+            var playlist = InitializePlaylist(player, playlistName);
             foreach (var media in files.Select(player.newMedia))
             {
                 playlist.appendItem(media);

@@ -13,7 +13,6 @@ namespace Keebee.AAT.Display.Extensions
         {
             // clear the existing playlist
             var playlist = InitializePlaylist(player, playlistName);
-            playlist.clear();
 
             // clear the media player library 
             var library = player.mediaCollection;

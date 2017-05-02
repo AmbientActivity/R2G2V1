@@ -14,9 +14,6 @@
         $description = $args[1]
         $command = $args[2]
         $start_time = $args[3]
-        $taskRunAsUser = $args[4]
-
-        $user = "WIN10\John"
 
         $get_task = Get-ScheduledTask $task_name -ErrorAction SilentlyContinue
 

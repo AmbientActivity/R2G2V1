@@ -61,7 +61,7 @@ namespace Keebee.AAT.Display.Extensions
         {
             _playlistCollection = player.playlistCollection.getByName(playlistName);
 
-            // remove existing playliasts
+            // remove existing playlists from the collection
             if (_playlistCollection.count > 0)
             {
                 var pl = _playlistCollection.Item(0);

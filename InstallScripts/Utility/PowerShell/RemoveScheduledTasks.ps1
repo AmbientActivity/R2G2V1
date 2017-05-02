@@ -21,9 +21,9 @@
      RemoveScheduledTask "R2G2 - Backup"
     Write-Host "done."
 
-    # video capture cleanup
-    Write-Host "Removing File Cleanup task..." -NoNewline
-    RemoveScheduledTask "R2G2 - File Cleanup"
+    # video capture file cleanup
+    Write-Host "Removing Video Capture File Cleanup task..." -NoNewline
+    RemoveScheduledTask "R2G2 - Video Capture File Cleanup"
     Write-Host "done."
 
     # display launch

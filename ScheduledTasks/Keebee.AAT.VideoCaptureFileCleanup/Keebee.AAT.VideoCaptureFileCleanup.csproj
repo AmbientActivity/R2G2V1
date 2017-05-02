@@ -7,8 +7,8 @@
     <ProjectGuid>{4BA91070-F7FA-48C6-86BC-2A48ABD16D1C}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Keebee.AAT.FileCleanup</RootNamespace>
-    <AssemblyName>Keebee.AAT.FileCleanup</AssemblyName>
+    <RootNamespace>Keebee.AAT.VideoCaptureFileCleanup</RootNamespace>
+    <AssemblyName>Keebee.AAT.VideoCaptureFileCleanup</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>

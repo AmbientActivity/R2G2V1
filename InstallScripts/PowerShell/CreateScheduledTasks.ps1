@@ -35,13 +35,7 @@
             $Action = $TaskDefinition.Actions.Create(0)
             $action.Path = "$command"
 
-            $logOnType = 5
-            if ($taskRunAsUser -ne "SYSTEM")
-            {
-                $logOnType = 0
-            }
-
-            $rootFolder.RegisterTaskDefinition("$task_name", $TaskDefinition, 6, $taskRunAsUser, $null, $logOnType) | Out-Null
+            $rootFolder.RegisterTaskDefinition("$task_name", $TaskDefinition, 6, "SYSTEM", $null, 5) | Out-Null
         }
     }
 
@@ -52,7 +46,7 @@
     $command = "$scheduledTasksPath\EventLogExporter\1.0.0.0\Keebee.AAT.EventLogExporter.exe"
     $start_time = "01:00"
 
-    CreateScheduledTask $task_name $description $command $start_time "SYSTEM"
+    CreateScheduledTask $task_name $description $command $start_time
     Write-Host "done."
 
     # backup
@@ -63,17 +57,17 @@
     $command = "$scheduledTasksPath\Backup\1.0.0.0\Keebee.AAT.Backup.exe" 
     $start_time = "03:30"
 
-    CreateScheduledTask $task_name $description $command $start_time "SYSTEM"
+    CreateScheduledTask $task_name $description $command $start_time
     Write-Host "done."
 
-    # file cleanup
-    Write-Host "Creating File Cleanup task..." -NoNewline
-    $task_name = "R2G2 - File Cleanup"
-    $description = "Deletes all 0KB video capture files.  Purges Media Player library database files."
-    $command = "$scheduledTasksPath\FileCleanup\1.0.0.0\Keebee.AAT.FileCleanup.exe"
+    # video capture file cleanup
+    Write-Host "Creating Video Capture File Cleanup task..." -NoNewline
+    $task_name = "R2G2 - Video Capture File Cleanup"
+    $description = "Deletes all 0KB video capture files."
+    $command = "$scheduledTasksPath\VideoCaptureFileCleanup\1.0.0.0\Keebee.AAT.VideoCaptureFileCleanup.exe"
     $start_time = "03:00"
 
-    CreateScheduledTask $task_name $description $command $start_time $env:USERNAME
+    CreateScheduledTask $task_name $description $command $start_time
     Write-Host "done."
 
     # display (to launch upon user logon)

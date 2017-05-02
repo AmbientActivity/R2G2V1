@@ -69,7 +69,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Keebee.AAT.ApiClient", "API
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Keebee.AAT.ApiClientTests", "APIClient\Keebee.AAT.ApiClientTests\Keebee.AAT.ApiClientTests.csproj", "{9EE958DD-C9A6-4239-9586-88C2CB0F22A8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Keebee.AAT.FileCleanup", "ScheduledTasks\Keebee.AAT.FileCleanup\Keebee.AAT.FileCleanup.csproj", "{4BA91070-F7FA-48C6-86BC-2A48ABD16D1C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Keebee.AAT.VideoCaptureFileCleanup", "ScheduledTasks\Keebee.AAT.VideoCaptureFileCleanup\Keebee.AAT.VideoCaptureFileCleanup.csproj", "{4BA91070-F7FA-48C6-86BC-2A48ABD16D1C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -2,7 +2,7 @@
 using System.Linq;
 using Keebee.AAT.Shared;
 
-namespace Keebee.AAT.FileCleanup
+namespace Keebee.AAT.VideoCaptureFileCleanup
 {
     internal class Program
     {

@@ -10,8 +10,6 @@ namespace Keebee.AAT.Display.UserControls
 {
     public partial class MediaPlayer : UserControl
     {
-        private const string PlaylistProfile = PlaylistName.Profile;
-
         private SystemEventLogger _systemEventLogger;
         public SystemEventLogger SystemEventLogger
         {
@@ -37,7 +35,6 @@ namespace Keebee.AAT.Display.UserControls
 
         private int _maxIndex;
         private bool _isLoop;
-        private IWMPPlaylist _playlist;
 
         private string[] _files;
         private int _currentPlaylisIndex;
@@ -78,8 +75,8 @@ namespace Keebee.AAT.Display.UserControls
             try
             {
                 if (_maxIndex == 0) return;
-                _currentPlaylisIndex = (_currentPlaylisIndex >= _maxIndex) ? 0 : _currentPlaylisIndex + 1;
-                axWindowsMediaPlayer1.currentMedia = _playlist.Item[_currentPlaylisIndex];
+                _currentPlaylisIndex = (_currentPlaylisIndex >= _maxIndex) ? 0 : _currentPlaylisIndex + 1;        
+                axWindowsMediaPlayer1.URL = _files[_currentPlaylisIndex];
 
                 axWindowsMediaPlayer1.Ctlcontrols.play();
             }
@@ -95,7 +92,7 @@ namespace Keebee.AAT.Display.UserControls
             {
                 if (_maxIndex == 0) return;
                 _currentPlaylisIndex = (_currentPlaylisIndex <= 0) ? _maxIndex : _currentPlaylisIndex - 1;
-                axWindowsMediaPlayer1.currentMedia = _playlist.Item[_currentPlaylisIndex];
+                axWindowsMediaPlayer1.URL = _files[_currentPlaylisIndex];
 
                 axWindowsMediaPlayer1.Ctlcontrols.play();
             }
@@ -108,7 +105,6 @@ namespace Keebee.AAT.Display.UserControls
         public void Stop()
         {
             axWindowsMediaPlayer1.Ctlcontrols.stop();
-            _playlist.clear();
         }
 
         private void ConfigureComponents()
@@ -148,9 +144,7 @@ namespace Keebee.AAT.Display.UserControls
                     if (axWindowsMediaPlayer1.playState == WMPPlayState.wmppsPlaying)
                         axWindowsMediaPlayer1.Ctlcontrols.stop();
 
-                    _playlist = axWindowsMediaPlayer1.LoadPlaylist(PlaylistProfile, _files);
-
-                    axWindowsMediaPlayer1.currentMedia = _playlist.Item[0];
+                    axWindowsMediaPlayer1.URL = _files[0];
                     axWindowsMediaPlayer1.Ctlcontrols.play();
                 }
                 catch (Exception ex)

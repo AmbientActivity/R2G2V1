@@ -338,11 +338,8 @@ namespace Keebee.AAT.Display.Caregiver
             }
             else
             {
-                var media = _residentMediaFilesClient.GetForResident(_currentResident.Id);
-
-                _media = media != null 
-                    ? _residentMediaFilesClient.GetForResident(_currentResident.Id) 
-                    : new List<ResponseTypePaths>();
+               var media = _residentMediaFilesClient.GetForResident(_currentResident.Id);
+                _media = media ?? new List<ResponseTypePaths>();
             }
         }
 
@@ -1271,6 +1268,8 @@ namespace Keebee.AAT.Display.Caregiver
             CancelBackgroundWorkers(true);
             StopAudio();
             RaiseCaregiverCompleteEvent();
+            musicPlayer.ClearPlaylists(PlaylistCaregiver);
+            radioShowPlayer.ClearPlaylists(PlaylistCaregiver);
         }
 
         // disable column resizing for all list views

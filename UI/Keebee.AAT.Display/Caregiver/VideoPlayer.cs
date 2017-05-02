@@ -1,5 +1,4 @@
 ﻿using Keebee.AAT.SystemEventLogging;
-using Keebee.AAT.Display.Extensions;
 using Keebee.AAT.Shared;
 using System;
 using System.Diagnostics;
@@ -11,12 +10,6 @@ namespace Keebee.AAT.Display.Caregiver
 {
     public partial class VideoPlayer : Form
     {
-        private const string PlaylistCaregiver = "caregiver";
-
-        private IWMPPlaylist _playlist;
-        private IWMPMedia _lastMedia;
-        private int _maxIndex;
-
         private SystemEventLogger _systemEventLogger;
         public SystemEventLogger EventLogger
         {
@@ -67,11 +60,7 @@ namespace Keebee.AAT.Display.Caregiver
         {
             try
             {
-                _maxIndex = _videos.Length - 1;
-                _playlist = axWindowsMediaPlayer1.LoadPlaylist(PlaylistCaregiver, _videos);
-                _lastMedia = _playlist.Item[_maxIndex];
-
-                axWindowsMediaPlayer1.currentPlaylist = _playlist;
+                axWindowsMediaPlayer1.URL = _videos[0];
             }
             catch (Exception ex)
             {
@@ -84,14 +73,9 @@ namespace Keebee.AAT.Display.Caregiver
             switch (e.newState)
             {
                 case (int)WMPPlayState.wmppsMediaEnded:
-                    if (axWindowsMediaPlayer1.currentMedia.isIdentical[_lastMedia])
-                    {
-                        Close();
-                    }
-                    break;
-
-                case (int)WMPPlayState.wmppsReady:  // means the video was not found
                     Close();
+                    break;
+                case (int)WMPPlayState.wmppsReady:
                     break;
             }
         }

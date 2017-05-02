@@ -40,8 +40,8 @@ namespace Keebee.AAT.Shared
     public static class PlaylistName
     {
         public const string Ambient = "ambient";
-        public const string Profile = "profile";
-        public const string Caregiver = "caregiver";
+        public const string CaregiverMusic = "caregiver-music";
+        public const string CaregiverRadioShows = "caregiver-radio-shows";
     }
 
     public enum RotationSensorStep

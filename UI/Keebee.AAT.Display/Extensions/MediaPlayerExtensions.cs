@@ -47,9 +47,9 @@ namespace Keebee.AAT.Display.Extensions
             return index;
         }
 
-        public static void ClearPlaylists(this AxWindowsMediaPlayer player, string playlistName)
+        public static void ClearPlaylists(this AxWindowsMediaPlayer player)
         {
-            _playlistCollection = player.playlistCollection.getByName(playlistName);
+            _playlistCollection = player.playlistCollection.getAll();
 
             var count = _playlistCollection.count;
 
@@ -67,7 +67,7 @@ namespace Keebee.AAT.Display.Extensions
 
         private static IWMPPlaylist InitializePlaylist(AxWindowsMediaPlayer player, string playlistName)
         {
-            player.ClearPlaylists(playlistName);
+            player.ClearPlaylists();
             return player.playlistCollection.newPlaylist(playlistName);
         }
     }

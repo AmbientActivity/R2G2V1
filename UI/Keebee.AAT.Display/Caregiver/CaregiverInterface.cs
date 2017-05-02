@@ -78,7 +78,6 @@ namespace Keebee.AAT.Display.Caregiver
         private IEnumerable<ResponseTypePaths> _media;
 
         // playlist
-        private const string PlaylistCaregiver = PlaylistName.Caregiver;
         private IWMPPlaylist _musicPlaylist;
         private IWMPPlaylist _radioShowPlaylist;
         private int _totalSongs;
@@ -649,7 +648,7 @@ namespace Keebee.AAT.Display.Caregiver
                     break;
                 default:
                     var music = GetFilePaths(MediaPathTypeId.Music, ResponseTypeId.Radio);
-                    _musicPlaylist = musicPlayer.LoadPlaylist(PlaylistCaregiver, music);
+                    _musicPlaylist = musicPlayer.LoadPlaylist(PlaylistName.CaregiverMusic, music);
 
                     musicPlayer.currentPlaylist = _musicPlaylist;
                     musicPlayer.Ctlcontrols.stop();
@@ -672,7 +671,7 @@ namespace Keebee.AAT.Display.Caregiver
                     break;
                 default:
                     var radioShows = GetFilePaths(MediaPathTypeId.RadioShows, ResponseTypeId.Radio);
-                    _radioShowPlaylist = radioShowPlayer.LoadPlaylist(PlaylistCaregiver, radioShows);
+                    _radioShowPlaylist = radioShowPlayer.LoadPlaylist(PlaylistName.CaregiverRadioShows, radioShows);
 
                     radioShowPlayer.currentPlaylist = _radioShowPlaylist;
                     radioShowPlayer.Ctlcontrols.stop();
@@ -1268,8 +1267,8 @@ namespace Keebee.AAT.Display.Caregiver
             CancelBackgroundWorkers(true);
             StopAudio();
             RaiseCaregiverCompleteEvent();
-            musicPlayer.ClearPlaylists(PlaylistCaregiver);
-            radioShowPlayer.ClearPlaylists(PlaylistCaregiver);
+            musicPlayer.ClearPlaylists();
+            radioShowPlayer.ClearPlaylists();
         }
 
         // disable column resizing for all list views

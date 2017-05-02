@@ -35,6 +35,7 @@ namespace Keebee.AAT.Display.Extensions
             return playlist;
         }
 
+        // for the caregiver screen
         public static void ClearPlaylist(this AxWindowsMediaPlayer player, string playlistName)
         {
             var playlist = InitializePlaylist(player, playlistName);
@@ -61,11 +62,16 @@ namespace Keebee.AAT.Display.Extensions
         {
             _playlistCollection = player.playlistCollection.getByName(playlistName);
 
+            var count = _playlistCollection.count;
+
             // remove existing playlists from the collection
-            if (_playlistCollection.count > 0)
+            if (count > 0)
             {
-                var pl = _playlistCollection.Item(0);
-                player.playlistCollection.remove(pl);
+                for (var i = 0; i < count;  i++)
+                {
+                    var pl = _playlistCollection.Item(i);
+                    player.playlistCollection.remove(pl);
+                }
             }
 
             return player.playlistCollection.newPlaylist(playlistName);

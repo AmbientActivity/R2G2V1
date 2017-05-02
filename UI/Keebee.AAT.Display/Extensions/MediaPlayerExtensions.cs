@@ -61,9 +61,14 @@ namespace Keebee.AAT.Display.Extensions
         {
             _playlistCollection = player.playlistCollection.getByName(playlistName);
 
-            return _playlistCollection.count == 0
-                    ? player.playlistCollection.newPlaylist(playlistName)
-                    : _playlistCollection.Item(0);
+            // remove existing playliasts
+            if (_playlistCollection.count > 0)
+            {
+                var pl = _playlistCollection.Item(0);
+                player.playlistCollection.remove(pl);
+            }
+
+            return player.playlistCollection.newPlaylist(playlistName);
         }
     }
 }

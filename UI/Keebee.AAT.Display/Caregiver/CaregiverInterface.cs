@@ -1356,7 +1356,7 @@ namespace Keebee.AAT.Display.Caregiver
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"Caregiver.UpdatImagesListViewImage: {ex.Message}", EventLogEntryType.Error);
+                _systemEventLogger.WriteEntry($"Caregiver.UpdateImagesListViewImage: {ex.Message}", EventLogEntryType.Error);
             }
         }
 

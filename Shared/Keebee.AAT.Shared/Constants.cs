@@ -37,13 +37,6 @@ namespace Keebee.AAT.Shared
         public const string KeepIISAliveExe = "Keebee.AAT.KeepIISAliveService.exe";
     }
 
-    public static class PlaylistName
-    {
-        public const string Ambient = "ambient";
-        public const string CaregiverMusic = "caregiver-music";
-        public const string CaregiverRadioShows = "caregiver-radio-shows";
-    }
-
     public enum RotationSensorStep
     {
         Value1 = 200,

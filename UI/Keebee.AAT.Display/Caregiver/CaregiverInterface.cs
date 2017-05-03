@@ -801,7 +801,7 @@ namespace Keebee.AAT.Display.Caregiver
                     var videoPlayer = new VideoPlayer
                     {
                         EventLogger = _systemEventLogger,
-                        Videos = videos
+                        Video = videos[0]  // just play one at a time
                     };
 
                     StopAudio();
@@ -830,7 +830,7 @@ namespace Keebee.AAT.Display.Caregiver
                     var videoPlayer = new VideoPlayer
                     {
                         EventLogger = _systemEventLogger,
-                        Videos = videos
+                        Video = videos[0]  // just play one at a time
                     };
 
                     StopAudio();

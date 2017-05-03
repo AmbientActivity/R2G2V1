@@ -20,6 +20,13 @@ using WMPLib;
 
 namespace Keebee.AAT.Display
 {
+    internal static class PlaylistName
+    {
+        public const string Ambient = "ambient";
+        public const string CaregiverMusic = "caregiver-music";
+        public const string CaregiverRadioShows = "caregiver-radio-shows";
+    }
+
     internal enum ResponseValueChangeType
     {
         Increase = 0,

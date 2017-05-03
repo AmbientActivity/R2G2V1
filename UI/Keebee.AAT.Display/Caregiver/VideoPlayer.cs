@@ -16,10 +16,10 @@ namespace Keebee.AAT.Display.Caregiver
             set { _systemEventLogger = value; }
         }
 
-        private string[] _videos;
-        public string[] Videos
+        private string _video;
+        public string Video
         {
-            set { _videos = value; }
+            set { _video = value; }
         }
 
         public VideoPlayer()
@@ -60,7 +60,7 @@ namespace Keebee.AAT.Display.Caregiver
         {
             try
             {
-                axWindowsMediaPlayer1.URL = _videos[0];
+                axWindowsMediaPlayer1.URL = _video;
             }
             catch (Exception ex)
             {

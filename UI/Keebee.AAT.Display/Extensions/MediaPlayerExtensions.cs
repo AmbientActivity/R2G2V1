@@ -11,8 +11,8 @@ namespace Keebee.AAT.Display.Extensions
 
         public static IWMPPlaylist LoadPlaylist(this AxWindowsMediaPlayer player, string playlistName, IEnumerable<string> files)
         {
-            // load the new playlist
             var playlist = GetPlaylist(player, playlistName);
+
             foreach (var media in files.Select(player.newMedia))
             {
                 playlist.appendItem(media);
@@ -21,7 +21,8 @@ namespace Keebee.AAT.Display.Extensions
             return playlist;
         }
 
-        public static void PurgeLibrary(this AxWindowsMediaPlayer player)
+        //TODO: Removed temporarily - still need to determine if it's needed
+        private static void PurgeLibrary(this AxWindowsMediaPlayer player)
         {
             // clear the media player library 
             var library = player.mediaCollection;
@@ -47,25 +48,27 @@ namespace Keebee.AAT.Display.Extensions
                 index = i;
                 break;
             }
+
             return index;
         }
 
         public static IWMPPlaylist GetPlaylist(this AxWindowsMediaPlayer player, string playlistName)
         {
-            IWMPPlaylist playlist = null;
+            IWMPPlaylist playlist;
 
             _playlistCollection = player.playlistCollection.getByName(playlistName);
 
-            var count = _playlistCollection.count;
-            if (count == 0) return player.playlistCollection.newPlaylist(playlistName);
-            
-            // remove all but last one
-            if (count >= 1)
+            switch (_playlistCollection.count)
             {
-                playlist = _playlistCollection.Item(0);
-                playlist.clear();
+                case 0:
+                    playlist = player.playlistCollection.newPlaylist(playlistName);
+                    break;
+                default:
+                    playlist = _playlistCollection.Item(0);
+                    break;
             }
-      
+
+            playlist.clear();
             return playlist;
         }
     }

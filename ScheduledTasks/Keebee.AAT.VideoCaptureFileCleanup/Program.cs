@@ -1,6 +1,6 @@
-﻿using System.IO;
+﻿using Keebee.AAT.Shared;
+using System.IO;
 using System.Linq;
-using Keebee.AAT.Shared;
 
 namespace Keebee.AAT.VideoCaptureFileCleanup
 {

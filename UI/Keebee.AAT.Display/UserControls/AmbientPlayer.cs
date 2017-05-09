@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using Keebee.AAT.Display.Extensions;
 using WMPLib;
 
 namespace Keebee.AAT.Display.UserControls
@@ -81,6 +82,11 @@ namespace Keebee.AAT.Display.UserControls
             DisplayContent(showInvitation: false);
             axWindowsMediaPlayer1.Ctlcontrols.play();
             _timerVideo.Start();         
+        }
+
+        public void ClearPlaylist()
+        {
+            axWindowsMediaPlayer1.ClearPlaylist(PlaylistName.Ambient);
         }
 
         private void ConfigureMediaPlayer()

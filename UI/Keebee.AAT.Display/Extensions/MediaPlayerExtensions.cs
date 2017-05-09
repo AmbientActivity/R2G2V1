@@ -12,6 +12,7 @@ namespace Keebee.AAT.Display.Extensions
         public static IWMPPlaylist LoadPlaylist(this AxWindowsMediaPlayer player, string playlistName, IEnumerable<string> files)
         {
             var playlist = GetPlaylist(player, playlistName);
+            playlist.clear();
 
             foreach (var media in files.Select(player.newMedia))
             {
@@ -19,21 +20,6 @@ namespace Keebee.AAT.Display.Extensions
             }
 
             return playlist;
-        }
-
-        //TODO: Removed temporarily - still need to determine if it's needed
-        private static void PurgeLibrary(this AxWindowsMediaPlayer player)
-        {
-            // clear the media player library 
-            var library = player.mediaCollection;
-            var allItems = library.getAll();
-            var countItems = allItems.count;
-
-            for (var i = 0; i < countItems; i++)
-            {
-                var item = allItems.Item[i];
-                library.remove(item, true);
-            }
         }
 
         public static int CurrentIndex(this AxWindowsMediaPlayer player, IWMPPlaylist playlist)
@@ -52,7 +38,28 @@ namespace Keebee.AAT.Display.Extensions
             return index;
         }
 
-        public static IWMPPlaylist GetPlaylist(this AxWindowsMediaPlayer player, string playlistName)
+        public static void ClearPlaylist(this AxWindowsMediaPlayer player, string playlistName)
+        {
+            var playlist = GetPlaylist(player, playlistName);
+            playlist.clear();
+        }
+
+        //TODO: PurgeLibrary() temporarily removed - might not be needed
+        //private static void PurgeLibrary(this AxWindowsMediaPlayer player)
+        //{
+        //    // clear the media player library 
+        //    var library = player.mediaCollection;
+        //    var allItems = library.getAll();
+        //    var countItems = allItems.count;
+
+        //    for (var i = 0; i < countItems; i++)
+        //    {
+        //        var item = allItems.Item[i];
+        //        library.remove(item, true);
+        //    }
+        //}
+
+        private static IWMPPlaylist GetPlaylist(this AxWindowsMediaPlayer player, string playlistName)
         {
             IWMPPlaylist playlist;
 
@@ -68,7 +75,6 @@ namespace Keebee.AAT.Display.Extensions
                     break;
             }
 
-            playlist.clear();
             return playlist;
         }
     }

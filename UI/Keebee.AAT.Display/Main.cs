@@ -1037,6 +1037,7 @@ namespace Keebee.AAT.Display
 
         private void MainFormClosing(object sender, FormClosingEventArgs e)
         {
+            ambientPlayer1.ClearPlaylist();
             ambientPlayer1.Dock = DockStyle.None;
             slideViewerFlash1.Dock = DockStyle.None;
             matchingGame1.Dock = DockStyle.None;

@@ -1266,6 +1266,8 @@ namespace Keebee.AAT.Display.Caregiver
         {
             CancelBackgroundWorkers(true);
             StopAudio();
+            musicPlayer.ClearPlaylist(PlaylistName.CaregiverMusic);
+            radioShowPlayer.ClearPlaylist(PlaylistName.CaregiverRadioShows);
             RaiseCaregiverCompleteEvent();
         }
 

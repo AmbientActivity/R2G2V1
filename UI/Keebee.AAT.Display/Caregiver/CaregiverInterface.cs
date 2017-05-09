@@ -1267,8 +1267,6 @@ namespace Keebee.AAT.Display.Caregiver
             CancelBackgroundWorkers(true);
             StopAudio();
             RaiseCaregiverCompleteEvent();
-            musicPlayer.ClearPlaylists();
-            radioShowPlayer.ClearPlaylists();
         }
 
         // disable column resizing for all list views

@@ -11,6 +11,18 @@ namespace Keebee.AAT.Display.Extensions
 
         public static IWMPPlaylist LoadPlaylist(this AxWindowsMediaPlayer player, string playlistName, IEnumerable<string> files)
         {
+            // load the new playlist
+            var playlist = GetPlaylist(player, playlistName);
+            foreach (var media in files.Select(player.newMedia))
+            {
+                playlist.appendItem(media);
+            }
+
+            return playlist;
+        }
+
+        public static void PurgeLibrary(this AxWindowsMediaPlayer player)
+        {
             // clear the media player library 
             var library = player.mediaCollection;
             var allItems = library.getAll();
@@ -21,15 +33,6 @@ namespace Keebee.AAT.Display.Extensions
                 var item = allItems.Item[i];
                 library.remove(item, true);
             }
-
-            // load the new playlist
-            var playlist = InitializePlaylist(player, playlistName);
-            foreach (var media in files.Select(player.newMedia))
-            {
-                playlist.appendItem(media);
-            }
-
-            return playlist;
         }
 
         public static int CurrentIndex(this AxWindowsMediaPlayer player, IWMPPlaylist playlist)
@@ -47,28 +50,23 @@ namespace Keebee.AAT.Display.Extensions
             return index;
         }
 
-        public static void ClearPlaylists(this AxWindowsMediaPlayer player)
+        public static IWMPPlaylist GetPlaylist(this AxWindowsMediaPlayer player, string playlistName)
         {
-            _playlistCollection = player.playlistCollection.getAll();
+            IWMPPlaylist playlist = null;
+
+            _playlistCollection = player.playlistCollection.getByName(playlistName);
 
             var count = _playlistCollection.count;
-
-            // remove existing playlists from the collection
-            if (count > 0)
+            if (count == 0) return player.playlistCollection.newPlaylist(playlistName);
+            
+            // remove all but last one
+            if (count >= 1)
             {
-                for (var i = 0; i < count; i++)
-                {
-                    var pl = _playlistCollection.Item(i);
-                    pl.clear();
-                    player.playlistCollection.remove(pl);
-                }
+                playlist = _playlistCollection.Item(0);
+                playlist.clear();
             }
-        }
-
-        private static IWMPPlaylist InitializePlaylist(AxWindowsMediaPlayer player, string playlistName)
-        {
-            player.ClearPlaylists();
-            return player.playlistCollection.newPlaylist(playlistName);
+      
+            return playlist;
         }
     }
 }

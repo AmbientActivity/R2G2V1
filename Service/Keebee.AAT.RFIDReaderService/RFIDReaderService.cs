@@ -47,7 +47,7 @@ namespace Keebee.AAT.RfidReaderService
         public RfidReaderService()
         {
             InitializeComponent();
-            _systemEventLogger = new SystemEventLogger(SystemEventLogType.RfidReaderService);
+            _systemEventLogger = new SystemEventLogger(SystemEventLogType.BluetoothBeaconWatcherService);
             _residentsClient = new ResidentsClient();
 
             // message queue sender

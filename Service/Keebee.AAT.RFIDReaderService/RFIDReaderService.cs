@@ -1,4 +1,5 @@
-﻿using Keebee.AAT.RESTClient;
+﻿using Keebee.AAT.ApiClient.Models;
+using Keebee.AAT.ApiClient.Clients;
 using Keebee.AAT.SystemEventLogging;
 using Keebee.AAT.MessageQueuing;
 using Keebee.AAT.Shared;
@@ -17,15 +18,15 @@ namespace Keebee.AAT.RfidReaderService
     internal partial class RfidReaderService : ServiceBase
     {
 #if DEBUG
-        private readonly CustomMessageQueue _messageQueueRfidMonitor;
-        private bool _readerMonitorIsActive;
+        //private readonly CustomMessageQueue _messageQueueRfidMonitor;
+        //private bool _readerMonitorIsActive;
 #endif
 
         // residents
         private Resident[] _residents;
 
-        // operations REST client
-        private readonly IOperationsClient _opsClient;
+        // api client
+        private readonly IResidentsClient _residentsClient;
 
         // event logger
         private readonly SystemEventLogger _systemEventLogger;
@@ -47,25 +48,25 @@ namespace Keebee.AAT.RfidReaderService
         {
             InitializeComponent();
             _systemEventLogger = new SystemEventLogger(SystemEventLogType.RfidReaderService);
-            _opsClient = new OperationsClient();
+            _residentsClient = new ResidentsClient();
 
             // message queue sender
             _messageQueueRfid = new CustomMessageQueue(new CustomMessageQueueArgs
             {
-                QueueName = MessageQueueType.Rfid
+                QueueName = MessageQueueType.BluetoothBeaconWatcher
             })
             { SystemEventLogger = _systemEventLogger };
 #if DEBUG
-            _messageQueueRfidMonitor = new CustomMessageQueue(new CustomMessageQueueArgs
-            {
-                QueueName = MessageQueueType.RfidMonitor
-            });
+            //_messageQueueRfidMonitor = new CustomMessageQueue(new CustomMessageQueueArgs
+            //{
+            //    QueueName = MessageQueueType.RfidMonitor
+            //});
 
-            var q = new CustomMessageQueue(new CustomMessageQueueArgs
-            {
-                QueueName = MessageQueueType.RfidMonitorState,
-                MessageReceivedCallback = RfidReaderMonitorMessageReceived
-            });
+            //var q = new CustomMessageQueue(new CustomMessageQueueArgs
+            //{
+            //    QueueName = MessageQueueType.RfidMonitorState,
+            //    MessageReceivedCallback = RfidReaderMonitorMessageReceived
+            //});
 #endif
             InitializeReader();
             _readTagThread = new Thread(ReadTag);
@@ -100,13 +101,13 @@ namespace Keebee.AAT.RfidReaderService
                     if (residentId < 0) continue;
 
                     var resident = residentId == 0
-                        ? new Resident { Id = PublicMediaSource.Id, FirstName = PublicMediaSource.Name, GameDifficultyLevel = 1, AllowVideoCapturing = false }
+                        ? new Resident { Id = PublicProfileSource.Id, FirstName = PublicProfileSource.Name, GameDifficultyLevel = 1, AllowVideoCapturing = false }
                         : GetResident(residentId);
 
                     if (resident == null) continue;
 #if DEBUG
-                    if (_readerMonitorIsActive)
-                        _messageQueueRfidMonitor.Send(CreateMessageBody(true, 1, residentId));
+                    //if (_readerMonitorIsActive)
+                    //    _messageQueueRfidMonitor.Send(CreateMessageBody(true, 1, residentId));
 #endif
                     _messageQueueRfid.Send(CreateMessageBodyFromResident(resident));
                 }
@@ -135,8 +136,8 @@ namespace Keebee.AAT.RfidReaderService
                     if (id >= 0)
                         idArray[i] = id;
 #if DEBUG
-                if (_readerMonitorIsActive)
-                    _messageQueueRfidMonitor.Send(CreateMessageBody(false, i + 1, idArray[i]));
+                //if (_readerMonitorIsActive)
+                //    _messageQueueRfidMonitor.Send(CreateMessageBody(false, i + 1, idArray[i]));
 #endif
                     try
                     {
@@ -249,7 +250,7 @@ namespace Keebee.AAT.RfidReaderService
         {
             try
             {
-                _residents = _opsClient.GetResidents().ToArray();
+                _residents = _residentsClient.Get().ToArray();
             }
             catch (Exception ex)
             {
@@ -271,22 +272,22 @@ namespace Keebee.AAT.RfidReaderService
         }
 
 #if DEBUG
-        private static string CreateMessageBody(bool isFinal, int readCount, int residentId)
-        {
-            var message = new RfidMonitorMessage { IsFinal = isFinal, ReadCount = readCount, ResidentId = residentId };
+        //private static string CreateMessageBody(bool isFinal, int readCount, int residentId)
+        //{
+        //    var message = new RfidMonitorMessage { IsFinal = isFinal, ReadCount = readCount, ResidentId = residentId };
 
-            var serializer = new JavaScriptSerializer();
-            var messageBody = serializer.Serialize(message);
-            return messageBody;
-        }
+        //    var serializer = new JavaScriptSerializer();
+        //    var messageBody = serializer.Serialize(message);
+        //    return messageBody;
+        //}
 
-        private void RfidReaderMonitorMessageReceived(object sender, MessageEventArgs e)
-        {
-            var message = (e.MessageBody);
+        //private void RfidReaderMonitorMessageReceived(object sender, MessageEventArgs e)
+        //{
+        //    var message = (e.MessageBody);
 
-            var activeState = Convert.ToInt16(message);
-            _readerMonitorIsActive = activeState > 0;
-        }
+        //    var activeState = Convert.ToInt16(message);
+        //    _readerMonitorIsActive = activeState > 0;
+        //}
 #endif
 
         protected override void OnStart(string[] args)

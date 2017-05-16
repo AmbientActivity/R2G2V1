@@ -39,10 +39,11 @@ namespace Keebee.AAT.Administrator.Controllers
         [Authorize]
         public JsonResult GetData()
         {
+            var configs = _configsClient.Get().ToArray();
             var vm = new
             {
-                ConfigList = GetConfigList(),
-                ConfigDetailList = GetConfigDetailList()
+                ConfigList = GetConfigList(configs),
+                ConfigDetailList = GetConfigDetailList(configs)
             };
 
             return Json(vm, JsonRequestBehavior.AllowGet);
@@ -80,11 +81,12 @@ namespace Keebee.AAT.Administrator.Controllers
                     configid = AddConfig(c, selectedConfigId);
             }
 
+            var configs = _configsClient.Get().ToArray();
             return Json(new
             {
                 SelectedId = configid,
-                ConfigList = GetConfigList(),
-                ConfigDetailList = GetConfigDetailList(),
+                ConfigList = GetConfigList(configs),
+                ConfigDetailList = GetConfigDetailList(configs),
                 Success = (null == msgs),
                 ErrorMessages = msgs
             }, JsonRequestBehavior.AllowGet);
@@ -96,9 +98,10 @@ namespace Keebee.AAT.Administrator.Controllers
         {
             _configsClient.Delete(id);
 
+            var configs = _configsClient.Get().ToArray();
             return Json(new
             {
-                ConfigList = GetConfigList(),
+                ConfigList = GetConfigList(configs),
                 Success = true,
             }, JsonRequestBehavior.AllowGet);
         }
@@ -121,9 +124,10 @@ namespace Keebee.AAT.Administrator.Controllers
                     configDetailid = AddConfigDetail(cd);
             }
 
+            var configs = _configsClient.Get().ToArray();
             return Json(new
             {
-                ConfigDetailList = GetConfigDetailList(),
+                ConfigDetailList = GetConfigDetailList(configs),
                 SelectedId = configDetailid,
                 Success = (null == msgs),
                 ErrorMessages = msgs
@@ -139,9 +143,10 @@ namespace Keebee.AAT.Administrator.Controllers
             if (isActive)
                 SendNewConfiguration(configId);
 
+            var configs = _configsClient.Get().ToArray();
             return Json(new
             {
-                ConfigDetailList = GetConfigDetailList(),
+                ConfigDetailList = GetConfigDetailList(configs),
                 Success = true,
             }, JsonRequestBehavior.AllowGet);
         }
@@ -153,19 +158,19 @@ namespace Keebee.AAT.Administrator.Controllers
             _configsClient.Activate(configId);
             SendNewConfiguration(configId);
 
+            var configs = _configsClient.Get().ToArray();
             var vm = new
             {
                 SelectedId = configId,
-                ConfigList = GetConfigList(),
-                ConfigDetailList = GetConfigDetailList()
+                ConfigList = GetConfigList(configs),
+                ConfigDetailList = GetConfigDetailList(configs)
             };
 
             return Json(vm, JsonRequestBehavior.AllowGet);
         }
 
-        private IEnumerable<ConfigViewModel> GetConfigList()
+        private static IEnumerable<ConfigViewModel> GetConfigList(Config[] configs)
         {
-            var configs = _configsClient.Get().ToArray();
             var defaultConfig = configs.Where(x => x.Id == ConfigId.Default).ToArray();
             var customConfigs = configs.Where(x => x.Id != ConfigId.Default).OrderBy(x => x.Description).ToArray();
             var allConfigs = defaultConfig.Union(customConfigs);
@@ -192,10 +197,8 @@ namespace Keebee.AAT.Administrator.Controllers
             return list;
         }
 
-        private IEnumerable<ConfigDetailViewModel> GetConfigDetailList()
+        private static IEnumerable<ConfigDetailViewModel> GetConfigDetailList(IEnumerable<Config> configs)
         {
-            var configs = _configsClient.Get();
-
             var list = configs
                 .SelectMany(config => config.ConfigDetails
                     .Select(cd =>

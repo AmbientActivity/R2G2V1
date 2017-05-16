@@ -24,18 +24,21 @@ namespace Keebee.AAT.Display.Caregiver
         public event EventHandler CaregiverCompleteEvent;
 
         private SystemEventLogger _systemEventLogger;
+
         public SystemEventLogger EventLogger
         {
             set { _systemEventLogger = value; }
         }
 
         private IEnumerable<ResponseTypePaths> _publicMedia;
+
         public IEnumerable<ResponseTypePaths> PublicMediaFiles
         {
             set { _publicMedia = value; }
         }
 
         private Config _config;
+
         public Config Config
         {
             set { _config = value; }
@@ -179,8 +182,8 @@ namespace Keebee.AAT.Display.Caregiver
             Location = new Point(0, 0);
 
             // set form size to 1/3 primary monitor size
-            Width = SystemInformation.PrimaryMonitorSize.Width / 3;
-            Height = SystemInformation.PrimaryMonitorSize.Height / 3;
+            Width = SystemInformation.PrimaryMonitorSize.Width/3;
+            Height = SystemInformation.PrimaryMonitorSize.Height/3;
 
 #elif !DEBUG
             WindowState = FormWindowState.Maximized;
@@ -210,7 +213,7 @@ namespace Keebee.AAT.Display.Caregiver
             tableLayoutPanel1.ColumnStyles[0].Width = TableLayoutPanelColOneWidth;
             tableLayoutPanel1.ColumnStyles[1].Width = TableLayoutPanelColTwoWidth;
         }
-        
+
         private void ConfigureDropdown()
         {
             lblMediaSource.Font = new Font("Microsoft Sans Serif", LabelMediaSourceFontSize);
@@ -243,7 +246,10 @@ namespace Keebee.AAT.Display.Caregiver
             switch (lv.Name)
             {
                 case "lvImagesGeneral":
-                    _imageListImagesGeneral = new ImageList { ImageSize = new Size(ThumbnailDimensions, ThumbnailDimensions) };
+                    _imageListImagesGeneral = new ImageList
+                    {
+                        ImageSize = new Size(ThumbnailDimensions, ThumbnailDimensions)
+                    };
                     lv.SmallImageList = _imageListImagesGeneral;
                     lv.Columns.Add("", ThumbnailDimensions);
                     break;
@@ -258,24 +264,30 @@ namespace Keebee.AAT.Display.Caregiver
                     lv.Columns.Add("Status", ListViewAudioColWidthStatus);
                     break;
                 case "lvTVShows":
-                    _imageListTVShows = new ImageList { ImageSize = new Size(ThumbnailDimensions, ThumbnailDimensions) };
+                    _imageListTVShows = new ImageList {ImageSize = new Size(ThumbnailDimensions, ThumbnailDimensions)};
                     lv.SmallImageList = _imageListTVShows;
                     lv.Columns.Add("", ThumbnailDimensions);
                     break;
                 case "lvHomeMovies":
-                    _imageListHomeMovies = new ImageList { ImageSize = new Size(ThumbnailDimensions, ThumbnailDimensions) };
+                    _imageListHomeMovies = new ImageList
+                    {
+                        ImageSize = new Size(ThumbnailDimensions, ThumbnailDimensions)
+                    };
                     lv.SmallImageList = _imageListHomeMovies;
                     lv.Columns.Add("", ThumbnailDimensions);
                     break;
                 case "lvImagesPersonal":
-                    _imageListImagesPersonal = new ImageList { ImageSize = new Size(ThumbnailDimensions, ThumbnailDimensions) };
+                    _imageListImagesPersonal = new ImageList
+                    {
+                        ImageSize = new Size(ThumbnailDimensions, ThumbnailDimensions)
+                    };
                     lv.SmallImageList = _imageListImagesPersonal;
                     lv.Columns.Add("", ThumbnailDimensions);
                     break;
             }
 
-            lv.Columns.Add("Name", lv.Name == "lvMusic" || lv.Name == "lvRadioShows" 
-                ? ListViewAudioColWidthName 
+            lv.Columns.Add("Name", lv.Name == "lvMusic" || lv.Name == "lvRadioShows"
+                ? ListViewAudioColWidthName
                 : ListViewMediaColWidthName);
 
             lv.Columns.Add("StreamId", 0);
@@ -299,25 +311,41 @@ namespace Keebee.AAT.Display.Caregiver
         private void ConfigureBackgroundWorkers()
         {
             // image general thumbnails
-            _bgwImageGeneralThumbnails = new BackgroundWorker { WorkerSupportsCancellation = true, WorkerReportsProgress = true };
+            _bgwImageGeneralThumbnails = new BackgroundWorker
+            {
+                WorkerSupportsCancellation = true,
+                WorkerReportsProgress = true
+            };
             _bgwImageGeneralThumbnails.DoWork += LoadImagesGeneralListViewThumbnails;
             _bgwImageGeneralThumbnails.ProgressChanged += UpdateImagesGeneralListViewImage;
             _bgwImageGeneralThumbnails.RunWorkerCompleted += LoadImagesGeneralListViewThumbnailsCompleted;
 
             // image personal thumbnails
-            _bgwImagePersonalThumbnails = new BackgroundWorker { WorkerSupportsCancellation = true, WorkerReportsProgress = true };
+            _bgwImagePersonalThumbnails = new BackgroundWorker
+            {
+                WorkerSupportsCancellation = true,
+                WorkerReportsProgress = true
+            };
             _bgwImagePersonalThumbnails.DoWork += LoadImagesPersonalListViewThumbnails;
             _bgwImagePersonalThumbnails.ProgressChanged += UpdateImagesPersonalListViewImage;
             _bgwImagePersonalThumbnails.RunWorkerCompleted += LoadImagesPersonalListViewThumbnailsCompleted;
 
             // tv show thumbnails
-            _bgwTVShowThumbnails = new BackgroundWorker { WorkerSupportsCancellation = true, WorkerReportsProgress = true };
+            _bgwTVShowThumbnails = new BackgroundWorker
+            {
+                WorkerSupportsCancellation = true,
+                WorkerReportsProgress = true
+            };
             _bgwTVShowThumbnails.DoWork += LoadTVShowsListViewThumbnails;
             _bgwTVShowThumbnails.ProgressChanged += UpdateTVShowsListViewImage;
             _bgwTVShowThumbnails.RunWorkerCompleted += LoadTVShowsListViewThumbnailsCompleted;
 
             // home movie thumbnails
-            _bgwHomeMovieThumbnails = new BackgroundWorker { WorkerSupportsCancellation = true, WorkerReportsProgress = true };
+            _bgwHomeMovieThumbnails = new BackgroundWorker
+            {
+                WorkerSupportsCancellation = true,
+                WorkerReportsProgress = true
+            };
             _bgwHomeMovieThumbnails.DoWork += LoadHomeMoviesListViewThumbnails;
             _bgwHomeMovieThumbnails.ProgressChanged += UpdateHomeMoviesListViewImage;
             _bgwHomeMovieThumbnails.RunWorkerCompleted += LoadHomeMoviesListViewThumbnailsCompleted;
@@ -339,7 +367,7 @@ namespace Keebee.AAT.Display.Caregiver
             }
             else
             {
-               var media = _residentMediaFilesClient.GetForResident(_currentResident.Id);
+                var media = _residentMediaFilesClient.GetForResident(_currentResident.Id);
                 _media = media ?? new List<ResponseTypePaths>();
             }
         }
@@ -351,9 +379,9 @@ namespace Keebee.AAT.Display.Caregiver
                 var residents = _residentsClient.Get().ToList();
                 var arrayList = new ArrayList();
 
-                var residentList = new List<Resident> { _publicProfile }
+                var residentList = new List<Resident> {_publicProfile}
                     .Union(residents
-                    .OrderBy(o => o.LastName).ThenBy(o => o.FirstName))
+                        .OrderBy(o => o.LastName).ThenBy(o => o.FirstName))
                     .ToArray();
 
                 foreach (var r in residentList)
@@ -387,14 +415,14 @@ namespace Keebee.AAT.Display.Caregiver
                 foreach (var f in files)
                 {
                     lvTVShows.Items.Add(new ListViewItem(new[]
-                                    {
-                                        string.Empty,
-                                        f.Filename,
-                                        f.StreamId.ToString()
-                                    })
-                                    {
-                                        BackColor = ((rowIndex & 1) == 0) ? Color.AliceBlue : Color.White
-                                    });
+                    {
+                        string.Empty,
+                        f.Filename,
+                        f.StreamId.ToString()
+                    })
+                    {
+                        BackColor = ((rowIndex & 1) == 0) ? Color.AliceBlue : Color.White
+                    });
                     rowIndex++;
                 }
 
@@ -422,11 +450,11 @@ namespace Keebee.AAT.Display.Caregiver
                 foreach (var f in files)
                 {
                     lvHomeMovies.Items.Add(new ListViewItem(new[]
-                                    {
-                                        string.Empty,
-                                        f.Filename,
-                                        f.StreamId.ToString()
-                                    })
+                    {
+                        string.Empty,
+                        f.Filename,
+                        f.StreamId.ToString()
+                    })
                     {
                         BackColor = ((rowIndex & 1) == 0) ? Color.AliceBlue : Color.White
                     });
@@ -441,7 +469,8 @@ namespace Keebee.AAT.Display.Caregiver
             }
             catch (Exception ex)
             {
-                _systemEventLogger?.WriteEntry($"Caregiver.LoadListViewHomeMovies: {ex.Message}", EventLogEntryType.Error);
+                _systemEventLogger?.WriteEntry($"Caregiver.LoadListViewHomeMovies: {ex.Message}",
+                    EventLogEntryType.Error);
             }
         }
 
@@ -452,16 +481,16 @@ namespace Keebee.AAT.Display.Caregiver
                 lvImagesGeneral.Items.Clear();
 
                 var files = GetMediaFiles(MediaPathTypeId.ImagesGeneral, ResponseTypeId.SlideShow).ToArray();
-                
+
                 var rowIndex = 0;
                 foreach (var f in files)
                 {
                     lvImagesGeneral.Items.Add(new ListViewItem(new[]
-                                    {
-                                        string.Empty,
-                                        f.Filename,
-                                        f.StreamId.ToString()
-                                    })
+                    {
+                        string.Empty,
+                        f.Filename,
+                        f.StreamId.ToString()
+                    })
                     {
                         BackColor = ((rowIndex & 1) == 0) ? Color.AliceBlue : Color.White
                     });
@@ -493,12 +522,12 @@ namespace Keebee.AAT.Display.Caregiver
                 foreach (var f in files)
                 {
                     lvMusic.Items.Add(new ListViewItem(new[]
-                                    {
-                                        string.Empty,
-                                        string.Empty,
-                                        f.Filename,
-                                        f.StreamId.ToString()
-                                    })
+                    {
+                        string.Empty,
+                        string.Empty,
+                        f.Filename,
+                        f.StreamId.ToString()
+                    })
                     {
                         ImageIndex = ImageIndexPlay,
                         BackColor = ((rowIndex & 1) == 0) ? Color.AliceBlue : Color.White
@@ -525,12 +554,12 @@ namespace Keebee.AAT.Display.Caregiver
                 foreach (var f in files)
                 {
                     lvRadioShows.Items.Add(new ListViewItem(new[]
-                                    {
-                                        string.Empty,
-                                        string.Empty,
-                                        f.Filename,
-                                        f.StreamId.ToString()
-                                    })
+                    {
+                        string.Empty,
+                        string.Empty,
+                        f.Filename,
+                        f.StreamId.ToString()
+                    })
                     {
                         ImageIndex = ImageIndexPlay,
                         BackColor = ((rowIndex & 1) == 0) ? Color.AliceBlue : Color.White
@@ -540,7 +569,8 @@ namespace Keebee.AAT.Display.Caregiver
             }
             catch (Exception ex)
             {
-                _systemEventLogger?.WriteEntry($"Caregiver.LoadListViewRadioShows: {ex.Message}", EventLogEntryType.Error);
+                _systemEventLogger?.WriteEntry($"Caregiver.LoadListViewRadioShows: {ex.Message}",
+                    EventLogEntryType.Error);
             }
         }
 
@@ -578,7 +608,8 @@ namespace Keebee.AAT.Display.Caregiver
             }
             catch (Exception ex)
             {
-                _systemEventLogger?.WriteEntry($"Caregiver.LoadListViewImagesPersonal: {ex.Message}", EventLogEntryType.Error);
+                _systemEventLogger?.WriteEntry($"Caregiver.LoadListViewImagesPersonal: {ex.Message}",
+                    EventLogEntryType.Error);
             }
         }
 
@@ -589,7 +620,8 @@ namespace Keebee.AAT.Display.Caregiver
                 lvActivities.Items.Clear();
 
                 var gameDifficulatyLevel = (residentId > 0)
-                    ? _currentResident.GameDifficultyLevel : 1;
+                    ? _currentResident.GameDifficultyLevel
+                    : 1;
 
                 var interactiveResponseTypes = _config.ConfigDetails
                     .Where(rt => rt.ResponseType.InteractiveActivityType != null)
@@ -615,7 +647,8 @@ namespace Keebee.AAT.Display.Caregiver
             }
             catch (Exception ex)
             {
-                _systemEventLogger?.WriteEntry($"Caregiver.LoadListViewInteractiveActivities: {ex.Message}", EventLogEntryType.Error);
+                _systemEventLogger?.WriteEntry($"Caregiver.LoadListViewInteractiveActivities: {ex.Message}",
+                    EventLogEntryType.Error);
             }
         }
 
@@ -742,7 +775,7 @@ namespace Keebee.AAT.Display.Caregiver
                 }
                 else
                 {
-                    var messageBox = new MessageBoxCustom { MessageText = "This image is no longer available" };
+                    var messageBox = new MessageBoxCustom {MessageText = "This image is no longer available"};
                     messageBox.ShowDialog();
                 }
             }
@@ -799,7 +832,7 @@ namespace Keebee.AAT.Display.Caregiver
                     var videoPlayer = new VideoPlayer
                     {
                         EventLogger = _systemEventLogger,
-                        Video = videos[0]  // just play one at a time
+                        Video = videos[0] // just play one at a time
                     };
 
                     StopAudio();
@@ -807,7 +840,7 @@ namespace Keebee.AAT.Display.Caregiver
                 }
                 else
                 {
-                    var messageBox = new MessageBoxCustom { MessageText = "This video is no longer available" };
+                    var messageBox = new MessageBoxCustom {MessageText = "This video is no longer available"};
                     messageBox.ShowDialog();
                 }
             }
@@ -828,7 +861,7 @@ namespace Keebee.AAT.Display.Caregiver
                     var videoPlayer = new VideoPlayer
                     {
                         EventLogger = _systemEventLogger,
-                        Video = videos[0]  // just play one at a time
+                        Video = videos[0] // just play one at a time
                     };
 
                     StopAudio();
@@ -836,7 +869,7 @@ namespace Keebee.AAT.Display.Caregiver
                 }
                 else
                 {
-                    var messageBox = new MessageBoxCustom { MessageText = "This video is no longer available" };
+                    var messageBox = new MessageBoxCustom {MessageText = "This video is no longer available"};
                     messageBox.ShowDialog();
                 }
             }
@@ -890,7 +923,8 @@ namespace Keebee.AAT.Display.Caregiver
             }
         }
 
-        private void PlayInteractiveActivity(int interactiveActivityId, int difficultyLevel, string interactiveActivityType)
+        private void PlayInteractiveActivity(int interactiveActivityId, int difficultyLevel,
+            string interactiveActivityType)
         {
             try
             {
@@ -936,7 +970,8 @@ namespace Keebee.AAT.Display.Caregiver
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"Caregiver.PlayInteractiveActivity: {ex.Message}", EventLogEntryType.Error);
+                _systemEventLogger.WriteEntry($"Caregiver.PlayInteractiveActivity: {ex.Message}",
+                    EventLogEntryType.Error);
             }
         }
 
@@ -984,7 +1019,8 @@ namespace Keebee.AAT.Display.Caregiver
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"Caregiver.HomeMoviesListViewClick: {ex.Message}", EventLogEntryType.Error);
+                _systemEventLogger.WriteEntry($"Caregiver.HomeMoviesListViewClick: {ex.Message}",
+                    EventLogEntryType.Error);
             }
         }
 
@@ -1023,7 +1059,7 @@ namespace Keebee.AAT.Display.Caregiver
                 }
                 else
                 {
-                    var messageBox = new MessageBoxCustom { MessageText = "This song is no longer available" };
+                    var messageBox = new MessageBoxCustom {MessageText = "This song is no longer available"};
                     messageBox.ShowDialog();
                 }
 
@@ -1043,14 +1079,15 @@ namespace Keebee.AAT.Display.Caregiver
                 var selectedIndex = lvRadioShows.SelectedIndices[0];
 
                 if (File.Exists(_radioShowPlaylist[selectedIndex]))
-                    {
+                {
                     if (_currentRadioShowIndex == selectedIndex)
                     {
                         if (radioShowPlayer.playState == WMPPlayState.wmppsPlaying)
                         {
                             radioShowPlayer.Ctlcontrols.pause();
                             lvRadioShows.Items[_currentRadioShowIndex].ImageIndex = ImageIndexPlayActive;
-                            lvRadioShows.Items[_currentRadioShowIndex].SubItems[ListViewAudioColumnStatus].Text = "Paused";
+                            lvRadioShows.Items[_currentRadioShowIndex].SubItems[ListViewAudioColumnStatus].Text =
+                                "Paused";
                         }
                         else
                         {
@@ -1060,7 +1097,8 @@ namespace Keebee.AAT.Display.Caregiver
                                 radioShowPlayer.URL = _radioShowPlaylist[selectedIndex];
                             radioShowPlayer.Ctlcontrols.play();
                             lvRadioShows.Items[_currentRadioShowIndex].ImageIndex = ImageIndexPause;
-                            lvRadioShows.Items[_currentRadioShowIndex].SubItems[ListViewAudioColumnStatus].Text = "Playing...";
+                            lvRadioShows.Items[_currentRadioShowIndex].SubItems[ListViewAudioColumnStatus].Text =
+                                "Playing...";
                         }
                     }
                     else
@@ -1071,7 +1109,7 @@ namespace Keebee.AAT.Display.Caregiver
                 }
                 else
                 {
-                    var messageBox = new MessageBoxCustom { MessageText = "This show is no longer available" };
+                    var messageBox = new MessageBoxCustom {MessageText = "This show is no longer available"};
                     messageBox.ShowDialog();
                 }
 
@@ -1094,7 +1132,8 @@ namespace Keebee.AAT.Display.Caregiver
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"Caregiver.ImagesGeneralListViewClick: {ex.Message}", EventLogEntryType.Error);
+                _systemEventLogger.WriteEntry($"Caregiver.ImagesGeneralListViewClick: {ex.Message}",
+                    EventLogEntryType.Error);
             }
         }
 
@@ -1108,7 +1147,8 @@ namespace Keebee.AAT.Display.Caregiver
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"Caregiver.ImagesPersonalListViewClick: {ex.Message}", EventLogEntryType.Error);
+                _systemEventLogger.WriteEntry($"Caregiver.ImagesPersonalListViewClick: {ex.Message}",
+                    EventLogEntryType.Error);
             }
         }
 
@@ -1125,11 +1165,12 @@ namespace Keebee.AAT.Display.Caregiver
                 var interactiveActivityType = lvActivities.SelectedItems[0]
                     .SubItems[ListViewIActivitiesColumnName].Text;
 
-                PlayInteractiveActivity(interactiveActivityId, difficultyLevel, interactiveActivityType);              
+                PlayInteractiveActivity(interactiveActivityId, difficultyLevel, interactiveActivityType);
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"Caregiver.InteractivitiesActivitiesListViewClick: {ex.Message}", EventLogEntryType.Error);
+                _systemEventLogger.WriteEntry($"Caregiver.InteractivitiesActivitiesListViewClick: {ex.Message}",
+                    EventLogEntryType.Error);
             }
         }
 
@@ -1142,13 +1183,13 @@ namespace Keebee.AAT.Display.Caregiver
 
                 switch (e.newState)
                 {
-                    case (int)WMPPlayState.wmppsPlaying:
+                    case (int) WMPPlayState.wmppsPlaying:
                         lvMusic.Items[index].SubItems[ListViewAudioColumnStatus].Text = "Playing...";
                         lvMusic.Items[index].ImageIndex = ImageIndexPause;
                         lvMusic.Items[index].Selected = true;
                         break;
 
-                    case (int)WMPPlayState.wmppsMediaEnded:
+                    case (int) WMPPlayState.wmppsMediaEnded:
                         lvMusic.Items[index].SubItems[ListViewAudioColumnStatus].Text = string.Empty;
                         lvMusic.Items[index].ImageIndex = ImageIndexPlay;
 
@@ -1159,8 +1200,13 @@ namespace Keebee.AAT.Display.Caregiver
                         }
                         break;
 
-                    case (int)WMPPlayState.wmppsReady:
-                        musicPlayer.Ctlcontrols.play();
+                    case (int) WMPPlayState.wmppsReady:
+                        try
+                        {
+                            musicPlayer.Ctlcontrols.play();
+                        }
+                        catch{ }
+                        
                         break;
 
                     // in case a file gets deleted while it's running
@@ -1222,7 +1268,12 @@ namespace Keebee.AAT.Display.Caregiver
                         break;
 
                     case (int)WMPPlayState.wmppsReady:
-                        radioShowPlayer.Ctlcontrols.play();
+                        try
+                        {
+                            radioShowPlayer.Ctlcontrols.play();
+                        }
+                        catch { }
+                        
                         break;
 
                     case (int)WMPPlayState.wmppsTransitioning:

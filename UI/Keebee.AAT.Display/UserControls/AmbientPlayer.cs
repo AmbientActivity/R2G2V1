@@ -7,7 +7,6 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using Keebee.AAT.Display.Extensions;
 using WMPLib;
 
 namespace Keebee.AAT.Display.UserControls
@@ -47,7 +46,9 @@ namespace Keebee.AAT.Display.UserControls
         private Timer _timerInvitation;
         private Timer _timerVideo;
 
-        private IWMPPlaylist _playlist;
+        private string[] _playlist;
+        private int _currentIndex;
+        private int _maxIndex;
 
         public AmbientPlayer()
         {
@@ -56,23 +57,27 @@ namespace Keebee.AAT.Display.UserControls
             ConfigureInvitationMessage();
         }
 
-        public void Play(IWMPPlaylist playlist)
+        public void Play(string[] playlist)
         {
             try
             {
                 _playlist = playlist;
+                _currentIndex = 0;
+                _maxIndex = _playlist.Length - 1;
+
                 PlayAmbient();
+
                 _timerVideo.Start();
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"AmbientPlayer.PlayAmbient: {ex.Message}", EventLogEntryType.Error);
+                _systemEventLogger.WriteEntry($"AmbientPlayer.Play: {ex.Message}", EventLogEntryType.Error);
             }
         }
 
         public void Pause()
         {
-            axWindowsMediaPlayer1.Ctlcontrols.pause();
+            axWindowsMediaPlayer.Ctlcontrols.pause();
             _timerVideo.Stop();
             _timerInvitation.Stop();
         }
@@ -80,24 +85,19 @@ namespace Keebee.AAT.Display.UserControls
         public void Resume()
         {
             DisplayContent(showInvitation: false);
-            axWindowsMediaPlayer1.Ctlcontrols.play();
+            axWindowsMediaPlayer.Ctlcontrols.play();
             _timerVideo.Start();         
-        }
-
-        public void ClearPlaylist()
-        {
-            axWindowsMediaPlayer1.ClearPlaylist(Main.PlaylistName.Ambient);
         }
 
         private void ConfigureMediaPlayer()
         {
-            axWindowsMediaPlayer1.stretchToFit = true;
-            axWindowsMediaPlayer1.Dock = DockStyle.Fill;
-            axWindowsMediaPlayer1.uiMode = "none";
-            axWindowsMediaPlayer1.settings.setMode("loop", true);
-            axWindowsMediaPlayer1.settings.volume = MediaPlayerControl.DefaultVolume;
-            axWindowsMediaPlayer1.enableContextMenu = false;
-            axWindowsMediaPlayer1.Ctlenabled = false;
+            axWindowsMediaPlayer.stretchToFit = true;
+            axWindowsMediaPlayer.Dock = DockStyle.Fill;
+            axWindowsMediaPlayer.uiMode = "none";
+            axWindowsMediaPlayer.settings.setMode("loop", true);
+            axWindowsMediaPlayer.settings.volume = MediaPlayerControl.DefaultVolume;
+            axWindowsMediaPlayer.enableContextMenu = false;
+            axWindowsMediaPlayer.Ctlenabled = false;
         }
 
         private void ConfigureInvitationMessage()
@@ -129,7 +129,8 @@ namespace Keebee.AAT.Display.UserControls
             {
                 try
                 {
-                    axWindowsMediaPlayer1.currentPlaylist = _playlist;
+                    axWindowsMediaPlayer.URL = _playlist[_currentIndex];
+                    axWindowsMediaPlayer.Ctlcontrols.play();
                 }
                 catch (Exception ex)
                 {
@@ -165,8 +166,8 @@ namespace Keebee.AAT.Display.UserControls
 
                 var  message = _invitationMessages[_currentInvitationMessageIndex].Message;
 
-                axWindowsMediaPlayer1.settings.mute = true;
-                axWindowsMediaPlayer1.Hide();
+                axWindowsMediaPlayer.settings.mute = true;
+                axWindowsMediaPlayer.Hide();
 
                 lblInvitation.Text = message;
                 lblInvitation.Show();
@@ -176,8 +177,8 @@ namespace Keebee.AAT.Display.UserControls
             else
             {
                 lblInvitation.Hide();
-                axWindowsMediaPlayer1.Show();
-                axWindowsMediaPlayer1.settings.mute = false;
+                axWindowsMediaPlayer.Show();
+                axWindowsMediaPlayer.settings.mute = false;
 
                 _isInvitaionShown = false;
             }
@@ -207,6 +208,38 @@ namespace Keebee.AAT.Display.UserControls
 
             if (responseTypeId > 0)
                 RaiseScreenTouchedEvent(responseTypeId);
+        }
+
+        private void PlayStateChange(object sender, AxWMPLib._WMPOCXEvents_PlayStateChangeEvent e)
+        {
+            try
+            {
+                switch (e.newState)
+                {
+                    case (int) WMPPlayState.wmppsMediaEnded:
+                        if (_currentIndex < _maxIndex)
+                            _currentIndex++;
+                        else
+                            _currentIndex = 0;
+
+                        axWindowsMediaPlayer.URL = _playlist[_currentIndex];
+                        break;
+
+                    case (int) WMPPlayState.wmppsReady:
+                        try
+                        {
+                            axWindowsMediaPlayer.Ctlcontrols.play();
+                        }
+                        catch
+                        {
+                        }
+                        break;
+                }
+            }
+            catch (Exception ex)
+            {
+                _systemEventLogger.WriteEntry($"AmbientPlayer.PlayStateChange: {ex.Message}", EventLogEntryType.Error);
+            }
         }
     }
 }

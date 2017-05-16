@@ -1,6 +1,5 @@
 ﻿using Keebee.AAT.SystemEventLogging;
 using Keebee.AAT.Shared;
-using Keebee.AAT.Display.Extensions;
 using Keebee.AAT.Display.Caregiver.CustomControls;
 using Keebee.AAT.Display.Helpers;
 using Keebee.AAT.ApiClient.Clients;

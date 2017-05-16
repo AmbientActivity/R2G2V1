@@ -9,20 +9,17 @@ using System.Diagnostics;
 using System.Drawing;
 using System.ServiceProcess;
 using System.Windows.Forms;
-using AxWMPLib;
-using WMPLib;
 
 namespace Keebee.AAT.Display
 {
     public partial class Splash : Form
     {
         private const string SqlExpressServiceName = "MSSQL$SQLEXPRESS";
-        private const string PlaylistAmbient = Main.PlaylistName.Ambient;
 
         private Timer _timer;
 
         // ambient playlist
-        private IWMPPlaylist _ambientPlaylist;
+        private string[] _ambientPlaylist;
 
         // event logger
         private readonly SystemEventLogger _systemEventLogger;
@@ -61,33 +58,24 @@ namespace Keebee.AAT.Display
                 if (!StartSqlExpressService())
                     return false;
 
-                // create a temporary media player for loading the ambient playlist
-                using (var mediaPlayer = new AxWindowsMediaPlayer())
+                var mediaFileQuery = new MediaFileQuery();
+                _ambientPlaylist = mediaFileQuery.GetFilesForResponseType(PublicProfileSource.Id, ResponseTypeId.Ambient, MediaPathTypeId.Ambient);
+                if (!_ambientPlaylist.Any())
                 {
-                    Controls.Add(mediaPlayer);
-                    var mediaFileQuery = new MediaFileQuery();
-                    var ambientFiles = mediaFileQuery.GetFilesForResponseType(PublicProfileSource.Id, ResponseTypeId.Ambient, MediaPathTypeId.Ambient);
-                    if (!ambientFiles.Any())
-                    {
-                        Hide();
-                        MessageBox.Show("No Ambient Video content found", "No Content Found", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        Close();
-                    }
+                    Hide();
+                    MessageBox.Show("No Ambient Video content found", "No Content Found", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    Close();
+                }
 
-                    if (ambientFiles.Length > 1)
-                    ambientFiles.Shuffle();
+                if (_ambientPlaylist.Length > 1)
+                    _ambientPlaylist.Shuffle();
 
-                    _ambientPlaylist = mediaPlayer.LoadPlaylist(PlaylistAmbient, ambientFiles);
+                if (_ambientPlaylist == null)
+                {
+                    _systemEventLogger.WriteEntry(
+                        $"Splash.LoadAmbientMediaPlaylist{Environment.NewLine}Failed to read the database.{Environment.NewLine}Number of attempts {_numAttempt}", EventLogEntryType.Warning);
 
-                    Controls.Remove(mediaPlayer);
-
-                    if (_ambientPlaylist == null)
-                    {
-                        _systemEventLogger.WriteEntry(
-                            $"Splash.LoadAmbientMediaPlaylist{Environment.NewLine}Failed to read the database.{Environment.NewLine}Number of attempts {_numAttempt}", EventLogEntryType.Warning);
-
-                        return false;
-                    }
+                    return false;
                 }
             }
             catch (Exception ex)

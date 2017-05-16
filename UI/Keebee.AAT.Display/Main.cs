@@ -22,11 +22,6 @@ namespace Keebee.AAT.Display
 {
     public partial class Main : Form
     {
-        internal static class PlaylistName
-        {
-            public const string Ambient = "ambient";
-        }
-
         internal enum ResponseValueChangeType
         {
             Increase = 0,
@@ -46,8 +41,8 @@ namespace Keebee.AAT.Display
             set { _systemEventLogger = value; }
         }
 
-        private IWMPPlaylist _ambientPlaylist;
-        public IWMPPlaylist AmbientPlaylist
+        private string[] _ambientPlaylist;
+        public string[] AmbientPlaylist
         {
             set { _ambientPlaylist = value; }
         }
@@ -794,7 +789,6 @@ namespace Keebee.AAT.Display
             else
             {
                 StopCurrentResponse();
-                _ambientPlaylist.clear();
                 // alert the State Machine Service that the display is no longer active or idle
                 _messageQueueDisplaySms.Send(CreateDisplayMessageBody(false));
                 _messageQueueDisplayPhidget.Send(CreateDisplayMessageBody(false));
@@ -1035,7 +1029,6 @@ namespace Keebee.AAT.Display
 
         private void MainFormClosing(object sender, FormClosingEventArgs e)
         {
-            ambientPlayer1.ClearPlaylist();
             ambientPlayer1.Dock = DockStyle.None;
             slideViewerFlash1.Dock = DockStyle.None;
             matchingGame1.Dock = DockStyle.None;

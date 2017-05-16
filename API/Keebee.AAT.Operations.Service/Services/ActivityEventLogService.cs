@@ -15,7 +15,7 @@ namespace Keebee.AAT.Operations.Service.Services
         IEnumerable<ActivityEventLog> GetForConfigDetail(int configDetailId);
         IEnumerable<ActivityEventLog> GetForResident(int residentId);
         IEnumerable<ActivityEventLog> GetWithConfigDetail();
-        IEnumerable<ConfigDetail> GetGroupedConfigDetail();
+        IEnumerable<ConfigDetail> GetGroupedConfigDetails();
         int Post(ActivityEventLog activityEventLog);
         void Patch(int id, ActivityEventLog activityEventLog);
         void Delete(int id);
@@ -115,7 +115,7 @@ namespace Keebee.AAT.Operations.Service.Services
             return activityEventLogs;
         }
 
-        public IEnumerable<ConfigDetail> GetGroupedConfigDetail()
+        public IEnumerable<ConfigDetail> GetGroupedConfigDetails()
         {
             var container = new Container(new Uri(ODataHost.Url));
 

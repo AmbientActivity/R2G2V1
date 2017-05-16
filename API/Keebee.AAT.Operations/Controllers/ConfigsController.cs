@@ -35,45 +35,51 @@ namespace Keebee.AAT.Operations.Controllers
 
             if (configs == null) return new DynamicJsonArray(new DynamicJsonArray(new object[0]));
 
-            var activityEventLogs = _activityEventLogService.GetGroupedConfigDetail().ToArray();
-            var jArray = configs.Select(c => new
-            {
-                c.Id,
-                c.Description,
-                c.IsActive,
-                c.IsActiveEventLog,
-                IsEventLogs = activityEventLogs.Any(x => x.ConfigDetail.ConfigId == c.Id),
-                ConfigDetails = c.ConfigDetails.Select(cd => new
+            var usedDetails = _activityEventLogService.GetGroupedConfigDetail().ToArray();
+
+            var jArray = configs
+                .GroupJoin(usedDetails, c => c.Id, u => u.ConfigId,
+                (c, inUse) => new
                     {
-                        cd.Id,
-                        cd.ConfigId,
-                        cd.Description,
-                        cd.Location,
-                        IsEventLogs = activityEventLogs.Any(x => x.ConfigDetail.Id == cd.Id),
-                        PhidgetType = new
-                        {
-                            cd.PhidgetType.Id,
-                            cd.PhidgetType.Description,
-                        },
-                        PhidgetStyleType = new
-                        {
-                            cd.PhidgetStyleType.Id,
-                            cd.PhidgetStyleType.Description,
-                        },
-                        ResponseType = new
-                        {
-                            cd.ResponseType.Id,
-                            cd.ResponseType.Description,
-                            InteractiveActivityType = (cd.ResponseType.InteractiveActivityTypeId != null)
-                            ? new
+                        c.Id,
+                        c.Description,
+                        c.IsActive,
+                        c.IsActiveEventLog,
+                        IsEventLogs = inUse.Any(),
+                        ConfigDetails = c.ConfigDetails
+                            .GroupJoin(usedDetails, cd => cd.Id, u => u.Id,
+                            (cd, inUseDetail) => new
                             {
-                                cd.ResponseType.InteractiveActivityType.Id,
-                                cd.ResponseType.InteractiveActivityType.Description
-                            } : null,
-                            cd.ResponseType.IsSystem
-                        }
-                    }).OrderBy(o => o.PhidgetType.Id)
-            }).ToArray();
+                                cd.Id,
+                                cd.ConfigId,
+                                cd.Description,
+                                cd.Location,
+                                IsEventLogs = inUseDetail.Any(),
+                                PhidgetType = new
+                                {
+                                    cd.PhidgetType.Id,
+                                    cd.PhidgetType.Description,
+                                },
+                                PhidgetStyleType = new
+                                {
+                                    cd.PhidgetStyleType.Id,
+                                    cd.PhidgetStyleType.Description,
+                                },
+                                ResponseType = new
+                                {
+                                    cd.ResponseType.Id,
+                                    cd.ResponseType.Description,
+                                    InteractiveActivityType = (cd.ResponseType.InteractiveActivityTypeId != null)
+                                        ? new
+                                        {
+                                            cd.ResponseType.InteractiveActivityType.Id,
+                                            cd.ResponseType.InteractiveActivityType.Description
+                                        }
+                                        : null,
+                                    cd.ResponseType.IsSystem
+                                }
+                        }).OrderBy(o => o.PhidgetType.Id)
+                }).ToArray();
 
             return new DynamicJsonArray(jArray);
         }

@@ -35,7 +35,7 @@ namespace Keebee.AAT.Operations.Controllers
 
             if (configs == null) return new DynamicJsonArray(new DynamicJsonArray(new object[0]));
 
-            var activityEventLogs = _activityEventLogService.GetWithConfigDetail().ToArray();
+            var activityEventLogs = _activityEventLogService.GetGroupedConfigDetail().ToArray();
             var jArray = configs.Select(c => new
             {
                 c.Id,

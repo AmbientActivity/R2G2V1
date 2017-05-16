@@ -110,12 +110,7 @@ namespace Keebee.AAT.Display
             this.ambientPlayer1.TabIndex = 20;
             // 
             // Main
-            // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.BackColor = System.Drawing.Color.Yellow;
-            this.ClientSize = new System.Drawing.Size(408, 221);
-            this.ControlBox = false;
+            //
             this.Controls.Add(this.ambientPlayer1);
             this.Controls.Add(this.mediaPlayer1);
             this.Controls.Add(this.paintingActivity1);
@@ -124,21 +119,23 @@ namespace Keebee.AAT.Display
             this.Controls.Add(this.offScreen1);
             this.Controls.Add(this.slideViewerFlash1);
             this.Controls.Add(this.matchingGame1);
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainFormClosing);
+            this.Shown += new System.EventHandler(this.MainShown);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.BackColor = System.Drawing.Color.Yellow;
+            this.ClientSize = new System.Drawing.Size(680, 360);
+            this.ControlBox = false;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "Main";
-            this.ShowIcon = false;
             this.ShowInTaskbar = false;
+            this.ShowIcon = false;
             this.Text = "Main";
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainFormClosing);
-            this.Shown += new System.EventHandler(this.MainShown);
             this.ResumeLayout(false);
             this.PerformLayout();
-
         }
-
-        #endregion
         private MatchingGame matchingGame1;
         private SlideViewer slideViewerFlash1;
         private OffScreen offScreen1;
@@ -147,6 +144,6 @@ namespace Keebee.AAT.Display
         private PaintingActivity paintingActivity1;
         private MediaPlayer mediaPlayer1;
         private AmbientPlayer ambientPlayer1;
+        #endregion
     }
 }
-

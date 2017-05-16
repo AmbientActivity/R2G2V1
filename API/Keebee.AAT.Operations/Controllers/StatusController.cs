@@ -14,7 +14,7 @@ namespace Keebee.AAT.Operations.Controllers
             _statusService = statusService;
         }
 
-        // gets a count of PhidgetTypes (for the KeepAlive routine in the StateMachineService)
+        // gets a count of Users (for the KeepAlive routine in the StateMachineService)
         public async Task<int> Get()
         {
             return await Task.Run(() => _statusService.Get());

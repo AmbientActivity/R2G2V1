@@ -86,7 +86,7 @@ namespace Keebee.AAT.Display.UserControls
 
         public void ClearPlaylist()
         {
-            axWindowsMediaPlayer1.ClearPlaylist(PlaylistName.Ambient);
+            axWindowsMediaPlayer1.ClearPlaylist(Main.PlaylistName.Ambient);
         }
 
         private void ConfigureMediaPlayer()

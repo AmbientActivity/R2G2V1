@@ -17,7 +17,7 @@ namespace Keebee.AAT.Display
     public partial class Splash : Form
     {
         private const string SqlExpressServiceName = "MSSQL$SQLEXPRESS";
-        private const string PlaylistAmbient = PlaylistName.Ambient;
+        private const string PlaylistAmbient = Main.PlaylistName.Ambient;
 
         private Timer _timer;
 

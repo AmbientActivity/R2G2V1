@@ -20,22 +20,20 @@ using WMPLib;
 
 namespace Keebee.AAT.Display
 {
-    internal static class PlaylistName
-    {
-        public const string Ambient = "ambient";
-        public const string CaregiverMusic = "caregiver-music";
-        public const string CaregiverRadioShows = "caregiver-radio-shows";
-    }
-
-    internal enum ResponseValueChangeType
-    {
-        Increase = 0,
-        Decrease = 1,
-        NoDifference = 2
-    }
-
     public partial class Main : Form
     {
+        internal static class PlaylistName
+        {
+            public const string Ambient = "ambient";
+        }
+
+        internal enum ResponseValueChangeType
+        {
+            Increase = 0,
+            Decrease = 1,
+            NoDifference = 2
+        }
+
         // api client
         private readonly IPublicMediaFilesClient _publicMediaFilesClient;
         private readonly IConfigsClient _configsClient;

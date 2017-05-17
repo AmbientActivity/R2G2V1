@@ -1275,6 +1275,7 @@ namespace Keebee.AAT.Display.Caregiver
                         
                         break;
 
+                    // in case a file gets deleted while it's running
                     case (int)WMPPlayState.wmppsTransitioning:
                         if (radioShowPlayer.currentMedia != null)
                         {

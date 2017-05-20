@@ -47,7 +47,7 @@ namespace Keebee.AAT.Display
             this.lblActiveResident.BackColor = System.Drawing.Color.White;
             this.lblActiveResident.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblActiveResident.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.lblActiveResident.Location = new System.Drawing.Point(321, 191);
+            this.lblActiveResident.Location = new System.Drawing.Point(593, 330);
             this.lblActiveResident.Name = "lblActiveResident";
             this.lblActiveResident.Size = new System.Drawing.Size(88, 31);
             this.lblActiveResident.TabIndex = 15;
@@ -110,7 +110,12 @@ namespace Keebee.AAT.Display
             this.ambientPlayer1.TabIndex = 20;
             // 
             // Main
-            //
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.BackColor = System.Drawing.Color.Yellow;
+            this.ClientSize = new System.Drawing.Size(680, 360);
+            this.ControlBox = false;
             this.Controls.Add(this.ambientPlayer1);
             this.Controls.Add(this.mediaPlayer1);
             this.Controls.Add(this.paintingActivity1);
@@ -119,22 +124,18 @@ namespace Keebee.AAT.Display
             this.Controls.Add(this.offScreen1);
             this.Controls.Add(this.slideViewerFlash1);
             this.Controls.Add(this.matchingGame1);
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainFormClosing);
-            this.Shown += new System.EventHandler(this.MainShown);
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.BackColor = System.Drawing.Color.Yellow;
-            this.ClientSize = new System.Drawing.Size(680, 360);
-            this.ControlBox = false;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "Main";
-            this.ShowInTaskbar = false;
             this.ShowIcon = false;
+            this.ShowInTaskbar = false;
             this.Text = "Main";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainFormClosing);
+            this.Shown += new System.EventHandler(this.MainShown);
             this.ResumeLayout(false);
             this.PerformLayout();
+
         }
         private MatchingGame matchingGame1;
         private SlideViewer slideViewerFlash1;

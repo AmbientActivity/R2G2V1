@@ -101,6 +101,5 @@ namespace Keebee.AAT.DataAccess.Tests.Controllers
             Assert.IsNotNull(resident);
             Assert.AreEqual(resident.Id, residentId);
         }
-
     }
 }

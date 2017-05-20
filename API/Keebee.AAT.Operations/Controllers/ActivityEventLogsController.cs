@@ -205,16 +205,16 @@ namespace Keebee.AAT.Operations.Controllers
             return new DynamicJsonArray(jArray);
         }
 
-        // GET: api/ActivityEventLogs/ids?configId=1
+        // GET: api/ActivityEventLogs/ConfigDetails
         [HttpGet]
-        [Route("ids")]
-        public async Task<DynamicJsonArray> GetIds()
+        [Route("configdetails")]
+        public async Task<DynamicJsonArray> GetConfigDetails()
         {
             IEnumerable<ActivityEventLog> activityEventLogs = new Collection<ActivityEventLog>();
 
             await Task.Run(() =>
             {
-                activityEventLogs = _activityEventLogService.Get();
+                activityEventLogs = _activityEventLogService.GetConfigDetails();
             });
 
             if (activityEventLogs == null) return new DynamicJsonArray(new object[0]);
@@ -222,9 +222,8 @@ namespace Keebee.AAT.Operations.Controllers
             var jArray = activityEventLogs
                 .Select(x => new
                 {
-                    x.Id,
-                    x.ConfigDetail.ConfigId,
-                    x.ConfigDetailId
+                    x.ConfigDetailId,
+                    x.ConfigDetail.ConfigId
                 }).ToArray();
 
             return new DynamicJsonArray(jArray);

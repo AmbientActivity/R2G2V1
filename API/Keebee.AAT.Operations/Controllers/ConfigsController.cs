@@ -35,10 +35,13 @@ namespace Keebee.AAT.Operations.Controllers
 
             if (configs == null) return new DynamicJsonArray(new DynamicJsonArray(new object[0]));
 
-            var usedDetails = _activityEventLogService.GetGroupedConfigDetails().ToArray();
+            var usedConfigs = _activityEventLogService.GetConfigDetails().ToArray();
+
+            var usedIds = usedConfigs.Select(x => x.ConfigDetailId);
+            var usedConfigIds = usedConfigs.Select(x => x.ConfigDetail.ConfigId);
 
             var jArray = configs
-                .GroupJoin(usedDetails, c => c.Id, u => u.ConfigId,
+                .GroupJoin(usedConfigIds, c => c.Id, used => used,
                 (c, inUse) => new
                     {
                         c.Id,
@@ -47,7 +50,7 @@ namespace Keebee.AAT.Operations.Controllers
                         c.IsActiveEventLog,
                         IsEventLogs = inUse.Any(),
                         ConfigDetails = c.ConfigDetails
-                            .GroupJoin(usedDetails, cd => cd.Id, u => u.Id,
+                            .GroupJoin(usedIds, cd => cd.Id, u => u,
                             (cd, inUseDetail) => new
                             {
                                 cd.Id,

@@ -3,6 +3,9 @@ using Keebee.AAT.Operations.Service.KeebeeAAT;
 using System.Collections.Generic;
 using System.Linq;
 using System;
+using System.IO;
+using System.Net;
+using System.Web.Script.Serialization;
 
 namespace Keebee.AAT.Operations.Service.Services
 {
@@ -15,7 +18,7 @@ namespace Keebee.AAT.Operations.Service.Services
         IEnumerable<ActivityEventLog> GetForConfigDetail(int configDetailId);
         IEnumerable<ActivityEventLog> GetForResident(int residentId);
         IEnumerable<ActivityEventLog> GetWithConfigDetail();
-        IEnumerable<ConfigDetail> GetGroupedConfigDetails();
+        IEnumerable<ActivityEventLog> GetConfigDetails();
         int Post(ActivityEventLog activityEventLog);
         void Patch(int id, ActivityEventLog activityEventLog);
         void Delete(int id);
@@ -115,19 +118,40 @@ namespace Keebee.AAT.Operations.Service.Services
             return activityEventLogs;
         }
 
-        public IEnumerable<ConfigDetail> GetGroupedConfigDetails()
+        internal class ActivityEventLogs
         {
-            var container = new Container(new Uri(ODataHost.Url));
+            public IEnumerable<ActivityEventLog> value { get; set; }
+        }
+        public IEnumerable<ActivityEventLog> GetConfigDetails()
+        {
+            var url = $"{ODataHost.Url}/ActivityEventLogs?$apply=groupby((ConfigDetail/ConfigId, ConfigDetailId), aggregate(Id with sum as Total))";
+            var request = (HttpWebRequest)WebRequest.Create(url);
 
-            var detailsInUse = container.ActivityEventLogs
-                .Expand("ConfigDetail")
-                .AsEnumerable()
-                .GroupBy(x => new { x.ConfigDetail.ConfigId, x.ConfigDetailId }, (key, group) => new
-                        ConfigDetail
-                        {
-                            Id = (int)key.ConfigDetailId,
-                            ConfigId = key.ConfigId
-                        }).AsEnumerable();
+            IEnumerable<ActivityEventLog> detailsInUse;
+
+            using (var response = request.GetResponse())
+            {
+                using (var stream = response.GetResponseStream())
+                {
+                    var data = new StreamReader(stream);
+                    var result = data.ReadToEnd();
+
+                    var serializer = new JavaScriptSerializer();
+                    detailsInUse = serializer.Deserialize<ActivityEventLogs>(result).value;
+                }
+            }
+
+            //var container = new Container(new Uri(ODataHost.Url));
+
+            //var detailsInUse = container.ActivityEventLogs
+            //    .Expand("ConfigDetail")
+            //    .AsEnumerable()
+            //    .GroupBy(x => new { x.ConfigDetail.ConfigId, x.ConfigDetailId }, (key, group) => new
+            //            ConfigDetail
+            //    {
+            //        Id = (int)key.ConfigDetailId,
+            //        ConfigId = key.ConfigId
+            //    }).AsEnumerable();
 
             return detailsInUse;
         }

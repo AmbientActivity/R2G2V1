@@ -30,6 +30,11 @@
     Write-Host "Removing Display Launch task..." -NoNewline
     RemoveScheduledTask "R2G2 - Display Launch"
     Write-Host "done."
+
+    # nightly restart
+    Write-Host "Removing Nightly System Restart task..." -NoNewline
+    RemoveScheduledTask "R2G2 - System Restart"
+    Write-Host "done."
 }
 Catch
 {

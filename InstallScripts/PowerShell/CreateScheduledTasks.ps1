@@ -14,6 +14,7 @@
         $description = $args[1]
         $command = $args[2]
         $start_time = $args[3]
+        $arguments = $args[4]
 
         $get_task = Get-ScheduledTask $task_name -ErrorAction SilentlyContinue
 
@@ -31,6 +32,7 @@
              
             $Action = $TaskDefinition.Actions.Create(0)
             $action.Path = "$command"
+            $action.Arguments = "$arguments"
 
             $rootFolder.RegisterTaskDefinition("$task_name", $TaskDefinition, 6, "SYSTEM", $null, 5) | Out-Null
         }
@@ -81,6 +83,18 @@
         $trigger = New-ScheduledTaskTrigger -AtLogon -User $user
         Register-ScheduledTask -Action $action -Trigger $trigger -RunLevel Highest -TaskName $task_name -Description $description | Out-Null
     }
+    Write-Host "done."
+
+    # system restart
+    Write-Host "Creating System Restart task..." -NoNewline
+    $task_name = "R2G2 - System Restart"
+    $description = "Performs a system restart."
+    $command = "shutdown"
+    $start_time = "04:00"
+    $arguments = "/r"
+
+    CreateScheduledTask $task_name $description $command $start_time $arguments
+
     Write-Host "done."
 }
 Catch

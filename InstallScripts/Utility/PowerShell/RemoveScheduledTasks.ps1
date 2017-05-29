@@ -11,14 +11,14 @@
         }
     }
 
+    # display launch
+    Write-Host "Removing Display Launch task..." -NoNewline
+    RemoveScheduledTask "R2G2 - Display Launch"
+    Write-Host "done."
+
     # event log export
     Write-Host "Removing Event Log Export task..." -NoNewline
     RemoveScheduledTask "R2G2 - Event Log Export"
-    Write-Host "done."
-
-    # backup
-    Write-Host "Removing Backup task..." -NoNewline
-     RemoveScheduledTask "R2G2 - Backup"
     Write-Host "done."
 
     # video capture file cleanup
@@ -26,12 +26,12 @@
     RemoveScheduledTask "R2G2 - Video Capture File Cleanup"
     Write-Host "done."
 
-    # display launch
-    Write-Host "Removing Display Launch task..." -NoNewline
-    RemoveScheduledTask "R2G2 - Display Launch"
+    # backup
+    Write-Host "Removing Backup task..." -NoNewline
+     RemoveScheduledTask "R2G2 - Backup"
     Write-Host "done."
 
-    # nightly restart
+    # system restart
     Write-Host "Removing System Restart task..." -NoNewline
     RemoveScheduledTask "R2G2 - System Restart"
     Write-Host "done."

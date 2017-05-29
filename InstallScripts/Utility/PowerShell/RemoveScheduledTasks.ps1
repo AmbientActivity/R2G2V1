@@ -32,7 +32,7 @@
     Write-Host "done."
 
     # nightly restart
-    Write-Host "Removing Nightly System Restart task..." -NoNewline
+    Write-Host "Removing System Restart task..." -NoNewline
     RemoveScheduledTask "R2G2 - System Restart"
     Write-Host "done."
 }

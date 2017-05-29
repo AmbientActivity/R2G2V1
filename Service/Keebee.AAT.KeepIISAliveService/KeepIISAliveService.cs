@@ -1,18 +1,12 @@
 ﻿using Keebee.AAT.SystemEventLogging;
-using Keebee.AAT.Shared;
 using System;
+using System.Diagnostics;
 using System.Net;
 using System.ServiceProcess;
 using System.Threading;
 
 namespace Keebee.AAT.KeepIISAliveService
 {
-    internal static class KeepAliveUrl
-    {
-        public const string OperationsApi = "http://localhost/Keebee.AAT.Operations/api/status";
-        public const string AdministratorHome = "http://localhost/Keebee.AAT.Administrator";
-    }
-
     partial class KeepIISAliveService : ServiceBase
     {
         // event logger
@@ -44,12 +38,12 @@ namespace Keebee.AAT.KeepIISAliveService
 
                     if (response.StatusCode != HttpStatusCode.OK)
                         _systemEventLogger.WriteEntry(
-                            $"Error accessing api.{Environment.NewLine}StatusCode: {response.StatusCode}");
+                            $"Error accessing api.{Environment.NewLine}StatusCode: {response.StatusCode}", EventLogEntryType.Error);
                 }
                 catch (Exception ex)
                 {
                     _systemEventLogger.WriteEntry(
-                            $"Error accessing api.{Environment.NewLine}Error: {ex.Message}");
+                            $"Error accessing api.{Environment.NewLine}Error: {ex.Message}", EventLogEntryType.Error);
                 }
 
                 try
@@ -76,13 +70,13 @@ namespace Keebee.AAT.KeepIISAliveService
 
                     if (response.StatusCode != HttpStatusCode.OK)
                         _systemEventLogger.WriteEntry(
-                            $"Error accessing admin sitet.{Environment.NewLine}StatusCode: {response.StatusCode}");
+                            $"Error accessing admin site.{Environment.NewLine}StatusCode: {response.StatusCode}", EventLogEntryType.Error);
 
                 }
                 catch (Exception ex)
                 {
                     _systemEventLogger.WriteEntry(
-                            $"Error accessing admin site.{Environment.NewLine}Error: {ex.Message}");
+                            $"Error accessing admin site.{Environment.NewLine}Error: {ex.Message}", EventLogEntryType.Error);
                 }
 
                 try
@@ -108,5 +102,11 @@ namespace Keebee.AAT.KeepIISAliveService
             _keepAliveThread.Abort();
             _keepAliveThreadAdmin.Abort();
         }
+    }
+
+    internal static class KeepAliveUrl
+    {
+        public const string OperationsApi = "http://localhost/Keebee.AAT.Operations/api/status";
+        public const string AdministratorHome = "http://localhost/Keebee.AAT.Administrator";
     }
 }

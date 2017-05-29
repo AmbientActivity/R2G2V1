@@ -358,7 +358,7 @@ namespace Keebee.AAT.Backup
 
                             if (File.Exists(destFilePath))
                             {
-                                if (destFilePath.ToLower().EndsWith(".mp4"))
+                                if (destFilePath.ToLower().EndsWith(".mp3") || destFilePath.ToLower().EndsWith(".mp4"))
                                 {
                                     if (IsFileIdenticalMp4(fiSource.FullName, destFilePath))
                                         continue;

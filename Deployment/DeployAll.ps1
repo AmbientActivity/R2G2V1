@@ -354,6 +354,12 @@ Try
 
     Write-Host "done.”
 
+
+    # cleanup garbage
+    get-childitem $pathDeployments -include *.pdb -recurse | foreach ($_) {remove-item $_.fullname}
+    get-childitem $pathDeployments -include *.vshost.* -recurse | foreach ($_) {remove-item $_.fullname}
+    get-childitem $pathDeployments -include *TemporaryGeneratedFile_* -recurse | foreach ($_) {remove-item $_.fullname}
+
     Write-Host -foregroundcolor green "`nDeployment complete.`n”
 }
 Catch

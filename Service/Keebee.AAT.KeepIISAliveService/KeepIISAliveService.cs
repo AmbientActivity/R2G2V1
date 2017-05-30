@@ -47,7 +47,7 @@ namespace Keebee.AAT.KeepIISAliveService
 
                 try
                 {
-                    Thread.Sleep(60000);
+                    Thread.Sleep(120000);
                 }
 
                 catch (ThreadAbortException)

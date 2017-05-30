@@ -360,7 +360,7 @@ namespace Keebee.AAT.Backup
                             {
                                 if (destFilePath.ToLower().EndsWith(".mp3") || destFilePath.ToLower().EndsWith(".mp4"))
                                 {
-                                    if (IsFileIdenticalMp4(fiSource.FullName, destFilePath))
+                                    if (IsFileIdenticalMp3Mp4(fiSource.FullName, destFilePath))
                                         continue;
                                 }
                                 else
@@ -410,7 +410,7 @@ namespace Keebee.AAT.Backup
             && (File.ReadAllBytes(file1).SequenceEqual(File.ReadAllBytes(file2)));
         }
 
-        private static bool IsFileIdenticalMp4(string file1, string file2)
+        private static bool IsFileIdenticalMp3Mp4(string file1, string file2)
         {
             return new FileInfo(file1).Length == new FileInfo(file2).Length;
             //&& (File.ReadAllBytes(file1).SequenceEqual(File.ReadAllBytes(file2))); // causes OutOfMemory exception for large files

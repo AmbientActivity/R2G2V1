@@ -12,7 +12,7 @@ namespace Keebee.AAT.KeepIISAliveService
         // event logger
         private readonly SystemEventLogger _systemEventLogger;
         private readonly Thread _keepAliveThread;
-        private readonly Thread _keepAliveThreadAdmin;
+        private const string KeepAlivewUrl = "http://localhost/Keebee.AAT.Administrator/Home/Ping";
 
         public KeepIISAliveService()
         {
@@ -20,63 +20,29 @@ namespace Keebee.AAT.KeepIISAliveService
 
             _systemEventLogger = new SystemEventLogger(SystemEventLogType.KeepIISAliveService);
 
-            _keepAliveThread = new Thread(KeepAliveOperations);
+            _keepAliveThread = new Thread(KeepIISAlive);
             _keepAliveThread.Start();
-
-            _keepAliveThreadAdmin = new Thread(KeepAliveAdministrator);
-            _keepAliveThreadAdmin.Start();
         }
 
-        private void KeepAliveOperations()
+        private void KeepIISAlive()
         {
             while (true)
             {
                 try
                 {
-                    var req = (HttpWebRequest)WebRequest.Create(KeepAliveUrl.OperationsApi);
+                    var req = (HttpWebRequest)WebRequest.Create(KeepAlivewUrl);
                     var response = (HttpWebResponse)req.GetResponse();
 
                     if (response.StatusCode != HttpStatusCode.OK)
                         _systemEventLogger.WriteEntry(
-                            $"Error accessing api.{Environment.NewLine}StatusCode: {response.StatusCode}", EventLogEntryType.Error);
-                }
-                catch (Exception ex)
-                {
-                    _systemEventLogger.WriteEntry(
-                            $"Error accessing api.{Environment.NewLine}Error: {ex.Message}", EventLogEntryType.Error);
-                }
-
-                try
-                {
-                    Thread.Sleep(60000);
-                }
-
-                catch (ThreadAbortException)
-                {
-                    break;
-                }
-            }
-        }
-
-        private void KeepAliveAdministrator()
-        {
-            while (true)
-            {
-                try
-                {
-                    var req = (HttpWebRequest)WebRequest.Create(KeepAliveUrl.AdministratorHome);
-                    var response = (HttpWebResponse)req.GetResponse();
-
-
-                    if (response.StatusCode != HttpStatusCode.OK)
-                        _systemEventLogger.WriteEntry(
-                            $"Error accessing admin site.{Environment.NewLine}StatusCode: {response.StatusCode}", EventLogEntryType.Error);
+                            $"Error accessing the web site.{Environment.NewLine}StatusCode: {response.StatusCode}", EventLogEntryType.Error);
 
                 }
                 catch (Exception ex)
                 {
+                    var message = ex.InnerException?.Message ?? ex.Message;
                     _systemEventLogger.WriteEntry(
-                            $"Error accessing admin site.{Environment.NewLine}Error: {ex.Message}", EventLogEntryType.Error);
+                            $"Error accessing the web site.{Environment.NewLine}Message: {message}", EventLogEntryType.Error);
                 }
 
                 try
@@ -100,13 +66,6 @@ namespace Keebee.AAT.KeepIISAliveService
         {
             _systemEventLogger.WriteEntry("In OnStop");
             _keepAliveThread.Abort();
-            _keepAliveThreadAdmin.Abort();
         }
-    }
-
-    internal static class KeepAliveUrl
-    {
-        public const string OperationsApi = "http://localhost/Keebee.AAT.Operations/api/status";
-        public const string AdministratorHome = "http://localhost/Keebee.AAT.Administrator";
     }
 }

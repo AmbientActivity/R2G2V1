@@ -11,6 +11,7 @@ namespace Keebee.AAT.ApiClient.Clients
         IEnumerable<User> Get();
         User Get(int id);
         User GetByUsername(string username);
+        int GetCount();
         int Post(User user);
         void Patch(int id, User user);
         string Delete(int id);
@@ -43,6 +44,15 @@ namespace Keebee.AAT.ApiClient.Clients
             var user = JsonConvert.DeserializeObject<User>(data.Content);
 
             return user;
+        }
+
+        public int GetCount()
+        {
+            var request = new RestRequest("users/count", Method.GET);
+            var data = Execute(request);
+            var count = Convert.ToInt32(data.Content);
+
+            return count;
         }
 
         public void Patch(int id, User user)

@@ -96,7 +96,6 @@
     <Compile Include="Services\ResponseTypeService.cs" />
     <Compile Include="Services\ActiveResidentEventLogService.cs" />
     <Compile Include="Services\RoleService.cs" />
-    <Compile Include="Services\StatusService.cs" />
     <Compile Include="Services\UserRoleService.cs" />
     <Compile Include="Services\UserService.cs" />
   </ItemGroup>

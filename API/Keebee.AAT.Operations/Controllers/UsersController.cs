@@ -87,6 +87,21 @@ namespace Keebee.AAT.Operations.Controllers
             return new DynamicJsonObject(exObj);
         }
 
+        // GET: api/Users/Count
+        [HttpGet]
+        [Route("count")]
+        public async Task<int> Count()
+        {
+            var count = 0;
+
+            await Task.Run(() =>
+            {
+                count = _userService.GetCount();
+            });
+
+            return count;
+        }
+
         // POST: api/Users
         [HttpPost]
         public int Post([FromBody]User user)

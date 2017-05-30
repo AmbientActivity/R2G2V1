@@ -11,6 +11,7 @@ namespace Keebee.AAT.Operations.Service.Services
         IEnumerable<User> Get();
         User Get(int id);
         User GetByUsername(string username);
+        int GetCount();  // for the KeepIISAlive Service
         int Post(User user);
         void Patch(int id, User user);
         void Delete(int id);
@@ -44,6 +45,12 @@ namespace Keebee.AAT.Operations.Service.Services
                 .FirstOrDefault();
 
             return user;
+        }
+
+        public int GetCount()
+        {
+            var container = new Container(new Uri(ODataHost.Url));
+            return container.Users.Count();
         }
 
         public int Post(User user)

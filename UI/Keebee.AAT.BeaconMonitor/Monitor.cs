@@ -30,7 +30,6 @@ namespace Keebee.AAT.BeaconMonitor
             InitializeComponent();
             ConfigureListViews();
 
-#if DEBUG
             _messageQueueBeaconMonitorState = new CustomMessageQueue(new CustomMessageQueueArgs
             {
                 QueueName = MessageQueueType.BeaconMonitorState
@@ -53,7 +52,7 @@ namespace Keebee.AAT.BeaconMonitor
                 QueueName = MessageQueueType.BeaconMonitorResident,
                 MessageReceivedCallback = MessageReceivedBeaconResident
             });
-#endif
+
             radOff.Checked = true;
         }
 
@@ -173,7 +172,6 @@ namespace Keebee.AAT.BeaconMonitor
 
         private void MonitorCheckChanged(object sender, EventArgs e)
         {
-#if DEBUG
             foreach (var result in from control in grpMonitor.Controls.OfType<RadioButton>()
                                    select control into radio
                                    where radio.Checked
@@ -181,7 +179,6 @@ namespace Keebee.AAT.BeaconMonitor
             {
                 _messageQueueBeaconMonitorState.Send(result == "On" ? "1" : "0");
             }
-#endif
         }
 
         private void ClearButtonClick(object sender, EventArgs e)

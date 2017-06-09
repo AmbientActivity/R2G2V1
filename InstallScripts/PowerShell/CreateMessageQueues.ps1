@@ -56,6 +56,13 @@ Try
     write-host "Creating Continuous Radio message queue..." -NoNewline
     CreateMessageQueue "Phidget-Continuous-Radio"
     write-host "done."
+
+    # Beaon Monitor Message Queues
+    write-host "Creating Beacon Monitor message queues..." -NoNewline
+    CreateMessageQueue "Beacon-Monitor"
+    CreateMessageQueue "Beacon-Monitor-Resident"
+    CreateMessageQueue "Beacon-Monitor-State"
+    write-host "done."
 }
 Catch
 {

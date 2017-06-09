@@ -25,6 +25,7 @@ $pathAdministator = "Web\Administrator\"
 $pathDisplayRelease = "UI\Display\"
 $pathDisplayDebug = "UI\Display\"
 $pathSimulator = "UI\Simulator\"
+$pathBeaconMonitor = "UI\BeaconMonitor\"
 
 # scheduled tasks
 $pathScheduledTasks = "ScheduledTasks\"
@@ -161,6 +162,16 @@ Try
     }
     New-Item -ItemType Directory -Force -Path $path | Out-Null
     Copy-Item C:\Users\$env:USERNAME\Source\Repos\R2G2V1\UI\Keebee.AAT.Simulator\bin\Release\* $path -recurse -Force
+
+    # beacon monitor
+    $path = $pathDeployments + $pathBeaconMonitor + $pathVersion
+    If(test-path $path)
+    {
+        Remove-Item $path -recurse -Force
+    }
+    New-Item -ItemType Directory -Force -Path $path | Out-Null
+    Copy-Item C:\Users\$env:USERNAME\Source\Repos\R2G2V1\UI\Keebee.AAT.BeaconMonitor\bin\Release\* $path -recurse -Force
+
     Write-Host "done.”
 
 

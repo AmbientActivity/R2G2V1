@@ -18,13 +18,13 @@ namespace Keebee.AAT.MessageQueuing
         VideoCapture = 9,
         ConfigSms = 10,
         ConfigPhidget = 11,
-        PhidgetContinuousRadio = 12
+        PhidgetContinuousRadio = 12,
+        BeaconMonitor = 13,
+        BeaconMonitorResident = 14,
+        BeaconMonitorState = 15
 #if DEBUG
-        , PhidgetMonitor = 13
-        , PhidgetMonitorState = 14
-        , BeaconMonitor = 15
-        , BeaconMonitorResident = 16,
-        BeaconMonitorState = 17
+        , PhidgetMonitor = 16
+        , PhidgetMonitorState = 17
 #endif
     }
 
@@ -53,14 +53,15 @@ namespace Keebee.AAT.MessageQueuing
         private const string QueueNameConfigSms = "Config-SMS";
         private const string QueueNameConfigPhidget = "Config-Phidget";
         private const string QueueNamePhidgetContinuousRadio = "Phidget-Continuous-Radio";
-#if DEBUG
-        private const string QueueNamePhidgetMonitor = "Phidget-Monitor";
-        private const string QueueNamePhidgetMonitorState = "Phidget-Monitor-State";
-
         private const string QueueNameBeaconMonitor = "Beacon-Monitor";
         private const string QueueNameBeaconMonitorResident = "Beacon-Monitor-Resident";
         private const string QueueNameBeaconMonitorState = "Beacon-Monitor-State";
+
+#if DEBUG
+        private const string QueueNamePhidgetMonitor = "Phidget-Monitor";
+        private const string QueueNamePhidgetMonitorState = "Phidget-Monitor-State";
 #endif
+
         private SystemEventLogger _systemEventLogger;
         public SystemEventLogger SystemEventLogger
         {
@@ -162,13 +163,6 @@ namespace Keebee.AAT.MessageQueuing
                 case MessageQueueType.PhidgetContinuousRadio:
                     literal = QueueNamePhidgetContinuousRadio;
                     break;
-#if DEBUG
-                case MessageQueueType.PhidgetMonitor:
-                    literal = QueueNamePhidgetMonitor;
-                    break;
-                case MessageQueueType.PhidgetMonitorState:
-                    literal = QueueNamePhidgetMonitorState;
-                    break;
                 case MessageQueueType.BeaconMonitor:
                     literal = QueueNameBeaconMonitor;
                     break;
@@ -177,6 +171,13 @@ namespace Keebee.AAT.MessageQueuing
                     break;
                 case MessageQueueType.BeaconMonitorState:
                     literal = QueueNameBeaconMonitorState;
+                    break;
+#if DEBUG
+                case MessageQueueType.PhidgetMonitor:
+                    literal = QueueNamePhidgetMonitor;
+                    break;
+                case MessageQueueType.PhidgetMonitorState:
+                    literal = QueueNamePhidgetMonitorState;
                     break;
 #endif
             }

@@ -19,11 +19,9 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
 {
     public partial class BluetoothBeaconWatcherService : ServiceBase
     {
-#if DEBUG
         private readonly CustomMessageQueue _messageQueueBeaconMonitor;
         private readonly CustomMessageQueue _messageQueueBeaconMonitorResident;
         private bool _beaconMonitorIsActive;
-#endif
 
         private const int BeaconReadInterval = 1000;   // 1 second
 
@@ -101,7 +99,6 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
             })
             { SystemEventLogger = _systemEventLogger };
 
-#if DEBUG
             _messageQueueBeaconMonitor = new CustomMessageQueue(new CustomMessageQueueArgs
             {
                 QueueName = MessageQueueType.BeaconMonitor
@@ -117,7 +114,6 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
                 QueueName = MessageQueueType.BeaconMonitorState,
                 MessageReceivedCallback = BeaconMonitorMessageReceived
             });
-#endif
 
             _beaconManager = new BeaconManager();
 
@@ -178,23 +174,22 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
 
                     _messageQueueBeaconWatcher.Send(GetSerializedResident(_publicResident));
                     _activeResidentId = PublicProfileSource.Id;
-#if DEBUG
+
                     if (_beaconMonitorIsActive)
                         _messageQueueBeaconMonitorResident.Send(GetSerializedBeaconWatcherMonitorResidentMessage(_activeResidentId, PublicProfileSource.Name, 0));
-#endif
                 }
 
                 else if (LoadResidents())
                 {
                     var closestBeacon = GetClosestKeebeeBeacon(_beaconManager.BluetoothBeacons);
                     var residentId = closestBeacon?.ResidentId ?? 0;
-#if DEBUG
+
                     if (_beaconMonitorIsActive)
                     {
                         var r = GetResident(residentId) ?? _publicResident;
                         _messageQueueBeaconMonitorResident.Send(GetSerializedBeaconWatcherMonitorResidentMessage(r.Id, r.Name, closestBeacon?.Rssi));
                     }
-#endif
+
                     if (residentId == _activeResidentId)
                     {
                         _timer.Start();
@@ -234,9 +229,9 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
                     if (DateTimeOffset.Now - beacon.Timestamp >= fiveSeconds)
                     {
                         _beaconManager.BluetoothBeacons.Remove(beacon);
-#if DEBUG
+
+                        if (!_beaconMonitorIsActive) continue;
                         _messageQueueBeaconMonitor.Send(GetSerializedBeaconWatcherMonitorMessage(_beaconManager.BluetoothBeacons));
-#endif
                     }
                 }
             }
@@ -285,10 +280,9 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
                 if (!_displayIsActive) return;
 
                 _beaconManager.ReceivedAdvertisement(eventArgs);
-#if DEBUG
+
                 if (!_beaconMonitorIsActive) return;
                 _messageQueueBeaconMonitor.Send(GetSerializedBeaconWatcherMonitorMessage(_beaconManager.BluetoothBeacons));
-#endif
             }
             catch (ArgumentException e)
             {
@@ -404,10 +398,10 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
                 if (_displayIsActive) return;
 
                 _messageQueueBeaconWatcher.Send(GetSerializedResident(_publicResident));
-#if DEBUG
-                _messageQueueBeaconMonitorResident.Send(GetSerializedResident(_publicResident));
-#endif
                 _activeResidentId = PublicProfileSource.Id;
+
+                if (!_beaconMonitorIsActive) return;
+                _messageQueueBeaconMonitorResident.Send(GetSerializedResident(_publicResident));
             }
             catch (Exception ex)
             {
@@ -505,7 +499,6 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
         }
         #endregion
 
-#if DEBUG
         private static string GetSerializedBeaconWatcherMonitorMessage(IEnumerable<Beacon.Beacon> beacons)
         {
             var message = beacons
@@ -577,7 +570,6 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
                 _systemEventLogger.WriteEntry($"BeaconMonitorMessageReceived: {ex.Message}", EventLogEntryType.Error);
             }
         }
-#endif
 
         protected override void OnStart(string[] args)
         {

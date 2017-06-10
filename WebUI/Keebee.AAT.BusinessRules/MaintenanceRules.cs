@@ -24,6 +24,10 @@ namespace Keebee.AAT.BusinessRules
             set { _systemEventLogger = value; }
         }
 
+        private const string ServiceNameStateMachine = "Keebee.AAT.StateMachineService";
+        private const string ServiceNameKeepIISAlive = "Keebee.AAT.KeepIISAliveService";
+        private const string ServiceNameBeaconWatcher = "Keebee.AAT.BluetoothBeaconWatcherService";
+
         public string RestartServices()
         {
             try
@@ -35,7 +39,7 @@ namespace Keebee.AAT.BusinessRules
                 {
                     service.Stop();
                     service.WaitForStatus(ServiceControllerStatus.Stopped);
-                    while (StateMachineIsInstalled()) { }
+                    while (IsInstalledStateMachine()) { }
                 }
 
                 // bluetooth beacon watcher
@@ -144,9 +148,9 @@ namespace Keebee.AAT.BusinessRules
                 msg = ServiceInstaller.Uninstall(exePathSms);
 
                 // wait for these to completely uninstall
-                while (StateMachineIsInstalled()) { }
+                while (IsInstalledStateMachine()) { }
 
-                while (KeepIISAliveIsInstalled()) { }
+                while (IsInstalledKeepIISAlive()) { }
 
                 // install
                 if (msg == null)
@@ -194,8 +198,8 @@ namespace Keebee.AAT.BusinessRules
 
                 msg = ServiceInstaller.Uninstall(exePathSms);
 
-                while (StateMachineIsInstalled()) { }
-                while (KeepIISAliveIsInstalled()) { }
+                while (IsInstalledStateMachine()) { }
+                while (IsInstalledKeepIISAlive()) { }
 
                 return msg;
             }
@@ -207,15 +211,55 @@ namespace Keebee.AAT.BusinessRules
             }
         }
 
-        private static bool StateMachineIsInstalled()
+        public string InstallBeaconService(string bluetoothBeaconWatcherPath)
         {
-            var processes = Process.GetProcessesByName("Keebee.AAT.StateMachineService");
+            var exePathBluetoothBeaconWatcher = $@"{bluetoothBeaconWatcherPath}\{ServiceName.BluetoothBeaconWatcherExe}";
+
+            try
+            {
+                var msg = ServiceInstaller.Install(exePathBluetoothBeaconWatcher);
+                return msg;
+            }
+
+            catch (Exception ex)
+            {
+                _systemEventLogger.WriteEntry($"InstallBeaconService: {ex.Message}", EventLogEntryType.Error);
+                return ex.Message;
+            }
+        }
+
+        public string UnInstallBeaconService(string bluetoothBeaconWatcherPath)
+        {
+            var exePathBluetoothBeaconWatcher = $@"{bluetoothBeaconWatcherPath}\{ServiceName.BluetoothBeaconWatcherExe}";
+
+            try
+            {
+                var msg = ServiceInstaller.Uninstall(exePathBluetoothBeaconWatcher);
+                return msg;
+            }
+
+            catch (Exception ex)
+            {
+                _systemEventLogger.WriteEntry($"UnInstallBeaconService: {ex.Message}", EventLogEntryType.Error);
+                return ex.Message;
+            }
+        }
+
+        public static bool IsInstalledBeaconService()
+        {
+            var processes = Process.GetProcessesByName(ServiceNameBeaconWatcher);
             return (processes.Any());
         }
 
-        private static bool KeepIISAliveIsInstalled()
+        private static bool IsInstalledStateMachine()
         {
-            var processes = Process.GetProcessesByName("Keebee.AAT.KeebIISAlive");
+            var processes = Process.GetProcessesByName(ServiceNameStateMachine);
+            return (processes.Any());
+        }
+
+        private static bool IsInstalledKeepIISAlive()
+        {
+            var processes = Process.GetProcessesByName(ServiceNameKeepIISAlive);
             return (processes.Any());
         }
 

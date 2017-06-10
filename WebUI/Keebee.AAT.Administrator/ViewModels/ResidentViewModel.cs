@@ -9,7 +9,6 @@ namespace Keebee.AAT.Administrator.ViewModels
         public int SelectedId { get; set; }
         public List<string> ErrorMessages { get; set; }
         public bool Success { get; set; }
-
         public string IdSearch { get; set; }
         public string FirstNameSearch { get; set; }
         public string LastNameSearch { get; set; }
@@ -31,16 +30,10 @@ namespace Keebee.AAT.Administrator.ViewModels
         public DateTime DateUpdated { get; set; }
     }
 
-    public class ResidentEditViewModel
+    public class ResidentEditViewModel : ResidentViewModel
     {
-        public int Id { get; set; }
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
-        public string Gender { get; set; }
         public SelectList Genders { get; set; }
-        public int GameDifficultyLevel { get; set; }
         public SelectList GameDifficultyLevels { get; set; }
-        public bool AllowVideoCapturing { get; set; }
     }
 
     public class SharedLibraryLinkViewModel

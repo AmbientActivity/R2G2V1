@@ -10,7 +10,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
 using System;
-using System.IO;
 
 namespace Keebee.AAT.Administrator.Controllers
 {
@@ -310,9 +309,9 @@ namespace Keebee.AAT.Administrator.Controllers
             return vm;
         }
 
-        private IEnumerable<PublicMediaFileViewModel> GetMediaFiles()
+        private IEnumerable<MediaFileViewModel> GetMediaFiles()
         {
-            var list = new List<PublicMediaFileViewModel>();
+            var list = new List<MediaFileViewModel>();
             var mediaResponseTypes = _publicMediaFilesClient.Get(isSystem: false).ToArray();
 
             var mediaPaths = mediaResponseTypes.SelectMany(x => x.Paths)
@@ -330,7 +329,7 @@ namespace Keebee.AAT.Administrator.Controllers
 
                     foreach (var file in files)
                     {
-                        var vm = new PublicMediaFileViewModel
+                        var vm = new MediaFileViewModel
                         {
                             Id = file.Id,
                             StreamId = file.StreamId,

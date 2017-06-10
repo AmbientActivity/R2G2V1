@@ -308,6 +308,7 @@
     <Compile Include="ViewModels\EventLogViewModel.cs" />
     <Compile Include="ViewModels\ImageViewerViewModel.cs" />
     <Compile Include="ViewModels\LoginViewModel.cs" />
+    <Compile Include="ViewModels\MaintenanceViewModel.cs" />
     <Compile Include="ViewModels\MediaFileViewModel.cs" />
     <Compile Include="ViewModels\PublicProfileViewModel.cs" />
     <Compile Include="ViewModels\ResidentViewModel.cs" />

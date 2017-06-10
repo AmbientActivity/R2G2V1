@@ -8,6 +8,7 @@ using System.Linq;
 using System.Web.Mvc;
 using System.Web.Script.Serialization;
 using System.Configuration;
+using Keebee.AAT.Administrator.ViewModels;
 
 namespace Keebee.AAT.Administrator.Controllers
 {
@@ -68,7 +69,10 @@ namespace Keebee.AAT.Administrator.Controllers
         [Authorize]
         public ActionResult Index()
         {
-            return View();
+            return View(new MaintenanceViewModel
+            {
+                IsActiveBeaconService = MaintenanceRules.IsInstalledBeaconService() ? 1 : 0
+            });
         }
 
         [Authorize]
@@ -165,6 +169,30 @@ namespace Keebee.AAT.Administrator.Controllers
             }
 
             return null;
+        }
+
+        [Authorize]
+        public string InstallBeaconService()
+        {
+            var bluetoothBeaconWatcherPath = ConfigurationManager.AppSettings["BluetoothBeaconWatcherServiceLocation"];
+
+            // install the beacon watcher service
+            var rules = new MaintenanceRules { EventLogger = _systemEventLogger };
+            var msg = rules.InstallBeaconService(bluetoothBeaconWatcherPath);
+
+            return msg;
+        }
+
+        [Authorize]
+        public string UninstallBeaconService()
+        {
+            var bluetoothBeaconWatcherPath = ConfigurationManager.AppSettings["BluetoothBeaconWatcherServiceLocation"];
+
+            // uninstall the beacon watcher service
+            var rules = new MaintenanceRules { EventLogger = _systemEventLogger };
+            var msg = rules.UnInstallBeaconService(bluetoothBeaconWatcherPath);
+
+            return msg;
         }
 
         [Authorize]

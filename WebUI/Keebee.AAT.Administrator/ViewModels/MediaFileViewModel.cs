@@ -14,26 +14,12 @@ namespace Keebee.AAT.Administrator.ViewModels
     {
         public int Id { get; set; }
         public Guid StreamId { get; set; }
-        public int ResidentId { get; set; }
         public string Filename { get; set; }
         public string FileType { get; set; }
         public int FileSize { get; set; }
         public string Path { get; set; }
         public int MediaPathTypeId { get; set; }
         public bool IsLinked { get; set; }
-    }
-
-    public class PublicMediaFileViewModel
-    {
-        public int Id { get; set; }
-        public Guid StreamId { get; set; }
-        public int ResponseTypeId { get; set; }
-        public string Filename { get; set; }
-        public string FileType { get; set; }
-        public int FileSize { get; set; }
-        public bool IsLinked { get; set; }
-        public string Path { get; set; }
-        public int MediaPathTypeId { get; set; }
     }
 
     public class SharedLibraryFileViewModel

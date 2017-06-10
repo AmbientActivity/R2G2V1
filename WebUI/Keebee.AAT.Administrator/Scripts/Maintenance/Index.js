@@ -8,12 +8,30 @@
 ; (function ($) {
 
     maintenance.index = {
-        init: function () {
+        init: function (values) {
+
+            var config = {
+                isActiveBeaconService: 0
+            }
+
+            $.extend(config, values);
+
             var cmdUninstall = $("#uninstall");
             var cmdReinstall = $("#reinstall");
             var cmdRestart = $("#restart");
             var cmdKillDisplay = $("#kill-display");
             var cmdClearServiceLogs = $("#clear-service-logs");
+            var cmdInstallBeaconService = $("#install-beacon-service");
+
+            if (config.isActiveBeaconService === 1) {
+                cmdInstallBeaconService.html("Uninstall Beacons");
+                cmdInstallBeaconService.removeClass("btn-success");
+                cmdInstallBeaconService.addClass("btn-danger");
+            } else {
+                cmdInstallBeaconService.html("Install Beacons");
+                cmdInstallBeaconService.removeClass("btn-danger");
+                cmdInstallBeaconService.addClass("btn-success");
+            }
 
             cmdRestart.click(function () {
                 BootstrapDialog.show({
@@ -78,6 +96,60 @@
                             action: function (dialog) {
                                 dialog.close();
                                 clearServiceLogs();
+                            }
+                        }
+                    ]
+                });
+            });
+
+            cmdInstallBeaconService.click(function () {
+                var message;
+                var actionName;
+                var inProgressDesc;
+                var completedDesc;
+                var buttonText;
+                var cssClassNew;
+                var cssClassOld;
+
+                if (config.isActiveBeaconService === 0) {
+                    message = "Install Beacon Service?";
+                    actionName = "InstallBeaconService";
+                    inProgressDesc = "Installing Beacon Service...";
+                    completedDesc = "Beacon Service installed successfully";
+                    buttonText = "Uninstall Beacons";
+                    config.isActiveBeaconService = 1;
+                    cssClassNew = "btn-danger";
+                    cssClassOld = "btn-success";
+                } else {
+                    message = "Uninstall Beacon Service?";
+                    actionName = "UninstallBeaconService";
+                    inProgressDesc = "Uninstalling Beacon Service...";
+                    completedDesc = "Beacon Service uninstalled successfully";
+                    buttonText = "Install Beacons";
+                    config.isActiveBeaconService = 0;
+                    cssClassNew = "btn-success";
+                    cssClassOld = "btn-danger";
+                }
+
+                BootstrapDialog.show({
+                    title: "Service Utilities",
+                    message: message,
+                    closable: false,
+                    buttons: [
+                        {
+                            label: "Cancel",
+                            action: function (dialog) {
+                                dialog.close();
+                            }
+                        }, {
+                            label: "OK",
+                            cssClass: "btn-primary",
+                            action: function (dialog) {
+                                dialog.close();
+                                execute(actionName, inProgressDesc, completedDesc);
+                                cmdInstallBeaconService.html(buttonText);
+                                cmdInstallBeaconService.removeClass(cssClassOld);
+                                cmdInstallBeaconService.addClass(cssClassNew);
                             }
                         }
                     ]
@@ -155,8 +227,8 @@
                                         buttons: [
                                         {
                                             label: "Close",
-                                            action: function (dialog) {
-                                                dialog.close();
+                                            action: function (dlg) {
+                                                dlg.close();
                                             }
                                         }]
                                     });
@@ -168,8 +240,8 @@
                                         message: "The following error occured:\n" + data,
                                         buttons: [{
                                             label: "Close",
-                                            action: function (dialog) {
-                                                dialog.close();
+                                            action: function (dlg) {
+                                                dlg.close();
                                             }
                                         }]
                                     });
@@ -184,8 +256,8 @@
                                     message: "The following error occured:\n" + data,
                                     buttons: [{
                                         label: "Close",
-                                        action: function (dialog) {
-                                            dialog.close();
+                                        action: function (dlg) {
+                                            dlg.close();
                                         }
                                     }]
                                 });

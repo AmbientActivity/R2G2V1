@@ -1,4 +1,5 @@
-﻿
+﻿@model Keebee.AAT.Administrator.ViewModels.MaintenanceViewModel
+
 @{
     ViewBag.Title = "Maintenance Utilities";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -7,7 +8,7 @@
 
 <script type="text/javascript">
     $(document).ready(function () {
-        maintenance.index.init();
+        maintenance.index.init({ isActiveBeaconService: @Model.IsActiveBeaconService });
     });
 </script>
 
@@ -22,6 +23,7 @@
             <button id="restart" class="btn btn-primary btn-md maintenance-button">Restart Services</button>
             <button id="clear-service-logs" class="btn btn-primary btn-md maintenance-button">Clear Service Logs</button>
             <button id="kill-display" class="btn btn-primary btn-md maintenance-button">Kill Display</button>
+            <button id="install-beacon-service" class="btn btn-danger btn-md maintenance-button">Uninstall Beacons</button>
             @*<button id="reinstall" class="btn btn-primary btn-md">Reinstall Services</button>
             <button id="uninstall" class="btn btn-primary btn-md">Uninstall Services</button>*@
         </div>

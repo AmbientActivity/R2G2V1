@@ -32,13 +32,13 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ImageViewer));
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.slideViewerFlash1 = new Keebee.AAT.Display.UserControls.SlideViewer();
             this.lblAutoMode = new System.Windows.Forms.Label();
             this.btnPlay = new MetroFramework.Controls.MetroButton();
-            this.btnNext = new MetroFramework.Controls.MetroButton();
-            this.btnPrevious = new MetroFramework.Controls.MetroButton();
             this.btnClose = new MetroFramework.Controls.MetroButton();
+            this.btnPrevious = new MetroFramework.Controls.MetroButton();
+            this.btnNext = new MetroFramework.Controls.MetroButton();
             this.imageList1 = new System.Windows.Forms.ImageList(this.components);
-            this.slideViewerFlash1 = new Keebee.AAT.Display.UserControls.SlideViewer();
             this.tableLayoutPanel1.SuspendLayout();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
@@ -74,10 +74,21 @@
             this.tableLayoutPanel1.SetColumnSpan(this.panel1, 6);
             this.panel1.Controls.Add(this.slideViewerFlash1);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel1.Location = new System.Drawing.Point(3, 3);
+            this.panel1.Location = new System.Drawing.Point(0, 0);
+            this.panel1.Margin = new System.Windows.Forms.Padding(0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(625, 335);
+            this.panel1.Size = new System.Drawing.Size(631, 341);
             this.panel1.TabIndex = 12;
+            // 
+            // slideViewerFlash1
+            // 
+            this.slideViewerFlash1.BackColor = System.Drawing.Color.Yellow;
+            this.slideViewerFlash1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.slideViewerFlash1.Location = new System.Drawing.Point(0, 0);
+            this.slideViewerFlash1.Name = "slideViewerFlash1";
+            this.slideViewerFlash1.Size = new System.Drawing.Size(629, 339);
+            this.slideViewerFlash1.TabIndex = 1;
+            this.slideViewerFlash1.Click += new System.EventHandler(this.PreviousButtonClick);
             // 
             // lblAutoMode
             // 
@@ -101,16 +112,15 @@
             this.btnPlay.UseSelectable = true;
             this.btnPlay.Click += new System.EventHandler(this.PlayButtonClick);
             // 
-            // btnNext
+            // btnClose
             // 
-            this.btnNext.BackgroundImage = global::Keebee.AAT.Display.Properties.Resources.arrow_right;
-            this.btnNext.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
-            this.btnNext.Location = new System.Drawing.Point(317, 344);
-            this.btnNext.Name = "btnNext";
-            this.btnNext.Size = new System.Drawing.Size(150, 64);
-            this.btnNext.TabIndex = 19;
-            this.btnNext.UseSelectable = true;
-            this.btnNext.Click += new System.EventHandler(this.NextButtonClick);
+            this.btnClose.BackgroundImage = global::Keebee.AAT.Display.Properties.Resources.close;
+            this.btnClose.Location = new System.Drawing.Point(561, 344);
+            this.btnClose.Name = "btnClose";
+            this.btnClose.Size = new System.Drawing.Size(66, 65);
+            this.btnClose.TabIndex = 20;
+            this.btnClose.UseSelectable = true;
+            this.btnClose.Click += new System.EventHandler(this.CloseButtonClick);
             // 
             // btnPrevious
             // 
@@ -123,15 +133,16 @@
             this.btnPrevious.UseSelectable = true;
             this.btnPrevious.Click += new System.EventHandler(this.PreviousButtonClick);
             // 
-            // btnClose
+            // btnNext
             // 
-            this.btnClose.BackgroundImage = global::Keebee.AAT.Display.Properties.Resources.close;
-            this.btnClose.Location = new System.Drawing.Point(561, 344);
-            this.btnClose.Name = "btnClose";
-            this.btnClose.Size = new System.Drawing.Size(66, 65);
-            this.btnClose.TabIndex = 20;
-            this.btnClose.UseSelectable = true;
-            this.btnClose.Click += new System.EventHandler(this.CloseButtonClick);
+            this.btnNext.BackgroundImage = global::Keebee.AAT.Display.Properties.Resources.arrow_right;
+            this.btnNext.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
+            this.btnNext.Location = new System.Drawing.Point(317, 344);
+            this.btnNext.Name = "btnNext";
+            this.btnNext.Size = new System.Drawing.Size(150, 64);
+            this.btnNext.TabIndex = 19;
+            this.btnNext.UseSelectable = true;
+            this.btnNext.Click += new System.EventHandler(this.NextButtonClick);
             // 
             // imageList1
             // 
@@ -139,16 +150,6 @@
             this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
             this.imageList1.Images.SetKeyName(0, "play_active.png");
             this.imageList1.Images.SetKeyName(1, "pause.png");
-            // 
-            // slideViewerFlash1
-            // 
-            this.slideViewerFlash1.BackColor = System.Drawing.Color.Yellow;
-            this.slideViewerFlash1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.slideViewerFlash1.Location = new System.Drawing.Point(0, 0);
-            this.slideViewerFlash1.Name = "slideViewerFlash1";
-            this.slideViewerFlash1.Size = new System.Drawing.Size(623, 333);
-            this.slideViewerFlash1.TabIndex = 1;
-            this.slideViewerFlash1.Click += new System.EventHandler(this.PreviousButtonClick);
             // 
             // ImageViewer
             // 

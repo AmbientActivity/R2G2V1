@@ -50,11 +50,11 @@ namespace Keebee.AAT.Display.Caregiver
             this.lvHomeMovies = new Keebee.AAT.Display.Caregiver.CustomControls.ListViewLarge();
             this.tabImagesPersonal = new System.Windows.Forms.TabPage();
             this.lvImagesPersonal = new Keebee.AAT.Display.Caregiver.CustomControls.ListViewLarge();
-            this.btnClose = new System.Windows.Forms.Button();
             this.cboResident = new Keebee.AAT.Display.Caregiver.CustomControls.ComboBoxLarge();
             this.lblMediaSource = new System.Windows.Forms.Label();
             this.musicPlayer = new AxWMPLib.AxWindowsMediaPlayer();
             this.radioShowPlayer = new AxWMPLib.AxWindowsMediaPlayer();
+            this.btnClose = new MetroFramework.Controls.MetroButton();
             this.tableLayoutPanel1.SuspendLayout();
             this.tbMedia.SuspendLayout();
             this.tabImagesGeneral.SuspendLayout();
@@ -91,8 +91,8 @@ namespace Keebee.AAT.Display.Caregiver
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 526F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 73F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tableLayoutPanel1.Controls.Add(this.tbMedia, 0, 1);
             this.tableLayoutPanel1.Controls.Add(this.btnClose, 2, 0);
+            this.tableLayoutPanel1.Controls.Add(this.tbMedia, 0, 1);
             this.tableLayoutPanel1.Controls.Add(this.cboResident, 1, 0);
             this.tableLayoutPanel1.Controls.Add(this.lblMediaSource, 0, 0);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -319,18 +319,6 @@ namespace Keebee.AAT.Display.Caregiver
             this.lvImagesPersonal.ColumnWidthChanging += new System.Windows.Forms.ColumnWidthChangingEventHandler(this.ImagesPersonalListViewColumnWidthChanging);
             this.lvImagesPersonal.ItemClicked += new System.EventHandler(this.ImagesPersonalListViewClick);
             // 
-            // btnClose
-            // 
-            this.btnClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnClose.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnClose.Image = ((System.Drawing.Image)(resources.GetObject("btnClose.Image")));
-            this.btnClose.Location = new System.Drawing.Point(627, 3);
-            this.btnClose.Name = "btnClose";
-            this.btnClose.Size = new System.Drawing.Size(64, 64);
-            this.btnClose.TabIndex = 6;
-            this.btnClose.UseVisualStyleBackColor = true;
-            this.btnClose.Click += new System.EventHandler(this.CloseButtonClick);
-            // 
             // cboResident
             // 
             this.cboResident.Location = new System.Drawing.Point(98, 15);
@@ -373,6 +361,16 @@ namespace Keebee.AAT.Display.Caregiver
             this.radioShowPlayer.TabIndex = 8;
             this.radioShowPlayer.Visible = false;
             this.radioShowPlayer.PlayStateChange += new AxWMPLib._WMPOCXEvents_PlayStateChangeEventHandler(this.PlayStateChangeRadioShows);
+            // 
+            // btnClose
+            // 
+            this.btnClose.BackgroundImage = global::Keebee.AAT.Display.Properties.Resources.close;
+            this.btnClose.Location = new System.Drawing.Point(624, 3);
+            this.btnClose.Name = "btnClose";
+            this.btnClose.Size = new System.Drawing.Size(66, 65);
+            this.btnClose.TabIndex = 21;
+            this.btnClose.UseSelectable = true;
+            this.btnClose.Click += new System.EventHandler(this.CloseButtonClick);
             // 
             // CaregiverInterface
             // 
@@ -422,7 +420,6 @@ namespace Keebee.AAT.Display.Caregiver
         private CustomControls.ListViewLarge lvActivities;
         private TabPage tabImagesPersonal;
         private CustomControls.ListViewLarge lvImagesPersonal;
-        private Button btnClose;
         private CustomControls.ComboBoxLarge cboResident;
         private Label lblMediaSource;
         private TabPage tabRadioShows;
@@ -430,5 +427,6 @@ namespace Keebee.AAT.Display.Caregiver
         private CustomControls.ListViewLarge lvHomeMovies;
         private CustomControls.ListViewLarge lvRadioShows;
         private AxWMPLib.AxWindowsMediaPlayer radioShowPlayer;
+        private MetroFramework.Controls.MetroButton btnClose;
     }
 }

@@ -93,7 +93,7 @@ namespace Keebee.AAT.Display
         private bool _isPaintingActivityTimeoutExpired;
 
         // caregiver interface
-        private CaregiverInterface2 _caregiverInterface;
+        private CaregiverInterface _caregiverInterface;
 
         // custom event loggers
         private readonly InteractiveActivityEventLogger _interactiveActivityEventLogger;
@@ -763,7 +763,7 @@ namespace Keebee.AAT.Display
                 var mediaResponseTypes = _publicMediaFilesClient.Get();
                 var config = _configsClient.GetActiveDetails();
 
-                _caregiverInterface = new CaregiverInterface2
+                _caregiverInterface = new CaregiverInterface
                 {
                     EventLogger = _systemEventLogger,
                     Config = config,

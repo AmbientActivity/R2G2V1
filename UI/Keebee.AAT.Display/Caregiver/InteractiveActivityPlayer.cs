@@ -125,12 +125,14 @@ namespace Keebee.AAT.Display.Caregiver
                     matchingGame1.Show();
                     matchingGame1.SystemEventLogger = _systemEventLogger;
                     matchingGame1.Play(_shapes, _sounds, _difficultyLevel, false, _isActiveEventLog, false);
+                    matchingGame1.Select();
                     break;
 
                 case InteractiveActivityTypeId.PaintingActivity:
                     paintingActivity1.Show();
                     paintingActivity1.SystemEventLogger = _systemEventLogger;
                     paintingActivity1.Play(false, _isActiveEventLog, false);
+                    paintingActivity1.Select();
                     break;
             }
         }

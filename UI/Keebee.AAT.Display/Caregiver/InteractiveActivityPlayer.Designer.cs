@@ -28,10 +28,26 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.btnClose = new MetroFramework.Controls.MetroButton();
             this.paintingActivity1 = new Keebee.AAT.Display.UserControls.PaintingActivity();
             this.matchingGame1 = new Keebee.AAT.Display.UserControls.MatchingGame();
-            this.btnClose = new MetroFramework.Controls.MetroButton();
             this.SuspendLayout();
+            // 
+            // btnClose
+            // 
+            this.btnClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnClose.BackColor = System.Drawing.SystemColors.ControlDarkDark;
+            this.btnClose.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
+            this.btnClose.Location = new System.Drawing.Point(438, -2);
+            this.btnClose.Margin = new System.Windows.Forms.Padding(0);
+            this.btnClose.Name = "btnClose";
+            this.btnClose.Size = new System.Drawing.Size(61, 37);
+            this.btnClose.TabIndex = 2;
+            this.btnClose.Text = "Exit";
+            this.btnClose.UseCustomBackColor = true;
+            this.btnClose.UseCustomForeColor = true;
+            this.btnClose.UseSelectable = true;
+            this.btnClose.Click += new System.EventHandler(this.CloseButtonClick);
             // 
             // paintingActivity1
             // 
@@ -48,17 +64,6 @@
             this.matchingGame1.Name = "matchingGame1";
             this.matchingGame1.Size = new System.Drawing.Size(118, 54);
             this.matchingGame1.TabIndex = 0;
-            // 
-            // btnClose
-            // 
-            this.btnClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnClose.Location = new System.Drawing.Point(438, -2);
-            this.btnClose.Name = "btnClose";
-            this.btnClose.Size = new System.Drawing.Size(60, 37);
-            this.btnClose.TabIndex = 2;
-            this.btnClose.Text = "Exit";
-            this.btnClose.UseSelectable = true;
-            this.btnClose.Click += new System.EventHandler(this.CloseButtonClick);
             // 
             // InteractiveActivityPlayer
             // 

@@ -16,7 +16,6 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Windows.Forms;
 using System.Linq;
-using WMPLib;
 
 namespace Keebee.AAT.Display
 {
@@ -94,7 +93,7 @@ namespace Keebee.AAT.Display
         private bool _isPaintingActivityTimeoutExpired;
 
         // caregiver interface
-        private CaregiverInterface _caregiverInterface;
+        private CaregiverInterface2 _caregiverInterface;
 
         // custom event loggers
         private readonly InteractiveActivityEventLogger _interactiveActivityEventLogger;
@@ -764,7 +763,7 @@ namespace Keebee.AAT.Display
                 var mediaResponseTypes = _publicMediaFilesClient.Get();
                 var config = _configsClient.GetActiveDetails();
 
-                _caregiverInterface = new CaregiverInterface
+                _caregiverInterface = new CaregiverInterface2
                 {
                     EventLogger = _systemEventLogger,
                     Config = config,

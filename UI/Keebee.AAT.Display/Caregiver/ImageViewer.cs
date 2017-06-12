@@ -19,6 +19,8 @@ namespace Keebee.AAT.Display.Caregiver
             set { _images = value; }
         }
 
+        private bool _isPlaying = false;
+
 #if DEBUG
         private const int AutoModeLabelFontSize = 8;
 
@@ -85,16 +87,18 @@ namespace Keebee.AAT.Display.Caregiver
 
         private void PlayButtonClick(object sender, EventArgs e)
         {
-            if (btnPlay.ImageIndex == 0)
+            if (!_isPlaying)
             {
                 slideViewerFlash1.ShowNext();
                 slideViewerFlash1.StartTimer();
-                btnPlay.ImageIndex = 1;
+                btnPlay.BackgroundImage = imageList1.Images[1];
+                _isPlaying = true;
             }
             else
             {
                 slideViewerFlash1.StopTimer();
-                btnPlay.ImageIndex = 0;
+                btnPlay.BackgroundImage = imageList1.Images[0];
+                _isPlaying = false;
             }
         }
 

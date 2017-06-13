@@ -157,7 +157,7 @@ package
 			urlSoundTryAgain = new URLRequest(tryAgainPath);
 			urlSoundLetsTryAgain = new URLRequest(letsTryAgainPath);
 			urlSoundLetsTrySomethingDifferent = new URLRequest(letsTrySomethingDifferentPath);
-
+			
 			soundCorrect = new Sound();
 			soundGoodJob = new Sound();
 			soundWellDone = new Sound();
@@ -195,7 +195,7 @@ package
 			clickedImagesPairs = new Array();
 			childImagesPairs = new Array();
 			clickedImagesPairsInstance = new Array();
-			
+
 			if (enableGameTimeout)
 				gameTimeout = setTimeout(timedFunctionGame, timeoutValue);
 		}

@@ -13,7 +13,6 @@ using System.Linq;
 using System.Web.Mvc;
 using System;
 using System.Web.Script.Serialization;
-using Keebee.AAT.BusinessRules.Shared;
 
 namespace Keebee.AAT.Administrator.Controllers
 {
@@ -140,11 +139,15 @@ namespace Keebee.AAT.Administrator.Controllers
 
                 residentList = GetResidentList();
 
-                success = (errormessage.Length == 0);    
+                success = (errormessage.Length == 0);
                 if (success)
-                    // alert the bluetooth beacon watcher to reload its residents
-                    _messageQueueBluetoothBeaconWatcherReload.Send(CreateMessageBodyFromResidents(residentList));
-
+                {
+                    if (ServiceUtilities.IsInstalled(ServiceUtilities.ServiceType.BluetoothBeaconWatcher))
+                    {
+                        // alert the bluetooth beacon watcher to reload its residents
+                        _messageQueueBluetoothBeaconWatcherReload.Send(CreateMessageBodyFromResidents(residentList));
+                    }
+                }
             }
             catch (Exception ex)
             {
@@ -236,7 +239,7 @@ namespace Keebee.AAT.Administrator.Controllers
             return list;
         }
 
-        private void UpdateResident(ResidentEditViewModel residentDetail)
+        private void UpdateResident(ResidentViewModel residentDetail)
         {
             var r = new ResidentEdit
             {
@@ -250,7 +253,7 @@ namespace Keebee.AAT.Administrator.Controllers
             _residentsClient.Patch(residentDetail.Id, r);
         }
 
-        private int AddResident(ResidentEditViewModel residentDetail)
+        private int AddResident(ResidentViewModel residentDetail)
         {
             var r = new ResidentEdit
             {

@@ -8,7 +8,6 @@ using System.Linq;
 using System.Web.Mvc;
 using System.Web.Script.Serialization;
 using System.Configuration;
-using Keebee.AAT.BusinessRules.Shared;
 
 namespace Keebee.AAT.Administrator.Controllers
 {

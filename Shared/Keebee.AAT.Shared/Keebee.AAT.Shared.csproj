@@ -42,8 +42,9 @@
   <ItemGroup>
     <Compile Include="Constants.cs" />
     <Compile Include="MessageModels.cs" />
-    <Compile Include="PhidgetUtil.cs" />
+    <Compile Include="PhidgetUtility.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ServiceUtilities.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

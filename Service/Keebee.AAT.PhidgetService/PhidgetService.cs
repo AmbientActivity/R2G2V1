@@ -266,7 +266,7 @@ namespace Keebee.AAT.PhidgetService
                     _messageQueuePhidgetContinuousRadio.Send($"{sensorValue}");
 
                 // send step value
-                var stepValue = PhidgetUtil.GetSensorStepValue(sensorValue);
+                var stepValue = PhidgetUtility.GetSensorStepValue(sensorValue);
                 if (stepValue > 0)
                 {
                     if (configDetail.ResponseTypeId != ResponseTypeId.Radio)

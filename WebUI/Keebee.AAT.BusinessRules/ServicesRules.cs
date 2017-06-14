@@ -1,5 +1,5 @@
 ﻿using Keebee.AAT.SystemEventLogging;
-using Keebee.AAT.BusinessRules.Shared;
+using Keebee.AAT.Shared;
 using System.Diagnostics;
 using System;
 

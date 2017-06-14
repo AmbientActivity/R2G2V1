@@ -22,7 +22,7 @@ Try
     # Video Capture Message Queue
     write-host "Removing Video Capture message queue..." -NoNewline
     RemoveMessageQueue "Video-Capture"
-    RemoveMessageQueue "Video-Capture-Sms"
+    RemoveMessageQueue "Video-Capture-State"
     write-host "done."
 
     # Bluetooth Beacon Watcher Message Queues

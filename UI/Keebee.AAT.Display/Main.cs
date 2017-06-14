@@ -791,8 +791,13 @@ namespace Keebee.AAT.Display
                 // alert the State Machine Service that the display is no longer active or idle
                 _messageQueueDisplaySms.Send(CreateDisplayMessageBody(false));
                 _messageQueueDisplayPhidget.Send(CreateDisplayMessageBody(false));
-                _messageQueueDisplayVideoCapture.Send(CreateDisplayMessageBody(false));
-                _messageQueueDisplayBluetoothBeaconWatcher.Send(CreateDisplayMessageBody(false));
+
+                if (ServiceUtilities.IsInstalled(ServiceUtilities.ServiceType.BluetoothBeaconWatcher))
+                    _messageQueueDisplayBluetoothBeaconWatcher.Send(CreateDisplayMessageBody(false));
+
+                if (ServiceUtilities.IsInstalled(ServiceUtilities.ServiceType.VideoCapture))
+                    _messageQueueDisplayVideoCapture.Send(CreateDisplayMessageBody(false));
+
                 Application.Exit();
             }
         }
@@ -1006,8 +1011,12 @@ namespace Keebee.AAT.Display
                 // inform the services that the display is now active
                 _messageQueueDisplaySms.Send(CreateDisplayMessageBody(true));
                 _messageQueueDisplayPhidget.Send(CreateDisplayMessageBody(true));
-                _messageQueueDisplayVideoCapture.Send(CreateDisplayMessageBody(true));
-                _messageQueueDisplayBluetoothBeaconWatcher.Send(CreateDisplayMessageBody(true));
+
+                if (ServiceUtilities.IsInstalled(ServiceUtilities.ServiceType.BluetoothBeaconWatcher))
+                    _messageQueueDisplayBluetoothBeaconWatcher.Send(CreateDisplayMessageBody(true));
+
+                if (ServiceUtilities.IsInstalled(ServiceUtilities.ServiceType.VideoCapture))
+                    _messageQueueDisplayVideoCapture.Send(CreateDisplayMessageBody(true));
 
                 _activeResident = new ResidentMessage
                 {

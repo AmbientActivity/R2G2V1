@@ -20,7 +20,7 @@ namespace Keebee.AAT.VideoCaptureService
         private readonly Timer _timer;
 
         // message queue sender
-        private readonly CustomMessageQueue _messageQueueVideoCaptureSms;
+        private readonly CustomMessageQueue _messageQueueVideoCaptureState;
 
         // config settings
         private readonly VideoEncodingQuality _encodingQuality;
@@ -42,9 +42,9 @@ namespace Keebee.AAT.VideoCaptureService
             _systemEventLogger = new SystemEventLogger(SystemEventLogType.VideoCaptureService);
 
             // message queue sender
-            _messageQueueVideoCaptureSms = new CustomMessageQueue(new CustomMessageQueueArgs
+            _messageQueueVideoCaptureState = new CustomMessageQueue(new CustomMessageQueueArgs
             {
-                QueueName = MessageQueueType.VideoCaptureSms
+                QueueName = MessageQueueType.VideoCaptureState
             })
             { SystemEventLogger = _systemEventLogger };
 
@@ -220,13 +220,13 @@ namespace Keebee.AAT.VideoCaptureService
         protected override void OnStart(string[] args)
         {
             _systemEventLogger.WriteEntry("In OnStart");
-            _messageQueueVideoCaptureSms.Send("1");
+            _messageQueueVideoCaptureState.Send("1");
         }
 
         protected override void OnStop()
         {
             _systemEventLogger.WriteEntry("In OnStop");
-            _messageQueueVideoCaptureSms.Send("0");
+            _messageQueueVideoCaptureState.Send("0");
             _timer.Stop();
             _timer.Dispose();
         }

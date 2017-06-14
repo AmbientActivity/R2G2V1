@@ -100,8 +100,8 @@ namespace Keebee.AAT.StateMachineService
 
             var q5 = new CustomMessageQueue(new CustomMessageQueueArgs
             {
-                QueueName = MessageQueueType.VideoCaptureSms,
-                MessageReceivedCallback = MessageReceivedVideoCaptureSms
+                QueueName = MessageQueueType.VideoCaptureState,
+                MessageReceivedCallback = MessageReceivedVideoCaptureState
             })
             { SystemEventLogger = _systemEventLogger };
         }
@@ -248,7 +248,7 @@ namespace Keebee.AAT.StateMachineService
             }
         }
 
-        private void MessageReceivedVideoCaptureSms(object source, MessageEventArgs e)
+        private void MessageReceivedVideoCaptureState(object source, MessageEventArgs e)
         {
             try
             {
@@ -256,7 +256,7 @@ namespace Keebee.AAT.StateMachineService
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"MessageReceivedVideoCaptureSms{Environment.NewLine}{ex.Message}", EventLogEntryType.Error);
+                _systemEventLogger.WriteEntry($"MessageReceivedVideoCaptureState{Environment.NewLine}{ex.Message}", EventLogEntryType.Error);
             }
         }
 

@@ -1,6 +1,6 @@
 ﻿namespace Keebee.AAT.Shared
 {
-    public static class PhidgetUtil
+    public static class PhidgetUtility
     {
         private const int StepTolerance = 70;
         public static int GetSensorStepValue(int val)

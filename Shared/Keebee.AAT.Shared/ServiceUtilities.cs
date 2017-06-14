@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Linq;
-using Keebee.AAT.Shared;
 
-namespace Keebee.AAT.BusinessRules.Shared
+namespace Keebee.AAT.Shared
 {
     public class ServiceUtilities
     {
@@ -64,7 +63,7 @@ namespace Keebee.AAT.BusinessRules.Shared
                 default:
                     return string.Empty;
             }
-            
+
         }
     }
 }

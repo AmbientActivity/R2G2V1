@@ -25,7 +25,7 @@ Try
     # Video Capture Message Queue
     write-host "Creating Video Capture message queue..." -NoNewline
     CreateMessageQueue "Video-Capture"
-    CreateMessageQueue "Video-Capture-Sms"
+    CreateMessageQueue "Video-Capture-State"
     write-host "done."
 
     # Bluetooth Beacon Watcher Message Queues

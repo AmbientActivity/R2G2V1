@@ -1,7 +1,6 @@
 ﻿using Keebee.AAT.SystemEventLogging;
 using Keebee.AAT.Shared;
 using Keebee.AAT.MessageQueuing;
-using Keebee.AAT.BusinessRules.Shared;
 using System;
 using System.Diagnostics;
 using System.ServiceProcess;

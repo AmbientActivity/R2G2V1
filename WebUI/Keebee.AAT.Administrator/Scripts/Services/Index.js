@@ -35,10 +35,11 @@
                             cssClass: "btn-primary",
                             action: function (dialog) {
                                 dialog.close();
-                                utilities.service.execute(
+                                utilities.job.execute(
                                 {
                                     controller: "Services",
                                     action: "SaveSettings",
+                                    title: "Service Activation/Deactivation",
                                     waitMessage: "Saving settings...",
                                     verbage: "Settings saved successfully",
                                     params: {

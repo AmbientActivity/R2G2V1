@@ -1,13 +1,13 @@
 ﻿/*!
  * 1.0 Keebee AAT Copyright © 2015
- * Utilities/Service.js
+ * Utilities/JobExecution.js
  * Author: John Charlton
  * Date: 2017-06
  */
 
 ; (function ($) {
 
-    utilities.service = {
+    utilities.job = {
         execute: function (options) {
             var config = {
                 controller: "",

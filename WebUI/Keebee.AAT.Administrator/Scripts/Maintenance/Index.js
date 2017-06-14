@@ -31,7 +31,7 @@
                             cssClass: "btn-primary",
                             action: function (dialog) {
                                 dialog.close();
-                                utilities.service.execute(
+                                utilities.job.execute(
                                 {
                                     controller: "Maintenance",
                                     action: "RestartServices",
@@ -108,7 +108,7 @@
                             cssClass: "btn-primary",
                             action: function(dialog) {
                                 dialog.close();
-                                utilities.service.execute(
+                                utilities.job.execute(
                                 {
                                     controller: "Maintenance",
                                     action: "ReinstallServices",
@@ -138,7 +138,7 @@
                             cssClass: "btn-primary",
                             action: function (dialog) {
                                 dialog.close();
-                                utilities.service.execute(
+                                utilities.job.execute(
                                 {
                                     controller: "Maintenance",
                                     action: "UninstallServices",

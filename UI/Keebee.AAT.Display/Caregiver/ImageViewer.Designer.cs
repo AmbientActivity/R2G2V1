@@ -35,10 +35,10 @@
             this.btnNext = new System.Windows.Forms.Button();
             this.btnPrevious = new System.Windows.Forms.Button();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.slideViewerFlash1 = new Keebee.AAT.Display.UserControls.SlideViewer();
             this.btnPlay = new System.Windows.Forms.Button();
             this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this.lblAutoMode = new System.Windows.Forms.Label();
-            this.slideViewerFlash1 = new Keebee.AAT.Display.UserControls.SlideViewer();
             this.tableLayoutPanel1.SuspendLayout();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
@@ -105,14 +105,23 @@
             // 
             // panel1
             // 
-            this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.tableLayoutPanel1.SetColumnSpan(this.panel1, 6);
             this.panel1.Controls.Add(this.slideViewerFlash1);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel1.Location = new System.Drawing.Point(3, 3);
+            this.panel1.Location = new System.Drawing.Point(0, 0);
+            this.panel1.Margin = new System.Windows.Forms.Padding(0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(625, 335);
+            this.panel1.Size = new System.Drawing.Size(631, 341);
             this.panel1.TabIndex = 12;
+            // 
+            // slideViewerFlash1
+            // 
+            this.slideViewerFlash1.BackColor = System.Drawing.Color.Yellow;
+            this.slideViewerFlash1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.slideViewerFlash1.Location = new System.Drawing.Point(0, 0);
+            this.slideViewerFlash1.Name = "slideViewerFlash1";
+            this.slideViewerFlash1.Size = new System.Drawing.Size(631, 341);
+            this.slideViewerFlash1.TabIndex = 1;
             // 
             // btnPlay
             // 
@@ -142,15 +151,6 @@
             this.lblAutoMode.Size = new System.Drawing.Size(59, 13);
             this.lblAutoMode.TabIndex = 16;
             this.lblAutoMode.Text = "Auto Mode";
-            // 
-            // slideViewerFlash1
-            // 
-            this.slideViewerFlash1.BackColor = System.Drawing.Color.Yellow;
-            this.slideViewerFlash1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.slideViewerFlash1.Location = new System.Drawing.Point(0, 0);
-            this.slideViewerFlash1.Name = "slideViewerFlash1";
-            this.slideViewerFlash1.Size = new System.Drawing.Size(623, 333);
-            this.slideViewerFlash1.TabIndex = 1;
             // 
             // ImageViewer
             // 

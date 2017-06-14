@@ -13,72 +13,115 @@
     @Scripts.Render("~/bundles/ThirdPartyScripts")
     @Scripts.Render("~/bundles/CustomScripts")
 
-    <meta name="description" content="The description of my page" />
+    <meta name="description" content="R2G2 Administrator" />
 </head>
 <body>
-    <div class="navbar navbar-fixed-top">
-        <div class="container">
-            @*<div class="navbar-brand">
-                 <a href="~/Home"><img src="~/Content/Images/logo_small.png" alt="" /></a>
-            </div>*@
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-            </div>
-            <div class="navbar-collapse collapse">
-                <ul id="main-menu" class="nav navbar-nav">
-                    <li>@Html.ActionLink("Home", "Index", "Home")</li>
-                    @if (Request.IsAuthenticated)
+<script>
+    $(document)
+        .ready(function() {
+            function collapseSubmenus() {
+                var submenus = $('.dropdown-submenu a.configs');
+
+                $(submenus)
+                    .each(function(index, menu) {
+                        if ($(menu).next('ul').is(':visible')) {
+                            $(menu).next('ul').toggle();
+                        }
+                    });
+            }
+
+            $('.navbar-collapse')
+                .on("click",
+                    function() {
+                        collapseSubmenus();
+                    });
+
+            $('.dropdown-submenu a.configs')
+                .on("click",
+                    function(e) {
+                        collapseSubmenus();
+                        $(this).next('ul').toggle();
+                        e.stopPropagation();
+                        e.preventDefault();
+                    });
+
+            $('body')
+                .on("click",
+                    function() {
+                        collapseSubmenus();
+                    });
+        });
+</script>
+
+<div class="navbar navbar-fixed-top">
+    <div class="container">
+        @*<div class="navbar-brand">
+                     <a href="~/Home"><img src="~/Content/Images/logo_small.png" alt="" /></a>
+                </div>*@
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+        </div>
+        <div class="navbar-collapse collapse">
+            <ul id="main-menu" class="nav navbar-nav">
+                <li>@Html.ActionLink("Home", "Index", "Home")</li>
+                @if (Request.IsAuthenticated)
+                {
+                    if (User.IsInRole("Caregiver"))
                     {
-                        if (User.IsInRole("Caregiver"))
-                        {
-                            <li class="dropdown">
-                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Manage<b class="caret"></b></a>
-                                <ul class="dropdown-menu">
-                                    <li>@Html.ActionLink("Residents", "Index", "Residents")</li>
-                                    <li>@Html.ActionLink("Public Profile", "Index", "PublicProfile")</li>
-                                </ul>
-                            </li>
-                        }
-                        if (User.IsInRole("Administrator"))
-                        {
-                            <li class="dropdown">
-                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Data Capture<b class="caret"></b></a>
-                                <ul class="dropdown-menu">
-                                    <li>@Html.ActionLink("Event Logs", "Index", "EventLogs")</li>
-                                    <li>@Html.ActionLink("Export Event Log", "Export", "EventLogs")</li>
-                                    <li><hr></li>
-                                    <li>@Html.ActionLink("Video Captures", "Index", "VideoCaptures")</li>
-                                    <li>@Html.ActionLink("Export Video Captures", "Export", "VideoCaptures")</li>
-                                </ul>
-                            </li>
-                            <li class="dropdown">
-                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">System<b class="caret"></b></a>
-                                <ul class="dropdown-menu">
-                                    <li>@Html.ActionLink("Shared Library", "Index", "SharedLibrary")</li>
-                                    <li>@Html.ActionLink("System Profile", "Index", "SystemProfile")</li>
-                                    <li>@Html.ActionLink("Phidget Configuration", "Index", "PhidgetConfig")</li>
-                                    <li>@Html.ActionLink("Maintenance", "Index", "Maintenance")</li>
-                                </ul>
-                            </li>
-                        }
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Manage<b class="caret"></b></a>
+                            <ul class="dropdown-menu">
+                                <li>@Html.ActionLink("Residents", "Index", "Residents")</li>
+                                <li>@Html.ActionLink("Public Profile", "Index", "PublicProfile")</li>
+                            </ul>
+                        </li>
                     }
-                </ul>
-                <div class="greeting" id="greeting">@Html.Partial("_LogOnPartial")</div>
-            </div>
+                    if (User.IsInRole("Administrator"))
+                    {
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Data Capture<b class="caret"></b></a>
+                            <ul class="dropdown-menu">
+                                <li>@Html.ActionLink("Event Logs", "Index", "EventLogs")</li>
+                                <li>@Html.ActionLink("Export Event Log", "Export", "EventLogs")</li>
+                                <li><hr></li>
+                                <li>@Html.ActionLink("Video Captures", "Index", "VideoCaptures")</li>
+                                <li>@Html.ActionLink("Export Video Captures", "Export", "VideoCaptures")</li>
+                            </ul>
+                        </li>
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">System <i class="caret" aria-hidden="true"></i></a>
+                            <ul class="dropdown-menu">
+                                <li>@Html.ActionLink("Shared Library", "Index", "SharedLibrary")</li>
+                                <li class="dropdown-submenu">
+                                    <a href="" class="configs">Configuration <i class="fa fa-caret-right" aria-hidden="true"></i></a>
+                                    <ul class="dropdown-menu">
+                                        <li>@Html.ActionLink("Phidgets", "Index", "PhidgetConfig")</li>
+                                        <li>@Html.ActionLink("Services", "Index", "Services")</li>
+                                    </ul>
+                                </li>
+                                <li>@Html.ActionLink("System Profile", "Index", "SystemProfile")</li>
+                                <li>@Html.ActionLink("Maintenance", "Index", "Maintenance")</li>
+                            </ul>
+                        </li>
+                    }
+                }
+            </ul>
+            <div class="greeting" id="greeting">@Html.Partial("_LogOnPartial")</div>
         </div>
     </div>
+</div>
 
-    <div class="container body-content">
-        @RenderBody()
-        <hr />
-        <footer>
-            <p>&copy; @DateTime.Now.Year - Keebee Play</p>
-        </footer>
-    </div>
-    @RenderSection("scripts", required: false)
+<div class="container body-content">
+    @RenderBody()
+    <hr/>
+    <footer>
+        <p>&copy; @DateTime.Now.Year - Keebee Play</p>
+    </footer>
+</div>
+@RenderSection("scripts", required: false)
 </body>
 </html>

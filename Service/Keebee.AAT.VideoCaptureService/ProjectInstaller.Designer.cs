@@ -33,7 +33,7 @@
             // 
             // serviceProcessInstaller1
             // 
-            this.serviceProcessInstaller1.Account = System.ServiceProcess.ServiceAccount.LocalSystem;
+            this.serviceProcessInstaller1.Account = System.ServiceProcess.ServiceAccount.NetworkService;
             this.serviceProcessInstaller1.Installers.AddRange(new System.Configuration.Install.Installer[] {
             this.videoCaptureServiceInstaller});
             this.serviceProcessInstaller1.Password = null;

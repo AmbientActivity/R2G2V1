@@ -54,6 +54,8 @@ namespace Keebee.AAT.Administrator
                 "~/Scripts/SharedLibrary/Index.js",
                 "~/Scripts/SystemProfile/Index.js",
                 "~/Scripts/PublicProfile/Index.js",
+                "~/Scripts/Services/Index.js",
+                "~/Scripts/Utilities/Service.js",
                 "~/Scripts/Maintenance/Index.js");
             customScriptBundle.Builder = nullBuilder;
             customScriptBundle.Transforms.Add(scriptTransformer);
@@ -79,6 +81,7 @@ namespace Keebee.AAT.Administrator
             var commonStylesBundle = new StyleBundle("~/bundles/CommonStyles");
             commonStylesBundle.Include(
                 "~/Content/bootstrap.css",
+                "~/Content/font-awesome.css",
                 "~/Content/bootstrap-theme.css",
                 "~/Content/bootstrap-datepicker.css",
                 "~/Content/bootstrap-dialog.css",

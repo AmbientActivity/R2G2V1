@@ -35,6 +35,9 @@ namespace Keebee.AAT.StateMachineService
         // display state
         private bool _isDisplayActive;
 
+        // video capture
+        private bool _isInstalledVideoCapture;
+
         public StateMachineService()
         {
             InitializeComponent();
@@ -87,10 +90,18 @@ namespace Keebee.AAT.StateMachineService
                 MessageReceivedCallback = MessageReceivedDisplaySms
             })
             { SystemEventLogger = _systemEventLogger };
+
             var q4 = new CustomMessageQueue(new CustomMessageQueueArgs
             {
                 QueueName = MessageQueueType.BluetoothBeaconWatcher,
                 MessageReceivedCallback = MessageReceivedBluetoothBeaconWatcher
+            })
+            { SystemEventLogger = _systemEventLogger };
+
+            var q5 = new CustomMessageQueue(new CustomMessageQueueArgs
+            {
+                QueueName = MessageQueueType.VideoCaptureSms,
+                MessageReceivedCallback = MessageReceivedVideoCaptureSms
             })
             { SystemEventLogger = _systemEventLogger };
         }
@@ -118,11 +129,14 @@ namespace Keebee.AAT.StateMachineService
                         .Distinct().ToArray()
                 };
 
-                if (!configDetail.IsSystemReponseType)
+                if (_isInstalledVideoCapture)
                 {
-                    if (_activeResident.AllowVideoCapturing)
-                        // send a signal to the video capture service to start recording
-                        _messageQueueVideoCapture.Send("1");
+                    if (!configDetail.IsSystemReponseType)
+                    {
+                        if (_activeResident.AllowVideoCapturing)
+                            // send a signal to the video capture service to start recording
+                            _messageQueueVideoCapture.Send("1");
+                    }
                 }
 
                 var serializer = new JavaScriptSerializer();
@@ -231,6 +245,18 @@ namespace Keebee.AAT.StateMachineService
             catch (Exception ex)
             {
                 _systemEventLogger.WriteEntry($"MessageReceiveConfigSms{Environment.NewLine}{ex.Message}", EventLogEntryType.Error);
+            }
+        }
+
+        private void MessageReceivedVideoCaptureSms(object source, MessageEventArgs e)
+        {
+            try
+            {
+                _isInstalledVideoCapture = e.MessageBody == "1";
+            }
+            catch (Exception ex)
+            {
+                _systemEventLogger.WriteEntry($"MessageReceivedVideoCaptureSms{Environment.NewLine}{ex.Message}", EventLogEntryType.Error);
             }
         }
 

@@ -1,11 +1,10 @@
 ﻿using Keebee.AAT.SystemEventLogging;
 using Keebee.AAT.Shared;
 using Keebee.AAT.MessageQueuing;
+using Keebee.AAT.BusinessRules.Shared;
 using System;
-using System.Configuration.Install;
 using System.Diagnostics;
 using System.ServiceProcess;
-using System.Linq;
 using System.Web.Script.Serialization;
 
 namespace Keebee.AAT.BusinessRules
@@ -24,14 +23,13 @@ namespace Keebee.AAT.BusinessRules
             set { _systemEventLogger = value; }
         }
 
-        private const string ServiceNameStateMachine = "Keebee.AAT.StateMachineService";
-        private const string ServiceNameKeepIISAlive = "Keebee.AAT.KeepIISAliveService";
-        private const string ServiceNameBeaconWatcher = "Keebee.AAT.BluetoothBeaconWatcherService";
-
         public string RestartServices()
         {
             try
             {
+                var isInstalledBeaconWatcher = ServiceUtilities.IsInstalled(ServiceUtilities.ServiceType.BluetoothBeaconWatcher);
+                var isInstalledVideoCapture = ServiceUtilities.IsInstalled(ServiceUtilities.ServiceType.VideoCapture);
+
                 // state machine
                 var service = new ServiceController(ServiceName.StateMachine);
 
@@ -39,26 +37,29 @@ namespace Keebee.AAT.BusinessRules
                 {
                     service.Stop();
                     service.WaitForStatus(ServiceControllerStatus.Stopped);
-                    while (IsInstalledStateMachine()) { }
+                    while (ServiceUtilities.IsInstalled(ServiceUtilities.ServiceType.VideoCapture)) { }
                 }
 
                 // bluetooth beacon watcher
-                service = new ServiceController(ServiceName.BluetoothBeaconWatcher);
-
-                service.Start();
-                service.WaitForStatus(ServiceControllerStatus.Running);
+                if (isInstalledBeaconWatcher)
+                {
+                    service = new ServiceController(ServiceName.BluetoothBeaconWatcher);
+                    service.Start();
+                    service.WaitForStatus(ServiceControllerStatus.Running);
+                }
 
                 // phidget
                 service = new ServiceController(ServiceName.Phidget);
-
                 service.Start();
                 service.WaitForStatus(ServiceControllerStatus.Running);
 
                 // video
-                service = new ServiceController(ServiceName.VideoCapture);
-
-                service.Start();
-                service.WaitForStatus(ServiceControllerStatus.Running);
+                if (isInstalledVideoCapture)
+                {
+                    service = new ServiceController(ServiceName.VideoCapture);
+                    service.Start();
+                    service.WaitForStatus(ServiceControllerStatus.Running);
+                }
             }
             catch (Exception ex)
             {
@@ -129,44 +130,38 @@ namespace Keebee.AAT.BusinessRules
 
         public string ReinstallServices(string smsPath, string phidgetPath, string bluetoothBeaconWatcherPath, string videoCapturPath, string keepIISAlivePath)
         {
-            var exePathSms = $@"{smsPath}\{ServiceName.StateMachineExe}";
-            var exePathPhidget = $@"{phidgetPath}\{ServiceName.PhidgetExe}";
-            var exePathBluetoothBeaconWatcher = $@"{bluetoothBeaconWatcherPath}\{ServiceName.BluetoothBeaconWatcherExe}";
-            var exePathVideoCapture = $@"{videoCapturPath}\{ServiceName.VideoCaptureExe}";
-            var exePathKeepIISAlive = $@"{keepIISAlivePath}\{ServiceName.KeepIISAliveExe}";
-
             try
             {
                 // uninstall
-                var msg = ServiceInstaller.Uninstall(exePathKeepIISAlive)
-                          ?? ServiceInstaller.Uninstall(exePathBluetoothBeaconWatcher)
-                          ?? ServiceInstaller.Uninstall(exePathPhidget)
-                          ?? ServiceInstaller.Uninstall(exePathVideoCapture);
+                var msg = ServiceUtilities.Install(ServiceUtilities.ServiceType.KeepIISAlive, keepIISAlivePath, false)
+                          ?? ServiceUtilities.Install(ServiceUtilities.ServiceType.BluetoothBeaconWatcher, bluetoothBeaconWatcherPath, false)
+                          ?? ServiceUtilities.Install(ServiceUtilities.ServiceType.Phidget, phidgetPath, false)
+                          ?? ServiceUtilities.Install(ServiceUtilities.ServiceType.VideoCapture, videoCapturPath, false);
 
                 if (msg != null) return msg;
 
-                msg = ServiceInstaller.Uninstall(exePathSms);
+                msg = ServiceUtilities.Install(ServiceUtilities.ServiceType.StateMachine, smsPath, false);
 
                 // wait for these to completely uninstall
-                while (IsInstalledStateMachine()) { }
+                while (ServiceUtilities.IsInstalled(ServiceUtilities.ServiceType.StateMachine)) { }
 
-                while (IsInstalledKeepIISAlive()) { }
+                while (ServiceUtilities.IsInstalled(ServiceUtilities.ServiceType.KeepIISAlive)) { }
 
                 // install
                 if (msg == null)
-                    msg = ServiceInstaller.Install(exePathSms);
+                    msg = ServiceUtilities.Install(ServiceUtilities.ServiceType.StateMachine, smsPath, true);
 
                 if (msg == null)
-                    msg = ServiceInstaller.Install(exePathPhidget);
+                    msg = ServiceUtilities.Install(ServiceUtilities.ServiceType.Phidget, phidgetPath, true);
 
                 if (msg == null)
-                    msg = ServiceInstaller.Install(exePathVideoCapture);
+                    msg = ServiceUtilities.Install(ServiceUtilities.ServiceType.VideoCapture, videoCapturPath, true);
 
                 if (msg == null)
-                    msg = ServiceInstaller.Install(exePathBluetoothBeaconWatcher);
+                    msg = ServiceUtilities.Install(ServiceUtilities.ServiceType.BluetoothBeaconWatcher, bluetoothBeaconWatcherPath, true);
 
                 if (msg == null)
-                    msg = ServiceInstaller.Install(exePathKeepIISAlive);
+                    msg = ServiceUtilities.Install(ServiceUtilities.ServiceType.KeepIISAlive, keepIISAlivePath, true);
 
                 return msg;
             }
@@ -180,26 +175,20 @@ namespace Keebee.AAT.BusinessRules
 
         public string UninstallServices(string smsPath, string phidgetPath, string bluetoothBeaconWatcherPath, string videoCapturPath, string keepIISAlivePath)
         {
-            var exePathSms = $@"{smsPath}\{ServiceName.StateMachineExe}";
-            var exePathPhidget = $@"{phidgetPath}\{ServiceName.PhidgetExe}";
-            var exePathPathBluetoothBeaconWatcher = $@"{bluetoothBeaconWatcherPath}\{ServiceName.BluetoothBeaconWatcherExe}";
-            var exePathVideoCapture = $@"{videoCapturPath}\{ServiceName.VideoCaptureExe}";
-            var exePathKeepIISAlive = $@"{keepIISAlivePath}\{ServiceName.KeepIISAliveExe}";
-
             try
             {
                 // uninstall
-                var msg = ((ServiceInstaller.Uninstall(exePathKeepIISAlive) 
-                        ?? ServiceInstaller.Uninstall(exePathPathBluetoothBeaconWatcher)) 
-                        ?? ServiceInstaller.Uninstall(exePathPhidget)) 
-                        ?? ServiceInstaller.Uninstall(exePathVideoCapture);
+                var msg = ((ServiceUtilities.Install(ServiceUtilities.ServiceType.KeepIISAlive, keepIISAlivePath, false) 
+                        ?? ServiceUtilities.Install(ServiceUtilities.ServiceType.BluetoothBeaconWatcher, bluetoothBeaconWatcherPath, false)) 
+                        ?? ServiceUtilities.Install(ServiceUtilities.ServiceType.Phidget, phidgetPath, false)) 
+                        ?? ServiceUtilities.Install(ServiceUtilities.ServiceType.VideoCapture, videoCapturPath, false);
 
                 if (msg != null) return msg;
 
-                msg = ServiceInstaller.Uninstall(exePathSms);
+                msg = ServiceUtilities.Install(ServiceUtilities.ServiceType.StateMachine, smsPath, false);
 
-                while (IsInstalledStateMachine()) { }
-                while (IsInstalledKeepIISAlive()) { }
+                while (ServiceUtilities.IsInstalled(ServiceUtilities.ServiceType.StateMachine)) { }
+                while (ServiceUtilities.IsInstalled(ServiceUtilities.ServiceType.KeepIISAlive)) { }
 
                 return msg;
             }
@@ -208,91 +197,6 @@ namespace Keebee.AAT.BusinessRules
             {
                 _systemEventLogger.WriteEntry($"UninstallServices: {ex.Message}", EventLogEntryType.Error);
                 return ex.Message;
-            }
-        }
-
-        public string InstallBeaconService(string bluetoothBeaconWatcherPath)
-        {
-            var exePathBluetoothBeaconWatcher = $@"{bluetoothBeaconWatcherPath}\{ServiceName.BluetoothBeaconWatcherExe}";
-
-            try
-            {
-                var msg = ServiceInstaller.Install(exePathBluetoothBeaconWatcher);
-                return msg;
-            }
-
-            catch (Exception ex)
-            {
-                _systemEventLogger.WriteEntry($"InstallBeaconService: {ex.Message}", EventLogEntryType.Error);
-                return ex.Message;
-            }
-        }
-
-        public string UnInstallBeaconService(string bluetoothBeaconWatcherPath)
-        {
-            var exePathBluetoothBeaconWatcher = $@"{bluetoothBeaconWatcherPath}\{ServiceName.BluetoothBeaconWatcherExe}";
-
-            try
-            {
-                var msg = ServiceInstaller.Uninstall(exePathBluetoothBeaconWatcher);
-                return msg;
-            }
-
-            catch (Exception ex)
-            {
-                _systemEventLogger.WriteEntry($"UnInstallBeaconService: {ex.Message}", EventLogEntryType.Error);
-                return ex.Message;
-            }
-        }
-
-        public static bool IsInstalledBeaconService()
-        {
-            var processes = Process.GetProcessesByName(ServiceNameBeaconWatcher);
-            return (processes.Any());
-        }
-
-        private static bool IsInstalledStateMachine()
-        {
-            var processes = Process.GetProcessesByName(ServiceNameStateMachine);
-            return (processes.Any());
-        }
-
-        private static bool IsInstalledKeepIISAlive()
-        {
-            var processes = Process.GetProcessesByName(ServiceNameKeepIISAlive);
-            return (processes.Any());
-        }
-
-        private static class ServiceInstaller
-        {
-            public static string Install(string exePath)
-            {
-                try
-                {
-                    ManagedInstallerClass.InstallHelper(
-                        new string[] { exePath });
-                }
-                catch (Exception ex)
-                {
-                    return ex.InnerException?.Message ?? ex.Message;
-                }
-
-                return null;
-            }
-
-            public static string Uninstall(string exePath)
-            {
-                try
-                {
-                    ManagedInstallerClass.InstallHelper(
-                        new string[] { "/u", exePath });
-                }
-                catch (Exception ex)
-                {
-                    return ex.InnerException?.Message ?? ex.Message;
-                }
-
-                return null;
             }
         }
     }

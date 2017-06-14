@@ -164,6 +164,9 @@
     <Content Include="Content\images\win7-bar.png" />
     <Content Include="Content\images\win7-bg.png" />
     <Content Include="Content\Site.css" />
+    <Content Include="Content\font-awesome.css" />
+    <Content Include="Content\font-awesome.min.css" />
+    <Content Include="fonts\fontawesome-webfont.svg" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
     <Content Include="READ_ME.txt" />
@@ -190,6 +193,11 @@
     <Content Include="Scripts\bootstrap-dialog.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
+    <Content Include="fonts\FontAwesome.otf" />
+    <Content Include="fonts\fontawesome-webfont.woff2" />
+    <Content Include="fonts\fontawesome-webfont.woff" />
+    <Content Include="fonts\fontawesome-webfont.ttf" />
+    <Content Include="fonts\fontawesome-webfont.eot" />
     <None Include="Scripts\jquery-3.1.1.intellisense.js" />
     <Content Include="Scripts\jquery-3.1.1.js" />
     <Content Include="Scripts\jquery-3.1.1.min.js" />
@@ -275,9 +283,11 @@
     <Content Include="Scripts\ResidentProfile\Index.js" />
     <Content Include="Scripts\Residents\Index.js" />
     <Content Include="Scripts\Maintenance\Index.js" />
+    <Content Include="Scripts\Services\Index.js" />
     <Content Include="Scripts\SharedLibrary\Index.js" />
     <Content Include="Scripts\Site\Namespaces.js" />
     <Content Include="Scripts\Site\Site.js" />
+    <Content Include="Scripts\Utilities\Service.js" />
     <Content Include="Scripts\SystemProfile\Index.js" />
     <Content Include="Scripts\VideoCaptures\Index.js" />
     <Content Include="Web.config">
@@ -296,6 +306,7 @@
     <Compile Include="Controllers\ResidentProfileController.cs" />
     <Compile Include="Controllers\ResidentsController.cs" />
     <Compile Include="Controllers\MaintenanceController.cs" />
+    <Compile Include="Controllers\ServicesController.cs" />
     <Compile Include="Controllers\SharedLibraryController.cs" />
     <Compile Include="Controllers\SystemProfileController.cs" />
     <Compile Include="Controllers\VideoCapturesController.cs" />
@@ -308,7 +319,7 @@
     <Compile Include="ViewModels\EventLogViewModel.cs" />
     <Compile Include="ViewModels\ImageViewerViewModel.cs" />
     <Compile Include="ViewModels\LoginViewModel.cs" />
-    <Compile Include="ViewModels\MaintenanceViewModel.cs" />
+    <Compile Include="ViewModels\ServicesViewModel.cs" />
     <Compile Include="ViewModels\MediaFileViewModel.cs" />
     <Compile Include="ViewModels\PublicProfileViewModel.cs" />
     <Compile Include="ViewModels\ResidentViewModel.cs" />
@@ -346,6 +357,7 @@
     <Content Include="Views\SharedLibrary\_LinkedResidentMedia.cshtml" />
     <Content Include="Views\SystemProfile\Index.cshtml" />
     <Content Include="Views\ResidentProfile\Index.cshtml" />
+    <Content Include="Views\Services\Index.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

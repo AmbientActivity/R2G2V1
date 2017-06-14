@@ -384,7 +384,7 @@ namespace Keebee.AAT.Simulator
 
         private void ExecuteResponse(int responseTypeId, int phidgetTypeId, int sensorValue = MaxValue - 1, bool isSystem = false, int[] reponseTypeIds = null)
         {
-            if (Process.GetProcessesByName(ApplicationName.DisplayApp).Any())
+            if (Process.GetProcessesByName($"{AppSettings.Namespace}.{AppSettings.DisplayAppName}").Any())
                 _messageQueueResponse.Send(CreateMessageBodyForResponse(responseTypeId, phidgetTypeId, isSystem, sensorValue, reponseTypeIds));
         }
 

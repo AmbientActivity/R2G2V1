@@ -21,10 +21,11 @@ namespace Keebee.AAT.MessageQueuing
         PhidgetContinuousRadio = 12,
         BeaconMonitor = 13,
         BeaconMonitorResident = 14,
-        BeaconMonitorState = 15
+        BeaconMonitorState = 15,
+        VideoCaptureSms = 16
 #if DEBUG
-        , PhidgetMonitor = 16
-        , PhidgetMonitorState = 17
+        , PhidgetMonitor = 17
+        , PhidgetMonitorState = 18
 #endif
     }
 
@@ -56,7 +57,7 @@ namespace Keebee.AAT.MessageQueuing
         private const string QueueNameBeaconMonitor = "Beacon-Monitor";
         private const string QueueNameBeaconMonitorResident = "Beacon-Monitor-Resident";
         private const string QueueNameBeaconMonitorState = "Beacon-Monitor-State";
-
+        private const string QueueNameVideoCaptureSms = "Video-Capture-Sms";
 #if DEBUG
         private const string QueueNamePhidgetMonitor = "Phidget-Monitor";
         private const string QueueNamePhidgetMonitorState = "Phidget-Monitor-State";
@@ -171,6 +172,9 @@ namespace Keebee.AAT.MessageQueuing
                     break;
                 case MessageQueueType.BeaconMonitorState:
                     literal = QueueNameBeaconMonitorState;
+                    break;
+                case MessageQueueType.VideoCaptureSms:
+                    literal = QueueNameVideoCaptureSms;
                     break;
 #if DEBUG
                 case MessageQueueType.PhidgetMonitor:

@@ -60,7 +60,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="AccountRules.cs" />
     <Compile Include="MaintenanceRules.cs" />
+    <Compile Include="ServicesRules.cs" />
     <Compile Include="SharedLibraryRules.cs" />
+    <Compile Include="Shared\ServiceUtilities.cs" />
     <Compile Include="SystemProfileRules.cs" />
     <Compile Include="VideoCaptureRules.cs" />
   </ItemGroup>

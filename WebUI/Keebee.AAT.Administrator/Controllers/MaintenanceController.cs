@@ -8,7 +8,7 @@ using System.Linq;
 using System.Web.Mvc;
 using System.Web.Script.Serialization;
 using System.Configuration;
-using Keebee.AAT.Administrator.ViewModels;
+using Keebee.AAT.BusinessRules.Shared;
 
 namespace Keebee.AAT.Administrator.Controllers
 {
@@ -67,16 +67,15 @@ namespace Keebee.AAT.Administrator.Controllers
 
         // GET: Services
         [Authorize]
+        [HttpGet]
         public ActionResult Index()
         {
-            return View(new MaintenanceViewModel
-            {
-                IsActiveBeaconService = MaintenanceRules.IsInstalledBeaconService() ? 1 : 0
-            });
+            return View();
         }
 
         [Authorize]
-        public string ReinstallServices()
+        [HttpGet]
+        public JsonResult ReinstallServices()
         {
             var smsPath = ConfigurationManager.AppSettings["StateMachineServiceLocation"];
             var phidgetPath = ConfigurationManager.AppSettings["PhidgetServiceLocation"];
@@ -111,11 +110,16 @@ namespace Keebee.AAT.Administrator.Controllers
                 var message = configRules.GetMessageBody(activeConfigId);
                 _messageQueueConfigSms.Send(message);
             }
-            return msg;
+
+            return Json(new
+            {
+                ErrorMessage = msg
+            }, JsonRequestBehavior.AllowGet);
         }
 
         [Authorize]
-        public string UninstallServices()
+        [HttpGet]
+        public JsonResult UninstallServices()
         {
             var smsPath = ConfigurationManager.AppSettings["StateMachineServiceLocation"];
             var phidgetPath = ConfigurationManager.AppSettings["PhidgetServiceLocation"];
@@ -132,70 +136,69 @@ namespace Keebee.AAT.Administrator.Controllers
             var rules = new MaintenanceRules { EventLogger = _systemEventLogger };
             var msg = rules.UninstallServices(smsPath, phidgetPath, bluetoothBeaconWatcherPath, videoCapturePath, keepIISAlivePath);
 
-            return msg;
+            return Json(new
+            {
+                ErrorMessage = msg
+            }, JsonRequestBehavior.AllowGet);
         }
 
         [Authorize]
-        public string RestartServices()
+        [HttpGet]
+        public JsonResult RestartServices()
         {
+            var isInstalledBeaconWatcher = ServiceUtilities.IsInstalled(ServiceUtilities.ServiceType.BluetoothBeaconWatcher);
+            var isInstalledVideoCapture = ServiceUtilities.IsInstalled(ServiceUtilities.ServiceType.VideoCapture);
+
+            // gather the current config info (will need to send it to the SMS after it is restarted)
+            var configsClient = new ConfigsClient();
+            var activeConfigId = configsClient.GetActive().Id;
+            var configRules = new PhidgetConfigRules();
+            var configMessage = configRules.GetMessageBody(activeConfigId);
+
             // temporarily inform the services that the display is currently not active
             _messageQueueDisplaySms.Send(CreateDisplayMessageBody(false));
             _messageQueueDisplayPhidget.Send(CreateDisplayMessageBody(false));
-            _messageQueueDisplayVideoCapture.Send(CreateDisplayMessageBody(false));
-            _messageQueueDisplayBluetoothBeaconWatcher.Send(CreateDisplayMessageBody(false));
+
+            if (isInstalledVideoCapture)
+                _messageQueueDisplayVideoCapture.Send(CreateDisplayMessageBody(false));
+
+            if (isInstalledBeaconWatcher)
+                _messageQueueDisplayBluetoothBeaconWatcher.Send(CreateDisplayMessageBody(false));
 
             // restart the services
             var rules = new MaintenanceRules { EventLogger = _systemEventLogger };
             var msg = rules.RestartServices();
 
-            if (msg != null) return msg;
-
-            // inform the services if the display is currently active
-            if (DisplayIsActive())
+            if (msg == null)
             {
-                _messageQueueDisplaySms.Send(CreateDisplayMessageBody(true));
-                _messageQueueDisplayPhidget.Send(CreateDisplayMessageBody(true));
-                _messageQueueDisplayVideoCapture.Send(CreateDisplayMessageBody(true));
-                _messageQueueDisplayBluetoothBeaconWatcher.Send(CreateDisplayMessageBody(true));
+
+                // inform the services if the display is currently active
+                if (DisplayIsActive())
+                {
+                    _messageQueueDisplaySms.Send(CreateDisplayMessageBody(true));
+                    _messageQueueDisplayPhidget.Send(CreateDisplayMessageBody(true));
+
+                    if (isInstalledVideoCapture)
+                        _messageQueueDisplayVideoCapture.Send(CreateDisplayMessageBody(true));
+
+                    if (isInstalledBeaconWatcher)
+                        _messageQueueDisplayBluetoothBeaconWatcher.Send(CreateDisplayMessageBody(true));
+                }
+                else
+                {
+                    // inform the state machine to reload its current config
+                    _messageQueueConfigSms.Send(configMessage);
+                }
             }
-            else
+
+            return Json(new
             {
-                // inform the state machine to reload the current config
-                var configsClient = new ConfigsClient();
-                var activeConfigId = configsClient.GetActive().Id;
-                var configRules = new PhidgetConfigRules();
-                var message = configRules.GetMessageBody(activeConfigId);
-                _messageQueueConfigSms.Send(message);
-            }
-
-            return null;
+                ErrorMessage = msg
+            }, JsonRequestBehavior.AllowGet);
         }
 
         [Authorize]
-        public string InstallBeaconService()
-        {
-            var bluetoothBeaconWatcherPath = ConfigurationManager.AppSettings["BluetoothBeaconWatcherServiceLocation"];
-
-            // install the beacon watcher service
-            var rules = new MaintenanceRules { EventLogger = _systemEventLogger };
-            var msg = rules.InstallBeaconService(bluetoothBeaconWatcherPath);
-
-            return msg;
-        }
-
-        [Authorize]
-        public string UninstallBeaconService()
-        {
-            var bluetoothBeaconWatcherPath = ConfigurationManager.AppSettings["BluetoothBeaconWatcherServiceLocation"];
-
-            // uninstall the beacon watcher service
-            var rules = new MaintenanceRules { EventLogger = _systemEventLogger };
-            var msg = rules.UnInstallBeaconService(bluetoothBeaconWatcherPath);
-
-            return msg;
-        }
-
-        [Authorize]
+        [HttpGet]
         public string KillDisplay()
         {
             var rules = new MaintenanceRules
@@ -208,6 +211,7 @@ namespace Keebee.AAT.Administrator.Controllers
         }
 
         [Authorize]
+        [HttpGet]
         public string ClearServiceLogs()
         {
             var rules = new MaintenanceRules { EventLogger = _systemEventLogger };

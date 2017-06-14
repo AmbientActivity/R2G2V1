@@ -109,6 +109,7 @@ namespace Keebee.AAT.BusinessRules
                 });
             }
         }
+
         // view model
         public ConfigEditModel GetConfigEditViewModel(int id, int configId)
         {
@@ -164,7 +165,7 @@ namespace Keebee.AAT.BusinessRules
                 Id = config.Id,
                 Description = config.Description,
                 IsActiveEventLog = config.IsActiveEventLog,
-                IsDisplayActive = IsProcessRunning(ApplicationName.DisplayApp),
+                IsDisplayActive = IsProcessRunning($"{AppSettings.Namespace}.{AppSettings.DisplayAppName}"),
                 ConfigDetails = config.ConfigDetails
                     .Select(x => new
                         ConfigDetailMessage
@@ -188,6 +189,5 @@ namespace Keebee.AAT.BusinessRules
         {
             return Process.GetProcessesByName(processName).Any();
         }
-
     }
 }

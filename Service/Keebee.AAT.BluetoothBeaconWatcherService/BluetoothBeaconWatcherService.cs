@@ -19,8 +19,11 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
 {
     public partial class BluetoothBeaconWatcherService : ServiceBase
     {
+        // message queue
+        private readonly CustomMessageQueue _messageQueueBeaconWatcher;
         private readonly CustomMessageQueue _messageQueueBeaconMonitor;
         private readonly CustomMessageQueue _messageQueueBeaconMonitorResident;
+
         private bool _beaconMonitorIsActive;
 
         private const int BeaconReadInterval = 1000;   // 1 second
@@ -30,9 +33,6 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
 
         // event logger
         private readonly SystemEventLogger _systemEventLogger;
-
-        // message queue
-        private readonly CustomMessageQueue _messageQueueBeaconWatcher;
 
         // beacon manager
         private readonly BeaconManager _beaconManager;
@@ -84,6 +84,16 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
             })
             { SystemEventLogger = _systemEventLogger };
 
+            _messageQueueBeaconMonitor = new CustomMessageQueue(new CustomMessageQueueArgs
+            {
+                QueueName = MessageQueueType.BeaconMonitor
+            });
+
+            _messageQueueBeaconMonitorResident = new CustomMessageQueue(new CustomMessageQueueArgs
+            {
+                QueueName = MessageQueueType.BeaconMonitorResident
+            });
+
             // message queue listener
             var q1 = new CustomMessageQueue(new CustomMessageQueueArgs
             {
@@ -98,16 +108,6 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
                 MessageReceivedCallback = MessageReceivedDisplayBluetoothBeaconWatcher
             })
             { SystemEventLogger = _systemEventLogger };
-
-            _messageQueueBeaconMonitor = new CustomMessageQueue(new CustomMessageQueueArgs
-            {
-                QueueName = MessageQueueType.BeaconMonitor
-            });
-
-            _messageQueueBeaconMonitorResident = new CustomMessageQueue(new CustomMessageQueueArgs
-            {
-                QueueName = MessageQueueType.BeaconMonitorResident
-            });
 
             var q3 = new CustomMessageQueue(new CustomMessageQueueArgs
             {

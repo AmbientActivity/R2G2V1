@@ -2,9 +2,10 @@
 
 namespace Keebee.AAT.Shared
 {
-    public static class ApplicationName
+    public static class AppSettings
     {
-        public const string DisplayApp = "Keebee.AAT.Display";
+        public const string Namespace = "Keebee.AAT";
+        public const string DisplayAppName = "Display";
     }
 
     public static class VideoCaptures
@@ -29,12 +30,6 @@ namespace Keebee.AAT.Shared
         public const string BluetoothBeaconWatcher = "BluetoothBeaconWatcherService";
         public const string VideoCapture = "VideoCaptureService";
         public const string KeepIISAlive = "KeepIISAliveService";
-
-        public const string StateMachineExe = "Keebee.AAT.StateMachineService.exe";
-        public const string PhidgetExe = "Keebee.AAT.PhidgetService.exe";
-        public const string BluetoothBeaconWatcherExe = "Keebee.AAT.BluetoothBeaconWatcherService.exe";
-        public const string VideoCaptureExe = "Keebee.AAT.VideoCaptureService.exe";
-        public const string KeepIISAliveExe = "Keebee.AAT.KeepIISAliveService.exe";
     }
 
     public enum RotationSensorStep

@@ -17,5 +17,7 @@
     window.publicprofile = {};
     window.systemprofile = {};
     window.sharedlibrary = {};
+    window.services = {};
+    window.utilities = {};
     window.maintenance = {};
 })();

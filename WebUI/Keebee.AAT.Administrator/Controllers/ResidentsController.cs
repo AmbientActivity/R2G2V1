@@ -13,6 +13,7 @@ using System.Linq;
 using System.Web.Mvc;
 using System;
 using System.Web.Script.Serialization;
+using Keebee.AAT.BusinessRules.Shared;
 
 namespace Keebee.AAT.Administrator.Controllers
 {
@@ -93,8 +94,13 @@ namespace Keebee.AAT.Administrator.Controllers
 
             var success = (null == msgs) && (residentId > 0);
             if (success)
-                // alert the bluetooth beacon watcher to reload its residents
-                _messageQueueBluetoothBeaconWatcherReload.Send(CreateMessageBodyFromResidents(residentList));
+            {
+                if (ServiceUtilities.IsInstalled(ServiceUtilities.ServiceType.BluetoothBeaconWatcher))
+                {
+                    // alert the bluetooth beacon watcher to reload its residents
+                    _messageQueueBluetoothBeaconWatcherReload.Send(CreateMessageBodyFromResidents(residentList));
+                }
+            }
 
             return Json(new
             {

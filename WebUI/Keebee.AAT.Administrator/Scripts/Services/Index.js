@@ -21,8 +21,6 @@
             var chkBeaconWatcher = $("#chkIsInstalledBeaconWatcher");
             var chkVideoCapture = $("#chkIsInstalledVideoCapture");
 
-            var cmdSave = $("#save");
-
             cmdSave.attr("disabled", "disabled");
 
             function enableDetail() {

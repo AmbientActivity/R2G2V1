@@ -205,7 +205,7 @@ namespace Keebee.AAT.BeaconMonitor
                 service.Start();
                 service.WaitForStatus(ServiceControllerStatus.Running);
 
-                if (DisplayIsActive())
+                if (IsDisplayActive())
                 {
                     _messageQueueDisplayBluetoothBeaconWatcher.Send(CreateDisplayMessageBody(true));
                 }
@@ -225,7 +225,7 @@ namespace Keebee.AAT.BeaconMonitor
             }
         }
 
-        private static bool DisplayIsActive()
+        private static bool IsDisplayActive()
         {
             var processes = Process.GetProcessesByName("Keebee.AAT.Display");
             return (processes.Any());

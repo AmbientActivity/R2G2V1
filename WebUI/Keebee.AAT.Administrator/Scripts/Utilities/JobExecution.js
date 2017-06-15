@@ -10,13 +10,18 @@
     utilities.job = {
         execute: function (options) {
             var config = {
-                controller: "",
-                action: "",
-                title: "",
-                waitMessage: "",
-                verbage: "",
+                controller: null,
+                action: null,
+                title: null,
+                waitMessage: "Please wait...",
+                successVerbage: null,
                 params: {}
             };
+
+            if (options.controller === null) reject("Controller name cannot be null");
+            if (options.action === null) reject("Action name cannot be null");
+            if (options.title === null) reject("Title cannot be null");
+            if (options.waitMessage === null) reject("Wait Message cannot be null");
 
             $.extend(config, options);
 
@@ -38,20 +43,22 @@
                                 dialog.close();
 
                                 if (data.ErrorMessage === null) {
-                                    BootstrapDialog.show({
-                                        title: "Success",
-                                        closable: false,
-                                        type: BootstrapDialog.TYPE_SUCCESS,
-                                        message: config.verbage,
-                                        buttons: [
-                                            {
-                                                label: "Close",
-                                                action: function(dlg) {
-                                                    dlg.close();
+                                    if (config.successVerbage !== null) {
+                                        BootstrapDialog.show({
+                                            title: "Success",
+                                            closable: false,
+                                            type: BootstrapDialog.TYPE_SUCCESS,
+                                            message: config.successVerbage,
+                                            buttons: [
+                                                {
+                                                    label: "Close",
+                                                    action: function(dlg) {
+                                                        dlg.close();
+                                                    }
                                                 }
-                                            }
-                                        ]
-                                    });
+                                            ]
+                                        });
+                                    }
                                     resolve(data);
                                 } else {
                                     BootstrapDialog.show({

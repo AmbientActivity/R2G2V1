@@ -72,7 +72,6 @@
                                     action: "SaveSettings",
                                     title: "Service Activation/Deactivation",
                                     waitMessage: "Saving settings...",
-                                    verbage: "Settings saved successfully",
                                     params: {
                                         activateBeaconWatcher: $.trim(chkBeaconWatcher.is(":checked")),
                                         activateVideoCapture: $.trim(chkVideoCapture.is(":checked"))

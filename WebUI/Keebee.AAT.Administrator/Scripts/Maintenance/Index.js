@@ -37,7 +37,7 @@
                                     action: "RestartServices",
                                     title: "Service Utilities",
                                     waitMessage: "Restarting services...",
-                                    verbage: "All services restarted successfully"
+                                    successVerbage: "All services restarted successfully"
                                 });
                             }
                         }
@@ -114,7 +114,7 @@
                                     action: "ReinstallServices",
                                     title: "Service Utilities",
                                     waitMessage: "Installing services...",
-                                    verbage: "All services installed successfully"
+                                    successVerbage: "All services installed successfully"
                                 });
                             }
                         }
@@ -144,7 +144,7 @@
                                     action: "UninstallServices",
                                     title: "Service Utilities",
                                     waitMessage: "Uninstalling services...",
-                                    verbage: "All services uninstalled successfully"
+                                    successVerbage: "All services uninstalled successfully"
                                 });
                             }
                         }

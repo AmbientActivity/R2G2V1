@@ -74,24 +74,26 @@ namespace Keebee.AAT.Administrator.Controllers
             var r = JsonConvert.DeserializeObject<ResidentEditViewModel>(resident);
             var residentId = r.Id;
             var rules = new ResidentRules();
-            IEnumerable<ResidentViewModel> residentList = new Collection<ResidentViewModel>();
+            string errorMsg = null;
 
-            IEnumerable<string> msgs = rules.Validate(r.FirstName, r.LastName, r.Gender, residentId == 0);
+            IEnumerable<string> validateMsgs = rules.Validate(r.FirstName, r.LastName, r.Gender, residentId == 0);
 
             if (residentId > 0)
             {
-                if (msgs == null)
+                if (validateMsgs == null)
                     UpdateResident(r);
             }
             else
             {
-                if (msgs == null)
-                    residentId = AddResident(r);
+                if (validateMsgs == null)
+                {
+                    errorMsg = AddResident(r, out residentId);
+                }
             }
 
-            residentList = GetResidentList();
+            var residentList = GetResidentList().ToArray();
 
-            var success = (null == msgs) && (residentId > 0);
+            var success = (null == validateMsgs) && (null == errorMsg) && (residentId > 0);
             if (success)
             {
                 if (ServiceUtilities.IsInstalled(ServiceUtilities.ServiceType.BluetoothBeaconWatcher))
@@ -106,7 +108,8 @@ namespace Keebee.AAT.Administrator.Controllers
                 ResidentList = residentList,
                 SelectedId = residentId,
                 Success = success,
-                ErrorMessages = msgs
+                ValidationMessages = validateMsgs,
+                ErrorMessage = errorMsg
             }, JsonRequestBehavior.AllowGet);
         }
 
@@ -114,7 +117,7 @@ namespace Keebee.AAT.Administrator.Controllers
         [Authorize]
         public JsonResult Delete(int id)
         {
-            string errormessage;
+            string errorMsg;
             bool success;
             IEnumerable<ResidentViewModel> residentList = new Collection<ResidentViewModel>();
             
@@ -123,14 +126,14 @@ namespace Keebee.AAT.Administrator.Controllers
                 var activeResident = _activeResidentClient.Get();
                 if (activeResident.Resident.Id == id)
                 {
-                    errormessage = "The resident is currently engaging with R2G2 and cannot be deleted at this time.";
+                    errorMsg = "The resident is currently engaging with R2G2 and cannot be deleted at this time.";
                 }
                 else
                 {
                     var rules = new ResidentRules();
-                    errormessage = rules.DeleteResident(id);
+                    errorMsg = rules.DeleteResident(id);
 
-                    if (errormessage.Length == 0)
+                    if (errorMsg == null)
                     {
                         var fileManager = new FileManager {EventLogger = _systemEventLogger};
                         fileManager.DeleteFolders(id);
@@ -139,12 +142,12 @@ namespace Keebee.AAT.Administrator.Controllers
 
                 residentList = GetResidentList();
 
-                success = (errormessage.Length == 0);
+                success = (errorMsg == null);
                 if (success)
                 {
                     if (ServiceUtilities.IsInstalled(ServiceUtilities.ServiceType.BluetoothBeaconWatcher))
                     {
-                        // alert the bluetooth beacon watcher to reload its residents
+                        // send the bluetooth beacon watcher the new resident list
                         _messageQueueBluetoothBeaconWatcherReload.Send(CreateMessageBodyFromResidents(residentList));
                     }
                 }
@@ -152,13 +155,13 @@ namespace Keebee.AAT.Administrator.Controllers
             catch (Exception ex)
             {
                 success = false;
-                errormessage = ex.Message;
+                errorMsg = ex.Message;
             }
 
             return Json(new
             {
                 Success = success,
-                ErrorMessage = errormessage,
+                ErrorMessage = errorMsg,
                 ResidentList = residentList,
             }, JsonRequestBehavior.AllowGet);
         }
@@ -183,7 +186,8 @@ namespace Keebee.AAT.Administrator.Controllers
                 FirstNameSearch = firstname,
                 LastNameSearch = lastname,
                 SortColumnName = sortcolumn,
-                SortDescending = sortdescending
+                SortDescending = sortdescending,
+                IsVideoCaptureServiceInstalled = ServiceUtilities.IsInstalled(ServiceUtilities.ServiceType.VideoCapture) ? 1 : 0
             };
 
             return vm;
@@ -214,6 +218,7 @@ namespace Keebee.AAT.Administrator.Controllers
                     new SelectListItem { Value = "5", Text = "5" }},
                     "Value", "Text", resident?.GameDifficultyLevel),
                 AllowVideoCapturing = resident?.AllowVideoCapturing ?? false,
+                IsVideoCaptureServiceInstalled = ServiceUtilities.IsInstalled(ServiceUtilities.ServiceType.VideoCapture)
             };
 
             return vm;
@@ -253,25 +258,31 @@ namespace Keebee.AAT.Administrator.Controllers
             _residentsClient.Patch(residentDetail.Id, r);
         }
 
-        private int AddResident(ResidentViewModel residentDetail)
+        private string AddResident(ResidentViewModel residentDetail, out int residentId)
         {
-            var r = new ResidentEdit
+            string msg;
+            residentId = -1;
+
+            try
             {
-                FirstName = residentDetail.FirstName,
-                LastName = residentDetail.LastName,
-                Gender = residentDetail.Gender,
-                GameDifficultyLevel = residentDetail.GameDifficultyLevel,
-                AllowVideoCapturing = residentDetail.AllowVideoCapturing
-            };
+                msg = _residentsClient.Post(new ResidentEdit
+                {
+                    FirstName = residentDetail.FirstName,
+                    LastName = residentDetail.LastName,
+                    Gender = residentDetail.Gender,
+                    GameDifficultyLevel = residentDetail.GameDifficultyLevel,
+                    AllowVideoCapturing = residentDetail.AllowVideoCapturing
+                }, out residentId);
 
-            var id = _residentsClient.Post(r);
+                var fileManager = new FileManager {EventLogger = _systemEventLogger};
+                fileManager.CreateFolders(residentId);
+            }
+            catch (Exception ex)
+            {
+                msg = ex.Message;
+            }
 
-            if (id <= 0) return id;
-
-            var fileManager = new FileManager {EventLogger = _systemEventLogger};
-            fileManager.CreateFolders(id);
-
-            return id;
+            return msg;
         }
 
         private static string CreateMessageBodyFromResidents(IEnumerable<ResidentViewModel> residents)

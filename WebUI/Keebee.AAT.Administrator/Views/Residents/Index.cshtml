@@ -8,7 +8,7 @@
 <h3>Resident Manager</h3>
 
 <script type="text/javascript">
-    $(document).ready(function() {
+    $(document).ready(function () {
         residents.index.init(
         {
             selectedid: '@Model.SelectedId',
@@ -16,7 +16,8 @@
             firstname: '@Model.FirstNameSearch',
             lastname: '@Model.LastNameSearch',
             sortcolumn: '@Model.SortColumnName',
-            sortdescending: '@Model.SortDescending'
+            sortdescending: '@Model.SortDescending',
+            isVideoCaptureServiceInstalled: '@Model.IsVideoCaptureServiceInstalled'
         });
     });
 </script>
@@ -64,11 +65,14 @@
                     <td data-bind="text: lastname"></td>
                     <td data-bind="text: gender"></td>
                     <td data-bind="text: gamedifficultylevel"></td>
+                    
+                    <!-- ko if: $parent.isVideoCaptureServiceInstalled === '1' -->
                     <!-- ko if: allowvideocapturing -->
                     <td style="text-align: center"><span class="glyphicon glyphicon-ok"></span></td>
                     <!-- /ko -->
                     <!-- ko if: !allowvideocapturing -->
                     <td></td>
+                    <!-- /ko -->
                     <!-- /ko -->
                     <td data-bind="text: moment(datecreated).format('ll')"></td>
                     <td data-bind="text: moment(dateupdated).format('ll')"></td>

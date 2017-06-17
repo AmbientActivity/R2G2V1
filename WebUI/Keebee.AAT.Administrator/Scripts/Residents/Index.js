@@ -20,7 +20,8 @@
                 firstname: "",
                 lastname: "",
                 sortcolumn: "",
-                sortdescending: 0
+                sortdescending: 0,
+                isVideoCaptureServiceInstalled: 0
             }
 
             $.extend(config, values);
@@ -72,6 +73,7 @@
                         self.idSearch = ko.observable(config.idsearch);
                         self.firstNameSearch = ko.observable(config.firstname);
                         self.lastNameSearch = ko.observable(config.lastname);
+                        self.isVideoCaptureServiceInstalled = config.isVideoCaptureServiceInstalled;
 
                         self.totalResidents = ko.observable(0);
 
@@ -91,7 +93,10 @@
                             arr.push({ title: "Last Name", sortable: true, sortKey: "lastname", numeric: false, cssClass: "col-lastname" });
                             arr.push({ title: "Gender", sortable: true, sortKey: "gender", numeric: false, cssClass: "col-gender" });
                             arr.push({ title: "Level", sortable: true, sortKey: "gamedifficultylevel", numeric: true, cssClass: "col-level" });
-                            arr.push({ title: "Capturable", sortable: true, sortKey: "allowvideocapturing", numeric: false, cssClass: "col-capturable" });
+
+                            if (config.isVideoCaptureServiceInstalled === "1")
+                                arr.push({ title: "Capturable", sortable: true, sortKey: "allowvideocapturing", numeric: false, cssClass: "col-capturable" });
+
                             arr.push({ title: "Created", sortable: true, sortKey: "datecreated", numeric: true, cssClass: "col-date" });
                             arr.push({ title: "Updated", sortable: true, sortKey: "dateupdated", numeric: true, cssClass: "col-date" });
                             return arr;
@@ -204,7 +209,7 @@
                                                 cssClass: "btn-primary",
                                                 action: function (dialog) {
                                                     self.saveResident().then(function (result) {
-                                                        if (result.ErrorMessages === null) {
+                                                        if (result.ValidationMessages === null) {
                                                             lists.ResidentList = result.ResidentList;
                                                             createResidentArray(lists.ResidentList);
                                                             self.selectedResident(self.getResident(result.SelectedId));
@@ -217,8 +222,8 @@
                                                             $("#validation-container").html("");
                                                             $("body").css("cursor", "default");
                                                             var html = "<ul>";
-                                                            for (var i = 0; i < result.ErrorMessages.length; i++) {
-                                                                var msg = result.ErrorMessages[i];
+                                                            for (var i = 0; i < result.ValidationMessages.length; i++) {
+                                                                var msg = result.ValidationMessages[i];
                                                                 html = html + "<li>" + msg + "</li>";
                                                             }
                                                             html = html + "</ul>";
@@ -248,50 +253,6 @@
                                     + "&sortcolumn=" + currentSortKey
                                     + "&sortdescending=" + sortdescending;
                             }
-                        };
-
-                        self.deleteSelected = function (id) {
-                            $("body").css("cursor", "wait");
-
-                            BootstrapDialog.show({
-                                type: BootstrapDialog.TYPE_INFO,
-                                title: "Resident",
-                                message: "Deleting resident...",
-                                closable: false,
-                                onshown: function (dialog) {
-                                    $.post({
-                                        url: site.url + "Residents/Delete/",
-                                        data: { id: id },
-                                        dataType: "json",
-                                        success: function (result) {
-
-                                            dialog.close();
-                                            $("body").css("cursor", "default");
-                                            if (result.Success) {
-                                                lists.ResidentList = result.ResidentList;
-                                                createResidentArray(lists.ResidentList);
-                                                self.sort({ afterSave: true });
-                                            } else {
-                                                BootstrapDialog.show({
-                                                    type: BootstrapDialog.TYPE_DANGER,
-                                                    title: "Delete Error",
-                                                    message: result.ErrorMessage
-                                                });
-                                            }
-                                        },
-                                        error: function (result) {
-                                            dialog.close();
-                                            $("body").css("cursor", "default");
-                                            BootstrapDialog.show({
-                                                type: BootstrapDialog.TYPE_DANGER,
-                                                title: "Delete Error",
-                                                message: "Unexpected Error\n" + result
-                                            });
-                                        }
-                                    });
-                                }
-
-                            });
                         };
 
                         self.showDeleteDialog = function (row) {
@@ -324,8 +285,23 @@
                                         label: "Yes, Delete",
                                         cssClass: "btn-danger",
                                         action: function (dialog) {
-                                            self.deleteSelected(row.id);
-                                            dialog.close();
+                                            utilities.job.execute(
+                                            {
+                                                controller: "Residents",
+                                                action: "Delete",
+                                                type: "POST",
+                                                params: { id: id },
+                                                title: "Delete Resident"
+                                            })
+                                            .then(function(result) {
+                                                dialog.close();
+                                                lists.ResidentList = result.ResidentList;
+                                                createResidentArray(lists.ResidentList);
+                                                self.sort({ afterSave: true });
+                                            })
+                                            .catch(function() {
+                                                dialog.close();
+                                            });     
                                         }
                                     }
                                 ]
@@ -375,20 +351,19 @@
                                 var jsonData = JSON.stringify(residentdetail);
 
                                 $("body").css("cursor", "wait");
-
-                                $.post({
-                                    url: site.url + "Residents/Save/",
-                                    data: { resident: jsonData },
-                                    dataType: "json",
-                                    success: function (result) {
-                                        resolve(result);
-                                    },
-                                    error: function (result) {
-                                        reject(result);
-                                    },
-                                    failure: function (result) {
-                                        reject(result);
-                                    }
+                                utilities.job.execute(
+                                {
+                                    type: "POST",
+                                    controller: "Residents",
+                                    action: "Save",
+                                    title: "Save Resident",
+                                    params: { resident: jsonData }
+                                })
+                                .then(function(result) {
+                                    resolve(result);
+                                })
+                                .catch(function(result) {
+                                    reject(result);
                                 });
                             });
                         };

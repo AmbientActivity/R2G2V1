@@ -18,17 +18,22 @@
             <div class="label label-default">Game Difficulty Level</div>
             @Html.DropDownList("ddlGameDifficultyLevels", @Model.GameDifficultyLevels, new { @class = "form-control" })
         </div>
-        <div class="col-sm-12">
-            <div class="label label-default">Allow Video Capturing</div>
-            @if (Model.AllowVideoCapturing)
-            {
-                <div><input type="checkbox" id="chkAllowVideoCapturing" checked /></div>
-            }
-            else
-            {
-                <div><input type="checkbox" id="chkAllowVideoCapturing" /></div>
-            }
-        </div>
+        @if (Model.IsVideoCaptureServiceInstalled)
+        {
+            <div class="col-sm-12">
+                <div class="label label-default">Allow Video Capturing</div>
+                @if (Model.AllowVideoCapturing)
+                {
+                    <div><input type="checkbox" id="chkAllowVideoCapturing" checked/>
+                    </div>
+                }
+                else
+                {
+                    <div><input type="checkbox" id="chkAllowVideoCapturing"/>
+                    </div>
+                }
+            </div>
+        }
     </div>
 </div>
 <div class="validation-container" id="validation-container"></div>

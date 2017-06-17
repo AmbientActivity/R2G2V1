@@ -33,6 +33,7 @@
                                 dialog.close();
                                 utilities.job.execute(
                                 {
+                                    type: "GET",
                                     controller: "Maintenance",
                                     action: "RestartServices",
                                     title: "Service Utilities",
@@ -110,6 +111,7 @@
                                 dialog.close();
                                 utilities.job.execute(
                                 {
+                                    type: "GET",
                                     controller: "Maintenance",
                                     action: "ReinstallServices",
                                     title: "Service Utilities",
@@ -140,6 +142,7 @@
                                 dialog.close();
                                 utilities.job.execute(
                                 {
+                                    type: "GET",
                                     controller: "Maintenance",
                                     action: "UninstallServices",
                                     title: "Service Utilities",

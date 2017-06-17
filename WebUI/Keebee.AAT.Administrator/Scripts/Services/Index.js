@@ -70,6 +70,7 @@
                                 {
                                     controller: "Services",
                                     action: "SaveSettings",
+                                    type: "GET",
                                     title: "Service Activation/Deactivation",
                                     waitMessage: "Saving settings...",
                                     params: {

@@ -12,6 +12,8 @@
             var config = {
                 controller: null,
                 action: null,
+                type: "GET",
+                dataType: "json",
                 title: null,
                 waitMessage: "Please wait...",
                 successVerbage: null,
@@ -34,9 +36,10 @@
                     onshown: function (dialog) {
                         $("body").css("cursor", "wait");
                    
-                        $.get({
+                        $.ajax({
+                            type: config.type,
                             url: site.url + config.controller + "/" + config.action,
-                            dataType: "json",
+                            dataType: config.dataType,
                             data: config.params,
                             success: function (data) {
                                 $("body").css("cursor", "default");

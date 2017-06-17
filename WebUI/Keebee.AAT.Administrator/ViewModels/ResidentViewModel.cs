@@ -14,7 +14,8 @@ namespace Keebee.AAT.Administrator.ViewModels
         public string LastNameSearch { get; set; }
         public string SortColumnName { get; set; }
         public int? SortDescending { get; set; }
-    }
+        public int IsVideoCaptureServiceInstalled { get; set; }
+}
 
     public class ResidentViewModel
     {
@@ -34,6 +35,7 @@ namespace Keebee.AAT.Administrator.ViewModels
     {
         public SelectList Genders { get; set; }
         public SelectList GameDifficultyLevels { get; set; }
+        public bool IsVideoCaptureServiceInstalled { get; set; }
     }
 
     public class SharedLibraryLinkViewModel

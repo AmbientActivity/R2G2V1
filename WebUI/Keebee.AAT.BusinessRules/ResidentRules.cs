@@ -90,7 +90,7 @@ namespace Keebee.AAT.BusinessRules
                 var residentsClient = new ResidentsClient();
                 result = residentsClient.Delete(id);
 
-                if (result.Length > 0)
+                if (result != null)
                     throw new Exception($"Error deleting Resident{Environment.NewLine}{result}");
             }
 

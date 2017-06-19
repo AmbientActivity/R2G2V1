@@ -6,6 +6,7 @@ using Keebee.AAT.SystemEventLogging;
 using Keebee.AAT.MessageQueuing;
 using Keebee.AAT.ApiClient.Clients;
 using Keebee.AAT.ApiClient.Models;
+using Keebee.AAT.Administrator.Extensions;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -177,19 +178,21 @@ namespace Keebee.AAT.Administrator.Controllers
         [Authorize]
         public string UploadAvatar(HttpPostedFileBase file)
         {
-            // convert to image and orient
+            // convert to image and orient correctly
             var image = Image.FromStream(file.InputStream);
-            ResidentRules.GetOrientedImage(image);
+            var orientedImg = image.Orient();
 
             // convert back to stream
             var stream = new MemoryStream();
-            image.Save(stream, ImageFormat.Jpeg);
+            orientedImg.Save(stream, ImageFormat.Jpeg);
 
             // convert to web image and resize
             var webImg = new WebImage(stream);
-            webImg.Resize(60, 60, false, true);
 
-            return Convert.ToBase64String(webImg.GetBytes());
+            var croppedImage = webImg.CustomCrop(1);
+            croppedImage.Resize(60, 60, true, true);
+
+            return Convert.ToBase64String(croppedImage.GetBytes());
         }
 
         private static ResidentsViewModel LoadResidentsViewModel(

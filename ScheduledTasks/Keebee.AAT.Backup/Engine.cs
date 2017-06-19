@@ -62,7 +62,6 @@ namespace Keebee.AAT.Backup
 
                     if (driveBackup.IsReady)
                     {
-
                         // backup deployment folders (except media)
                         logText.Append(BackupFiles(_pathDeployments, _pathBackup,
                             excludeFolders: new[] { Path.Combine(_pathDeployments, "Media") }));
@@ -978,8 +977,8 @@ namespace Keebee.AAT.Backup
                             : "null";
 
                         sw.WriteLine(
-                            "INSERT [dbo].[Residents] ([Id], [FirstName], [LastName], [Gender], [GameDifficultyLevel], [AllowVideoCapturing], [DateCreated], [DateUpdated]) " +
-                            $"VALUES({r.Id}, '{r.FirstName.Replace("'", "''")}', {lastName}, '{r.Gender}', {r.GameDifficultyLevel}, {allowVideoCapturing}, GETDATE(), GETDATE())");
+                            "INSERT [dbo].[Residents] ([Id], [FirstName], [LastName], [Gender], [GameDifficultyLevel], [AllowVideoCapturing], [DateCreated], [DateUpdated], [ProfilePicture]) " +
+                            $"VALUES({r.Id}, '{r.FirstName.Replace("'", "''")}', {lastName}, '{r.Gender}', {r.GameDifficultyLevel}, {allowVideoCapturing}, GETDATE(), GETDATE(), CONVERT(VARBINARY(max), '0x{BitConverter.ToString(r.ProfilePicture).Replace("-", string.Empty)}', 1))");
                     }
                     sw.WriteLine("SET IDENTITY_INSERT [dbo].[Residents] OFF");
 

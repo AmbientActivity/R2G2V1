@@ -49,8 +49,8 @@ Try
                     "IF NOT EXISTS (SELECT * FROM Residents WHERE Id = $residentId)`r`n" +
                     "BEGIN`r`n" +
                         "SET IDENTITY_INSERT [dbo].[Residents] ON`r`n" +
-                        "INSERT [dbo].[Residents] ([Id], [FirstName], [LastName], [Gender], [GameDifficultyLevel], [AllowVideoCapturing], [DateCreated], [DateUpdated]) " +
-                        "VALUES($residentId, 'Resident $residentId', null, 'F', 1, 1, GetDate(), GetDate())`r`n" +
+                        "INSERT [dbo].[Residents] ([Id], [FirstName], [LastName], [Gender], [GameDifficultyLevel], [AllowVideoCapturing], [DateCreated], [DateUpdated], [ProfilePicture]) " +
+                        "VALUES($residentId, 'Resident $residentId', null, 'F', 1, 1, GetDate(), GetDate(), CONVERT(VARBINARY(max), '0x', 1))`r`n" +
                         "SET IDENTITY_INSERT [dbo].[Residents] OFF`r`n`r`n" +
             
                         "--- Activity 1 - ResponseType 'SlideShow' ---`r`n" +
@@ -86,8 +86,8 @@ Try
                         "'$residentId\videos\home-movies\' AND [FileType] = 'mp4'`r`n" +
                     "END"
 
-                    #Write-Host `n$sql
-                    Invoke-SqlQuery -Query $sql -Server $server -Database $database
+                    Write-Host `n$sql
+                    #Invoke-SqlQuery -Query $sql -Server $server -Database $database
                     Write-Host "done.`n"
                 }
             }

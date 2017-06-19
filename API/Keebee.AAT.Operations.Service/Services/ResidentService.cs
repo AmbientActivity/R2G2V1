@@ -76,6 +76,9 @@ namespace Keebee.AAT.Operations.Service.Services
             if (resident.LastName.Length == 0)
                 resident.LastName = null;
 
+            if (resident.ProfilePicture == null)
+                resident.ProfilePicture = new byte[0];
+
             container.AddToResidents(resident);
             container.SaveChanges();
 
@@ -103,6 +106,7 @@ namespace Keebee.AAT.Operations.Service.Services
                 r.GameDifficultyLevel = resident.GameDifficultyLevel;
 
             r.AllowVideoCapturing = resident.AllowVideoCapturing;
+            r.ProfilePicture = resident.ProfilePicture ?? new byte[0];
 
             resident.DateUpdated = DateTime.Now;
 

@@ -21,6 +21,9 @@ textarea {
 hr {
     margin: 5px;
 }
+img {
+    image-orientation: from-image;
+}
 a:hover, a:visited, a:link, a:active {
     text-decoration: none;
 }
@@ -248,3 +251,19 @@ a:hover, a:visited, a:link, a:active {
     left: 100%;
     margin-top: -1px;
 }
+
+.progressBar {
+	    background-color: #3E6FAD;
+	    width: 0;
+	    height: 20px;
+	    margin-top: 10px;
+	    margin-bottom: 10px;
+	    -moz-border-radius: 5px;
+	    -webkit-border-radius: 5px;
+	    -o-border-radius: 5px;
+	    border-radius: 5px;
+	    -moz-transition: .25s ease-out;
+	    -webkit-transition: .25s ease-out;
+	    -o-transition: .25s ease-out;
+	    transition: .25s ease-out;
+    }

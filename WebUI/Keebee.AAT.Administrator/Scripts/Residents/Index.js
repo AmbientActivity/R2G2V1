@@ -49,7 +49,7 @@
                     if (config.sortcolumn.length > 0)
                         $("#resident-col-" + config.sortcolumn).trigger("click");
 
-                    function Resident(id, firstname, lastname, gender, gamedifficultylevel, allowvideocapturing, hasprofile, datecreated, dateupdated) {
+                    function Resident(id, firstname, lastname, gender, gamedifficultylevel, allowvideocapturing, profilepicture, hasprofile, datecreated, dateupdated) {
                         var self = this;
 
                         self.id = id;
@@ -58,6 +58,7 @@
                         self.gender = gender;
                         self.gamedifficultylevel = gamedifficultylevel;
                         self.allowvideocapturing = allowvideocapturing;
+                        self.profilepicture = profilepicture;
                         self.hasprofile = hasprofile;
                         self.datecreated = datecreated;
                         self.dateupdated = dateupdated;
@@ -339,9 +340,14 @@
                             var gender = $.trim($("#ddlGenders").val());
                             var gamedifficultylevel = $.trim($("#ddlGameDifficultyLevels").val());
                             var allowVideoCapturing = $.trim($("#chkAllowVideoCapturing").is(":checked"));
+                            var profilePicture = null;
+
+                            if ($("#profile-picture").attr("alt") === "exists") {
+                                profilePicture = $("#profile-picture").attr("src").replace("data:image/jpg;base64,", "");
+                            }
 
                             return {
-                                Id: self.selectedResident().id, FirstName: firstname, LastName: lastname, Gender: gender, GameDifficultyLevel: gamedifficultylevel, AllowVideoCapturing: allowVideoCapturing
+                                Id: self.selectedResident().id, FirstName: firstname, LastName: lastname, Gender: gender, GameDifficultyLevel: gamedifficultylevel, AllowVideoCapturing: allowVideoCapturing, ProfilePicture: profilePicture
                             };
                         };
 

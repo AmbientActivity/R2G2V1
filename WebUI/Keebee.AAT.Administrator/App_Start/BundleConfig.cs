@@ -1,7 +1,4 @@
 ﻿using System.Web.Optimization;
-using BundleTransformer.Core.Builders;
-using BundleTransformer.Core.Resolvers;
-using BundleTransformer.Core.Transformers;
 
 namespace Keebee.AAT.Administrator
 {
@@ -10,42 +7,29 @@ namespace Keebee.AAT.Administrator
         // For more information on bundling, visit http://go.microsoft.com/fwlink/?LinkId=301862
         public static void RegisterBundles(BundleCollection bundles)
         {
-            var nullBuilder = new NullBuilder();
-            var styleTransformer = new StyleTransformer();
-            var scriptTransformer = new ScriptTransformer();
 
-            // Replace a default bundle resolver in order to the debugging HTTP-handler
-            // can use transformations of the corresponding bundle
-            BundleResolver.Current = new CustomBundleResolver();
+            bundles.Add(new ScriptBundle("~/bundles/Jquery").Include(
+                "~/Scripts/jquery-{version}.js"));
 
-            var jQueryBundle = new Bundle("~/bundles/Jquery");
-            jQueryBundle.Include(
-                "~/Scripts/jquery-{version}.js");
-            jQueryBundle.Builder = nullBuilder;
-            jQueryBundle.Transforms.Add(scriptTransformer);
-            bundles.Add(jQueryBundle);
+            bundles.Add(new ScriptBundle("~/bundles/JqueryVal").Include(
+                "~/Scripts/jquery.validate*"));
 
-            var jQueryValBundle = new Bundle("~/bundles/JqueryVal");
-            jQueryValBundle.Include(
-                "~/Scripts/jquery.validate*");
-            jQueryValBundle.Builder = nullBuilder;
-            jQueryValBundle.Transforms.Add(scriptTransformer);
-            bundles.Add(jQueryValBundle);
+            // Use the development version of Modernizr to develop with and learn from. Then, when you're
+            // ready for production, use the build tool at http://modernizr.com to pick only the tests you need.
+            bundles.Add(new ScriptBundle("~/bundles/Modernizr").Include(
+                "~/Scripts/modernizr-.*"));
 
-            var thirdPartyScriptBundle = new Bundle("~/bundles/ThirdPartyScripts");
-            thirdPartyScriptBundle.Include(
+            bundles.Add(new ScriptBundle("~/bundles/ThirdPartyScripts").Include(
                 "~/Scripts/knockout-{version}.js",
-                "~/Scripts/moment.js");
-            thirdPartyScriptBundle.Builder = nullBuilder;
-            thirdPartyScriptBundle.Transforms.Add(scriptTransformer);
-            bundles.Add(thirdPartyScriptBundle);
+                "~/Scripts/simpleUpload.js",
+                "~/Scripts/moment.js"));
 
-            var customScriptBundle = new ScriptBundle("~/bundles/CustomScripts");
-            customScriptBundle.Include(
+            bundles.Add(new ScriptBundle("~/bundles/CustomScripts").Include(
                 "~/Scripts/Site/Namespaces.js",
                 "~/Scripts/Site/Site.js",
                 "~/Scripts/Account/Utilities.js",
                 "~/Scripts/Residents/Index.js",
+                "~/Scripts/Residents/_ResidentEdit.js",
                 "~/Scripts/ResidentProfile/Index.js",
                 "~/Scripts/EventLogs/Index.js",
                 "~/Scripts/EventLogs/Export.js",
@@ -56,42 +40,20 @@ namespace Keebee.AAT.Administrator
                 "~/Scripts/PublicProfile/Index.js",
                 "~/Scripts/Services/Index.js",
                 "~/Scripts/Utilities/JobExecution.js",
-                "~/Scripts/Maintenance/Index.js");
-            customScriptBundle.Builder = nullBuilder;
-            customScriptBundle.Transforms.Add(scriptTransformer);
-            bundles.Add(customScriptBundle);
+                "~/Scripts/Maintenance/Index.js"));
 
-            // Use the development version of Modernizr to develop with and learn from. Then, when you're
-            // ready for production, use the build tool at http://modernizr.com to pick only the tests you need.
-            var modernizrBundle = new Bundle("~/bundles/Modernizr");
-            modernizrBundle.Include("~/Scripts/modernizr-.*");
-            modernizrBundle.Builder = nullBuilder;
-            modernizrBundle.Transforms.Add(scriptTransformer);
-            bundles.Add(modernizrBundle);
+            bundles.Add(new ScriptBundle("~/bundles/Bootstrap").Include(
+                "~/Scripts/bootstrap.js",
+                "~/Scripts/bootstrap-dialog.js",
+                "~/Scripts/bootstrap-datepicker.js"));
 
-            var bootstrapBundle = new Bundle("~/bundles/Bootstrap");
-            bootstrapBundle.Include(
-                      "~/Scripts/bootstrap.js",
-                      "~/Scripts/bootstrap-dialog.js",
-                      "~/Scripts/bootstrap-datepicker.js");
-            bootstrapBundle.Builder = nullBuilder;
-            bootstrapBundle.Transforms.Add(scriptTransformer);
-            bundles.Add(bootstrapBundle);
-
-            var commonStylesBundle = new StyleBundle("~/bundles/CommonStyles");
-            commonStylesBundle.Include(
+            bundles.Add(new StyleBundle("~/bundles/CommonStyles").Include(
                 "~/Content/bootstrap.css",
                 "~/Content/font-awesome.css",
                 "~/Content/bootstrap-theme.css",
                 "~/Content/bootstrap-datepicker.css",
                 "~/Content/bootstrap-dialog.css",
-                "~/Content/site.css");
-            commonStylesBundle.Builder = nullBuilder;
-            commonStylesBundle.Transforms.Add(styleTransformer);
-            bundles.Add(commonStylesBundle);
-
-            // uncomment to see optimizations locally
-            //BundleTable.EnableOptimizations = true;
+                "~/Content/site.css"));
         }
     }
 }

@@ -3,6 +3,7 @@ using Keebee.AAT.ApiClient.Clients;
 using Keebee.AAT.ApiClient.Models;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 
 namespace Keebee.AAT.BusinessRules
@@ -252,6 +253,34 @@ namespace Keebee.AAT.BusinessRules
             var message = $"All available {mediaPathType} {isAre} already included in this profile.";
 
             return message;
+        }
+
+        public static Image GetOrientedImage(Image image)
+        {
+            foreach (var prop in image.PropertyItems)
+            {
+                if ((prop.Id == 0x0112 || prop.Id == 5029 || prop.Id == 274))
+                {
+                    var value = (int)prop.Value[0];
+                    if (value == 6)
+                    {
+                        image.RotateFlip(RotateFlipType.Rotate90FlipNone);
+                        break;
+                    }
+                    else if (value == 8)
+                    {
+                        image.RotateFlip(RotateFlipType.Rotate270FlipNone);
+                        break;
+                    }
+                    else if (value == 3)
+                    {
+                        image.RotateFlip(RotateFlipType.Rotate180FlipNone);
+                        break;
+                    }
+                }
+            }
+
+            return image;
         }
     }
 }

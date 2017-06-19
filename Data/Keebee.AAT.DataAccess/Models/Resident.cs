@@ -18,6 +18,7 @@ namespace Keebee.AAT.DataAccess.Models
         public bool AllowVideoCapturing { get; set; }
         public DateTime DateCreated { get; set; }
         public DateTime DateUpdated { get; set; }
+        public byte[] ProfilePicture { get; set; }
         public virtual IList<ResidentMediaFile> MediaFiles { get; set; }
     }
 }

@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-// Generation date: 2017-02-14 4:04:15 PM
+// Generation date: 2017-06-18 7:41:54 PM
 namespace Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models
 {
     /// <summary>
@@ -3786,6 +3786,29 @@ namespace Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models
         partial void OnDateUpdatedChanging(global::System.DateTimeOffset value);
         partial void OnDateUpdatedChanged();
         /// <summary>
+        /// There are no comments for Property ProfilePicture in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        [global::Microsoft.OData.Client.OriginalNameAttribute("ProfilePicture")]
+        public byte[] ProfilePicture
+        {
+            get
+            {
+                return this._ProfilePicture;
+            }
+            set
+            {
+                this.OnProfilePictureChanging(value);
+                this._ProfilePicture = value;
+                this.OnProfilePictureChanged();
+                this.OnPropertyChanged("ProfilePicture");
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private byte[] _ProfilePicture;
+        partial void OnProfilePictureChanging(byte[] value);
+        partial void OnProfilePictureChanged();
+        /// <summary>
         /// There are no comments for Property MediaFiles in the schema.
         /// </summary>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
@@ -5731,6 +5754,7 @@ namespace Keebee.AAT.DataAccess.Tests.KeebeeAAT
         <Property Name=""AllowVideoCapturing"" Type=""Edm.Boolean"" Nullable=""false"" />
         <Property Name=""DateCreated"" Type=""Edm.DateTimeOffset"" Nullable=""false"" />
         <Property Name=""DateUpdated"" Type=""Edm.DateTimeOffset"" Nullable=""false"" />
+        <Property Name=""ProfilePicture"" Type=""Edm.Binary"" />
         <NavigationProperty Name=""MediaFiles"" Type=""Collection(Keebee.AAT.DataAccess.Models.ResidentMediaFile)"" />
       </EntityType>
       <EntityType Name=""ActiveResident"">

@@ -14,8 +14,8 @@ namespace Keebee.AAT.ApiClient.Clients
         Resident GetWithMedia(int residentId);
         Resident GetByNameGender(string firstName, string lastName, string gender);
         bool Exists(int residentId);
-        string Patch(int residentId, ResidentEdit resident);
-        string Post(ResidentEdit resident, out int newId);
+        string Patch(int residentId, Resident resident);
+        string Post(Resident resident, out int newId);
     }
 
     public class ResidentsClient : BaseClient, IResidentsClient
@@ -64,7 +64,7 @@ namespace Keebee.AAT.ApiClient.Clients
             return Convert.ToBoolean(data.Content);
         }
 
-        public string Patch(int id, ResidentEdit resident)
+        public string Patch(int id, Resident resident)
         {
             var request = new RestRequest($"residents/{id}", Method.PATCH);
             var json = request.JsonSerializer.Serialize(resident);
@@ -72,13 +72,13 @@ namespace Keebee.AAT.ApiClient.Clients
             var response = Execute(request);
             string msg = null;
 
-            if (response.StatusCode != HttpStatusCode.OK)
+            if (response.StatusCode != HttpStatusCode.NoContent)
                 msg = response.StatusDescription;
 
             return msg;
         }
 
-        public string Post(ResidentEdit resident, out int newId)
+        public string Post(Resident resident, out int newId)
         {
             var request = new RestRequest("residents", Method.POST);
             var json = request.JsonSerializer.Serialize(resident);

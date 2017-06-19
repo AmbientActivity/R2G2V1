@@ -19,5 +19,6 @@
     window.sharedlibrary = {};
     window.services = {};
     window.utilities = {};
+    window.file = {};
     window.maintenance = {};
 })();

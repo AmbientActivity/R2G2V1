@@ -12,6 +12,11 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Web.Mvc;
 using System;
+using System.Drawing;
+using System.Drawing.Imaging;
+using System.IO;
+using System.Web;
+using System.Web.Helpers;
 using System.Web.Script.Serialization;
 
 namespace Keebee.AAT.Administrator.Controllers
@@ -81,7 +86,9 @@ namespace Keebee.AAT.Administrator.Controllers
             if (residentId > 0)
             {
                 if (validateMsgs == null)
-                    UpdateResident(r);
+                {
+                    errorMsg = UpdateResident(r);
+                }
             }
             else
             {
@@ -166,6 +173,25 @@ namespace Keebee.AAT.Administrator.Controllers
             }, JsonRequestBehavior.AllowGet);
         }
 
+        [HttpPost]
+        [Authorize]
+        public string UploadAvatar(HttpPostedFileBase file)
+        {
+            // convert to image and orient
+            var image = Image.FromStream(file.InputStream);
+            ResidentRules.GetOrientedImage(image);
+
+            // convert back to stream
+            var stream = new MemoryStream();
+            image.Save(stream, ImageFormat.Jpeg);
+
+            // convert to web image and resize
+            var webImg = new WebImage(stream);
+            webImg.Resize(60, 60, false, true);
+
+            return Convert.ToBase64String(webImg.GetBytes());
+        }
+
         private static ResidentsViewModel LoadResidentsViewModel(
             int id, 
             List<string> msgs, 
@@ -201,6 +227,16 @@ namespace Keebee.AAT.Administrator.Controllers
             {
                 resident = _residentsClient.Get(id);
             }
+
+            string profilePicture = null;
+
+            if (resident?.ProfilePicture != null)
+            {
+                profilePicture = (resident?.ProfilePicture?.Length == 0) 
+                    ? null
+                    : $"data:image/jpg;base64,{Convert.ToBase64String(resident?.ProfilePicture)}";
+            }
+
             var vm = new ResidentEditViewModel
             {
                 Id = resident?.Id ?? 0,
@@ -218,6 +254,7 @@ namespace Keebee.AAT.Administrator.Controllers
                     new SelectListItem { Value = "5", Text = "5" }},
                     "Value", "Text", resident?.GameDifficultyLevel),
                 AllowVideoCapturing = resident?.AllowVideoCapturing ?? false,
+                ProfilePicture = profilePicture,
                 IsVideoCaptureServiceInstalled = ServiceUtilities.IsInstalled(ServiceUtilities.ServiceType.VideoCapture)
             };
 
@@ -237,25 +274,27 @@ namespace Keebee.AAT.Administrator.Controllers
                     Gender = resident.Gender,
                     GameDifficultyLevel = resident.GameDifficultyLevel,
                     AllowVideoCapturing = resident.AllowVideoCapturing,
+                    ProfilePicture = resident.ProfilePicture != null ? Convert.ToBase64String(resident.ProfilePicture) : null,
                     DateCreated = resident.DateCreated,
-                    DateUpdated = resident.DateUpdated,
+                    DateUpdated = resident.DateUpdated
                 }).OrderBy(x => x.Id);
 
             return list;
         }
 
-        private void UpdateResident(ResidentViewModel residentDetail)
+        private string UpdateResident(ResidentViewModel residentDetail)
         {
-            var r = new ResidentEdit
+            var r = new Resident
             {
                 FirstName = residentDetail.FirstName,
                 LastName = residentDetail.LastName,
                 Gender = residentDetail.Gender,
                 GameDifficultyLevel = residentDetail.GameDifficultyLevel,
-                AllowVideoCapturing = residentDetail.AllowVideoCapturing
+                AllowVideoCapturing = residentDetail.AllowVideoCapturing,
+                ProfilePicture = residentDetail.ProfilePicture != null ? Convert.FromBase64String(residentDetail.ProfilePicture) : null
             };
 
-            _residentsClient.Patch(residentDetail.Id, r);
+            return _residentsClient.Patch(residentDetail.Id, r);
         }
 
         private string AddResident(ResidentViewModel residentDetail, out int residentId)
@@ -265,13 +304,14 @@ namespace Keebee.AAT.Administrator.Controllers
 
             try
             {
-                msg = _residentsClient.Post(new ResidentEdit
+                msg = _residentsClient.Post(new Resident
                 {
                     FirstName = residentDetail.FirstName,
                     LastName = residentDetail.LastName,
                     Gender = residentDetail.Gender,
                     GameDifficultyLevel = residentDetail.GameDifficultyLevel,
-                    AllowVideoCapturing = residentDetail.AllowVideoCapturing
+                    AllowVideoCapturing = residentDetail.AllowVideoCapturing,
+                    ProfilePicture = Convert.FromBase64String(residentDetail.ProfilePicture)
                 }, out residentId);
 
                 var fileManager = new FileManager {EventLogger = _systemEventLogger};

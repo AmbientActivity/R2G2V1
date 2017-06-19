@@ -1,0 +1,100 @@
+﻿/*!
+ * 1.0 Keebee AAT Copyright © 2016
+ * Residents/_ResidentEdit.js
+ * Author: John Charlton
+ * Date: 2016-08
+ */
+
+
+; (function ($) {
+
+    residents.edit = {
+        init: function (options) {
+
+            var config = {
+                profilePicturePlaceholder: ""
+            };
+
+            $.extend(config, options);
+
+            var imgProfilePicture = $("#profile-picture");
+            var inputFileUpload = $("#fileupload");
+            var cmdRemovePicture = $("#remove-picture");
+            var progressDesc = $("#progress");
+            var progressBar = $("#progressBar");
+
+            // initialize the remove button
+            if (imgProfilePicture.attr("alt") === "notexists")
+                cmdRemovePicture.attr("disabled", "disabled");
+            else
+                cmdRemovePicture.removeAttr("disabled");
+
+            cmdRemovePicture.click(function () {
+                imgProfilePicture.attr("src", site.url + config.profilePicturePlaceholder);
+                imgProfilePicture.attr("alt", "notexists");
+                cmdRemovePicture.attr("disabled", "disabled");
+            });
+
+            inputFileUpload.change(function () {
+                $(this).simpleUpload(site.url + "Residents/UploadAvatar",
+                {
+                    allowedExts: ["jpg", "jpeg", "png", "gif"],
+                    allowedTypes: ["image/jpg", "image/jpeg", "image/png", "image/gif"],
+                    maxFileSize: 5000000, //5MB in bytes
+
+                    start: function (file) {
+                        progressBar.show();
+                    },
+
+                    progress: function (progress) {
+                        progressDesc.html("Progress: " + Math.round(progress) + "%");
+                        progressBar.css("width", progress/2 + "%");
+                    },
+
+                    success: function (data) {
+                        imgProfilePicture.attr("src", "data:image/jpg;base64," + data);
+                        imgProfilePicture.attr("alt", "exists");
+                        cmdRemovePicture.removeAttr("disabled");
+                        progressDesc.html("");
+                        progressBar.width(0);
+                        progressBar.hide();
+                    },
+
+                    error: function (error) {
+                        var errorName = error.name;
+
+                        if (errorName === "InvalidFileExtensionError") {
+                            BootstrapDialog.show({
+                                title: "Invalid File Extension",
+                                type: BootstrapDialog.TYPE_WARNING,
+                                message: "Can only upload files of type jpg, png or gif",
+                                buttons: [
+                                    {
+                                        label: "OK",
+                                        action: function(dialog) {
+                                            dialog.close();
+                                        }
+                                    }
+                                ]
+                            });
+                        } else {
+                            BootstrapDialog.show({
+                                title: "Upload Error",
+                                type: BootstrapDialog.TYPE_DANGER,
+                                message: errorName + ": " + error.message,
+                                buttons: [
+                                    {
+                                        label: "OK",
+                                        action: function (dialog) {
+                                            dialog.close();
+                                        }
+                                    }
+                                ]
+                            });
+                        }
+                    }
+                });
+            });
+        }
+    }
+})(jQuery);

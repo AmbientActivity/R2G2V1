@@ -25,14 +25,14 @@
 
             // initialize the remove button
             if (imgProfilePicture.attr("alt") === "notexists")
-                cmdRemovePicture.attr("disabled", "disabled");
+                cmdRemovePicture.prop("disabled", true);
             else
-                cmdRemovePicture.removeAttr("disabled");
+                cmdRemovePicture.prop("disabled", false);
 
             cmdRemovePicture.click(function () {
                 imgProfilePicture.attr("src", site.url + config.profilePicturePlaceholder);
                 imgProfilePicture.attr("alt", "notexists");
-                cmdRemovePicture.attr("disabled", "disabled");
+                cmdRemovePicture.prop("disabled", true);
             });
 
             inputFileUpload.change(function () {
@@ -44,6 +44,9 @@
 
                     start: function (file) {
                         progressBar.show();
+                        $("button").prop("disabled", true);
+                        $("input").prop("disabled", true);
+                        $(".btn").addClass("disabled");
                     },
 
                     progress: function (progress) {
@@ -58,6 +61,9 @@
                         progressDesc.html("");
                         progressBar.width(0);
                         progressBar.hide();
+                        $("button").prop("disabled", false);
+                        $("input").prop("disabled", false);
+                        $(".btn").removeClass("disabled");
                     },
 
                     error: function (error) {

@@ -86,8 +86,7 @@ Try
                         "'$residentId\videos\home-movies\' AND [FileType] = 'mp4'`r`n" +
                     "END"
 
-                    Write-Host `n$sql
-                    #Invoke-SqlQuery -Query $sql -Server $server -Database $database
+                    Invoke-SqlQuery -Query $sql -Server $server -Database $database
                     Write-Host "done.`n"
                 }
             }

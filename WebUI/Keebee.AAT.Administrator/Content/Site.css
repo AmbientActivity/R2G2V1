@@ -165,6 +165,9 @@ a:hover, a:visited, a:link, a:active {
 .table > tfoot > tr > td {
   vertical-align: middle;
 }
+.table-striped tbody tr.highlight td {
+    background-color: #e3e8ff;
+}
 /* filter */
 .select-filter {
     min-width: 200px;
@@ -232,12 +235,31 @@ a:hover, a:visited, a:link, a:active {
 .col-islinked {
     width: 20px;
 }
+.col-glyphicon {
+    width: 30px;
+}
+
+/* resident table */
+.col-id {
+    width: 40px;
+}
+.col-gender {
+    width: 70px;
+}
+.col-level {
+    width: 40px;
+}
 .col-capturable {
     width: 30px;
 }
-/* bootstrap glyphicons*/
-.col-glyphicon {
-    width: 30px;
+.col-date {
+    width: 100px;
+}
+
+/* bootstrap glyphicons */
+.glyphicon-resident {
+    font-size: 20px;
+    padding-right: 5px;
 }
 .glyphicon-remove {
     color: #c12e2a;

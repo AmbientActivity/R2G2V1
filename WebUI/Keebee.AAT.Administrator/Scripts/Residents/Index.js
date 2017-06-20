@@ -85,7 +85,7 @@
 
                         self.columns = ko.computed(function () {
                             var arr = [];
-                            arr.push({ title: "ID", sortable: true, sortKey: "id", numeric: true, cssClass: "col-idsearch" });
+                            arr.push({ title: "ID", sortable: true, sortKey: "id", numeric: true, cssClass: "col-id" });
                             arr.push({ title: "First Name", sortable: true, sortKey: "firstname", numeric: false, cssClass: "col-firstname" });
                             arr.push({ title: "Last Name", sortable: true, sortKey: "lastname", numeric: false, cssClass: "col-lastname" });
                             arr.push({ title: "Gender", sortable: true, sortKey: "gender", numeric: false, cssClass: "col-gender" });

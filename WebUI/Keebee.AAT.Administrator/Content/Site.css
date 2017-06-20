@@ -75,6 +75,7 @@ a:hover, a:visited, a:link, a:active {
 .navbar a:focus {
   color: #ffffff;
 }
+
 .navbar .nav.navbar-nav > .open > a,
 .navbar .nav.navbar-nav > .open > a:hover,
 .navbar .nav.navbar-nav > .open > a:focus {
@@ -84,7 +85,17 @@ a:hover, a:visited, a:link, a:active {
 .navbar .nav > li > a:focus {
   background-color: #231b10;
 }
-
+/*.nav .caret {
+  border-top-color: #e1e0e0;
+  border-bottom-color: #e1e0e0;
+}*/
+/*.nav a.hover .caret {
+  border-top-color: #F0F0F0;
+  border-bottom-color: #F0F0F0;
+}*/
+/*.dropdown-menu > li > a:hover  {
+    background-color: #b0c3e1;
+}*/
 /* login */
 .greeting {
     float: right;
@@ -95,7 +106,7 @@ a:hover, a:visited, a:link, a:active {
     list-style: none;
 }
 #menu-login {
-    color: #418cff;
+    color: #b6cae9;
 }
 
 /* dialogs */
@@ -107,6 +118,10 @@ a:hover, a:visited, a:link, a:active {
 }
 
 .modal-content {
+    width: 470px;
+}
+.modal-body {
+    padding-bottom: 0;
     width: 470px;
 }
 .col-sm-12 {
@@ -149,6 +164,11 @@ a:hover, a:visited, a:link, a:active {
 .table tbody > tr > td.vert-align {
     vertical-align: middle;
 }
+
+.table-striped tbody tr.highlight td {
+    background-color: #e3e8ff;
+}
+
 /* filter */
 .select-filter {
     min-width: 200px;
@@ -216,6 +236,7 @@ a:hover, a:visited, a:link, a:active {
 .col-islinked {
     width: 20px;
 }
+
 /* bootstrap glyphicons*/
 .col-glyphicon {
     width: 30px;
@@ -253,7 +274,7 @@ a:hover, a:visited, a:link, a:active {
 }
 
 .progressBar {
-	    background-color: #3E6FAD;
+	    background-color: #419641;
 	    width: 0;
 	    height: 20px;
 	    margin-top: 10px;

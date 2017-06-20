@@ -6,9 +6,6 @@
  */
 
 ; (function ($) {
-
-    var highlightRowColour = "#e3e8ff";
-
     residents.index = {
         init: function (values) {
             var currentSortKey = "id";
@@ -33,10 +30,8 @@
                 ResidentList: []
             };
 
-            $.get({
-                url: site.url + "Residents/GetData/",
-                dataType: "json",
-                success: function (data) {
+            $.get(site.url + "Residents/GetData/")
+                .done(function (data) {
                     $.extend(lists, data);
 
                     ko.applyBindings(new ResidentViewModel());
@@ -189,9 +184,8 @@
                                 self.selectedResident([]);
                             }
 
-                            $.get({
-                                url: site.url + "Residents/GetResidentEditView/" + id,
-                                success: function (message) {
+                            $.get(site.url + "Residents/GetResidentEditView/" + id)
+                                .done(function (message) {
                                     BootstrapDialog.show({
                                         title: title,
                                         message: $("<div></div>").append(message),
@@ -236,7 +230,6 @@
                                             }
                                         ]
                                     });
-                                }
                             });                         
                         };
 
@@ -322,16 +315,8 @@
                         };
 
                         self.highlightRow = function (row) {
-                            if (row == null) return;
-
-                            var rows = tblResident.find("tr:gt(0)");
-                            rows.each(function () {
-                                $(this).css("background-color", "#ffffff");
-                            });
-
                             var r = tblResident.find("#row_" + row.id);
-                            r.css("background-color", highlightRowColour);
-                            tblResident.attr("tr:hover", highlightRowColour);
+                            $(r).addClass("highlight").siblings().removeClass("highlight");
                         };
 
                         self.getResidentDetailFromDialog = function () {
@@ -374,7 +359,6 @@
                             });
                         };
                     };
-                }
             });       
         }
     }

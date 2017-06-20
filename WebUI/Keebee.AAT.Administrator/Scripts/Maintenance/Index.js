@@ -156,9 +156,8 @@
             });
 
             function killDisplay() {
-                $.get({
-                    url: site.url + "Maintenance/KillDisplay",
-                    success: function (data) {
+                $.get(site.url + "Maintenance/KillDisplay")
+                    .done(function (data) {
                         $("body").css("cursor", "default");
 
                         if (data.length === 0)
@@ -175,14 +174,12 @@
                                     }
                                 }]
                             });
-                       }
                 });
             }
 
             function clearServiceLogs() {
-                $.get({
-                    url: site.url + "Maintenance/ClearServiceLogs",
-                    success: function(data) {
+                $.get(site.url + "Maintenance/ClearServiceLogs")
+                    .done(function(data) {
                         $("body").css("cursor", "default");
 
                         if (data.length === 0)
@@ -200,7 +197,6 @@
                                     }
                                 ]
                             });
-                    }
                 });
             }
         }

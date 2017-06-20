@@ -15,7 +15,7 @@
                 type: "GET",
                 dataType: "json",
                 title: null,
-                waitMessage: "Please wait...",
+                waitMessage: "One moment...",
                 successVerbage: null,
                 params: {}
             };
@@ -31,7 +31,7 @@
                 BootstrapDialog.show({
                     type: BootstrapDialog.TYPE_INFO,
                     title: config.title,
-                    message: config.waitMessage,
+                    message: "<p>" + config.waitMessage + "</p>",
                     closable: false,
                     onshown: function (dialog) {
                         $("body").css("cursor", "wait");

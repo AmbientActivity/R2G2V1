@@ -68,8 +68,6 @@ function DisableScreen() {
 }
 
 ; (function ($) {
-    var highlightRowColour = "#e3e8ff";
-
     residentprofile.index = {
         init: function (values) {
             var config = {
@@ -91,11 +89,9 @@ function DisableScreen() {
                 MediaPathTypeList: []
             };
 
-            $.get({
-                url: site.url + "ResidentProfile/GetData/" + config.residentid
-                    + "?mediaPathTypeId=" + $("#mediaPathTypeId").val(),
-                dataType: "json",
-                success: function (data) {
+            $.get(site.url + "ResidentProfile/GetData/" + config.residentid
+                    + "?mediaPathTypeId=" + $("#mediaPathTypeId").val())
+                .done(function (data) {
                     $.extend(lists, data);
 
                     ko.applyBindings(new FileViewModel());
@@ -228,13 +224,10 @@ function DisableScreen() {
                         self.reloadUploaderHtml = function () {
                             var mediaPathTypeId = self.selectedMediaPathType();
 
-                            $.get({
-                                url: site.url + "ResidentProfile/GetUploaderHtml?mediaPathTypeId=" + mediaPathTypeId,
-                                dataType: "json",
-                                success: function (result) {
+                            $.get(site.url + "ResidentProfile/GetUploaderHtml?mediaPathTypeId=" + mediaPathTypeId)
+                                .done(function (result) {
                                     $("#uploader-html-container").html(result.UploaderHtml);
                                     $("#uploadbutton").text(result.AddButtonText);
-                                }
                             });
                         };
 
@@ -278,9 +271,8 @@ function DisableScreen() {
                         self.showPreview = function (row) {
                             $("body").css("cursor", "wait");
 
-                            $.get({
-                                url: site.url + "ResidentProfile/GetImageViewerView?streamId=" + row.streamid + "&fileType=" + row.filetype,
-                                success: function (message) {
+                            $.get(site.url + "ResidentProfile/GetImageViewerView?streamId=" + row.streamid + "&fileType=" + row.filetype)
+                                .done(function (message) {
                                     BootstrapDialog.show({
                                         type: BootstrapDialog.TYPE_INFO,
                                         title: "Image Viewer - " + row.filename + "." + row.filetype.toLowerCase(),
@@ -294,8 +286,8 @@ function DisableScreen() {
                                             }
                                         }]
                                     });
-                                },
-                                error: function (message) {
+                                })
+                                .error(function (message) {
                                     BootstrapDialog.show({
                                         type: BootstrapDialog.TYPE_DANGER,
                                         title: "Error",
@@ -309,7 +301,6 @@ function DisableScreen() {
                                             }
                                         }]
                                     });
-                                }
                             });
                         };
 
@@ -318,10 +309,9 @@ function DisableScreen() {
                             var title = "<span class='glyphicon glyphicon-link' style='color: #fff'></span>";
                             var mediaPathTypeDesc = self.mediaPathType().shortdescription;
 
-                            $.get({
-                                data: { residentId: residentId, mediaPathTypeId: self.selectedMediaPathType() },
-                                url: site.url + "ResidentProfile/GetSharedLibarayLinkView/",
-                                success: function (message) {
+                            $.get(site.url + "ResidentProfile/GetSharedLibarayLinkView/",
+                                { residentId: residentId, mediaPathTypeId: self.selectedMediaPathType() })
+                                .done(function (message) {
                                     var hasHave = "has";
                                     if (mediaPathTypeDesc.endsWith("s"))
                                         hasHave = "have";
@@ -365,7 +355,6 @@ function DisableScreen() {
                                             ]
                                         });
                                     }
-                                }
                             });
                         };
 
@@ -459,7 +448,7 @@ function DisableScreen() {
                         self.highlightSelectedRows = function () {
                             var rows = tblFile.find("tr:gt(0)");
                             rows.each(function () {
-                                $(this).css("background-color", "#ffffff");
+                                $(this).removeClass("highlight");
                             });
 
                             var selected = self.files()
@@ -467,11 +456,8 @@ function DisableScreen() {
 
                             $.each(selected, function (item, value) {
                                 var r = tblFile.find("#row_" + value.id);
-                                r.css("background-color", highlightRowColour);
-                                tblFile.attr("tr:hover", highlightRowColour);
+                                $(r).addClass("highlight");
                             });
-
-                            return true;
                         };
 
                         self.deleteSelected = function () {
@@ -487,16 +473,13 @@ function DisableScreen() {
                                 message: "One moment...",
                                 closable: false,
                                 onshown: function (dialog) {
-                                    $.post({
-                                        url: site.url + "ResidentProfile/DeleteSelected/",
-                                        data:
+                                    $.post(site.url + "ResidentProfile/DeleteSelected/",
                                         {
                                             ids: ids,
                                             residentId: residentId,
                                             mediaPathTypeId: mediaPathTypeId
-                                        },
-                                        dataType: "json",
-                                        success: function (result) {
+                                        })
+                                        .done(function (result) {
                                             dialog.close();
                                             $("body").css("cursor", "default");
                                             if (result.Success) {
@@ -516,8 +499,8 @@ function DisableScreen() {
                                                     message: result.ErrorMessage
                                                 });
                                             }
-                                        },
-                                        error: function (result) {
+                                        })
+                                        .error(function (result) {
                                             dialog.close();
                                             $("body").css("cursor", "default");
                                             enableDetail();
@@ -527,8 +510,7 @@ function DisableScreen() {
                                                 title: "Delete Error",
                                                 message: "Unexpected Error\n" + result
                                             });
-                                        }
-                                    });
+                                        });
                                 }
                             });
                         };
@@ -543,16 +525,13 @@ function DisableScreen() {
                             var residentId = config.residentid;
                             var mediaPathTypeId = $("#mediaPathTypeId").val();
 
-                            $.post({
-                                url: site.url + "ResidentProfile/AddFromSharedLibrary/",
-                                data:
+                            $.post(site.url + "ResidentProfile/AddFromSharedLibrary/", 
                                 {
                                     streamIds: ids,
                                     residentId: residentId,
                                     mediaPathTypeId: mediaPathTypeId
-                                },
-                                dataType: "json",
-                                success: function (result) {
+                                })
+                            .done(function (result) {
                                     $("body").css("cursor", "default");
                                     if (result.Success) {
                                         lists.FileList = result.FileList;
@@ -571,8 +550,8 @@ function DisableScreen() {
                                             message: result.ErrorMessage
                                         });
                                     }
-                                },
-                                error: function (result) {
+                                })
+                                .error(function (result) {
                                     $("body").css("cursor", "default");
                                     enableDetail();
 
@@ -581,7 +560,6 @@ function DisableScreen() {
                                         title: "Error Adding Shared Files",
                                         message: "Unexpected Error\n" + result
                                     });
-                                }
                             });
                         };
 
@@ -597,7 +575,6 @@ function DisableScreen() {
                                 })[0];
                         }
                     };
-                }
             });
         }        
     }

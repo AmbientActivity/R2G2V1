@@ -6,9 +6,6 @@
  */
 
 ; (function ($) {
-
-    var highlightRowColour = "#e3e8ff";
-
     videocaptures.index = {
         init: function () {
             var sortDescending = false;
@@ -18,10 +15,8 @@
                 VideoCaptureList: []
             };
 
-            $.get({
-                url: site.url + "VideoCaptures/GetData/",
-                dataType: "json",
-                success: function (data) {
+            $.get(site.url + "VideoCaptures/GetData/")
+                .done(function (data) {
                     $.extend(lists, data);
 
                     ko.applyBindings(new VideoCaptureViewModel());
@@ -125,19 +120,10 @@
                         });
 
                         self.highlightRow = function (row) {
-                            if (row == null) return;
-
-                            var rows = tblVideoCapture.find("tr:gt(0)");
-                            rows.each(function () {
-                                $(this).css("background-color", "#ffffff");
-                            });
-
                             var r = tblVideoCapture.find("#row_" + row.streamid);
-                            r.css("background-color", highlightRowColour);
-                            $("#tblVideoCapture").attr("tr:hover", highlightRowColour);
+                            $(r).addClass("highlight").siblings().removeClass("highlight");
                         };
                     };
-                }
             });      
         }
     }

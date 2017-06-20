@@ -314,7 +314,7 @@ namespace Keebee.AAT.Administrator.Controllers
                     Gender = residentDetail.Gender,
                     GameDifficultyLevel = residentDetail.GameDifficultyLevel,
                     AllowVideoCapturing = residentDetail.AllowVideoCapturing,
-                    ProfilePicture = Convert.FromBase64String(residentDetail.ProfilePicture)
+                    ProfilePicture = residentDetail.ProfilePicture != null ? Convert.FromBase64String(residentDetail.ProfilePicture) : null
                 }, out residentId);
 
                 var fileManager = new FileManager {EventLogger = _systemEventLogger};

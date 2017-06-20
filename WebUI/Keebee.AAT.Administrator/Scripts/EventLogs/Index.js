@@ -6,9 +6,6 @@
  */
 
 ; (function ($) {
-
-    var highlightRowColour = "#e3e8ff";
-
     eventlogs.index = {
         init: function () {
             var sortDescending = false;
@@ -18,10 +15,8 @@
                 EventLogList: []
             };
 
-            $.get({
-                url: site.url + "EventLogs/GetData/",
-                dataType: "json",
-                success: function (data) {
+            $.get(site.url + "EventLogs/GetData/")
+                .done(function (data) {
                     $.extend(lists, data);
 
                     ko.applyBindings(new EventLogViewModel());
@@ -129,19 +124,10 @@
                         });
 
                         self.highlightRow = function (row) {
-                            if (row == null) return;
-
-                            var rows = tblEventLog.find("tr:gt(0)");
-                            rows.each(function () {
-                                $(this).css("background-color", "#ffffff");
-                            });
-
                             var r = tblEventLog.find("#row_" + row.streamid);
-                            r.css("background-color", highlightRowColour);
-                            $("#tblEventLog").attr("tr:hover", highlightRowColour);
+                            $(r).addClass("highlight").siblings().removeClass("highlight");
                         };
                     };
-                }
             });
         }
     }

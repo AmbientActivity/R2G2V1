@@ -68,8 +68,6 @@ function DisableScreen() {
 }
 
 ; (function ($) {
-    var highlightRowColour = "#e3e8ff";
-
     sharedlibrary.index = {
         init: function (values) {
             
@@ -91,10 +89,8 @@ function DisableScreen() {
                 MediaPathTypeList: []
             };
 
-            $.get({
-                url: site.url + "SharedLibrary/GetData?" + "mediaPathTypeId=" + $("#mediaPathTypeId").val(),
-                dataType: "json",
-                success: function (data) {
+            $.get(site.url + "SharedLibrary/GetData?" + "mediaPathTypeId=" + $("#mediaPathTypeId").val())
+                .done(function (data) {
                     $.extend(lists, data);
 
                     ko.applyBindings(new FileViewModel());
@@ -223,13 +219,10 @@ function DisableScreen() {
                         self.reloadUploaderHtml = function () {
                             var mediaPathTypeId = self.selectedMediaPathType();
 
-                            $.get({
-                                url: site.url + "SharedLibrary/GetUploaderHtml?mediaPathTypeId=" + mediaPathTypeId,
-                                dataType: "json",
-                                success: function (result) {
+                            $.get(site.url + "SharedLibrary/GetUploaderHtml?mediaPathTypeId=" + mediaPathTypeId)
+                                .done(function (result) {
                                     $("#uploader-html-container").html(result.UploaderHtml);
                                     $("#uploadbutton").text(result.AddButtonText);
-                                }
                             });
                         };
 
@@ -309,9 +302,8 @@ function DisableScreen() {
                         self.showPreview = function (row) {
                             $("body").css("cursor", "wait");
 
-                            $.get({
-                                url: site.url + "SharedLibrary/GetImageViewerView?streamId=" + row.streamid + "&fileType=" + row.filetype,
-                                success: function (message) {
+                            $.get(site.url + "SharedLibrary/GetImageViewerView?streamId=" + row.streamid + "&fileType=" + row.filetype)
+                                .done(function (message) {
                                     BootstrapDialog.show({
                                         type: BootstrapDialog.TYPE_INFO,
                                         title: "Image Viewer - " + row.filename + "." + row.filetype.toLowerCase(),
@@ -325,8 +317,8 @@ function DisableScreen() {
                                             }
                                         }]
                                     });
-                                },
-                                error: function (message) {
+                                })
+                                .error(function (message) {
                                     BootstrapDialog.show({
                                         type: BootstrapDialog.TYPE_DANGER,
                                         title: "Error",
@@ -340,17 +332,14 @@ function DisableScreen() {
                                             }
                                         }]
                                     });
-                                }
                             });
                         };
 
                         self.showLinkedProfilesDialog = function (row) {
                             var title = "<span class='glyphicon glyphicon-link' style='color: #fff'></span>";
 
-                            $.get({
-                                data: { streamId: row.streamid },
-                                url: site.url + "SharedLibrary/GetLinkedResidentsView/",
-                                success: function (message) {
+                            $.get(site.url + "SharedLibrary/GetLinkedResidentsView/", { streamId: row.streamid })
+                                .done(function (message) {
                                     BootstrapDialog.show({
                                         title: title + " Linked Profiles",
                                         message: $("<div></div>").append(message),
@@ -366,7 +355,6 @@ function DisableScreen() {
                                             }
                                         ]
                                     });
-                                }
                             });
                         };
 
@@ -434,7 +422,7 @@ function DisableScreen() {
                         self.highlightSelectedRows = function () {
                             var rows = tblFile.find("tr:gt(0)");
                             rows.each(function () {
-                                $(this).css("background-color", "#ffffff");
+                                $(this).removeClass("highlight");
                             });
 
                             var selected = self.files()
@@ -442,8 +430,7 @@ function DisableScreen() {
 
                             $.each(selected, function (item, value) {
                                 var r = tblFile.find("#row_" + value.streamid);
-                                r.css("background-color", highlightRowColour);
-                                tblFile.attr("tr:hover", highlightRowColour);
+                                $(r).addClass("highlight");
                             });
                         };
 
@@ -459,16 +446,13 @@ function DisableScreen() {
                                 message: "One moment...",
                                 closable: false,
                                 onshown: function (dialog) {
-                                    $.post({
-                                        url: site.url + "SharedLibrary/DeleteSelected/",
-                                        data:
+                                    $.post(site.url + "SharedLibrary/DeleteSelected/",
                                         {
                                             streamIds: streamIds,
                                             mediaPathTypeId: mediaPathTypeId,
                                             isSharable: self.isSharable()
-                                        },
-                                        dataType: "json",
-                                        success: function (result) {
+                                        })
+                                        done(function (result) {
                                             dialog.close();
                                             $("body").css("cursor", "default");
                                             if (result.Success) {
@@ -488,8 +472,8 @@ function DisableScreen() {
                                                     message: result.ErrorMessage
                                                 });
                                             }
-                                        },
-                                        error: function (result) {
+                                        })
+                                        .error(function (result) {
                                             dialog.close();
                                             $("body").css("cursor", "default");
                                             enableDetail();
@@ -499,8 +483,7 @@ function DisableScreen() {
                                                 title: "Delete Error",
                                                 message: "Unexpected Error\n" + result
                                             });
-                                        }
-                                    });
+                                        });
                                 }
                             });
                         };
@@ -517,7 +500,6 @@ function DisableScreen() {
                                 })[0];
                         }
                     };
-                }
             });
         }
     }

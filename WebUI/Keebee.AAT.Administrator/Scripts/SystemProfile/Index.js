@@ -6,8 +6,6 @@
  */
 
 ; (function ($) {
-    var highlightRowColour = "#e3e8ff";
-
     systemprofile.index = {
         init: function () {
 
@@ -22,10 +20,8 @@
                 MediaPathTypeList: []
             };
 
-            $.get({
-                url: site.url + "SystemProfile/GetData",
-                dataType: "json",
-                success: function (data) {
+            $.get(site.url + "SystemProfile/GetData")
+                .done(function (data) {
                     $.extend(lists, data);
 
                     ko.applyBindings(new FileViewModel());
@@ -181,10 +177,9 @@
                             var title = "<span class='glyphicon glyphicon-link' style='color: #fff'></span>";
                             var mediaPathTypeDesc = self.mediaPathType().shortdescription;
 
-                            $.get({
-                                data: { mediaPathTypeId: self.selectedMediaPathType() },
-                                url: site.url + "SystemProfile/GetSharedLibarayLinkView/",
-                                success: function (message) {
+                            $.get(site.url + "SystemProfile/GetSharedLibarayLinkView/", 
+                                { mediaPathTypeId: self.selectedMediaPathType() })
+                                .done(function (message) {
                                     if (message.length === 0) {
                                         var hasHave = "has";
                                         if (mediaPathTypeDesc.endsWith("s"))
@@ -228,7 +223,6 @@
                                             ]
                                         });
                                     }
-                                }
                             });
                         };
 
@@ -324,7 +318,7 @@
                         self.highlightSelectedRows = function () {
                             var rows = tblFile.find("tr:gt(0)");
                             rows.each(function () {
-                                $(this).css("background-color", "#ffffff");
+                                $(this).removeClass("highlight");
                             });
 
                             var selected = self.files()
@@ -332,11 +326,8 @@
 
                             $.each(selected, function (item, value) {
                                 var r = tblFile.find("#row_" + value.id);
-                                r.css("background-color", highlightRowColour);
-                                tblFile.attr("tr:hover", highlightRowColour);
+                                $(r).addClass("highlight");
                             });
-
-                            return true;
                         };
 
                         self.deleteSelected = function () {
@@ -350,15 +341,12 @@
                                 message: "One moment...",
                                 closable: false,
                                 onshown: function (dialog) {
-                                    $.post({
-                                        url: site.url + "SystemProfile/DeleteSelected/",
-                                        data:
+                                    $.post(site.url + "SystemProfile/DeleteSelected/",
                                         {
                                             ids: ids,
                                             mediaPathTypeId: self.selectedMediaPathType()
-                                        },
-                                        dataType: "json",
-                                        success: function (result) {
+                                        })
+                                        .done(function (result) {
                                             dialog.close();
                                             $("body").css("cursor", "default");
                                             if (result.Success) {
@@ -378,8 +366,8 @@
                                                     message: result.ErrorMessage
                                                 });
                                             }
-                                        },
-                                        error: function (result) {
+                                        })
+                                        .error(function (result) {
                                             dialog.close();
                                             $("body").css("cursor", "default");
                                             self.enableDetail();
@@ -389,8 +377,7 @@
                                                 title: "Delete Error",
                                                 message: "Unexpected Error\n" + result
                                             });
-                                        }
-                                    });
+                                        });
                                 }
                             });
                         };
@@ -403,15 +390,12 @@
                                 ids.push(value.id);
                             });
 
-                            $.post({
-                                url: site.url + "SystemProfile/AddSharedMediaFiles/",
-                                data:
+                            $.post(site.url + "SystemProfile/AddSharedMediaFiles/",
                                 {
                                     streamIds: ids,
                                     mediaPathTypeId: self.selectedMediaPathType()
-                                },
-                                dataType: "json",
-                                success: function (result) {
+                                })
+                                .done(function (result) {
                                     $("body").css("cursor", "default");
                                     if (result.Success) {
                                         lists.FileList = result.FileList;
@@ -430,8 +414,8 @@
                                             message: result.ErrorMessage
                                         });
                                     }
-                                },
-                                error: function (result) {
+                                })
+                                .error(function (result) {
                                     $("body").css("cursor", "default");
                                     self.enableDetail();
 
@@ -440,16 +424,14 @@
                                         title: "Error Adding Shared Files",
                                         message: "Unexpected Error\n" + data
                                     });
-                                }
-                            });
+                                });
                         };
 
                         self.showImagePreview = function (row) {
                             $("body").css("cursor", "wait");
 
-                            $.get({
-                                url: site.url + "SystemProfile/GetImageViewerView?streamId=" + row.streamid + "&fileType=" + row.filetype,
-                                success: function (message) {
+                            $.get(site.url + "SystemProfile/GetImageViewerView?streamId=" + row.streamid + "&fileType=" + row.filetype)
+                                .done(function (message) {
                                     BootstrapDialog.show({
                                         type: BootstrapDialog.TYPE_INFO,
                                         title: "Image Viewer - " + row.filename + "." + row.filetype.toLowerCase(),
@@ -463,8 +445,8 @@
                                             }
                                         }]
                                     });
-                                },
-                                error: function (message) {
+                                })
+                                .error(function (message) {
                                     BootstrapDialog.show({
                                         type: BootstrapDialog.TYPE_DANGER,
                                         title: "Error",
@@ -478,7 +460,6 @@
                                             }
                                         }]
                                     });
-                                }
                             });
                         };
 
@@ -506,7 +487,6 @@
                             }
                         };
                     };
-                }
             });
         }
     }

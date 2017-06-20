@@ -73,7 +73,7 @@
                     if (User.IsInRole("Caregiver"))
                     {
                         <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Manage<b class="caret"></b></a>
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Manage <i class="fa fa-caret-down"></i></a>
                             <ul class="dropdown-menu">
                                 <li>@Html.ActionLink("Residents", "Index", "Residents")</li>
                                 <li>@Html.ActionLink("Public Profile", "Index", "PublicProfile")</li>
@@ -83,7 +83,7 @@
                     if (User.IsInRole("Administrator"))
                     {
                         <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Data Capture<b class="caret"></b></a>
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Data Capture <i class="fa fa-caret-down"></i></a>
                             <ul class="dropdown-menu">
                                 <li>@Html.ActionLink("Event Logs", "Index", "EventLogs")</li>
                                 <li>@Html.ActionLink("Export Event Log", "Export", "EventLogs")</li>
@@ -93,10 +93,10 @@
                             </ul>
                         </li>
                         <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">System <i class="caret" aria-hidden="true"></i></a>
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">System <i class="fa fa-caret-down"></i></a>
                             <ul class="dropdown-menu">
                                 <li class="dropdown-submenu">
-                                    <a href="" class="configs">Configuration <i class="fa fa-caret-right" aria-hidden="true"></i></a>
+                                    <a href="" class="configs">Configuration <i class="fa fa-caret-right"></i></a>
                                     <ul class="dropdown-menu">
                                         <li>@Html.ActionLink("Phidgets", "Index", "PhidgetConfig")</li>
                                         <li>@Html.ActionLink("Services", "Index", "Services")</li>

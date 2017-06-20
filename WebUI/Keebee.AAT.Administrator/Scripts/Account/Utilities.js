@@ -17,17 +17,13 @@
                 return new Promise(function(resolve, reject) {
                     var jsonData = getLoginDetailFromDialog();
 
-                    $.get({
-                        data: jsonData,
-                        dataType: "json",
-                        url: site.url + "Account/Login",
-                        success: function (result) {
+                    $.get(site.url + "Account/Login", jsonData)
+                        .done(function (result) {
                             resolve(result);
-                        },
-                        error: function (result) {
+                        })
+                        .error(function (result) {
                             reject(result);
-                        }
-                    });
+                        });
                 });
             }
 
@@ -41,9 +37,8 @@
             };
 
             cmdLogin.click(function () {
-                $.get({
-                    url: site.url + "Account/GetLoginView",
-                    success: function (message) {
+                $.get(site.url + "Account/GetLoginView")
+                    .done(function (message) {
                         BootstrapDialog.show({
                             title: "R2G2 Login",
                             message: $("<div></div>").append(message),
@@ -63,7 +58,7 @@
                                     hotkey: 13,  // enter
                                     action: function (dialog) {
                                         $("body").css("cursor", "wait");
-                                        attemptToLogin().then(function(result) {
+                                        attemptToLogin().then(function (result) {
                                             if (result.Success) {
                                                 dialog.close();
                                                 location.reload();
@@ -81,8 +76,7 @@
                                 }
                             ]
                         });
-                    }
-                });
+                    });
             });
 
             cmdLogOff.click(function () {
@@ -98,9 +92,8 @@
             lnkChangePassword.click(function () {
                 var title = "<span class='glyphicon glyphicon-pencil'></span>";
 
-                $.get({
-                    url: site.url + "Account/GetChangePasswordView",
-                    success: function (message) {
+                $.get(site.url + "Account/GetChangePasswordView")
+                    .done(function (message) {
                         BootstrapDialog.show({
                             title: title + " Change Password",
                             message: $("<div></div>").append(message),
@@ -149,26 +142,20 @@
                                 }
                             ]
                         });
-                    }
-                });
+                    });
             });
 
             function attemptToChangePassword() {
                 return new Promise(function(resolve, reject) {
                     var jsonData = getChangePasswordDetailFromDialog();
 
-                    $.get({
-                        dataType: "json",
-                        data: jsonData,
-                        url: site.url + "Account/AttemptToChangePassword",
-                        success: function (result) {
+                    $.get(site.url + "Account/AttemptToChangePassword", jsonData)
+                        .done(function(result) {
                             resolve(result);
-
-                        },
-                        error: function (result) {
+                         })
+                         .error(function (result) {
                             reject(result);
-                        }
-                    });
+                        });
                 });
             }
 

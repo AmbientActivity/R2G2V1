@@ -8,8 +8,7 @@
 ; (function ($) {
 
     phidgetconfig.index = {
-        init: function() {
-            var highlightRowColour = "#e3e8ff";
+        init: function () {
 
             // buttons
             var cmdEdit = $("#edit");
@@ -26,10 +25,8 @@
 
             cmdDelete.attr("disabled", "disabled");
 
-            $.get({
-                url: site.url + "PhidgetConfig/GetData/",
-                dataType: "json",
-                success: function (data) {
+            $.get(site.url + "PhidgetConfig/GetData/")
+                .done(function (data) {
                     $.extend(lists, data);
                     activeConfig = lists.ConfigList.filter(function (value) { return value.IsActive; })[0];
 
@@ -149,16 +146,8 @@
                         });
 
                         self.highlightRow = function (row) {
-                            if (row == null) return;
-
-                            var rows = tblConfigDetail.find("tr:gt(0)");
-                            rows.each(function () {
-                                $(this).css("background-color", "#ffffff");
-                            });
-
                             var r = tblConfigDetail.find("#row_" + row.id);
-                            r.css("background-color", highlightRowColour);
-                            tblConfigDetail.attr("tr:hover", highlightRowColour);
+                            $(r).addClass("highlight").siblings().removeClass("highlight");
                         };
 
                         self.showEditDialog = function () {
@@ -228,10 +217,9 @@
                                 self.selectedConfigDetail([]);
                             }
 
-                            $.get({
-                                url: site.url + "PhidgetConfig/GetConfigDetailEditView/" + id,
-                                data: { id: id, configId: self.selectedConfig() },
-                                success: function (message) {
+                            $.get(site.url + "PhidgetConfig/GetConfigDetailEditView/" + id, 
+                                { id: id, configId: self.selectedConfig() })
+                                .done(function (message) {
                                     BootstrapDialog.show({
                                         title: title,
                                         message: $("<div></div>").append(message),
@@ -277,7 +265,6 @@
                                             }
                                         ]
                                     });
-                                }
                             });
                         };
 
@@ -331,10 +318,9 @@
                                 title = title + " Duplicate Configuration";
                             }
 
-                            $.get({
-                                url: site.url + "PhidgetConfig/GetConfigEditView/" + id,
-                                data: { selectedConfigid: self.selectedConfig() },
-                                success: function (message) {
+                            $.get(site.url + "PhidgetConfig/GetConfigEditView/" + id,
+                                { selectedConfigid: self.selectedConfig() })
+                                .done(function (message) {
                                     BootstrapDialog.show({
                                         title: title,
                                         message: $("<div></div>").append(message),
@@ -386,7 +372,6 @@
                                             }
                                         ]
                                     });
-                                }
                             });
                         };
 
@@ -471,20 +456,13 @@
                             return new Promise(function(resolve, reject) {
                                 $("body").css("cursor", "wait");
 
-                                $.post({
-                                    url: site.url + "PhidgetConfig/Delete/",
-                                    data: { id: id },
-                                    dataType: "json",
-                                    success: function (result) {
+                                $.post(site.url + "PhidgetConfig/Delete/", { id: id })
+                                    .done(function (result) {
                                         resolve(result);
-                                    },
-                                    error: function (result) {
+                                    })
+                                    .error(function (result) {
                                         reject(result);
-                                    },
-                                    failure: function (result) {
-                                        reject(result);
-                                    }
-                                });
+                                    });
                             });
                         };
 
@@ -520,20 +498,13 @@
 
                                 $("body").css("cursor", "wait");
 
-                                $.post({
-                                    url: site.url + "PhidgetConfig/SaveDetail/",
-                                    data: { configdetail: jsonData },
-                                    dataType: "json",
-                                    success: function (result) {
+                                $.post(site.url + "PhidgetConfig/SaveDetail/", { configdetail: jsonData })
+                                    .done(function (result) {
                                         resolve(result);
-                                    },
-                                    error: function (result) {
+                                    })
+                                    .error(function (result) {
                                         reject(result);
-                                    },
-                                    failure: function (result) {
-                                        reject(result);
-                                    }
-                                });
+                                    });
                             });
                         };
 
@@ -541,24 +512,18 @@
                             return new Promise(function(resolve, reject) {
                                 $("body").css("cursor", "wait");
 
-                                $.post({
-                                    url: site.url + "PhidgetConfig/DeleteDetail/",
-                                    data: {
+                                $.post(site.url + "PhidgetConfig/DeleteDetail/",
+                                    {
                                         id: id,
                                         configId: self.selectedConfig(),
                                         isActive: self.selectedConfig() === self.activeConfig()
-                                    },
-                                    dataType: "json",
-                                    success: function (result) {
+                                    })
+                                    .done(function (result) {
                                         resolve(result);
-                                    },
-                                    error: function (result) {
+                                    })
+                                    .error(function (result) {
                                         reject(result);
-                                    },
-                                    failure: function (result) {
-                                        reject(result);
-                                    }
-                                });
+                                    });
                             });
                         };
 
@@ -567,20 +532,13 @@
                                 var configId = self.selectedConfig();
                                 $("body").css("cursor", "wait");
 
-                                $.get({
-                                    url: site.url + "PhidgetConfig/Activate/",
-                                    data: { configId: configId },
-                                    dataType: "json",
-                                    success: function (result) {
+                                $.get(site.url + "PhidgetConfig/Activate/", { configId: configId })
+                                    .done(function (result) {
                                         resolve(result);
-                                    },
-                                    error: function (result) {
+                                    })
+                                    .error(function (result) {
                                         reject(result);
-                                    },
-                                    failure: function (result) {
-                                        reject(result);
-                                    }
-                                });
+                                    });
                             });
                         };
 
@@ -620,7 +578,6 @@
                                 [0].description;
                         };
                     }
-                }
             });
         }          
     }

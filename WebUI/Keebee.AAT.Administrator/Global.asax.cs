@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Security.Principal;
-using System.Web;
 using System.Web.Optimization;
 using System.Web.Routing;
 using System.Web.Security;
 
 namespace Keebee.AAT.Administrator
 {
-    public class MvcApplication : HttpApplication
+    public class MvcApplication : System.Web.HttpApplication
     {
         protected void Application_Start()
         {

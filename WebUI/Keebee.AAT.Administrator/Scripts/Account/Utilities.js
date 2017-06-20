@@ -80,12 +80,9 @@
             });
 
             cmdLogOff.click(function () {
-                $.ajax({
-                    type: "GET",
-                    url: site.url + "Account/LogOff",
-                    success: function () {
+                $.get(site.url + "Account/LogOff")
+                    .done(function () {
                         location.reload();
-                    }
                 });
             });
 

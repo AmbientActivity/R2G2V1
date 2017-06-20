@@ -435,20 +435,14 @@
 
                                 $("body").css("cursor", "wait");
 
-                                $.post({
-                                    url: site.url + "PhidgetConfig/Save/",
-                                    data: { config: jsonData, selectedConfigId: self.selectedConfig() },
-                                    dataType: "json",
-                                    success: function (result) {
+                                $.post("PhidgetConfig/Save/",
+                                    { config: jsonData, selectedConfigId: self.selectedConfig() })
+                                    .done(function (result) {
                                         resolve(result);
-                                    },
-                                    error: function (result) {
+                                    })
+                                    .error(function (result) {
                                         reject(result);
-                                    },
-                                    failure: function (result) {
-                                        reject(result);
-                                    }
-                                });
+                                    });
                             });
                         };
 

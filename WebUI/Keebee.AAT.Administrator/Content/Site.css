@@ -238,7 +238,9 @@ a:hover, a:visited, a:link, a:active {
 .col-glyphicon {
     width: 30px;
 }
-
+.col-profile-picture {
+    width: 57px;
+}
 /* resident table */
 .col-id {
     width: 40px;

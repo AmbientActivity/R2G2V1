@@ -44,7 +44,7 @@
                     if (config.sortcolumn.length > 0)
                         $("#resident-col-" + config.sortcolumn).trigger("click");
 
-                    function Resident(id, firstname, lastname, gender, gamedifficultylevel, allowvideocapturing, profilepicture, hasprofile, datecreated, dateupdated) {
+                    function Resident(id, firstname, lastname, gender, gamedifficultylevel, allowvideocapturing, profilepicture, dateupdated) {
                         var self = this;
 
                         self.id = id;
@@ -54,8 +54,6 @@
                         self.gamedifficultylevel = gamedifficultylevel;
                         self.allowvideocapturing = allowvideocapturing;
                         self.profilepicture = profilepicture;
-                        self.hasprofile = hasprofile;
-                        self.datecreated = datecreated;
                         self.dateupdated = dateupdated;
                     }
 
@@ -94,13 +92,12 @@
                             if (config.isVideoCaptureServiceInstalled === "1")
                                 arr.push({ title: "Capturable", sortable: true, sortKey: "allowvideocapturing", numeric: false, cssClass: "col-capturable" });
 
-                            //arr.push({ title: "Created", sortable: true, sortKey: "datecreated", numeric: true, cssClass: "col-date" });
                             arr.push({ title: "Updated", sortable: true, sortKey: "dateupdated", numeric: true, cssClass: "col-date" });
                             return arr;
                         });
 
                         function pushResident(value) {
-                            self.residents.push(new Resident(value.Id, value.FirstName, value.LastName, value.Gender, value.GameDifficultyLevel, value.AllowVideoCapturing, value.ProfilePicture, value.HasProfile, value.DateCreated, value.DateUpdated));
+                            self.residents.push(new Resident(value.Id, value.FirstName, value.LastName, value.Gender, value.GameDifficultyLevel, value.AllowVideoCapturing, value.ProfilePicture, value.DateUpdated));
                         };
 
                         self.selectedResident(self.residents()[0]);

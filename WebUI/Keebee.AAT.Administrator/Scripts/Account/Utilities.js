@@ -57,19 +57,19 @@
                                     cssClass: "btn-primary",
                                     hotkey: 13,  // enter
                                     action: function (dialog) {
-                                        $("body").css("cursor", "wait");
+                                        //$("body").css("cursor", "wait");
                                         attemptToLogin().then(function (result) {
                                             if (result.Success) {
                                                 dialog.close();
                                                 location.reload();
-                                                $("body").css("cursor", "default");
+                                                //$("body").css("cursor", "default");
                                             } else {
                                                 $("#validation-container").show();
                                                 $("#validation-container").html("");
-                                                $("body").css("cursor", "default");
+                                                //$("body").css("cursor", "default");
                                                 var html = "<br/><ul><li>" + result.ErrorMessage + "</li></ul>";
                                                 $("#validation-container").append(html);
-                                                $("body").css("cursor", "default");
+                                                //$("body").css("cursor", "default");
                                             }
                                         });
                                     }
@@ -112,7 +112,7 @@
                                         attemptToChangePassword().then(function(result) {
                                             if (result.Success) {
                                                 dialog.close();
-                                                $("body").css("cursor", "default");
+                                                //$("body").css("cursor", "default");
                                                 BootstrapDialog.show({
                                                     title: "Success",
                                                     closable: false,
@@ -129,10 +129,10 @@
                                             } else {
                                                 $("#validation-container").show();
                                                 $("#validation-container").html("");
-                                                $("body").css("cursor", "default");
+                                                //$("body").css("cursor", "default");
                                                 var html = "<ul><li>" + result.ErrorMessage + "</li></ul>";
                                                 $("#validation-container").append(html);
-                                                $("body").css("cursor", "default");
+                                                //$("body").css("cursor", "default");
                                             }
                                         });
                                     }

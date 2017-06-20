@@ -70,6 +70,7 @@
                         self.firstNameSearch = ko.observable(config.firstname);
                         self.lastNameSearch = ko.observable(config.lastname);
                         self.isVideoCaptureServiceInstalled = config.isVideoCaptureServiceInstalled;
+                        self.profilePicture = config.ProfilePicture;
 
                         self.totalResidents = ko.observable(0);
 
@@ -93,13 +94,13 @@
                             if (config.isVideoCaptureServiceInstalled === "1")
                                 arr.push({ title: "Capturable", sortable: true, sortKey: "allowvideocapturing", numeric: false, cssClass: "col-capturable" });
 
-                            arr.push({ title: "Created", sortable: true, sortKey: "datecreated", numeric: true, cssClass: "col-date" });
+                            //arr.push({ title: "Created", sortable: true, sortKey: "datecreated", numeric: true, cssClass: "col-date" });
                             arr.push({ title: "Updated", sortable: true, sortKey: "dateupdated", numeric: true, cssClass: "col-date" });
                             return arr;
                         });
 
                         function pushResident(value) {
-                            self.residents.push(new Resident(value.Id, value.FirstName, value.LastName, value.Gender, value.GameDifficultyLevel, value.AllowVideoCapturing, value.HasProfile, value.DateCreated, value.DateUpdated));
+                            self.residents.push(new Resident(value.Id, value.FirstName, value.LastName, value.Gender, value.GameDifficultyLevel, value.AllowVideoCapturing, value.ProfilePicture, value.HasProfile, value.DateCreated, value.DateUpdated));
                         };
 
                         self.selectedResident(self.residents()[0]);
@@ -211,11 +212,11 @@
                                                             self.sort({ afterSave: true });
                                                             self.highlightRow(self.selectedResident());
                                                             dialog.close();
-                                                            $("body").css("cursor", "default");
+                                                            //$("body").css("cursor", "default");
                                                         } else {
                                                             $("#validation-container").show();
                                                             $("#validation-container").html("");
-                                                            $("body").css("cursor", "default");
+                                                            //$("body").css("cursor", "default");
                                                             var html = "<ul>";
                                                             for (var i = 0; i < result.ValidationMessages.length; i++) {
                                                                 var msg = result.ValidationMessages[i];
@@ -223,7 +224,7 @@
                                                             }
                                                             html = html + "</ul>";
                                                             $("#validation-container").append(html);
-                                                            $("body").css("cursor", "default");
+                                                            //$("body").css("cursor", "default");
                                                         }
                                                     });
                                                 }
@@ -341,7 +342,7 @@
                                 var residentdetail = self.getResidentDetailFromDialog();
                                 var jsonData = JSON.stringify(residentdetail);
 
-                                $("body").css("cursor", "wait");
+                                //$("body").css("cursor", "wait");
                                 utilities.job.execute(
                                 {
                                     type: "POST",

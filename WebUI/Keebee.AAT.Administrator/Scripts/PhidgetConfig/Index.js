@@ -191,7 +191,7 @@
                                                     .filter(function(value) { return value.IsActive === true })[0].Id;
                                                 self.selectedConfig(activeId);
                                                 dialog.close();
-                                                $("body").css("cursor", "default");
+                                                //$("body").css("cursor", "default");
                                             });
                                         }
                                     }
@@ -246,11 +246,11 @@
                                                             self.enableDetail();
                                                             self.sort();
                                                             dialog.close();
-                                                            $("body").css("cursor", "default");
+                                                            //$("body").css("cursor", "default");
                                                         } else {
                                                             $("#validation-container").show();
                                                             $("#validation-container").html("");
-                                                            $("body").css("cursor", "default");
+                                                            //$("body").css("cursor", "default");
                                                             var html = "<ul>";
                                                             for (var i = 0; i < result.ErrorMessages.length; i++) {
                                                                 var msg = result.ErrorMessages[i];
@@ -258,7 +258,7 @@
                                                             }
                                                             html = html + "</ul>";
                                                             $("#validation-container").append(html);
-                                                            $("body").css("cursor", "default");
+                                                            //$("body").css("cursor", "default");
                                                         }
                                                     });
                                                 }
@@ -301,7 +301,7 @@
                                                 createConfigDetailArray(lists.ConfigDetailList);
                                                 self.enableDetail();
                                                 dialog.close();
-                                                $("body").css("cursor", "default");
+                                                //$("body").css("cursor", "default");
                                             });
                                         }
                                     }
@@ -353,11 +353,11 @@
                                                                 self.activeEventLogDesc("Off");
                                                             self.enableDetail();
                                                             dialog.close();
-                                                            $("body").css("cursor", "default");
+                                                            //$("body").css("cursor", "default");
                                                         } else {
                                                             $("#validation-container").show();
                                                             $("#validation-container").html("");
-                                                            $("body").css("cursor", "default");
+                                                            //$("body").css("cursor", "default");
                                                             var html = "<ul>";
                                                             for (var i = 0; i < result.ErrorMessages.length; i++) {
                                                                 var msg = result.ErrorMessages[i];
@@ -365,7 +365,7 @@
                                                             }
                                                             html = html + "</ul>";
                                                             $("#validation-container").append(html);
-                                                            $("body").css("cursor", "default");
+                                                            //$("body").css("cursor", "default");
                                                         }
                                                     });
                                                 }
@@ -407,7 +407,7 @@
                                                     self.activeEventLogDesc("Off");
                                                 self.enableDetail();
                                                 dialog.close();
-                                                $("body").css("cursor", "default");
+                                                //$("body").css("cursor", "default");
                                             });
                                         }
                                     }
@@ -448,7 +448,7 @@
 
                         self.deleteConfig = function (id) {
                             return new Promise(function(resolve, reject) {
-                                $("body").css("cursor", "wait");
+                                //$("body").css("cursor", "wait");
 
                                 $.post(site.url + "PhidgetConfig/Delete/", { id: id })
                                     .done(function (result) {
@@ -490,7 +490,7 @@
                                 configdetail.ConfigId = self.selectedConfig();
                                 var jsonData = JSON.stringify(configdetail);
 
-                                $("body").css("cursor", "wait");
+                                //$("body").css("cursor", "wait");
 
                                 $.post(site.url + "PhidgetConfig/SaveDetail/", { configdetail: jsonData })
                                     .done(function (result) {
@@ -504,7 +504,7 @@
 
                         self.deleteConfigDetail = function (id) {
                             return new Promise(function(resolve, reject) {
-                                $("body").css("cursor", "wait");
+                                //$("body").css("cursor", "wait");
 
                                 $.post(site.url + "PhidgetConfig/DeleteDetail/",
                                     {
@@ -524,7 +524,7 @@
                         self.activateConfig = function () {
                             return new Promise(function(resolve, reject) {
                                 var configId = self.selectedConfig();
-                                $("body").css("cursor", "wait");
+                                //$("body").css("cursor", "wait");
 
                                 $.get(site.url + "PhidgetConfig/Activate/", { configId: configId })
                                     .done(function (result) {

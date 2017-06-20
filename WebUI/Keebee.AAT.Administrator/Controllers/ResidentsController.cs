@@ -231,15 +231,6 @@ namespace Keebee.AAT.Administrator.Controllers
                 resident = _residentsClient.Get(id);
             }
 
-            string profilePicture = null;
-
-            if (resident?.ProfilePicture != null)
-            {
-                profilePicture = (resident?.ProfilePicture?.Length == 0) 
-                    ? null
-                    : $"data:image/jpg;base64,{Convert.ToBase64String(resident?.ProfilePicture)}";
-            }
-
             var vm = new ResidentEditViewModel
             {
                 Id = resident?.Id ?? 0,
@@ -257,7 +248,7 @@ namespace Keebee.AAT.Administrator.Controllers
                     new SelectListItem { Value = "5", Text = "5" }},
                     "Value", "Text", resident?.GameDifficultyLevel),
                 AllowVideoCapturing = resident?.AllowVideoCapturing ?? false,
-                ProfilePicture = profilePicture,
+                ProfilePicture = ResidentRules.GetImageBase64(resident?.ProfilePicture),
                 IsVideoCaptureServiceInstalled = ServiceUtilities.IsInstalled(ServiceUtilities.ServiceType.VideoCapture)
             };
 

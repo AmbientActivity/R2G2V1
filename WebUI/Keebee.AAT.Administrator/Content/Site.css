@@ -153,12 +153,18 @@ a:hover, a:visited, a:link, a:active {
 /* turn off bootstrap vertical-align: top */
 .table tbody > tr > td.vert-align {
     vertical-align: middle;
+    display: inline-block;
+    float: none;
 }
-
-.table-striped tbody tr.highlight td {
-    background-color: #e3e8ff;
+/* override bootstraps td settings for vertical-align */
+.table > thead > tr > th,
+.table > tbody > tr > th,
+.table > tfoot > tr > th,
+.table > thead > tr > td,
+.table > tbody > tr > td,
+.table > tfoot > tr > td {
+  vertical-align: middle;
 }
-
 /* filter */
 .select-filter {
     min-width: 200px;
@@ -226,7 +232,9 @@ a:hover, a:visited, a:link, a:active {
 .col-islinked {
     width: 20px;
 }
-
+.col-capturable {
+    width: 30px;
+}
 /* bootstrap glyphicons*/
 .col-glyphicon {
     width: 30px;

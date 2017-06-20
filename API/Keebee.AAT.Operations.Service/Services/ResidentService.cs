@@ -108,7 +108,7 @@ namespace Keebee.AAT.Operations.Service.Services
             r.AllowVideoCapturing = resident.AllowVideoCapturing;
             r.ProfilePicture = resident.ProfilePicture ?? new byte[0];
 
-            resident.DateUpdated = DateTime.Now;
+            r.DateUpdated = DateTime.Now;
 
             container.UpdateObject(r);
             container.SaveChanges();

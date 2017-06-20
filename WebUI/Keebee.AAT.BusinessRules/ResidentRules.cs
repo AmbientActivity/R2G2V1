@@ -255,32 +255,17 @@ namespace Keebee.AAT.BusinessRules
             return message;
         }
 
-        public static Image GetOrientedImage(Image image)
+        public static string GetImageBase64(byte[] binaryData)
         {
-            foreach (var prop in image.PropertyItems)
+            string imageBase64 = null;
+            if (binaryData != null)
             {
-                if ((prop.Id == 0x0112 || prop.Id == 5029 || prop.Id == 274))
-                {
-                    var value = (int)prop.Value[0];
-                    if (value == 6)
-                    {
-                        image.RotateFlip(RotateFlipType.Rotate90FlipNone);
-                        break;
-                    }
-                    else if (value == 8)
-                    {
-                        image.RotateFlip(RotateFlipType.Rotate270FlipNone);
-                        break;
-                    }
-                    else if (value == 3)
-                    {
-                        image.RotateFlip(RotateFlipType.Rotate180FlipNone);
-                        break;
-                    }
-                }
+                imageBase64 = (binaryData.Length == 0)
+                    ? null
+                    : $"data:image/jpg;base64,{Convert.ToBase64String(binaryData)}";
             }
 
-            return image;
+            return imageBase64;
         }
     }
 }

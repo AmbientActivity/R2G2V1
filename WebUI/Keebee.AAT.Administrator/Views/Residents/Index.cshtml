@@ -50,8 +50,9 @@
                     <th class="col-glyphicon"></th>
                     <th class="col-glyphicon"></th>
                     <!-- ko foreach: columns -->
-                    <th data-bind="click: $parent.sort, attr: { id: 'resident-col-' + sortKey }"><a href="#" data-bind="text: title"></a></th>
+                    <th data-bind="click: $parent.sort, attr: { id: 'resident-col-' + sortKey }, css: cssClass"><a href="#" data-bind="text: title"></a></th>
                     <!-- /ko -->
+                    <th class="col-glyphicon"></th>
                 </tr>
             </thead>
 
@@ -59,7 +60,7 @@
                 <tr data-bind="click: $parent.highlightRow, attr: {id: 'row_' +  id}">
                     <td><a href="#" data-bind="click: $parent.showDeleteDialog, css: 'glyphicon glyphicon-remove'"></a></td>
                     <td><a data-bind="attr: { href: '#' }, click: $parent.showEditDialog, css: 'glyphicon glyphicon-pencil'"></a></td>
-                    <td><a data-bind="attr: { href: '#' }, click: $parent.editProfile, css: 'glyphicon glyphicon-user'"></a></td>
+                    <td><a data-bind="attr: { href: '#' }, click: $parent.editProfile, css: 'glyphicon glyphicon-cd'"></a></td>
                     <td data-bind="text: id"></td>
                     <td data-bind="text: firstname"></td>
                     <td data-bind="text: lastname"></td>
@@ -74,8 +75,9 @@
                     <td></td>
                     <!-- /ko -->
                     <!-- /ko -->
-                    <td data-bind="text: moment(datecreated).format('ll')"></td>
+                    @*<td data-bind="text: moment(datecreated).format('ll')"></td>*@
                     <td data-bind="text: moment(dateupdated).format('ll')"></td>
+                    <td><img data-bind="attr: { src: 'data:image/jpg;base64,' + profilepicture }" alt="" width="40" height="40" class="img-circle"></td>
                 </tr>
             </tbody>
         </table>

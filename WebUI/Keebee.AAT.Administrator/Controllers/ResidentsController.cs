@@ -248,7 +248,7 @@ namespace Keebee.AAT.Administrator.Controllers
                     new SelectListItem { Value = "5", Text = "5" }},
                     "Value", "Text", resident?.GameDifficultyLevel),
                 AllowVideoCapturing = resident?.AllowVideoCapturing ?? false,
-                ProfilePicture = ResidentRules.GetImageBase64(resident?.ProfilePicture),
+                ProfilePicture = ResidentRules.GetProfilePicture(resident?.ProfilePicture),
                 IsVideoCaptureServiceInstalled = ServiceUtilities.IsInstalled(ServiceUtilities.ServiceType.VideoCapture)
             };
 
@@ -268,7 +268,7 @@ namespace Keebee.AAT.Administrator.Controllers
                     Gender = resident.Gender,
                     GameDifficultyLevel = resident.GameDifficultyLevel,
                     AllowVideoCapturing = resident.AllowVideoCapturing,
-                    ProfilePicture = resident.ProfilePicture != null ? Convert.ToBase64String(resident.ProfilePicture) : null,
+                    ProfilePicture = ResidentRules.GetProfilePicture(resident?.ProfilePicture),
                     DateCreated = resident.DateCreated,
                     DateUpdated = resident.DateUpdated
                 }).OrderBy(x => x.Id);

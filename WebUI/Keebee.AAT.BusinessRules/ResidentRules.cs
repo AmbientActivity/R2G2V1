@@ -255,17 +255,17 @@ namespace Keebee.AAT.BusinessRules
             return message;
         }
 
-        public static string GetImageBase64(byte[] binaryData)
+        public static string GetProfilePicture(byte[] binaryData)
         {
-            string imageBase64 = null;
+            string profilePicture = null;
             if (binaryData != null)
             {
-                imageBase64 = (binaryData.Length == 0)
+                profilePicture = (binaryData.Length == 0)
                     ? null
                     : $"data:image/jpg;base64,{Convert.ToBase64String(binaryData)}";
             }
 
-            return imageBase64;
+            return profilePicture;
         }
     }
 }

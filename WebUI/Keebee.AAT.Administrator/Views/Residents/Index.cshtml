@@ -77,7 +77,12 @@
                     <!-- /ko -->
                     @*<td data-bind="text: moment(datecreated).format('ll')"></td>*@
                     <td data-bind="text: moment(dateupdated).format('ll')"></td>
-                    <td><img data-bind="attr: { src: 'data:image/jpg;base64,' + profilepicture }" alt="" width="40" height="40" class="img-circle"></td>
+                    <!-- ko if: profilepicture === null -->
+                    <td><img src="~/Content/images/ProfilePicturePlaceholder.jpg" alt="" width="40" height="40" class="img-circle"></td>
+                    <!-- /ko -->
+                    <!-- ko if: profilepicture !== null -->
+                    <td><img data-bind="attr: { src: profilepicture }" alt="" width="40" height="40" class="img-circle"></td>                  
+                    <!-- /ko -->
                 </tr>
             </tbody>
         </table>

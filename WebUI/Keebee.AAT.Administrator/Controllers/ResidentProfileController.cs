@@ -293,7 +293,7 @@ namespace Keebee.AAT.Administrator.Controllers
             {
                 ResidentId = resident.Id,
                 FullName = fullName,
-                ProfilePicture = ResidentRules.GetImageBase64(resident.ProfilePicture),
+                ProfilePicture = ResidentRules.GetProfilePicture(resident.ProfilePicture),
                 AddButtonText = $"Upload {rules.GetMediaPathShortDescription(mediaPathTypeId)}",
                 IdSearch = idsearch,
                 FirstNameSearch = firstname,

@@ -38,8 +38,8 @@
             inputFileUpload.change(function () {
                 $(this).simpleUpload(site.url + "Residents/UploadAvatar",
                 {
-                    allowedExts: ["jpg", "jpeg", "png", "gif"],
-                    allowedTypes: ["image/jpg", "image/jpeg", "image/png", "image/gif"],
+                    allowedExts: ["jpg", "jpeg", "png", "gif, bmp"],
+                    allowedTypes: ["image/jpg", "image/jpeg", "image/png", "image/gif", "image/bmp"],
                     maxFileSize: 5000000, //5MB in bytes
 
                     start: function (file) {
@@ -73,7 +73,7 @@
                             BootstrapDialog.show({
                                 title: "Invalid File Extension",
                                 type: BootstrapDialog.TYPE_WARNING,
-                                message: "Can only upload files of type jpg, png or gif",
+                                message: "Can only upload files of type jpg, png, gif or bmp",
                                 buttons: [
                                     {
                                         label: "OK",

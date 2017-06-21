@@ -3,6 +3,7 @@ using System.Security.Principal;
 using System.Web.Optimization;
 using System.Web.Routing;
 using System.Web.Security;
+using Keebee.AAT.Shared;
 
 namespace Keebee.AAT.Administrator
 {
@@ -12,6 +13,12 @@ namespace Keebee.AAT.Administrator
         {
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
+        }
+
+        protected void Session_start(object sender, EventArgs e)
+        {
+            Session["IsBeaconWatcherServiceInstalled"] = ServiceUtilities.IsInstalled(ServiceUtilities.ServiceType.BluetoothBeaconWatcher)
+                ? "true" : "false";
         }
 
         protected void Application_AuthenticateRequest(object sender, EventArgs e)

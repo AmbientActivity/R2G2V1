@@ -84,6 +84,7 @@
                                         chkBeaconWatcher.prop("checked", (config.IsInstalledBeaconWatcherService === 1));
                                         chkVideoCapture.prop("checked", (config.IsInstalledVideoCaptureService === 1));
                                         cmdSave.attr("disabled", "disabled");
+                                        window.location.reload();
                                     }
                                 });
                             }

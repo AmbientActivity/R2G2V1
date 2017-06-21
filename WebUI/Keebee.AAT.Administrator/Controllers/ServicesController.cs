@@ -39,6 +39,11 @@ namespace Keebee.AAT.Administrator.Controllers
             var msg =  rules.Install(ServiceUtilities.ServiceType.BluetoothBeaconWatcher, beaconWatcherPath, activateBeaconWatcher) ??
                        rules.Install(ServiceUtilities.ServiceType.VideoCapture, videoCapturePath, activateVideoCapture);
 
+            if (msg == null)
+            {
+                Session["IsBeaconWatcherServiceInstalled"] = activateBeaconWatcher ? "true" : "false";
+            }
+
             return Json(new
             {
                 ErrorMessage = msg,

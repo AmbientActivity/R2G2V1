@@ -1,8 +1,8 @@
 ﻿using Keebee.AAT.ApiClient.Clients;
-using Keebee.AAT.ApiClient.Models;
 using Keebee.AAT.BusinessRules.Models;
 using System;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 
 namespace Keebee.AAT.BusinessRules
@@ -21,12 +21,10 @@ namespace Keebee.AAT.BusinessRules
             public int Height;
         }
 
-        private readonly IMediaFilesClient _mediaFilesClient;
         private readonly IMediaFileStreamsClient _mediaFileStreamsClient;
 
         public ImageViewerRules()
         {
-            _mediaFilesClient = new MediaFilesClient();
             _mediaFileStreamsClient = new MediaFileStreamsClient();
         }
 
@@ -35,40 +33,40 @@ namespace Keebee.AAT.BusinessRules
             const int maxWidth = PreviewConstants.MaxImagePreviewgWidth;        
             var file = _mediaFileStreamsClient.Get(streamId);
 
-            var originalSize = GetOriginalSize(file);
-            var size = GetImageSize(originalSize.Width, originalSize.Height);
+            // get image from stream
+            Image image;
+            using (var ms = new MemoryStream(file.Stream))
+            {
+                image = Image.FromStream(ms);
+            }
 
-            var paddingLeft = (size.Width < maxWidth)
-                ? $"{(maxWidth - size.Width) / 2}px" : "0";
+            // figure out the best size for the image viewer dimensions
+            var newSize = GetImageSize(image.Width, image.Height);
 
-            var base64String = Convert.ToBase64String(file.Stream).TrimStart('\"').TrimEnd('\"');
+            // resize the image
+            var resizedImage = (Image) new Bitmap(image, 
+                new Size {Height = newSize.Height, Width = newSize.Width});
+
+            // calculate padding
+            var paddingLeft = (newSize.Width < maxWidth)
+                ? $"{(maxWidth - newSize.Width) / 2}px" : "0";
+
+            // convert back to stream
+            var stream = new MemoryStream();
+            resizedImage.Save(stream, GetImageFormat(file.FileType));
+
+            // convert to base64 string and generate the prefix
+            var base64String = Convert.ToBase64String(stream.ToArray());
             var prefix = $"data:image/{file.FileType.ToLower()};base64";
 
             return new ImageViewerModel
             {
                 FileType = fileType,
-                Width = size.Width,
-                Height = size.Height,
+                Width = newSize.Width,
+                Height = newSize.Height,
                 PaddingLeft = paddingLeft,
                 Base64String = $"{prefix},{base64String}"
             };
-        }
-
-        private static ImageSize GetOriginalSize(MediaFileStream file)
-        {
-            int originalWidth;
-            int originalHeight;
-            var bytes = file.Stream;
-            using (var stream = new MemoryStream(bytes, 0, bytes.Length))
-            {
-                using (var image = Image.FromStream(stream, false, false))
-                {
-                    originalWidth = image.Width;
-                    originalHeight = image.Height;
-                }
-            }
-
-            return new ImageSize { Width = originalWidth, Height = originalHeight };
         }
 
         private static ImageSize GetImageSize(int width, int height)
@@ -108,6 +106,21 @@ namespace Keebee.AAT.BusinessRules
             }
 
             return new ImageSize { Width = newWidth, Height = newHeight };
+        }
+
+        private static ImageFormat GetImageFormat(string fileType)
+        {
+            switch (fileType.ToLower())
+            {
+                case "gif":
+                    return ImageFormat.Gif;
+                case "bmp":
+                    return ImageFormat.Bmp;
+                case "png":
+                    return ImageFormat.Png;
+                default:
+                    return ImageFormat.Jpeg;
+            }
         }
     }
 }

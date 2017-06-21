@@ -1,9 +1,9 @@
-﻿using System;
+﻿using Keebee.AAT.Shared;
+using System;
 using System.Security.Principal;
 using System.Web.Optimization;
 using System.Web.Routing;
 using System.Web.Security;
-using Keebee.AAT.Shared;
 
 namespace Keebee.AAT.Administrator
 {

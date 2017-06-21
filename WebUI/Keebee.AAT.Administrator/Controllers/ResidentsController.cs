@@ -176,7 +176,7 @@ namespace Keebee.AAT.Administrator.Controllers
 
         [HttpPost]
         [Authorize]
-        public string UploadAvatar(HttpPostedFileBase file)
+        public string UploadProfilePicture(HttpPostedFileBase file)
         {
             // convert to image and orient correctly
             var image = Image.FromStream(file.InputStream);

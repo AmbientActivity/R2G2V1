@@ -36,7 +36,7 @@
             });
 
             inputFileUpload.change(function () {
-                $(this).simpleUpload(site.url + "Residents/UploadAvatar",
+                $(this).simpleUpload(site.url + "Residents/UploadProfilePicture",
                 {
                     allowedExts: ["jpg", "jpeg", "png", "gif, bmp"],
                     allowedTypes: ["image/jpg", "image/jpeg", "image/png", "image/gif", "image/bmp"],

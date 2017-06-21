@@ -21,25 +21,35 @@
             var chkBeaconWatcher = $("#chkIsInstalledBeaconWatcher");
             var chkVideoCapture = $("#chkIsInstalledVideoCapture");
 
-            cmdSave.attr("disabled", "disabled");
+            cmdSave.prop("disabled", true);
 
-            function enableDetail() {
+            function beaconWatcherServiceHasChanged() {
                 var isCheckedBeaconWatcher = $.trim(chkBeaconWatcher.is(":checked"));
-                var isCheckedVideoCapture = $.trim(chkVideoCapture.is(":checked"));
-
                 if ((isCheckedBeaconWatcher === "false" && config.IsInstalledBeaconWatcherService === 1)
                     || (isCheckedBeaconWatcher === "true" && config.IsInstalledBeaconWatcherService === 0)) {
-                    cmdSave.removeAttr("disabled");
-                    return;
+                    return true;
                 }
 
+                return false;
+            }
+
+            function videoCaptureServiceHasChanged() {
+                var isCheckedVideoCapture = $.trim(chkVideoCapture.is(":checked"));
                 if ((isCheckedVideoCapture === "false" && config.IsInstalledVideoCaptureService === 1)
                     || (isCheckedVideoCapture === "true" && config.IsInstalledVideoCaptureService === 0)) {
-                    cmdSave.removeAttr("disabled");
+                    return true;
+                }
+
+                return false;
+            }
+
+            function enableDetail() {
+                if (beaconWatcherServiceHasChanged() || videoCaptureServiceHasChanged()) {
+                    cmdSave.prop("disabled", false);
                     return;
                 }
 
-                cmdSave.attr("disabled", "disabled");
+                cmdSave.prop("disabled", true);
             }
 
             chkBeaconWatcher.change(function() {
@@ -79,12 +89,16 @@
                                     }
                                 }).then(function(data) {
                                     if (data.ErrorMessage === null) {
+                                        var beaconServiceHasChanged = beaconWatcherServiceHasChanged();
+
                                         $.extend(config, data.ServiceSettings);
  
                                         chkBeaconWatcher.prop("checked", (config.IsInstalledBeaconWatcherService === 1));
                                         chkVideoCapture.prop("checked", (config.IsInstalledVideoCaptureService === 1));
                                         cmdSave.attr("disabled", "disabled");
-                                        window.location.reload();
+
+                                        if (beaconServiceHasChanged)
+                                            window.location.reload();                               
                                     }
                                 });
                             }

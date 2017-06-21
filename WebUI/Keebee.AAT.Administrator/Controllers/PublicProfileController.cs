@@ -204,11 +204,11 @@ namespace Keebee.AAT.Administrator.Controllers
 
             return PartialView("_ImageViewer", new ImageViewerViewModel
             {
-                FilePath = m.FilePath,
                 FileType = m.FileType,
                 Width = m.Width,
                 Height = m.Height,
-                PaddingLeft = m.PaddingLeft
+                PaddingLeft = m.PaddingLeft,
+                Base64String = m.Base64String
             });
         }
 

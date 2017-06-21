@@ -30,7 +30,7 @@
                 cmdRemovePicture.prop("disabled", false);
 
             cmdRemovePicture.click(function () {
-                imgProfilePicture.attr("src", site.url + config.profilePicturePlaceholder);
+                imgProfilePicture.attr("src", config.profilePicturePlaceholder);
                 imgProfilePicture.attr("alt", "notexists");
                 cmdRemovePicture.prop("disabled", true);
             });

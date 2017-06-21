@@ -56,6 +56,7 @@
     <Compile Include="Clients\ConfigsClient.cs" />
     <Compile Include="Clients\InteractiveActivityEventLogsClient.cs" />
     <Compile Include="Clients\MediaFilesClient.cs" />
+    <Compile Include="Clients\MediaFileStreamsClient.cs" />
     <Compile Include="Clients\MediaPathTypesClient.cs" />
     <Compile Include="Clients\ActiveResidentEventLogsClient.cs" />
     <Compile Include="Clients\PhidgetStyleTypesClient.cs" />

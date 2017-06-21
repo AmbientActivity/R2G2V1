@@ -212,13 +212,6 @@ namespace Keebee.AAT.BusinessRules
             return responseTypeId;
         }
 
-        public byte[] GetFile(string path, string filename)
-        {
-            var file = _mediaFilesClient.GetFileStreamFromPath(path, filename);
-
-            return file;
-        }
-
         public IEnumerable<MediaFile> GetAvailableSharedMediaFiles(int residentId, int mediaPathTypeId)
         {
             var mediaSource = new MediaSourcePath();
@@ -245,16 +238,6 @@ namespace Keebee.AAT.BusinessRules
             return availableFiles;
         }
 
-        public string GetNoAvailableSharedMediaMessage(int mediaPathTypeId)
-        {
-            var mediaPathType = GetMediaPathShortDescription(mediaPathTypeId);
-
-            var isAre = mediaPathType.EndsWith("s") ? "are" : "is";
-            var message = $"All available {mediaPathType} {isAre} already included in this profile.";
-
-            return message;
-        }
-
         public static string GetProfilePicture(byte[] binaryData)
         {
             string profilePicture = null;
@@ -266,6 +249,11 @@ namespace Keebee.AAT.BusinessRules
             }
 
             return profilePicture;
+        }
+
+        public static string GetProfilePicturePlaceholder()
+        {
+            return $"data:image/jpg;base64,{ImagesBase64.ProfilePicturePlaceholder}";
         }
     }
 }

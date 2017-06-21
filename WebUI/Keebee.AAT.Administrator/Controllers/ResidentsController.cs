@@ -249,6 +249,7 @@ namespace Keebee.AAT.Administrator.Controllers
                     "Value", "Text", resident?.GameDifficultyLevel),
                 AllowVideoCapturing = resident?.AllowVideoCapturing ?? false,
                 ProfilePicture = ResidentRules.GetProfilePicture(resident?.ProfilePicture),
+                ProfilePicturePlaceholder = ResidentRules.GetProfilePicturePlaceholder(),
                 IsVideoCaptureServiceInstalled = ServiceUtilities.IsInstalled(ServiceUtilities.ServiceType.VideoCapture)
             };
 
@@ -269,6 +270,7 @@ namespace Keebee.AAT.Administrator.Controllers
                     GameDifficultyLevel = resident.GameDifficultyLevel,
                     AllowVideoCapturing = resident.AllowVideoCapturing,
                     ProfilePicture = ResidentRules.GetProfilePicture(resident?.ProfilePicture),
+                    ProfilePicturePlaceholder = ResidentRules.GetProfilePicturePlaceholder(),
                     DateCreated = resident.DateCreated,
                     DateUpdated = resident.DateUpdated
                 }).OrderBy(x => x.Id);
@@ -285,7 +287,9 @@ namespace Keebee.AAT.Administrator.Controllers
                 Gender = residentDetail.Gender,
                 GameDifficultyLevel = residentDetail.GameDifficultyLevel,
                 AllowVideoCapturing = residentDetail.AllowVideoCapturing,
-                ProfilePicture = residentDetail.ProfilePicture != null ? Convert.FromBase64String(residentDetail.ProfilePicture) : null
+                ProfilePicture = residentDetail.ProfilePicture != null 
+                    ? Convert.FromBase64String(residentDetail.ProfilePicture) 
+                    : null
             };
 
             return _residentsClient.Patch(residentDetail.Id, r);

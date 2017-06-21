@@ -67,8 +67,8 @@ namespace Keebee.AAT.Administrator.Controllers
 
         private static IEnumerable<EventLogViewModel> GetEventLogList()
         {
-            var mediaFilesCLient = new MediaFilesClient();
-            var paths = mediaFilesCLient.GetForPath(Exports.EventLogPath).ToArray();
+            var mediaFilesClient = new MediaFilesClient();
+            var paths = mediaFilesClient.GetForPath(Exports.EventLogPath).ToArray();
 
             if (!paths.Any()) return new Collection<EventLogViewModel>();
 

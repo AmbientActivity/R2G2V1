@@ -3,6 +3,7 @@ using Keebee.AAT.ApiClient.Models;
 using Keebee.AAT.BusinessRules.Models;
 using System;
 using System.Drawing;
+using System.IO;
 
 namespace Keebee.AAT.BusinessRules
 {
@@ -21,16 +22,18 @@ namespace Keebee.AAT.BusinessRules
         }
 
         private readonly IMediaFilesClient _mediaFilesClient;
+        private readonly IMediaFileStreamsClient _mediaFileStreamsClient;
 
         public ImageViewerRules()
         {
             _mediaFilesClient = new MediaFilesClient();
+            _mediaFileStreamsClient = new MediaFileStreamsClient();
         }
 
         public ImageViewerModel GetImageViewerModel(Guid streamId, string fileType)
         {
             const int maxWidth = PreviewConstants.MaxImagePreviewgWidth;        
-            var file = _mediaFilesClient.Get(streamId);
+            var file = _mediaFileStreamsClient.Get(streamId);
 
             var originalSize = GetOriginalSize(file);
             var size = GetImageSize(originalSize.Width, originalSize.Height);
@@ -38,22 +41,25 @@ namespace Keebee.AAT.BusinessRules
             var paddingLeft = (size.Width < maxWidth)
                 ? $"{(maxWidth - size.Width) / 2}px" : "0";
 
+            var base64String = Convert.ToBase64String(file.Stream).TrimStart('\"').TrimEnd('\"');
+            var prefix = $"data:image/{file.FileType.ToLower()};base64";
+
             return new ImageViewerModel
             {
-                FilePath = $@"{file.Path}\{file.Filename}",
                 FileType = fileType,
                 Width = size.Width,
                 Height = size.Height,
-                PaddingLeft = paddingLeft
+                PaddingLeft = paddingLeft,
+                Base64String = $"{prefix},{base64String}"
             };
         }
 
-        private static ImageSize GetOriginalSize(MediaFilePath file)
+        private static ImageSize GetOriginalSize(MediaFileStream file)
         {
             int originalWidth;
             int originalHeight;
-
-            using (var stream = System.IO.File.OpenRead($@"{file.Path}\{file.Filename}"))
+            var bytes = file.Stream;
+            using (var stream = new MemoryStream(bytes, 0, bytes.Length))
             {
                 using (var image = Image.FromStream(stream, false, false))
                 {

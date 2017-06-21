@@ -26,7 +26,7 @@ namespace Keebee.AAT.ApiClient.Models
 
     public class MediaFileStream : MediaFile
     {
-        public byte[] Stream{ get; set; }
+        public byte[] Stream { get; set; }
     }
 
     public class MediaPathTypeFiles

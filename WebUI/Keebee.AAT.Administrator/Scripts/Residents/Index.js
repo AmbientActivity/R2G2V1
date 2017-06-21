@@ -44,7 +44,7 @@
                     if (config.sortcolumn.length > 0)
                         $("#resident-col-" + config.sortcolumn).trigger("click");
 
-                    function Resident(id, firstname, lastname, gender, gamedifficultylevel, allowvideocapturing, profilepicture, dateupdated) {
+                    function Resident(id, firstname, lastname, gender, gamedifficultylevel, allowvideocapturing, profilepicture, profilepictureplaceholder, dateupdated) {
                         var self = this;
 
                         self.id = id;
@@ -54,6 +54,7 @@
                         self.gamedifficultylevel = gamedifficultylevel;
                         self.allowvideocapturing = allowvideocapturing;
                         self.profilepicture = profilepicture;
+                        self.profilepictureplaceholder = profilepictureplaceholder;
                         self.dateupdated = dateupdated;
                     }
 
@@ -97,7 +98,7 @@
                         });
 
                         function pushResident(value) {
-                            self.residents.push(new Resident(value.Id, value.FirstName, value.LastName, value.Gender, value.GameDifficultyLevel, value.AllowVideoCapturing, value.ProfilePicture, value.DateUpdated));
+                            self.residents.push(new Resident(value.Id, value.FirstName, value.LastName, value.Gender, value.GameDifficultyLevel, value.AllowVideoCapturing, value.ProfilePicture, value.ProfilePicturePlaceholder, value.DateUpdated));
                         };
 
                         self.selectedResident(self.residents()[0]);
@@ -209,11 +210,9 @@
                                                             self.sort({ afterSave: true });
                                                             self.highlightRow(self.selectedResident());
                                                             dialog.close();
-                                                            //$("body").css("cursor", "default");
                                                         } else {
                                                             $("#validation-container").show();
                                                             $("#validation-container").html("");
-                                                            //$("body").css("cursor", "default");
                                                             var html = "<ul>";
                                                             for (var i = 0; i < result.ValidationMessages.length; i++) {
                                                                 var msg = result.ValidationMessages[i];
@@ -221,7 +220,6 @@
                                                             }
                                                             html = html + "</ul>";
                                                             $("#validation-container").append(html);
-                                                            //$("body").css("cursor", "default");
                                                         }
                                                     });
                                                 }
@@ -339,7 +337,6 @@
                                 var residentdetail = self.getResidentDetailFromDialog();
                                 var jsonData = JSON.stringify(residentdetail);
 
-                                //$("body").css("cursor", "wait");
                                 utilities.job.execute(
                                 {
                                     type: "POST",

@@ -27,6 +27,7 @@ namespace Keebee.AAT.Administrator.ViewModels
         public int GameDifficultyLevel { get; set; }
         public bool AllowVideoCapturing { get; set; }
         public string ProfilePicture { get; set; }
+        public string ProfilePicturePlaceholder { get; set; }
         public DateTime DateCreated { get; set; }
         public DateTime DateUpdated { get; set; }
     }

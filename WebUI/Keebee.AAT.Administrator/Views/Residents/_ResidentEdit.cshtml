@@ -4,7 +4,7 @@
     $(document).ready(function() {
         residents.edit.init(
         {
-            profilePicturePlaceholder: '/Content/images/ProfilePicturePlaceholder.jpg'
+            profilePicturePlaceholder: '@Model.ProfilePicturePlaceholder'
         });
     });
 </script>
@@ -53,7 +53,7 @@
             }
             else
             {
-                <img class="img-circle" id="profile-picture" src="~/Content/images/ProfilePicturePlaceholder.jpg" alt="notexists" width="60" height="60" />
+                <img class="img-circle" id="profile-picture" src="@Model.ProfilePicturePlaceholder" alt="notexists" width="60" height="60" />
             }
         </div>
         <div class="col-sm-12">

@@ -331,8 +331,6 @@
                         };
 
                         self.deleteSelected = function () {
-                            //$("body").css("cursor", "wait");
-
                             var ids = self.selectedIds();
 
                             BootstrapDialog.show({
@@ -348,7 +346,6 @@
                                         })
                                         .done(function (result) {
                                             dialog.close();
-                                            //$("body").css("cursor", "default");
                                             if (result.Success) {
                                                 lists.FileList = result.FileList;
                                                 createFileArray(lists.FileList);
@@ -357,7 +354,6 @@
                                                 self.checkSelectAll(false);
                                                 self.enableDetail();
                                             } else {
-                                                //$("body").css("cursor", "default");
                                                 self.enableDetail();
 
                                                 BootstrapDialog.show({
@@ -369,7 +365,6 @@
                                         })
                                         .error(function (result) {
                                             dialog.close();
-                                            //$("body").css("cursor", "default");
                                             self.enableDetail();
 
                                             BootstrapDialog.show({
@@ -383,8 +378,6 @@
                         };
 
                         self.addSharedFiles = function () {
-                            //$("body").css("cursor", "wait");
-
                             var ids = [];
                             $("input[name='shared_files']:checked").each(function (item, value) {
                                 ids.push(value.id);
@@ -396,7 +389,6 @@
                                     mediaPathTypeId: self.selectedMediaPathType()
                                 })
                                 .done(function (result) {
-                                    //$("body").css("cursor", "default");
                                     if (result.Success) {
                                         lists.FileList = result.FileList;
                                         createFileArray(lists.FileList);
@@ -405,7 +397,6 @@
                                         self.checkSelectAll(false);
                                         self.enableDetail();
                                     } else {
-                                        //$("body").css("cursor", "default");
                                         self.enableDetail();
 
                                         BootstrapDialog.show({
@@ -416,7 +407,6 @@
                                     }
                                 })
                                 .error(function (result) {
-                                    //$("body").css("cursor", "default");
                                     self.enableDetail();
 
                                     BootstrapDialog.show({
@@ -428,8 +418,6 @@
                         };
 
                         self.showImagePreview = function (row) {
-                            //$("body").css("cursor", "wait");
-
                             $.get(site.url + "SystemProfile/GetImageViewerView?streamId=" + row.streamid + "&fileType=" + row.filetype)
                                 .done(function (message) {
                                     BootstrapDialog.show({
@@ -437,7 +425,6 @@
                                         title: "Image Viewer - " + row.filename + "." + row.filetype.toLowerCase(),
                                         message: $("<div></div>").append(message),
                                         closable: false,
-                                        //onshown: function () { $("body").css("cursor", "default"); },
                                         buttons: [{
                                             label: "Close",
                                             action: function (dialog) {
@@ -452,7 +439,6 @@
                                         title: "Error",
                                         message: $("<div></div>").append(message),
                                         closable: false,
-                                        //onshown: function () { $("body").css("cursor", "default"); },
                                         buttons: [{
                                             label: "Close",
                                             action: function (dialog) {

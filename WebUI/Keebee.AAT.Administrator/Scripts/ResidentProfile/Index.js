@@ -1,5 +1,5 @@
 ﻿/*!
- * Residents/Profile.js
+ * ResidentProfile/Index.js
  * Author: John Charlton
  * Date: 2016-08
  */
@@ -269,8 +269,6 @@ function DisableScreen() {
                         };
 
                         self.showPreview = function (row) {
-                            //$("body").css("cursor", "wait");
-
                             $.get(site.url + "ResidentProfile/GetImageViewerView?streamId=" + row.streamid + "&fileType=" + row.filetype)
                                 .done(function (message) {
                                     BootstrapDialog.show({
@@ -278,7 +276,6 @@ function DisableScreen() {
                                         title: "Image Viewer - " + row.filename + "." + row.filetype.toLowerCase(),
                                         message: $("<div></div>").append(message),
                                         closable: false,
-                                        //onshown: function () { $("body").css("cursor", "default"); },
                                         buttons: [{
                                             label: "Close",
                                             action: function (dialog) {
@@ -293,7 +290,6 @@ function DisableScreen() {
                                         title: "Error",
                                         message: $("<div></div>").append(message),
                                         closable: false,
-                                        //onshown: function () { $("body").css("cursor", "default"); },
                                         buttons: [{
                                             label: "Close",
                                             action: function (dialog) {
@@ -461,8 +457,6 @@ function DisableScreen() {
                         };
 
                         self.deleteSelected = function () {
-                            //$("body").css("cursor", "wait");
-
                             var ids = self.selectedIds();
                             var residentId = config.residentid;
                             var mediaPathTypeId = $("#mediaPathTypeId").val();
@@ -481,7 +475,6 @@ function DisableScreen() {
                                         })
                                         .done(function (result) {
                                             dialog.close();
-                                            //$("body").css("cursor", "default");
                                             if (result.Success) {
                                                 lists.FileList = result.FileList;
                                                 createFileArray(lists.FileList);
@@ -490,7 +483,6 @@ function DisableScreen() {
                                                 self.checkSelectAll(false);
                                                 enableDetail();
                                             } else {
-                                                //$("body").css("cursor", "default");
                                                 enableDetail();
 
                                                 BootstrapDialog.show({
@@ -502,7 +494,6 @@ function DisableScreen() {
                                         })
                                         .error(function (result) {
                                             dialog.close();
-                                            //$("body").css("cursor", "default");
                                             enableDetail();
 
                                             BootstrapDialog.show({
@@ -516,8 +507,6 @@ function DisableScreen() {
                         };
 
                         self.addSharedFiles = function () {
-                            //$("body").css("cursor", "wait");
-
                             var ids = [];
                             $("input[name='shared_files']:checked").each(function (item, value) {
                                 ids.push(value.id);
@@ -532,7 +521,6 @@ function DisableScreen() {
                                     mediaPathTypeId: mediaPathTypeId
                                 })
                             .done(function (result) {
-                                    //$("body").css("cursor", "default");
                                     if (result.Success) {
                                         lists.FileList = result.FileList;
                                         createFileArray(lists.FileList);
@@ -541,7 +529,6 @@ function DisableScreen() {
                                         self.checkSelectAll(false);
                                         enableDetail();
                                     } else {
-                                        //$("body").css("cursor", "default");
                                         enableDetail();
 
                                         BootstrapDialog.show({
@@ -552,7 +539,6 @@ function DisableScreen() {
                                     }
                                 })
                                 .error(function (result) {
-                                    //$("body").css("cursor", "default");
                                     enableDetail();
 
                                     BootstrapDialog.show({

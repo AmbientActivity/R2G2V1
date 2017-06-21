@@ -11,7 +11,7 @@ namespace Keebee.AAT.ApiClient.Clients
         MediaFilePath Get(Guid streamId);
         IEnumerable<Media> GetForPath(string path);
         MediaFilePath GetFromPath(string path, string filename);
-        byte[] GetFileBytes(Guid streamId);
+        byte[] GetStream(Guid streamId);
         byte[] GetFileStreamFromPath(string path, string filename);
         IEnumerable<Media> GetWithLinkedData(string path);
     }
@@ -45,7 +45,7 @@ namespace Keebee.AAT.ApiClient.Clients
             return mediaFile;
         }
 
-        public byte[] GetFileBytes(Guid streamId)
+        public byte[] GetStream(Guid streamId)
         {
             var request = new RestRequest($"mediafilestreams/{streamId}", Method.GET);
             var data = Execute(request);

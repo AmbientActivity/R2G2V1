@@ -34,15 +34,12 @@
                     message: "<p>" + config.waitMessage + "</p>",
                     closable: false,
                     onshown: function (dialog) {
-                        //$("body").css("cursor", "wait");
-                   
                         $.ajax({
                             type: config.type,
                             url: site.url + config.controller + "/" + config.action,
                             dataType: config.dataType,
                             data: config.params,
                             success: function (data) {
-                                //$("body").css("cursor", "default");
                                 dialog.close();
 
                                 if (data.ErrorMessage === null) {
@@ -82,7 +79,6 @@
                                 }
                             },
                             error: function (data) {
-                                //$("body").css("cursor", "default");
                                 dialog.close();
                                 BootstrapDialog.show({
                                     title: "Error",

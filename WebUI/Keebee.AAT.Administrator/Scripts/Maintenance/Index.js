@@ -158,8 +158,6 @@
             function killDisplay() {
                 $.get(site.url + "Maintenance/KillDisplay")
                     .done(function (data) {
-                        //$("body").css("cursor", "default");
-
                         if (data.length === 0)
                             BootstrapDialog.show({
                                 title: "Success",
@@ -180,8 +178,6 @@
             function clearServiceLogs() {
                 $.get(site.url + "Maintenance/ClearServiceLogs")
                     .done(function(data) {
-                        //$("body").css("cursor", "default");
-
                         if (data.length === 0)
                             BootstrapDialog.show({
                                 title: "Success",

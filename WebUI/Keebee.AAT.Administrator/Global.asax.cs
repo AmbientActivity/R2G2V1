@@ -15,7 +15,7 @@ namespace Keebee.AAT.Administrator
             BundleConfig.RegisterBundles(BundleTable.Bundles);
         }
 
-        protected void Session_start(object sender, EventArgs e)
+        protected void Session_Start(object sender, EventArgs e)
         {
             Session["IsBeaconWatcherServiceInstalled"] = ServiceUtilities.IsInstalled(ServiceUtilities.ServiceType.BluetoothBeaconWatcher)
                 ? "true" : "false";

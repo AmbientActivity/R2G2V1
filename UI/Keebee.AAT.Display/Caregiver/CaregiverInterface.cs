@@ -53,13 +53,15 @@ namespace Keebee.AAT.Display.Caregiver
         #region local variables
 
         // constants
+        private const string FontFamily = "Tahoma";
+
         private const int TabIndexImagesGeneral = 0;
         private const int TabIndexMusic = 1;
         private const int TabIndexRadioShows = 2;
         private const int TabIndexTVShows = 3;
         private const int TabIndexActivities = 4;
         private const int TabIndexHomeMovies = 5;
-        private const int TabIndexImagesPersonal = 6;
+        private const int TabIndexImagesPersonal = 6;     
 
         // delegate
         private delegate void RaiseCaregiverCompleteEventDelegate();
@@ -80,8 +82,6 @@ namespace Keebee.AAT.Display.Caregiver
         private IEnumerable<ResponseTypePaths> _media;
 
         // playlist
-        //private IWMPPlaylist _musicPlaylist;
-        //private IWMPPlaylist _radioShowPlaylist;
         private string[] _musicPlaylist;
         private string[] _radioShowPlaylist;
         private int _totalSongs;
@@ -115,7 +115,8 @@ namespace Keebee.AAT.Display.Caregiver
         private const int ListViewAudioColWidthName = 507;
         private const int ListViewMediaColWidthName = 577;
         private const int ListViewActivitiesColWidthName = 593;
-
+        private const int ListViewFontSize = 12;
+        
         private const int LabelMediaSourceFontSize = 10;
         private const int LabelMediaSourceMarginTop = 25;
         private const int ComboBoxResidentWidth = 465;
@@ -123,17 +124,18 @@ namespace Keebee.AAT.Display.Caregiver
         private const int TableLayoutPanelColOneWidth = 100;
         private const int TableLayoutPanelColTwoWidth = 465;
 
-        private const int TabPaddingX = 3;
-        private const int TabPaddingY = 3;
+        private const int TabPaddingX = 5;
+        private const int TabPaddingY = 5;
 
-        private const int TabPageFontSize = 10;
-        private const int TabFontSize = 10;
+        private const int TabPageFontSize = 12;
+        private const int TabFontSize = 12;
 #elif !DEBUG
         private const int ThumbnailDimensions = 64;
         private const int ListViewAudioColWidthStatus = 150;
         private const int ListViewAudioColWidthName = 1663;
         private const int ListViewMediaColWidthName = 1813;
         private const int ListViewActivitiesColWidthName = 1877;
+        private const int ListViewFontSize = 20;
 
         private const int LabelMediaSourceFontSize = 20;
         private const int LabelMediaSourceMarginTop = 20;
@@ -205,6 +207,9 @@ namespace Keebee.AAT.Display.Caregiver
 
             musicPlayer.Hide();
             musicPlayer.settings.volume = MediaPlayerControl.DefaultVolume;
+
+            radioShowPlayer.Hide();
+            radioShowPlayer.settings.volume = MediaPlayerControl.DefaultVolume;
         }
 
         private void ConfigureTableLayout()
@@ -215,23 +220,23 @@ namespace Keebee.AAT.Display.Caregiver
 
         private void ConfigureDropdown()
         {
-            lblMediaSource.Font = new Font("Microsoft Sans Serif", LabelMediaSourceFontSize);
+            lblMediaSource.Font = new Font(FontFamily, LabelMediaSourceFontSize);
             lblMediaSource.Margin = new Padding(3, LabelMediaSourceMarginTop, 0, 0);
             cboResident.Width = ComboBoxResidentWidth;
         }
 
         private void ConfigureTabLayout()
         {
-            tbMedia.Font = new Font("Microsoft Sans Serif", TabFontSize);
+            tbMedia.Font = new Font(FontFamily, TabFontSize);
             tbMedia.Padding = new Point(TabPaddingX, TabPaddingY);
 
-            tbMedia.TabPages[TabIndexImagesGeneral].Font = new Font("Microsoft Sans Serif", TabPageFontSize);
-            tbMedia.TabPages[TabIndexMusic].Font = new Font("Microsoft Sans Serif", TabPageFontSize);
-            tbMedia.TabPages[TabIndexRadioShows].Font = new Font("Microsoft Sans Serif", TabPageFontSize);
-            tbMedia.TabPages[TabIndexTVShows].Font = new Font("Microsoft Sans Serif", TabPageFontSize);
-            tbMedia.TabPages[TabIndexActivities].Font = new Font("Microsoft Sans Serif", TabPageFontSize);
-            tbMedia.TabPages[TabIndexHomeMovies].Font = new Font("Microsoft Sans Serif", TabPageFontSize);
-            tbMedia.TabPages[TabIndexImagesPersonal].Font = new Font("Microsoft Sans Serif", TabPageFontSize);
+            tbMedia.TabPages[TabIndexImagesGeneral].Font = new Font(FontFamily, TabPageFontSize);
+            tbMedia.TabPages[TabIndexMusic].Font = new Font(FontFamily, TabPageFontSize);
+            tbMedia.TabPages[TabIndexRadioShows].Font = new Font(FontFamily, TabPageFontSize);
+            tbMedia.TabPages[TabIndexTVShows].Font = new Font(FontFamily, TabPageFontSize);
+            tbMedia.TabPages[TabIndexActivities].Font = new Font(FontFamily, TabPageFontSize);
+            tbMedia.TabPages[TabIndexHomeMovies].Font = new Font(FontFamily, TabPageFontSize);
+            tbMedia.TabPages[TabIndexImagesPersonal].Font = new Font(FontFamily, TabPageFontSize);
         }
 
         private void ConfigureListViewMedia(ListViewLarge lv)
@@ -241,6 +246,8 @@ namespace Keebee.AAT.Display.Caregiver
             lv.FullRowSelect = true;
             lv.HeaderStyle = ColumnHeaderStyle.Nonclickable;
             lv.View = View.Details;
+            lv.ColorListViewHeader(Color.SteelBlue, Color.White);
+            lv.Font = new Font(FontFamily, ListViewFontSize);
 
             switch (lv.Name)
             {
@@ -255,12 +262,12 @@ namespace Keebee.AAT.Display.Caregiver
                 case "lvMusic":
                     lv.SmallImageList = _imageListAudio;
                     lv.Columns.Add("", ThumbnailDimensions);
-                    lv.Columns.Add("Status", ListViewAudioColWidthStatus);
+                    lv.Columns.Add("State", ListViewAudioColWidthStatus);
                     break;
                 case "lvRadioShows":
                     lv.SmallImageList = _imageListAudio;
                     lv.Columns.Add("", ThumbnailDimensions);
-                    lv.Columns.Add("Status", ListViewAudioColWidthStatus);
+                    lv.Columns.Add("State", ListViewAudioColWidthStatus);
                     break;
                 case "lvTVShows":
                     _imageListTVShows = new ImageList {ImageSize = new Size(ThumbnailDimensions, ThumbnailDimensions)};
@@ -285,7 +292,7 @@ namespace Keebee.AAT.Display.Caregiver
                     break;
             }
 
-            lv.Columns.Add("Name", lv.Name == "lvMusic" || lv.Name == "lvRadioShows"
+            lv.Columns.Add("Description", lv.Name == "lvMusic" || lv.Name == "lvRadioShows" || lv.Name == "lvActivities"
                 ? ListViewAudioColWidthName
                 : ListViewMediaColWidthName);
 
@@ -299,11 +306,11 @@ namespace Keebee.AAT.Display.Caregiver
             lvActivities.FullRowSelect = true;
             lvActivities.HeaderStyle = ColumnHeaderStyle.Nonclickable;
             lvActivities.View = View.Details;
+            lvActivities.ColorListViewHeader(Color.SteelBlue, Color.White);
 
-            lvActivities.SmallImageList = _imageListAudio;
-            lvActivities.Columns.Add("", 0);
+            lvActivities.Columns.Add("", ThumbnailDimensions);
             lvActivities.Columns.Add("GameDifficultyLevel", 0);
-            lvActivities.Columns.Add("Name", ListViewActivitiesColWidthName);
+            lvActivities.Columns.Add("Description", ListViewActivitiesColWidthName);
             lvActivities.Columns.Add("ResponseId", 0);
         }
 
@@ -922,8 +929,7 @@ namespace Keebee.AAT.Display.Caregiver
             }
         }
 
-        private void PlayInteractiveActivity(int interactiveActivityId, int difficultyLevel,
-            string interactiveActivityType)
+        private void PlayInteractiveActivity(int interactiveActivityId, int difficultyLevel)
         {
             try
             {
@@ -946,7 +952,6 @@ namespace Keebee.AAT.Display.Caregiver
                             Shapes = totalShapes,
                             Sounds = totalSounds,
                             DifficultyLevel = difficultyLevel,
-                            ActivityName = interactiveActivityType,
                             IsActiveEventLog = _config.IsActiveEventLog
                         };
                         StopAudio();
@@ -959,13 +964,15 @@ namespace Keebee.AAT.Display.Caregiver
                             InteractiveActivityId = interactiveActivityId,
                             ResidentId = _currentResident.Id,
                             SystemEventLogger = _systemEventLogger,
-                            ActivityName = interactiveActivityType,
                             IsActiveEventLog = _config.IsActiveEventLog
                         };
                         StopAudio();
                         paintingActivityPlayer.ShowDialog();
                         break;
                 }
+
+                // remove focus from the selected item in the ListView
+                lblMediaSource.Focus();
             }
             catch (Exception ex)
             {
@@ -1161,10 +1168,7 @@ namespace Keebee.AAT.Display.Caregiver
                 var difficultyLevel = Convert.ToInt32(lvActivities.SelectedItems[0]
                     .SubItems[ListViewIActivitiesColumnDifficultyLevel].Text);
 
-                var interactiveActivityType = lvActivities.SelectedItems[0]
-                    .SubItems[ListViewIActivitiesColumnName].Text;
-
-                PlayInteractiveActivity(interactiveActivityId, difficultyLevel, interactiveActivityType);
+                PlayInteractiveActivity(interactiveActivityId, difficultyLevel);
             }
             catch (Exception ex)
             {

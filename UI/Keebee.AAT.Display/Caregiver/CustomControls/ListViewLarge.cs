@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
@@ -20,16 +20,16 @@ namespace Keebee.AAT.Display.Caregiver.CustomControls
         const int GWL_STYLE = (-16);
 
         [DllImport("user32.dll")]
-        static extern int SendMessage(IntPtr hwnd, int msg, int wParam, int lParam);
+        private static extern int SendMessage(IntPtr hwnd, int msg, int wParam, int lParam);
 
         [DllImport("user32.dll")]
-        static extern uint GetWindowLong(IntPtr hwnd, int index);
+        private static extern uint GetWindowLong(IntPtr hwnd, int index);
 
         [DllImport("user32.dll")]
-        static extern void SetWindowLong(IntPtr hwnd, int index, uint value);
+        private static extern void SetWindowLong(IntPtr hwnd, int index, uint value);
 
         [DllImport("user32.dll")]
-        static extern bool SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int X,
+        private static extern bool SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int X,
               int Y, int cx, int cy, uint uFlags);
 
         // event handler
@@ -100,6 +100,29 @@ namespace Keebee.AAT.Display.Caregiver.CustomControls
 
             // Let the window know of the changes
             SetWindowPos(handle, IntPtr.Zero, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOZORDER | SWP_NOSIZE | SWP_FRAMECHANGED);
+        }
+
+        //List view header formatters
+        public void ColorListViewHeader(Color backColor, Color foreColor)
+        {
+            listView1.OwnerDraw = true;
+            listView1.DrawColumnHeader +=
+                new DrawListViewColumnHeaderEventHandler
+                (
+                    (sender, e) => HeaderDraw(sender, e, backColor, foreColor)
+                );
+            listView1.DrawItem += new DrawListViewItemEventHandler(BodyDraw);
+        }
+
+        private static void HeaderDraw(object sender, DrawListViewColumnHeaderEventArgs e, Color backColor, Color foreColor)
+        {
+            e.Graphics.FillRectangle(new SolidBrush(backColor), e.Bounds);
+            e.Graphics.DrawString(e.Header.Text, e.Font, new SolidBrush(foreColor), e.Bounds);
+        }
+
+        private static void BodyDraw(object sender, DrawListViewItemEventArgs e)
+        {
+            e.DrawDefault = true;
         }
     }
 }

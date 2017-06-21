@@ -33,12 +33,6 @@ namespace Keebee.AAT.Display.Caregiver
             set { _sounds = value; }
         }
 
-        private string _activityName;
-        public string ActivityName
-        {
-            set { _activityName = value; }
-        }
-
         private int _difficultyLevel;
         public int DifficultyLevel
         {

@@ -35,6 +35,7 @@ namespace Keebee.AAT.Display.Caregiver
             this.imageListMusic = new System.Windows.Forms.ImageList(this.components);
             this.imageListMusicDebug = new System.Windows.Forms.ImageList(this.components);
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            this.btnClose = new MetroFramework.Controls.MetroButton();
             this.tbMedia = new System.Windows.Forms.TabControl();
             this.tabImagesGeneral = new System.Windows.Forms.TabPage();
             this.lvImagesGeneral = new Keebee.AAT.Display.Caregiver.CustomControls.ListViewLarge();
@@ -54,7 +55,6 @@ namespace Keebee.AAT.Display.Caregiver
             this.lblMediaSource = new System.Windows.Forms.Label();
             this.musicPlayer = new AxWMPLib.AxWindowsMediaPlayer();
             this.radioShowPlayer = new AxWMPLib.AxWindowsMediaPlayer();
-            this.btnClose = new MetroFramework.Controls.MetroButton();
             this.tableLayoutPanel1.SuspendLayout();
             this.tbMedia.SuspendLayout();
             this.tabImagesGeneral.SuspendLayout();
@@ -87,10 +87,9 @@ namespace Keebee.AAT.Display.Caregiver
             // tableLayoutPanel1
             // 
             this.tableLayoutPanel1.ColumnCount = 3;
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 95F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 526F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 73F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 100F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 68F));
             this.tableLayoutPanel1.Controls.Add(this.btnClose, 2, 0);
             this.tableLayoutPanel1.Controls.Add(this.tbMedia, 0, 1);
             this.tableLayoutPanel1.Controls.Add(this.cboResident, 1, 0);
@@ -101,9 +100,18 @@ namespace Keebee.AAT.Display.Caregiver
             this.tableLayoutPanel1.RowCount = 2;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 73F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(694, 404);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(640, 360);
             this.tableLayoutPanel1.TabIndex = 7;
+            // 
+            // btnClose
+            // 
+            this.btnClose.BackgroundImage = global::Keebee.AAT.Display.Properties.Resources.close;
+            this.btnClose.Location = new System.Drawing.Point(575, 3);
+            this.btnClose.Name = "btnClose";
+            this.btnClose.Size = new System.Drawing.Size(62, 65);
+            this.btnClose.TabIndex = 21;
+            this.btnClose.UseSelectable = true;
+            this.btnClose.Click += new System.EventHandler(this.CloseButtonClick);
             // 
             // tbMedia
             // 
@@ -116,20 +124,21 @@ namespace Keebee.AAT.Display.Caregiver
             this.tbMedia.Controls.Add(this.tabHomeMovies);
             this.tbMedia.Controls.Add(this.tabImagesPersonal);
             this.tbMedia.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tbMedia.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.tbMedia.Font = new System.Drawing.Font("Tahoma", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.tbMedia.Location = new System.Drawing.Point(3, 76);
             this.tbMedia.Name = "tbMedia";
             this.tbMedia.SelectedIndex = 0;
-            this.tbMedia.Size = new System.Drawing.Size(688, 325);
+            this.tbMedia.Size = new System.Drawing.Size(634, 281);
             this.tbMedia.TabIndex = 0;
             // 
             // tabImagesGeneral
             // 
             this.tabImagesGeneral.Controls.Add(this.lvImagesGeneral);
-            this.tabImagesGeneral.Location = new System.Drawing.Point(4, 25);
+            this.tabImagesGeneral.Font = new System.Drawing.Font("Tahoma", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.tabImagesGeneral.Location = new System.Drawing.Point(4, 27);
             this.tabImagesGeneral.Name = "tabImagesGeneral";
             this.tabImagesGeneral.Padding = new System.Windows.Forms.Padding(3);
-            this.tabImagesGeneral.Size = new System.Drawing.Size(680, 296);
+            this.tabImagesGeneral.Size = new System.Drawing.Size(626, 250);
             this.tabImagesGeneral.TabIndex = 0;
             this.tabImagesGeneral.Text = "Images";
             this.tabImagesGeneral.UseVisualStyleBackColor = true;
@@ -137,14 +146,14 @@ namespace Keebee.AAT.Display.Caregiver
             // lvImagesGeneral
             // 
             this.lvImagesGeneral.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lvImagesGeneral.Font = new System.Drawing.Font("Tahoma", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lvImagesGeneral.FullRowSelect = false;
             this.lvImagesGeneral.GridLines = false;
             this.lvImagesGeneral.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Clickable;
             this.lvImagesGeneral.Location = new System.Drawing.Point(3, 3);
-            this.lvImagesGeneral.Margin = new System.Windows.Forms.Padding(4);
             this.lvImagesGeneral.MultiSelect = true;
             this.lvImagesGeneral.Name = "lvImagesGeneral";
-            this.lvImagesGeneral.Size = new System.Drawing.Size(674, 290);
+            this.lvImagesGeneral.Size = new System.Drawing.Size(620, 244);
             this.lvImagesGeneral.SmallImageList = null;
             this.lvImagesGeneral.TabIndex = 0;
             this.lvImagesGeneral.View = System.Windows.Forms.View.LargeIcon;
@@ -154,10 +163,11 @@ namespace Keebee.AAT.Display.Caregiver
             // tabMusic
             // 
             this.tabMusic.Controls.Add(this.lvMusic);
-            this.tabMusic.Location = new System.Drawing.Point(4, 25);
+            this.tabMusic.Font = new System.Drawing.Font("Tahoma", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.tabMusic.Location = new System.Drawing.Point(4, 27);
             this.tabMusic.Name = "tabMusic";
             this.tabMusic.Padding = new System.Windows.Forms.Padding(3);
-            this.tabMusic.Size = new System.Drawing.Size(680, 296);
+            this.tabMusic.Size = new System.Drawing.Size(626, 250);
             this.tabMusic.TabIndex = 3;
             this.tabMusic.Text = "Music";
             this.tabMusic.UseVisualStyleBackColor = true;
@@ -172,7 +182,7 @@ namespace Keebee.AAT.Display.Caregiver
             this.lvMusic.Margin = new System.Windows.Forms.Padding(4);
             this.lvMusic.MultiSelect = true;
             this.lvMusic.Name = "lvMusic";
-            this.lvMusic.Size = new System.Drawing.Size(674, 290);
+            this.lvMusic.Size = new System.Drawing.Size(620, 244);
             this.lvMusic.SmallImageList = null;
             this.lvMusic.TabIndex = 5;
             this.lvMusic.View = System.Windows.Forms.View.LargeIcon;
@@ -182,10 +192,11 @@ namespace Keebee.AAT.Display.Caregiver
             // tabRadioShows
             // 
             this.tabRadioShows.Controls.Add(this.lvRadioShows);
-            this.tabRadioShows.Location = new System.Drawing.Point(4, 25);
+            this.tabRadioShows.Font = new System.Drawing.Font("Tahoma", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.tabRadioShows.Location = new System.Drawing.Point(4, 27);
             this.tabRadioShows.Name = "tabRadioShows";
             this.tabRadioShows.Padding = new System.Windows.Forms.Padding(3);
-            this.tabRadioShows.Size = new System.Drawing.Size(680, 296);
+            this.tabRadioShows.Size = new System.Drawing.Size(626, 250);
             this.tabRadioShows.TabIndex = 3;
             this.tabRadioShows.Text = "Radio Shows";
             this.tabRadioShows.UseVisualStyleBackColor = true;
@@ -200,7 +211,7 @@ namespace Keebee.AAT.Display.Caregiver
             this.lvRadioShows.Margin = new System.Windows.Forms.Padding(4);
             this.lvRadioShows.MultiSelect = true;
             this.lvRadioShows.Name = "lvRadioShows";
-            this.lvRadioShows.Size = new System.Drawing.Size(674, 290);
+            this.lvRadioShows.Size = new System.Drawing.Size(620, 244);
             this.lvRadioShows.SmallImageList = null;
             this.lvRadioShows.TabIndex = 7;
             this.lvRadioShows.View = System.Windows.Forms.View.LargeIcon;
@@ -210,10 +221,11 @@ namespace Keebee.AAT.Display.Caregiver
             // tabTVShows
             // 
             this.tabTVShows.Controls.Add(this.lvTVShows);
-            this.tabTVShows.Location = new System.Drawing.Point(4, 25);
+            this.tabTVShows.Font = new System.Drawing.Font("Tahoma", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.tabTVShows.Location = new System.Drawing.Point(4, 27);
             this.tabTVShows.Name = "tabTVShows";
             this.tabTVShows.Padding = new System.Windows.Forms.Padding(3);
-            this.tabTVShows.Size = new System.Drawing.Size(680, 296);
+            this.tabTVShows.Size = new System.Drawing.Size(626, 250);
             this.tabTVShows.TabIndex = 1;
             this.tabTVShows.Text = "TV Shows";
             this.tabTVShows.UseVisualStyleBackColor = true;
@@ -228,7 +240,7 @@ namespace Keebee.AAT.Display.Caregiver
             this.lvTVShows.Margin = new System.Windows.Forms.Padding(4);
             this.lvTVShows.MultiSelect = true;
             this.lvTVShows.Name = "lvTVShows";
-            this.lvTVShows.Size = new System.Drawing.Size(674, 290);
+            this.lvTVShows.Size = new System.Drawing.Size(620, 244);
             this.lvTVShows.SmallImageList = null;
             this.lvTVShows.TabIndex = 0;
             this.lvTVShows.View = System.Windows.Forms.View.LargeIcon;
@@ -238,10 +250,11 @@ namespace Keebee.AAT.Display.Caregiver
             // tabActivities
             // 
             this.tabActivities.Controls.Add(this.lvActivities);
-            this.tabActivities.Location = new System.Drawing.Point(4, 25);
+            this.tabActivities.Font = new System.Drawing.Font("Tahoma", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.tabActivities.Location = new System.Drawing.Point(4, 27);
             this.tabActivities.Name = "tabActivities";
             this.tabActivities.Padding = new System.Windows.Forms.Padding(3);
-            this.tabActivities.Size = new System.Drawing.Size(680, 296);
+            this.tabActivities.Size = new System.Drawing.Size(626, 250);
             this.tabActivities.TabIndex = 5;
             this.tabActivities.Text = "Activities";
             this.tabActivities.UseVisualStyleBackColor = true;
@@ -256,7 +269,7 @@ namespace Keebee.AAT.Display.Caregiver
             this.lvActivities.Margin = new System.Windows.Forms.Padding(4);
             this.lvActivities.MultiSelect = true;
             this.lvActivities.Name = "lvActivities";
-            this.lvActivities.Size = new System.Drawing.Size(674, 290);
+            this.lvActivities.Size = new System.Drawing.Size(620, 244);
             this.lvActivities.SmallImageList = null;
             this.lvActivities.TabIndex = 0;
             this.lvActivities.View = System.Windows.Forms.View.LargeIcon;
@@ -266,10 +279,11 @@ namespace Keebee.AAT.Display.Caregiver
             // tabHomeMovies
             // 
             this.tabHomeMovies.Controls.Add(this.lvHomeMovies);
-            this.tabHomeMovies.Location = new System.Drawing.Point(4, 25);
+            this.tabHomeMovies.Font = new System.Drawing.Font("Tahoma", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.tabHomeMovies.Location = new System.Drawing.Point(4, 27);
             this.tabHomeMovies.Name = "tabHomeMovies";
             this.tabHomeMovies.Padding = new System.Windows.Forms.Padding(3);
-            this.tabHomeMovies.Size = new System.Drawing.Size(680, 296);
+            this.tabHomeMovies.Size = new System.Drawing.Size(626, 250);
             this.tabHomeMovies.TabIndex = 7;
             this.tabHomeMovies.Text = "Home Movies";
             this.tabHomeMovies.UseVisualStyleBackColor = true;
@@ -284,7 +298,7 @@ namespace Keebee.AAT.Display.Caregiver
             this.lvHomeMovies.Margin = new System.Windows.Forms.Padding(5);
             this.lvHomeMovies.MultiSelect = true;
             this.lvHomeMovies.Name = "lvHomeMovies";
-            this.lvHomeMovies.Size = new System.Drawing.Size(674, 290);
+            this.lvHomeMovies.Size = new System.Drawing.Size(620, 244);
             this.lvHomeMovies.SmallImageList = null;
             this.lvHomeMovies.TabIndex = 1;
             this.lvHomeMovies.View = System.Windows.Forms.View.LargeIcon;
@@ -294,10 +308,11 @@ namespace Keebee.AAT.Display.Caregiver
             // tabImagesPersonal
             // 
             this.tabImagesPersonal.Controls.Add(this.lvImagesPersonal);
-            this.tabImagesPersonal.Location = new System.Drawing.Point(4, 25);
+            this.tabImagesPersonal.Font = new System.Drawing.Font("Tahoma", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.tabImagesPersonal.Location = new System.Drawing.Point(4, 27);
             this.tabImagesPersonal.Name = "tabImagesPersonal";
             this.tabImagesPersonal.Padding = new System.Windows.Forms.Padding(3);
-            this.tabImagesPersonal.Size = new System.Drawing.Size(680, 296);
+            this.tabImagesPersonal.Size = new System.Drawing.Size(626, 250);
             this.tabImagesPersonal.TabIndex = 4;
             this.tabImagesPersonal.Text = "Personal Images";
             this.tabImagesPersonal.UseVisualStyleBackColor = true;
@@ -312,7 +327,7 @@ namespace Keebee.AAT.Display.Caregiver
             this.lvImagesPersonal.Margin = new System.Windows.Forms.Padding(4);
             this.lvImagesPersonal.MultiSelect = true;
             this.lvImagesPersonal.Name = "lvImagesPersonal";
-            this.lvImagesPersonal.Size = new System.Drawing.Size(674, 290);
+            this.lvImagesPersonal.Size = new System.Drawing.Size(620, 244);
             this.lvImagesPersonal.SmallImageList = null;
             this.lvImagesPersonal.TabIndex = 0;
             this.lvImagesPersonal.View = System.Windows.Forms.View.LargeIcon;
@@ -321,22 +336,23 @@ namespace Keebee.AAT.Display.Caregiver
             // 
             // cboResident
             // 
-            this.cboResident.Location = new System.Drawing.Point(98, 15);
+            this.cboResident.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.cboResident.Location = new System.Drawing.Point(103, 15);
             this.cboResident.Margin = new System.Windows.Forms.Padding(3, 15, 3, 3);
             this.cboResident.Name = "cboResident";
             this.cboResident.SelectedValue = null;
-            this.cboResident.Size = new System.Drawing.Size(520, 47);
+            this.cboResident.Size = new System.Drawing.Size(457, 53);
             this.cboResident.TabIndex = 7;
             this.cboResident.SelectedIndexChanged += new System.EventHandler(this.ResidentSelectedIndexChanged);
             // 
             // lblMediaSource
             // 
             this.lblMediaSource.AutoSize = true;
-            this.lblMediaSource.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblMediaSource.Font = new System.Drawing.Font("Tahoma", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblMediaSource.Location = new System.Drawing.Point(3, 25);
             this.lblMediaSource.Margin = new System.Windows.Forms.Padding(3, 25, 0, 0);
             this.lblMediaSource.Name = "lblMediaSource";
-            this.lblMediaSource.Size = new System.Drawing.Size(92, 16);
+            this.lblMediaSource.Size = new System.Drawing.Size(95, 18);
             this.lblMediaSource.TabIndex = 3;
             this.lblMediaSource.Text = "Media Source";
             // 
@@ -362,21 +378,11 @@ namespace Keebee.AAT.Display.Caregiver
             this.radioShowPlayer.Visible = false;
             this.radioShowPlayer.PlayStateChange += new AxWMPLib._WMPOCXEvents_PlayStateChangeEventHandler(this.PlayStateChangeRadioShows);
             // 
-            // btnClose
-            // 
-            this.btnClose.BackgroundImage = global::Keebee.AAT.Display.Properties.Resources.close;
-            this.btnClose.Location = new System.Drawing.Point(624, 3);
-            this.btnClose.Name = "btnClose";
-            this.btnClose.Size = new System.Drawing.Size(66, 65);
-            this.btnClose.TabIndex = 21;
-            this.btnClose.UseSelectable = true;
-            this.btnClose.Click += new System.EventHandler(this.CloseButtonClick);
-            // 
             // CaregiverInterface
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(694, 404);
+            this.ClientSize = new System.Drawing.Size(640, 360);
             this.Controls.Add(this.tableLayoutPanel1);
             this.Controls.Add(this.musicPlayer);
             this.Controls.Add(this.radioShowPlayer);

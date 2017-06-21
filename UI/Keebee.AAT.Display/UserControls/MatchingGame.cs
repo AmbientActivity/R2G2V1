@@ -32,9 +32,9 @@ namespace Keebee.AAT.Display.UserControls
         private bool _isAllowVideoCapture;
 
         // delegate
-        private delegate void RaiseMatchingGameTimeoutExpiredDelegate();
+        private delegate void RaiseMatchingGameTimeoutExpiredEventDelegate();
         private delegate void RaiseLogInteractiveActivityEventEventDelegate(string description, int difficultyLevel, bool? success);
-        private delegate void RaiseStartVideoCaptureDelegate();
+        private delegate void RaiseStartVideoCaptureEventDelegate();
 
         private int _initialDifficultyLevel;
         private bool _enableGameTimeout;
@@ -221,7 +221,7 @@ namespace Keebee.AAT.Display.UserControls
 
             if (InvokeRequired)
             {
-                Invoke(new RaiseMatchingGameTimeoutExpiredDelegate(RaiseMatchingGameTimeoutExpiredEvent));
+                Invoke(new RaiseMatchingGameTimeoutExpiredEventDelegate(RaiseMatchingGameTimeoutExpiredEvent));
             }
             else
             {
@@ -257,7 +257,7 @@ namespace Keebee.AAT.Display.UserControls
 
             if (InvokeRequired)
             {
-                Invoke(new RaiseStartVideoCaptureDelegate(RaiseStartVideoCaptureEvent));
+                Invoke(new RaiseStartVideoCaptureEventDelegate(RaiseStartVideoCaptureEvent));
             }
             else
             {

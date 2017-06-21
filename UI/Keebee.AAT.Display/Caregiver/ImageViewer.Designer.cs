@@ -65,7 +65,7 @@
             this.tableLayoutPanel1.RowCount = 2;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 71F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(631, 412);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(640, 360);
             this.tableLayoutPanel1.TabIndex = 1;
             // 
             // panel1
@@ -77,7 +77,7 @@
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Margin = new System.Windows.Forms.Padding(0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(631, 341);
+            this.panel1.Size = new System.Drawing.Size(640, 289);
             this.panel1.TabIndex = 12;
             // 
             // slideViewerFlash1
@@ -86,7 +86,7 @@
             this.slideViewerFlash1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.slideViewerFlash1.Location = new System.Drawing.Point(0, 0);
             this.slideViewerFlash1.Name = "slideViewerFlash1";
-            this.slideViewerFlash1.Size = new System.Drawing.Size(629, 339);
+            this.slideViewerFlash1.Size = new System.Drawing.Size(638, 287);
             this.slideViewerFlash1.TabIndex = 1;
             this.slideViewerFlash1.Click += new System.EventHandler(this.PreviousButtonClick);
             // 
@@ -94,7 +94,7 @@
             // 
             this.lblAutoMode.AutoSize = true;
             this.lblAutoMode.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblAutoMode.Location = new System.Drawing.Point(73, 371);
+            this.lblAutoMode.Location = new System.Drawing.Point(73, 319);
             this.lblAutoMode.Margin = new System.Windows.Forms.Padding(3, 30, 0, 0);
             this.lblAutoMode.Name = "lblAutoMode";
             this.lblAutoMode.Size = new System.Drawing.Size(59, 13);
@@ -105,7 +105,7 @@
             // 
             this.btnPlay.BackgroundImage = global::Keebee.AAT.Display.Properties.Resources.play_active;
             this.btnPlay.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.btnPlay.Location = new System.Drawing.Point(3, 344);
+            this.btnPlay.Location = new System.Drawing.Point(3, 292);
             this.btnPlay.Name = "btnPlay";
             this.btnPlay.Size = new System.Drawing.Size(64, 65);
             this.btnPlay.TabIndex = 17;
@@ -115,7 +115,7 @@
             // btnClose
             // 
             this.btnClose.BackgroundImage = global::Keebee.AAT.Display.Properties.Resources.close;
-            this.btnClose.Location = new System.Drawing.Point(561, 344);
+            this.btnClose.Location = new System.Drawing.Point(571, 292);
             this.btnClose.Name = "btnClose";
             this.btnClose.Size = new System.Drawing.Size(66, 65);
             this.btnClose.TabIndex = 20;
@@ -126,7 +126,7 @@
             // 
             this.btnPrevious.BackgroundImage = global::Keebee.AAT.Display.Properties.Resources.arrow_left;
             this.btnPrevious.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
-            this.btnPrevious.Location = new System.Drawing.Point(161, 344);
+            this.btnPrevious.Location = new System.Drawing.Point(166, 292);
             this.btnPrevious.Name = "btnPrevious";
             this.btnPrevious.Size = new System.Drawing.Size(150, 64);
             this.btnPrevious.TabIndex = 18;
@@ -137,7 +137,7 @@
             // 
             this.btnNext.BackgroundImage = global::Keebee.AAT.Display.Properties.Resources.arrow_right;
             this.btnNext.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
-            this.btnNext.Location = new System.Drawing.Point(317, 344);
+            this.btnNext.Location = new System.Drawing.Point(322, 292);
             this.btnNext.Name = "btnNext";
             this.btnNext.Size = new System.Drawing.Size(150, 64);
             this.btnNext.TabIndex = 19;
@@ -156,7 +156,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.Yellow;
-            this.ClientSize = new System.Drawing.Size(631, 412);
+            this.ClientSize = new System.Drawing.Size(640, 360);
             this.Controls.Add(this.tableLayoutPanel1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.MaximizeBox = false;

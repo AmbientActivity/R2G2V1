@@ -10,10 +10,18 @@
 
 <script type="text/javascript">
     $(document)
-        .ready(function() {
+        .ready(function () {
             systemprofile.index.init();
         });
 </script>
+
+<audio id="audio-player" controls autoplay data-bind="event: { ended: audioEnded }">
+    <source type="audio/mp3" src="" />
+</audio>
+
+<div id="video-player-container" style="display: none">
+    <video id="video-player" controls autoplay><source type="video/mp4" src="" /></video>
+</div>
 
 <div class="panel panel-default">
     <div class="panel-heading">
@@ -38,10 +46,7 @@
             <thead>
                 <tr>
                     <th class="col-glyphicon"><input type="checkbox" id="chk_all" data-bind="checked: selectAllIsSelected, click: selectAllRows" /></th>
-
-                    <!-- ko if: isPreviewable() -->
                     <th class="col-glyphicon"></th>
-                    <!-- /ko -->
                     <!-- ko foreach: columns -->
                     <!-- ko if: !sortable -->
                     <th data-bind="text: title"></th>
@@ -56,8 +61,11 @@
             <tbody data-bind="foreach: filesTable">
                 <tr data-bind="attr: { id: 'row_' + id }">
                     <td><input type="checkbox" data-bind="attr: { id: 'chk_' + id }, checked: isselected, click: $parent.selectFile" /></td>
-                    <!-- ko if: $parent.isPreviewable() -->
+                    <!-- ko if: !$parent.isAudio() -->
                     <td><a href="#" data-bind="click: $parent.showPreview, css: 'glyphicon glyphicon-eye-open'"></a></td>
+                    <!-- /ko -->
+                    <!-- ko if: $parent.isAudio() -->
+                    <td><a href="#" data-bind="attr: { id: 'audio_' + id }, click: $parent.showPreview, css: 'glyphicon glyphicon-play'"></a></td>
                     <!-- /ko -->
                     <td data-bind="text: filename"></td>
                     <td data-bind="text: filetype"></td>

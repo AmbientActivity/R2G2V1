@@ -223,6 +223,7 @@
     <Compile Include="Models\ConfigDetail.cs" />
     <Compile Include="Models\Config.cs" />
     <Compile Include="Models\MediaPathType.cs" />
+    <Compile Include="Models\MediaPathTypeCategory.cs" />
     <Compile Include="Models\PublicMediaFile.cs" />
     <Compile Include="Models\ResidentMediaFile.cs" />
     <Compile Include="Models\MediaFileStream.cs" />

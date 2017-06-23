@@ -13,6 +13,7 @@ IF OBJECT_ID('ResponseTypes', 'U') IS NOT NULL DROP TABLE ResponseTypes
 IF OBJECT_ID('ResponseTypeCategories', 'U') IS NOT NULL DROP TABLE ResponseTypeCategories
 IF OBJECT_ID('InteractiveActivityTypes', 'U') IS NOT NULL DROP TABLE InteractiveActivityTypes
 IF OBJECT_ID('MediaPathTypes', 'U') IS NOT NULL DROP TABLE MediaPathTypes
+IF OBJECT_ID('MediaPathTypeCategories', 'U') IS NOT NULL DROP TABLE MediaPathTypeCategories
 IF OBJECT_ID('PhidgetTypes', 'U') IS NOT NULL DROP TABLE PhidgetTypes
 IF OBJECT_ID('PhidgetStyleTypes', 'U') IS NOT NULL DROP TABLE PhidgetStyleTypes
 IF OBJECT_ID('Residents', 'U') IS NOT NULL DROP TABLE Residents

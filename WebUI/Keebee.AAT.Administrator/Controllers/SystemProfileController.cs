@@ -46,9 +46,9 @@ namespace Keebee.AAT.Administrator.Controllers
                 MediaPathTypeList = mediaPathTypes.Select(x => new
                 {
                     x.Id,
+                    x.Category,
                     x.Description,
-                    x.ShortDescription,
-                    x.IsPreviewable
+                    x.ShortDescription
                 })
             };
 

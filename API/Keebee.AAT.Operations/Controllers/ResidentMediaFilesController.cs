@@ -1,8 +1,8 @@
-﻿using System;
-using Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models;
+﻿using Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models;
 using Keebee.AAT.Operations.Service.Services;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System;
 using System.Dynamic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -70,6 +70,7 @@ namespace Keebee.AAT.Operations.Controllers
                                     MediaPathType = new
                                         {
                                             pt.MediaPathType.Id,
+                                            Category = pt.MediaPathType.MediaPathTypeCategory.Description,
                                             pt.MediaPathType.Path,
                                             pt.MediaPathType.Description,
                                             pt.MediaPathType.ShortDescription
@@ -128,6 +129,7 @@ namespace Keebee.AAT.Operations.Controllers
             exObj.MediaPathType = new
                 {
                     residentMediaFile.MediaPathType.Id,
+                    Category = residentMediaFile.MediaPathType.MediaPathTypeCategory.Description,
                     residentMediaFile.MediaPathType.Path,
                     residentMediaFile.MediaPathType.Description,
                     residentMediaFile.MediaPathType.ShortDescription
@@ -180,6 +182,7 @@ namespace Keebee.AAT.Operations.Controllers
                             MediaPathType = new
                             {
                                 pt.MediaPathType.Id,
+                                Category = pt.MediaPathType.MediaPathTypeCategory.Description,
                                 pt.MediaPathType.Path,
                                 pt.MediaPathType.Description,
                                 pt.MediaPathType.ShortDescription
@@ -221,6 +224,7 @@ namespace Keebee.AAT.Operations.Controllers
                     MediaPathType = new
                     {
                         pt.MediaPathType.Id,
+                        Category = pt.MediaPathType.MediaPathTypeCategory.Description,
                         pt.MediaPathType.Path,
                         pt.MediaPathType.Description,
                         pt.MediaPathType.ShortDescription
@@ -293,12 +297,12 @@ namespace Keebee.AAT.Operations.Controllers
                             ResponseType = new
                             {
                                 mf.ResponseType.Id,
-                                mf.ResponseType.Description,
                                 ResponseTypeCatgory = new
                                 {
                                     mf.ResponseType.ResponseTypeCategory.Id,
                                     mf.ResponseType.ResponseTypeCategory.Description
-                                }
+                                },
+                                mf.ResponseType.Description
                             },
                             Paths = mf.MediaFiles
                                 .GroupBy(pt => pt.MediaPathType)
@@ -308,6 +312,7 @@ namespace Keebee.AAT.Operations.Controllers
                                     MediaPathType = new
                                     {
                                         pt.MediaPathType.Id,
+                                        Category = pt.MediaPathType.MediaPathTypeCategory.Description,
                                         pt.MediaPathType.Path,
                                         pt.MediaPathType.Description,
                                         pt.MediaPathType.ShortDescription
@@ -378,6 +383,7 @@ namespace Keebee.AAT.Operations.Controllers
                                     MediaPathType = new
                                     {
                                         pt.MediaPathType.Id,
+                                        Category = pt.MediaPathType.MediaPathTypeCategory.Description,
                                         pt.MediaPathType.Path,
                                         pt.MediaPathType.Description,
                                         pt.MediaPathType.ShortDescription

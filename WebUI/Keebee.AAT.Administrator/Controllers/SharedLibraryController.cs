@@ -242,7 +242,7 @@ namespace Keebee.AAT.Administrator.Controllers
                     new
                     {
                         f.StreamId,
-                        f.Filename,
+                        Filename = f.Filename.Replace($".{f.FileType}", string.Empty),
                         f.FileSize,
                         f.FileType,
                         mediaPathType.Path,

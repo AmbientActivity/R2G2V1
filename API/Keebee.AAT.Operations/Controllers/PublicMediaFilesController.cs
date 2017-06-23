@@ -1,6 +1,6 @@
-﻿using System;
-using Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models;
+﻿using Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models;
 using Keebee.AAT.Operations.Service.Services;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Dynamic;
@@ -58,12 +58,12 @@ namespace Keebee.AAT.Operations.Controllers
                             MediaPathType = new
                             {
                                 pt.MediaPathType.Id,
+                                Category = pt.MediaPathType.MediaPathTypeCategory.Description,
                                 pt.MediaPathType.Path,
                                 pt.MediaPathType.Description,
                                 pt.MediaPathType.ShortDescription,
                                 pt.MediaPathType.IsSystem,
-                                pt.MediaPathType.IsSharable,
-                                pt.MediaPathType.IsPreviewable
+                                pt.MediaPathType.IsSharable
                             },
                             Files = pt.Files.Select(f => new
                             {
@@ -105,12 +105,12 @@ namespace Keebee.AAT.Operations.Controllers
             exObj.MediaPathType = new
             {
                 publicMediaFile.MediaPathType.Id,
+                Category = publicMediaFile.MediaPathType.MediaPathTypeCategory.Description,
                 publicMediaFile.MediaPathType.Path,
                 publicMediaFile.MediaPathType.Description,
                 publicMediaFile.MediaPathType.ShortDescription,
                 publicMediaFile.MediaPathType.IsSystem,
-                publicMediaFile.MediaPathType.IsSharable,
-                publicMediaFile.MediaPathType.IsPreviewable
+                publicMediaFile.MediaPathType.IsSharable
             };
             exObj.MediaFile = new
             {
@@ -146,12 +146,12 @@ namespace Keebee.AAT.Operations.Controllers
                     MediaPathType = new
                     {
                         pt.MediaPathType.Id,
+                        Category = pt.MediaPathType.MediaPathTypeCategory.Description,
                         pt.MediaPathType.Path,
                         pt.MediaPathType.Description,
                         pt.MediaPathType.ShortDescription,
                         pt.MediaPathType.IsSystem,
                         pt.MediaPathType.IsSharable,
-                        pt.MediaPathType.IsPreviewable
                     },
                     Files = pt.Files.Select(f => new
                     {
@@ -199,12 +199,12 @@ namespace Keebee.AAT.Operations.Controllers
                             MediaPathType = new
                             {
                                 pt.MediaPathType.Id,
+                                Category = pt.MediaPathType.MediaPathTypeCategory.Description,
                                 pt.MediaPathType.Path,
                                 pt.MediaPathType.Description,
                                 pt.MediaPathType.ShortDescription,
                                 pt.MediaPathType.IsSystem,
-                                pt.MediaPathType.IsSharable,
-                                pt.MediaPathType.IsPreviewable
+                                pt.MediaPathType.IsSharable,                             
                             },
                             Files = pt.Files.Select(f => new
                             {
@@ -247,6 +247,7 @@ namespace Keebee.AAT.Operations.Controllers
                         MediaPathType = new
                         {
                             x.MediaPathType.Id,
+                            Category = x.MediaPathType.MediaPathTypeCategory.Description,
                             x.MediaPathType.Path,
                             x.MediaPathType.Description,
                             x.MediaPathType.ShortDescription,
@@ -314,12 +315,12 @@ namespace Keebee.AAT.Operations.Controllers
                             MediaPathType = new
                             {
                                 pt.MediaPathType.Id,
+                                Category = pt.MediaPathType.MediaPathTypeCategory.Description,
                                 pt.MediaPathType.Path,
                                 pt.MediaPathType.Description,
                                 pt.MediaPathType.ShortDescription,
                                 pt.MediaPathType.IsSystem,
-                                pt.MediaPathType.IsSharable,
-                                pt.MediaPathType.IsPreviewable
+                                pt.MediaPathType.IsSharable
                             },
                             Files = pt.Files.Select(f => new
                             {
@@ -374,12 +375,12 @@ namespace Keebee.AAT.Operations.Controllers
                             MediaPathType = new
                             {
                                 pt.MediaPathType.Id,
+                                Category = pt.MediaPathType.MediaPathTypeCategory.Description,
                                 pt.MediaPathType.Path,
                                 pt.MediaPathType.Description,
                                 pt.MediaPathType.ShortDescription,
                                 pt.MediaPathType.IsSystem,
-                                pt.MediaPathType.IsSharable,
-                                pt.MediaPathType.IsPreviewable
+                                pt.MediaPathType.IsSharable
                             },
                             Files = pt.Files.Select(f => new
                             {
@@ -425,6 +426,7 @@ namespace Keebee.AAT.Operations.Controllers
                         MediaPathType = new
                         {
                             x.MediaPathType.Id,
+                            Category = x.MediaPathType.MediaPathTypeCategory.Description,
                             x.MediaPathType.Path,
                             x.MediaPathType.Description,
                             x.MediaPathType.ShortDescription,

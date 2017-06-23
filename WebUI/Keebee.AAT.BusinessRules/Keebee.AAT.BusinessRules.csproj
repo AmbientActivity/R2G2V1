@@ -50,6 +50,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Models\VideoPlayerModel.cs" />
     <Compile Include="PhidgetConfigRules.cs" />
     <Compile Include="Models\ConfigEditModel.cs" />
     <Compile Include="Models\ImageViewerModel.cs" />
@@ -64,6 +65,7 @@
     <Compile Include="SharedLibraryRules.cs" />
     <Compile Include="SystemProfileRules.cs" />
     <Compile Include="VideoCaptureRules.cs" />
+    <Compile Include="VideoPlayerRules.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\APIClient\Keebee.AAT.ApiClient\Keebee.AAT.ApiClient.csproj">

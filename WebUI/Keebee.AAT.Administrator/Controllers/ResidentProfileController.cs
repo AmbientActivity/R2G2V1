@@ -110,9 +110,9 @@ namespace Keebee.AAT.Administrator.Controllers
                 MediaPathTypeList = mediaPathTypes.Select(x => new
                 {
                     x.Id,
+                    x.Category,
                     x.Description,
                     x.ShortDescription,
-                    x.IsPreviewable,
                     x.IsSharable
                 })
             };
@@ -293,7 +293,7 @@ namespace Keebee.AAT.Administrator.Controllers
             {
                 ResidentId = resident.Id,
                 FullName = fullName,
-                ProfilePicture = ResidentRules.GetProfilePicture(resident.ProfilePicture),
+                ProfilePicture = ResidentRules.GetProfilePicture(resident.ProfilePicture) ?? ResidentRules.GetProfilePicturePlaceholder(),
                 AddButtonText = $"Upload {rules.GetMediaPathShortDescription(mediaPathTypeId)}",
                 IdSearch = idsearch,
                 FirstNameSearch = firstname,

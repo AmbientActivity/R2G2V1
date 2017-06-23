@@ -62,7 +62,7 @@ namespace Keebee.AAT.Operations.Service.Services
             var container = new Container(new Uri(ODataHost.Url));
 
             return container.Residents.ByKey(id)
-                .Expand("MediaFiles($expand=MediaFile,MediaPathType,ResponseType($expand=ResponseTypeCategory))")
+                .Expand("MediaFiles($expand=MediaFile,MediaPathType($expand=MediaPathTypeCategory),ResponseType($expand=ResponseTypeCategory))")
                 .GetValue();
         }
 

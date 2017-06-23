@@ -27,6 +27,17 @@ img {
 a:hover, a:visited, a:link, a:active {
     text-decoration: none;
 }
+
+/* audio and video tags */
+audio { 
+   display:none;
+}
+
+video {
+  width: 100%    !important;
+  height: auto   !important;
+}
+
 @media (min-width: 800px) {
   .container {
     width: 850px;

@@ -81,9 +81,17 @@ function DisableScreen() {
             var cmdDelete = $("#delete");
             var cmdAddShared = $("#add-shared");
 
+            // audio player
+            var audioPlayer = $("#audio-player");
+            var audioPlayerElement = document.getElementById("audio-player");
+
+            // video player
+            var videoPlayer = $("#video-player");
+            var videoPlayerContainer = $("#video-player-container");
+
             var sortDescending = false;
             var currentSortKey = "filename";
-            
+
             var lists = {
                 FileList: [],
                 MediaPathTypeList: []
@@ -108,8 +116,12 @@ function DisableScreen() {
                         self.totalFiles = ko.observable(0);
                         self.selectAllIsSelected = ko.observable(false);
                         self.selectedIds = ko.observable([]);
-                        self.isPreviewable = ko.observable(false);
                         self.isSharable = ko.observable(false);
+                        self.isAudio = ko.observable(false);
+
+                        // for audio previewing
+                        self.currentStreamId = ko.observable(0);
+                        self.currentRowId = ko.observable(0);
 
                         createFileArray(lists.FileList);
                         createMediaPathTypeArray(lists.MediaPathTypeList);
@@ -138,19 +150,19 @@ function DisableScreen() {
                                 self.mediaPathTypes.push(
                                     {
                                         id: value.Id,
+                                        category: value.Category,
                                         description: value.Description,
                                         shortdescription: value.ShortDescription,
-                                        ispreviewable: value.IsPreviewable,
                                         issharable: value.IsSharable
                                     });
                             });
 
-                            var mediaType = self.mediaPathTypes().filter(function (value) {
+                            var mediaPathType = self.mediaPathTypes().filter(function (value) {
                                 return value.id === self.selectedMediaPathType();
                             })[0];
 
-                            self.isPreviewable(mediaType.ispreviewable);
-                            self.isSharable(mediaType.issharable);
+                            self.isSharable(mediaPathType.issharable);
+                            self.isAudio(mediaPathType.category.includes("Audio"));
                         };
 
                         function enableDetail() {
@@ -238,10 +250,13 @@ function DisableScreen() {
                             self.checkSelectAll(false);
                             self.selectAllRows();
 
-                            self.isPreviewable(self.mediaPathType().ispreviewable);
                             self.isSharable(self.mediaPathType().issharable);
+                            self.isAudio(self.mediaPathType().category.includes("Audio"));
 
                             enableDetail();
+
+                            // clear any streaming videos
+                            videoPlayer.attr("src", "");
                         });
 
                         self.filteredFiles = ko.computed(function () {
@@ -269,11 +284,22 @@ function DisableScreen() {
                         };
 
                         self.showPreview = function (row) {
-                            $.get(site.url + "ResidentProfile/GetImageViewerView?streamId=" + row.streamid + "&fileType=" + row.filetype)
+                            var pathCategory = self.mediaPathType().category;
+
+                            if (pathCategory.includes("Image"))
+                                self.previewImage(row);
+                            if (pathCategory.includes("Video"))
+                                self.previewVideo(row);
+                            if (pathCategory.includes("Audio"))
+                                self.previewAudio(row);
+                        };
+
+                        self.previewImage = function (row) {
+                            $.get(site.url + "PublicProfile/GetImageViewerView?streamId=" + row.streamid + "&fileType=" + row.filetype)
                                 .done(function (message) {
                                     BootstrapDialog.show({
                                         type: BootstrapDialog.TYPE_INFO,
-                                        title: "Image Viewer - " + row.filename + "." + row.filetype.toLowerCase(),
+                                        title: row.filename + "." + row.filetype.toLowerCase(),
                                         message: $("<div></div>").append(message),
                                         closable: false,
                                         buttons: [{
@@ -297,7 +323,81 @@ function DisableScreen() {
                                             }
                                         }]
                                     });
+                                });
+                        };
+
+                        self.previewVideo = function (row) {
+                            var src = site.getApiUrl + "videos/" + row.streamid;
+                            var filetype = row.filetype.toLowerCase();
+
+                            BootstrapDialog.show({
+                                type: BootstrapDialog.TYPE_INFO,
+                                title: row.filename + "." + row.filetype.toLowerCase(),
+                                width: "auto",
+                                message: $("<div></div>").append(videoPlayer),
+                                onshown: function () {
+                                    videoPlayer.attr("src", src);
+                                },
+                                closable: false,
+                                buttons: [{
+                                    label: "Close",
+                                    action: function (dialog) {
+                                        videoPlayer.attr("src", "");
+                                        videoPlayer.attr("type", "video/" + filetype);
+                                        dialog.close();
+                                    }
+                                }]
                             });
+                        };
+
+                        self.audioEnded = function () {
+                            self.setGlyph(self.currentRowId(), false, false);
+                        };
+
+                        self.setGlyph = function (rowid, paused, success) {
+                            var glyphElement = tblFile.find("#audio_" + rowid);
+                            var cssPlay = "glyphicon-play";
+                            var cssPause = "glyphicon-pause";
+
+                            if (success) {
+                                cssPlay = cssPlay.concat(" text-success");
+                                cssPause = cssPause.concat(" text-success");
+                            } else {
+                                glyphElement.removeClass("text-success");
+                            }
+
+                            if (paused) {
+                                glyphElement.removeClass(cssPlay);
+                                glyphElement.addClass(cssPause);
+                            } else {
+                                glyphElement.removeClass(cssPause);
+                                glyphElement.addClass(cssPlay);
+                            }
+                        };
+
+                        self.previewAudio = function (row) {
+                            if (self.currentStreamId() === row.streamid) {
+                                // already paused or playing                            
+                                if (audioPlayerElement.paused) {
+                                    audioPlayerElement.play();
+                                    self.setGlyph(row.id, true, true);
+                                } else {
+                                    audioPlayerElement.pause();
+                                    self.setGlyph(row.id, false, true);
+                                }
+                            } else {
+                                // end previous
+                                self.audioEnded();
+
+                                // play new selection
+                                self.setGlyph(row.id, true, true);
+                                audioPlayer.attr("type", "audio/" + row.filetype.toLowerCase());
+                                audioPlayer.attr("src", site.getApiUrl + "audio/" + row.streamid);
+
+                                // set current id's
+                                self.currentStreamId(row.streamid);
+                                self.currentRowId(row.id);
+                            }
                         };
 
                         self.showSharedLibrayLinkDialog = function () {

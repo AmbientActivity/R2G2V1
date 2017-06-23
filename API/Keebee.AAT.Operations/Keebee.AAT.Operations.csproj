@@ -152,6 +152,7 @@
     <Compile Include="App_Start\UnityConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\ActiveResidentsController.cs" />
+    <Compile Include="Controllers\AudioController.cs" />
     <Compile Include="Controllers\MediaPathTypesController.cs" />
     <Compile Include="Controllers\PublicMediaFilesController.cs" />
     <Compile Include="Controllers\ResidentMediaFilesController.cs" />
@@ -169,9 +170,12 @@
     <Compile Include="Controllers\RolesController.cs" />
     <Compile Include="Controllers\UserRolesController.cs" />
     <Compile Include="Controllers\UsersController.cs" />
+    <Compile Include="Controllers\VideosController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Helpers\VideoStreamer.cs" />
+    <Compile Include="Helpers\AudioStreamer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

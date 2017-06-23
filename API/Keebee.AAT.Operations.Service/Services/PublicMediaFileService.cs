@@ -30,7 +30,7 @@ namespace Keebee.AAT.Operations.Service.Services
             var container = new Container(new Uri(ODataHost.Url));
 
             var media = container.PublicMediaFiles
-                .Expand("MediaFile,MediaPathType,ResponseType($expand=ResponseTypeCategory)")
+                .Expand("MediaFile,MediaPathType($expand=MediaPathTypeCategory),ResponseType($expand=ResponseTypeCategory)")
                 .AsEnumerable();
 
             return media;
@@ -41,7 +41,7 @@ namespace Keebee.AAT.Operations.Service.Services
             var container = new Container(new Uri(ODataHost.Url));
 
             var media = container.PublicMediaFiles.ByKey(id)
-                .Expand("MediaFile,MediaPathType,ResponseType($expand=ResponseTypeCategory)");
+                .Expand("MediaFile,MediaPathType($expand=MediaPathTypeCategory),ResponseType($expand=ResponseTypeCategory)");
 
             return media.GetValue();
         }
@@ -52,7 +52,7 @@ namespace Keebee.AAT.Operations.Service.Services
 
             var media = container.PublicMediaFiles
                 .AddQueryOption("$filter", $"ResponseTypeId eq {responseTypdId}")
-                .Expand("MediaFile,MediaPathType,ResponseType($expand=ResponseTypeCategory)")
+                .Expand("MediaFile,MediaPathType($expand=MediaPathTypeCategory),ResponseType($expand=ResponseTypeCategory)")
                 .AsEnumerable();
 
             return media;
@@ -64,7 +64,7 @@ namespace Keebee.AAT.Operations.Service.Services
 
             var media = container.PublicMediaFiles
                 .AddQueryOption("$filter", $"MediaPathTypeId eq {mediaPathTypdId}")
-                .Expand("MediaFile,MediaPathType,ResponseType")
+                .Expand("MediaFile,MediaPathType($expand=MediaPathTypeCategory),ResponseType")
                 .AsEnumerable();
 
             return media;
@@ -76,7 +76,7 @@ namespace Keebee.AAT.Operations.Service.Services
 
             var media = container.PublicMediaFiles
                 .AddQueryOption("$filter", $"StreamId eq {streamId}")
-                .Expand("MediaPathType,ResponseType")
+                .Expand("MediaPathType($expand=MediaPathTypeCategory),ResponseType")
                 .AsEnumerable();
 
             return media;
@@ -100,12 +100,12 @@ namespace Keebee.AAT.Operations.Service.Services
             if (isSystem)
                 return container.PublicMediaFiles
                     .AddQueryOption("$filter", "MediaPathType/IsSystem")
-                    .Expand("MediaFile,MediaPathType,ResponseType($expand=ResponseTypeCategory)")
+                    .Expand("MediaFile,MediaPathType($expand=MediaPathTypeCategory),ResponseType($expand=ResponseTypeCategory)")
                     .AsEnumerable();
             else
                 return container.PublicMediaFiles
                     .AddQueryOption("$filter", "MediaPathType/IsSystem eq false")
-                    .Expand("MediaFile,MediaPathType,ResponseType($expand=ResponseTypeCategory)")
+                    .Expand("MediaFile,MediaPathType($expand=MediaPathTypeCategory),ResponseType($expand=ResponseTypeCategory)")
                     .AsEnumerable();
         }
 
@@ -115,7 +115,7 @@ namespace Keebee.AAT.Operations.Service.Services
 
             var media = container.PublicMediaFiles
                 .AddQueryOption("$filter", "IsLinked")
-                .Expand("MediaFile,MediaPathType,ResponseType($expand=ResponseTypeCategory)")
+                .Expand("MediaFile,MediaPathType($expand=MediaPathTypeCategory),ResponseType($expand=ResponseTypeCategory)")
                 .AsEnumerable();
 
             return media;
@@ -127,7 +127,7 @@ namespace Keebee.AAT.Operations.Service.Services
 
             var media = container.PublicMediaFiles
                 .AddQueryOption("$filter", $"IsLinked and StreamId eq {streamId}")
-                .Expand("MediaFile,MediaPathType,ResponseType($expand=ResponseTypeCategory)")
+                .Expand("MediaFile,MediaPathType($expand=MediaPathTypeCategory),ResponseType($expand=ResponseTypeCategory)")
                 .AsEnumerable();
 
             return media;

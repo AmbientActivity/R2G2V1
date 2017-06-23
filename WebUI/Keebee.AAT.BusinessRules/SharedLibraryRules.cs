@@ -195,9 +195,9 @@ namespace Keebee.AAT.BusinessRules
             return mediaPathTypes.Select(x => new
             {
                 x.Id,
+                x.Category,
                 x.Description,
                 x.ShortDescription,
-                x.IsPreviewable,
                 IsSharable = true
             }).OrderBy(x => x.Description);
         }

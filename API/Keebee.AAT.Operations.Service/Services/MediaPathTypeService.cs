@@ -23,6 +23,7 @@ namespace Keebee.AAT.Operations.Service.Services
             var container = new Container(new Uri(ODataHost.Url));
 
             var mediaPathTypes = container.MediaPathTypes
+                .Expand("MediaPathTypeCategory")
                 .AsEnumerable();
 
             return mediaPathTypes;
@@ -33,6 +34,7 @@ namespace Keebee.AAT.Operations.Service.Services
             var container = new Container(new Uri(ODataHost.Url));
 
             var mediaPathType = container.MediaPathTypes.ByKey(id)
+                .Expand("MediaPathTypeCategory")
                 .GetValue();
 
             return mediaPathType;
@@ -44,9 +46,11 @@ namespace Keebee.AAT.Operations.Service.Services
 
             var mediaPathTypes = (isSystem)
                 ? container.MediaPathTypes
+                    .Expand("MediaPathTypeCategory")
                     .AddQueryOption("$filter", "IsSystem")
                     .AsEnumerable()
                 : container.MediaPathTypes
+                    .Expand("MediaPathTypeCategory")
                     .AddQueryOption("$filter", "IsSystem eq false")
                     .AsEnumerable();
 

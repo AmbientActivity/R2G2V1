@@ -41,6 +41,8 @@ namespace Keebee.AAT.DataAccess.Models
 
         public DbSet<MediaPathType> MediaPathTypes { get; set; }
 
+        public DbSet<MediaPathTypeCategory> MediaPathTypeCategories { get; set; }
+
         public DbSet<ResidentMediaFile> ResidentMediaFiles { get; set; }
 
         public DbSet<PublicMediaFile> PublicMediaFiles { get; set; }

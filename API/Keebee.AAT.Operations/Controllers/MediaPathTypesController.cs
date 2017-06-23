@@ -37,10 +37,10 @@ namespace Keebee.AAT.Operations.Controllers
                 .Select(x => new
                 {
                     x.Id,
+                    Category = x.MediaPathTypeCategory.Description,
                     x.Path,
                     x.Description,
                     x.ShortDescription,
-                    x.IsPreviewable,
                     x.IsSystem,
                     x.IsSharable
                 }).ToArray();
@@ -65,10 +65,10 @@ namespace Keebee.AAT.Operations.Controllers
             dynamic exObj = new ExpandoObject();
 
             exObj.Id = mediaPathType.Id;
+            exObj.Category = mediaPathType.MediaPathTypeCategory.Description;
             exObj.Path = mediaPathType.Path;
             exObj.Description = mediaPathType.Description;
             exObj.ShortDescription = mediaPathType.ShortDescription;
-            exObj.IsSystem = mediaPathType.IsPreviewable;
             exObj.IsSystem = mediaPathType.IsSystem;
             exObj.IsSharable = mediaPathType.IsSharable;
 
@@ -92,10 +92,10 @@ namespace Keebee.AAT.Operations.Controllers
                 .Select(x => new
                 {
                     x.Id,
+                    Category = x.MediaPathTypeCategory.Description,
                     x.Path,
                     x.Description,
                     x.ShortDescription,
-                    x.IsPreviewable,
                     x.IsSystem,
                     x.IsSharable
                 }).ToArray();

@@ -146,6 +146,7 @@ namespace Keebee.AAT.Operations.Controllers
                             MediaPathType = new
                             {
                                 pt.MediaPathType.Id,
+                                Category = pt.MediaPathType.MediaPathTypeCategory.Description,
                                 pt.MediaPathType.Description
                             },
                             Files = pt.Files.Select(f => new

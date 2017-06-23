@@ -100,9 +100,9 @@ namespace Keebee.AAT.Administrator.Controllers
                 MediaPathTypeList = mediaPathTypes.Select(x => new
                 {
                     x.Id,
+                    x.Category,
                     x.Description,
-                    x.ShortDescription,
-                    x.IsPreviewable
+                    x.ShortDescription
                 })
             };
 
@@ -277,7 +277,7 @@ namespace Keebee.AAT.Administrator.Controllers
             _publicMediaFilesClient.Post(mf);
         }
 
-        private PublicProfileViewModel LoadPublicProfileViewModel(
+        private static PublicProfileViewModel LoadPublicProfileViewModel(
                 int? mediaPathTypeId)
         {
             var rules = new PublicProfileRules();

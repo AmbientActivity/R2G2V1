@@ -19,7 +19,7 @@
     <source type="audio/mp3" src="" />
 </audio>
 
-<div id="video-player-container" style="display: none">
+<div style="display: none">
     <video id="video-player" controls autoplay><source type="video/mp4" src="" /></video>
 </div>
 
@@ -78,7 +78,15 @@
                 <td><a href="#" data-bind="click: $parent.showPreview, css: 'glyphicon glyphicon-eye-open'"></a></td>
                 <!-- /ko -->
                 <!-- ko if: $parent.isAudio() -->
+                <!-- ko if: isplaying -->
+                <td><a href="#" data-bind="attr: { id: 'audio_' + id }, click: $parent.showPreview, css: 'glyphicon glyphicon-pause text-success'"></a></td>
+                <!-- /ko -->          
+                <!-- ko if: ispaused -->
+                <td><a href="#" data-bind="attr: { id: 'audio_' + id }, click: $parent.showPreview, css: 'glyphicon glyphicon-play text-success'"></a></td>
+                <!-- /ko -->
+                <!-- ko if: !ispaused && !isplaying -->
                 <td><a href="#" data-bind="attr: { id: 'audio_' + id }, click: $parent.showPreview, css: 'glyphicon glyphicon-play'"></a></td>
+                <!-- /ko -->                
                 <!-- /ko -->
                 <td data-bind="text: filename"></td>
                 <td data-bind="text: filetype"></td>

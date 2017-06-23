@@ -18,7 +18,6 @@
 
             // video player
             var videoPlayer = $("#video-player");
-            var videoPlayerContainer = $("#video-player-container");
 
             var sortDescending = false;
             var currentSortKey = "filename";
@@ -67,7 +66,9 @@
                                     path: value.Path,
                                     islinked: value.IsLinked,
                                     mediapathtypeid: value.MediaPathTypeId,
-                                    isselected: false
+                                    isselected: false,
+                                    isplaying: false,
+                                    ispaused: false
                                 });
                             });
                         };
@@ -88,8 +89,6 @@
 
                             self.selectedMediaPathType(mediaPathType.id);
                             self.isAudio(mediaPathType.category.includes("Audio"));
-
-                            videoPlayer.attr("src", "");
                         };
 
                         self.columns = ko.computed(function () {
@@ -155,9 +154,7 @@
                             })[0];
 
                             self.isAudio(mediaPathType.category.includes("Audio"));
-
-                            // clear any streaming videos
-                            videoPlayer.attr("src", "");
+                            self.clearStreams();
                         });
 
                         self.filteredFiles = ko.computed(function () {
@@ -178,6 +175,21 @@
                         self.filesTable = ko.computed(function () {
                             var filteredFiles = self.filteredFiles();
                             self.totalFilteredFiles(filteredFiles.length);
+
+                            // look for currently playing or paused audio and set flags
+                            var currentlyStreaming = filteredFiles.filter(function (value) {
+                                return value.id === self.currentRowId();
+                            })[0];
+
+                            if (currentlyStreaming !== null && typeof currentlyStreaming !== "undefined") {
+                                if (audioPlayerElement.paused) {
+                                    currentlyStreaming.ispaused = true;
+                                    currentlyStreaming.isplaying = false;
+                                } else {
+                                    currentlyStreaming.isplaying = true;
+                                    currentlyStreaming.ispaused = false;
+                                }
+                            }
 
                             return filteredFiles;
                         });
@@ -338,6 +350,30 @@
                             });
                         };
 
+                        self.previewAudio = function (row) {
+                            if (self.currentStreamId() === row.streamid) {
+                                // already paused or playing                            
+                                if (audioPlayerElement.paused) {
+                                    audioPlayerElement.play();
+                                    self.setGlyph(row.streamid, true, true);
+                                } else {
+                                    audioPlayerElement.pause();
+                                    self.setGlyph(row.streamid, false, true);
+                                }
+                            } else {
+                                // end previous
+                                self.audioEnded();
+
+                                // play new selection
+                                self.setGlyph(row.streamid, true, true);
+                                audioPlayer.attr("type", "audio/" + row.filetype.toLowerCase());
+                                audioPlayer.attr("src", site.getApiUrl + "audio/" + row.streamid);
+
+                                // set current id's
+                                self.currentStreamId(row.streamid);
+                            }
+                        };
+
                         self.audioEnded = function () {
                             self.setGlyph(self.currentStreamId(), false, false);
                         };
@@ -363,27 +399,21 @@
                             }
                         };
 
-                        self.previewAudio = function (row) {
-                            if (self.currentStreamId() === row.streamid) {
-                                // already paused or playing                            
-                                if (audioPlayerElement.paused) {
-                                    audioPlayerElement.play();
-                                    self.setGlyph(row.streamid, true, true);
-                                } else {
-                                    audioPlayerElement.pause();
-                                    self.setGlyph(row.streamid, false, true);
-                                }
-                            } else {
-                                // end previous
-                                self.audioEnded();
+                        self.clearStreams = function () {
+                            videoPlayer.attr("src", "");
+                            audioPlayer.attr("src", "");
+                            self.currentRowId(0);
+                            self.currentStreamId(0);
 
-                                // play new selection
-                                self.setGlyph(row.streamid, true, true);
-                                audioPlayer.attr("type", "audio/" + row.filetype.toLowerCase());
-                                audioPlayer.attr("src", site.getApiUrl + "audio/" + row.streamid);
+                            var currentlyPlaying = self.filteredFiles()
+                                .filter(function (value) {
+                                    return value.ispaused || value.isplaying;
+                                })[0];
 
-                                // set current id's
-                                self.currentStreamId(row.streamid);
+                            if (currentlyPlaying !== null && typeof currentlyPlaying !== "undefined") {
+                                currentlyPlaying.ispaused = false;
+                                currentlyPlaying.isplaying = false;
+                                self.setGlyph(currentlyPlaying.id, false, false);
                             }
                         };
 
@@ -515,6 +545,8 @@
                             $("input[name='shared_files']:checked").each(function (item, value) {
                                 ids.push(value.id);
                             });
+
+                            self.clearStreams();
 
                             $.post(site.url + "SystemProfile/AddSharedMediaFiles/",
                                 {

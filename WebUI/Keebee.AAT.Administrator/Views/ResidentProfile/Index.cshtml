@@ -91,7 +91,15 @@
                 <td><a href="#" data-bind="click: $parent.showPreview, css: 'glyphicon glyphicon-eye-open'"></a></td>
                 <!-- /ko -->
                 <!-- ko if: $parent.isAudio() -->
+                <!-- ko if: isplaying -->
+                <td><a href="#" data-bind="attr: { id: 'audio_' + id }, click: $parent.showPreview, css: 'glyphicon glyphicon-pause text-success'"></a></td>
+                <!-- /ko -->
+                <!-- ko if: ispaused -->
+                <td><a href="#" data-bind="attr: { id: 'audio_' + id }, click: $parent.showPreview, css: 'glyphicon glyphicon-play text-success'"></a></td>
+                <!-- /ko -->
+                <!-- ko if: !ispaused && !isplaying -->
                 <td><a href="#" data-bind="attr: { id: 'audio_' + id }, click: $parent.showPreview, css: 'glyphicon glyphicon-play'"></a></td>
+                <!-- /ko -->
                 <!-- /ko -->
                 <td data-bind="text: filename"></td>
                 <td data-bind="text: filetype"></td>

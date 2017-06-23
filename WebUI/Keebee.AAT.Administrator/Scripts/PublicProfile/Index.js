@@ -86,7 +86,6 @@ function DisableScreen() {
 
             // video player
             var videoPlayer = $("#video-player");
-            var videoPlayerContainer = $("#video-player-container");
 
             var sortDescending = false;
             var currentSortKey = "filename";
@@ -114,9 +113,9 @@ function DisableScreen() {
                         self.totalFilteredFiles = ko.observable(0);
                         self.selectAllIsSelected = ko.observable(false);
                         self.selectedIds = ko.observable([]);
-                        self.isAudio = ko.observable(false);
 
                         // for audio previewing
+                        self.isAudio = ko.observable(false);
                         self.currentStreamId = ko.observable(0);
                         self.currentRowId = ko.observable(0);
 
@@ -136,7 +135,9 @@ function DisableScreen() {
                                     islinked: value.IsLinked,
                                     path: value.Path,
                                     mediapathtypeid: value.MediaPathTypeId,
-                                    isselected: false
+                                    isselected: false,
+                                    isplaying: false,
+                                    ispaused: false
                                 });
                             });
                         };
@@ -156,6 +157,7 @@ function DisableScreen() {
                             var pathType = self.mediaPathTypes().filter(function (value) {
                                 return value.id === self.selectedMediaPathType();
                             })[0];
+
                             self.isAudio(pathType.category.includes("Audio"));
                         };
 
@@ -242,9 +244,7 @@ function DisableScreen() {
                             self.selectAllRows();
 
                             self.isAudio(self.mediaPathType().category.includes("Audio"));
-
-                            // clear any streaming videos
-                            videoPlayer.attr("src", "");
+                            self.clearStreams();
                         });
 
                         self.filteredFiles = ko.computed(function () {
@@ -265,6 +265,21 @@ function DisableScreen() {
                         self.filesTable = ko.computed(function () {
                             var filteredFiles = self.filteredFiles();
                             self.totalFilteredFiles(filteredFiles.length);
+                            
+                            // look for currently playing or paused audio and set flags
+                            var currentlyStreaming = filteredFiles.filter(function (value) {
+                                return value.id === self.currentRowId();
+                            })[0];
+
+                            if (currentlyStreaming !== null && typeof currentlyStreaming !== "undefined") {
+                                if (audioPlayerElement.paused) {
+                                    currentlyStreaming.ispaused = true;
+                                    currentlyStreaming.isplaying = false;
+                                } else {
+                                    currentlyStreaming.isplaying = true;
+                                    currentlyStreaming.ispaused = false;
+                                }
+                            }
 
                             return filteredFiles;
                         });
@@ -424,6 +439,31 @@ function DisableScreen() {
                             });
                         };
 
+                        self.previewAudio = function (row) {
+                            if (self.currentStreamId() === row.streamid) {
+                                // already paused or playing                            
+                                if (audioPlayerElement.paused) {
+                                    audioPlayerElement.play();
+                                    self.setGlyph(row.id, true, true);
+                                } else {
+                                    audioPlayerElement.pause();
+                                    self.setGlyph(row.id, false, true);
+                                }
+                            } else {
+                                // end previous
+                                self.audioEnded();
+
+                                // play new selection
+                                self.setGlyph(row.id, true, true);
+                                audioPlayer.attr("type", "audio/" + row.filetype.toLowerCase());
+                                audioPlayer.attr("src", site.getApiUrl + "audio/" + row.streamid);
+
+                                // set current id's
+                                self.currentStreamId(row.streamid);
+                                self.currentRowId(row.id);
+                            }
+                        };
+
                         self.audioEnded = function() {
                             self.setGlyph(self.currentRowId(), false, false);
                         };
@@ -449,28 +489,21 @@ function DisableScreen() {
                             }
                         };
 
-                        self.previewAudio = function (row) {
-                            if (self.currentStreamId() === row.streamid) {
-                                // already paused or playing                            
-                                if (audioPlayerElement.paused) {
-                                    audioPlayerElement.play();
-                                    self.setGlyph(row.id, true, true);
-                                } else {
-                                    audioPlayerElement.pause();
-                                    self.setGlyph(row.id, false, true);
-                                }
-                            } else {
-                                // end previous
-                                self.audioEnded();
+                        self.clearStreams = function() {
+                            videoPlayer.attr("src", "");
+                            audioPlayer.attr("src", "");
+                            self.currentRowId(0);
+                            self.currentStreamId(0);
 
-                                // play new selection
-                                self.setGlyph(row.id, true, true);
-                                audioPlayer.attr("type", "audio/" + row.filetype.toLowerCase());
-                                audioPlayer.attr("src", site.getApiUrl + "audio/" + row.streamid);
+                            var currentlyPlaying = self.filteredFiles()
+                                .filter(function (value) {
+                                    return value.ispaused || value.isplaying;
+                                })[0];
 
-                                // set current id's
-                                self.currentStreamId(row.streamid);
-                                self.currentRowId(row.id);
+                            if (currentlyPlaying !== null && typeof currentlyPlaying !== "undefined") {
+                                currentlyPlaying.ispaused = false;
+                                currentlyPlaying.isplaying = false;
+                                self.setGlyph(currentlyPlaying.id, false, false);
                             }
                         };
 
@@ -554,6 +587,8 @@ function DisableScreen() {
                             var ids = self.selectedIds();
                             var mediaPathTypeId = $("#mediaPathTypeId").val();
 
+                            self.clearStreams();
+
                             BootstrapDialog.show({
                                 type: BootstrapDialog.TYPE_INFO,
                                 title: "Delete Files",
@@ -605,6 +640,8 @@ function DisableScreen() {
                             });
 
                             var mediaPathTypeId = $("#mediaPathTypeId").val();
+
+                            self.clearStreams();
 
                             $.post(site.url + "PublicProfile/AddSharedMediaFiles/",
                                 { streamIds: ids, mediaPathTypeId: mediaPathTypeId })

@@ -29,6 +29,7 @@ namespace Keebee.AAT.Operations
             container.RegisterType<IActiveResidentEventLogService, ActiveResidentEventLogService>();
             container.RegisterType<IMediaFileService, MediaFileService>();
             container.RegisterType<IMediaFileStreamService, MediaFileStreamService>();
+            container.RegisterType<IThumbnailService, ThumbnailService>();
             container.RegisterType<IMediaPathTypeService, MediaPathTypeService>();
             container.RegisterType<IResidentMediaFileService, ResidentMediaFileService>();
             container.RegisterType<IPublicMediaFileService, PublicMediaFileService>();

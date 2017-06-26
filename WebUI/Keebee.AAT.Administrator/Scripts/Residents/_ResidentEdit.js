@@ -12,6 +12,7 @@
         init: function (options) {
 
             var config = {
+                id: -1,
                 profilePicturePlaceholder: ""
             };
 
@@ -22,6 +23,9 @@
             var cmdRemovePicture = $("#remove-picture");
             var progressDesc = $("#progress");
             var progressBar = $("#progressBar");
+            var deleteButton = $("button.btn.btn-danger");
+
+            if (config.id === 0) deleteButton.hide();
 
             // initialize the remove button
             if (imgProfilePicture.attr("alt") === "notexists")

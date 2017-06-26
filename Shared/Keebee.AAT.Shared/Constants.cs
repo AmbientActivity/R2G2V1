@@ -66,6 +66,20 @@ namespace Keebee.AAT.Shared
         public const int Cats = 10;
     }
 
+    public static class MediaPathTypeCategoryId
+    {
+        public const int Audio = 1;
+        public const int Image = 2;
+        public const int Video = 3;
+    }
+
+    public static class MediaPathTypeCategoryDescription
+    {
+        public const string Audio = "Audio";
+        public const string Image = "Image";
+        public const string Video = "Video";
+    }
+
     public static class SystemMediaPathType
     {
         public const string AmbientDescription = "System (Ambient)";

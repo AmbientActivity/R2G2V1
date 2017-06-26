@@ -96,7 +96,7 @@ function DisableScreen() {
             };
 
             $.get(site.url + "PublicProfile/GetData?" + "mediaPathTypeId=" + $("#mediaPathTypeId").val())
-                .done(function (data) {
+                .done(function(data) {
                     $.extend(lists, data);
 
                     ko.applyBindings(new FileViewModel());
@@ -125,45 +125,49 @@ function DisableScreen() {
 
                         function createFileArray(list) {
                             self.files.removeAll();
-                            $(list).each(function (index, value) {
-                                self.files.push({
-                                    id: value.Id,
-                                    streamid: value.StreamId,
-                                    filename: value.Filename,
-                                    filetype: value.FileType,
-                                    filesize: value.FileSize,
-                                    islinked: value.IsLinked,
-                                    path: value.Path,
-                                    mediapathtypeid: value.MediaPathTypeId,
-                                    isselected: false,
-                                    isplaying: false,
-                                    ispaused: false
+                            $(list)
+                                .each(function(index, value) {
+                                    self.files.push({
+                                        id: value.Id,
+                                        streamid: value.StreamId,
+                                        filename: value.Filename,
+                                        filetype: value.FileType,
+                                        filesize: value.FileSize,
+                                        islinked: value.IsLinked,
+                                        path: value.Path,
+                                        thumbnail: value.Thumbnail,
+                                        mediapathtypeid: value.MediaPathTypeId,
+                                        isselected: false,
+                                        isplaying: false,
+                                        ispaused: false
+                                    });
                                 });
-                            });
                         };
 
                         function createMediaPathTypeArray(list) {
                             self.mediaPathTypes.removeAll();
-                            $(list).each(function (index, value) {
-                                self.mediaPathTypes.push(
-                                {
-                                    id: value.Id,
-                                    category: value.Category,
-                                    description: value.Description,
-                                    shortdescription: value.ShortDescription
+                            $(list)
+                                .each(function(index, value) {
+                                    self.mediaPathTypes.push(
+                                    {
+                                        id: value.Id,
+                                        category: value.Category,
+                                        description: value.Description,
+                                        shortdescription: value.ShortDescription
+                                    });
                                 });
-                            });
 
-                            var pathType = self.mediaPathTypes().filter(function (value) {
-                                return value.id === self.selectedMediaPathType();
-                            })[0];
+                            var pathType = self.mediaPathTypes()
+                                .filter(function(value) {
+                                    return value.id === self.selectedMediaPathType();
+                                })[0];
 
                             self.isAudio(pathType.category.includes("Audio"));
                         };
 
                         function enableDetail() {
                             var selected = self.files()
-                                .filter(function (value) { return value.isselected; });
+                                .filter(function(value) { return value.isselected; });
 
                             cmdDelete.attr("disabled", "disabled");
                             if (selected.length > 0) {
@@ -173,16 +177,41 @@ function DisableScreen() {
                             }
                         };
 
-                        self.columns = ko.computed(function () {
+                        self.columns = ko.computed(function() {
                             var arr = [];
-                            arr.push({ title: "Name", sortable: true, sortKey: "filename", numeric: false, cssClass: "" });
-                            arr.push({ title: "Type", sortable: true, sortKey: "filetype", numeric: false, cssClass: "col-filetype" });
-                            arr.push({ title: "Size", sortable: true, sortKey: "filesize", numeric: true, cssClass: "col-filesize" });
-                            arr.push({ title: "Linked", sortable: true, sortKey: "islinked", numeric: true, cssClass: "col-islinked" });
+                            arr.push({
+                                title: "Name",
+                                sortable: true,
+                                sortKey: "filename",
+                                numeric: false,
+                                cssClass: ""
+                            });
+                            arr.push({
+                                title: "Type",
+                                sortable: true,
+                                sortKey: "filetype",
+                                numeric: false,
+                                cssClass: "col-filetype"
+                            });
+                            arr.push({
+                                title: "Size",
+                                sortable: true,
+                                sortKey: "filesize",
+                                numeric: true,
+                                cssClass: "col-filesize"
+                            });
+                            arr.push({
+                                title: "Linked",
+                                sortable: true,
+                                sortKey: "islinked",
+                                numeric: true,
+                                cssClass: "col-islinked"
+                            });
+
                             return arr;
                         });
 
-                        self.sort = function (header) {
+                        self.sort = function(header) {
                             var afterSave = typeof header.afterSave != "undefined" ? header.afterSave : false;
                             var sortKey;
 
@@ -199,75 +228,93 @@ function DisableScreen() {
                                 sortKey = currentSortKey;
                             }
 
-                            $(self.columns()).each(function (index, value) {
-                                if (value.sortKey === sortKey) {
-                                    self.files.sort(function (a, b) {
-                                        if (value.numeric) {
-                                            if (sortDescending) {
-                                                return a[sortKey] > b[sortKey]
-                                                        ? -1 : a[sortKey] < b[sortKey] || a.filename > b.filename ? 1 : 0;
+                            $(self.columns())
+                                .each(function(index, value) {
+                                    if (value.sortKey === sortKey) {
+                                        self.files.sort(function(a, b) {
+                                            if (value.numeric) {
+                                                if (sortDescending) {
+                                                    return a[sortKey] > b[sortKey]
+                                                        ? -1
+                                                        : a[sortKey] < b[sortKey] || a.filename > b.filename ? 1 : 0;
+                                                } else {
+                                                    return a[sortKey] < b[sortKey]
+                                                        ? -1
+                                                        : a[sortKey] > b[sortKey] || a.filename > b.filename ? 1 : 0;
+                                                }
                                             } else {
-                                                return a[sortKey] < b[sortKey]
-                                                    ? -1 : a[sortKey] > b[sortKey] || a.filename > b.filename ? 1 : 0;
+                                                if (sortDescending) {
+                                                    return a[sortKey].toString().toLowerCase() >
+                                                        b[sortKey].toString().toLowerCase()
+                                                        ? -1
+                                                        : a[sortKey].toString().toLowerCase() <
+                                                        b[sortKey].toString().toLowerCase() ||
+                                                        a.filename.toLowerCase() > b.filename.toLowerCase()
+                                                        ? 1
+                                                        : 0;
+                                                } else {
+                                                    return a[sortKey].toString().toLowerCase() <
+                                                        b[sortKey].toString().toLowerCase()
+                                                        ? -1
+                                                        : a[sortKey].toString().toLowerCase() >
+                                                        b[sortKey].toString().toLowerCase() ||
+                                                        a.filename.toLowerCase() > b.filename.toLowerCase()
+                                                        ? 1
+                                                        : 0;
+                                                }
                                             }
-                                        } else {
-                                            if (sortDescending) {
-                                                return a[sortKey].toString().toLowerCase() > b[sortKey].toString().toLowerCase()
-                                                    ? -1 : a[sortKey].toString().toLowerCase() < b[sortKey].toString().toLowerCase()
-                                                    || a.filename.toLowerCase() > b.filename.toLowerCase() ? 1 : 0;
-                                            } else {
-                                                return a[sortKey].toString().toLowerCase() < b[sortKey].toString().toLowerCase()
-                                                    ? -1 : a[sortKey].toString().toLowerCase() > b[sortKey].toString().toLowerCase()
-                                                    || a.filename.toLowerCase() > b.filename.toLowerCase() ? 1 : 0;
-                                            }
-                                        }
-                                    });
-                                }
-                            });
+                                        });
+                                    }
+                                });
                         };
 
-                        self.reloadUploaderHtml = function () {
+                        self.reloadUploaderHtml = function() {
                             var mediaPathTypeId = self.selectedMediaPathType();
 
                             $.get(site.url + "PublicProfile/GetUploaderHtml?mediaPathTypeId=" + mediaPathTypeId)
-                                .done(function (result) {
+                                .done(function(result) {
                                     $("#uploader-html-container").html(result.UploaderHtml);
                                     $("#uploadbutton").text(result.AddButtonText);
-                            });
+                                });
                         };
 
                         self.selectedMediaPathType.subscribe(function (id) {
                             if (typeof id === "undefined") return;
                             $("#mediaPathTypeId").val(id);
+                            self.isAudio(self.mediaPathType().category.includes("Audio"));
+
                             self.reloadUploaderHtml();
                             self.checkSelectAll(false);
                             self.selectAllRows();
-
-                            self.isAudio(self.mediaPathType().category.includes("Audio"));
                             self.clearStreams();
                         });
 
-                        self.filteredFiles = ko.computed(function () {
-                            return ko.utils.arrayFilter(self.files(), function (f) {
-                                return (
-                                    self.filenameSearch().length === 0 ||
-                                    f.filename.toLowerCase().indexOf(self.filenameSearch().toLowerCase()) !== -1) &&
-                                    f.mediapathtypeid === self.selectedMediaPathType();
-                            });
+                        self.filteredFiles = ko.computed(function() {
+                            return ko.utils.arrayFilter(self.files(),
+                                function(f) {
+                                    return (
+                                            self.filenameSearch().length === 0 ||
+                                                f.filename
+                                                .toLowerCase()
+                                                .indexOf(self.filenameSearch().toLowerCase()) !==
+                                                -1) &&
+                                        f.mediapathtypeid === self.selectedMediaPathType();
+                                });
                         });
 
-                        self.filteredFilesBySelection = ko.computed(function () {
-                            return ko.utils.arrayFilter(self.files(), function (f) {
-                                return (f.mediapathtypeid === self.selectedMediaPathType());
-                            });
+                        self.filteredFilesBySelection = ko.computed(function() {
+                            return ko.utils.arrayFilter(self.files(),
+                                function(f) {
+                                    return (f.mediapathtypeid === self.selectedMediaPathType());
+                                });
                         });
 
-                        self.filesTable = ko.computed(function () {
+                        self.filesTable = ko.computed(function() {
                             var filteredFiles = self.filteredFiles();
                             self.totalFilteredFiles(filteredFiles.length);
-                            
+
                             // look for currently playing or paused audio and set flags
-                            var currentlyStreaming = filteredFiles.filter(function (value) {
+                            var currentlyStreaming = filteredFiles.filter(function(value) {
                                 return value.id === self.currentRowId();
                             })[0];
 
@@ -284,24 +331,26 @@ function DisableScreen() {
                             return filteredFiles;
                         });
 
-                        self.checkAllReset = ko.computed(function () {
+                        self.checkAllReset = ko.computed(function() {
                             $("#chk_all").prop("checked", false);
 
                             self.selectedIds([]);
-                            $.each(self.filteredFiles(), function (item, value) {
-                                value.isselected = false;
+                            $.each(self.filteredFiles(),
+                                function(item, value) {
+                                    value.isselected = false;
 
-                                var chk = tblFile.find("#chk_" + value.id);
-                                chk.prop("checked", false);
-                            });
+                                    var chk = tblFile.find("#chk_" + value.id);
+                                    chk.prop("checked", false);
+                                });
                         });
 
-                        self.showLinkFromSharedLibarayDialog = function () {
+                        self.showLinkFromSharedLibarayDialog = function() {
                             var title = "<span class='glyphicon glyphicon-link' style='color: #fff'></span>";
                             var mediaPathTypeDesc = self.mediaPathType().shortdescription;
 
-                            $.get(site.url + "PublicProfile/GetSharedLibarayLinkView/", { mediaPathTypeId: self.selectedMediaPathType() })
-                                .done(function (message) {
+                            $.get(site.url + "PublicProfile/GetSharedLibarayLinkView/",
+                                    { mediaPathTypeId: self.selectedMediaPathType() })
+                                .done(function(message) {
                                     if (message.length === 0) {
                                         var hasHave = "has";
                                         if (mediaPathTypeDesc.endsWith("s"))
@@ -309,14 +358,19 @@ function DisableScreen() {
 
                                         BootstrapDialog.show({
                                             title: title + " Add <b>" + mediaPathTypeDesc + "</b> From Shared Library",
-                                            message: $("<div></div>").append("All available " + mediaPathTypeDesc + " " + hasHave + " already been added to the public profile."),
+                                            message: $("<div></div>")
+                                                .append("All available " +
+                                                    mediaPathTypeDesc +
+                                                    " " +
+                                                    hasHave +
+                                                    " already been added to the public profile."),
 
                                             closable: false,
                                             buttons: [
                                                 {
                                                     label: "OK",
                                                     cssClass: "btn-primary",
-                                                    action: function (dialog) {
+                                                    action: function(dialog) {
                                                         dialog.close();
                                                     }
                                                 }
@@ -331,13 +385,13 @@ function DisableScreen() {
                                             buttons: [
                                                 {
                                                     label: "Cancel",
-                                                    action: function (dialog) {
+                                                    action: function(dialog) {
                                                         dialog.close();
                                                     }
                                                 }, {
                                                     label: "OK",
                                                     cssClass: "btn-primary",
-                                                    action: function (dialog) {
+                                                    action: function(dialog) {
                                                         self.addSharedFiles();
                                                         dialog.close();
                                                     }
@@ -345,10 +399,10 @@ function DisableScreen() {
                                             ]
                                         });
                                     }
-                            });
+                                });
                         };
 
-                        self.showDeleteSelectedDialog = function () {
+                        self.showDeleteSelectedDialog = function() {
                             BootstrapDialog.show({
                                 type: BootstrapDialog.TYPE_DANGER,
                                 title: "Delete Files?",
@@ -357,13 +411,13 @@ function DisableScreen() {
                                 buttons: [
                                     {
                                         label: "Cancel",
-                                        action: function (dialog) {
+                                        action: function(dialog) {
                                             dialog.close();
                                         }
                                     }, {
                                         label: "Yes, Delete",
                                         cssClass: "btn-danger",
-                                        action: function (dialog) {
+                                        action: function(dialog) {
                                             self.deleteSelected();
                                             dialog.close();
                                         }
@@ -372,7 +426,7 @@ function DisableScreen() {
                             });
                         };
 
-                        self.showPreview = function (row) {
+                        self.showPreview = function(row) {
                             var pathCategory = self.mediaPathType().category;
 
                             if (pathCategory.includes("Image"))
@@ -383,39 +437,47 @@ function DisableScreen() {
                                 self.previewAudio(row);
                         };
 
-                        self.previewImage = function (row) {
-                            $.get(site.url + "PublicProfile/GetImageViewerView?streamId=" + row.streamid + "&fileType=" + row.filetype)
-                                .done(function (message) {
+                        self.previewImage = function(row) {
+                            $.get(site.url +
+                                    "PublicProfile/GetImageViewerView?streamId=" +
+                                    row.streamid +
+                                    "&fileType=" +
+                                    row.filetype)
+                                .done(function(message) {
                                     BootstrapDialog.show({
                                         type: BootstrapDialog.TYPE_INFO,
                                         title: row.filename + "." + row.filetype.toLowerCase(),
                                         message: $("<div></div>").append(message),
                                         closable: false,
-                                        buttons: [{
-                                            label: "Close",
-                                            action: function (dialog) {
-                                                dialog.close();
+                                        buttons: [
+                                            {
+                                                label: "Close",
+                                                action: function(dialog) {
+                                                    dialog.close();
+                                                }
                                             }
-                                        }]
+                                        ]
                                     });
                                 })
-                                .error(function (message) {
+                                .error(function(message) {
                                     BootstrapDialog.show({
                                         type: BootstrapDialog.TYPE_DANGER,
                                         title: "Error",
                                         message: $("<div></div>").append(message),
                                         closable: false,
-                                        buttons: [{
-                                            label: "Close",
-                                            action: function (dialog) {
-                                                dialog.close();
+                                        buttons: [
+                                            {
+                                                label: "Close",
+                                                action: function(dialog) {
+                                                    dialog.close();
+                                                }
                                             }
-                                        }]
+                                        ]
                                     });
-                            });
+                                });
                         };
 
-                        self.previewVideo = function (row) {
+                        self.previewVideo = function(row) {
                             var src = site.getApiUrl + "videos/" + row.streamid;
                             var filetype = row.filetype.toLowerCase();
 
@@ -424,22 +486,24 @@ function DisableScreen() {
                                 title: row.filename + "." + row.filetype.toLowerCase(),
                                 width: "auto",
                                 message: $("<div></div>").append(videoPlayer),
-                                onshown: function () {
+                                onshown: function() {
                                     videoPlayer.attr("src", src);
                                 },
                                 closable: false,
-                                buttons: [{
-                                    label: "Close",
-                                    action: function (dialog) {
-                                        videoPlayer.attr("src", "");
-                                        videoPlayer.attr("type", "video/" + filetype);
-                                        dialog.close();
+                                buttons: [
+                                    {
+                                        label: "Close",
+                                        action: function(dialog) {
+                                            videoPlayer.attr("src", "");
+                                            videoPlayer.attr("type", "video/" + filetype);
+                                            dialog.close();
+                                        }
                                     }
-                                }]
+                                ]
                             });
                         };
 
-                        self.previewAudio = function (row) {
+                        self.previewAudio = function(row) {
                             if (self.currentStreamId() === row.streamid) {
                                 // already paused or playing                            
                                 if (audioPlayerElement.paused) {
@@ -468,7 +532,7 @@ function DisableScreen() {
                             self.setGlyph(self.currentRowId(), false, false);
                         };
 
-                        self.setGlyph = function (rowid, paused, success) {
+                        self.setGlyph = function(rowid, paused, success) {
                             var glyphElement = tblFile.find("#audio_" + rowid);
                             var cssPlay = "glyphicon-play";
                             var cssPause = "glyphicon-pause";
@@ -496,7 +560,7 @@ function DisableScreen() {
                             self.currentStreamId(0);
 
                             var currentlyPlaying = self.filteredFiles()
-                                .filter(function (value) {
+                                .filter(function(value) {
                                     return value.ispaused || value.isplaying;
                                 })[0];
 
@@ -507,7 +571,7 @@ function DisableScreen() {
                             }
                         };
 
-                        self.showFeatureNotDoneYetDialog = function () {
+                        self.showFeatureNotDoneYetDialog = function() {
                             BootstrapDialog.show({
                                 type: BootstrapDialog.TYPE_INFO,
                                 title: "Under Development",
@@ -516,7 +580,7 @@ function DisableScreen() {
                                 buttons: [
                                     {
                                         label: "Close",
-                                        action: function (dialog) {
+                                        action: function(dialog) {
                                             dialog.close();
                                         }
                                     }
@@ -524,19 +588,20 @@ function DisableScreen() {
                             });
                         };
 
-                        self.selectAllRows = function () {
+                        self.selectAllRows = function() {
                             self.selectedIds([]);
 
-                            $.each(self.filteredFiles(), function (item, value) {
-                                if (self.selectAllIsSelected())
-                                    self.selectedIds().push(value.id);
-                                else
-                                    self.selectedIds().pop(value.id);
+                            $.each(self.filteredFiles(),
+                                function(item, value) {
+                                    if (self.selectAllIsSelected())
+                                        self.selectedIds().push(value.id);
+                                    else
+                                        self.selectedIds().pop(value.id);
 
-                                value.isselected = self.selectAllIsSelected();
-                                var chk = tblFile.find("#chk_" + value.id);
-                                chk.prop("checked", self.selectAllIsSelected());
-                            });
+                                    value.isselected = self.selectAllIsSelected();
+                                    var chk = tblFile.find("#chk_" + value.id);
+                                    chk.prop("checked", self.selectAllIsSelected());
+                                });
 
                             self.highlightSelectedRows();
                             enableDetail();
@@ -544,7 +609,7 @@ function DisableScreen() {
                             return true;
                         };
 
-                        self.selectFile = function (row) {
+                        self.selectFile = function(row) {
                             if (typeof row === "undefined") return false;
                             if (row === null) return false;
 
@@ -560,7 +625,7 @@ function DisableScreen() {
                             return true;
                         };
 
-                        self.removeSelectedId = function (id) {
+                        self.removeSelectedId = function(id) {
                             for (var i = self.selectedIds().length - 1; i >= 0; i--) {
                                 if (self.selectedIds()[i] === id) {
                                     self.selectedIds().splice(i, 1);
@@ -568,22 +633,23 @@ function DisableScreen() {
                             }
                         }
 
-                        self.highlightSelectedRows = function () {
+                        self.highlightSelectedRows = function() {
                             var rows = tblFile.find("tr:gt(0)");
-                            rows.each(function () {
+                            rows.each(function() {
                                 $(this).removeClass("highlight");
                             });
 
                             var selected = self.files()
-                                .filter(function (value) { return value.isselected; });
+                                .filter(function(value) { return value.isselected; });
 
-                            $.each(selected, function (item, value) {
-                                var r = tblFile.find("#row_" + value.id);
-                                $(r).addClass("highlight");
-                            });
+                            $.each(selected,
+                                function(item, value) {
+                                    var r = tblFile.find("#row_" + value.id);
+                                    $(r).addClass("highlight");
+                                });
                         };
 
-                        self.deleteSelected = function () {
+                        self.deleteSelected = function() {
                             var ids = self.selectedIds();
                             var mediaPathTypeId = $("#mediaPathTypeId").val();
 
@@ -594,13 +660,13 @@ function DisableScreen() {
                                 title: "Delete Files",
                                 message: "One moment...",
                                 closable: false,
-                                onshown: function (dialog) {
-                                    $.post(site.url + "PublicProfile/DeleteSelected/",                
+                                onshown: function(dialog) {
+                                    $.post(site.url + "PublicProfile/DeleteSelected/",
                                         {
                                             ids: ids,
                                             mediaPathTypeId: mediaPathTypeId
                                         })
-                                        .done(function (result) {
+                                        .done(function(result) {
                                             dialog.close();
                                             if (result.Success) {
                                                 lists.FileList = result.FileList;
@@ -619,7 +685,7 @@ function DisableScreen() {
                                                 });
                                             }
                                         })
-                                        .error(function (result) {
+                                        .error(function(result) {
                                             dialog.close();
                                             enableDetail();
 
@@ -633,19 +699,20 @@ function DisableScreen() {
                             });
                         };
 
-                        self.addSharedFiles = function () {
+                        self.addSharedFiles = function() {
                             var ids = [];
-                            $("input[name='shared_files']:checked").each(function (item, value) {
-                                ids.push(value.id);
-                            });
+                            $("input[name='shared_files']:checked")
+                                .each(function(item, value) {
+                                    ids.push(value.id);
+                                });
 
                             var mediaPathTypeId = $("#mediaPathTypeId").val();
 
                             self.clearStreams();
 
                             $.post(site.url + "PublicProfile/AddSharedMediaFiles/",
-                                { streamIds: ids, mediaPathTypeId: mediaPathTypeId })
-                                .done(function (result) {
+                                    { streamIds: ids, mediaPathTypeId: mediaPathTypeId })
+                                .done(function(result) {
                                     if (result.Success) {
                                         lists.FileList = result.FileList;
                                         createFileArray(lists.FileList);
@@ -663,7 +730,7 @@ function DisableScreen() {
                                         });
                                     }
                                 })
-                                .error(function (result) {
+                                .error(function(result) {
                                     enableDetail();
 
                                     BootstrapDialog.show({
@@ -674,19 +741,19 @@ function DisableScreen() {
                                 });
                         };
 
-                        self.checkSelectAll = function (checked) {
+                        self.checkSelectAll = function(checked) {
                             self.selectAllIsSelected(checked);
                             $("#chk_all").prop("checked", checked);
                         };
 
-                        self.mediaPathType = function () {
+                        self.mediaPathType = function() {
                             return self.mediaPathTypes()
-                                .filter(function (value) {
+                                .filter(function(value) {
                                     return value.id === self.selectedMediaPathType();
                                 })[0];
                         }
                     };
-            });
+                });
         }
     }
 })(jQuery);

@@ -41,10 +41,16 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Constants.cs" />
-    <Compile Include="MessageModels.cs" />
-    <Compile Include="PhidgetUtility.cs" />
+    <Compile Include="Models\MessageModels.cs" />
+    <Compile Include="Utilities\PhidgetUtility.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ServiceUtilities.cs" />
+    <Compile Include="Utilities\ServiceUtilities.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\APIClient\Keebee.AAT.ApiClient\Keebee.AAT.ApiClient.csproj">
+      <Project>{a1f90f14-bc01-4ef8-9b3e-a7fe4b1b7f9f}</Project>
+      <Name>Keebee.AAT.ApiClient</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

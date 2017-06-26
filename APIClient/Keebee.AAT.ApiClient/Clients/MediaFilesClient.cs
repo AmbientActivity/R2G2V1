@@ -8,6 +8,7 @@ namespace Keebee.AAT.ApiClient.Clients
 {
     public interface IMediaFilesClient
     {
+        IEnumerable<Media> Get();
         MediaFilePath Get(Guid streamId);
         IEnumerable<Media> GetForPath(string path);
         MediaFilePath GetFromPath(string path, string filename);
@@ -18,6 +19,15 @@ namespace Keebee.AAT.ApiClient.Clients
 
     public class MediaFilesClient : BaseClient, IMediaFilesClient
     {
+        public IEnumerable<Media> Get()
+        {
+            var request = new RestRequest("mediafiles", Method.GET);
+            var data = Execute(request);
+            var media = JsonConvert.DeserializeObject<IEnumerable<Media>>(data.Content);
+
+            return media;
+        }
+
         public MediaFilePath Get(Guid streamId)
         {
             var request = new RestRequest($"mediafiles/{streamId}", Method.GET);

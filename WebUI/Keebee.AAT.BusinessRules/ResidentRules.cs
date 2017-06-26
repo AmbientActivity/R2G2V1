@@ -255,5 +255,12 @@ namespace Keebee.AAT.BusinessRules
         {
             return $"data:image/jpg;base64,{ImagesBase64.ProfilePicturePlaceholder}";
         }
+
+        public static string GetThumbnail(byte[] binaryData)
+        {
+            return binaryData != null
+                ? $"data:image/jpg;base64,{Convert.ToBase64String(binaryData)}"
+                : null;
+        }
     }
 }

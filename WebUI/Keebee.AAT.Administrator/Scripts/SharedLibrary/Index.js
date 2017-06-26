@@ -136,6 +136,7 @@ function DisableScreen() {
                                     path: value.Path,
                                     mediapathtypeid: value.MediaPathTypeId,
                                     numlinked: value.NumLinkedProfiles,
+                                    thumbnail: value.Thumbnail,
                                     isselected: false,
                                     isplaying: false,
                                     ispaused: false

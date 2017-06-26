@@ -12,14 +12,17 @@ namespace Keebee.AAT.Display.Caregiver.Helpers
         private readonly int _currentResidentId;
         private readonly MediaSourcePath _mediaPath = new MediaSourcePath();
         private readonly IEnumerable<ResponseTypePaths> _publicMediaFiles;
+        private readonly IEnumerable<Thumbnail> _thumbnails;
 
         public MediaFileQuery(IEnumerable<ResponseTypePaths> mediaFiles, 
             IEnumerable<ResponseTypePaths> publicMediaFiles, 
-            int currentResidentId)
+            IEnumerable<Thumbnail> thumbnails, int currentResidentId)
         {
             _mediaFiles = mediaFiles;
             _publicMediaFiles = publicMediaFiles;
             _currentResidentId = currentResidentId;
+            _thumbnails = thumbnails;
+
         }
 
         // get filenames with full path
@@ -106,10 +109,10 @@ namespace Keebee.AAT.Display.Caregiver.Helpers
         }
 
         // get filenames with no extensions or path
-        public IEnumerable<MediaFile> GetMediaFiles(int mediaPathTypeId, int? responseTypeId = null)
+        public IEnumerable<MediaFileThumbnail> GetMediaFiles(int mediaPathTypeId, int? responseTypeId = null)
         {
             var mediaFiles = _mediaFiles.ToArray();
-
+            
             var paths = mediaFiles
                 .Where(x => x.ResponseType.Id == responseTypeId || responseTypeId == null)
                 .SelectMany(x => x.Paths)
@@ -126,17 +129,21 @@ namespace Keebee.AAT.Display.Caregiver.Helpers
                         .Where(x => x.MediaPathType.Id == mediaPathTypeId)
                         .ToArray();
                 }
-                else return new List<MediaFile>();
+                else return new List<MediaFileThumbnail>();
             }
 
             return paths
                 .Single(x => x.MediaPathType.Id == mediaPathTypeId).Files
-                .Select(f => new MediaFile
+                .Select(f =>
                 {
-                    StreamId = f.StreamId,
-                    Filename = f.Filename.Replace($".{f.FileType}", string.Empty)
-                })
-                .OrderBy(f => f.Filename);
+                    var thumbnail = _thumbnails.FirstOrDefault(x => x.StreamId == f.StreamId);
+                    return new MediaFileThumbnail
+                    {
+                        StreamId = f.StreamId,
+                        Filename = f.Filename.Replace($".{f.FileType}", string.Empty),
+                        Thumbnail = thumbnail?.Image
+                    };
+                }).OrderBy(f => f.Filename);
         }
     }
 }

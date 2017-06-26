@@ -233,5 +233,12 @@ namespace Keebee.AAT.BusinessRules
 
             return publicProfile.Union(residentProfiles);
         }
+
+        public static string GetThumbnail(byte[] binaryData)
+        {
+            return binaryData != null
+                ? $"data:image/jpg;base64,{Convert.ToBase64String(binaryData)}"
+                : null;
+        }
     }
 }

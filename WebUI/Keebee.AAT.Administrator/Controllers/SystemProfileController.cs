@@ -3,6 +3,7 @@ using Keebee.AAT.Shared;
 using Keebee.AAT.BusinessRules;
 using Keebee.AAT.ApiClient.Clients;
 using Keebee.AAT.ApiClient.Models;
+using Keebee.AAT.ThumbnailGeneration;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
@@ -15,6 +16,7 @@ namespace Keebee.AAT.Administrator.Controllers
         // api client
         private readonly IPublicMediaFilesClient _publicMediaFilesClient;
         private readonly IMediaPathTypesClient _mediaPathTypesClient;
+        private readonly IThumbnailsClient _thumbnailsClient;
 
         private readonly MediaSourcePath _mediaSourcePath = new MediaSourcePath();
 
@@ -22,6 +24,7 @@ namespace Keebee.AAT.Administrator.Controllers
         {
             _publicMediaFilesClient = new PublicMediaFilesClient();
             _mediaPathTypesClient = new MediaPathTypesClient();
+            _thumbnailsClient = new ThumbnailsClient();
         }
 
         // GET: SystemProfile
@@ -138,7 +141,7 @@ namespace Keebee.AAT.Administrator.Controllers
         public JsonResult AddSharedMediaFiles(Guid[] streamIds, int mediaPathTypeId)
         {
             bool success;
-            var errormessage = string.Empty;
+            string errorMessage = null;
 
             try
             {
@@ -154,7 +157,14 @@ namespace Keebee.AAT.Administrator.Controllers
                             IsLinked = true
                         };
 
-                        _publicMediaFilesClient.Post(pmf);
+                        int newId;
+                        errorMessage = _publicMediaFilesClient.Post(pmf, out newId);
+
+                        if (errorMessage != null)
+                        {
+                            var thumbnailGenerator = new ThumbnailGenerator();
+                            errorMessage = thumbnailGenerator.Generate(streamId);
+                        }
                     }
                 }
                 success = true;
@@ -162,13 +172,13 @@ namespace Keebee.AAT.Administrator.Controllers
             catch (Exception ex)
             {
                 success = false;
-                errormessage = ex.Message;
+                errorMessage = ex.Message;
             }
 
             return Json(new
             {
                 Success = success,
-                ErrorMessage = errormessage,
+                ErrorMessage = errorMessage,
                 FileList = GetMediaFiles()
             }, JsonRequestBehavior.AllowGet);
         }
@@ -206,6 +216,7 @@ namespace Keebee.AAT.Administrator.Controllers
         {
             var list = new List<MediaFileViewModel>();
             var mediaResponseTypes = _publicMediaFilesClient.Get(isSystem: true).ToArray(); // system only
+            var thumbnails = _thumbnailsClient.Get().ToArray();
 
             var mediaPaths = mediaResponseTypes.SelectMany(x => x.Paths)
                 .Where(x => x.MediaPathType.IsSystem)
@@ -223,6 +234,7 @@ namespace Keebee.AAT.Administrator.Controllers
 
                     foreach (var file in files)
                     {
+                        var thumb = thumbnails.FirstOrDefault(x => x.StreamId == file.StreamId);
                         var vm = new MediaFileViewModel
                         {
                             Id = file.Id,
@@ -232,7 +244,8 @@ namespace Keebee.AAT.Administrator.Controllers
                             FileSize = file.FileSize,
                             Path = $@"{pathRoot}\{path.MediaPathType.Path}",
                             IsLinked = file.IsLinked,
-                            MediaPathTypeId = path.MediaPathType.Id
+                            MediaPathTypeId = path.MediaPathType.Id,
+                            Thumbnail = SystemProfileRules.GetThumbnail(thumb?.Image)
                         };
 
                         list.Add(vm);

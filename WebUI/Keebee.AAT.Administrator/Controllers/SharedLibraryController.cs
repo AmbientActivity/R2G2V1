@@ -18,6 +18,7 @@ namespace Keebee.AAT.Administrator.Controllers
         // api client
         private readonly IMediaFilesClient _mediaFilesClient;
         private readonly IMediaPathTypesClient _mediaPathTypesClient;
+        private readonly IThumbnailsClient _thumbnailsClient;
 
         private readonly SystemEventLogger _systemEventLogger;
         private readonly MediaSourcePath _mediaSourcePath = new MediaSourcePath();
@@ -28,6 +29,7 @@ namespace Keebee.AAT.Administrator.Controllers
 
             _mediaFilesClient = new MediaFilesClient();
             _mediaPathTypesClient = new MediaPathTypesClient();
+            _thumbnailsClient = new ThumbnailsClient();
         }
 
         [Authorize]
@@ -233,13 +235,16 @@ namespace Keebee.AAT.Administrator.Controllers
         private IEnumerable<object> GetFileList(IEnumerable<MediaPathType> mediaPathTypes)
         {
             var sharedMedia = _mediaFilesClient.GetWithLinkedData(_mediaSourcePath.SharedLibrary);
+            var thumbnails = _thumbnailsClient.Get().ToArray();
 
             return sharedMedia.SelectMany(p =>
             {
                 var mediaPathType = SharedLibraryRules.GetMediaPathTypeFromRawPath(p.Path, mediaPathTypes);
 
                 return p.Files.Select(f =>
-                    new
+                {
+                    var thumb = thumbnails.FirstOrDefault(x => x.StreamId == f.StreamId);
+                    return new
                     {
                         f.StreamId,
                         Filename = f.Filename.Replace($".{f.FileType}", string.Empty),
@@ -247,8 +252,10 @@ namespace Keebee.AAT.Administrator.Controllers
                         f.FileType,
                         mediaPathType.Path,
                         MediaPathTypeId = mediaPathType.Id,
-                        f.NumLinkedProfiles
-                    });
+                        f.NumLinkedProfiles,
+                        Thumbnail = SharedLibraryRules.GetThumbnail(thumb?.Image)
+                    };
+                });
             });
         }
     }

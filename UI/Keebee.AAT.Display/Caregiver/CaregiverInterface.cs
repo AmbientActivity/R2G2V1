@@ -4,10 +4,10 @@ using Keebee.AAT.Display.Caregiver.CustomControls;
 using Keebee.AAT.Display.Helpers;
 using Keebee.AAT.ApiClient.Clients;
 using Keebee.AAT.ApiClient.Models;
+using Keebee.AAT.Display.Caregiver.Helpers;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
@@ -19,6 +19,8 @@ namespace Keebee.AAT.Display.Caregiver
 {
     public partial class CaregiverInterface : Form
     {
+        #region public properties
+
         // event handler
         public event EventHandler CaregiverCompleteEvent;
 
@@ -50,7 +52,13 @@ namespace Keebee.AAT.Display.Caregiver
             GameDifficultyLevel = 1
         };
 
+        #endregion
+
         #region local variables
+
+        private readonly ResidentsClient _residentsClient = new ResidentsClient();
+        private readonly ResidentMediaFilesClient _residentMediaFilesClient = new ResidentMediaFilesClient();
+        private IEnumerable<Thumbnail> _thumbnails;
 
         // constants
         private const string FontFamily = "Tahoma";
@@ -65,12 +73,6 @@ namespace Keebee.AAT.Display.Caregiver
 
         // delegate
         private delegate void RaiseCaregiverCompleteEventDelegate();
-
-        // background workers
-        private BackgroundWorker _bgwImageGeneralThumbnails;
-        private BackgroundWorker _bgwImagePersonalThumbnails;
-        private BackgroundWorker _bgwTVShowThumbnails;
-        private BackgroundWorker _bgwHomeMovieThumbnails;
 
         // image lists
         private ImageList _imageListImagesGeneral;
@@ -91,10 +93,6 @@ namespace Keebee.AAT.Display.Caregiver
         private Resident _currentResident;
         private int _currentMusicIndex;
         private int _currentRadioShowIndex;
-        private string[] _currentImageGeneralFiles;
-        private string[] _currentImagePersonalFiles;
-        private string[] _currentTVShowFiles;
-        private string[] _currentHomeMovieFiles;
 
         // image indices
         private const int ImageIndexPlay = 0;
@@ -150,13 +148,8 @@ namespace Keebee.AAT.Display.Caregiver
         private const int TabFontSize = 26;
         private const int TabPageFontSize = 20;
 #endif
-        // to prevent background workers from lingering
-        private bool _formIsClosing;
 
         #endregion
-
-        private readonly ResidentsClient _residentsClient = new ResidentsClient();
-        private readonly ResidentMediaFilesClient _residentMediaFilesClient = new ResidentMediaFilesClient();
 
         public CaregiverInterface()
         {
@@ -167,9 +160,10 @@ namespace Keebee.AAT.Display.Caregiver
             _imageListAudio = imageListMusic;
 #endif
             ConfigureControls();
-            ConfigureBackgroundWorkers();
             InitializeStartupPosition();
+            LoadThumbnails();
             _currentResident = _publicProfile;
+
         }
 
         #region initiialization
@@ -314,52 +308,15 @@ namespace Keebee.AAT.Display.Caregiver
             lvActivities.Columns.Add("ResponseId", 0);
         }
 
-        private void ConfigureBackgroundWorkers()
-        {
-            // image general thumbnails
-            _bgwImageGeneralThumbnails = new BackgroundWorker
-            {
-                WorkerSupportsCancellation = true,
-                WorkerReportsProgress = true
-            };
-            _bgwImageGeneralThumbnails.DoWork += LoadImagesGeneralListViewThumbnails;
-            _bgwImageGeneralThumbnails.ProgressChanged += UpdateImagesGeneralListViewImage;
-            _bgwImageGeneralThumbnails.RunWorkerCompleted += LoadImagesGeneralListViewThumbnailsCompleted;
-
-            // image personal thumbnails
-            _bgwImagePersonalThumbnails = new BackgroundWorker
-            {
-                WorkerSupportsCancellation = true,
-                WorkerReportsProgress = true
-            };
-            _bgwImagePersonalThumbnails.DoWork += LoadImagesPersonalListViewThumbnails;
-            _bgwImagePersonalThumbnails.ProgressChanged += UpdateImagesPersonalListViewImage;
-            _bgwImagePersonalThumbnails.RunWorkerCompleted += LoadImagesPersonalListViewThumbnailsCompleted;
-
-            // tv show thumbnails
-            _bgwTVShowThumbnails = new BackgroundWorker
-            {
-                WorkerSupportsCancellation = true,
-                WorkerReportsProgress = true
-            };
-            _bgwTVShowThumbnails.DoWork += LoadTVShowsListViewThumbnails;
-            _bgwTVShowThumbnails.ProgressChanged += UpdateTVShowsListViewImage;
-            _bgwTVShowThumbnails.RunWorkerCompleted += LoadTVShowsListViewThumbnailsCompleted;
-
-            // home movie thumbnails
-            _bgwHomeMovieThumbnails = new BackgroundWorker
-            {
-                WorkerSupportsCancellation = true,
-                WorkerReportsProgress = true
-            };
-            _bgwHomeMovieThumbnails.DoWork += LoadHomeMoviesListViewThumbnails;
-            _bgwHomeMovieThumbnails.ProgressChanged += UpdateHomeMoviesListViewImage;
-            _bgwHomeMovieThumbnails.RunWorkerCompleted += LoadHomeMoviesListViewThumbnailsCompleted;
-        }
-
         #endregion
 
         #region loaders
+
+        private void LoadThumbnails()
+        {
+            var thumbnailsClient = new ThumbnailsClient();
+            _thumbnails = thumbnailsClient.Get();
+        }
 
         private void LoadResidentMedia(int residentId)
         {
@@ -429,14 +386,16 @@ namespace Keebee.AAT.Display.Caregiver
                     {
                         BackColor = ((rowIndex & 1) == 0) ? Color.AliceBlue : Color.White
                     });
+
+                    var image = ThumbnailHelper.GetImageFromByteArray(f.Thumbnail);
+                    if (image != null)
+                    {
+                        _imageListTVShows.Images.Add(image);
+                        lvTVShows.Items[rowIndex].ImageIndex = rowIndex;
+                    }
+
                     rowIndex++;
                 }
-
-                _currentTVShowFiles = GetFilePaths(MediaPathTypeId.TVShows, ResponseTypeId.Television);
-
-                if (_bgwTVShowThumbnails.IsBusy) return;
-                lvTVShows.SmallImageList?.Images.Clear();
-                _bgwTVShowThumbnails.RunWorkerAsync();
             }
             catch (Exception ex)
             {
@@ -464,14 +423,16 @@ namespace Keebee.AAT.Display.Caregiver
                     {
                         BackColor = ((rowIndex & 1) == 0) ? Color.AliceBlue : Color.White
                     });
+
+                    var image = ThumbnailHelper.GetImageFromByteArray(f.Thumbnail);
+                    if (image != null)
+                    {
+                        _imageListHomeMovies.Images.Add(image);
+                        lvHomeMovies.Items[rowIndex].ImageIndex = rowIndex;
+                    }
+                    
                     rowIndex++;
                 }
-
-                _currentHomeMovieFiles = GetFilePaths(MediaPathTypeId.HomeMovies, ResponseTypeId.Television);
-
-                if (_bgwHomeMovieThumbnails.IsBusy) return;
-                lvHomeMovies.SmallImageList?.Images.Clear();
-                _bgwHomeMovieThumbnails.RunWorkerAsync();
             }
             catch (Exception ex)
             {
@@ -500,14 +461,16 @@ namespace Keebee.AAT.Display.Caregiver
                     {
                         BackColor = ((rowIndex & 1) == 0) ? Color.AliceBlue : Color.White
                     });
+
+                    var image = ThumbnailHelper.GetImageFromByteArray(f.Thumbnail);
+                    if (image != null)
+                    {
+                        _imageListImagesGeneral.Images.Add(image);
+                        lvImagesGeneral.Items[rowIndex].ImageIndex = rowIndex;
+                    }
+
                     rowIndex++;
                 }
-
-                _currentImageGeneralFiles = GetFilePaths(MediaPathTypeId.ImagesGeneral, ResponseTypeId.SlideShow);
-
-                if (_bgwImageGeneralThumbnails.IsBusy) return;
-                lvImagesGeneral.SmallImageList?.Images.Clear();
-                _bgwImageGeneralThumbnails.RunWorkerAsync();
             }
             catch (Exception ex)
             {
@@ -602,15 +565,15 @@ namespace Keebee.AAT.Display.Caregiver
                         BackColor = ((rowIndex & 1) == 0) ? Color.AliceBlue : Color.White
                     });
 
+                    var image = ThumbnailHelper.GetImageFromByteArray(f.Thumbnail);
+                    if (image != null)
+                    {
+                        _imageListImagesPersonal.Images.Add(image);
+                        lvImagesPersonal.Items[rowIndex].ImageIndex = rowIndex;
+                    }
+
                     rowIndex++;
                 }
-
-                _currentImagePersonalFiles = GetFilePaths(MediaPathTypeId.ImagesPersonal);
-
-                if (_bgwImagePersonalThumbnails.IsBusy) return;
-
-                lvImagesPersonal.SmallImageList?.Images.Clear();
-                _bgwImagePersonalThumbnails.RunWorkerAsync();
             }
             catch (Exception ex)
             {
@@ -719,7 +682,7 @@ namespace Keebee.AAT.Display.Caregiver
 
         #region file queries
 
-        // get filenames with full path (for the thumbnails)
+        // get filenames with full path (and no thumbnails)
         private string[] GetFilePaths(int mediaPathTypeId, int? responseTypeId = null, Guid? streamId = null)
         {
             string[] filePaths = null;
@@ -727,7 +690,7 @@ namespace Keebee.AAT.Display.Caregiver
             {
                 if (_media != null)
                 {
-                    var mediaFileQuery = new Helpers.MediaFileQuery(_media, _publicMedia, _currentResident.Id);
+                    var mediaFileQuery = new Helpers.MediaFileQuery(_media, _publicMedia, _thumbnails, _currentResident.Id);
                     filePaths = mediaFileQuery.GetFilePaths(mediaPathTypeId, responseTypeId, streamId);
                 }
             }
@@ -740,14 +703,15 @@ namespace Keebee.AAT.Display.Caregiver
         }
 
         // get filenames with no extensions or path (for displaying on the screen)
-        private IEnumerable<MediaFile> GetMediaFiles(int mediaPathTypeId, int? responseTypeId = null)
+        // also include thumbnail images
+        private IEnumerable<MediaFileThumbnail> GetMediaFiles(int mediaPathTypeId, int? responseTypeId = null)
         {
-            IEnumerable<MediaFile> files = null;
+            IEnumerable<MediaFileThumbnail> files = null;
             try
             {
                 if (_media != null)
                 {
-                    var mediaFileQuery = new Helpers.MediaFileQuery(_media, _publicMedia, _currentResident.Id);
+                    var mediaFileQuery = new Helpers.MediaFileQuery(_media, _publicMedia, _thumbnails, _currentResident.Id);
                     files = mediaFileQuery.GetMediaFiles(mediaPathTypeId, responseTypeId);
                 }
             }
@@ -1317,7 +1281,7 @@ namespace Keebee.AAT.Display.Caregiver
         {
             try
             {
-                CancelBackgroundWorkers();
+                //CancelBackgroundWorkers();
 
                 var frmSplash = new Splash();
                 frmSplash.Show();
@@ -1349,13 +1313,11 @@ namespace Keebee.AAT.Display.Caregiver
 
         private void CloseButtonClick(object sender, EventArgs e)
         {
-            _formIsClosing = true;
             Close();
         }
 
         private void CaregiverInterfaceFormClosing(object sender, FormClosingEventArgs e)
         {
-            CancelBackgroundWorkers(true);
             StopAudio();
             RaiseCaregiverCompleteEvent();
         }
@@ -1426,288 +1388,6 @@ namespace Keebee.AAT.Display.Caregiver
         private bool TabPageExists(TabPage tabPage)
         {
             return tbMedia.TabPages.Cast<TabPage>().Contains(tabPage);
-        }
-
-        #endregion
-
-        #region background workers (for thumbnails)
-
-        // image general thumbnails
-        private void UpdateImagesGeneralListViewImage(object sender, ProgressChangedEventArgs e)
-        {
-            try
-            {
-                if (_formIsClosing) return;
-                if (_bgwImageGeneralThumbnails.CancellationPending) return;
-
-                _imageListImagesGeneral.Images.Add((Image) e.UserState);
-                lvImagesGeneral.Items[e.ProgressPercentage].ImageIndex = e.ProgressPercentage;
-            }
-            catch (Exception ex)
-            {
-                _systemEventLogger.WriteEntry($"Caregiver.UpdateImagesListViewImage: {ex.Message}", EventLogEntryType.Error);
-            }
-        }
-
-        private void LoadImagesGeneralListViewThumbnails(object sender, DoWorkEventArgs e)
-        {
-            try
-            {
-                var rowIndex = 0;
-                var files = _currentImageGeneralFiles;
-
-                foreach (var file in files)
-                {
-                    if (_bgwImageGeneralThumbnails.CancellationPending)
-                    {
-                        e.Cancel = true;
-                        return;
-                    }
-
-                    var thumbnail = Thumbnail.Picture.Get(file, ThumbnailDimensions);
-                    _bgwImageGeneralThumbnails.ReportProgress(rowIndex, thumbnail);
-
-                    rowIndex++;
-                }
-            }
-            catch (Exception ex)
-            {
-                _systemEventLogger.WriteEntry($"Caregiver.LoadImagesGeneralListViewThumbnails: {ex.Message}", EventLogEntryType.Error);
-            }
-        }
-
-        private void LoadImagesGeneralListViewThumbnailsCompleted(object sender, RunWorkerCompletedEventArgs e)
-        {
-            try
-            {
-                if (!e.Cancelled || _formIsClosing) return;
-
-                lvImagesGeneral.SmallImageList?.Images.Clear();
-                _bgwImageGeneralThumbnails.RunWorkerAsync();
-            }
-            catch (Exception ex)
-            {
-                _systemEventLogger.WriteEntry($"Caregiver.LoadImagesGeneralListViewThumbnailsCompleted: {ex.Message}", EventLogEntryType.Error);
-            }
-        }
-
-        // image personal thumbnails
-        private void UpdateImagesPersonalListViewImage(object sender, ProgressChangedEventArgs e)
-        {
-            try
-            {
-                if (_formIsClosing) return;
-
-                if (_bgwImagePersonalThumbnails.CancellationPending) return;
-
-                _imageListImagesPersonal.Images.Add((Image)e.UserState);
-                lvImagesPersonal.Items[e.ProgressPercentage].ImageIndex = e.ProgressPercentage;
-            }
-            catch (Exception ex)
-            {
-                _systemEventLogger.WriteEntry($"Caregiver.UpdateImagesPersonalListViewImage: {ex.Message}", EventLogEntryType.Error);
-            }
-        }
-
-        private void LoadImagesPersonalListViewThumbnails(object sender, DoWorkEventArgs e)
-        {
-            var rowIndex = 0;
-            var files = _currentImagePersonalFiles;
-
-            foreach (var file in files)
-            {
-                if (_bgwImagePersonalThumbnails.CancellationPending)
-                {
-                    e.Cancel = true;
-                    return;
-                }
-
-                var thumbnail = Thumbnail.Picture.Get(file, ThumbnailDimensions);
-                _bgwImagePersonalThumbnails.ReportProgress(rowIndex, thumbnail);
-
-                rowIndex++;
-            }
-        }
-
-        private void LoadImagesPersonalListViewThumbnailsCompleted(object sender, RunWorkerCompletedEventArgs e)
-        {
-            try
-            {
-                if (!e.Cancelled || _formIsClosing) return;
-
-                lvImagesPersonal.SmallImageList?.Images.Clear();
-                _bgwImageGeneralThumbnails.RunWorkerAsync();
-            }
-            catch (Exception ex)
-            {
-                _systemEventLogger.WriteEntry($"Caregiver.LoadImagesPersonalListViewThumbnailsCompleted: {ex.Message}", EventLogEntryType.Error);
-            }
-        }
-
-        // tv show thumbnails
-        private void UpdateTVShowsListViewImage(object sender, ProgressChangedEventArgs e)
-        {
-            try
-            {
-                if (_formIsClosing) return;
-                if (_bgwTVShowThumbnails.CancellationPending) return;
-                
-                _imageListTVShows.Images.Add((Image)e.UserState);
-                lvTVShows.Items[e.ProgressPercentage].ImageIndex = e.ProgressPercentage;
-            }
-            catch (Exception ex)
-            {
-                _systemEventLogger.WriteEntry($"Caregiver.UpdateTVShowsListViewImage: {ex.Message}", EventLogEntryType.Error);
-            }
-        }
-
-        private void LoadTVShowsListViewThumbnails(object sender, DoWorkEventArgs e)
-        {
-            try
-            {
-                var rowIndex = 0;
-                var files = _currentTVShowFiles;
-
-                foreach (var file in files)
-                {
-                    if (_bgwTVShowThumbnails.CancellationPending)
-                    {
-                        e.Cancel = true;
-                        return;
-                    }
-
-                    var thumbnail = Thumbnail.Video.Get(file, 2, 5);
-                    _bgwTVShowThumbnails.ReportProgress(rowIndex, thumbnail);
-
-                    rowIndex++;
-                }
-            }
-            catch (Exception ex)
-            {
-                _systemEventLogger.WriteEntry($"Caregiver.LoadTVShowsListViewThumbnails: {ex.Message}", EventLogEntryType.Error);
-            }
-        }
-
-        private void LoadTVShowsListViewThumbnailsCompleted(object sender, RunWorkerCompletedEventArgs e)
-        {
-            try
-            {
-                if (!e.Cancelled || _formIsClosing) return;
-
-                lvTVShows.SmallImageList?.Images.Clear();
-                _bgwTVShowThumbnails.RunWorkerAsync();
-            }
-            catch (Exception ex)
-            {
-                _systemEventLogger.WriteEntry($"Caregiver.LoadTVShowsListViewThumbnailsCompleted: {ex.Message}", EventLogEntryType.Error);
-
-            }
-        }
-
-        // home movie thumbnails
-        private void UpdateHomeMoviesListViewImage(object sender, ProgressChangedEventArgs e)
-        {
-            try
-            {
-                if (_formIsClosing) return;
-                if (_bgwHomeMovieThumbnails.CancellationPending) return;
-
-                _imageListHomeMovies.Images.Add((Image) e.UserState);
-
-                if (e.ProgressPercentage < lvHomeMovies.Items.Count)
-                {
-                    lvHomeMovies.Items[e.ProgressPercentage].ImageIndex = e.ProgressPercentage;
-                }
-            }
-            catch (Exception ex)
-            {
-                _systemEventLogger.WriteEntry($"Caregiver.UpdateHomeMoviesListViewImage: {ex.Message}", EventLogEntryType.Error);
-            }
-        }
-
-        private void LoadHomeMoviesListViewThumbnails(object sender, DoWorkEventArgs e)
-        {
-            try
-            {
-                var rowIndex = 0;
-                var files = _currentHomeMovieFiles;
-
-                foreach (var file in files)
-                {
-                    if (_bgwHomeMovieThumbnails.CancellationPending)
-                    {
-                        e.Cancel = true;
-                        return;
-                    }
-
-                    var thumbnail = Thumbnail.Video.Get(file, 2, 5);
-                    _bgwHomeMovieThumbnails.ReportProgress(rowIndex, thumbnail);
-
-                    rowIndex++;
-                }
-            }
-            catch (Exception ex)
-            {
-                _systemEventLogger.WriteEntry($"Caregiver.LoadHomeMoviesListViewThumbnails: {ex.Message}", EventLogEntryType.Error);
-            }
-        }
-
-        private void LoadHomeMoviesListViewThumbnailsCompleted(object sender, RunWorkerCompletedEventArgs e)
-        {
-            try
-            {
-                if (!e.Cancelled || _formIsClosing) return;
-
-                lvHomeMovies.SmallImageList?.Images.Clear();
-                _bgwHomeMovieThumbnails.RunWorkerAsync();
-            }
-            catch (Exception ex)
-            {
-                _systemEventLogger.WriteEntry($"Caregiver.LoadHomeMoviesListViewThumbnailsCompleted: {ex.Message}", EventLogEntryType.Error);
-
-            }
-        }
-
-        // cancel workers
-        private void CancelBackgroundWorkers(bool dispose = false)
-        {
-            if (_bgwImageGeneralThumbnails != null)
-            {
-                if (_bgwImageGeneralThumbnails.IsBusy)
-                {
-                    _bgwImageGeneralThumbnails.CancelAsync();
-                }
-            }
-
-            if (_bgwImagePersonalThumbnails != null)
-            {
-                if (_bgwImagePersonalThumbnails.IsBusy)
-                {
-                    _bgwImagePersonalThumbnails.CancelAsync();
-                }
-            }
-
-            if (_bgwTVShowThumbnails != null)
-            {
-                if (_bgwTVShowThumbnails.IsBusy)
-                {
-                    _bgwTVShowThumbnails.CancelAsync();
-                }
-            }
-
-            if (_bgwHomeMovieThumbnails != null)
-            {
-                if (_bgwHomeMovieThumbnails.IsBusy)
-                {
-                    _bgwHomeMovieThumbnails.CancelAsync();
-                }
-            }
-
-            if (!dispose) return;
-            _bgwImageGeneralThumbnails?.Dispose();
-            _bgwImagePersonalThumbnails?.Dispose();
-            _bgwTVShowThumbnails?.Dispose();
-            _bgwHomeMovieThumbnails?.Dispose();
         }
 
         #endregion

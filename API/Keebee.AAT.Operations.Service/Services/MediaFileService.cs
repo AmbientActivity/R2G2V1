@@ -23,6 +23,7 @@ namespace Keebee.AAT.Operations.Service.Services
             var container = new Container(new Uri(ODataHost.Url));
 
             var media = container.MediaFiles
+                .AddQueryOption("$filter", "IsFolder eq false")
                 .AsEnumerable();
 
             return media;

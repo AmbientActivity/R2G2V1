@@ -51,7 +51,6 @@
                         self.firstname = firstname;
                         self.lastname = lastname;
                         self.gender = gender;
-                        self.gamedifficultylevel = gamedifficultylevel;
                         self.allowvideocapturing = allowvideocapturing;
                         self.profilepicture = profilepicture;
                         self.profilepictureplaceholder = profilepictureplaceholder;
@@ -88,7 +87,6 @@
                             arr.push({ title: "First Name", sortable: true, sortKey: "firstname", numeric: false, cssClass: "col-firstname" });
                             arr.push({ title: "Last Name", sortable: true, sortKey: "lastname", numeric: false, cssClass: "col-lastname" });
                             arr.push({ title: "Gender", sortable: true, sortKey: "gender", numeric: false, cssClass: "col-gender" });
-                            arr.push({ title: "Level", sortable: true, sortKey: "gamedifficultylevel", numeric: true, cssClass: "col-level" });
 
                             if (config.isVideoCaptureServiceInstalled === "1")
                                 arr.push({ title: "Capturable", sortable: true, sortKey: "allowvideocapturing", numeric: false, cssClass: "col-capturable" });
@@ -193,35 +191,44 @@
                                         },
                                         closable: false,
                                         buttons: [
-                                            {
+                                             {
+                                                 label: "Save",
+                                                 cssClass: "btn-primary",
+                                                 action: function (dialog) {
+                                                     self.saveResident().then(function (result) {
+                                                         if (result.ValidationMessages === null) {
+                                                             lists.ResidentList = result.ResidentList;
+                                                             createResidentArray(lists.ResidentList);
+                                                             self.selectedResident(self.getResident(result.SelectedId));
+                                                             self.sort({ afterSave: true });
+                                                             self.highlightRow(self.selectedResident());
+                                                             dialog.close();
+                                                         } else {
+                                                             $("#validation-container").show();
+                                                             $("#validation-container").html("");
+                                                             var html = "<ul>";
+                                                             for (var i = 0; i < result.ValidationMessages.length; i++) {
+                                                                 var msg = result.ValidationMessages[i];
+                                                                 html = html + "<li>" + msg + "</li>";
+                                                             }
+                                                             html = html + "</ul>";
+                                                             $("#validation-container").append(html);
+                                                         }
+                                                     });
+                                                 }
+                                             }, {
                                                 label: "Cancel",
                                                 action: function (dialog) {
                                                     dialog.close();
                                                 }
                                             }, {
-                                                label: "OK",
-                                                cssClass: "btn-primary",
-                                                action: function (dialog) {
-                                                    self.saveResident().then(function (result) {
-                                                        if (result.ValidationMessages === null) {
-                                                            lists.ResidentList = result.ResidentList;
-                                                            createResidentArray(lists.ResidentList);
-                                                            self.selectedResident(self.getResident(result.SelectedId));
-                                                            self.sort({ afterSave: true });
-                                                            self.highlightRow(self.selectedResident());
+                                                label: "Delete",
+                                                cssClass: "btn-danger",
+                                                action: function(dialog) {
+                                                    self.showDeleteDialog(row)
+                                                        .then(function() {
                                                             dialog.close();
-                                                        } else {
-                                                            $("#validation-container").show();
-                                                            $("#validation-container").html("");
-                                                            var html = "<ul>";
-                                                            for (var i = 0; i < result.ValidationMessages.length; i++) {
-                                                                var msg = result.ValidationMessages[i];
-                                                                html = html + "<li>" + msg + "</li>";
-                                                            }
-                                                            html = html + "</ul>";
-                                                            $("#validation-container").append(html);
-                                                        }
-                                                    });
+                                                        });
                                                 }
                                             }
                                         ]
@@ -246,55 +253,60 @@
                         };
 
                         self.showDeleteDialog = function (row) {
-                            self.highlightRow(row);
-                            
-                            var id = (typeof row.id !== "undefined" ? row.id : 0);
-                            if (id <= 0) return;
-                            var r = self.getResident(id);
-                            var messageGender;
+                            return new Promise(function(resolve, reject) {
+                                self.highlightRow(row);
 
-                            if (r.gender === "M") messageGender = "his";
-                            else messageGender = "her";
+                                var id = (typeof row.id !== "undefined" ? row.id : 0);
+                                if (id <= 0) return false;
+                                var r = self.getResident(id);
+                                var messageGender;
 
-                            var fullName = r.firstname;
-                            if (r.lastname != null) fullName = fullName + " " + r.lastname;
+                                if (r.gender === "M") messageGender = "his";
+                                else messageGender = "her";
 
-                            BootstrapDialog.show({
-                                type: BootstrapDialog.TYPE_DANGER,
-                                title: "Delete Resident?",
-                                message: "Permanently delete the resident <i><b>" + fullName + "</b></i>?\n\n" +
-                                    "<b>Warning:</b> All " + messageGender + " personal media files will be removed!",
-                                closable: false,
-                                buttons: [
-                                    {
-                                        label: "Cancel",
-                                        action: function (dialog) {
-                                            dialog.close();
-                                        }
-                                    }, {
-                                        label: "Yes, Delete",
-                                        cssClass: "btn-danger",
-                                        action: function (dialog) {
-                                            utilities.job.execute(
-                                            {
-                                                controller: "Residents",
-                                                action: "Delete",
-                                                type: "POST",
-                                                params: { id: id },
-                                                title: "Delete Resident"
-                                            })
-                                            .then(function(result) {
+                                var fullName = r.firstname;
+                                if (r.lastname != null) fullName = fullName + " " + r.lastname;
+
+                                BootstrapDialog.show({
+                                    type: BootstrapDialog.TYPE_DANGER,
+                                    title: "Delete Resident?",
+                                    message: "Permanently delete the resident <i><b>" + fullName + "</b></i>?\n\n" +
+                                        "<b>Warning:</b> All " + messageGender + " personal media files will be removed!",
+                                    closable: false,
+                                    buttons: [
+                                        {
+                                            label: "Cancel",
+                                            action: function (dialog) {
                                                 dialog.close();
-                                                lists.ResidentList = result.ResidentList;
-                                                createResidentArray(lists.ResidentList);
-                                                self.sort({ afterSave: true });
-                                            })
-                                            .catch(function() {
-                                                dialog.close();
-                                            });     
+                                                reject();
+                                            }
+                                        }, {
+                                            label: "Yes, Delete",
+                                            cssClass: "btn-danger",
+                                            action: function (dialog) {
+                                                utilities.job.execute(
+                                                {
+                                                    controller: "Residents",
+                                                    action: "Delete",
+                                                    type: "POST",
+                                                    params: { id: id },
+                                                    title: "Delete Resident"
+                                                })
+                                                .then(function (result) {
+                                                    dialog.close();
+                                                    lists.ResidentList = result.ResidentList;
+                                                    createResidentArray(lists.ResidentList);
+                                                    self.sort({ afterSave: true });
+                                                    resolve(result);
+                                                })
+                                                .catch(function () {
+                                                    dialog.close();
+                                                    reject();
+                                                });
+                                            }
                                         }
-                                    }
-                                ]
+                                    ]
+                                });
                             });
                         };
 

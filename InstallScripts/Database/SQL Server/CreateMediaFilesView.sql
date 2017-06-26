@@ -21,7 +21,7 @@ SELECT
 	file_type as [FileType],
 	cached_file_size AS [FileSize],
 	is_directory as IsFolder,
-	FileTableRootPath() + REPLACE(file_stream.GetFileNamespacePath(), [name], '') AS [Path]
+	FileTableRootPath() + REPLACE(file_stream.GetFileNamespacePath(), [name], '') AS [Path],
 FROM dbo.Media
 GO
 
@@ -38,6 +38,6 @@ SELECT
 	cached_file_size AS [FileSize],
 	is_directory as IsFolder,
 	FileTableRootPath() + REPLACE(file_stream.GetFileNamespacePath(), [name], '') AS [Path],
-	file_stream as Stream
+	file_stream as Stream,
 FROM dbo.Media
 GO

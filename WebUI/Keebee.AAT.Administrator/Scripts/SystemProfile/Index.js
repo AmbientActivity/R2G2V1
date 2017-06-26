@@ -66,6 +66,7 @@
                                     path: value.Path,
                                     islinked: value.IsLinked,
                                     mediapathtypeid: value.MediaPathTypeId,
+                                    thumbnail: value.Thumbnail,
                                     isselected: false,
                                     isplaying: false,
                                     ispaused: false

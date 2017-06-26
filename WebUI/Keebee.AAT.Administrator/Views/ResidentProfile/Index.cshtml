@@ -33,7 +33,7 @@
 </audio>
 
 <div id="video-player-container" style="display: none">
-    <video id="video-player" controls autoplay><source type="video/mp4" src="" /></video>
+    <video id="video-player" controls controlsList="nodownload" autoplay><source type="video/mp4" src="" /></video>
 </div>
 
 @{Html.BeginForm();}
@@ -88,7 +88,9 @@
             <tr data-bind="attr: { id: 'row_' + id }">
                 <td><input type="checkbox" data-bind="attr: { id: 'chk_' + id }, checked: isselected, click: $parent.selectFile" /></td>
                 <!-- ko if: !$parent.isAudio() -->
-                <td><a href="#" data-bind="click: $parent.showPreview, css: 'glyphicon glyphicon-eye-open'"></a></td>
+                <td><a href="#" data-bind="click: $parent.showPreview, attr: { title: 'Click to preview' }">
+                    <img alt="" width="40" height="40" data-bind="attr: { src: thumbnail }">
+                </a></td>
                 <!-- /ko -->
                 <!-- ko if: $parent.isAudio() -->
                 <!-- ko if: isplaying -->

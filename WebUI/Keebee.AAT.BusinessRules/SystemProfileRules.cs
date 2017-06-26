@@ -211,5 +211,12 @@ namespace Keebee.AAT.BusinessRules
 
             return message;
         }
+
+        public static string GetThumbnail(byte[] binaryData)
+        {
+            return binaryData != null
+                ? $"data:image/jpg;base64,{Convert.ToBase64String(binaryData)}"
+                : null;
+        }
     }
 }

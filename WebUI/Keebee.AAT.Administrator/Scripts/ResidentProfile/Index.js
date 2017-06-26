@@ -136,6 +136,7 @@ function DisableScreen() {
                                     filetype: value.FileType,
                                     filesize: value.FileSize,
                                     islinked: value.IsLinked,
+                                    thumbnail: value.Thumbnail,
                                     path: value.Path,
                                     mediapathtypeid: value.MediaPathTypeId,
                                     isselected: false,

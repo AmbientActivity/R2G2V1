@@ -65,6 +65,7 @@
     <Compile Include="Clients\ResidentMediaFilesClient.cs" />
     <Compile Include="Clients\ResidentsClient.cs" />
     <Compile Include="Clients\ResponseTypesClient.cs" />
+    <Compile Include="Clients\ThumbnailsClient.cs" />
     <Compile Include="Clients\UserRolesClient.cs" />
     <Compile Include="Clients\UsersClient.cs" />
     <Compile Include="JsonSerializer.cs" />
@@ -85,6 +86,7 @@
     <Compile Include="Models\ResponseTypeCategory.cs" />
     <Compile Include="Models\ActiveResidentEventLog.cs" />
     <Compile Include="Models\Role.cs" />
+    <Compile Include="Models\Thumbnail.cs" />
     <Compile Include="Models\User.cs" />
     <Compile Include="Models\UserRole.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

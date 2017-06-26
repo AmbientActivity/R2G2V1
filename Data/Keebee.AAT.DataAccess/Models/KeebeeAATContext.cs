@@ -39,6 +39,8 @@ namespace Keebee.AAT.DataAccess.Models
 
         public DbSet<MediaFileStream> MediaFileStreams { get; set; }
 
+        public DbSet<Thumbnail> Thumbnails { get; set; }
+
         public DbSet<MediaPathType> MediaPathTypes { get; set; }
 
         public DbSet<MediaPathTypeCategory> MediaPathTypeCategories { get; set; }

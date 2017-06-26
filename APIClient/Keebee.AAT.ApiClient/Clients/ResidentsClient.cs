@@ -69,7 +69,9 @@ namespace Keebee.AAT.ApiClient.Clients
             var request = new RestRequest($"residents/{id}", Method.PATCH);
             var json = request.JsonSerializer.Serialize(resident);
             request.AddParameter("application/json", json, ParameterType.RequestBody);
+
             var response = Execute(request);
+
             string msg = null;
 
             if (response.StatusCode != HttpStatusCode.NoContent)
@@ -83,16 +85,18 @@ namespace Keebee.AAT.ApiClient.Clients
             var request = new RestRequest("residents", Method.POST);
             var json = request.JsonSerializer.Serialize(resident);
             request.AddParameter("application/json", json, ParameterType.RequestBody);
+
             var response = Execute(request);
-            string msg = null;
+
+            string result = null;
             newId = -1;
 
             if (response.StatusCode == HttpStatusCode.OK)
                 newId = Convert.ToInt32(response.Content);
             else
-                msg = response.StatusDescription;
+                result = response.StatusDescription;
 
-            return msg;
+            return result;
         }
 
         public string Delete(int id)

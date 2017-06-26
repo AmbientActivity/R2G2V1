@@ -21,7 +21,7 @@ namespace Keebee.AAT.Administrator
                 ? "true" : "false";
         }
 
-        protected void Application_AuthenticateRequest(object sender, EventArgs e)
+        protected void Application_OnPostAuthenticateRequest(object sender, EventArgs e)
         {
             // get the authentication cookie
             var cookieName = FormsAuthentication.FormsCookieName;

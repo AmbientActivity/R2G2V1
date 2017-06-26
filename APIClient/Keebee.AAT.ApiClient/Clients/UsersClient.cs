@@ -23,7 +23,7 @@ namespace Keebee.AAT.ApiClient.Clients
         {
             var request = new RestRequest("users", Method.GET);
             var data = Execute(request);
-            var users = JsonConvert.DeserializeObject<UserList>(data.Content).Users;
+            var users = JsonConvert.DeserializeObject<IEnumerable<User>>(data.Content);
 
             return users;
         }

@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
 using CuteWebUI;
+using Keebee.AAT.ThumbnailGeneration;
 
 namespace Keebee.AAT.Administrator.Controllers
 {
@@ -20,6 +21,7 @@ namespace Keebee.AAT.Administrator.Controllers
         private readonly IActiveResidentClient _activeResidentClient;
         private readonly IResidentMediaFilesClient _residentMediaFilesClient;
         private readonly IMediaPathTypesClient _mediaPathTypesClient;
+        private readonly IThumbnailsClient _thumbnailsClient;
 
         private readonly SystemEventLogger _systemEventLogger;
         private readonly MediaSourcePath _mediaSourcePath = new MediaSourcePath();
@@ -32,6 +34,7 @@ namespace Keebee.AAT.Administrator.Controllers
             _residentMediaFilesClient = new ResidentMediaFilesClient();
             _activeResidentClient = new ActiveResidentClient();
             _mediaPathTypesClient = new MediaPathTypesClient();
+            _thumbnailsClient = new ThumbnailsClient();
         }
 
         // GET: ResidentProfile
@@ -86,7 +89,8 @@ namespace Keebee.AAT.Administrator.Controllers
                     if (msg.Length == 0)
                     {
                         file.MoveTo(filePath);
-                        AddResidentMediaFile(id, file.FileName, (int)mediaPathTypeId, mediaPath);
+                        msg = AddResidentMediaFile(id, file.FileName, (int)mediaPathTypeId, mediaPath);
+                        vm.ErrorMessage = msg;
                     }
                 }
             }
@@ -125,7 +129,7 @@ namespace Keebee.AAT.Administrator.Controllers
         public JsonResult AddFromSharedLibrary(Guid[] streamIds, int residentId, int mediaPathTypeId)
         {
             bool success;
-            var errormessage = string.Empty;
+            string errorMessage = null;
 
             try
             {
@@ -144,7 +148,8 @@ namespace Keebee.AAT.Administrator.Controllers
                             IsLinked = true
                         };
 
-                        _residentMediaFilesClient.Post(mf);
+                        int newId;
+                        errorMessage = _residentMediaFilesClient.Post(mf, out newId);
                     }
                 }
                 success = true;
@@ -152,13 +157,13 @@ namespace Keebee.AAT.Administrator.Controllers
             catch (Exception ex)
             {
                 success = false;
-                errormessage = ex.Message;
+                errorMessage = ex.Message;
             }
 
             return Json(new
             {
                 Success = success,
-                ErrorMessage = errormessage,
+                ErrorMessage = errorMessage,
                 FileList = GetFiles(residentId)
             }, JsonRequestBehavior.AllowGet);
         }
@@ -306,7 +311,7 @@ namespace Keebee.AAT.Administrator.Controllers
             return vm;
         }
 
-        private void AddResidentMediaFile(int residentId, string filename, int mediaPathTypeId, string mediaPathType)
+        private string AddResidentMediaFile(int residentId, string filename, int mediaPathTypeId, string mediaPathType)
         {
             var fileManager = new FileManager { EventLogger = _systemEventLogger };
             var streamId = fileManager.GetStreamId($@"{residentId}\{mediaPathType}", filename);
@@ -321,7 +326,15 @@ namespace Keebee.AAT.Administrator.Controllers
                 IsLinked = false
             };
 
-            _residentMediaFilesClient.Post(mf);
+            int newId;
+            var errorMessage = _residentMediaFilesClient.Post(mf, out newId);
+
+            if (errorMessage != null) return errorMessage;
+
+            var thumbnailGenerator = new ThumbnailGenerator();
+            errorMessage = thumbnailGenerator.Generate(streamId);
+
+            return errorMessage;
         }
 
         private static SharedLibraryLinkViewModel LoadSharedLibaryAddViewModel(int residentId, int mediaPathTypeId)
@@ -346,6 +359,7 @@ namespace Keebee.AAT.Administrator.Controllers
         {
             var list = new List<MediaFileViewModel>();
             var paths = _residentMediaFilesClient.GetForResident(id);
+            var thumbnails = _thumbnailsClient.Get().ToArray();
 
             if (paths == null) return list;
 
@@ -361,6 +375,7 @@ namespace Keebee.AAT.Administrator.Controllers
 
                 foreach (var file in files)
                 {
+                    var thumb = thumbnails.FirstOrDefault(x => x.StreamId == file.StreamId);
                     var item = new MediaFileViewModel
                     {
                         Id = file.Id,
@@ -370,7 +385,8 @@ namespace Keebee.AAT.Administrator.Controllers
                         FileSize = file.FileSize,
                         IsLinked = file.IsLinked,
                         Path = $@"{pathRoot}\{path.MediaPathType.Description}",
-                        MediaPathTypeId = path.MediaPathType.Id
+                        MediaPathTypeId = path.MediaPathType.Id,
+                        Thumbnail = ResidentRules.GetThumbnail(thumb?.Image)
                     };
 
                     list.Add(item);

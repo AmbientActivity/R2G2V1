@@ -20,7 +20,7 @@
 </audio>
 
 <div id="video-player-container" style="display: none">
-    <video id="video-player" controls autoplay><source type="video/mp4" src="" /></video>
+    <video id="video-player" controls controlsList="nodownload" autoplay><source type="video/mp4" src="" /></video>
 </div>
 
 <div class="panel panel-default">
@@ -55,6 +55,9 @@
                     <th data-bind="click: $parent.sort, attr: { id: 'file-col-' + sortKey }, css: cssClass"><a href="#" data-bind="text: title"></a></th>
                     <!-- /ko -->
                     <!-- /ko -->
+                    <!-- ko if: !isAudio() -->
+                    <th class="col-glyphicon"></th>
+                    <!-- /ko -->
                 </tr>
             </thead>
 
@@ -62,7 +65,9 @@
                 <tr data-bind="attr: { id: 'row_' + id }">
                     <td><input type="checkbox" data-bind="attr: { id: 'chk_' + id }, checked: isselected, click: $parent.selectFile" /></td>
                     <!-- ko if: !$parent.isAudio() -->
-                    <td><a href="#" data-bind="click: $parent.showPreview, css: 'glyphicon glyphicon-eye-open'"></a></td>
+                    <td><a href="#" data-bind="click: $parent.showPreview, attr: { title: 'Click to preview' }">
+                        <img alt="" width="40" height="40" data-bind="attr: { src: thumbnail }">
+                    </a></td>
                     <!-- /ko -->
                     <!-- ko if: $parent.isAudio() -->
                     <!-- ko if: isplaying -->
@@ -78,6 +83,9 @@
                     <td data-bind="text: filename"></td>
                     <td data-bind="text: filetype"></td>
                     <td data-bind="text: filesize"></td>
+                    <!-- ko if: !$parent.isAudio() -->
+                    <td></td>
+                    <!-- /ko -->
                 </tr>
             </tbody>
         </table>

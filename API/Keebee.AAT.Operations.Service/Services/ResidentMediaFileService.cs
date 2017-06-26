@@ -119,7 +119,7 @@ namespace Keebee.AAT.Operations.Service.Services
             var el = container.ResidentMediaFiles.Where(e => e.Id == id).SingleOrDefault();
             if (el == null) return;
 
-            if (el.ResidentId != null)
+            if (residentMediaFile.ResidentId > 0)
                 el.ResidentId = residentMediaFile.ResidentId;
 
             container.UpdateObject(el);

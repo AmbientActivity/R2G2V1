@@ -48,11 +48,11 @@ namespace Keebee.AAT.Operations.Controllers
                     x.Path,
                     Files = x.Files.Select(f => new
                     {
-                                f.StreamId,
-                                f.IsFolder,
-                                f.Filename,
-                                f.FileType,
-                                f.FileSize
+                        f.StreamId,
+                        f.IsFolder,
+                        f.Filename,
+                        f.FileType,
+                        f.FileSize
                      })
                 }).ToArray();
 

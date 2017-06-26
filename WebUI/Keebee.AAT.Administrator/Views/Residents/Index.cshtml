@@ -59,7 +59,7 @@
             <tbody data-bind="foreach: residentsTable">
                 <tr data-bind="click: $parent.highlightRow, attr: {id: 'row_' +  id}">
                     <td>
-                        <a href="#" data-toggle="tooltip" title="Manage resident's profile" data-bind="click: $parent.editProfile, attr: { id: 'profile_' + id }, event: { mouseover: $parent.showTooltipProfile }">
+                        <a href="#" data-toggle="tooltip" class="tooltiptext" title="Manage resident's media profile" data-bind="click: $parent.editProfile, attr: { id: 'profile_' + id }, event: { mouseover: $parent.showTooltipProfile }">
                             <!-- ko if: profilepicture === null -->
                             <img data-bind="attr: { src: profilepictureplaceholder }" alt="" width="40" height="40" class="img-circle">
                             <!-- /ko -->
@@ -82,8 +82,8 @@
                     <!-- /ko -->
                     <!-- /ko -->
                     <td data-bind="text: moment(dateupdated).format('ll')"></td>
-                    <td><a href="#" data-toggle="tooltip" title="Edit resident details" data-bind="click: $parent.showEditDialog, attr: { id: 'edit_' + id }, event: { mouseover: $parent.showTooltipEdit }"><i class="glyphicon glyphicon-pencil glyphicon-resident"></i></a></td>
-                    <td><a href="#" data-toggle="tooltip" title="Edit resident details" data-bind="click: $parent.showDeleteDialog, attr: { id: 'edit_' + id }, event: { mouseover: $parent.showTooltipDelete }"><i class="glyphicon glyphicon-trash glyphicon-resident"></i></a></td>
+                    <td><a href="#" data-toggle="tooltip" class="tooltiptext" title="Edit resident details" data-bind="click: $parent.showEditDialog, attr: { id: 'edit_' + id }, event: { mouseover: $parent.showTooltipEdit }"><i class="glyphicon glyphicon-pencil glyphicon-resident"></i></a></td>
+                    <td><a href="#" data-toggle="tooltip" class="tooltiptext" title="Delete resident" data-bind="click: $parent.showDeleteDialog, attr: { id: 'delete_' + id }, event: { mouseover: $parent.showTooltipDelete }"><i class="glyphicon glyphicon-trash glyphicon-resident"></i></a></td>
                 </tr>
             </tbody>
         </table>

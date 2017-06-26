@@ -323,6 +323,12 @@
                             e.tooltip();
                         };
 
+                        self.showTooltipDelete = function (row) {
+                            var e = tblResident.find("#delete_" + row.id);
+                            e.addClass("text-danger");
+                            e.tooltip();
+                        };
+
                         self.highlightRow = function (row) {
                             var r = tblResident.find("#row_" + row.id);
                             $(r).addClass("highlight").siblings().removeClass("highlight");

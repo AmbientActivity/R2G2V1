@@ -29,7 +29,7 @@ namespace Keebee.AAT.DataAccess.Controllers
         // PUT: odata/InteractiveActivityTypes(5)
         public async Task<IHttpActionResult> Put([FromODataUri] int key, Delta<InteractiveActivityType> patch)
         {
-            Validate(patch.GetEntity());
+            Validate(patch.GetInstance());
 
             if (!ModelState.IsValid)
             {
@@ -81,7 +81,7 @@ namespace Keebee.AAT.DataAccess.Controllers
         [AcceptVerbs("PATCH", "MERGE")]
         public async Task<IHttpActionResult> Patch([FromODataUri] int key, Delta<InteractiveActivityType> patch)
         {
-            Validate(patch.GetEntity());
+            Validate(patch.GetInstance());
 
             if (!ModelState.IsValid)
             {

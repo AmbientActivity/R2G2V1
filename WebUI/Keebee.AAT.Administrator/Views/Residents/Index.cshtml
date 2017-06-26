@@ -52,6 +52,7 @@
                     <th data-bind="click: $parent.sort, attr: { id: 'resident-col-' + sortKey }, css: cssClass"><a href="#" data-bind="text: title"></a></th>
                     <!-- /ko -->
                     <th class="col-glyphicon"></th>
+                    <th class="col-glyphicon"></th>
                 </tr>
             </thead>
 
@@ -82,6 +83,7 @@
                     <!-- /ko -->
                     <td data-bind="text: moment(dateupdated).format('ll')"></td>
                     <td><a href="#" data-toggle="tooltip" title="Edit resident details" data-bind="click: $parent.showEditDialog, attr: { id: 'edit_' + id }, event: { mouseover: $parent.showTooltipEdit }"><i class="glyphicon glyphicon-pencil glyphicon-resident"></i></a></td>
+                    <td><a href="#" data-toggle="tooltip" title="Edit resident details" data-bind="click: $parent.showDeleteDialog, attr: { id: 'edit_' + id }, event: { mouseover: $parent.showTooltipDelete }"><i class="glyphicon glyphicon-trash glyphicon-resident"></i></a></td>
                 </tr>
             </tbody>
         </table>

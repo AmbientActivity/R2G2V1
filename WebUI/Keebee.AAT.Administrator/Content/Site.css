@@ -274,7 +274,7 @@ video {
     font-size: 20px;
     padding-right: 5px;
 }
-.glyphicon-remove {
+.glyphicon-remove, .glyphicon-trash {
     color: #c12e2a;
 }
 .glyphicon-pencil {

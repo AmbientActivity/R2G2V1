@@ -191,7 +191,12 @@
                                         },
                                         closable: false,
                                         buttons: [
-                                             {
+                                            {
+                                                label: "Cancel",
+                                                action: function (dialog) {
+                                                    dialog.close();
+                                                }
+                                            },{
                                                  label: "Save",
                                                  cssClass: "btn-primary",
                                                  action: function (dialog) {
@@ -216,21 +221,7 @@
                                                          }
                                                      });
                                                  }
-                                             }, {
-                                                label: "Cancel",
-                                                action: function (dialog) {
-                                                    dialog.close();
-                                                }
-                                            }, {
-                                                label: "Delete",
-                                                cssClass: "btn-danger",
-                                                action: function(dialog) {
-                                                    self.showDeleteDialog(row)
-                                                        .then(function() {
-                                                            dialog.close();
-                                                        });
-                                                }
-                                            }
+                                             }
                                         ]
                                     });
                             });                         

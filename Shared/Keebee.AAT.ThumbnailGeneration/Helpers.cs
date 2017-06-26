@@ -1,5 +1,4 @@
 ﻿using Keebee.AAT.ApiClient.Models;
-using Keebee.AAT.Shared;
 using System;
 using System.Drawing;
 using System.Drawing.Imaging;

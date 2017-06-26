@@ -417,6 +417,11 @@
                                 self.setGlyph(currentlyPlaying.id, false, false);
                             }
                         };
+                        
+                        self.showTooltipThumb = function (row) {
+                           var t = tblFile.find("#thumb_" + row.id);
+                           t.tooltip();
+                        };
 
                         self.showFeatureNotDoneYetDialog = function () {
                             BootstrapDialog.show({

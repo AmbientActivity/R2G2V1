@@ -73,7 +73,7 @@
             <tr data-bind="attr: { id: 'row_' + streamid }">
                 <td><input type="checkbox" data-bind="attr: { id: 'chk_' + streamid }, checked: isselected, click: $parent.selectFile"/></td>
                 <!-- ko if: !$parent.isAudio() -->
-                <td><a href="#" data-bind="click: $parent.showPreview, attr: { title: 'Click to preview' }">
+                <td><a data-toggle="tooltip" title="Click to prview" href="#" data-bind="click: $parent.showPreview, attr: { id: 'thumb_' + streamid }, event: { mouseover: $parent.showTooltipThumb }">
                     <img alt="" width="40" height="40" data-bind="attr: { src: thumbnail }">
                 </a></td>
                 <!-- /ko -->
@@ -94,7 +94,7 @@
                 <!-- ko if: !$parent.isAudio() -->
                 <!-- /ko -->
                 <!-- ko if: $parent.isSharable() -->
-                <td><a href="#" data-bind="click: $parent.showLinkedProfilesDialog, css: 'glyphicon glyphicon-link', attr: {title: 'Linked profiles: ' + numlinked}"></a></td>
+                <td><a href="#" data-toggle="tooltip" data-bind="click: $parent.showLinkedProfilesDialog, css: 'glyphicon glyphicon-link', attr: { title: 'Linked profiles: ' + numlinked, id: 'linked_' + streamid }, event: { mouseover: $parent.showTooltipLinked }"></a></td>
                 <!-- /ko -->
             </tr>
             </tbody>

@@ -434,6 +434,11 @@ function DisableScreen() {
                             }
                         };
 
+                        self.showTooltipThumb = function (row) {
+                            var t = tblFile.find("#thumb_" + row.id);
+                            t.tooltip();
+                        };
+
                         self.showSharedLibrayLinkDialog = function () {
                             var residentId = config.residentid;
                             var title = "<span class='glyphicon glyphicon-link' style='color: #fff'></span>";

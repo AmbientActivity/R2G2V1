@@ -58,7 +58,7 @@
             <tbody data-bind="foreach: residentsTable">
                 <tr data-bind="click: $parent.highlightRow, attr: {id: 'row_' +  id}">
                     <td>
-                        <a href="#" data-bind="click: $parent.editProfile, attr: { title: 'Manage resident\'s profile' }">
+                        <a href="#" data-toggle="tooltip" title="Manage resident's profile" data-bind="click: $parent.editProfile, attr: { id: 'profile_' + id }, event: { mouseover: $parent.showTooltipProfile }">
                             <!-- ko if: profilepicture === null -->
                             <img data-bind="attr: { src: profilepictureplaceholder }" alt="" width="40" height="40" class="img-circle">
                             <!-- /ko -->
@@ -81,7 +81,7 @@
                     <!-- /ko -->
                     <!-- /ko -->
                     <td data-bind="text: moment(dateupdated).format('ll')"></td>
-                    <td><a data-bind="attr: { href: '#', title: 'Edit resident details' }, click: $parent.showEditDialog"><i class="glyphicon glyphicon-pencil glyphicon-resident"></i></a></td>
+                    <td><a href="#" data-toggle="tooltip" title="Edit resident details" data-bind="click: $parent.showEditDialog, attr: { id: 'edit_' + id }, event: { mouseover: $parent.showTooltipEdit }"><i class="glyphicon glyphicon-pencil glyphicon-resident"></i></a></td>
                 </tr>
             </tbody>
         </table>

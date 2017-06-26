@@ -461,6 +461,16 @@ function DisableScreen() {
                             }
                         };
 
+                        self.showTooltipThumb = function (row) {
+                            var t = tblFile.find("#thumb_" + row.streamid);
+                            t.tooltip();
+                        };
+
+                        self.showTooltipLinked = function (row) {
+                            var l = tblFile.find("#linked_" + row.streamid);
+                            l.tooltip();
+                        };
+
                         self.showLinkedProfilesDialog = function (row) {
                             var title = "<span class='glyphicon glyphicon-link' style='color: #fff'></span>";
 

@@ -571,6 +571,11 @@ function DisableScreen() {
                             }
                         };
 
+                        self.showTooltipThumb = function (row) {
+                            var t = tblFile.find("#thumb_" + row.id);
+                            t.tooltip();
+                        };
+
                         self.showFeatureNotDoneYetDialog = function() {
                             BootstrapDialog.show({
                                 type: BootstrapDialog.TYPE_INFO,
@@ -751,7 +756,7 @@ function DisableScreen() {
                                 .filter(function(value) {
                                     return value.id === self.selectedMediaPathType();
                                 })[0];
-                        }
+                        };
                     };
                 });
         }

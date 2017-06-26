@@ -322,6 +322,16 @@
                             return resident;
                         };
 
+                        self.showTooltipProfile = function (row) {
+                            var p = tblResident.find("#profile_" + row.id);
+                            p.tooltip();
+                        };
+
+                        self.showTooltipEdit = function (row) {
+                            var e = tblResident.find("#edit_" + row.id);
+                            e.tooltip();
+                        };
+
                         self.highlightRow = function (row) {
                             var r = tblResident.find("#row_" + row.id);
                             $(r).addClass("highlight").siblings().removeClass("highlight");

@@ -76,7 +76,7 @@
             <tr data-bind="attr: { id: 'row_' + id }">
                 <td><input type="checkbox" data-bind="attr: { id: 'chk_' + id }, checked: isselected, click: $parent.selectFile"/></td>
                 <!-- ko if: !$parent.isAudio() -->
-                <td><a href="#" data-toggle="tooltip" title="Click to preview" data-bind="click: $parent.showPreview">
+                <td><a href="#" data-toggle="tooltip" title="Click to preview" data-bind="attr: { id: 'thumb_' + id }, event: { mouseover: $parent.showTooltipThumb }, click: $parent.showPreview">
                     <img alt="" width="40" height="40" data-bind="attr: { src: thumbnail }">
                 </a></td>
                 <!-- /ko -->

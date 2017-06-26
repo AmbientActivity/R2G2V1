@@ -10,6 +10,8 @@ using System.Linq;
 using System.Web.Mvc;
 using System;
 using System.Collections.Generic;
+using System.IO;
+using Keebee.AAT.ThumbnailGeneration;
 
 namespace Keebee.AAT.Administrator.Controllers
 {
@@ -70,13 +72,16 @@ namespace Keebee.AAT.Administrator.Controllers
                     var rules = new SharedLibraryRules();
                     var mediaPath = rules.GetMediaPathType(mediaPathTypeId);
                     var path = $@"{_mediaSourcePath.MediaRoot}\{_mediaSourcePath.SharedLibrary}\{mediaPath.Path}\";
-                    var filePath = $@"{path}\{file.FileName}";
+                    var filePath = Path.Combine(path, file.FileName);
 
                     // delete it if it already exists
                     var msg = fileManager.DeleteFile(filePath);
 
                     if (msg.Length == 0)
-                        file.MoveTo(filePath);
+                    {
+                        msg = AddSharedLibraryFile(file, path);
+                        vm.ErrorMessage = msg;
+                    }
                 }
             }
 
@@ -258,5 +263,27 @@ namespace Keebee.AAT.Administrator.Controllers
                 });
             });
         }
-    }
+
+        private string AddSharedLibraryFile(MvcUploadFile file, string path)
+        {
+            string errorMessage;
+
+            try
+            {
+                file.MoveTo(Path.Combine(path, file.FileName));
+
+                var mediaFile = _mediaFilesClient.GetFromPath(path, file.FileName);
+                var streamId = mediaFile.StreamId;
+
+                var thumbnailGenerator = new ThumbnailGenerator();
+                errorMessage = thumbnailGenerator.Generate(streamId);
+            }
+            catch (Exception ex)
+            {
+                errorMessage = ex.Message;
+            }
+
+            return errorMessage;
+        }
+}
 }

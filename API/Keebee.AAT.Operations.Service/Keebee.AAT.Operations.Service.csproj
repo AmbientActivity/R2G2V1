@@ -113,6 +113,10 @@
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Data\Keebee.AAT.DataAccess\Keebee.AAT.DataAccess.csproj">
+      <Project>{8b2310c0-f9ce-48b3-a194-4150ee59f8b3}</Project>
+      <Name>Keebee.AAT.DataAccess</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Shared\Keebee.AAT.Shared\Keebee.AAT.Shared.csproj">
       <Project>{3cb12af2-7655-46f6-9969-990730f73964}</Project>
       <Name>Keebee.AAT.Shared</Name>

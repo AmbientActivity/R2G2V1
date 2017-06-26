@@ -70,16 +70,18 @@ namespace Keebee.AAT.Administrator.Controllers
                     if (!SharedLibraryRules.IsValidFile(file.FileName, mediaPathTypeId)) continue;
 
                     var rules = new SharedLibraryRules();
-                    var mediaPath = rules.GetMediaPathType(mediaPathTypeId);
-                    var path = $@"{_mediaSourcePath.MediaRoot}\{_mediaSourcePath.SharedLibrary}\{mediaPath.Path}\";
-                    var filePath = Path.Combine(path, file.FileName);
+                    var mediaPathType = rules.GetMediaPathType(mediaPathTypeId);
+                    var pathRoot = _mediaSourcePath.MediaRoot;
+                    var pathMedia = $@"{_mediaSourcePath.SharedLibrary}\{mediaPathType.Path}\";
+                    var filePath = Path.Combine($@"{pathRoot}\{pathMedia}", file.FileName);
 
                     // delete it if it already exists
                     var msg = fileManager.DeleteFile(filePath);
 
+                    // add the new file to the folder and create a thumbnail
                     if (msg.Length == 0)
                     {
-                        msg = AddSharedLibraryFile(file, path);
+                        msg = AddSharedLibraryFile(file, pathRoot, pathMedia);
                         vm.ErrorMessage = msg;
                     }
                 }
@@ -264,15 +266,15 @@ namespace Keebee.AAT.Administrator.Controllers
             });
         }
 
-        private string AddSharedLibraryFile(MvcUploadFile file, string path)
+        private string AddSharedLibraryFile(MvcUploadFile file, string pathRoot, string pathMedia)
         {
             string errorMessage;
 
             try
             {
-                file.MoveTo(Path.Combine(path, file.FileName));
+                file.MoveTo(Path.Combine($@"{pathRoot}\{pathMedia}", file.FileName));
 
-                var mediaFile = _mediaFilesClient.GetFromPath(path, file.FileName);
+                var mediaFile = _mediaFilesClient.GetFromPath(pathMedia, file.FileName);
                 var streamId = mediaFile.StreamId;
 
                 var thumbnailGenerator = new ThumbnailGenerator();

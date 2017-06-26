@@ -100,6 +100,9 @@ function DisableScreen() {
                 .done(function (data) {
                     $.extend(lists, data);
 
+                    $("#loading-container").hide();
+                    $("#tblFile").show();
+
                     ko.applyBindings(new FileViewModel());
 
                     function FileViewModel() {

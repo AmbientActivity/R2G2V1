@@ -29,6 +29,9 @@
                     $.extend(lists, data);
                     activeConfig = lists.ConfigList.filter(function (value) { return value.IsActive; })[0];
 
+                    $("#loading-container").hide();
+                    $("#tblConfigDetail").show();
+
                     ko.applyBindings(new ConfigViewModel());
 
                     function ConfigDetail(id, configid, sortorder, phidgettype, phidgetstyletype, description, location, responsetype, issystem, canedit) {

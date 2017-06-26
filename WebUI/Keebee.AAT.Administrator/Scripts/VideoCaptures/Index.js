@@ -19,6 +19,9 @@
                 .done(function (data) {
                     $.extend(lists, data);
 
+                    $("#loading-container").hide();
+                    $("#tblVideoCapture").show();
+
                     ko.applyBindings(new VideoCaptureViewModel());
 
                     function VideoCapture(filename, path, filesize) {

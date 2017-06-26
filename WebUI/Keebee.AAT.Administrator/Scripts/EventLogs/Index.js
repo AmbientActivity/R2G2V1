@@ -19,6 +19,9 @@
                 .done(function (data) {
                     $.extend(lists, data);
 
+                    $("#loading-container").hide();
+                    $("#tblEventLog").show();
+
                     ko.applyBindings(new EventLogViewModel());
 
                     function EventLog(streamid, isfolder, filename, filetype, filesize, path) {

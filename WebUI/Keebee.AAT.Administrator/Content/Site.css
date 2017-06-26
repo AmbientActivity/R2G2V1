@@ -320,4 +320,10 @@ video {
 	    -webkit-transition: .25s ease-out;
 	    -o-transition: .25s ease-out;
 	    transition: .25s ease-out;
-    }
+}
+
+/* for the page loading gif */
+.loading {
+    margin: auto; 
+    text-align: center;
+}

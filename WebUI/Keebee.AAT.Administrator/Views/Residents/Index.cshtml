@@ -59,7 +59,7 @@
             <tbody data-bind="foreach: residentsTable">
                 <tr data-bind="click: $parent.highlightRow, attr: {id: 'row_' +  id}">
                     <td>
-                        <a href="#" data-toggle="tooltip" class="tooltiptext" title="Manage resident's media profile" data-bind="click: $parent.editProfile, attr: { id: 'profile_' + id }, event: { mouseover: $parent.showTooltipProfile }">
+                        <a href="#" data-toggle="tooltip" class="tooltiptext" title="Manage resident's profile media" data-bind="click: $parent.editProfile, attr: { id: 'profile_' + id }, event: { mouseover: $parent.showTooltipProfile }">
                             <!-- ko if: profilepicture === null -->
                             <img data-bind="attr: { src: profilepictureplaceholder }" alt="" width="40" height="40" class="img-circle">
                             <!-- /ko -->

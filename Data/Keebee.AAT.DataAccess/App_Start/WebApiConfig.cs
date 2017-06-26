@@ -35,7 +35,6 @@ namespace Keebee.AAT.DataAccess
             builder.EntitySet<UserRole>("UserRoles");
 
             config.MapODataServiceRoute("odata", "odata", builder.GetEdmModel());
-            config.Count().Filter().OrderBy().Expand().Select().MaxTop(null);
             config.EnsureInitialized();
         }
     }

@@ -30,7 +30,7 @@ namespace Keebee.AAT.DataAccess.Controllers
         // PUT: odata/Thumbnails(5)
         public async Task<IHttpActionResult> Put([FromODataUri] Guid key, Delta<Thumbnail> patch)
         {
-            Validate(patch.GetInstance());
+            Validate(patch.GetEntity());
 
             if (!ModelState.IsValid)
             {
@@ -82,7 +82,7 @@ namespace Keebee.AAT.DataAccess.Controllers
         [AcceptVerbs("PATCH", "MERGE")]
         public async Task<IHttpActionResult> Patch([FromODataUri] Guid key, Delta<Thumbnail> patch)
         {
-            Validate(patch.GetInstance());
+            Validate(patch.GetEntity());
 
             if (!ModelState.IsValid)
             {

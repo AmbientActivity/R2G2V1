@@ -167,19 +167,6 @@ namespace Keebee.AAT.BusinessRules
             return isValid;
         }
 
-        public static bool IsMediaTypePreviewable(int mediaPathTypeId)
-        {
-            switch (mediaPathTypeId)
-            {
-                case MediaPathTypeId.ImagesGeneral:
-                case MediaPathTypeId.ImagesPersonal:
-                case MediaPathTypeId.MatchingGameShapes:
-                    return true;
-                default:
-                    return false;
-            }
-        }
-
         public static MediaPathType GetMediaPathTypeFromRawPath(string path, IEnumerable<MediaPathType> mediaPathTypes)
         {
             var folderName = path.Split(Path.DirectorySeparatorChar)
@@ -239,6 +226,19 @@ namespace Keebee.AAT.BusinessRules
             return binaryData != null
                 ? $"data:image/jpg;base64,{Convert.ToBase64String(binaryData)}"
                 : null;
+        }
+
+        public static bool IsMediaTypeThumbnail(int mediaPathTypeId)
+        {
+            switch (mediaPathTypeId)
+            {
+                case MediaPathTypeId.Music:
+                case MediaPathTypeId.RadioShows:
+                case MediaPathTypeId.MatchingGameSounds:
+                    return true;
+                default:
+                    return false;
+            }
         }
     }
 }

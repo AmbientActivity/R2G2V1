@@ -34,6 +34,35 @@
                 .done(function (data) {
                     $.extend(lists, data);
 
+                    $("#loading-container").hide();
+                    $("#tblResident").show();
+                    $("#add-resident").removeAttr("disabled");
+
+                    ko.bindingHandlers.setTooltips = {
+                        update: function (element, valueAccessor) {
+                            ko.utils.unwrapObservable(valueAccessor());
+                            var e = element;
+                            for (var index = 0, length = element.childNodes.length; index < length; index++) {
+                                var node = element.childNodes[index];
+                                if (node.nodeType === 1) {
+                                    var id = node.id.replace("row_", "");
+
+                                    var tooltipThumb = $("#thumb_" + id);
+                                    if (tooltipThumb.length > 0)
+                                        tooltipThumb.tooltip({ delay: { show: 100, hide: 100 } });
+
+                                    var tooltipEdit = $("#edit_" + id);
+                                    if (tooltipEdit.length > 0)
+                                        tooltipEdit.tooltip({ delay: { show: 100, hide: 100 } });
+
+                                    var tooltipDelete = $("#delete_" + id);
+                                    if (tooltipDelete.length > 0)
+                                        tooltipDelete.tooltip({ delay: { show: 100, hide: 100 } });
+                                }
+                            }
+                        }
+                    }
+
                     ko.applyBindings(new ResidentViewModel());
 
                     // pre-select the resident whose media was just being managed
@@ -165,6 +194,8 @@
                         });
 
                         self.showEditDialog = function (row) {
+                            $("#edit_" + row.id).tooltip("hide");
+
                             var id = (typeof row.id !== "undefined" ? row.id : 0);
                             var title = "<span class='glyphicon glyphicon-pencil' style='color: #fff'></span>";
 
@@ -228,6 +259,8 @@
                         };
 
                         self.editProfile = function (row) {
+                            $("#thumb_" + row.id).tooltip("hide");
+
                             var id = row.id;
 
                             var sortdescending = 0;
@@ -244,6 +277,8 @@
                         };
 
                         self.showDeleteDialog = function (row) {
+                            $("#delete_" + row.id).tooltip("hide");
+
                             return new Promise(function(resolve, reject) {
                                 self.highlightRow(row);
 
@@ -311,22 +346,6 @@
                             });
 
                             return resident;
-                        };
-
-                        self.showTooltipProfile = function (row) {
-                            var p = tblResident.find("#profile_" + row.id);
-                            p.tooltip();
-                        };
-
-                        self.showTooltipEdit = function (row) {
-                            var e = tblResident.find("#edit_" + row.id);
-                            e.tooltip();
-                        };
-
-                        self.showTooltipDelete = function (row) {
-                            var e = tblResident.find("#delete_" + row.id);
-                            e.addClass("text-danger");
-                            e.tooltip();
                         };
 
                         self.highlightRow = function (row) {

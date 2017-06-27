@@ -102,12 +102,33 @@ function DisableScreen() {
 
                     $("#loading-container").hide();
                     $("#tblFile").show();
+                    $("#uploadbutton").removeAttr("disabled");
+
+                    ko.bindingHandlers.setTooltips = {
+                        update: function (element, valueAccessor) {
+                            ko.utils.unwrapObservable(valueAccessor());
+                            var e = element;
+                            for (var index = 0, length = element.childNodes.length; index < length; index++) {
+                                var node = element.childNodes[index];
+                                if (node.nodeType === 1) {
+                                    var id = node.id.replace("row_", "");
+                                    var tolltipThumb = $("#thumb_" + id);
+
+                                    if (tolltipThumb.length > 0)
+                                        tolltipThumb.tooltip({ delay: { show: 100, hide: 100 } });
+
+                                    var tooltipLink = $("#link_" + id);
+                                    if (tooltipLink.length > 0)
+                                        tooltipLink.tooltip({ delay: { show: 100, hide: 100 } });
+                                }
+                            }
+                        }
+                    }
 
                     ko.applyBindings(new FileViewModel());
 
                     function FileViewModel() {
                         var tblFile = $("#tblFile");
-
                         var self = this;
 
                         self.files = ko.observableArray([]);
@@ -343,6 +364,8 @@ function DisableScreen() {
                         };
 
                         self.previewImage = function (row) {
+                            $("#thumb_" + row.id).tooltip("hide");
+
                             $.get(site.url + "PublicProfile/GetImageViewerView?streamId=" + row.streamid + "&fileType=" + row.filetype)
                                 .done(function (message) {
                                     BootstrapDialog.show({
@@ -375,6 +398,8 @@ function DisableScreen() {
                         };
 
                         self.previewVideo = function (row) {
+                            $("#thumb_" + row.id).tooltip("hide");
+
                             var src = site.getApiUrl + "videos/" + row.streamid;
                             var filetype = row.filetype.toLowerCase();
 
@@ -464,16 +489,6 @@ function DisableScreen() {
                             }
                         };
 
-                        self.showTooltipThumb = function (row) {
-                            var t = tblFile.find("#thumb_" + row.streamid);
-                            t.tooltip();
-                        };
-
-                        self.showTooltipLinked = function (row) {
-                            var l = tblFile.find("#linked_" + row.streamid);
-                            l.tooltip();
-                        };
-
                         self.showLinkedProfilesDialog = function (row) {
                             var title = "<span class='glyphicon glyphicon-link' style='color: #fff'></span>";
 
@@ -494,23 +509,6 @@ function DisableScreen() {
                                             }
                                         ]
                                     });
-                            });
-                        };
-
-                        self.showFeatureNotDoneYetDialog = function () {
-                            BootstrapDialog.show({
-                                type: BootstrapDialog.TYPE_INFO,
-                                title: "Under Development",
-                                message: "This feature has not been implemented yet.",
-                                closable: false,
-                                buttons: [
-                                    {
-                                        label: "Close",
-                                        action: function (dialog) {
-                                            dialog.close();
-                                        }
-                                    }
-                                ]
                             });
                         };
 

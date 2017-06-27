@@ -26,7 +26,7 @@
 <div class="panel panel-default">
     <div class="panel-heading">
         <div class="add-button-container">
-            <button id="add-shared" type="button" class="btn btn-md btn-success" data-bind="click: showLinkFromSharedLibarayDialog">Add From Shared Library</button>
+            <button id="add-shared" type="button" class="btn btn-md btn-success" data-bind="click: showLinkFromSharedLibarayDialog" disabled>Add From Shared Library</button>
             <button id="delete" disabled type="button" class="btn btn-md btn-danger" data-bind="click: showDeleteSelectedDialog">Delete Selected</button>
         </div>
         <ul class="nav nav-pills">
@@ -62,11 +62,11 @@
             </tr>
             </thead>
 
-            <tbody data-bind="foreach: filesTable">
+            <tbody data-bind="foreach: filesTable, setTooltips: filesTable">
             <tr data-bind="attr: { id: 'row_' + id }">
                 <td><input type="checkbox" data-bind="attr: { id: 'chk_' + id }, checked: isselected, click: $parent.selectFile"/></td>
                 <!-- ko if: !$parent.isAudio() -->
-                <td><a href="#" data-toggle="tooltip" title="Click to preview" data-bind="click: $parent.showPreview, attr: { id: 'thumb_' + id }, event: { mouseover: $parent.showTooltipThumb }">
+                <td><a href="#" data-toggle="tooltip" title="Preview it" data-bind="attr: { id: 'thumb_' + id }, click: $parent.showPreview">
                     <img alt="" width="40" height="40" data-bind="attr: { src: thumbnail }">
                 </a></td>
                 <!-- /ko -->

@@ -81,7 +81,7 @@ namespace Keebee.AAT.Administrator.Controllers
                     // add the new file to the folder and create a thumbnail
                     if (msg.Length == 0)
                     {
-                        msg = AddSharedLibraryFile(file, pathRoot, pathMedia);
+                        msg = AddSharedLibraryFile(file, pathRoot, pathMedia, (int)mediaPathTypeId);
                         vm.ErrorMessage = msg;
                     }
                 }
@@ -152,8 +152,8 @@ namespace Keebee.AAT.Administrator.Controllers
             {
                 foreach (var streamId in streamIds)
                 {
-                    var file = _mediaFilesClient.Get(streamId);
-                    if (file == null) continue;
+                    var mediaFile = _mediaFilesClient.Get(streamId);
+                    if (mediaFile == null) continue;
 
                     // delete all the linkage if it's sharable media (non-system)
                     if (isSharable)
@@ -163,8 +163,7 @@ namespace Keebee.AAT.Administrator.Controllers
                             throw new Exception(errormessage);
                     }
 
-                    var fileManager = new FileManager {EventLogger = _systemEventLogger};
-                    fileManager.DeleteFile($@"{file.Path}\{file.Filename}");
+                    errormessage = DeleteSharedLibraryFile(mediaFile, mediaPathTypeId);
                 }
 
                 success = true;
@@ -266,9 +265,9 @@ namespace Keebee.AAT.Administrator.Controllers
             });
         }
 
-        private string AddSharedLibraryFile(MvcUploadFile file, string pathRoot, string pathMedia)
+        private string AddSharedLibraryFile(MvcUploadFile file, string pathRoot, string pathMedia, int mediaPathTypeId)
         {
-            string errorMessage;
+            string errorMessage = null;
 
             try
             {
@@ -277,8 +276,34 @@ namespace Keebee.AAT.Administrator.Controllers
                 var mediaFile = _mediaFilesClient.GetFromPath(pathMedia, file.FileName);
                 var streamId = mediaFile.StreamId;
 
-                var thumbnailGenerator = new ThumbnailGenerator();
-                errorMessage = thumbnailGenerator.Generate(streamId);
+                if (SharedLibraryRules.IsMediaTypeThumbnail(mediaPathTypeId))
+                {
+                    var thumbnailGenerator = new ThumbnailGenerator();
+                    errorMessage = thumbnailGenerator.Generate(streamId);
+                }
+            }
+            catch (Exception ex)
+            {
+                errorMessage = ex.Message;
+            }
+
+            return errorMessage;
+        }
+
+        private string DeleteSharedLibraryFile(MediaFilePath mediaFile, int mediaPathTypeId)
+        {
+            string errorMessage = null;
+
+            try
+            {
+                var fileManager = new FileManager { EventLogger = _systemEventLogger };
+                fileManager.DeleteFile($@"{mediaFile.Path}\{mediaFile.Filename}");
+
+                if (SharedLibraryRules.IsMediaTypeThumbnail(mediaPathTypeId))
+                {
+                    errorMessage = _thumbnailsClient.Delete(mediaFile.StreamId);
+                }
+                
             }
             catch (Exception ex)
             {

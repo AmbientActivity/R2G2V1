@@ -32,7 +32,7 @@
     <div class="panel-heading">
         <div class="add-button-container">
             <div class="upload-action-container">
-                <button id="uploadbutton" type="button" class="btn btn-md btn-success upload-media-button" onclick="return" false;">@Model.AddButtonText</button>
+                <button id="uploadbutton" type="button" class="btn btn-md btn-success upload-media-button" onclick="return" false;" disabled>@Model.AddButtonText</button>
                 <button id="delete" disabled type="button" class="btn btn-md btn-danger" data-bind="click: showDeleteSelectedDialog">Delete Selected</button>
             </div>
             <input id="mediaPathTypeId" name="mediaPathTypeId" type="hidden" value="@Model.SelectedMediaPathType" />
@@ -70,23 +70,23 @@
             </tr>
             </thead>
 
-            <tbody data-bind="foreach: filesTable">
+            <tbody data-bind="foreach: filesTable, setTooltips: filesTable">
             <tr data-bind="attr: { id: 'row_' + streamid }">
                 <td><input type="checkbox" data-bind="attr: { id: 'chk_' + streamid }, checked: isselected, click: $parent.selectFile"/></td>
                 <!-- ko if: !$parent.isAudio() -->
-                <td><a data-toggle="tooltip" title="Click to prview" href="#" data-bind="click: $parent.showPreview, attr: { id: 'thumb_' + streamid }, event: { mouseover: $parent.showTooltipThumb }">
+                <td><a data-toggle="tooltip" title="Preview it" href="#" data-bind="attr: { id: 'thumb_' + streamid }, click: $parent.showPreview">
                     <img alt="" width="40" height="40" data-bind="attr: { src: thumbnail }">
                 </a></td>
                 <!-- /ko -->
                 <!-- ko if: $parent.isAudio() -->
                 <!-- ko if: isplaying -->
-                <td><a href="#" data-bind="attr: { id: 'audio_' + streamid }, click: $parent.showPreview, css: 'glyphicon glyphicon-pause text-success'"></a></td>
+                <td><a href="#" data-toggle="tooltip" title="Click to listen" data-bind="attr: { id: 'audio_' + streamid }, click: $parent.showPreview, css: 'glyphicon glyphicon-pause text-success'"></a></td>
                 <!-- /ko -->
                 <!-- ko if: ispaused -->
-                <td><a href="#" data-bind="attr: { id: 'audio_' + streamid }, click: $parent.showPreview, css: 'glyphicon glyphicon-play text-success'"></a></td>
+                <td><a href="#" data-toggle="tooltip" title="Click to listen"  data-bind="attr: { id: 'audio_' + streamid }, click: $parent.showPreview, css: 'glyphicon glyphicon-play text-success'"></a></td>
                 <!-- /ko -->
                 <!-- ko if: !ispaused && !isplaying -->
-                <td><a href="#" data-bind="attr: { id: 'audio_' + streamid }, click: $parent.showPreview, css: 'glyphicon glyphicon-play'"></a></td>
+                <td><a href="#" data-toggle="tooltip" title="Click to listen" data-bind="attr: { id: 'audio_' + streamid }, click: $parent.showPreview, css: 'glyphicon glyphicon-play'"></a></td>
                 <!-- /ko -->
                 <!-- /ko -->
                 <td data-bind="text: filename"></td>
@@ -95,7 +95,7 @@
                 <!-- ko if: !$parent.isAudio() -->
                 <!-- /ko -->
                 <!-- ko if: $parent.isSharable() -->
-                <td><a href="#" data-toggle="tooltip" data-bind="click: $parent.showLinkedProfilesDialog, css: 'glyphicon glyphicon-link', attr: { title: 'Linked profiles: ' + numlinked, id: 'linked_' + streamid }, event: { mouseover: $parent.showTooltipLinked }"></a></td>
+                <td><a href="#" data-toggle="tooltip" data-bind="attr: { id: 'link_' + streamid, title: 'Linked profiles: ' + numlinked }, click: $parent.showLinkedProfilesDialog, css: 'glyphicon glyphicon-link'"></a></td>
                 <!-- /ko -->
             </tr>
             </tbody>

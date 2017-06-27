@@ -101,12 +101,29 @@ function DisableScreen() {
 
                     $("#loading-container").hide();
                     $("#tblFile").show();
+                    $("#add-shared").removeAttr("disabled");
+                    $("#uploadbutton").removeAttr("disabled");
+
+                    ko.bindingHandlers.setTooltips = {
+                        update: function (element, valueAccessor) {
+                            ko.utils.unwrapObservable(valueAccessor());
+                            var e = element;
+                            for (var index = 0, length = element.childNodes.length; index < length; index++) {
+                                var node = element.childNodes[index];
+                                if (node.nodeType === 1) {
+                                    var id = node.id.replace("row_", "");
+                                    var tooltipElement = $("#thumb_" + id);
+                                    if (tooltipElement.length > 0)
+                                        tooltipElement.tooltip({ delay: { show: 100, hide: 100 } });
+                                }
+                            }
+                        }
+                    }
 
                     ko.applyBindings(new FileViewModel());
 
                     function FileViewModel() {
                         var tblFile = $("#tblFile");
-
                         var self = this;
 
                         self.files = ko.observableArray([]);
@@ -440,7 +457,9 @@ function DisableScreen() {
                                 self.previewAudio(row);
                         };
 
-                        self.previewImage = function(row) {
+                        self.previewImage = function (row) {
+                            $("#thumb_" + row.id).tooltip("hide");
+
                             $.get(site.url +
                                     "PublicProfile/GetImageViewerView?streamId=" +
                                     row.streamid +
@@ -480,7 +499,9 @@ function DisableScreen() {
                                 });
                         };
 
-                        self.previewVideo = function(row) {
+                        self.previewVideo = function (row) {
+                            $("#thumb_" + row.id).tooltip("hide");
+
                             var src = site.getApiUrl + "videos/" + row.streamid;
                             var filetype = row.filetype.toLowerCase();
 
@@ -506,7 +527,7 @@ function DisableScreen() {
                             });
                         };
 
-                        self.previewAudio = function(row) {
+                        self.previewAudio = function (row) {
                             if (self.currentStreamId() === row.streamid) {
                                 // already paused or playing                            
                                 if (audioPlayerElement.paused) {
@@ -572,28 +593,6 @@ function DisableScreen() {
                                 currentlyPlaying.isplaying = false;
                                 self.setGlyph(currentlyPlaying.id, false, false);
                             }
-                        };
-
-                        self.showTooltipThumb = function (row) {
-                            var t = tblFile.find("#thumb_" + row.id);
-                            t.tooltip();
-                        };
-
-                        self.showFeatureNotDoneYetDialog = function() {
-                            BootstrapDialog.show({
-                                type: BootstrapDialog.TYPE_INFO,
-                                title: "Under Development",
-                                message: "This feature has not been implemented yet.",
-                                closable: false,
-                                buttons: [
-                                    {
-                                        label: "Close",
-                                        action: function(dialog) {
-                                            dialog.close();
-                                        }
-                                    }
-                                ]
-                            });
                         };
 
                         self.selectAllRows = function() {

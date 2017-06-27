@@ -64,7 +64,7 @@
                     </tr>
                     </thead>
 
-                    <tbody data-bind="foreach: configDetailsTable">
+                    <tbody data-bind="foreach: configDetailsTable, setTooltips: configDetailsTable">
                     <tr data-bind="click: $parent.highlightRow, attr: {id: 'row_' +  id}">
                         <!-- ko if: canedit -->
                         <td><a href="#" data-bind="click: $parent.showDeleteDetailDialog, css: 'glyphicon glyphicon-remove'"></a></td>

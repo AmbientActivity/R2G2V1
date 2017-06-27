@@ -197,37 +197,10 @@ function DisableScreen() {
                             }
                         };
 
-                        self.columns = ko.computed(function() {
+                        self.columns = ko.computed(function () {
                             var arr = [];
-                            arr.push({
-                                title: "Name",
-                                sortable: true,
-                                sortKey: "filename",
-                                numeric: false,
-                                cssClass: ""
-                            });
-                            arr.push({
-                                title: "Type",
-                                sortable: true,
-                                sortKey: "filetype",
-                                numeric: false,
-                                cssClass: "col-filetype"
-                            });
-                            arr.push({
-                                title: "Size",
-                                sortable: true,
-                                sortKey: "filesize",
-                                numeric: true,
-                                cssClass: "col-filesize"
-                            });
-                            arr.push({
-                                title: "Linked",
-                                sortable: true,
-                                sortKey: "islinked",
-                                numeric: true,
-                                cssClass: "col-islinked"
-                            });
-
+                            arr.push({ title: "Name", sortable: true, sortKey: "filename", numeric: false, cssClass: "" });
+                            arr.push({ title: "Linked", sortable: true, sortKey: "islinked", numeric: true, cssClass: "col-islinked" });
                             return arr;
                         });
 

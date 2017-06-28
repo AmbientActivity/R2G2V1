@@ -204,6 +204,11 @@ video {
 
 /* total files counter */
 .total-files {
+    padding-top: 5px;
+    width: 75px;
+}
+.total-residents {
+    padding-top: 5px;
     width: 60px;
 }
 

@@ -39,11 +39,12 @@ namespace Keebee.AAT.Administrator
                 "~/Scripts/SystemProfile/Index.js",
                 "~/Scripts/PublicProfile/Index.js",
                 "~/Scripts/Services/Index.js",
+                "~/Scripts/Utilities/InProgressDialog.js",
                 "~/Scripts/Utilities/JobExecution.js",
                 "~/Scripts/Maintenance/Index.js"));
 
             bundles.Add(new ScriptBundle("~/bundles/Bootstrap").Include(
-                "~/Scripts/bootstrap.js",
+                "~/Scripts/bootstrap.min.js",
                 "~/Scripts/bootstrap-dialog.js",
                 "~/Scripts/bootstrap-datepicker.js"));
 

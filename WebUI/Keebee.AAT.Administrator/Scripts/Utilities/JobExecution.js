@@ -20,20 +20,18 @@
                 params: {}
             };
 
-            if (options.controller === null) reject("Controller name cannot be null");
-            if (options.action === null) reject("Action name cannot be null");
-            if (options.title === null) reject("Title cannot be null");
-            if (options.waitMessage === null) reject("Wait Message cannot be null");
+            if ((typeof options !== "undefined") && (options !== null)) {
+                if (options.controller === null) reject("Controller name cannot be null");
+                if (options.action === null) reject("Action name cannot be null");
+                if (options.title === null) reject("Title cannot be null");
+                if (options.waitMessage === null) reject("Wait Message cannot be null");
+            }
 
             $.extend(config, options);
 
             return new Promise(function(resolve, reject) {
-                BootstrapDialog.show({
-                    type: BootstrapDialog.TYPE_INFO,
-                    title: config.title,
-                    message: "<p>" + config.waitMessage + "</p>",
-                    closable: false,
-                    onshown: function (dialog) {
+                utilities.inprogress.show({ message: config.waitMessage })
+                    .then(function(dialog) {
                         $.ajax({
                             type: config.type,
                             url: site.url + config.controller + "/" + config.action,
@@ -95,8 +93,7 @@
                                 reject(data);
                             }
                         });
-                    }
-                });
+                    });
             });
         }
     }

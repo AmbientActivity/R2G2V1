@@ -11,58 +11,88 @@
 
 <div class="container">
     <div class="row">
-        <div class="col-sm-12">
+        <div class="col-sm-6">
             <div class="label label-default">First Name</div>
-            <input type="text" name="txtFirstName" id="txtFirstName" class="form-control" value="@Model.FirstName" maxlength="50"/>
+            <input type="text" name="txtFirstName" id="txtFirstName" class="form-control" value="@Model.FirstName" maxlength="50" />
         </div>
-        <div class="col-sm-12">
+    </div>
+    <div class="row">
+        <div class="col-sm-6">
             <div class="label label-default">Last Name</div>
-            <input type="text" id="txtLastName" class="form-control" value="@Model.LastName" maxlength="50"/>
+            <input type="text" id="txtLastName" class="form-control" value="@Model.LastName" maxlength="50" />
         </div>
-        <div class="col-sm-12">
+    </div>
+    <div class="row">
+        <div class="col-sm-6">
             <div class="label label-default">Gender</div>
-            @Html.DropDownList("ddlGenders", @Model.Genders, "-- Select One --", new {@class = "form-control"})
+            @Html.DropDownList("ddlGenders", @Model.Genders, "-- Select One --", new { @class = "form-control" })
         </div>
-        <div class="col-sm-12">
+    </div>
+    <div class="row">
+        <div class="col-sm-6">
             <div class="label label-default">Game Difficulty Level</div>
-            @Html.DropDownList("ddlGameDifficultyLevels", @Model.GameDifficultyLevels, new {@class = "form-control"})
+            @Html.DropDownList("ddlGameDifficultyLevels", @Model.GameDifficultyLevels, new { @class = "form-control" })
         </div>
-        @if (Model.IsVideoCaptureServiceInstalled)
-        {
-            <div class="col-sm-12">
+    </div>
+    @if (Model.IsVideoCaptureServiceInstalled)
+    {
+        <div class="row">
+            <div class="col-sm-6">
                 <div class="label label-default">Allow Video Capturing</div>
                 @if (Model.AllowVideoCapturing)
                 {
-                    <div><input type="checkbox" id="chkAllowVideoCapturing" checked/>
+                    <div>
+                        <input type="checkbox" id="chkAllowVideoCapturing" checked />
                     </div>
                 }
                 else
                 {
-                    <div><input type="checkbox" id="chkAllowVideoCapturing"/>
+                    <div>
+                        <input type="checkbox" id="chkAllowVideoCapturing" />
                     </div>
                 }
             </div>
-        }
-        <div class="col-sm-12">
-            <div class="label label-default">Profile Picture</div>
         </div>
-        <div class="col-sm-12">
-            @if (@Model.ProfilePicture != null)
-            {
-                <img class="img-circle" id="profile-picture" src="@Model.ProfilePicture" alt="exists" width="60" height="60" />
-            }
-            else
-            {
-                <img class="img-circle" id="profile-picture" src="@Model.ProfilePicturePlaceholder" alt="notexists" width="60" height="60" />
-            }
+    }
+    <div class="row">
+        <div class="col-sm-6">
+            <span class="label label-default">Profile Picture</span>
         </div>
-        <div class="col-sm-12">
-            <label class="btn btn-default btn-file btn-sm">
-                Browse... <input type="file" name="file" id="fileupload" style="display: none" />
-            </label>
-            <input class="btn btn-default btn-sm" type="button" id="remove-picture" value="Remove" />
-            <div id="progress"></div>
-            <div id="progressBar" class="progressBar" style="display: none"></div>
+    </div>
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="panel panel-profile-picture">
+                <div class="panel-body panel-body-profile-picture">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-sm-6">
+                                @if (@Model.ProfilePicture != null)
+                                {
+                                    <img class="img-circle" id="profile-picture" src="@Model.ProfilePicture" alt="exists" width="60" height="60" />
+                                }
+                                else
+                                {
+                                    <img class="img-circle" id="profile-picture" src="@Model.ProfilePicturePlaceholder" alt="notexists" width="60" height="60" />
+                                }
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <label class="btn btn-default btn-file btn-sm">
+                                    Browse... <input type="file" name="file" id="fileupload" style="display: none" />
+                                </label>
+                                <input class="btn btn-default btn-sm" type="button" id="remove-picture" value="Remove" />
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-9">
+                                <div id="progress"></div>
+                                <div id="progressBar" class="progressBar" style="display: none"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>

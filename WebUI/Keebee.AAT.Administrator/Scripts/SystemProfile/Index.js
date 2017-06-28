@@ -503,13 +503,8 @@
 
                         self.deleteSelected = function () {
                             var ids = self.selectedIds();
-
-                            BootstrapDialog.show({
-                                type: BootstrapDialog.TYPE_INFO,
-                                title: "Delete Files",
-                                message: "One moment...",
-                                closable: false,
-                                onshown: function (dialog) {
+                            utilities.inprogress.show()
+                                .then(function(dialog) {
                                     $.post(site.url + "SystemProfile/DeleteSelected/",
                                         {
                                             ids: ids,
@@ -544,8 +539,7 @@
                                                 message: "Unexpected Error\n" + result
                                             });
                                         });
-                                }
-                            });
+                                });
                         };
 
                         self.addSharedFiles = function () {

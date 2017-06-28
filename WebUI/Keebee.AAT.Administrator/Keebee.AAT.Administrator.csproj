@@ -318,6 +318,7 @@
     <Content Include="Scripts\Site\Namespaces.js" />
     <Content Include="Scripts\Site\Site.js" />
     <Content Include="Scripts\SystemProfile\Index.js" />
+    <Content Include="Scripts\Utilities\InProgressDialog.js" />
     <Content Include="Scripts\Utilities\JobExecution.js" />
     <Content Include="Scripts\VideoCaptures\Index.js" />
     <Content Include="Scripts\_references.js" />

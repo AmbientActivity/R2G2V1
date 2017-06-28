@@ -40,7 +40,7 @@ video {
 
 @media (min-width: 800px) {
   .container {
-    width: 850px;
+    /*width: 850px;*/
   }
 }
 @media (min-width: 500px) {
@@ -66,6 +66,7 @@ video {
     padding-left: 0;
   }
 }
+
 /* Bootstrap Navbar */
 .navbar {
   background-color: #000000;
@@ -110,24 +111,20 @@ video {
     color: #448af6;
 }
 
-/* dialogs */
+/* validation */
 #validation-container {
     color: #c12e2a;
 }
-.edit-dialog-container {
-    width: 450px;
-}
 
+/* dialogs */
 .modal-content {
     width: 470px;
 }
-.modal-body {
-    padding-bottom: 10px;
-    width: 470px;
+
+.row {
+    padding: 5px;
 }
-.col-sm-12 {
-    margin-bottom: 10px;
-}
+
 /* video capture */
 #tblVideoCapture > tbody > tr > th, #tblVideoCapture > tbody > tr > td {
     font-size: 13px;
@@ -143,7 +140,7 @@ video {
 /* media files */
 #tblFile > tbody > tr > th, #tblFile > tbody > tr > td {
     font-size: 13px;
-    padding: 8px 5px 3px 8px;
+    padding: 5px 5px 5px 8px;
 }
 
 /* residents */
@@ -156,9 +153,19 @@ video {
     font-size: 13px;
     padding: 8px 5px 5px 8px;
 }
-
-.resident-edit {
+.form-control-id {
+    width: 60px;
+}
+.button-add-resident {
+    float: right;
+    padding-right: 10px;
+}
+/*.resident-edit {
     width: 400px;
+}*/
+
+.table {
+    margin-bottom: 0;
 }
 
 /* turn off bootstrap vertical-align: top */
@@ -167,7 +174,8 @@ video {
     display: inline-block;
     float: none;
 }
-/* override bootstraps td settings for vertical-align */
+
+ /* override bootstraps td settings for vertical-align */
 .table > thead > tr > th,
 .table > tbody > tr > th,
 .table > tfoot > tr > th,
@@ -176,15 +184,30 @@ video {
 .table > tfoot > tr > td {
   vertical-align: middle;
 }
+
 .table-striped tbody tr.highlight td {
-    background-color: #e3e8ff;
+    background-color: #e6f3ff;
 }
+
+.table-detail-container {
+    overflow-y: auto;
+}
+
+.container-height {
+   height: 500px;   
+}
+
 /* filter */
 .select-filter {
     min-width: 200px;
 }
 
-/* residents media */
+/* total files counter */
+.total-files {
+    width: 60px;
+}
+
+/* resident profile */
 .back-to-residents-container {
     font-size: 16px;
     margin: -30px 0 0 0;
@@ -234,8 +257,34 @@ video {
 }
 
 /* tables/panels */
+.panel-heading-media {
+    border: none;
+    padding: 5px 5px 5px 2px;
+    margin: 0;
+}
+.panel-profile-picture {
+    margin-bottom: 0;
+    border-color: #ccc;
+    width: 400px;
+}
+.panel-body-profile-picture {
+    padding: 5px 0 0 0;
+    background-color: #f6f7fc;
+}
+.no-rows-message {
+    text-align: center;
+    color: lightgray;
+}
 .record-total {
     margin-top: 8px;
+}
+.col-selectall {
+    width: 30px;
+    padding-left: 4px;
+    margin-right: 40px;
+}
+.col-filename {
+    width: auto;
 }
 .col-filetype {
     width: 50px;
@@ -244,20 +293,30 @@ video {
     width: 85px;
 }
 .col-islinked {
-    width: 20px;
+    width: 30px;
+    float: right;
+    text-align: center;
+    margin-right: 35px;
+}
+.table-scrollbar {
+   margin-right: 50px;
 }
 .col-glyphicon {
     width: 30px;
+    text-align: center;
 }
-.col-profile-picture {
+.col-thumbnail {
     width: 57px;
+    text-align: center;
 }
+
 /* resident table */
 .col-id {
     width: 40px;
 }
 .col-gender {
     width: 70px;
+    text-align: center;
 }
 .col-level {
     width: 40px;
@@ -270,9 +329,16 @@ video {
 }
 
 /* bootstrap glyphicons */
+.fa-resident {
+    font-size: 30px;
+    padding-left: 18px;
+}
 .glyphicon-resident {
     font-size: 20px;
     padding-right: 5px;
+}
+.glyphicon-play, .glyphicon-pause {
+    font-size: 20px;
 }
 .glyphicon-remove, .glyphicon-trash {
     color: #c12e2a;
@@ -295,17 +361,14 @@ video {
 .upload-media-button {
     width: 165px;
 }
-
 .dropdown-submenu {
     position: relative;
 }
-
 .dropdown-submenu .dropdown-menu {
     top: 0;
     left: 100%;
     margin-top: -1px;
 }
-
 .progressBar {
 	    background-color: #419641;
 	    width: 0;
@@ -324,6 +387,12 @@ video {
 
 /* for the page loading gif */
 .loading {
+    margin: auto; 
+    text-align: center;
+}
+
+/* for the please wait... messages */
+.message-please-wait {
     margin: auto; 
     text-align: center;
 }

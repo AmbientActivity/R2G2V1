@@ -140,7 +140,7 @@ namespace Keebee.AAT.Administrator.Controllers
                     x.Id,
                     x.Description
                 }),
-                AddButtonText = $"Upload {rules.GetMediaPathShortDescription(mediaPathTypeId)}",
+                AddButtonText = $"Add {rules.GetMediaPathShortDescription(mediaPathTypeId)}",
             }, JsonRequestBehavior.AllowGet);
         }
 
@@ -297,7 +297,7 @@ namespace Keebee.AAT.Administrator.Controllers
             var vm = new PublicProfileViewModel
             {
                 Title = PublicProfileSource.Description,
-                AddButtonText = $"Upload {rules.GetMediaPathShortDescription(mediaPathTypeId)}",
+                AddButtonText = $"Add {rules.GetMediaPathShortDescription(mediaPathTypeId)}",
                 SelectedMediaPathType = mediaPathTypeId ?? MediaPathTypeId.Music
             };
 

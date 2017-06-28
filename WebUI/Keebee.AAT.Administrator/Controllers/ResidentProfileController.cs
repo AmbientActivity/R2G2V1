@@ -198,7 +198,7 @@ namespace Keebee.AAT.Administrator.Controllers
             return Json(new
             {
                 UploaderHtml = html,
-                AddButtonText = $"Upload {rules.GetMediaPathShortDescription(mediaPathTypeId)}",
+                AddButtonText = $"Add {rules.GetMediaPathShortDescription(mediaPathTypeId)}",
             }, JsonRequestBehavior.AllowGet);
         }
 
@@ -299,7 +299,7 @@ namespace Keebee.AAT.Administrator.Controllers
                 ResidentId = resident.Id,
                 FullName = fullName,
                 ProfilePicture = ResidentRules.GetProfilePicture(resident.ProfilePicture) ?? ResidentRules.GetProfilePicturePlaceholder(),
-                AddButtonText = $"Upload {rules.GetMediaPathShortDescription(mediaPathTypeId)}",
+                AddButtonText = $"Add {rules.GetMediaPathShortDescription(mediaPathTypeId)}",
                 IdSearch = idsearch,
                 FirstNameSearch = firstname,
                 LastNameSearch = lastname,

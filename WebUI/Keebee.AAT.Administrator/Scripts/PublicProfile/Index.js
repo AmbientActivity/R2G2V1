@@ -6,12 +6,7 @@
  */
 
 function CuteWebUI_AjaxUploader_OnPostback() {
-    BootstrapDialog.show({
-        type: BootstrapDialog.TYPE_INFO,
-        title: "Saving Media",
-        message: "One moment...",
-        closable: false
-    });
+    utilities.inprogress.show({ message: "Saving..." });
     document.forms[0].submit();
 }
 
@@ -100,14 +95,21 @@ function DisableScreen() {
                     $.extend(lists, data);
 
                     $("#loading-container").hide();
-                    $("#tblFile").show();
+                    $("#table-header").show();
+                    $("#table-detail").show();
                     $("#add-shared").removeAttr("disabled");
                     $("#uploadbutton").removeAttr("disabled");
 
-                    ko.bindingHandlers.setTooltips = {
+                    ko.bindingHandlers.tableUpdated = {
+                        update: function (element, valueAccessor, allBindings) {
+                            ko.unwrap(valueAccessor());
+                            $("#txtSearchFilename").focus();
+                        }
+                    }
+
+                    ko.bindingHandlers.tableRender = {
                         update: function (element, valueAccessor) {
                             ko.utils.unwrapObservable(valueAccessor());
-                            var e = element;
                             for (var index = 0, length = element.childNodes.length; index < length; index++) {
                                 var node = element.childNodes[index];
                                 if (node.nodeType === 1) {
@@ -116,6 +118,41 @@ function DisableScreen() {
                                     if (tooltipElement.length > 0)
                                         tooltipElement.tooltip({ delay: { show: 100, hide: 100 } });
                                 }
+                            }
+                            // if there are no rows in the table, hide the table and display a message
+                            var table = element.parentNode; // get the table element
+                            var noRowsMessage = $("#no-rows-message");
+                            var mediaPathTypeId = $("#mediaPathTypeId").val();
+
+                            var description = lists.MediaPathTypeList.filter(function (value) {
+                                return value.Id === Number(mediaPathTypeId);
+                            })[0].ShortDescription;
+
+                            var tableDetailElement = $("#table-detail");
+                            var tableHeaderElement = $("#table-header");
+
+                            if (table.rows.length > 1) {
+                                tableHeaderElement.show();
+                                tableDetailElement.show();
+                                noRowsMessage.hide();
+
+                                // determine there is table overflow (to cause a scrollbar)
+                                // if so, increase the right margin of last column header 
+                                var isLinkededElement = $("#sort-islinked");
+
+                                if (table.clientHeight > site.getMaxClientHeight) {
+                                    isLinkededElement.addClass("table-scrollbar");
+                                    tableDetailElement.addClass("container-height");
+                                } else {
+                                    isLinkededElement.removeClass("table-scrollbar");
+                                    tableDetailElement.removeClass("container-height");
+                                }
+
+                            } else {
+                                tableHeaderElement.hide();
+                                tableDetailElement.hide();
+                                noRowsMessage.html("<h2>No " + description.toLowerCase() + " found</h2>");
+                                noRowsMessage.show();
                             }
                         }
                     }
@@ -195,12 +232,14 @@ function DisableScreen() {
                                     cmdDelete.removeAttr("disabled");
                                 }
                             }
+
+                            $("#txtSearchFilename").focus();
                         };
 
                         self.columns = ko.computed(function () {
                             var arr = [];
-                            arr.push({ title: "Name", sortable: true, sortKey: "filename", numeric: false, cssClass: "" });
-                            arr.push({ title: "Linked", sortable: true, sortKey: "islinked", numeric: true, cssClass: "col-islinked" });
+                            arr.push({ title: "Name", sortable: true, sortKey: "filename", numeric: false });
+                            arr.push({ title: "Linked", sortable: true, sortKey: "islinked", numeric: true });
                             return arr;
                         });
 
@@ -267,7 +306,6 @@ function DisableScreen() {
                             $.get(site.url + "PublicProfile/GetUploaderHtml?mediaPathTypeId=" + mediaPathTypeId)
                                 .done(function(result) {
                                     $("#uploader-html-container").html(result.UploaderHtml);
-                                    $("#uploadbutton").text(result.AddButtonText);
                                 });
                         };
 
@@ -449,6 +487,7 @@ function DisableScreen() {
                                                 label: "Close",
                                                 action: function(dialog) {
                                                     dialog.close();
+                                                    enableDetail();
                                                 }
                                             }
                                         ]
@@ -465,6 +504,7 @@ function DisableScreen() {
                                                 label: "Close",
                                                 action: function(dialog) {
                                                     dialog.close();
+                                                    enableDetail();
                                                 }
                                             }
                                         ]
@@ -494,6 +534,7 @@ function DisableScreen() {
                                             videoPlayer.attr("src", "");
                                             videoPlayer.attr("type", "video/" + filetype);
                                             dialog.close();
+                                            enableDetail();
                                         }
                                     }
                                 ]
@@ -523,6 +564,8 @@ function DisableScreen() {
                                 self.currentStreamId(row.streamid);
                                 self.currentRowId(row.id);
                             }
+
+                            enableDetail();
                         };
 
                         self.audioEnded = function() {
@@ -634,13 +677,8 @@ function DisableScreen() {
                             var mediaPathTypeId = $("#mediaPathTypeId").val();
 
                             self.clearStreams();
-
-                            BootstrapDialog.show({
-                                type: BootstrapDialog.TYPE_INFO,
-                                title: "Delete Files",
-                                message: "One moment...",
-                                closable: false,
-                                onshown: function(dialog) {
+                            utilities.inprogress.show()
+                                .then(function(dialog) {
                                     $.post(site.url + "PublicProfile/DeleteSelected/",
                                         {
                                             ids: ids,
@@ -675,8 +713,7 @@ function DisableScreen() {
                                                 message: "Unexpected Error\n" + result
                                             });
                                         });
-                                }
-                            });
+                                });
                         };
 
                         self.addSharedFiles = function() {

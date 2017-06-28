@@ -8,9 +8,10 @@
 var site = (function () {
     var keebeeUrl = "/Keebee.AAT.Administrator/";
     var keebeeOperationsUrl = "/Keebee.AAT.Operations/api/";
+    var maxClientHeight = 500;   // need this value to determine if scrollbar needs to be shown
 
     var self = {
-        getUrl: function () {
+        getUrl: function() {
             var baseUrl = location.href;
             var rootUrl = baseUrl.substring(0, baseUrl.indexOf("/", 7));
 
@@ -20,7 +21,7 @@ var site = (function () {
                 return rootUrl + keebeeUrl;
             }
         },
-        getApiUrl: function () {
+        getApiUrl: function() {
             var baseUrl = location.href;
             var rootUrl = baseUrl.substring(0, baseUrl.indexOf("/", 7));
 
@@ -29,10 +30,12 @@ var site = (function () {
             } else {
                 return rootUrl + keebeeOperationsUrl;
             }
-        }
+        },
+        getMaxClientHeight: function () { return maxClientHeight; }
     };
     return {
         url: self.getUrl(),
-        getApiUrl: self.getApiUrl()
+        getApiUrl: self.getApiUrl(),
+        getMaxClientHeight: self.getMaxClientHeight()
     }
 })();

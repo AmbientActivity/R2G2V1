@@ -2,23 +2,31 @@
 
 <div class="container">
     <div class="row">
-        <div class="col-sm-12">
+        <div class="col-sm-6">
             <div class="label label-default">Description</div>
             <input type="text" id="txtDescription" class="form-control" value="@Model.Description" maxlength="50" />
         </div>
-        <div class="col-sm-12">
+    </div>
+    <div class="row">
+        <div class="col-sm-6">
             <div class="label label-default">Location</div>
             <input type="text" id="txtLocation" class="form-control" value="@Model.Location" maxlength="50" />
         </div>
-        <div class="col-sm-12">
+    </div>
+    <div class="row">
+        <div class="col-sm-6">
             <div class="label label-default">Phidget</div>
             @Html.DropDownList("ddlPhidgetTypes", @Model.PhidgetTypes, new { @class = "form-control" })
         </div>
-        <div class="col-sm-12">
+    </div>
+    <div class="row">
+        <div class="col-sm-6">
             <div class="label label-default">Phidget Style</div>
             @Html.DropDownList("ddlPhidgetStyleTypes", @Model.PhidgetStyleTypes, new { @class = "form-control" })
         </div>
-        <div class="col-sm-12">
+    </div>
+    <div class="row">
+        <div class="col-sm-6">
             <div class="label label-default">Response</div>
             @Html.DropDownList("ddlResponseTypes", @Model.ResponseTypes, new { @class = "form-control" })
         </div>

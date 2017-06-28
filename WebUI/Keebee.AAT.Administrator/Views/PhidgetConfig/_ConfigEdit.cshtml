@@ -1,16 +1,18 @@
 ﻿@model Keebee.AAT.Administrator.ViewModels.ConfigEditViewModel
 
-<div class="container edit-dialog-container">
+<div class="container">
     @if (Model.SourceConfigName != null)
     {
          <h4>Create a duplicate of: <b>@Model.SourceConfigName</b></h4>
     }
     <div class="row">
-        <div class="col-sm-12">
+        <div class="col-sm-6">
             <div class="label label-default">Name</div>
             <input type="text" id="txtDescription" class="form-control" value="@Model.Description" maxlength="50" />
         </div>
-        <div class="col-sm-12">
+    </div>
+    <div class="row">
+        <div class="col-sm-6">
             <div class="label label-default">Turn On Event Logging</div>
             @if (Model.IsActiveEventLog)
             {

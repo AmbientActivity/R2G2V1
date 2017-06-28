@@ -5,12 +5,7 @@
  */
 
 function CuteWebUI_AjaxUploader_OnPostback() {
-    BootstrapDialog.show({
-        type: BootstrapDialog.TYPE_INFO,
-        title: "Saving Media",
-        message: "Ome moment...",
-        closable: false
-    });
+    utilities.inprogress.show({ message: "Saving..." });
     document.forms[0].submit();
 }
 
@@ -95,21 +90,28 @@ function DisableScreen() {
                 FileList: [],
                 MediaPathTypeList: []
             };
-
+            
             $.get(site.url + "ResidentProfile/GetData/" + config.residentid
                     + "?mediaPathTypeId=" + $("#mediaPathTypeId").val())
                 .done(function (data) {
                     $.extend(lists, data);
 
                     $("#loading-container").hide();
-                    $("#tblFile").show();
+                    $("#table-header").show();
+                    $("#table-detail").show();
                     $("#uploadbutton").removeAttr("disabled");
                     cmdAddShared.removeAttr("disabled");
 
-                    ko.bindingHandlers.setTooltips = {
+                    ko.bindingHandlers.tableUpdated = {
+                        update: function (element, valueAccessor, allBindings) {
+                            ko.unwrap(valueAccessor());
+                            $("#txtSearchFilename").focus();
+                        }
+                    }
+
+                    ko.bindingHandlers.tableRender = {
                         update: function (element, valueAccessor) {
                             ko.utils.unwrapObservable(valueAccessor());
-                            var e = element;
                             for (var index = 0, length = element.childNodes.length; index < length; index++) {
                                 var node = element.childNodes[index];
                                 if (node.nodeType === 1) {
@@ -118,6 +120,41 @@ function DisableScreen() {
                                     if (tooltipElement.length > 0)
                                         tooltipElement.tooltip({ delay: { show: 100, hide: 100 } });
                                 }
+                            }
+                            // if there are no rows in the table, hide the table and display a message
+                            var table = element.parentNode; // get the table element
+                            var noRowsMessage = $("#no-rows-message");
+                            var mediaPathTypeId = $("#mediaPathTypeId").val();
+
+                            var description = lists.MediaPathTypeList.filter(function(value) {
+                                return value.Id === Number(mediaPathTypeId);
+                            })[0].ShortDescription;
+
+                            var tableDetailElement = $("#table-detail");
+                            var tableHeaderElement = $("#table-header");
+
+                            if (table.rows.length > 1) {
+                                tableHeaderElement.show();
+                                tableDetailElement.show();
+                                noRowsMessage.hide();
+
+                                // determine there is table overflow (to cause a scrollbar)
+                                // if so, increase the right margin of last column header 
+                                var isLinkededElement = $("#sort-islinked");
+
+                                if (table.clientHeight > site.getMaxClientHeight) {
+                                    isLinkededElement.addClass("table-scrollbar");
+                                    tableDetailElement.addClass("container-height");
+                                } else {
+                                    isLinkededElement.removeClass("table-scrollbar");
+                                    tableDetailElement.removeClass("container-height");
+                                }
+
+                            } else {
+                                tableHeaderElement.hide();
+                                tableDetailElement.hide();
+                                noRowsMessage.html("<h2>No " + description.toLowerCase() + " found</h2>");
+                                noRowsMessage.show();
                             }
                         }
                     }
@@ -132,7 +169,7 @@ function DisableScreen() {
                         self.mediaPathTypes = ko.observableArray([]);
                         self.selectedMediaPathType = ko.observable(config.selectedMediaPathTypeId);
                         self.filenameSearch = ko.observable("");
-                        self.totalFiles = ko.observable(0);
+                        self.totalFilteredFiles = ko.observable(0);
                         self.selectAllIsSelected = ko.observable(false);
                         self.selectedIds = ko.observable([]);
                         self.isSharable = ko.observable(false);
@@ -197,15 +234,17 @@ function DisableScreen() {
                                 cmdDelete.attr("disabled", "disabled");
 
                             if (self.isSharable())
-                                cmdAddShared.removeAttr("disabled");
+                                cmdAddShared.show();
                             else
-                                cmdAddShared.attr("disabled", "disabled");
+                                cmdAddShared.hide();
+
+                            $("#txtSearchFilename").focus();
                         };
 
                         self.columns = ko.computed(function () {
                             var arr = [];
-                            arr.push({ title: "Name", sortable: true, sortKey: "filename", numeric: false, cssClass: "" });
-                            arr.push({ title: "Linked", sortable: true, sortKey: "islinked", numeric: true, cssClass: "col-islinked" });
+                            arr.push({ title: "Name", sortable: true, sortKey: "filename", numeric: false });
+                            arr.push({ title: "Linked", sortable: true, sortKey: "islinked", numeric: true });
                             return arr;
                         });
 
@@ -259,7 +298,6 @@ function DisableScreen() {
                             $.get(site.url + "ResidentProfile/GetUploaderHtml?mediaPathTypeId=" + mediaPathTypeId)
                                 .done(function (result) {
                                     $("#uploader-html-container").html(result.UploaderHtml);
-                                    $("#uploadbutton").text(result.AddButtonText);
                             });
                         };
 
@@ -289,7 +327,7 @@ function DisableScreen() {
 
                         self.filesTable = ko.computed(function () {
                             var filteredFiles = self.filteredFiles();
-                            self.totalFiles(filteredFiles.length);
+                            self.totalFilteredFiles(filteredFiles.length);
 
                             // look for currently playing or paused audio and set flags
                             var currentlyStreaming = filteredFiles.filter(function (value) {
@@ -338,6 +376,7 @@ function DisableScreen() {
                                             label: "Close",
                                             action: function (dialog) {
                                                 dialog.close();
+                                                enableDetail();
                                             }
                                         }]
                                     });
@@ -352,6 +391,7 @@ function DisableScreen() {
                                             label: "Close",
                                             action: function (dialog) {
                                                 dialog.close();
+                                                enableDetail();
                                             }
                                         }]
                                     });
@@ -379,6 +419,7 @@ function DisableScreen() {
                                         videoPlayer.attr("src", "");
                                         videoPlayer.attr("type", "video/" + filetype);
                                         dialog.close();
+                                        enableDetail();
                                     }
                                 }]
                             });
@@ -407,6 +448,7 @@ function DisableScreen() {
                                 self.currentStreamId(row.streamid);
                                 self.currentRowId(row.id);
                             }
+                            enableDetail();
                         };
 
                         self.audioEnded = function () {
@@ -591,26 +633,22 @@ function DisableScreen() {
                             });
                         };
 
-                        self.deleteSelected = function () {
+                        self.deleteSelected = function() {
                             var ids = self.selectedIds();
                             var residentId = config.residentid;
                             var mediaPathTypeId = $("#mediaPathTypeId").val();
 
                             self.clearStreams();
 
-                            BootstrapDialog.show({
-                                type: BootstrapDialog.TYPE_INFO,
-                                title: "Delete Files",
-                                message: "One moment...",
-                                closable: false,
-                                onshown: function (dialog) {
+                            utilities.inprogress.show()
+                                .then(function(dialog) {
                                     $.post(site.url + "ResidentProfile/DeleteSelected/",
                                         {
                                             ids: ids,
                                             residentId: residentId,
                                             mediaPathTypeId: mediaPathTypeId
                                         })
-                                        .done(function (result) {
+                                        .done(function(result) {
                                             dialog.close();
                                             if (result.Success) {
                                                 lists.FileList = result.FileList;
@@ -629,7 +667,7 @@ function DisableScreen() {
                                                 });
                                             }
                                         })
-                                        .error(function (result) {
+                                        .error(function(result) {
                                             dialog.close();
                                             enableDetail();
 
@@ -639,8 +677,8 @@ function DisableScreen() {
                                                 message: "Unexpected Error\n" + result
                                             });
                                         });
-                                }
-                            });
+
+                                });
                         };
 
                         self.addSharedFiles = function () {

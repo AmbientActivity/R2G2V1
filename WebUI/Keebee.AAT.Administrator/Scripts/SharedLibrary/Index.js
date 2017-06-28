@@ -6,12 +6,7 @@
  */
 
 function CuteWebUI_AjaxUploader_OnPostback() {
-    BootstrapDialog.show({
-        type: BootstrapDialog.TYPE_INFO,
-        title: "Saving Media",
-        message: "One moment...",
-        closable: false
-    });
+    utilities.inprogress.show({ message: "Saving..." });
     document.forms[0].submit();
 }
 
@@ -576,13 +571,8 @@ function DisableScreen() {
                             var mediaPathTypeId = $("#mediaPathTypeId").val();
 
                             self.clearStreams();
-
-                            BootstrapDialog.show({
-                                type: BootstrapDialog.TYPE_INFO,
-                                title: "Delete Files",
-                                message: "One moment...",
-                                closable: false,
-                                onshown: function (dialog) {
+                            utilities.inprogress.show()
+                                .then(function(dialog) {
                                     $.post(site.url + "SharedLibrary/DeleteSelected/",
                                         {
                                             streamIds: streamIds,
@@ -618,8 +608,7 @@ function DisableScreen() {
                                                 message: "Unexpected Error\n" + result
                                             });
                                         });
-                                }
-                            });
+                                });
                         };
 
                         self.checkSelectAll = function (checked) {

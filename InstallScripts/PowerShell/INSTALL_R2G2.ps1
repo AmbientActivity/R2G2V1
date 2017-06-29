@@ -31,4 +31,5 @@ Catch
 {
     Write-Host -ForegroundColor red $_.Exception.Message
     Write-Host -ForegroundColor yellow "`nInstallation aborted.`n"
+    $x = $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
 }

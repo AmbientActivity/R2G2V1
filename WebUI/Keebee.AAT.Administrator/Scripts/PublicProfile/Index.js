@@ -83,7 +83,7 @@ function DisableScreen() {
             // video player
             var videoPlayer = $("#video-player");
 
-            var sortDescending = true; // will get flippedd to false upon initial load
+            var sortDescending = false;
             var currentSortKey = "filename";
             var isBinding = true;
 
@@ -124,7 +124,7 @@ function DisableScreen() {
                             }
                             // if there are no rows in the table, hide the table and display a message
                             var table = element.parentNode; // get the table element
-                            var noRowsMessage = $("#no-rows-message");
+                            var noMediaMessage = $("#no-media-message");
                             var mediaPathTypeId = $("#mediaPathTypeId").val();
 
                             var description = lists.MediaPathTypeList.filter(function (value) {
@@ -134,10 +134,10 @@ function DisableScreen() {
                             var tableDetailElement = $("#table-detail");
                             var tableHeaderElement = $("#table-header");
 
-                            if (table.rows.length > 1) {
+                            if (table.rows.length > 0) {
                                 tableHeaderElement.show();
                                 tableDetailElement.show();
-                                noRowsMessage.hide();
+                                noMediaMessage.hide();
 
                                 // determine if there is table overflow (to cause a scrollbar)
                                 // if so, increase the right margin of last column header 
@@ -154,8 +154,8 @@ function DisableScreen() {
                             } else {
                                 tableHeaderElement.hide();
                                 tableDetailElement.hide();
-                                noRowsMessage.html("<h2>No " + description.toLowerCase() + " found</h2>");
-                                noRowsMessage.show();
+                                noMediaMessage.html("<h2>No " + description.toLowerCase() + " found</h2>");
+                                noMediaMessage.show();
                             }
                         }
                     }
@@ -241,14 +241,13 @@ function DisableScreen() {
 
                         self.columns = ko.computed(function () {
                             var arr = [];
-                            arr.push({ sortKey: "filename", numeric: false });
-                            arr.push({ sortKey: "islinked", numeric: true });
+                            arr.push({ sortKey: "filename", numeric: false, boolean: false });
+                            arr.push({ sortKey: "islinked", numeric: false, boolean: true });
                             return arr;
                         });
 
                         self.sort = function (header) {
-                            if (isBinding && header.sortKey !== currentSortKey)
-                                return;
+                            if (isBinding) return;
 
                             var afterSave = typeof header.afterSave != "undefined" ? header.afterSave : false;
                             var sortKey;
@@ -266,44 +265,13 @@ function DisableScreen() {
                                 sortKey = currentSortKey;
                             }
 
-                            $(self.columns())
-                                .each(function(index, value) {
-                                    if (value.sortKey === sortKey) {
-                                        self.files.sort(function(a, b) {
-                                            if (value.numeric) {
-                                                if (sortDescending) {
-                                                    return a[sortKey] > b[sortKey]
-                                                        ? -1
-                                                        : a[sortKey] < b[sortKey] || a.filename > b.filename ? 1 : 0;
-                                                } else {
-                                                    return a[sortKey] < b[sortKey]
-                                                        ? -1
-                                                        : a[sortKey] > b[sortKey] || a.filename > b.filename ? 1 : 0;
-                                                }
-                                            } else {
-                                                if (sortDescending) {
-                                                    return a[sortKey].toString().toLowerCase() >
-                                                        b[sortKey].toString().toLowerCase()
-                                                        ? -1
-                                                        : a[sortKey].toString().toLowerCase() <
-                                                        b[sortKey].toString().toLowerCase() ||
-                                                        a.filename.toLowerCase() > b.filename.toLowerCase()
-                                                        ? 1
-                                                        : 0;
-                                                } else {
-                                                    return a[sortKey].toString().toLowerCase() <
-                                                        b[sortKey].toString().toLowerCase()
-                                                        ? -1
-                                                        : a[sortKey].toString().toLowerCase() >
-                                                        b[sortKey].toString().toLowerCase() ||
-                                                        a.filename.toLowerCase() > b.filename.toLowerCase()
-                                                        ? 1
-                                                        : 0;
-                                                }
-                                            }
-                                        });
-                                    }
-                                });
+                            self.files(utilities.sorting.sortFies(
+                                {
+                                    fileArray: self.files(),
+                                    columns: self.columns(),
+                                    sortKey: sortKey,
+                                    descending: sortDescending
+                                }));
                         };
 
                         self.reloadUploaderHtml = function() {

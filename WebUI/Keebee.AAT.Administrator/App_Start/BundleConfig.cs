@@ -41,6 +41,7 @@ namespace Keebee.AAT.Administrator
                 "~/Scripts/Services/Index.js",
                 "~/Scripts/Utilities/InProgressDialog.js",
                 "~/Scripts/Utilities/JobExecution.js",
+                "~/Scripts/Utilities/Sorting.js",
                 "~/Scripts/Maintenance/Index.js"));
 
             bundles.Add(new ScriptBundle("~/bundles/Bootstrap").Include(

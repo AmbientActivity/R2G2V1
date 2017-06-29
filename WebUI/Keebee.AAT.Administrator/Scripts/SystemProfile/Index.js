@@ -19,7 +19,7 @@
             // video player
             var videoPlayer = $("#video-player");
 
-            var sortDescending = true; // will get flippedd to false upon initial load
+            var sortDescending = false;
             var currentSortKey = "filename";
             var isBinding = true;
 
@@ -58,7 +58,7 @@
                             }
                             // if there are no rows in the table, hide the table and display a message
                             var table = element.parentNode; // get the table element
-                            var noRowsMessage = $("#no-rows-message");
+                            var noRowsMessage = $("#no-media-message");
                             var mediaPathTypeId = $("#mediaPathTypeId").val();
 
                             var description = lists.MediaPathTypeList.filter(function (value) {
@@ -68,7 +68,7 @@
                             var tableDetailElement = $("#table-detail");
                             var tableHeaderElement = $("#table-header");
 
-                            if (table.rows.length > 1) {
+                            if (table.rows.length > 0) {
                                 tableHeaderElement.show();
                                 tableDetailElement.show();
                                 noRowsMessage.hide();
@@ -156,17 +156,14 @@
 
                         self.columns = ko.computed(function () {
                             var arr = [];
-                            arr.push({ sortKey: "filename", numeric: false });
-                            arr.push({ sortKey: "filetype", numeric: false });
-                            arr.push({sortKey: "filesize", numeric: true });
+                            arr.push({ sortKey: "filename", numeric: false, boolean: false });
+                            arr.push({ sortKey: "filetype", numeric: false, boolean: false });
+                            arr.push({ sortKey: "filesize", numeric: true, boolean: false });
                             return arr;
                         });
 
                         self.sort = function (header) {
-                            if (isBinding && header.sortKey !== currentSortKey) {
-                                isBinding = false;
-                                return;
-                            }
+                            if (isBinding) return;
 
                             var afterSave = typeof header.afterSave != "undefined" ? header.afterSave : false;
                             var sortKey;
@@ -184,31 +181,13 @@
                                 sortKey = currentSortKey;
                             }
 
-                            $(self.columns()).each(function (index, value) {
-                                if (value.sortKey === sortKey) {
-                                    self.files.sort(function (a, b) {
-                                        if (value.numeric) {
-                                            if (sortDescending) {
-                                                return a[sortKey] > b[sortKey]
-                                                        ? -1 : a[sortKey] < b[sortKey] || a.filename > b.filename ? 1 : 0;
-                                            } else {
-                                                return a[sortKey] < b[sortKey]
-                                                    ? -1 : a[sortKey] > b[sortKey] || a.filename > b.filename ? 1 : 0;
-                                            }
-                                        } else {
-                                            if (sortDescending) {
-                                                return a[sortKey].toString().toLowerCase() > b[sortKey].toString().toLowerCase()
-                                                    ? -1 : a[sortKey].toString().toLowerCase() < b[sortKey].toString().toLowerCase()
-                                                    || a.filename.toLowerCase() > b.filename.toLowerCase() ? 1 : 0;
-                                            } else {
-                                                return a[sortKey].toString().toLowerCase() < b[sortKey].toString().toLowerCase()
-                                                    ? -1 : a[sortKey].toString().toLowerCase() > b[sortKey].toString().toLowerCase()
-                                                    || a.filename.toLowerCase() > b.filename.toLowerCase() ? 1 : 0;
-                                            }
-                                        }
-                                    });
-                                }
-                            });
+                            self.files(utilities.sorting.sortFies(
+                                {
+                                    fileArray: self.files(),
+                                    columns: self.columns(),
+                                    sortKey: sortKey,
+                                    descending: sortDescending
+                                }));
                         };
 
                         self.selectedMediaPathType.subscribe(function (id) {

@@ -28,6 +28,20 @@ a:hover, a:visited, a:link, a:active {
     text-decoration: none;
 }
 
+/* for the inner container overlow scroll bar */
+/* must correspond to maxClientHeight value in ~/Scripts/Site/Site.js */
+.container-height {
+   height: 500px;   
+}
+
+/* for h3 banners at top of page */
+.page-banner {
+    margin-top: 13px;
+}
+.page-banner-row {
+    padding-top: 6px;
+}
+
 /* audio and video tags */
 audio { 
    display:none;
@@ -67,7 +81,7 @@ video {
   }
 }
 
-/* Bootstrap Navbar */
+/* bootstrap navbar */
 .navbar {
   background-color: #000000;
 }
@@ -116,7 +130,7 @@ video {
     color: #c12e2a;
 }
 
-/* dialogs */
+/* dialog */
 .modal-content {
     width: 470px;
 }
@@ -125,7 +139,6 @@ video {
 .row {
     padding: 5px;
 }
-
 .row-table-header {
     margin: 0;
 }
@@ -133,40 +146,35 @@ video {
 .row-controls {
     padding-left: 0;
 }
+.row-banner {
+    margin-top: -12px;
+}
 
 /* video capture */
 #tblVideoCapture > tbody > tr > th, #tblVideoCapture > tbody > tr > td {
     padding: 8px 5px 3px 8px;
 }
 
-/* event logs */
+/* event log */
 #tblEventLog > tbody > tr > th, #tblEventLog > tbody > tr > td {
-    padding: 8px 5px 3px 8px;
+    padding: 5px 5px 5px 8px;
 }
 
-/* media files */
+/* media file */
 #tblFile > tbody > tr > th, #tblFile > tbody > tr > td {
     padding: 5px 5px 5px 8px;
 }
 
 /* residents */
 #tblResident > tbody > tr > th, #tblResident > tbody > tr > td {
-    padding: 8px 5px 5px 8px;
+    padding: 5px 5px 5px 8px;
 }
 
 #tblSharedFile > tbody > tr > th, #tblSharedFile > tbody > tr > td {
-    padding: 8px 5px 5px 8px;
+    padding: 5px 5px 5px 8px;
 }
 .form-control-id {
     width: 60px;
-}
-.button-add-resident {
-    float: right;
-    padding-right: 10px;
-}
-
-.table {
-    margin-bottom: 0;
 }
 
 /* turn off bootstrap vertical-align: top */
@@ -186,6 +194,7 @@ video {
   vertical-align: middle;
 }
 
+/* table */
 table td {
     border: 1px solid #e8e5e5;
 }
@@ -208,13 +217,16 @@ table td {
     font-size: 15px;
 }
 
-.container-height {
-   height: 500px;   
+.table {
+    margin-bottom: 0;
 }
 
 /* filter */
 .select-filter {
     min-width: 200px;
+}
+.description-filter {
+    width: 250px;
 }
 
 /* total files counter */
@@ -271,11 +283,6 @@ table td {
     width: 70px;
 }
 
-/* maintenance screen */
-.maintenance-button {
-    width: 146px;
-}
-
 /* tables/panels */
 .panel-heading-controls {
     padding-left: 5px;
@@ -283,9 +290,6 @@ table td {
 }
 .panel-body-media {
     padding: 0;
-}
-.media-delete-button {
-    margin-right: 40px;
 }
 .panel-profile-picture {
     margin-bottom: 0;
@@ -296,16 +300,20 @@ table td {
     padding: 5px 0 0 0;
     background-color: #f6f7fc;
 }
-.no-rows-message {
+.panel-no-body {
+    margin-bottom: 10px;
+}
+/* no media found message */
+.no-media-found {
     text-align: center;
     color: lightgray;
+    padding-bottom: 10px;
 }
 .record-total {
     margin-top: 8px;
 }
 
  /* checkbox */
-
 .checkbox-size-selectall {
     width: 20px;
     height: 20px;
@@ -321,7 +329,6 @@ table td {
 }
 
 /* table column */
-
 .col-right {
     float: right;
 }
@@ -333,7 +340,6 @@ table td {
 }
 .col-filetype {
     width: 50px;
-
 }
 .col-filesize {
     width: 80px;
@@ -345,11 +351,10 @@ table td {
 }
 .col-islinked {
     width: 30px;
-    text-align: center;
-    margin-right: 5px;
+    margin-right: 2px;
 }
 .table-scrollbar {
-   margin-right: 20px;
+   margin-right: 15px;
 }
 .col-glyphicon {
     width: 30px;
@@ -378,7 +383,7 @@ table td {
     width: 100px;
 }
 
-/* bootstrap glyphicons */
+/* bootstrap glyphicon */
 .fa-resident {
     font-size: 30px;
     padding-left: 18px;
@@ -417,8 +422,18 @@ table td {
     float: right;
     margin-right: 10px;
 }
+.add-resident-button {
+    float: right;
+    padding-right: 10px;
+}
+.maintenance-button {
+    width: 146px;
+}
+.media-delete-button {
+    margin-right: 40px;
+}
 
-
+/* dropdown */
 .dropdown-submenu {
     position: relative;
 }
@@ -427,6 +442,8 @@ table td {
     left: 100%;
     margin-top: -1px;
 }
+
+/* progress bar for profile picture upload */
 .progressBar {
 	    background-color: #419641;
 	    width: 0;
@@ -454,3 +471,4 @@ table td {
     margin: auto; 
     text-align: center;
 }
+    

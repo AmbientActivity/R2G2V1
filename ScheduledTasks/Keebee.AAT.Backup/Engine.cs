@@ -16,7 +16,6 @@ namespace Keebee.AAT.Backup
         private const string RestorePublicProfileFilename = "RestorePublicProfile";
         private const string RestoreResidentsFilename = "RestoreResidents";
         private const string RestoreConfigurationsFilename = "RestoreConfigurations";
-        private const string RestoreThumbnailsFilename = "RestoreThumbnails";
         private const string InstallR2G2Filename = "INSTALL_R2G2.ps1";
 
         private readonly string _pathDeployments;
@@ -97,7 +96,6 @@ namespace Keebee.AAT.Backup
                         logText.Append(CreateScriptRestorePublicProfile($@"{_pathBackup}\{_deploymentsFolder}"));
                         logText.Append(CreateScriptRestoreResidents($@"{_pathBackup}\{_deploymentsFolder}"));
                         logText.Append(CreateScriptRestoreConfigurations($@"{_pathBackup}\{_deploymentsFolder}"));
-                        logText.Append(CreateScriptRestoreThumbnails($@"{_pathBackup}\{_deploymentsFolder}"));
                         logText.Append(CreateInstallPowerShellScript($@"{_pathBackup}\{_deploymentsFolder}"));
                     }
                     else
@@ -1233,42 +1231,6 @@ namespace Keebee.AAT.Backup
             return sb.ToString();
         }
 
-        private static string CreateScriptRestoreThumbnails(string path)
-        {
-            var sb = new StringBuilder();
-
-            try
-            {
-                var thumbnailsClient = new ThumbnailsClient();
-                var thumbnails = thumbnailsClient.Get().ToArray();
-
-                var pathScript = $@"{path}\Install\Database\SQL Server\{RestoreThumbnailsFilename}.sql";
-
-                if (File.Exists(pathScript))
-                    File.Delete(pathScript);
-
-                using (var sw = new StreamWriter(pathScript))
-                {
-                    foreach (var thumbnail in thumbnails)
-                    {
-                        sw.WriteLine(
-                            "INSERT INTO Thumbnails (StreamId, [Image])" + 
-                            $"VALUES('{thumbnail.StreamId}', CONVERT(VARBINARY(max), '0x{BitConverter.ToString(thumbnail.Image).Replace("-", string.Empty)}', 1))");
-                    }
-                }
-            }
-            catch (Exception e)
-            {
-                var message = $"--- ERROR --- CreateScriptRestoreThumbnails: {e.Message}{Environment.NewLine}";
-#if DEBUG
-                Console.Write(message);
-#endif
-                sb.Append(message);
-            }
-
-            return sb.ToString();
-        }
-
         private string CreateInstallPowerShellScript(string path)
         {
             var sb = new StringBuilder();
@@ -1303,7 +1265,7 @@ namespace Keebee.AAT.Backup
                     if (_residentsExist)
                         sw.WriteLine(@"    invoke-expression -Command $installPathData\RestoreResidents.ps1");
                     sw.WriteLine(@"    invoke-expression -Command $installPathData\RestoreConfigurations.ps1");
-                    sw.WriteLine(@"    invoke-expression -Command $installPathData\RestoreThumbnails.ps1");
+                    sw.WriteLine(@"    invoke-expression -Command $installPath\CreateThumbnails.ps1");
                     sw.WriteLine(@"    invoke-expression -Command $installPath\InstallServices.ps1");
                     sw.WriteLine();
                     sw.WriteLine("    Write-Host -ForegroundColor green " + "\"" + "`nInstallation complete.`n" + "\"");

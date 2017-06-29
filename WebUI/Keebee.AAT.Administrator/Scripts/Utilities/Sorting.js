@@ -5,9 +5,11 @@
  * Date: 2017-06
  */
 
+/* specify the sortKey and a primarySortKey (used as a secondary sort if different from the sortKey) */
+
 ; (function ($) {
     utilities.sorting = {
-        sortFies: function (options) {
+        sortArray: function (options) {
             var config = {
                 fileArray: [],
                 columns: [],
@@ -17,86 +19,91 @@
             };
 
             $.extend(config, options);
-              
+             
+            var sortPrimary = function (a, b, descending) {
+                if (!descending) {
+                    return a[config.primaryKey] === b[config.primaryKey]
+                        ? 0
+                        : (a[config.primaryKey] < b[config.primaryKey] ? -1 : 1);
+                } else {
+                    return a[config.primaryKey] === b[config.primaryKey]
+                        ? 0
+                        : (a[config.primaryKey] > b[config.primaryKey] ? -1 : 1);
+                }
+            }
+
             $(config.columns).each(function (index, value) {
                 if (value.sortKey === config.sortKey) {
                     config.fileArray.sort(function (a, b) {
-                        if (value.numeric) {
-                            return sortNumeric(a, b);
-                        } else if (value.boolean) {
-                            return sortBoolean(a, b);
+                        if (!value.boolean) {
+                            return sortTextOrNumber(a, b);
                         } else {
-                            return sortFilenames(a, b);
-                        }
+                            return sortBoolean(a, b);
+                        } 
                     });
                 }
-
             });
 
             function sortBoolean(a, b) {
-                var sortByVal = function () {
-                    return a[config.primaryKey] === b[config.primaryKey] ? 0 : (a[config.primaryKey] < b[config.primaryKey] ? -1 : 1);
-                }
+                var boola = a[config.sortKey];
+                var boolb = b[config.sortKey];
 
                 if (config.descending) {
-                    if (a[config.sortKey] === b[config.sortKey]) {
-                        return sortByVal();
+                    if (boola === boolb) {
+                        return sortPrimary(a, b, false);
                     } else {
-                        if (a[config.sortKey] === true) {
+                        if (boola === true) {
                             return -1;
-                        } else if (b[config.sortKey] === true) {
+                        } else if (boolb === true) {
                             return 1;
                         } else {
-                            return sortByVal();
+                            return sortPrimary(a, b, false);
                         }
                     }
                 } else {
-                    if (a[config.sortKey] === b[config.sortKey]) {
-                        return sortByVal();
+                    if (boola === b[config.sortKey]) {
+                        return sortPrimary(a, b, false);
                     } else {
-                        if (a[config.sortKey] === false) {
+                        if (boola === false) {
                             return -1;
-                        } else if (b[config.sortKey] === false) {
+                        } else if (boolb === false) {
                             return 1;
                         } else {
-                            return sortByVal();
+                            return sortPrimary(a, b, false);
                         }
                     }
                 }
             }
 
-            function sortNumeric(a, b) {
-                if (config.descending) {
-                    return a[config.sortKey] > b[config.sortKey]
-                        ? -1
-                        : a[config.sortKey] < b[config.sortKey] || a[config.primaryKey] > b[config.primaryKey] ? 1 : 0;
-                } else {
-                    return a[config.sortKey] < b[config.sortKey]
-                        ? -1
-                        : a[config.sortKey] > b[config.sortKey] || a[config.primaryKey] > b[config.primaryKey] ? 1 : 0;
-                }
-            }
+            function sortTextOrNumber(a, b) {
+                var valuea;
+                var valueb;
 
-            function sortFilenames(a, b) {
-                if (config.descending) {
-                    return a[config.sortKey].toString().toLowerCase() >
-                        b[config.sortKey].toString().toLowerCase()
-                        ? -1
-                        : a[config.sortKey].toString().toLowerCase() <
-                        b[config.sortKey].toString().toLowerCase() ||
-                        a[config.primaryKey].toLowerCase() > b[config.primaryKey].toLowerCase()
-                        ? 1
-                        : 0;
+                if (isNaN(a[config.sortKey])) {
+                    valuea = a[config.sortKey].toString().toLowerCase();
+                    valueb = b[config.sortKey].toString().toLowerCase();
                 } else {
-                    return a[config.sortKey].toString().toLowerCase() <
-                        b[config.sortKey].toString().toLowerCase()
-                        ? -1
-                        : a[config.sortKey].toString().toLowerCase() >
-                        b[config.sortKey].toString().toLowerCase() ||
-                        a[config.primaryKey].toLowerCase() > b[config.primaryKey].toLowerCase()
-                        ? 1
-                        : 0;
-                };
+                    valuea = a[config.sortKey];
+                    valueb = b[config.sortKey];
+                }
+
+                if (config.descending) {
+                    if (valuea > valueb) {
+                        return -1;
+                    } else if (valuea < valueb) {
+                        return 1;
+                    } else {
+                        return sortPrimary(a, b, false);
+                    }
+                } else {
+                    if (valuea < valueb) {
+                        return -1;
+                    } else if (valuea > valueb) {
+                        return 1;
+                    } else {
+                        return sortPrimary(a, b, false);
+                    }
+                }
             }
 
             return config.fileArray;

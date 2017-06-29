@@ -8,7 +8,8 @@
 ; (function ($) {
     residents.index = {
         init: function (values) {
-            var currentSortKey = "id";
+            var currentSortKey = "firstname";
+            var primarySortKey = "firstname";
             var sortDescending = false;
 
             var config = {
@@ -112,10 +113,10 @@
 
                         self.columns = ko.computed(function () {
                             var arr = [];
-                            arr.push({ title: "ID", sortable: true, sortKey: "id", numeric: true, cssClass: "col-id" });
-                            arr.push({ title: "First Name", sortable: true, sortKey: "firstname", numeric: false, cssClass: "col-firstname" });
-                            arr.push({ title: "Last Name", sortable: true, sortKey: "lastname", numeric: false, cssClass: "col-lastname" });
-                            arr.push({ title: "Gender", sortable: true, sortKey: "gender", numeric: false, cssClass: "col-gender" });
+                            arr.push({ title: "ID", sortable: true, sortKey: "id", numeric: true, boolean: false, cssClass: "col-id" });
+                            arr.push({ title: "First Name", sortable: true, sortKey: "firstname", numeric: false, boolean: false, cssClass: "col-firstname" });
+                            arr.push({ title: "Last Name", sortable: true, sortKey: "lastname", numeric: false, boolean: false, cssClass: "col-lastname" });
+                            arr.push({ title: "Gender", sortable: true, sortKey: "gender", numeric: false, boolean: false, cssClass: "col-gender" });
 
                             if (config.isVideoCaptureServiceInstalled === "1")
                                 arr.push({ title: "Capturable", sortable: true, sortKey: "allowvideocapturing", numeric: false, cssClass: "col-capturable" });
@@ -146,32 +147,15 @@
                             } else {
                                 sortKey = currentSortKey;
                             }
-                            //return utilities.sorting.sortFiles();
-                            $(self.columns()).each(function (index, value) {
-                                if (value.sortKey === sortKey) {
-                                    self.residents.sort(function (a, b) {
-                                        if (value.numeric) {
-                                            if (sortDescending) {
-                                                return a[sortKey] > b[sortKey]
-                                                        ? -1 : a[sortKey] < b[sortKey] || a.filename > b.filename ? 1 : 0;
-                                            } else {
-                                                return a[sortKey] < b[sortKey]
-                                                    ? -1 : a[sortKey] > b[sortKey] || a.filename > b.filename ? 1 : 0;
-                                            }
-                                        } else {
-                                            if (sortDescending) {
-                                                return a[sortKey].toString().toLowerCase() > b[sortKey].toString().toLowerCase()
-                                                    ? -1 : a[sortKey].toString().toLowerCase() < b[sortKey].toString().toLowerCase()
-                                                    || a.firstname.toLowerCase() > b.firstname.toLowerCase() ? 1 : 0;
-                                            } else {
-                                                return a[sortKey].toString().toLowerCase() < b[sortKey].toString().toLowerCase()
-                                                    ? -1 : a[sortKey].toString().toLowerCase() > b[sortKey].toString().toLowerCase()
-                                                    || a.firstname.toLowerCase() > b.firstname.toLowerCase() ? 1 : 0;
-                                            }
-                                        }
-                                    });
-                                }
-                            });
+
+                            self.residents(utilities.sorting.sortArray(
+                                {
+                                    fileArray: self.residents(),
+                                    columns: self.columns(),
+                                    sortKey: sortKey,
+                                    primaryKey: primarySortKey,
+                                    descending: sortDescending
+                                }));
                         };
 
                         self.filteredResidents = ko.computed(function () {

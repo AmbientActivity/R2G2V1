@@ -246,8 +246,8 @@ function DisableScreen() {
 
                         self.columns = ko.computed(function () {
                             var arr = [];
-                            arr.push({ sortKey: "filename", numeric: false, boolean: false });
-                            arr.push({ sortKey: "islinked", numeric: false, boolean: true });
+                            arr.push({ sortKey: "filename", boolean: false });
+                            arr.push({ sortKey: "islinked", boolean: true });
                             return arr;
                         });
 
@@ -269,7 +269,8 @@ function DisableScreen() {
                             } else {
                                 sortKey = currentSortKey;
                             }
-                            self.files(utilities.sorting.sortFies(
+
+                            self.files(utilities.sorting.sortArray(
                                 {
                                     fileArray: self.files(),
                                     columns: self.columns(),

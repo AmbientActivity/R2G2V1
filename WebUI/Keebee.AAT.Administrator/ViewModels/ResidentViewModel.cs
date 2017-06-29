@@ -49,7 +49,6 @@ namespace Keebee.AAT.Administrator.ViewModels
         public int ResidentId { get; set; }
         public string FullName { get; set; }
         public string ProfilePicture { get; set; }
-        public string AddButtonText { get; set; }
         public string IdSearch { get; set; }
         public string FirstNameSearch { get; set; }
         public string LastNameSearch { get; set; }

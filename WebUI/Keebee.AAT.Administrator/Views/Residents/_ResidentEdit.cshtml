@@ -39,18 +39,16 @@
         <div class="row">
             <div class="col-sm-6">
                 <div class="label label-default">Allow Video Capturing</div>
-                @if (Model.AllowVideoCapturing)
-                {
-                    <div>
-                        <input type="checkbox" id="chkAllowVideoCapturing" checked />
-                    </div>
-                }
-                else
-                {
-                    <div>
-                        <input type="checkbox" id="chkAllowVideoCapturing" />
-                    </div>
-                }
+                <div>
+                    @if (Model.AllowVideoCapturing)
+                    {
+                        <input type="checkbox" class="form-control checkbox-size" id="chkAllowVideoCapturing" checked />
+                    }
+                    else
+                    {
+                        <input type="checkbox" class="form-control checkbox-size" id="chkAllowVideoCapturing" />
+                    }
+                </div>
             </div>
         </div>
     }

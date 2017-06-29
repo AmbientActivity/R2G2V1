@@ -140,7 +140,6 @@ namespace Keebee.AAT.Administrator.Controllers
                     x.Id,
                     x.Description
                 }),
-                AddButtonText = $"Add {rules.GetMediaPathShortDescription(mediaPathTypeId)}",
             }, JsonRequestBehavior.AllowGet);
         }
 
@@ -293,11 +292,9 @@ namespace Keebee.AAT.Administrator.Controllers
         private static PublicProfileViewModel LoadPublicProfileViewModel(
                 int? mediaPathTypeId)
         {
-            var rules = new PublicProfileRules();
             var vm = new PublicProfileViewModel
             {
                 Title = PublicProfileSource.Description,
-                AddButtonText = $"Add {rules.GetMediaPathShortDescription(mediaPathTypeId)}",
                 SelectedMediaPathType = mediaPathTypeId ?? MediaPathTypeId.Music
             };
 
@@ -363,7 +360,7 @@ namespace Keebee.AAT.Administrator.Controllers
                 }
             }
 
-            return list;
+            return list.OrderBy(x => x.Filename);
         }
     }
 }

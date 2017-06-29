@@ -198,7 +198,6 @@ namespace Keebee.AAT.Administrator.Controllers
             return Json(new
             {
                 UploaderHtml = html,
-                AddButtonText = $"Add {rules.GetMediaPathShortDescription(mediaPathTypeId)}",
             }, JsonRequestBehavior.AllowGet);
         }
 
@@ -299,7 +298,6 @@ namespace Keebee.AAT.Administrator.Controllers
                 ResidentId = resident.Id,
                 FullName = fullName,
                 ProfilePicture = ResidentRules.GetProfilePicture(resident.ProfilePicture) ?? ResidentRules.GetProfilePicturePlaceholder(),
-                AddButtonText = $"Add {rules.GetMediaPathShortDescription(mediaPathTypeId)}",
                 IdSearch = idsearch,
                 FirstNameSearch = firstname,
                 LastNameSearch = lastname,
@@ -393,7 +391,7 @@ namespace Keebee.AAT.Administrator.Controllers
                 }
             }
 
-            return list;
+            return list.OrderBy(x => x.Filename);
         }
     }
 }

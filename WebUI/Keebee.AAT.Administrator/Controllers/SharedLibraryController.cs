@@ -134,7 +134,6 @@ namespace Keebee.AAT.Administrator.Controllers
                     x.Id,
                     x.Description
                 }),
-                AddButtonText = $"Upload {rules.GetMediaPathShortDescription(mediaPathTypeId)}",
             }, JsonRequestBehavior.AllowGet);
         }
 
@@ -208,11 +207,9 @@ namespace Keebee.AAT.Administrator.Controllers
 
         private static SharedLibraryViewModel LoadSharedLibraryViewModel(int? mediaPathTypeId)
         {
-            var rules = new SharedLibraryRules();
             var vm = new SharedLibraryViewModel
             {
                 Title = "Shared Library",
-                AddButtonText = $"Upload {rules.GetMediaPathShortDescription(mediaPathTypeId)}",
                 SelectedMediaPathType = mediaPathTypeId ?? MediaPathTypeId.Music
             };
 
@@ -255,13 +252,13 @@ namespace Keebee.AAT.Administrator.Controllers
                         f.StreamId,
                         Filename = f.Filename.Replace($".{f.FileType}", string.Empty),
                         f.FileSize,
-                        f.FileType,
+                        FileType = f.FileType.ToUpper(),
                         mediaPathType.Path,
                         MediaPathTypeId = mediaPathType.Id,
                         f.NumLinkedProfiles,
                         Thumbnail = SharedLibraryRules.GetThumbnail(thumb?.Image)
                     };
-                });
+                }).OrderBy(x => x.Filename);
             });
         }
 

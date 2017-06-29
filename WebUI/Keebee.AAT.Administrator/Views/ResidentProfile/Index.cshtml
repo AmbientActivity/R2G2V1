@@ -44,9 +44,11 @@
     @Html.Raw(@Model.UploaderHtml)
 </div>
 <div class="panel panel-default">
-    <div class="panel-heading panel-heading-media">
+    <div class="panel-heading panel-heading-controls">
         <ul class="nav nav-pills">
-            <li><button id="delete" type="button" class="btn btn-md btn-default" disabled data-bind="click: showDeleteSelectedDialog"><i class="glyphicon glyphicon-trash"></i></button></li>
+            <li>
+                <button id="delete" type="button" class="btn btn-md btn-default media-delete-button" disabled data-bind="click: showDeleteSelectedDialog"><i class="glyphicon glyphicon-trash"></i></button>
+            </li>
             <li>
                 <input id="txtSearchFilename" type="text" class="form-control" placeholder="Search" data-bind="value: filenameSearch, valueUpdate: 'keyup'" />
             </li>
@@ -58,7 +60,7 @@
             </li>
             <li>
                 <div class="dropdown">
-                    <button id="add-media" class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">
+                    <button id="add" class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" disabled>
                         Add
                         <span class="caret"></span>
                     </button>
@@ -70,59 +72,63 @@
             </li>
         </ul>
     </div>
+</div>
 
-    <div id="loading-container" class="loading"><img src="~/Content/images/page-loading.gif" alt="Loading..."></div>
+<div id="loading-container" class="loading"><img src="~/Content/images/page-loading.gif" alt="Loading..."></div>
 
-    <!-- custom 'sticky' table header -->
-    <div id="table-header" class="container table-header-container" style="display: none">
-        <div class="row">
-            <div class="col-xs-1 col-selectall">
-                <input type="checkbox" id="chk_all" data-bind="checked: selectAllIsSelected, click: selectAllRows" />
-            </div>
-            <div class="col-xs-10 col-filename">
-                <a href="javascript:void(0)" class="sort" data-bind="click: sort({ afterSave: false, sortKey: 'filename', numeric: false})"><b>Description</b> <div class="glyphicon glyphicon-sort"></div></a>
-            </div>
-            <div id="sort-islinked" class="col-xs-1 col-islinked">
-                <a href="javascript:void(0)" data-bind="click: sort({ afterSave: false, sortKey: 'islinked', numeric: true})" class="glyphicon glyphicon-link"></a>
+<div class="panel panel-default">
+    <div class="panel-body panel-body-media">
+        <!-- custom 'sticky' table header -->
+        <div id="table-header" class="container table-header-container" style="display: none">
+            <div class="row row-table-header">
+                <div class="col-xs-1 checkbox-selectall">
+                    <input class="form-control checkbox-size-selectall" type="checkbox" id="chk_all" data-bind="checked: selectAllIsSelected, click: selectAllRows" />
+                </div>
+                <div class="col-xs-10 col-filename">
+                    <a href="javascript:void(0)" class="sort" data-bind="click: sort({ afterSave: false, sortKey: 'filename', numeric: false })"><b>Description</b> <div class="glyphicon glyphicon-sort"></div></a>
+                </div>
+                <div id="sort-right" class="col-right">
+                    <div class="col-xs-1 col-islinked ">
+                        <a href="javascript:void(0)" data-bind="click: sort({ afterSave: false, sortKey: 'islinked', numeric: true })" class="glyphicon glyphicon-link"></a>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
-    <div id="no-rows-message" class="no-rows-message" style="display: none"><h2>Profile contains no media</h2></div>
-    <div id="table-detail" class="table-detail-container container-height" style="display: none">
-        <table data-bind="tableUpdated: filesTable" class="table table-striped table-bordered table-hover" id="tblFile">
-            <thead style="display: none"><tr><th></th><th></th><th></th><th></th></tr></thead> <!-- empty table header -->
-
-            <tbody data-bind="foreach: filesTable, tableRender: filesTable">
-                <tr data-bind="attr: { id: 'row_' + id }">
-                    <td class="col-selectall"><input type="checkbox" data-bind="attr: { id: 'chk_' + id }, checked: isselected, click: $parent.selectFile" /></td>
-                    <!-- ko if: !$parent.isAudio() -->
-                    <td class="col-thumbnail">
-                        <a href="#" data-toggle="tooltip" title="Preview it" data-bind="attr: { id: 'thumb_' + id }, click: $parent.showPreview">
-                            <img alt="" width="40" height="40" data-bind="attr: { src: thumbnail }">
-                        </a>
-                    </td>
-                    <!-- /ko -->
-                    <!-- ko if: $parent.isAudio() -->
-                    <!-- ko if: isplaying -->
-                    <td class="col-thumbnail"><a href="javascript:void(0)" data-bind="attr: { id: 'audio_' + id }, click: $parent.showPreview, css: 'glyphicon glyphicon-pause text-success'"></a></td>
-                    <!-- /ko -->
-                    <!-- ko if: ispaused -->
-                    <td class="col-thumbnail"><a href="javascript:void(0)" data-bind="attr: { id: 'audio_' + id }, click: $parent.showPreview, css: 'glyphicon glyphicon-play text-success'"></a></td>
-                    <!-- /ko -->
-                    <!-- ko if: !ispaused && !isplaying -->
-                    <td class="col-thumbnail"><a href="javascript:void(0)" data-bind="attr: { id: 'audio_' + id }, click: $parent.showPreview, css: 'glyphicon glyphicon-play'"></a></td>
-                    <!-- /ko -->
-                    <!-- /ko -->
-                    <td class="col-filename" data-bind="text: filename"></td>
-                    <!-- ko if: islinked -->
-                    <td class="col-islinked"><span class="glyphicon glyphicon-ok"></span></td>
-                    <!-- /ko -->
-                    <!-- ko if: !islinked -->
-                    <td class="col-islinked"></td>
-                    <!-- /ko -->
-                </tr>
-            </tbody>
-        </table>
+        <div id="no-rows-message" class="no-rows-message" style="display: none"><h2>Profile contains no media</h2></div>
+        <div id="table-detail" class="table-detail-container container-height" style="display: none">
+            <table data-bind="tableUpdated: filesTable" class="table table-striped table-hover" id="tblFile">
+                <tbody data-bind="foreach: filesTable, tableRender: filesTable">
+                    <tr data-bind="attr: { id: 'row_' + id }">
+                        <td class="col-checkbox"><input type="checkbox" class="form-control checkbox-size" data-bind="attr: { id: 'chk_' + id }, checked: isselected, click: $parent.selectFile" /></td>
+                        <!-- ko if: !$parent.isAudio() -->
+                        <td class="col-thumbnail">
+                            <a href="#" data-toggle="tooltip" title="Preview it" data-bind="attr: { id: 'thumb_' + id }, click: $parent.showPreview">
+                                <img alt="" width="40" height="40" data-bind="attr: { src: thumbnail }">
+                            </a>
+                        </td>
+                        <!-- /ko -->
+                        <!-- ko if: $parent.isAudio() -->
+                        <!-- ko if: isplaying -->
+                        <td class="col-thumbnail"><a href="javascript:void(0)" data-bind="attr: { id: 'audio_' + id }, click: $parent.showPreview, css: 'glyphicon glyphicon-pause'"></a></td>
+                        <!-- /ko -->
+                        <!-- ko if: ispaused -->
+                        <td class="col-thumbnail"><a href="javascript:void(0)" data-bind="attr: { id: 'audio_' + id }, click: $parent.showPreview, css: 'glyphicon glyphicon-play play-paused'"></a></td>
+                        <!-- /ko -->
+                        <!-- ko if: !ispaused && !isplaying -->
+                        <td class="col-thumbnail"><a href="javascript:void(0)" data-bind="attr: { id: 'audio_' + id }, click: $parent.showPreview, css: 'glyphicon glyphicon-play'"></a></td>
+                        <!-- /ko -->
+                        <!-- /ko -->
+                        <td class="col-filename" data-bind="text: filename"></td>
+                        <!-- ko if: islinked -->
+                        <td class="col-islinked"><span class="glyphicon glyphicon-ok"></span></td>
+                        <!-- /ko -->
+                        <!-- ko if: !islinked -->
+                        <td class="col-islinked"></td>
+                        <!-- /ko -->
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
  @{Html.EndForm();}

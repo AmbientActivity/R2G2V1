@@ -74,7 +74,7 @@ function DisableScreen() {
 
             // buttons
             var cmdDelete = $("#delete");
-            var cmdAddShared = $("#add-shared");
+            var cmdAdd = $("#add");
 
             // audio player
             var audioPlayer = $("#audio-player");
@@ -83,8 +83,9 @@ function DisableScreen() {
             // video player
             var videoPlayer = $("#video-player");
 
-            var sortDescending = false;
+            var sortDescending = true; // will get flippedd to false upon initial load
             var currentSortKey = "filename";
+            var isBinding = true;
 
             var lists = {
                 FileList: [],
@@ -100,12 +101,13 @@ function DisableScreen() {
                     $("#table-header").show();
                     $("#table-detail").show();
                     $("#uploadbutton").removeAttr("disabled");
-                    cmdAddShared.removeAttr("disabled");
+                    cmdAdd.removeAttr("disabled");
 
                     ko.bindingHandlers.tableUpdated = {
                         update: function (element, valueAccessor, allBindings) {
                             ko.unwrap(valueAccessor());
                             $("#txtSearchFilename").focus();
+                            isBinding = false;
                         }
                     }
 
@@ -138,15 +140,15 @@ function DisableScreen() {
                                 tableDetailElement.show();
                                 noRowsMessage.hide();
 
-                                // determine there is table overflow (to cause a scrollbar)
+                                // determine if there is table overflow (to cause a scrollbar)
                                 // if so, increase the right margin of last column header 
-                                var isLinkededElement = $("#sort-islinked");
+                                var colRight = $("#sort-right");
 
                                 if (table.clientHeight > site.getMaxClientHeight) {
-                                    isLinkededElement.addClass("table-scrollbar");
+                                    colRight.addClass("table-scrollbar");
                                     tableDetailElement.addClass("container-height");
                                 } else {
-                                    isLinkededElement.removeClass("table-scrollbar");
+                                    colRight.removeClass("table-scrollbar");
                                     tableDetailElement.removeClass("container-height");
                                 }
 
@@ -234,21 +236,23 @@ function DisableScreen() {
                                 cmdDelete.attr("disabled", "disabled");
 
                             if (self.isSharable())
-                                cmdAddShared.show();
+                                cmdAdd.show();
                             else
-                                cmdAddShared.hide();
+                                cmdAdd.hide();
 
                             $("#txtSearchFilename").focus();
                         };
 
                         self.columns = ko.computed(function () {
                             var arr = [];
-                            arr.push({ title: "Name", sortable: true, sortKey: "filename", numeric: false });
-                            arr.push({ title: "Linked", sortable: true, sortKey: "islinked", numeric: true });
+                            arr.push({ sortKey: "filename", numeric: false });
+                            arr.push({ sortKey: "islinked", numeric: true });
                             return arr;
                         });
 
                         self.sort = function (header) {
+                            if (isBinding) return;
+
                             var afterSave = typeof header.afterSave != "undefined" ? header.afterSave : false;
                             var sortKey;
 
@@ -461,10 +465,10 @@ function DisableScreen() {
                             var cssPause = "glyphicon-pause";
 
                             if (success) {
-                                cssPlay = cssPlay.concat(" text-success");
-                                cssPause = cssPause.concat(" text-success");
+                                cssPlay = cssPlay.concat(" play-paused");
+                                cssPause = cssPause.concat(" play-paused");
                             } else {
-                                glyphElement.removeClass("text-success");
+                                glyphElement.removeClass("play-paused");
                             }
 
                             if (paused) {
@@ -619,7 +623,7 @@ function DisableScreen() {
                         }
 
                         self.highlightSelectedRows = function () {
-                            var rows = tblFile.find("tr:gt(0)");
+                            var rows = tblFile.find("tr");
                             rows.each(function () {
                                 $(this).removeClass("highlight");
                             });

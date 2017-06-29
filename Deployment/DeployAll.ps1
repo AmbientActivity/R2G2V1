@@ -33,6 +33,9 @@ $pathEventLogExporter = "EventLogExporter\"
 $pathVideoCaptureFileCleanup = "VideoCaptureFileCleanup\"
 $pathBackup = "Backup\"
 
+# thumbnail generator
+$pathThumbnailGenerator = $pathDeployments + "Install\Thumbnail\"
+
 # install scripts
 $pathInstallRoot = $pathDeployments + "Install\"
 
@@ -95,8 +98,6 @@ Try
 
     # build the solution
     Write-Host -ForegroundColor yellow "`n--- Build Solution ---`n”
-
-    # Write-Host "--- Functionality temporarily removed ---`n” -NoNewline
 
     # register Build-VisualStudioSolution powershell module
     $path = "C:\Users\$env:USERNAME\Documents\WindowsPowerShell\Modules\Build-VisualStudioSolution\"
@@ -352,6 +353,24 @@ Try
     New-Item -ItemType Directory -Force -Path $path | Out-Null
     Copy-Item C:\Users\$env:USERNAME\Source\Repos\R2G2V1\Service\Keebee.AAT.KeepIISAliveService\bin\Release\* $path -recurse -Force
     Write-Host "done.”
+
+    # -------------------- Thumbnail Generation --------------------
+
+    # thumbnails
+    Write-Host "Deploying Thumbnail Generator...” -NoNewline
+
+    # thumbnail installation path
+    $path = $pathThumbnailGenerator + $pathVersion
+    If(test-path $path)
+    {
+        Remove-Item $path -recurse -Force
+    }
+    New-Item -ItemType Directory -Force -Path $path | Out-Null
+    Copy-Item C:\Users\$env:USERNAME\Source\Repos\R2G2V1\Thumbnail\Keebee.AAT.GenerateThumbnails\bin\Release\* $path -recurse -Force
+
+    Write-Host "done.”
+
+    # -------------------- Documentation --------------------
 
     # documentation
     Write-Host "Deploying Setup Documentation...” -NoNewline

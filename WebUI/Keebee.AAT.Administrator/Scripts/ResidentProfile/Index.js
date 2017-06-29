@@ -85,6 +85,7 @@ function DisableScreen() {
 
             var sortDescending = false;
             var currentSortKey = "filename";
+            var primarySortKey = "filename";
             var isBinding = true;
 
             var lists = {
@@ -273,6 +274,7 @@ function DisableScreen() {
                                     fileArray: self.files(),
                                     columns: self.columns(),
                                     sortKey: sortKey,
+                                    primaryKey: primarySortKey,
                                     descending: sortDescending
                                 }));
                         };

@@ -15,6 +15,7 @@ Try
     invoke-expression -Command $installPathData\SeedData.ps1
     invoke-expression -Command $installPathData\SeedPublicProfile.ps1
     invoke-expression -Command $installPathData\CreatePreloadedResidents.ps1
+    invoke-expression -Command $installPath\CreateThumbnails.ps1
     invoke-expression -Command $installPath\InstallServices.ps1
 
     Write-Host -ForegroundColor green "`nInstallation complete.`n"

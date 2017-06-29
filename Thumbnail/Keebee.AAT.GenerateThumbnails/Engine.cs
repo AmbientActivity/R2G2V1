@@ -23,11 +23,12 @@ namespace Keebee.AAT.GenerateThumbnails
         {
             try
             {
+#if DEBUG
                 Console.WriteLine("---------------------");
                 Console.WriteLine("Generating Thumbnails");
                 Console.WriteLine("---------------------");
                 Console.WriteLine();
-
+#endif
                 var files = _mediaFilesClient.Get()
                     .SelectMany(x => x.Files)
                     .Where(x => x.FileType != "db")

@@ -21,6 +21,7 @@
 
             var sortDescending = false;
             var currentSortKey = "filename";
+            var primarySortKey = "filename";
             var isBinding = true;
 
             var lists = {
@@ -186,6 +187,7 @@
                                     fileArray: self.files(),
                                     columns: self.columns(),
                                     sortKey: sortKey,
+                                    primaryKey: primarySortKey,
                                     descending: sortDescending
                                 }));
                         };

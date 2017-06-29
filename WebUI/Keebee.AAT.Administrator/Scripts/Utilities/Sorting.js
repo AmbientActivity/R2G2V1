@@ -5,15 +5,14 @@
  * Date: 2017-06
  */
 
-/* column array must contain a field named 'filename' */
-
 ; (function ($) {
     utilities.sorting = {
         sortFies: function (options) {
             var config = {
                 fileArray: [],
                 columns: [],
-                sortKey: "filename",
+                sortKey: "",
+                primaryKey: "",
                 descending: true
             };
 
@@ -36,7 +35,7 @@
 
             function sortBoolean(a, b) {
                 var sortByVal = function () {
-                    return a.filename === b.filename ? 0 : (a.filename < b.filename ? -1 : 1);
+                    return a[config.primaryKey] === b[config.primaryKey] ? 0 : (a[config.primaryKey] < b[config.primaryKey] ? -1 : 1);
                 }
 
                 if (config.descending) {
@@ -70,11 +69,11 @@
                 if (config.descending) {
                     return a[config.sortKey] > b[config.sortKey]
                         ? -1
-                        : a[config.sortKey] < b[config.sortKey] || a.filename > b.filename ? 1 : 0;
+                        : a[config.sortKey] < b[config.sortKey] || a[config.primaryKey] > b[config.primaryKey] ? 1 : 0;
                 } else {
                     return a[config.sortKey] < b[config.sortKey]
                         ? -1
-                        : a[config.sortKey] > b[config.sortKey] || a.filename > b.filename ? 1 : 0;
+                        : a[config.sortKey] > b[config.sortKey] || a[config.primaryKey] > b[config.primaryKey] ? 1 : 0;
                 }
             }
 
@@ -85,7 +84,7 @@
                         ? -1
                         : a[config.sortKey].toString().toLowerCase() <
                         b[config.sortKey].toString().toLowerCase() ||
-                        a.filename.toLowerCase() > b.filename.toLowerCase()
+                        a[config.primaryKey].toLowerCase() > b[config.primaryKey].toLowerCase()
                         ? 1
                         : 0;
                 } else {
@@ -94,7 +93,7 @@
                         ? -1
                         : a[config.sortKey].toString().toLowerCase() >
                         b[config.sortKey].toString().toLowerCase() ||
-                        a.filename.toLowerCase() > b.filename.toLowerCase()
+                        a[config.primaryKey].toLowerCase() > b[config.primaryKey].toLowerCase()
                         ? 1
                         : 0;
                 };

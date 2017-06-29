@@ -146,7 +146,7 @@
                             } else {
                                 sortKey = currentSortKey;
                             }
-
+                            //return utilities.sorting.sortFiles();
                             $(self.columns()).each(function (index, value) {
                                 if (value.sortKey === sortKey) {
                                     self.residents.sort(function (a, b) {

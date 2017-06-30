@@ -95,7 +95,7 @@
  
                                         chkBeaconWatcher.prop("checked", (config.IsInstalledBeaconWatcherService === 1));
                                         chkVideoCapture.prop("checked", (config.IsInstalledVideoCaptureService === 1));
-                                        cmdSave.attr("disabled", "disabled");
+                                        cmdSave.prop("disabled", true);
 
                                         if (beaconServiceHasChanged)
                                             window.location.reload();                               

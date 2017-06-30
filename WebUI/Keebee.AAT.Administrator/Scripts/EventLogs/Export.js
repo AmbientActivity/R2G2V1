@@ -40,9 +40,9 @@
 
             function validateInput() {
                 if (dtDate.val() === "")
-                    cmdExport.attr("disabled", "disabled");
+                    cmdExport.prop("disabled", true);
                 else {
-                    cmdExport.removeAttr("disabled");
+                    cmdExport.prop("disabled", false);
                     initializeExportLinkButton();
                 }
             }

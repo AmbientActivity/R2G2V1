@@ -35,7 +35,7 @@
 
                     $("#loading-container").hide();
                     $("#tblFile").show();
-                    $("#add-shared").removeAttr("disabled");
+                    $("#add").prop("disabled", false);
 
                     ko.bindingHandlers.tableUpdated = {
                         update: function (element, valueAccessor, allBindings) {
@@ -262,11 +262,12 @@
                         });
 
                         self.showLinkFromSharedLibarayDialog = function () {
+                            $("body").css("cursor", "progress");
                             var title = "<span class='glyphicon glyphicon-link' style='color: #fff'></span>";
                             var mediaPathTypeDesc = self.mediaPathType().shortdescription;
 
                             $.get(site.url + "SystemProfile/GetSharedLibarayLinkView/", 
-                                { mediaPathTypeId: self.selectedMediaPathType() })
+                                { mediaPathTypeId: self.selectedMediaPathType() }, false)
                                 .done(function (message) {
                                     if (message.length === 0) {
                                         var hasHave = "has";
@@ -276,7 +277,7 @@
                                         BootstrapDialog.show({
                                             title: title + " Add <b>" + mediaPathTypeDesc + "</b> From Shared Library",
                                             message: $("<div></div>").append("All available " + mediaPathTypeDesc + " " + hasHave + " already been added to the system profile."),
-
+                                            onshown: function () { $("body").css("cursor", "default"); },
                                             closable: false,
                                             buttons: [
                                                 {
@@ -671,10 +672,10 @@
                             var selected = self.files()
                                 .filter(function (value) { return value.isselected; });
 
-                            cmdDelete.attr("disabled", "disabled");
+                            cmdDelete.prop("disabled", true);
                             if (selected.length > 0) {
                                 if (selected.length < self.filteredFilesBySelection().length) {
-                                    cmdDelete.removeAttr("disabled");
+                                    cmdDelete.prop("disabled", false);
                                 }
                             }
                         };

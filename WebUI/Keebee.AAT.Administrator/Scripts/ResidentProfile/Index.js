@@ -40,26 +40,26 @@ function CuteWebUI_AjaxUploader_OnSelect() {
 }
 
 function EnableScreen() {
-    $("#uploader-html-container").attr("hidden", "hidden");
-    $("#lnkGoBack").removeAttr("hidden");
-    $("#lblGoBackDisabled").attr("hidden", "hidden");
-    $("#txtSearchFilename").removeAttr("disabled");
-    $("#uploadbutton").removeAttr("disabled");
-    $("select").removeAttr("disabled");
-    $("#main-menu").removeAttr("hidden");
-    $("#menu-login").removeAttr("hidden");
+    $("#uploader-html-container").prop("hidden", true);
+    $("#lnkGoBack").prop("hidden", false);
+    $("#lblGoBackDisabled").prop("hidden", true);
+    $("#txtSearchFilename").prop("disabled", false);
+    $("#uploadbutton").prop("disabled", false);
+    $("select").prop("disabled", false);
+    $("#main-menu").prop("hidden", false);
+    $("#menu-login").prop("hidden", false);
 }
 
 function DisableScreen() {
-    $("#uploader-html-container").removeAttr("hidden");
-    $("#lnkGoBack").attr("hidden", "hidden");
-    $("#lblGoBackDisabled").removeAttr("hidden");
-    $("#txtSearchFilename").attr("disabled", "disabled");
-    $("#uploadbutton").attr("disabled", "disabled");
-    $("#delete").attr("hidden", "hidden");
-    $("select").attr("disabled", "disabled");
-    $("#main-menu").attr("hidden", "hidden");
-    $("#menu-login").attr("hidden", "hidden");
+    $("#uploader-html-container").prop("hidden", false);
+    $("#lnkGoBack").prop("hidden", true);
+    $("#lblGoBackDisabled").prop("hidden", false);
+    $("#txtSearchFilename").prop("disabled", true);
+    $("#uploadbutton").prop("disabled", true);
+    $("#delete").prop("hidden", true);
+    $("select").prop("disabled", true);
+    $("#main-menu").prop("hidden", true);
+    $("#menu-login").prop("hidden", true);
 }
 
 ; (function ($) {
@@ -231,10 +231,7 @@ function DisableScreen() {
                             var selected = self.files()
                                 .filter(function (value) { return value.isselected; });
 
-                            if (selected.length > 0)
-                                cmdDelete.removeAttr("disabled");
-                            else
-                                cmdDelete.attr("disabled", "disabled");
+                            cmdDelete.prop("disabled", (selected.length === 0));
 
                             if (self.isSharable())
                                 cmdAdd.show();

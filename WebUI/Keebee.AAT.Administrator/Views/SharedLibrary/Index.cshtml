@@ -27,9 +27,11 @@
 <input id="mediaPathTypeId" name="mediaPathTypeId" type="hidden" value="@Model.SelectedMediaPathType" />
 
 @{Html.BeginForm();}
+
 <div id="uploader-html-container" hidden="hidden">
     @Html.Raw(@Model.UploaderHtml)
 </div>
+
 <div class="panel panel-default panel-no-body">
     <div class="panel-heading panel-heading-controls">
         <ul class="nav nav-pills">
@@ -46,7 +48,7 @@
                 <label>Total:</label> <span data-bind="text: totalFilteredFiles()"></span>
             </li>
             <li>
-                <button class="btn btn-default" id="uploadbutton" onclick="return false;" disabled>
+                <button class="btn btn-primary" id="uploadbutton" onclick="return" false;" disabled>
                     Add
                 </button>
             </li>

@@ -13,7 +13,7 @@
             // buttons
             var cmdEdit = $("#edit");
             var cmdDelete = $("#delete");
-            var cmdActivate = $("#activate");
+
             // active config
             var activeConfig = {};
             
@@ -22,7 +22,7 @@
                 ConfigDetailList: []
             };
 
-            cmdDelete.attr("disabled", "disabled");
+            cmdDelete.prop("disabled", false);
 
             $.get(site.url + "PhidgetConfig/GetData/")
                 .done(function (data) {
@@ -536,18 +536,15 @@
 
                             // activate  button
                             //if (self.activeConfig() === configId || detailCount === 0) {
-                            //    cmdActivate.attr("disabled", "disabled");
+                            //    $("#activate").prop("disabled", true);
                             //} else {
-                            //    cmdActivate.removeAttr("disabled");
+                            //    $("#activate").prop("disabled", false);
                             //}
 
                             // COMMENTED - allow configuration to be activated at any time
 
                             // delete button
-                            if (!self.canDeleteConfig(configId))
-                                cmdDelete.attr("disabled", "disabled");
-                            else
-                                cmdDelete.removeAttr("disabled");
+                            cmdDelete.prop("disabled", !self.canDeleteConfig(configId));
                         };
 
                         self.canDeleteConfig = function (id) {

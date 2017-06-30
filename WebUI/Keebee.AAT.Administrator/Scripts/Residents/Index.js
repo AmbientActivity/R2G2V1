@@ -40,7 +40,7 @@
                     $("#loading-container").hide();
                     $("#table-header").show();
                     $("#table-detail").show();
-                    $("#add-resident").removeAttr("disabled");
+                    $("#add-resident").prop("disabled", false);
 
                     ko.bindingHandlers.tableUpdated = {
                         update: function (element, valueAccessor, allBindings) {

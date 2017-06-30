@@ -46,13 +46,6 @@ namespace Keebee.AAT.Administrator.Controllers
 
             using (var uploader = new MvcUploader(System.Web.HttpContext.Current))
             {
-                uploader.UploadUrl = Response.ApplyAppPathModifier("~/UploadHandler.ashx");
-                uploader.Name = "myuploader";
-                uploader.AllowedFileExtensions = SharedLibraryRules.GetAllowedExtensions(mediaPathTypeId);
-                uploader.MultipleFilesUpload = true;
-                uploader.InsertButtonID = "uploadbutton";
-                vm.UploaderHtml = uploader.Render();
-
                 // GET:
                 if (string.IsNullOrEmpty(myuploader))
                     return View(vm);

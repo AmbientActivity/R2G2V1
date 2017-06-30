@@ -323,7 +323,6 @@
                                             label: "Cancel",
                                             action: function (dialog) {
                                                 dialog.close();
-                                                reject();
                                             }
                                         }, {
                                             label: "Yes, Delete",
@@ -346,7 +345,7 @@
                                                 })
                                                 .catch(function () {
                                                     dialog.close();
-                                                    reject();
+                                                    reject(dialog);
                                                 });
                                             }
                                         }

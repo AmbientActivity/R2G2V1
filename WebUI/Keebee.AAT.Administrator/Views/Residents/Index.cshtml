@@ -63,7 +63,7 @@
                         <th data-bind="click: $parent.sort({ sortKey: 'allowvideocapturing', boolean: true }), attr: { id: 'resident-col-' + sortKey }, css: cssClass"><a href="#"><span class="glyphicon glyphicon-facetime-video glyphicon-resident"></span></a></th>
                         <!-- /ko -->
                         <!-- ko if: sortKey !== 'allowvideocapturing' -->
-                        <th data-bind="click: $parent.sort({ sortKey: 'allowvideocapturing', boolean: true }), attr: { id: 'resident-col-' + sortKey, boolean: true }, css: cssClass"><a href="#" data-bind="text: title"></a></th>
+                        <th data-bind="click: $parent.sort, attr: { id: 'resident-col-' + sortKey, boolean: true }, css: cssClass"><a href="#" data-bind="text: title"></a></th>
                         <!-- /ko -->
                         <!-- /ko -->
                         <th class="col-glyphicon"></th>

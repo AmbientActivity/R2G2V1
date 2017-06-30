@@ -8,7 +8,7 @@
 var site = (function () {
     var keebeeUrl = "/Keebee.AAT.Administrator/";
     var keebeeOperationsUrl = "/Keebee.AAT.Operations/api/";
-    var maxClientHeight = 500;   // need this value to determine if scrollbar needs to be shown
+    var maxClientHeight = 550;   // need this value to determine if scrollbar needs to be shown
 
     var self = {
         getUrl: function() {

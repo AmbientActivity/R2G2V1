@@ -385,15 +385,11 @@ thead {
     width: 60px;
     text-align: center;
 }
-.col-capturable-row {
-    width: 30px;
-    text-align: center;
-}
 .col-date {
-    width: 130px;
+    width: 110px;
 }
 .col-date-row {
-    width: 100px;
+    width: 90px;
 }
 
 /* font-awesome */

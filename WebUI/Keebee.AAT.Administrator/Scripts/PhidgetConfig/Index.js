@@ -307,6 +307,7 @@
                         };
 
                         self.showConfigEditDialog = function (id) {
+                            $("body").css("cursor", "progress");
                             var title = "<span class='glyphicon glyphicon-pencil'></span>";
 
                             if (id > 0) {
@@ -322,6 +323,7 @@
                                         title: title,
                                         message: $("<div></div>").append(message),
                                         onshown: function () {
+                                            $("body").css("cursor", "default");
                                             $("#txtDescription").focus();
                                         },
                                         closable: false,
@@ -525,10 +527,12 @@
 
                             var configId = self.selectedConfig();
 
+                            // COMMENTED - allow configuration to be activated at any time
+
                             // count of details
-                            var detailCount = self.configDetails().filter(function (value) {
-                                return value.configid === configId;
-                            }).length;
+                            //var detailCount = self.configDetails().filter(function (value) {
+                            //    return value.configid === configId;
+                            //}).length;
 
                             // activate  button
                             //if (self.activeConfig() === configId || detailCount === 0) {
@@ -536,6 +540,8 @@
                             //} else {
                             //    cmdActivate.removeAttr("disabled");
                             //}
+
+                            // COMMENTED - allow configuration to be activated at any time
 
                             // delete button
                             if (!self.canDeleteConfig(configId))

@@ -8,7 +8,7 @@
 <h3 class="page-banner"><img class="img-circle" src="@Model.ProfilePicture" alt="" width="60" height="60" /> Manage profile media for <i><b>@Model.FullName</b></i></h3>
 
 <div class="pull-right back-to-residents-container">
-    <a id="lnkGoBack" class="link-back-to-residents" href="#" onclick="location.href =
+    <a id="lnkGoBack" href="javascript:void(0)" onclick="location.href =
     '@Url.Action("Index", "Residents",
          new
          {
@@ -18,7 +18,7 @@
              @lastname = @Model.LastNameSearch,
              @sortcolumn = @Model.SortColumn,
              @sortdescending = @Model.SortDescending
-         })'"><span class="glyphicon glyphicon-chevron-left"></span>Back</a>
+         })'"><h4><span class="glyphicon glyphicon-chevron-left"></span>&nbsp;&nbsp;&nbsp;<b>Back</b></h4></a>
 </div>
 
 <script type="text/javascript">
@@ -62,13 +62,13 @@
             </li>
             <li>
                 <div class="dropdown">
-                    <button id="add" class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" disabled>
+                    <button id="add" class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown" disabled>
                         Add
                         <span class="caret"></span>
                     </button>
                     <ul class="dropdown-menu">
                         <li><a href="javascript:void(0)" id="add-shared" data-bind="click: showLinkFromSharedLibarayDialog">From Shared Library</a></li>
-                        <li><a href="javascript:void(0)" id="uploadbutton" onclick="return" false;">Upload</a></li>
+                        <li><a href="javascript:void(0)" id="uploadbutton" onclick="return" false;">From Your Computer</a></li>
                     </ul>
                 </div>
             </li>
@@ -106,7 +106,7 @@
                         <td class="col-checkbox"><input type="checkbox" class="form-control checkbox-size" data-bind="attr: { id: 'chk_' + id }, checked: isselected, click: $parent.selectFile" /></td>
                         <!-- ko if: !$parent.isAudio() -->
                         <td class="col-thumbnail">
-                            <a href="#" data-toggle="tooltip" title="Preview it" data-bind="attr: { id: 'thumb_' + id }, click: $parent.showPreview">
+                            <a href="javascript:void(0)" data-toggle="tooltip" title="Preview it" data-bind="attr: { id: 'thumb_' + id }, click: $parent.showPreview">
                                 <img alt="" width="40" height="40" data-bind="attr: { src: thumbnail }">
                             </a>
                         </td>
@@ -122,7 +122,7 @@
                         <td class="col-thumbnail"><a href="javascript:void(0)" data-bind="attr: { id: 'audio_' + id }, click: $parent.showPreview, css: 'glyphicon glyphicon-play'"></a></td>
                         <!-- /ko -->
                         <!-- /ko -->
-                        <td class="col-filename" data-bind="text: filename"></td>
+                        <td class="col-filename" data-bind="click: $parent.resetFocus, text: filename"></td>
                         <!-- ko if: islinked -->
                         <td class="col-checkmark"><span class="glyphicon glyphicon-ok"></span></td>
                         <!-- /ko -->

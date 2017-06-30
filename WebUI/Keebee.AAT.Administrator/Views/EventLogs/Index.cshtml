@@ -29,14 +29,14 @@
             <thead>
             <tr>
                 <!-- ko foreach: columns -->
-                <th data-bind="click: $parent.sort, attr: { id: 'eventlog-col-' + sortKey } "><a href="#" data-bind="text: title"></a></th>
+                <th data-bind="click: $parent.sort, attr: { id: 'eventlog-col-' + sortKey } "><a href="javascript:void(0)" data-bind="text: title"></a></th>
                 <!-- /ko -->
             </tr>
             </thead>
 
             <tbody data-bind="foreach: eventLogsTable">
             <tr data-bind="click: $parent.highlightRow, attr: {id: 'row_' +  streamid}">
-                <td><a href="#" data-bind="text: filename, click: download"></a></td>
+                <td><a href="javascript:void(0)" data-bind="text: filename, click: download"></a></td>
                 <td data-bind="text: path"></td>
                 <td data-bind="text: filetype"></td>
                 <td data-bind="text: filesize"></td>

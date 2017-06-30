@@ -46,11 +46,7 @@
             $(config.columns).each(function (index, value) {
                 if (value.sortKey === config.sortKey) {
                     config.fileArray.sort(function (a, b) {
-                        var isboolean = false;
-                        if (typeof value.boolean !== "undefined") {
-                            isboolean = value.boolean;
-                        }
-                        if (!isboolean) {
+                        if (!value.boolean) {
                             return sortTextOrNumber(a, b);
                         } else {
                             return sortBoolean(a, b);

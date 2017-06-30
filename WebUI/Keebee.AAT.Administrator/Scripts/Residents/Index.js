@@ -195,13 +195,18 @@
                                 sortKey = currentSortKey;
                             }
 
+                            var isboolean = false;
+                            if (typeof header.boolean !== "undefined") {
+                                isboolean = header.boolean;
+                            }
                             self.residents(utilities.sorting.sortArray(
                                 {
                                     fileArray: self.residents(),
                                     columns: self.columns(),
                                     sortKey: sortKey,
                                     primarySortKey: primarySortKey,
-                                    descending: sortDescending
+                                    descending: sortDescending,
+                                    boolean: isboolean
                                 }));
                         };
 
@@ -225,6 +230,7 @@
                         });
 
                         self.showEditDialog = function (row) {
+                            $("body").css("cursor", "progress");
                             $("#edit_" + row.id).tooltip("hide");
 
                             var id = (typeof row.id !== "undefined" ? row.id : 0);
@@ -243,12 +249,13 @@
                                 self.selectedResident([]);
                             }
 
-                            $.get(site.url + "Residents/GetResidentEditView/" + id)
+                            $.get(site.url + "Residents/GetResidentEditView/" + id, false)
                                 .done(function (message) {
                                     BootstrapDialog.show({
                                         title: title,
                                         message: $("<div></div>").append(message),
                                         onshown: function () {
+                                            $("body").css("cursor", "default");
                                             $("#txtFirstName").focus();
                                         },
                                         closable: false,

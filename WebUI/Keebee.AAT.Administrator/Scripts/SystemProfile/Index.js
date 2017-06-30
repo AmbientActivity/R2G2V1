@@ -169,11 +169,16 @@
                             var afterSave = typeof header.afterSave != "undefined" ? header.afterSave : false;
                             var sortKey;
 
+                            var isboolean = false;
+                            if (typeof header.boolean !== "undefined") {
+                                isboolean = header.boolean;
+                            }
+
                             if (!afterSave) {
                                 sortKey = header.sortKey;
 
                                 if (sortKey !== currentSortKey) {
-                                    sortDescending = false;
+                                    sortDescending = !isboolean;
                                 } else {
                                     sortDescending = !sortDescending;
                                 }
@@ -188,7 +193,8 @@
                                     columns: self.columns(),
                                     sortKey: sortKey,
                                     primarySortKey: primarySortKey,
-                                    descending: sortDescending
+                                    descending: sortDescending,
+                                    boolean: isboolean
                                 }));
                         };
 

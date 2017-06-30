@@ -266,13 +266,18 @@ function DisableScreen() {
                                 sortKey = currentSortKey;
                             }
 
+                            var isboolean = false;
+                            if (typeof header.boolean !== "undefined") {
+                                isboolean = header.boolean;
+                            }
                             self.files(utilities.sorting.sortArray(
                                 {
                                     fileArray: self.files(),
                                     columns: self.columns(),
                                     sortKey: sortKey,
                                     primarySortKey: primarySortKey,
-                                    descending: sortDescending
+                                    descending: sortDescending,
+                                    boolean: isboolean
                                 }));
                         };
 

@@ -10,7 +10,7 @@
         <h3 class="page-banner-row">Resident Manager</h3>
     </div>
     <div class="add-resident-button">
-        <h3><input id="add-resident" type="button" class="btn btn-default" value="Add Resident" data-bind="click: showEditDialog" disabled /></h3>
+        <h3><input id="add-resident" type="button" class="btn btn-primary" value="Add Resident" data-bind="click: showEditDialog" disabled /></h3>
     </div>
 </div>
 
@@ -109,9 +109,9 @@
                         <!-- /ko -->
                         <!-- /ko -->
                         <td class="col-date-row" data-bind="text: moment(dateupdated).format('ll')"></td>
-                        <td class="col-glyphicon"><a href="#" data-toggle="tooltip" title="Manage resident media" data-bind="attr: { id: 'profile_' + id }, click: $parent.editProfile"><i class="glyphicon glyphicon-cd glyphicon-resident"></i></a></td>
-                        <td class="col-glyphicon"><a href="#" data-toggle="tooltip" title="Edit resident details" data-bind="attr: { id: 'edit_' + id }, click: $parent.showEditDialog"><i class="glyphicon glyphicon-pencil glyphicon-resident"></i></a></td>
-                        <td class="col-glyphicon"><a href="#" data-toggle="tooltip" title="Delete resident" data-bind="attr: { id: 'delete_' + id }, click: $parent.showDeleteDialog"><i class="glyphicon glyphicon-trash glyphicon-resident"></i></a></td>
+                        <td class="col-glyphicon"><a href="javascript:void(0)" data-toggle="tooltip" title="Manage resident media" data-bind="attr: { id: 'profile_' + id }, click: $parent.editProfile"><i class="glyphicon glyphicon-cd glyphicon-resident"></i></a></td>
+                        <td class="col-glyphicon"><a href="javascript:void(0)" data-toggle="tooltip" title="Edit resident details" data-bind="attr: { id: 'edit_' + id }, click: $parent.showEditDialog"><i class="glyphicon glyphicon-pencil glyphicon-resident"></i></a></td>
+                        <td class="col-glyphicon"><a href="javascript:void(0)" data-toggle="tooltip" title="Delete resident" data-bind="attr: { id: 'delete_' + id }, click: $parent.showDeleteDialog"><i class="glyphicon glyphicon-trash glyphicon-resident"></i></a></td>
                     </tr>
                 </tbody>
             </table>

@@ -139,6 +139,9 @@ video {
 .row {
     padding: 5px;
 }
+.row-table-header {
+    margin: 0;
+}
 .row-video-capture-edit {
     padding-bottom: 10px;
 }
@@ -150,12 +153,9 @@ video {
     padding: 0;
     margin-left: -11px;
 }
-.row-table-header {
-    margin: 0;
-}
-
-.row-controls {
+.row-config-controls {
     padding-left: 0;
+    margin-bottom: 5px;
 }
 .row-banner {
     margin-top: -12px;
@@ -256,13 +256,7 @@ thead {
 
 /* resident profile */
 .back-to-residents-container {
-    font-size: 16px;
-    margin: -30px 0 0 0;
-}
-.link-back-to-residents {
-    font-size: 16px;
-    font-weight: bold;
-    margin: -30px 0 0 0;
+    margin: -60px 5px 0 0;
 }
 .add-button-container {
     font-size: 16px;

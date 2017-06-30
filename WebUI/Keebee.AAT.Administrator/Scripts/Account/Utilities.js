@@ -7,7 +7,7 @@
 
 ; (function ($) {
 
-    account.utilities = {
+    utilities.account = {
         init: function () {
             var lnkChangePassword = $("#change-password");
             var cmdLogin = $("#login");
@@ -37,12 +37,14 @@
             };
 
             cmdLogin.click(function () {
-                $.get(site.url + "Account/GetLoginView")
+                $("body").css("cursor", "progress");
+                $.get(site.url + "Account/GetLoginView", false)
                     .done(function (message) {
                         BootstrapDialog.show({
                             title: "R2G2 Login",
                             message: $("<div></div>").append(message),
                             onshown: function () {
+                                $("body").css("cursor", "default");
                                 $("#txtPassword").focus();
                             },
                             closable: false,

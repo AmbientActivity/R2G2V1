@@ -270,13 +270,18 @@ function DisableScreen() {
                                 sortKey = currentSortKey;
                             }
 
+                            var isboolean = false;
+                            if (typeof value.boolean !== "undefined") {
+                                isboolean = header.boolean;
+                            }
                             self.files(utilities.sorting.sortArray(
                                 {
                                     fileArray: self.files(),
                                     columns: self.columns(),
                                     sortKey: sortKey,
                                     primarySortKey: primarySortKey,
-                                    descending: sortDescending
+                                    descending: sortDescending,
+                                    boolean: isboolean
                                 }));
                         };
 
@@ -591,9 +596,8 @@ function DisableScreen() {
                                 self.removeSelectedId(row.id);
 
                             self.highlightSelectedRows();
-                            enableDetail();
-
                             self.checkSelectAll(self.selectedIds().length === self.filteredFiles().length);
+                            enableDetail();
 
                             return true;
                         };
@@ -724,6 +728,10 @@ function DisableScreen() {
                                 .filter(function (value) {
                                     return value.id === self.selectedMediaPathType();
                                 })[0];
+                        }
+
+                        self.resetFocus = function () {
+                            enableDetail();
                         }
                     };
             });

@@ -275,7 +275,7 @@ function DisableScreen() {
                                     fileArray: self.files(),
                                     columns: self.columns(),
                                     sortKey: sortKey,
-                                    primaryKey: primarySortKey,
+                                    primarySortKey: primarySortKey,
                                     descending: sortDescending
                                 }));
                         };

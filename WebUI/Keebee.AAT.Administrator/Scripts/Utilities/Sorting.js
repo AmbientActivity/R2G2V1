@@ -14,21 +14,32 @@
                 fileArray: [],
                 columns: [],
                 sortKey: "",
-                primaryKey: "",
+                primarySortKey: "",
                 descending: true
             };
 
             $.extend(config, options);
              
             var sortPrimary = function (a, b, descending) {
-                if (!descending) {
-                    return a[config.primaryKey] === b[config.primaryKey]
-                        ? 0
-                        : (a[config.primaryKey] < b[config.primaryKey] ? -1 : 1);
+                var valuea;
+                var valueb;
+
+                if (isNaN(a[config.primarySortKey])) {
+                    valuea = a[config.primarySortKey].toString().toLowerCase();
+                    valueb = b[config.primarySortKey].toString().toLowerCase();
                 } else {
-                    return a[config.primaryKey] === b[config.primaryKey]
+                    valuea = a[config.primarySortKey];
+                    valueb = b[config.primarySortKey];
+                }
+
+                if (!descending) {
+                    return valuea === valueb
                         ? 0
-                        : (a[config.primaryKey] > b[config.primaryKey] ? -1 : 1);
+                        : (valuea < valueb ? -1 : 1);
+                } else {
+                    return valuea === valueb
+                        ? 0
+                        : (valuea > valueb ? -1 : 1);
                 }
             }
 
@@ -65,7 +76,7 @@
                         }
                     }
                 } else {
-                    if (boola === b[config.sortKey]) {
+                    if (boola === boolb) {
                         return sortPrimary(a, b, false);
                     } else {
                         if (boola === false) {

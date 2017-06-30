@@ -200,7 +200,7 @@
                                     fileArray: self.residents(),
                                     columns: self.columns(),
                                     sortKey: sortKey,
-                                    primaryKey: primarySortKey,
+                                    primarySortKey: primarySortKey,
                                     descending: sortDescending
                                 }));
                         };
@@ -381,6 +381,7 @@
                         self.highlightRow = function (row) {
                             var r = tblResident.find("#row_" + row.id);
                             $(r).addClass("highlight").siblings().removeClass("highlight");
+                            $("#txtSearchFirstName").focus();
                         };
 
                         self.getResidentDetailFromDialog = function () {

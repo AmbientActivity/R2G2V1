@@ -271,7 +271,7 @@ function DisableScreen() {
                                     fileArray: self.files(),
                                     columns: self.columns(),
                                     sortKey: sortKey,
-                                    primaryKey: primarySortKey,
+                                    primarySortKey: primarySortKey,
                                     descending: sortDescending
                                 }));
                         };
@@ -745,6 +745,10 @@ function DisableScreen() {
                                     return value.id === self.selectedMediaPathType();
                                 })[0];
                         };
+
+                        self.resetFocus = function () {
+                            enableDetail();
+                        }
                     };
                 });
         }

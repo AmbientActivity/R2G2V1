@@ -273,7 +273,7 @@ namespace Keebee.AAT.Administrator.Controllers
                     ProfilePicturePlaceholder = ResidentRules.GetProfilePicturePlaceholder(),
                     DateCreated = resident.DateCreated,
                     DateUpdated = resident.DateUpdated
-                }).OrderBy(x => x.Id);
+                }).OrderBy(x => x.FirstName);
 
             return list;
         }

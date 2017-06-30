@@ -271,7 +271,7 @@ function DisableScreen() {
                             }
 
                             var isboolean = false;
-                            if (typeof value.boolean !== "undefined") {
+                            if (typeof header.boolean !== "undefined") {
                                 isboolean = header.boolean;
                             }
                             self.files(utilities.sorting.sortArray(

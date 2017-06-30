@@ -45,7 +45,7 @@ function EnableScreen() {
     $("#lnkGoBack").prop("hidden", false);
     $("#lblGoBackDisabled").prop("hidden", true);
     $("#txtSearchFilename").prop("disabled", false);
-    $("#uploadbutton").prop("disabled", false);
+    $("#add").prop("disabled", false);
     $("select").prop("disabled", false);
     $("#main-menu").prop("hidden", false);
     $("#menu-login").prop("hidden", false);
@@ -56,7 +56,7 @@ function DisableScreen() {
     $("#lnkGoBack").prop("hidden", true);
     $("#lblGoBackDisabled").prop("hidden", false);
     $("#txtSearchFilename").prop("disabled", true);
-    $("#uploadbutton").prop("disabled", true);
+    $("#add").prop("disabled", true);
     $("select").prop("disabled", true);
     $("#main-menu").prop("hidden", true);
     $("#menu-login").prop("hidden", true);
@@ -100,8 +100,8 @@ function DisableScreen() {
                     $("#loading-container").hide();
                     $("#table-header").show();
                     $("#table-detail").show();
-                    cmdAdd.removeAttr("disabled");
-                    $("#uploadbutton").removeAttr("disabled");
+                    cmdAdd.prop("disabled", false);
+                    //$("#uploadbutton").prop("disabled", false);
 
                     ko.bindingHandlers.tableUpdated = {
                         update: function (element, valueAccessor, allBindings) {

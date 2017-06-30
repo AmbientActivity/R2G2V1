@@ -66,6 +66,7 @@
                         <th data-bind="click: $parent.sort, attr: { id: 'resident-col-' + sortKey, boolean: true }, css: cssClass"><a href="#" data-bind="text: title"></a></th>
                         <!-- /ko -->
                         <!-- /ko -->
+                        <th id="sort-right" class="col-date"><a href="#" data-bind="click: sort({ sortKey: 'dateupdated' })">Updated</a></th>
                         <th class="col-glyphicon"></th>
                         <th class="col-glyphicon"></th>
                     </tr>

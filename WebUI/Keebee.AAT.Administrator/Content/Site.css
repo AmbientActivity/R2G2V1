@@ -388,6 +388,9 @@ thead {
 .col-date {
     width: 110px;
 }
+.col-date-scrollbar {
+    width: 120px;
+}
 .col-date-row {
     width: 90px;
 }

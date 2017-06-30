@@ -79,10 +79,12 @@
                                 var colRight = $("#sort-right");
 
                                 if (table.clientHeight > site.getMaxClientHeight) {
-                                    colRight.addClass("table-scrollbar");
+                                    colRight.removeClass("col-date");
+                                    colRight.addClass("col-date-scrollbar");
                                     tableDetailElement.addClass("container-height");
                                 } else {
-                                    colRight.removeClass("table-scrollbar");
+                                    colRight.removeClass("col-date-scrollbar");
+                                    colRight.addClass("col-date");
                                     tableDetailElement.removeClass("container-height");
                                 }
 
@@ -147,12 +149,12 @@
                             arr.push({ title: "ID", sortKey: "id", cssClass: "col-id" });
                             arr.push({ title: "First Name", sortKey: "firstname", cssClass: "col-firstname" });
                             arr.push({ title: "Last Name", sortKey: "lastname", cssClass: "col-lastname" });
-                            arr.push({ title: "Gender", sortKey: "gender", cssClass: "col-gender", });
+                            arr.push({ title: "Gender", sortKey: "gender", cssClass: "col-gender" });
 
                             if (config.isVideoCaptureServiceInstalled === "1")
                                 arr.push({ title: "Capturable", sortKey: "allowvideocapturing", cssClass: "col-capturable", boolean: true });
 
-                            arr.push({ title: "Updated", sortKey: "dateupdated", cssClass: "col-date" });
+                            //arr.push({ title: "Updated", sortKey: "dateupdated", id: "sort-right", cssClass: "col-date col-right" });
                             return arr;
                         });
 

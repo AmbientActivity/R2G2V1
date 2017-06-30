@@ -131,7 +131,7 @@ function DisableScreen() {
 
                     // if there are no rows in the table, hide the table and display a message
                     var table = element.parentNode; // get the table element
-                    var noRowsMessage = $("#no-media-message");
+                    var noRowsMessage = $("#no-records-message");
                     var mediaPathTypeId = $("#mediaPathTypeId").val();
 
                     var description = lists.MediaPathTypeList.filter(function(value) {
@@ -247,9 +247,9 @@ function DisableScreen() {
 
                         self.columns = ko.computed(function () {
                             var arr = [];
-                            arr.push({ sortKey: "filename", boolean: false });
-                            arr.push({ sortKey: "filetype", boolean: false });
-                            arr.push({ sortKey: "filesize", boolean: false });
+                            arr.push({ sortKey: "filename" });
+                            arr.push({ sortKey: "filetype" });
+                            arr.push({ sortKey: "filesize" });
                             return arr;
                         });
 

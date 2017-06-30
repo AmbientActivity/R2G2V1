@@ -8,9 +8,11 @@
 ; (function ($) {
     residents.index = {
         init: function (values) {
+
             var currentSortKey = "firstname";
             var primarySortKey = "firstname";
             var sortDescending = false;
+            var isBinding = true;
 
             var config = {
                 selectedid: 0,
@@ -36,40 +38,69 @@
                     $.extend(lists, data);
 
                     $("#loading-container").hide();
-                    $("#tblResident").show();
+                    $("#table-header").show();
+                    $("#table-detail").show();
                     $("#add-resident").removeAttr("disabled");
 
-                    ko.bindingHandlers.setTooltips = {
+                    ko.bindingHandlers.tableUpdated = {
+                        update: function (element, valueAccessor, allBindings) {
+                            ko.unwrap(valueAccessor());
+                            $("#txtSearchFirstName").focus();
+                            isBinding = false;
+                        }
+                    }
+
+                    ko.bindingHandlers.tableRender = {
                         update: function (element, valueAccessor) {
                             ko.utils.unwrapObservable(valueAccessor());
-                            var e = element;
                             for (var index = 0, length = element.childNodes.length; index < length; index++) {
                                 var node = element.childNodes[index];
                                 if (node.nodeType === 1) {
                                     var id = node.id.replace("row_", "");
-
-                                    var tooltipThumb = $("#thumb_" + id);
-                                    if (tooltipThumb.length > 0)
-                                        tooltipThumb.tooltip({ delay: { show: 100, hide: 100 } });
-
-                                    var tooltipEdit = $("#edit_" + id);
-                                    if (tooltipEdit.length > 0)
-                                        tooltipEdit.tooltip({ delay: { show: 100, hide: 100 } });
-
-                                    var tooltipDelete = $("#delete_" + id);
-                                    if (tooltipDelete.length > 0)
-                                        tooltipDelete.tooltip({ delay: { show: 100, hide: 100 } });
+                                    var tooltipElement = $("#thumb_" + id);
+                                    if (tooltipElement.length > 0)
+                                        tooltipElement.tooltip({ delay: { show: 100, hide: 100 } });
                                 }
+                            }
+                            // if there are no rows in the table, hide the table and display a message
+                            var table = element.parentNode; // get the table element
+                            var noMediaMessage = $("#no-records-message");
+
+                            var tableDetailElement = $("#table-detail");
+                            var tableHeaderElement = $("#table-header");
+
+                            if (table.rows.length > 0) {
+                                tableHeaderElement.show();
+                                tableDetailElement.show();
+                                noMediaMessage.hide();
+
+                                // determine if there is table overflow (to cause a scrollbar)
+                                // if so, increase the right margin of last column header 
+                                var colRight = $("#sort-right");
+
+                                if (table.clientHeight > site.getMaxClientHeight) {
+                                    colRight.addClass("table-scrollbar");
+                                    tableDetailElement.addClass("container-height");
+                                } else {
+                                    colRight.removeClass("table-scrollbar");
+                                    tableDetailElement.removeClass("container-height");
+                                }
+
+                            } else {
+                                tableHeaderElement.hide();
+                                tableDetailElement.hide();
+                                noMediaMessage.html("<h2>No residents found</h2>");
+                                noMediaMessage.show();
                             }
                         }
                     }
 
                     ko.applyBindings(new ResidentViewModel());
 
-                    // pre-select the resident whose media was just being managed
+                    // select the resident whose media was being managed as the page was posted
                     if (parseInt(config.selectedid) > 0) { $("#row_" + config.selectedid).trigger("click"); }
 
-                    // pre-sort the list after media was managed
+                    // rest sorting to the way it was before the page was posted
                     sortDescending = (config.sortdescending === "0");
                     if (config.sortcolumn.length > 0)
                         $("#resident-col-" + config.sortcolumn).trigger("click");
@@ -113,15 +144,15 @@
 
                         self.columns = ko.computed(function () {
                             var arr = [];
-                            arr.push({ title: "ID", sortable: true, sortKey: "id", numeric: true, boolean: false, cssClass: "col-id" });
-                            arr.push({ title: "First Name", sortable: true, sortKey: "firstname", numeric: false, boolean: false, cssClass: "col-firstname" });
-                            arr.push({ title: "Last Name", sortable: true, sortKey: "lastname", numeric: false, boolean: false, cssClass: "col-lastname" });
-                            arr.push({ title: "Gender", sortable: true, sortKey: "gender", numeric: false, boolean: false, cssClass: "col-gender" });
+                            arr.push({ title: "ID", sortKey: "id", cssClass: "col-id" });
+                            arr.push({ title: "First Name", sortKey: "firstname", cssClass: "col-firstname" });
+                            arr.push({ title: "Last Name", sortKey: "lastname", cssClass: "col-lastname" });
+                            arr.push({ title: "Gender", sortKey: "gender", cssClass: "col-gender", });
 
                             if (config.isVideoCaptureServiceInstalled === "1")
-                                arr.push({ title: "Capturable", sortable: true, sortKey: "allowvideocapturing", numeric: false, cssClass: "col-capturable" });
+                                arr.push({ title: "Capturable", sortKey: "allowvideocapturing", cssClass: "col-capturable", boolean: true });
 
-                            arr.push({ title: "Updated", sortable: true, sortKey: "dateupdated", numeric: true, cssClass: "col-date" });
+                            arr.push({ title: "Updated", sortKey: "dateupdated", cssClass: "col-date" });
                             return arr;
                         });
 
@@ -132,6 +163,8 @@
                         self.selectedResident(self.residents()[0]);
 
                         self.sort = function (header) {
+                            if (isBinding) return;
+
                             var afterSave = typeof header.afterSave != "undefined" ? header.afterSave : false;
                             var sortKey;
 

@@ -60,19 +60,21 @@
                     <input class="form-control checkbox-size-lg" type="checkbox" id="chk_all" data-bind="checked: selectAllIsSelected, click: selectAllRows" />
                 </div>
                 <div class="col-xs-7 col-filename">
-                    <a href="javascript:void(0)" class="sort" data-bind="click: sort({ afterSave: false, sortKey: 'filename', numeric: false})"><b>Description</b> <div class="glyphicon glyphicon-sort"></div></a>
+                    <a href="javascript:void(0)" class="sort" data-bind="click: sort({ sortKey: 'filename' })"><b>Description</b> <div class="glyphicon glyphicon-sort"></div></a>
                 </div>
                 <div id="sort-right" class="col-right">
                     <div class="col-xs-1 col-filetype">
-                        <a href="javascript:void(0)" class="sort" data-bind="click: sort({ afterSave: false, sortKey: 'filetype', numeric: false})"><b>Type</b></a>
+                        <a href="javascript:void(0)" class="sort" data-bind="click: sort({ sortKey: 'filetype' })"><b>Type</b></a>
                     </div>
                     <div class="col-xs-2 col-filesize-sm">
-                        <a href="javascript:void(0)" class="sort" data-bind="click: sort({ afterSave: false, sortKey: 'filesize', numeric: true})"><b>Size</b></a>
+                        <a href="javascript:void(0)" class="sort" data-bind="click: sort({ sortKey: 'filesize' })"><b>Size</b></a>
                     </div>
                 </div>
             </div>
         </div>
-        <div id="no-media-message" class="no-media-found" style="display: none"><h2>Profile contains no media</h2></div>
+
+        <div id="no-records-message" class="no-records-found" style="display: none"><h2>Profile contains no media</h2></div>
+
         <div id="table-detail" class="table-detail-container container-height" style="display: none">
             <table data-bind="tableUpdated: filesTable" class="table table-striped table-hover" id="tblFile">
                 <tbody data-bind="foreach: filesTable, tableRender: filesTable">

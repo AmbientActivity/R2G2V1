@@ -139,6 +139,17 @@ video {
 .row {
     padding: 5px;
 }
+.row-video-capture-edit {
+    padding-bottom: 10px;
+}
+.row-profile-picture-edit-label {
+    padding: 0;
+    margin-left: -11px;
+}
+.row-profile-picture-edit {
+    padding: 0;
+    margin-left: -11px;
+}
 .row-table-header {
     margin: 0;
 }
@@ -260,13 +271,7 @@ thead {
 
 /* phidget confguration */
 .config-container {
-    width: 780px;
-    margin-bottom: 10px;
-}
-.active-config-container {
-    float: right;
-    padding: 0;
-    margin: 20px 10px 0 0;
+    margin-left: -10px;
 }
 .active-config-label {
     float: right;
@@ -386,10 +391,10 @@ thead {
     text-align: center;
 }
 .col-date {
-    width: 110px;
+    width: 115px;
 }
 .col-date-scrollbar {
-    width: 120px;
+    width: 130px;
 }
 .col-date-row {
     width: 90px;
@@ -416,7 +421,10 @@ thead {
 .glyphicon-pencil {
     color: #265a88;
 }
-.glyphicon-pause {
+.play-paused {
+    color: #419641;
+}
+.glyphicon-cd {
     color: #419641;
 }
 .play-paused {

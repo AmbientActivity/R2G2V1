@@ -60,13 +60,16 @@
                         <th class="col-thumbnail"></th>
                         <!-- ko foreach: columns -->
                         <!-- ko if: sortKey === 'allowvideocapturing' -->
-                        <th data-bind="click: $parent.sort({ sortKey: 'allowvideocapturing', boolean: true }), attr: { id: 'resident-col-' + sortKey }, css: cssClass"><a href="#"><span class="glyphicon glyphicon-facetime-video glyphicon-resident"></span></a></th>
+                        <th data-bind="click: $parent.sort({ sortKey: 'allowvideocapturing', boolean: true }), attr: { id: 'resident-col-' + sortKey }, css: cssClass"><a href="javascript:void(0)"><span class="glyphicon glyphicon-facetime-video glyphicon-resident"></span></a></th>
                         <!-- /ko -->
                         <!-- ko if: sortKey !== 'allowvideocapturing' -->
-                        <th data-bind="click: $parent.sort, attr: { id: 'resident-col-' + sortKey, boolean: true }, css: cssClass"><a href="#" data-bind="text: title"></a></th>
+                        <!-- ko if: sortKey !== 'dateupdated' -->
+                        <th data-bind="click: $parent.sort, attr: { id: 'resident-col-' + sortKey, boolean: true }, css: cssClass"><a href="javascript:void(0)" data-bind="text: title"></a></th>
                         <!-- /ko -->
                         <!-- /ko -->
-                        <th id="sort-right" class="col-date"><a href="#" data-bind="click: sort({ sortKey: 'dateupdated' })">Updated</a></th>
+                        <!-- /ko -->
+                        <th id="sort-right" class="col-date"><a href="javascript:void(0)" data-bind="click: sort({ sortKey: 'dateupdated' })">Updated</a></th>
+                        <th class="col-glyphicon"></th>
                         <th class="col-glyphicon"></th>
                         <th class="col-glyphicon"></th>
                     </tr>
@@ -81,14 +84,12 @@
                 <tbody data-bind="foreach: residentsTable, tableRender: residentsTable">
                     <tr data-bind="click: $parent.highlightRow, attr: {id: 'row_' +  id}">
                         <td class="col-thumbnail-row">
-                            <a href="#" data-toggle="tooltip" title="Manage resident media" data-bind="attr: { id: 'thumb_' + id }, click: $parent.editProfile">
-                                <!-- ko if: profilepicture === null -->
-                                <img data-bind="attr: { src: profilepictureplaceholder }" alt="" width="40" height="40" class="img-circle">
-                                <!-- /ko -->
-                                <!-- ko if: profilepicture !== null -->
-                                <img data-bind="attr: { src: profilepicture }" alt="" width="40" height="40" class="img-circle">
-                                <!-- /ko -->
-                            </a>
+                            <!-- ko if: profilepicture === null -->
+                            <img data-bind="attr: { src: profilepictureplaceholder }" alt="" width="40" height="40" class="img-circle">
+                            <!-- /ko -->
+                            <!-- ko if: profilepicture !== null -->
+                            <img data-bind="attr: { src: profilepicture }" alt="" width="40" height="40" class="img-circle">
+                            <!-- /ko -->
                         </td>
                         <td class="col-id" data-bind="text: id"></td>
                         <td class="col-firstname" data-bind="text: firstname"></td>
@@ -108,6 +109,7 @@
                         <!-- /ko -->
                         <!-- /ko -->
                         <td class="col-date-row" data-bind="text: moment(dateupdated).format('ll')"></td>
+                        <td class="col-glyphicon"><a href="#" data-toggle="tooltip" title="Manage resident media" data-bind="attr: { id: 'profile_' + id }, click: $parent.editProfile"><i class="glyphicon glyphicon-cd glyphicon-resident"></i></a></td>
                         <td class="col-glyphicon"><a href="#" data-toggle="tooltip" title="Edit resident details" data-bind="attr: { id: 'edit_' + id }, click: $parent.showEditDialog"><i class="glyphicon glyphicon-pencil glyphicon-resident"></i></a></td>
                         <td class="col-glyphicon"><a href="#" data-toggle="tooltip" title="Delete resident" data-bind="attr: { id: 'delete_' + id }, click: $parent.showDeleteDialog"><i class="glyphicon glyphicon-trash glyphicon-resident"></i></a></td>
                     </tr>

@@ -23,18 +23,18 @@
     </div>
 </div>
 
-<div class="container">
+<div class="container config-container">
     <div class="row row-controls">
-        <div class="col-sm-5">
+        <div class="col-sm-4">
             <select class="form-control" data-bind="options: configs, optionsValue: 'id', optionsText: 'description', value: selectedConfig, event: { change: enableDetail }, css: 'select-config'"></select>
         </div>
-        <div class="col-sm-5">
+        <div class="col-sm-6">
             <a id="add" href="#" class="btn btn-success btn-md" data-bind="click: showAddDialog, css: 'glyphicon glyphicon-duplicate button-text'"></a>
             <a id="edit" href="#" class="btn btn-primary btn-md" data-bind="click: showEditDialog, css: 'glyphicon glyphicon-pencil button-text'"></a>
             <a id="delete" href="#" class="btn btn-danger btn-md" data-bind="click: showDeleteDialog, css: 'glyphicon glyphicon-trash button-text'"></a>
         </div>
         <div class="activate-button">
-            <button id="activate" class="btn btn-default btn-md" data-bind="click: showConfigActivateDialog">Activate</button>
+            <button id="activate" class="btn btn-primary btn-md" data-bind="click: showConfigActivateDialog">Activate</button>
         </div>
     </div>
 

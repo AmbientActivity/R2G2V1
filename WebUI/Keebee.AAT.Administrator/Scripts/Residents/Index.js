@@ -57,9 +57,21 @@
                                 var node = element.childNodes[index];
                                 if (node.nodeType === 1) {
                                     var id = node.id.replace("row_", "");
-                                    var tooltipElement = $("#thumb_" + id);
-                                    if (tooltipElement.length > 0)
-                                        tooltipElement.tooltip({ delay: { show: 100, hide: 100 } });
+
+                                    var tooltipProfile = $("#profile_" + id);
+                                    if (tooltipProfile.length > 0) {
+                                        tooltipProfile.tooltip({ delay: { show: 100, hide: 100 } });
+                                    }
+
+                                    var tooltipEdit = $("#edit_" + id);
+                                    if (tooltipEdit.length > 0) {
+                                        tooltipEdit.tooltip({ delay: { show: 100, hide: 100 } });
+                                    }
+
+                                    var tooltipDelete = $("#delete_" + id);
+                                    if (tooltipDelete.length > 0) {
+                                        tooltipDelete.tooltip({ delay: { show: 100, hide: 100 } });
+                                    }
                                 }
                             }
                             // if there are no rows in the table, hide the table and display a message
@@ -154,7 +166,7 @@
                             if (config.isVideoCaptureServiceInstalled === "1")
                                 arr.push({ title: "Capturable", sortKey: "allowvideocapturing", cssClass: "col-capturable", boolean: true });
 
-                            //arr.push({ title: "Updated", sortKey: "dateupdated", id: "sort-right", cssClass: "col-date col-right" });
+                            arr.push({ sortKey: "dateupdated" });
                             return arr;
                         });
 

@@ -178,22 +178,22 @@
             function clearServiceLogs() {
                 $.get(site.url + "Maintenance/ClearServiceLogs")
                     .done(function(data) {
-                        if (data.length === 0)
+                        if (data.length !== 0)
                             BootstrapDialog.show({
-                                title: "Success",
+                                title: "Error",
                                 closable: false,
-                                type: BootstrapDialog.TYPE_SUCCESS,
-                                message: "R2G2 Service Logs have been cleared",
+                                type: BootstrapDialog.TYPE_DANGER,
+                                message: "An error occurred clearing the Service Logs\n" + data,
                                 buttons: [
                                     {
-                                        label: "Close",
+                                        label: "OK",
                                         action: function(dialog) {
                                             dialog.close();
                                         }
                                     }
                                 ]
                             });
-                });
+                    });
             }
         }
     }

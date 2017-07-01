@@ -306,6 +306,8 @@ namespace Keebee.AAT.Display
 
         #endregion
 
+        #region core logic
+
         private void ExecuteResponse(int responseTypeId, int sensorValue, bool isSystem)
         {
             if (!isSystem)
@@ -488,6 +490,8 @@ namespace Keebee.AAT.Display
             _residentDisplayTimer.Start();
         }
 
+        #endregion
+
         #region callback
 
         private void PlayMedia(int responseTypeId, int responseValue)
@@ -649,7 +653,14 @@ namespace Keebee.AAT.Display
                     _interactiveActivityEventLogger.Add(_activeResident.Id, InteractiveActivityTypeId.MatchingGame, "New game has been initiated", _activeResident.GameDifficultyLevel);
                 }
     
-                matchingGame1.Play(totalShapes, totalSounds, _activeResident.GameDifficultyLevel, true, _currentIsActiveEventLog, _activeResident.AllowVideoCapturing);
+                matchingGame1.Play(
+                    totalShapes, 
+                    totalSounds, 
+                    _activeResident.GameDifficultyLevel,
+                    true, 
+                    _currentIsActiveEventLog, 
+                    _activeResident.AllowVideoCapturing, 
+                    _activeConfigDetail.SwfFile);
 
                 _currentResponseTypeId = ResponseTypeId.MatchingGame;
             }

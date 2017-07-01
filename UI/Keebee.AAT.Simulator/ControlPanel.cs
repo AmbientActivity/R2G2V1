@@ -256,6 +256,11 @@ namespace Keebee.AAT.Simulator
             ExecuteResponse(ResponseTypeId.PaintingActivity, PhidgetTypeId.Input4);
         }
 
+        private void VolumeControlClick(object sender, EventArgs e)
+        {
+            ExecuteResponse(ResponseTypeId.VolumeControl, PhidgetTypeId.Input2);
+        }
+
         private void ActivateResidentClick(object sender, EventArgs e)
         {
             var id = Convert.ToInt32(cboResident.SelectedValue.ToString());
@@ -390,6 +395,21 @@ namespace Keebee.AAT.Simulator
 
         private string CreateMessageBodyForResponse(int responseTypeId, int phidgetTypeId, bool isSystem, int sensorValue, int[] reponseTypeIds)
         {
+            var interactiveActivityTypeId = 0;
+            var swfFile = string.Empty;
+
+            switch (responseTypeId)
+            {
+                case ResponseTypeId.MatchingGame:
+                    interactiveActivityTypeId = InteractiveActivityTypeId.MatchingGame;
+                    swfFile = "MatchingGame.swf";
+                    break;
+                case ResponseTypeId.PaintingActivity:
+                    interactiveActivityTypeId = InteractiveActivityTypeId.PaintingActivity;
+                    swfFile = "PaintingActivity.swf";
+                    break;
+            }
+
             var responseMessage = new ResponseMessage
             {
                 SensorValue = sensorValue,
@@ -399,7 +419,9 @@ namespace Keebee.AAT.Simulator
                     ResponseTypeId = responseTypeId,
                     PhidgetTypeId = phidgetTypeId,
                     IsSystemReponseType = isSystem,
-                    ConfigId = ConfigId.Default
+                    ConfigId = ConfigId.Default,
+                    InteractiveActivityTypeId = interactiveActivityTypeId,
+                    SwfFile = swfFile
                 },
                 Resident = new ResidentMessage
                 {

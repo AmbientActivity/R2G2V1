@@ -124,7 +124,7 @@ namespace Keebee.AAT.Display.Caregiver
                 case InteractiveActivityTypeId.MatchingGame:
                     matchingGame1.Show();
                     matchingGame1.SystemEventLogger = _systemEventLogger;
-                    matchingGame1.Play(_shapes, _sounds, _difficultyLevel, false, _isActiveEventLog, false);
+                    matchingGame1.Play(_shapes, _sounds, _difficultyLevel, false, _isActiveEventLog, false, _swfFile);
                     matchingGame1.Select();
                     break;
                 default:

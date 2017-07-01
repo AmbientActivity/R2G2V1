@@ -52,6 +52,7 @@
             this.btnTelevisionRight = new System.Windows.Forms.Button();
             this.btnTelevisionLeft = new System.Windows.Forms.Button();
             this.bnRadioLeft = new System.Windows.Forms.Button();
+            this.btnVolumeControl = new System.Windows.Forms.Button();
             this.grpMediaSource.SuspendLayout();
             this.grpAutoResident.SuspendLayout();
             this.grpAutoSensor.SuspendLayout();
@@ -229,6 +230,7 @@
             // 
             // grpInterfaceKit
             // 
+            this.grpInterfaceKit.Controls.Add(this.btnVolumeControl);
             this.grpInterfaceKit.Controls.Add(this.btnPaintingActivity);
             this.grpInterfaceKit.Controls.Add(this.btnOffScreen);
             this.grpInterfaceKit.Controls.Add(this.btnCaregiver);
@@ -352,6 +354,18 @@
             this.bnRadioLeft.UseVisualStyleBackColor = true;
             this.bnRadioLeft.Click += new System.EventHandler(this.RadioLeftButtonClick);
             // 
+            // btnVolumeControl
+            // 
+            this.btnVolumeControl.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnVolumeControl.Location = new System.Drawing.Point(112, 153);
+            this.btnVolumeControl.Name = "btnVolumeControl";
+            this.btnVolumeControl.Size = new System.Drawing.Size(96, 36);
+            this.btnVolumeControl.TabIndex = 39;
+            this.btnVolumeControl.Text = "Volume Control";
+            this.btnVolumeControl.UseMnemonic = false;
+            this.btnVolumeControl.UseVisualStyleBackColor = true;
+            this.btnVolumeControl.Click += new System.EventHandler(this.VolumeControlClick);
+            // 
             // ControlPanel
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -404,6 +418,7 @@
         private System.Windows.Forms.Button btnOffScreen;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.Button btnPaintingActivity;
+        private System.Windows.Forms.Button btnVolumeControl;
     }
 }
 

@@ -15,7 +15,7 @@ namespace Keebee.AAT.Display.UserControls
 {
     public partial class MatchingGame : UserControl
     {
-        private const string SwfFilename = "MatchingGame.swf";
+        private string _swfFile;
 
         private SystemEventLogger _systemEventLogger;
         public SystemEventLogger SystemEventLogger
@@ -50,12 +50,14 @@ namespace Keebee.AAT.Display.UserControls
             axShockwaveFlash1.Dock = DockStyle.Fill;
         }
 
-        public void Play(string[] shapes, string[] sounds, int initialDifficultyLevel, bool enableTimeout, bool isActiveEventLog, bool isAllowVideoCapture)
+        public void Play(string[] shapes, string[] sounds, int initialDifficultyLevel, bool enableTimeout, bool isActiveEventLog, bool isAllowVideoCapture, string swfFile)
         {
             _initialDifficultyLevel = initialDifficultyLevel;
             _isActiveEventLog = isActiveEventLog;
             _isAllowVideoCapture = isAllowVideoCapture;
             _enableGameTimeout = enableTimeout;
+            _swfFile = swfFile;
+
             PlayGame(shapes, sounds);
         }
 
@@ -63,7 +65,7 @@ namespace Keebee.AAT.Display.UserControls
         {
             try
             {
-                var swf = Path.Combine(Application.StartupPath, SwfFilename);
+                var swf = Path.Combine(Application.StartupPath, _swfFile);
                 axShockwaveFlash1.LoadMovie(0, swf);
 
                 if (!shapes.Any()) return;

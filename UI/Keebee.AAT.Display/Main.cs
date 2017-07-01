@@ -55,7 +55,7 @@ namespace Keebee.AAT.Display
         private delegate void KillDisplayDelegate();
         private delegate void ShowOffScreenDelegate();
         private delegate void ShowVolumeControlDelegate();
-        private delegate void PlayPaintingActivityDelegate();
+        private delegate void PlayActivityDelegate(int responseTypeId);
 
         // message queue sender
         private readonly CustomMessageQueue _messageQueueDisplaySms;
@@ -90,7 +90,7 @@ namespace Keebee.AAT.Display
         // flags
         private bool _isNewResponse;
         private bool _isMatchingGameTimeoutExpired;
-        private bool _isPaintingActivityTimeoutExpired;
+        private bool _isActivityTimeoutExpired;
 
         // caregiver interface
         private CaregiverInterface _caregiverInterface;
@@ -174,7 +174,7 @@ namespace Keebee.AAT.Display
             matchingGame1.LogInteractiveActivityEventEvent += LogInteractiveActivityEvent;
             matchingGame1.StartVideoCaptureEvent += StartVideoCaptureEvent;
             mediaPlayer1.LogVideoActivityEventEvent += LogVideoActivityEvent;
-            paintingActivity1.PaintingActivityTimeoutExpiredEvent += PaintingActivityTimeoutExpired;
+            paintingActivity1.ActivityPlayerTimeoutExpiredEvent += ActivityPlayerTimeoutExpired;
             paintingActivity1.LogInteractiveActivityEventEvent += LogInteractiveActivityEvent;
             paintingActivity1.StartVideoCaptureEvent += StartVideoCaptureEvent;
 
@@ -325,9 +325,6 @@ namespace Keebee.AAT.Display
                     case ResponseTypeId.MatchingGame:
                         PlayMatchingGame();
                         break;
-                    case ResponseTypeId.PaintingActivity:
-                        PlayPaintingActivity();
-                        break;
                     case ResponseTypeId.KillDisplay:
                         KillDisplay();
                         break;
@@ -347,6 +344,10 @@ namespace Keebee.AAT.Display
                         break;
                     case ResponseTypeId.OffScreen:
                         ShowOffScreen();
+                        break;
+                    default:  // any generic swf activities that don't require any media
+                        if (_activeConfigDetail.InteractiveActivityTypeId > 0)
+                            PlayActivity(responseTypeId);
                         break;
                 }
 
@@ -398,7 +399,7 @@ namespace Keebee.AAT.Display
                     case ResponseTypeId.PaintingActivity:
                         paintingActivity1.Hide();
                         paintingActivity1.SendToBack();
-                        paintingActivity1.Stop(_isPaintingActivityTimeoutExpired);
+                        paintingActivity1.Stop(_isActivityTimeoutExpired);
                         break;
                     case ResponseTypeId.Radio:
                     case ResponseTypeId.Television:
@@ -455,7 +456,7 @@ namespace Keebee.AAT.Display
                         PlayMatchingGame();
                         break;
                     case ResponseTypeId.PaintingActivity:
-                        PlayPaintingActivity();
+                        PlayActivity(responseTypeId);
                         break;
                     case ResponseTypeId.SlideShow:
                         PlaySlideShow();
@@ -654,17 +655,17 @@ namespace Keebee.AAT.Display
             }
         }
 
-        private void PlayPaintingActivity()
+        private void PlayActivity(int responseTypeId)
         {
             if (InvokeRequired)
             {
-                Invoke(new PlayPaintingActivityDelegate(PlayPaintingActivity));
+                Invoke(new PlayActivityDelegate(PlayActivity), responseTypeId);
             }
             else
             {
                 StopCurrentResponse();
-                _isPaintingActivityTimeoutExpired = false;
 
+                _isActivityTimeoutExpired = false;
                 paintingActivity1.BringToFront();
                 paintingActivity1.Show();
                 DisplayActiveResident();
@@ -674,9 +675,13 @@ namespace Keebee.AAT.Display
                     _activityEventLogger.Add(_activeConfigDetail.ConfigId, _activeConfigDetail.Id, _activeResident.Id);
                 }
 
-                paintingActivity1.Play(true, _currentIsActiveEventLog, _activeResident.AllowVideoCapturing);
+                paintingActivity1.Play(true, 
+                    _currentIsActiveEventLog, 
+                    _activeResident.AllowVideoCapturing, 
+                    _activeConfigDetail.InteractiveActivityTypeId, 
+                    _activeConfigDetail.SwfFile);
 
-                _currentResponseTypeId = ResponseTypeId.PaintingActivity;
+                _currentResponseTypeId = responseTypeId;
             }
         }
 
@@ -961,18 +966,18 @@ namespace Keebee.AAT.Display
             }
         }
 
-        private void PaintingActivityTimeoutExpired(object sender, EventArgs e)
+        private void ActivityPlayerTimeoutExpired(object sender, EventArgs e)
         {
             try
             {
-                _isPaintingActivityTimeoutExpired = true;
+                _isActivityTimeoutExpired = true;
                 paintingActivity1.Hide();
                 ResumeAmbient();
                 _isNewResponse = true;
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"Main.PaintingActivityTimeoutExpiredEvent: {ex.Message}", EventLogEntryType.Error);
+                _systemEventLogger.WriteEntry($"Main.ActivityPlayerTimeoutExpired: {ex.Message}", EventLogEntryType.Error);
             }
         }
 

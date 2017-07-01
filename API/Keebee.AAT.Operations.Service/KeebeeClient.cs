@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-// Generation date: 2017-06-26 2:22:07 AM
+// Generation date: 2017-06-30 9:45:05 PM
 namespace Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models
 {
     /// <summary>
@@ -1274,12 +1274,14 @@ namespace Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models
         /// </summary>
         /// <param name="ID">Initial value of Id.</param>
         /// <param name="description">Initial value of Description.</param>
+        /// <param name="swfFile">Initial value of SwfFile.</param>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        public static InteractiveActivityType CreateInteractiveActivityType(int ID, string description)
+        public static InteractiveActivityType CreateInteractiveActivityType(int ID, string description, string swfFile)
         {
             InteractiveActivityType interactiveActivityType = new InteractiveActivityType();
             interactiveActivityType.Id = ID;
             interactiveActivityType.Description = description;
+            interactiveActivityType.SwfFile = swfFile;
             return interactiveActivityType;
         }
         /// <summary>
@@ -1328,6 +1330,29 @@ namespace Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models
         private string _Description;
         partial void OnDescriptionChanging(string value);
         partial void OnDescriptionChanged();
+        /// <summary>
+        /// There are no comments for Property SwfFile in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        [global::Microsoft.OData.Client.OriginalNameAttribute("SwfFile")]
+        public string SwfFile
+        {
+            get
+            {
+                return this._SwfFile;
+            }
+            set
+            {
+                this.OnSwfFileChanging(value);
+                this._SwfFile = value;
+                this.OnSwfFileChanged();
+                this.OnPropertyChanged("SwfFile");
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private string _SwfFile;
+        partial void OnSwfFileChanging(string value);
+        partial void OnSwfFileChanged();
         /// <summary>
         /// This event is raised when the value of the property is changed
         /// </summary>
@@ -5982,6 +6007,7 @@ namespace Keebee.AAT.Operations.Service.KeebeeAAT
         </Key>
         <Property Name=""Id"" Type=""Edm.Int32"" Nullable=""false"" />
         <Property Name=""Description"" Type=""Edm.String"" Nullable=""false"" />
+        <Property Name=""SwfFile"" Type=""Edm.String"" Nullable=""false"" />
       </EntityType>
       <EntityType Name=""ActivityEventLog"">
         <Key>

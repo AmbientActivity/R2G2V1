@@ -301,17 +301,18 @@ namespace Keebee.AAT.StateMachineService
                     Description = config.Description,
                     IsActiveEventLog = config.IsActiveEventLog,
                     ConfigDetails = config.ConfigDetails
-                                        .Select(x => new
-                                        ConfigDetailMessage
-                                        {
-                                            Id = x.Id,
-                                            ConfigId = x.ConfigId,
-                                            ResponseTypeId = x.ResponseType.Id,
-                                            PhidgetTypeId = x.PhidgetType.Id,
-                                            PhidgetStyleTypeId = x.PhidgetStyleType.Id,
-                                            IsSystemReponseType = x.ResponseType.IsSystem
-                                        }
-                                        )
+                        .Select(x => new
+                        ConfigDetailMessage
+                        {
+                            Id = x.Id,
+                            ConfigId = x.ConfigId,
+                            ResponseTypeId = x.ResponseType.Id,
+                            PhidgetTypeId = x.PhidgetType.Id,
+                            PhidgetStyleTypeId = x.PhidgetStyleType.Id,
+                            IsSystemReponseType = x.ResponseType.IsSystem,
+                            InteractiveActivityTypeId = x.ResponseType.InteractiveActivityType?.Id ?? 0,
+                            SwfFile = x.ResponseType.InteractiveActivityType?.SwfFile ?? string.Empty
+                        })
                 };
 
                 _systemEventLogger.WriteEntry($"The configuration '{config.Description}' has been activated");

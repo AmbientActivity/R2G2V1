@@ -1,6 +1,5 @@
 ﻿using Keebee.AAT.SystemEventLogging;
 using Keebee.AAT.Display.Models;
-using Keebee.AAT.Shared;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -9,18 +8,19 @@ using AxShockwaveFlashObjects;
 
 namespace Keebee.AAT.Display.UserControls
 {
-    public partial class PaintingActivity : UserControl
+    public partial class ActivityPlayer : UserControl
     {
-        private const string SwfFilename = "PaintingActivity.swf";
-
         private SystemEventLogger _systemEventLogger;
         public SystemEventLogger SystemEventLogger
         {
             set { _systemEventLogger = value; }
         }
 
+        private int _activityTypeId;
+        private string _swfFile;
+
         // event handler
-        public event EventHandler PaintingActivityTimeoutExpiredEvent;
+        public event EventHandler ActivityPlayerTimeoutExpiredEvent;
         public event EventHandler LogInteractiveActivityEventEvent;
         public event EventHandler StartVideoCaptureEvent;
 
@@ -28,13 +28,13 @@ namespace Keebee.AAT.Display.UserControls
         private bool _isAllowVideoCapture;
 
         // delegate
-        private delegate void RaisePaintingActivityTimeoutExpiredDelegate();
+        private delegate void RaiseActivityPlayerTimeoutExpiredDelegate();
         private delegate void RaiseLogInteractiveActvityEventEventDelegate(string description);
         private delegate void RaiseStartVideoCaptureDelegate();
 
         private bool _enableGameTimeout;
 
-        public PaintingActivity()
+        public ActivityPlayer()
         {
             InitializeComponent();
             ConfigureComponents();
@@ -45,23 +45,26 @@ namespace Keebee.AAT.Display.UserControls
             axShockwaveFlash1.Dock = DockStyle.Fill;
         }
 
-        public void Play(bool enableTimeout, bool isActiveEventLog, bool isAllowVideoCapture)
+        public void Play(bool enableTimeout, bool isActiveEventLog, bool isAllowVideoCapture, int activityTypeId, string swfFile)
         {
             _enableGameTimeout = enableTimeout;
             _isActiveEventLog = isActiveEventLog;
             _isAllowVideoCapture = isAllowVideoCapture;
-            PlayGame();
+            _activityTypeId = activityTypeId;
+            _swfFile = swfFile;
+
+            PlayActivity();
         }
 
-        private void PlayGame()
+        private void PlayActivity()
         {
             try
             {
                 var enableTimeout = _enableGameTimeout ? 1 : 0;
-                var swf = Path.Combine(Application.StartupPath, SwfFilename);
+                var swf = Path.Combine(Application.StartupPath, _swfFile);
                 axShockwaveFlash1.LoadMovie(0, swf);
 
-                axShockwaveFlash1.CallFunction("<invoke name=\"playPaintingActivity\"><arguments>" +
+                axShockwaveFlash1.CallFunction("<invoke name=\"playActivity\"><arguments>" +
                     $"<number>{enableTimeout}</number></arguments></invoke>");
 
                 axShockwaveFlash1.Show();
@@ -69,7 +72,7 @@ namespace Keebee.AAT.Display.UserControls
 
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"Display.PaintingActivity.PlayGame{Environment.NewLine}{ex.Message}", EventLogEntryType.Error);
+                _systemEventLogger.WriteEntry($"Display.ActivityPlayer.PlayActivity{Environment.NewLine}{ex.Message}", EventLogEntryType.Error);
             }
         }
 
@@ -81,11 +84,11 @@ namespace Keebee.AAT.Display.UserControls
                 axShockwaveFlash1.Hide();
 
                 if (!isTimeoutExpired)
-                    axShockwaveFlash1.CallFunction("<invoke name=\"stopPaintingActivity\"></invoke>");
+                    axShockwaveFlash1.CallFunction("<invoke name=\"stopActivity\"></invoke>");
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"Display.PaintingActivity.Stop{Environment.NewLine}{ex.Message}", EventLogEntryType.Error);
+                _systemEventLogger.WriteEntry($"Display.ActivityPlayer.Stop{Environment.NewLine}{ex.Message}", EventLogEntryType.Error);
             }
 
         }
@@ -112,7 +115,7 @@ namespace Keebee.AAT.Display.UserControls
 
                     var isGameHasExpired = request.Contains("<true/>");
                     if (isGameHasExpired)
-                        RaisePaintingActivityTimeoutExpired();
+                        RaiseActivityPlayerTimeoutExpired();
 
                     if (_isActiveEventLog)
                         RaiseLogInteractiveActivityEventEvent(description);
@@ -124,27 +127,27 @@ namespace Keebee.AAT.Display.UserControls
                 // no arguments implies "raise game complete event"
                 else
                 {
-                    RaisePaintingActivityTimeoutExpired();
+                    RaiseActivityPlayerTimeoutExpired();
                 }
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"Display.PaintingActivity.FlashCall{Environment.NewLine}{ex.Message}",
+                _systemEventLogger.WriteEntry($"Display.ActivityPlayer.FlashCall{Environment.NewLine}{ex.Message}",
                     EventLogEntryType.Error);
             }
         }
 
-        private void RaisePaintingActivityTimeoutExpired()
+        private void RaiseActivityPlayerTimeoutExpired()
         {
             if (IsDisposed) return;
 
             if (InvokeRequired)
             {
-                Invoke(new RaisePaintingActivityTimeoutExpiredDelegate(RaisePaintingActivityTimeoutExpired));
+                Invoke(new RaiseActivityPlayerTimeoutExpiredDelegate(RaiseActivityPlayerTimeoutExpired));
             }
             else
             {
-                PaintingActivityTimeoutExpiredEvent?.Invoke(new object(), new EventArgs());
+                ActivityPlayerTimeoutExpiredEvent?.Invoke(new object(), new EventArgs());
             }
         }
 
@@ -160,7 +163,7 @@ namespace Keebee.AAT.Display.UserControls
             {
                 var args = new LogInteractiveActivityEventArgs
                 {
-                    InteractiveActivityTypeId = InteractiveActivityTypeId.PaintingActivity,
+                    InteractiveActivityTypeId = _activityTypeId,
                     Description = description
                 };
 

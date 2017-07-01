@@ -106,6 +106,7 @@ namespace Keebee.AAT.Display.Caregiver
         private const int ListViewIActivitiesColumnDifficultyLevel = 1;
         private const int ListViewIActivitiesColumnName = 2;
         private const int ListViewIActivitiesColumnId = 3;
+        private const int ListViewIActivitiesColumnFile = 4;
 
 #if DEBUG
         private const int ThumbnailDimensions = 16;
@@ -148,7 +149,6 @@ namespace Keebee.AAT.Display.Caregiver
         private const int TabFontSize = 26;
         private const int TabPageFontSize = 20;
 #endif
-
         #endregion
 
         public CaregiverInterface()
@@ -306,6 +306,7 @@ namespace Keebee.AAT.Display.Caregiver
             lvActivities.Columns.Add("GameDifficultyLevel", 0);
             lvActivities.Columns.Add("Description", ListViewActivitiesColWidthName);
             lvActivities.Columns.Add("ResponseId", 0);
+            lvActivities.Columns.Add("SwfFile", 0);
         }
 
         #endregion
@@ -606,7 +607,8 @@ namespace Keebee.AAT.Display.Caregiver
                         string.Empty,
                         gameDifficulatyLevel.ToString(),
                         rt.Description,
-                        rt.InteractiveActivityType.Id.ToString()
+                        rt.InteractiveActivityType.Id.ToString(),
+                        rt.InteractiveActivityType.SwfFile
                     })
                     {
                         BackColor = ((rowIndex & 1) == 0) ? Color.AliceBlue : Color.White
@@ -893,7 +895,7 @@ namespace Keebee.AAT.Display.Caregiver
             }
         }
 
-        private void PlayInteractiveActivity(int interactiveActivityId, int difficultyLevel)
+        private void PlayInteractiveActivity(int interactiveActivityId, string swfFile, int difficultyLevel)
         {
             try
             {
@@ -921,17 +923,17 @@ namespace Keebee.AAT.Display.Caregiver
                         StopAudio();
                         matchingGamePlayer.ShowDialog();
                         break;
-
-                    case InteractiveActivityTypeId.PaintingActivity:
-                        var paintingActivityPlayer = new InteractiveActivityPlayer
+                    default:
+                        var activityPlayer = new InteractiveActivityPlayer
                         {
                             InteractiveActivityId = interactiveActivityId,
                             ResidentId = _currentResident.Id,
                             SystemEventLogger = _systemEventLogger,
-                            IsActiveEventLog = _config.IsActiveEventLog
+                            IsActiveEventLog = _config.IsActiveEventLog,
+                            SwfFile = swfFile
                         };
                         StopAudio();
-                        paintingActivityPlayer.ShowDialog();
+                        activityPlayer.ShowDialog();
                         break;
                 }
 
@@ -1129,10 +1131,13 @@ namespace Keebee.AAT.Display.Caregiver
                 var interactiveActivityId = Convert.ToInt32(lvActivities.SelectedItems[0]
                     .SubItems[ListViewIActivitiesColumnId].Text);
 
+                var swfFile = lvActivities.SelectedItems[0]
+                    .SubItems[ListViewIActivitiesColumnFile].Text;
+
                 var difficultyLevel = Convert.ToInt32(lvActivities.SelectedItems[0]
                     .SubItems[ListViewIActivitiesColumnDifficultyLevel].Text);
 
-                PlayInteractiveActivity(interactiveActivityId, difficultyLevel);
+                PlayInteractiveActivity(interactiveActivityId, swfFile, difficultyLevel);
             }
             catch (Exception ex)
             {

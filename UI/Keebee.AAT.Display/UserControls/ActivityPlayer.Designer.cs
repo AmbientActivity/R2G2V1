@@ -1,6 +1,6 @@
 ﻿namespace Keebee.AAT.Display.UserControls
 {
-    partial class PaintingActivity
+    partial class ActivityPlayer
     {
         /// <summary> 
         /// Required designer variable.
@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PaintingActivity));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ActivityPlayer));
             this.axShockwaveFlash1 = new AxShockwaveFlashObjects.AxShockwaveFlash();
             ((System.ComponentModel.ISupportInitialize)(this.axShockwaveFlash1)).BeginInit();
             this.SuspendLayout();
@@ -44,13 +44,13 @@
             this.axShockwaveFlash1.TabIndex = 1;
             this.axShockwaveFlash1.FlashCall += new AxShockwaveFlashObjects._IShockwaveFlashEvents_FlashCallEventHandler(this.FlashCall);
             // 
-            // PaintingActivity
+            // ActivityPlayer
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.Yellow;
             this.Controls.Add(this.axShockwaveFlash1);
-            this.Name = "PaintingActivity";
+            this.Name = "ActivityPlayer";
             this.Size = new System.Drawing.Size(397, 259);
             ((System.ComponentModel.ISupportInitialize)(this.axShockwaveFlash1)).EndInit();
             this.ResumeLayout(false);

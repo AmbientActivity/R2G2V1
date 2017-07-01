@@ -130,8 +130,8 @@ package
 		public function Main()
 		{
 			// comment to test
-			ExternalInterface.addCallback("playPaintingActivity", playPaintingActivity);
-			ExternalInterface.addCallback("stopPaintingActivity", stopPaintingActivity);
+			ExternalInterface.addCallback("playActivity", playPaintingActivity);
+			ExternalInterface.addCallback("stopActivity", stopPaintingActivity);
 			
 			stage.displayState = StageDisplayState.FULL_SCREEN;
 			//playPaintingActivity(1);

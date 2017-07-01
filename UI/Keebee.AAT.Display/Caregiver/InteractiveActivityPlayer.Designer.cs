@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             this.btnClose = new MetroFramework.Controls.MetroButton();
-            this.paintingActivity1 = new Keebee.AAT.Display.UserControls.PaintingActivity();
+            this.activityPlayer1 = new Keebee.AAT.Display.UserControls.ActivityPlayer();
             this.matchingGame1 = new Keebee.AAT.Display.UserControls.MatchingGame();
             this.SuspendLayout();
             // 
@@ -49,13 +49,13 @@
             this.btnClose.UseSelectable = true;
             this.btnClose.Click += new System.EventHandler(this.CloseButtonClick);
             // 
-            // paintingActivity1
+            // activityPlayer1
             // 
-            this.paintingActivity1.BackColor = System.Drawing.Color.Yellow;
-            this.paintingActivity1.Location = new System.Drawing.Point(161, 12);
-            this.paintingActivity1.Name = "paintingActivity1";
-            this.paintingActivity1.Size = new System.Drawing.Size(118, 54);
-            this.paintingActivity1.TabIndex = 1;
+            this.activityPlayer1.BackColor = System.Drawing.Color.Yellow;
+            this.activityPlayer1.Location = new System.Drawing.Point(161, 12);
+            this.activityPlayer1.Name = "activityPlayer1";
+            this.activityPlayer1.Size = new System.Drawing.Size(118, 54);
+            this.activityPlayer1.TabIndex = 1;
             // 
             // matchingGame1
             // 
@@ -72,7 +72,7 @@
             this.BackColor = System.Drawing.Color.Gainsboro;
             this.ClientSize = new System.Drawing.Size(640, 360);
             this.Controls.Add(this.btnClose);
-            this.Controls.Add(this.paintingActivity1);
+            this.Controls.Add(this.activityPlayer1);
             this.Controls.Add(this.matchingGame1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Name = "InteractiveActivityPlayer";
@@ -85,7 +85,7 @@
         #endregion
 
         private UserControls.MatchingGame matchingGame1;
-        private UserControls.PaintingActivity paintingActivity1;
+        private UserControls.ActivityPlayer activityPlayer1;
         private MetroFramework.Controls.MetroButton btnClose;
     }
 }

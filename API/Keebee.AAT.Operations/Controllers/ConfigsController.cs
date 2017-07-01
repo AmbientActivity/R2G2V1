@@ -76,7 +76,8 @@ namespace Keebee.AAT.Operations.Controllers
                                         ? new
                                         {
                                             cd.ResponseType.InteractiveActivityType.Id,
-                                            cd.ResponseType.InteractiveActivityType.Description
+                                            cd.ResponseType.InteractiveActivityType.Description,
+                                            cd.ResponseType.InteractiveActivityType.SwfFile
                                         }
                                         : null,
                                     cd.ResponseType.IsSystem
@@ -206,7 +207,8 @@ namespace Keebee.AAT.Operations.Controllers
                     ? new
                     {
                         cd.ResponseType.InteractiveActivityType.Id,
-                        cd.ResponseType.InteractiveActivityType.Description
+                        cd.ResponseType.InteractiveActivityType.Description,
+                        cd.ResponseType.InteractiveActivityType.SwfFile
                     } : null
                 }
             }).OrderBy(o => o.PhidgetType.Id);
@@ -264,7 +266,8 @@ namespace Keebee.AAT.Operations.Controllers
                     ? new
                     {
                         cd.ResponseType.InteractiveActivityType.Id,
-                        cd.ResponseType.InteractiveActivityType.Description
+                        cd.ResponseType.InteractiveActivityType.Description,
+                        cd.ResponseType.InteractiveActivityType.SwfFile
                     } : null
                 }
             }).OrderBy(o => o.PhidgetType.Id);

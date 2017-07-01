@@ -20,6 +20,8 @@ namespace Keebee.AAT.Shared
         public int PhidgetStyleTypeId { get; set; }
         public int ResponseTypeId { get; set; }
         public bool IsSystemReponseType { get; set; }
+        public int InteractiveActivityTypeId { get; set; }
+        public string SwfFile { get; set; }
     }
 
     public class ResidentMessage

@@ -15,19 +15,19 @@ echo ---------------------------------------------------
 installutil C:\Users\%USERNAME%\Source\Repos\R2G2V1\Service\Keebee.AAT.PhidgetService\bin\Debug\Keebee.AAT.PhidgetService.exe
 echo Done.
 
-echo.
-echo ---------------------------------------------------
-echo Installing Video Capture Service...
-echo ---------------------------------------------------
-installutil C:\Users\%USERNAME%\Source\Repos\R2G2V1\Service\Keebee.AAT.VideoCaptureService\bin\Debug\Keebee.AAT.VideoCaptureService.exe
-echo Done.
+REM echo.
+REM echo ---------------------------------------------------
+REM echo Installing Video Capture Service...
+REM echo ---------------------------------------------------
+REM installutil C:\Users\%USERNAME%\Source\Repos\R2G2V1\Service\Keebee.AAT.VideoCaptureService\bin\DebugREM \Keebee.AAT.VideoCaptureService.exe
+REM echo Done.
 
-echo.
-echo ---------------------------------------------------
-echo Installing Bluetooth Beacon Watcher Service...
-echo ---------------------------------------------------
-installutil C:\Users\%USERNAME%\Source\Repos\R2G2V1\Service\Keebee.AAT.BluetoothBeaconWatcherService\bin\Debug\Keebee.AAT.BluetoothBeaconWatcherService.exe
-echo Done.
+REM echo.
+REM echo ---------------------------------------------------
+REM echo Installing Bluetooth Beacon Watcher Service...
+REM echo ---------------------------------------------------
+REM installutil C:\Users\%USERNAME%\Source\Repos\R2G2V1\Service\Keebee.AAT.BluetoothBeaconWatcherService\bin\DebugREM \Keebee.AAT.BluetoothBeaconWatcherService.exe
+REM echo Done.
 
 echo.
 echo ---------------------------------------------------

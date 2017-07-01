@@ -213,6 +213,8 @@ namespace Keebee.AAT.Administrator.Controllers
                                              Description = cd.Description,
                                              Location = cd.Location,
                                              ResponseType = cd.ResponseType.Description,
+                                             InteractiveActivityTypeId = cd.ResponseType.InteractiveActivityType?.Id ?? 0,
+                                             SwfFile = cd.ResponseType.InteractiveActivityType?.SwfFile ?? string.Empty,
                                              IsSystem = cd.ResponseType.IsSystem,
                                              CanEdit = !cd.IsEventLogs
                                 };
@@ -259,13 +261,13 @@ namespace Keebee.AAT.Administrator.Controllers
                 Location = (configDetail != null) ? configDetail.Location : string.Empty,
                 PhidgetTypes = new SelectList(configEdit.PhidgetTypes, "Id", "Description", configDetail?.PhidgetType.Id),
                 PhidgetStyleTypes = new SelectList(configEdit.PhidgetStyleTypes, "Id", "Description", configDetail?.PhidgetStyleType.Id),
-                ResponseTypes = new SelectList(configEdit.ResponseTypes, "Id", "Description", configDetail?.ResponseType.Id)
+                ResponseTypes = new SelectList(configEdit.ResponseTypes.OrderBy(x => x.Description), "Id", "Description", configDetail?.ResponseType.Id)
             };
 
             return vm;
         }
 
-        private void UpdateConfig(ConfigEditViewModel config)
+        private void UpdateConfig(ConfigViewModel config)
         {
             var c = new ConfigEdit
             {
@@ -279,7 +281,7 @@ namespace Keebee.AAT.Administrator.Controllers
                 SendNewConfiguration(config.Id);
         }
 
-        private int AddConfig(ConfigEditViewModel config, int selectedConfigId)
+        private int AddConfig(ConfigViewModel config, int selectedConfigId)
         {
             // config
             var newConfig = new ConfigEdit

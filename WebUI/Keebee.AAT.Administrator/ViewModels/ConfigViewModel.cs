@@ -29,6 +29,8 @@ namespace Keebee.AAT.Administrator.ViewModels
         public string Description { get; set; }
         public string Location { get; set; }
         public string ResponseType { get; set; }
+        public int InteractiveActivityTypeId { get; set; }
+        public string SwfFile { get; set; }
         public bool IsSystem { get; set; }
         public bool CanEdit { get; set; }
     }

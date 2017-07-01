@@ -174,7 +174,9 @@ namespace Keebee.AAT.BusinessRules
                             ConfigId = config.Id,
                             ResponseTypeId = x.ResponseType.Id,
                             PhidgetTypeId = x.PhidgetType.Id,
-                            PhidgetStyleTypeId = x.PhidgetStyleType.Id
+                            PhidgetStyleTypeId = x.PhidgetStyleType.Id,
+                            InteractiveActivityTypeId = x.ResponseType.InteractiveActivityType?.Id ?? 0,
+                            SwfFile = x.ResponseType.InteractiveActivityType?.SwfFile ?? string.Empty
                         })
             };
 

@@ -67,8 +67,8 @@ SET IDENTITY_INSERT [dbo].[ResponseTypeCategories] OFF
 
 -- game types
 SET IDENTITY_INSERT [dbo].[InteractiveActivityTypes] ON 
-INSERT [dbo].[InteractiveActivityTypes] ([Id], [Description]) VALUES (1, N'Matching Game')
-INSERT [dbo].[InteractiveActivityTypes] ([Id], [Description]) VALUES (2, N'Painting Activity')
+INSERT [dbo].[InteractiveActivityTypes] ([Id], [Description], [SwfFile]) VALUES (1, N'Matching Game', 'MatchingGame.swf')
+INSERT [dbo].[InteractiveActivityTypes] ([Id], [Description], [SwfFile]) VALUES (2, N'Painting Activity', 'PaintingActivity.swf')
 SET IDENTITY_INSERT [dbo].[InteractiveActivityTypes] OFF
 
 -- response types

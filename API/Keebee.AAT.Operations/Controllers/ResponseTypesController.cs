@@ -47,8 +47,9 @@ namespace Keebee.AAT.Operations.Controllers
                     ? new
                     { 
                         x.InteractiveActivityType.Id,
-                        x.InteractiveActivityType.Description 
-                   } : null,
+                        x.InteractiveActivityType.Description,
+                        x.InteractiveActivityType.SwfFile
+                    } : null,
                     x.IsSystem
                 }).ToArray();
 
@@ -82,7 +83,8 @@ namespace Keebee.AAT.Operations.Controllers
                 ? new
                 {
                     responseType.InteractiveActivityType.Id,
-                    responseType.InteractiveActivityType.Description
+                    responseType.InteractiveActivityType.Description,
+                    responseType.InteractiveActivityType.SwfFile
                 } : null;
             exObj.IsSystem = responseType.IsSystem;
 

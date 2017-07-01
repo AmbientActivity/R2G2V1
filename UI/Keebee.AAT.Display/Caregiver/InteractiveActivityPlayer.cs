@@ -57,6 +57,12 @@ namespace Keebee.AAT.Display.Caregiver
             set { _interactiveActivityTypeId = value; }
         }
 
+        private string _swfFile;
+        public string SwfFile
+        {
+            set { _swfFile = value; }
+        }
+
         private readonly InteractiveActivityEventLogger _interactiveActivityEventLogger;
 
 #if DEBUG
@@ -85,8 +91,8 @@ namespace Keebee.AAT.Display.Caregiver
             matchingGame1.Dock = DockStyle.Fill;
             matchingGame1.Hide();
 
-            paintingActivity1.Hide();
-            paintingActivity1.Dock = DockStyle.Fill;
+            activityPlayer1.Hide();
+            activityPlayer1.Dock = DockStyle.Fill;
         }
 
         private void InitializeStartupPosition()
@@ -121,12 +127,11 @@ namespace Keebee.AAT.Display.Caregiver
                     matchingGame1.Play(_shapes, _sounds, _difficultyLevel, false, _isActiveEventLog, false);
                     matchingGame1.Select();
                     break;
-
-                case InteractiveActivityTypeId.PaintingActivity:
-                    paintingActivity1.Show();
-                    paintingActivity1.SystemEventLogger = _systemEventLogger;
-                    paintingActivity1.Play(false, _isActiveEventLog, false);
-                    paintingActivity1.Select();
+                default:
+                    activityPlayer1.Show();
+                    activityPlayer1.SystemEventLogger = _systemEventLogger;
+                    activityPlayer1.Play(false, _isActiveEventLog, false, _interactiveActivityTypeId, _swfFile);
+                    activityPlayer1.Select();
                     break;
             }
         }

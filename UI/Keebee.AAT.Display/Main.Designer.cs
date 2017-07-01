@@ -32,7 +32,7 @@ namespace Keebee.AAT.Display
         {
             this.lblActiveResident = new System.Windows.Forms.Label();
             this.mediaPlayer1 = new Keebee.AAT.Display.UserControls.MediaPlayer();
-            this.paintingActivity1 = new Keebee.AAT.Display.UserControls.PaintingActivity();
+            this.paintingActivity1 = new Keebee.AAT.Display.UserControls.ActivityPlayer();
             this.radioControl1 = new Keebee.AAT.Display.UserControls.RadioControl();
             this.offScreen1 = new Keebee.AAT.Display.UserControls.OffScreen();
             this.slideViewerFlash1 = new Keebee.AAT.Display.UserControls.SlideViewer();
@@ -142,7 +142,7 @@ namespace Keebee.AAT.Display
         private OffScreen offScreen1;
         private RadioControl radioControl1;
         private System.Windows.Forms.Label lblActiveResident;
-        private PaintingActivity paintingActivity1;
+        private ActivityPlayer paintingActivity1;
         private MediaPlayer mediaPlayer1;
         private AmbientPlayer ambientPlayer1;
         #endregion

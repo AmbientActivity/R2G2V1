@@ -180,7 +180,7 @@ video {
 /* remove border from sticky header and align center */
 .table-bordered > thead > tr > th,
 .table-bordered > thead > tr > td {
-    /*border: none;*/
+    border: none;
     vertical-align: middle;
 }
 .table-detail-container {

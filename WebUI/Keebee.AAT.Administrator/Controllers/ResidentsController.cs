@@ -190,7 +190,7 @@ namespace Keebee.AAT.Administrator.Controllers
             var webImg = new WebImage(stream);
 
             var croppedImage = webImg.CustomCrop(1);
-            croppedImage.Resize(96, 96, true, true);
+            webImg.Resize(96, 96, true, true).Crop(1, 1);
 
             return Convert.ToBase64String(croppedImage.GetBytes());
         }

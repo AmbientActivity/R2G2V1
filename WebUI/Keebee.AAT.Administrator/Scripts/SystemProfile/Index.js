@@ -67,6 +67,16 @@
                                 return value.Id === Number(mediaPathTypeId);
                             })[0].ShortDescription;
 
+                            var category = lists.MediaPathTypeList.filter(function (value) {
+                                return value.Id === Number(mediaPathTypeId);
+                            })[0].Category.toLowerCase();
+
+                            var colThumbnail = $("#col-thumbnail");
+                            if (category !== "audio")
+                                colThumbnail.html("<div class='virtualPlaceholderImage'></div>");
+                            else
+                                colThumbnail.html("");
+
                             var tableDetailElement = $("#table-detail");
                             var tableHeaderElement = $("#table-header");
 
@@ -160,9 +170,9 @@
 
                         self.columns = ko.computed(function () {
                             var arr = [];
-                            arr.push({ title: "Filename", sortKey: "filename", cssClass: "col-filename" });
-                            arr.push({ title: "Type", sortKey: "filetype", cssClass: "col-filetype" });
-                            arr.push({ title: "Size", sortKey: "filesize", cssClass: "col-filesize" });
+                            arr.push({ title: "Filename", sortKey: "filename", cssClass: "col-filename-sp" });
+                            arr.push({ title: "Type", sortKey: "filetype", cssClass: "col-filetype-sp" });
+                            arr.push({ title: "Size", sortKey: "filesize", cssClass: "col-filesize-sp" });
                             return arr;
                         });
 

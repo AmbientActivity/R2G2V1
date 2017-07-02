@@ -9,35 +9,59 @@
     });
 </script>
 
-<div class="container">
+<div class="container container-resident-edit">
     <div class="row">
-        <div class="col-sm-6">
+        <div class="col-sm-12">
             <div class="label label-default">First Name</div>
             <input type="text" name="txtFirstName" id="txtFirstName" class="form-control" value="@Model.FirstName" maxlength="50" />
         </div>
     </div>
     <div class="row">
-        <div class="col-sm-6">
+        <div class="col-sm-12">
             <div class="label label-default">Last Name</div>
             <input type="text" id="txtLastName" class="form-control" value="@Model.LastName" maxlength="50" />
         </div>
     </div>
     <div class="row">
-        <div class="col-sm-6">
+        <div class="col-sm-5">
             <div class="label label-default">Gender</div>
-            @Html.DropDownList("ddlGenders", @Model.Genders, "-- Select One --", new { @class = "form-control" })
+            <form>
+                <input type="hidden" id="radGender" value="@Model.Gender" />
+                <div class="radio radio-gender-select">
+                    @switch (@Model.Gender)
+                    {
+                        case "M":
+                            <div><label><input type="radio" id="M" name="optGender" checked="">Male</label>
+                            </div>
+                            <div><label><input type="radio" id="F" name="optGender">Female</label>
+                            </div>
+                            break;
+                        case "F":
+                            <div><label><input type="radio" id="M" name="optGender">Male</label>
+                            </div>
+                            <div><label><input type="radio" id="F" name="optGender" checked="">Female</label>
+                            </div>
+                            break;
+                        default:
+                            <div><label><input type="radio" id="M" name="optGender">Male</label>
+                            </div>
+                            <div><label><input type="radio" id="F" name="optGender">Female</label>
+                            </div>
+                            break;
+                    }
+                </div>
+            </form>
         </div>
-    </div>
-    <div class="row">
-        <div class="col-sm-6">
-            <div class="label label-default">Game Difficulty Level</div>
+        <div class="col-sm-7">
+            <div class="label label-default">Gaming Level</div>
             @Html.DropDownList("ddlGameDifficultyLevels", @Model.GameDifficultyLevels, new { @class = "form-control" })
         </div>
     </div>
+
     @if (Model.IsVideoCaptureServiceInstalled)
     {
         <div class="row row-video-capture-edit">
-            <div class="col-sm-6">
+            <div class="col-sm-12">
                 <div class="label label-default">Allow Video Capturing</div>
                 <div>
                     @if (Model.AllowVideoCapturing)
@@ -52,46 +76,44 @@
             </div>
         </div>
     }
-    <div class="row row-profile-picture-edit">
-        <div class="col-sm-6">
+    <div class="row row-profile-picture-label">
+        <div class="col-sm-12">
             <span class="label label-default">Profile Picture</span>
         </div>
     </div>
     <div class="row row-profile-picture-edit">
-        <div class="col-sm-6">
-            <div class="panel panel-profile-picture">
-                <div class="panel-body panel-body-profile-picture">
-                    <div class="container">
-                        <div class="row">
-                            <div class="col-sm-6">
-                                @if (@Model.ProfilePicture != null)
-                                {
-                                    <img class="img-circle" id="profile-picture" src="@Model.ProfilePicture" alt="exists" width="60" height="60" />
-                                }
-                                else
-                                {
-                                    <img class="img-circle" id="profile-picture" src="@Model.ProfilePicturePlaceholder" alt="notexists" width="60" height="60" />
-                                }
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-sm-6">
-                                <label class="btn btn-default btn-file btn-sm">
-                                    Browse... <input type="file" name="file" id="fileupload" style="display: none" />
-                                </label>
-                                <input class="btn btn-default btn-sm" type="button" id="remove-picture" value="Remove" />
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-sm-9">
-                                <div id="progress"></div>
-                                <div id="progressBar" class="progressBar" style="display: none"></div>
-                            </div>
-                        </div>
+        <div class="col-sm-12">
+            <div class="container container-profile-picture">
+                <div class="row">
+                    <div class="col-sm-12">
+                        @if (@Model.ProfilePicture != null)
+                        {
+                            <img class="img-circle" id="profile-picture" src="@Model.ProfilePicture" alt="exists" width="60" height="60" />
+                        }
+                        else
+                        {
+                            <img class="img-circle" id="profile-picture" src="@Model.ProfilePicturePlaceholder" alt="notexists" width="60" height="60" />
+                        }
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <span>
+                            <label class="btn btn-default btn-file btn-sm">
+                                Browse... <input type="file" name="file" id="fileupload" style="display: none" />
+                            </label>
+                            <input class="btn btn-default btn-sm" type="button" id="remove-picture" value="Remove" />
+                        </span>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <div id="progress"></div>
+            <div id="progressBar"class="progressBar" hidden></div>
+        </div>
+    </div>
+    <div class="validation-container" id="validation-container"></div>
 </div>
-<div class="validation-container" id="validation-container"></div>

@@ -236,10 +236,7 @@ namespace Keebee.AAT.Administrator.Controllers
                 Id = resident?.Id ?? 0,
                 FirstName = (resident != null) ? resident.FirstName : string.Empty,
                 LastName = (resident != null) ? resident.LastName : string.Empty,
-                Genders = new SelectList( new Collection<SelectListItem> {
-                    new SelectListItem { Value = "M", Text = "M" },
-                    new SelectListItem { Value = "F", Text = "F" }},
-                    "Value", "Text", resident?.Gender),
+                Gender = resident?.Gender ?? string.Empty,
                 GameDifficultyLevels = new SelectList(new Collection<SelectListItem> {
                     new SelectListItem { Value = "1", Text = "1" },
                     new SelectListItem { Value = "2", Text = "2" },

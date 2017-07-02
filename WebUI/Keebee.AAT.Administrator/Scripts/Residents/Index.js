@@ -9,6 +9,9 @@
     residents.index = {
         init: function (values) {
 
+            // buttons
+            var cmdAdd = $("#add");
+
             var currentSortKey = "firstname";
             var primarySortKey = "firstname";
             var sortDescending = false;
@@ -40,7 +43,7 @@
                     $("#loading-container").hide();
                     $("#table-header").show();
                     $("#table-detail").show();
-                    $("#add-resident").prop("disabled", false);
+                    cmdAdd.prop("disabled", false);
 
                     ko.bindingHandlers.tableUpdated = {
                         update: function (element, valueAccessor, allBindings) {
@@ -102,11 +105,9 @@
                             } else {
                                 tableHeaderElement.hide();
                                 tableDetailElement.hide();
-                                noMediaMessage.html("<h2>No residents found</h2>");
                                 noMediaMessage.show();
                             }
                         }
-                        //$("#txtSearchFirstName").focus();
                     }
 
                     ko.applyBindings(new ResidentViewModel());
@@ -232,10 +233,13 @@
 
                         self.showEditDialog = function (row) {
                             $("body").css("cursor", "progress");
+                            cmdAdd.prop("disabled", true);
                             $("#edit_" + row.id).tooltip("hide");
 
                             var id = (typeof row.id !== "undefined" ? row.id : 0);
                             var title = "<span class='glyphicon glyphicon-pencil' style='color: #fff'></span>";
+                            var type = BootstrapDialog.TYPE_PRIMARY;
+                            var btnClass = "btn-primary";
 
                             if (id > 0) {
                                 self.highlightRow(row);
@@ -247,6 +251,8 @@
                                 self.selectedResident(resident);
                             } else {
                                 title = title + " Add Resident";
+                                type = BootstrapDialog.TYPE_SUCCESS;
+                                btnClass = "btn-success";
                                 self.selectedResident([]);
                             }
 
@@ -254,6 +260,7 @@
                                 .done(function (message) {
                                     BootstrapDialog.show({
                                         title: title,
+                                        type:type,
                                         message: $("<div></div>").append(message),
                                         onshown: function () {
                                             $("body").css("cursor", "default");
@@ -265,10 +272,12 @@
                                                 label: "Cancel",
                                                 action: function (dialog) {
                                                     dialog.close();
+                                                    cmdAdd.prop("disabled", false);
                                                 }
                                             },{
                                                  label: "Save",
-                                                 cssClass: "btn-primary",
+                                                 cssClass: btnClass,
+                                                 hotkey: 13,  // enter
                                                  action: function (dialog) {
                                                      self.saveResident().then(function (result) {
                                                          if (result.ValidationMessages === null) {
@@ -278,6 +287,7 @@
                                                              self.sort({ afterSave: true });
                                                              self.highlightRow(self.selectedResident());
                                                              dialog.close();
+                                                             cmdAdd.prop("disabled", false);
                                                          } else {
                                                              $("#validation-container").show();
                                                              $("#validation-container").html("");
@@ -316,6 +326,7 @@
                         };
 
                         self.showDeleteDialog = function (row) {
+                            cmdAdd.prop("disabled", true);
                             $("#delete_" + row.id).tooltip("hide");
 
                             return new Promise(function(resolve, reject) {
@@ -336,13 +347,14 @@
                                     type: BootstrapDialog.TYPE_DANGER,
                                     title: "Delete Resident?",
                                     message: "Permanently delete the resident <i><b>" + fullName + "</b></i>?\n\n" +
-                                        "<b>Warning:</b> All " + messageGender + " personal media files will be removed!",
+                                            "<b>Warning:</b> All " + messageGender + " personal media files will be removed!",
                                     closable: false,
                                     buttons: [
                                         {
                                             label: "Cancel",
                                             action: function (dialog) {
                                                 dialog.close();
+                                                cmdAdd.prop("disabled", false);
                                             }
                                         }, {
                                             label: "Yes, Delete",
@@ -362,10 +374,12 @@
                                                     createResidentArray(lists.ResidentList);
                                                     self.sort({ afterSave: true });
                                                     resolve(result);
+                                                    cmdAdd.prop("disabled", false);
                                                 })
                                                 .catch(function () {
                                                     dialog.close();
                                                     reject(dialog);
+                                                    cmdAdd.prop("disabled", false);
                                                 });
                                             }
                                         }
@@ -395,7 +409,7 @@
                         self.getResidentDetailFromDialog = function () {
                             var firstname = $.trim($("#txtFirstName").val());
                             var lastname = $.trim($("#txtLastName").val());
-                            var gender = $.trim($("#ddlGenders").val());
+                            var gender = $("#radGender").val();
                             var gamedifficultylevel = $.trim($("#ddlGameDifficultyLevels").val());
                             var allowVideoCapturing = $.trim($("#chkAllowVideoCapturing").is(":checked"));
                             var profilePicture = null;

@@ -29,6 +29,23 @@
             else
                 cmdRemovePicture.prop("disabled", false);
 
+            $(function () {
+                // Bootstrappable btn-group with checkables inside
+                // - hide inputs and set bootstrap class
+                $(".btn-group label.btn input[type=radio]")
+                  .hide()
+                  .filter(":checked").parent(".btn").addClass("active");
+            });
+
+            $("input:radio").change(function () {
+                var id = $(this).attr("id");
+                var val = $(this).val();
+
+                if (val === "on") {
+                    $("#radGender").val(id);
+                }
+            });
+
             cmdRemovePicture.click(function () {
                 imgProfilePicture.attr("src", config.profilePicturePlaceholder);
                 imgProfilePicture.attr("alt", "notexists");
@@ -51,7 +68,7 @@
 
                     progress: function (progress) {
                         progressDesc.html("Progress: " + Math.round(progress) + "%");
-                        progressBar.css("width", progress/2 + "%");
+                        progressBar.css("width", progress + "%");
                     },
 
                     success: function (data) {

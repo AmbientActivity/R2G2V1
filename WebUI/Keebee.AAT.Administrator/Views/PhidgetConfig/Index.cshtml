@@ -28,13 +28,13 @@
         <div class="col-sm-4">
             <select class="form-control" data-bind="options: configs, optionsValue: 'id', optionsText: 'description', value: selectedConfig, event: { change: enableDetail }, css: 'select-config'"></select>
         </div>
-        <div class="col-sm-6">
-            <a id="add" href="javascript:void(0)" class="btn btn-success btn-md" data-bind="click: showAddDialog, css: 'glyphicon glyphicon-duplicate button-text'"></a>
-            <a id="edit" href="javascript:void(0)" class="btn btn-primary btn-md" data-bind="click: showEditDialog, css: 'glyphicon glyphicon-pencil button-text'"></a>
+        <div id="col-button-container"class="col-sm-6" hidden>
+            <a id="add" href="javascript:void(0)" class="btn btn-success btn-md" data-bind="click: showEditDialog(true), css: 'glyphicon glyphicon-duplicate button-text'"></a>
+            <a id="edit" href="javascript:void(0)" class="btn btn-primary btn-md" data-bind="click: showEditDialog(false), css: 'glyphicon glyphicon-pencil button-text'"></a>
             <a id="delete" href="javascript:void(0)" class="btn btn-danger btn-md" data-bind="click: showDeleteDialog, css: 'glyphicon glyphicon-trash button-text'"></a>
         </div>
         <div class="activate-button">
-            <button id="activate" class="btn btn-primary btn-md" data-bind="click: showConfigActivateDialog">Activate</button>
+            <button id="activate" class="btn btn-primary btn-md" data-bind="click: showActivatConfigDialog" disabled>Activate</button>
         </div>
     </div>
 
@@ -42,7 +42,7 @@
         <div class="panel-heading">
             <ul class="nav nav-pills">
                 <li>
-                    <button id="add-detail" class="btn btn-primary btn-md" data-bind="click: showEditDetailDialog">Add Detail</button>
+                    <button id="add-detail" class="btn btn-success btn-md" data-bind="click: showEditDetailDialog" disabled>Add Detail</button>
                 </li>
                 <li class="pull-right record-total">
                     <label>Total:</label> <span data-bind="text: totalConfigDetails()"></span>
@@ -55,7 +55,7 @@
 
     <div class="panel panel-default">
         <div class="panel-body panel-body-table-header">
-            <table class="table table-striped table-bordered table-hover" id="tblConfigDetail" style="display: none">
+            <table data-bind="tableUpdated: configDetails"  class="table table-striped table-bordered table-hover" id="tblConfigDetail" hidden>
                 <thead>
                     <tr>
                         <th class="col-glyphicon"></th>
@@ -69,7 +69,7 @@
                 <tbody data-bind="foreach: configDetailsTable, setTooltips: configDetailsTable">
                     <tr data-bind="click: $parent.highlightRow, attr: {id: 'row_' +  id}">
                         <!-- ko if: canedit -->
-                        <td><a href="javascript:void(0)" data-bind="click: $parent.showDeleteDetailDialog, css: 'glyphicon glyphicon-remove'"></a></td>
+                        <td><a href="javascript:void(0)" data-bind="click: $parent.showDeleteDetailDialog, css: 'glyphicon glyphicon-trash'"></a></td>
                         <td><a data-bind="attr: { href: '#' }, click: $parent.showEditDetailDialog, css: 'glyphicon glyphicon-pencil'"></a></td>
                         <!-- /ko -->
                         <!-- ko if: !canedit -->

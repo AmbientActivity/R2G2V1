@@ -43,9 +43,9 @@
             </table>
         </div>
 
-        <div id="no-records-message" class="no-records-found" style="display: none"><h2>No event logs found</h2></div>
+        <div id="no-records-message" class="no-records-found" hidden><h2>No event logs found</h2></div>
 
-        <div id="table-detail" class="table-detail-container container-height" style="display: none">
+        <div id="table-detail" class="table-detail-container container-height" hidden>
             <table data-bind="tableUpdated: eventLogsTable" class="table table-striped table-bordered table-hover" id="tblEventLog">
                 <tbody data-bind="foreach: eventLogsTable, tableRender: eventLogsTable">
                     <tr data-bind="attr: { click: $parent.highlightRow, id: 'row_' + streamid }">

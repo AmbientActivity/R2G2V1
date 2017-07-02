@@ -34,7 +34,6 @@ namespace Keebee.AAT.Administrator.ViewModels
 
     public class ResidentEditViewModel : ResidentViewModel
     {
-        public SelectList Genders { get; set; }
         public SelectList GameDifficultyLevels { get; set; }
         public bool IsVideoCaptureServiceInstalled { get; set; }
     }

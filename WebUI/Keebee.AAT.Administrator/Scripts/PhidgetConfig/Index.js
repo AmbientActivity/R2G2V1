@@ -9,10 +9,14 @@
 
     phidgetconfig.index = {
         init: function () {
+            var isBinding = true;
 
-            // buttons
+            // buttons            
+            var cmdAdd = $("#add");
             var cmdEdit = $("#edit");
             var cmdDelete = $("#delete");
+            var cmdActivate = $("#activate");
+            var cmdAddDetail = $("#add-detail");
 
             // active config
             var activeConfig = {};
@@ -31,6 +35,20 @@
 
                     $("#loading-container").hide();
                     $("#tblConfigDetail").show();
+                    $("#col-button-container").show();
+
+                    cmdAdd.prop("hidden", true);
+                    cmdEdit.prop("hidden", false);
+                    cmdDelete.prop("hidden", false);
+                    cmdActivate.prop("disabled", false);
+                    cmdAddDetail.prop("disabled", false);
+
+                    ko.bindingHandlers.tableUpdated = {
+                        update: function (element, valueAccessor, allBindings) {
+                            ko.unwrap(valueAccessor());
+                            isBinding = false;
+                        }
+                    }
 
                     ko.applyBindings(new ConfigViewModel());
 
@@ -82,6 +100,14 @@
 
                         createConfigDetailArray(lists.ConfigDetailList);
                         createConfigArray(lists.ConfigList);
+
+                        function enableButtons(enable) {
+                            cmdAdd.prop("hidden", enable);
+                            cmdEdit.prop("hidden", enable);
+                            cmdDelete.prop("hidden", enable);
+                            cmdAddDetail.prop("disabled", !enable);
+                            cmdActivate.prop("disabled", !enable);
+                        }
 
                         function createConfigDetailArray(list) {
                             self.configDetails.removeAll();
@@ -152,21 +178,93 @@
                             $(r).addClass("highlight").siblings().removeClass("highlight");
                         };
 
-                        self.showEditDialog = function () {
-                            if (cmdEdit.is("[disabled]")) return;
-                            var id = self.selectedConfig();
-                            self.showConfigEditDialog(id);
-                        };
+                        self.showEditDialog = function (add) {
+                            if (isBinding) return;
 
-                        self.showAddDialog = function () {
-                            self.showConfigEditDialog(0);
+                            $("body").css("cursor", "progress");
+                            enableButtons(false);
+
+                            var id = 0;
+
+                            var title;
+                            var type = BootstrapDialog.TYPE_PRIMARY;
+                            var btnClass = "btn-primary";
+
+                            if (add) {
+                                title = "<span class='glyphicon glyphicon-duplicate' style='color: #fff'></span>" + " Duplicate Configuration";
+                                type = BootstrapDialog.TYPE_SUCCESS;
+                                btnClass = "btn-success";
+                            } else {
+                                id = self.selectedConfig();
+                                title = "<span class='glyphicon glyphicon-pencil' style='color: #fff'></span>" + " Edit Configuration";
+                            }
+
+                            $.get(site.url + "PhidgetConfig/GetConfigEditView/" + id,
+                                { selectedConfigid: self.selectedConfig() })
+                                .done(function (message) {
+                                    BootstrapDialog.show({
+                                        type: type,
+                                        title: title,
+                                        message: $("<div></div>").append(message),
+                                        onshown: function () {
+                                            $("body").css("cursor", "default");
+                                            $("#txtDescription").focus();
+                                        },
+                                        closable: false,
+                                        buttons: [
+                                            {
+                                                label: "Cancel",
+                                                action: function (dialog) {
+                                                    dialog.close();
+                                                    enableButtons(true);
+                                                }
+                                            }, {
+                                                label: "OK",
+                                                hotkey: 13,  // enter
+                                                cssClass: btnClass,
+                                                action: function (dialog) {
+                                                    self.saveConfig(id).then(function (result) {
+                                                        if (result.ErrorMessages === null) {
+                                                            $.extend(lists, result);
+                                                            createConfigArray(lists.ConfigList);
+                                                            createConfigDetailArray(lists.ConfigDetailList);
+                                                            self.selectedConfig(result.SelectedId);
+                                                            activeConfig = result.ConfigList.filter(function (value) { return value.IsActive; })[0];
+                                                            self.activeConfig(activeConfig.Id);
+                                                            self.activeConfigDesc(activeConfig.Description);
+                                                            if (activeConfig.IsActiveEventLog === true)
+                                                                self.activeEventLogDesc("On");
+                                                            else
+                                                                self.activeEventLogDesc("Off");
+                                                            self.enableDetail();
+                                                            dialog.close();
+                                                            enableButtons(true);
+                                                        } else {
+                                                            $("#validation-container").show();
+                                                            $("#validation-container").html("");
+                                                            var html = "<ul>";
+                                                            for (var i = 0; i < result.ErrorMessages.length; i++) {
+                                                                var msg = result.ErrorMessages[i];
+                                                                html = html + "<li>" + msg + "</li>";
+                                                            }
+                                                            html = html + "</ul>";
+                                                            $("#validation-container").append(html);
+                                                        }
+                                                    });
+                                                }
+                                            }
+                                        ]
+                                    });
+                                });
                         };
 
                         self.showDeleteDialog = function () {
+                            if (isBinding) return;
                             if (cmdDelete.is("[disabled]")) return;
                             var id = self.selectedConfig();
+                            enableButtons(false);
 
-                            var title = "<span class='glyphicon glyphicon-trash'></span>";
+                            var title = "<span class='glyphicon glyphicon-trash' style='color: #fff'></span>";
                             if (id <= 0) return;
 
                             BootstrapDialog.show({
@@ -180,6 +278,7 @@
                                         label: "No",
                                         action: function (dialog) {
                                             dialog.close();
+                                            enableButtons(true);
                                         }
                                     }, {
                                         label: "Yes, Delete",
@@ -193,6 +292,7 @@
                                                     .filter(function(value) { return value.IsActive === true })[0].Id;
                                                 self.selectedConfig(activeId);
                                                 dialog.close();
+                                                enableButtons(true);
                                             });
                                         }
                                     }
@@ -201,13 +301,20 @@
                         };
 
                         self.showEditDetailDialog = function (row) {
+                            if (isBinding) return;
+
+                            $("body").css("cursor", "progress");
+                            enableButtons(false);
+
                             var id = (row.id !== undefined ? row.id : 0);
 
                             if (id > 0) {
                                 self.highlightRow(row);
                             }
                        
-                            var title = "<span class='glyphicon glyphicon-pencil'></span>";
+                            var title = "<span class='glyphicon glyphicon-pencil' style='color: #fff'></span>";
+                            var type = BootstrapDialog.TYPE_PRIMARY;
+                            var btnClass = "btn-primary";
 
                             if (id > 0) {
                                 title = title + " Edit Configuration Item";
@@ -215,16 +322,20 @@
                                 self.selectedConfigDetail(configDetail);
                             } else {
                                 title = title + " Add Configuration Item";
+                                type = BootstrapDialog.TYPE_SUCCESS;
+                                btnClass = "btn-success";
                                 self.selectedConfigDetail([]);
                             }
 
                             $.get(site.url + "PhidgetConfig/GetConfigDetailEditView/" + id, 
-                                { id: id, configId: self.selectedConfig() })
+                                { id: id, configId: self.selectedConfig() }, false)
                                 .done(function (message) {
                                     BootstrapDialog.show({
                                         title: title,
+                                        type: type,
                                         message: $("<div></div>").append(message),
                                         onshown: function () {
+                                            $("body").css("cursor", "default");
                                             $("#txtDescription").focus();
                                         },
                                         closable: false,
@@ -233,10 +344,12 @@
                                                 label: "Cancel",
                                                 action: function (dialog) {
                                                     dialog.close();
+                                                    enableButtons(true);
                                                 }
                                             }, {
                                                 label: "OK",
-                                                cssClass: "btn-primary",
+                                                hotkey: 13,  // enter
+                                                cssClass: btnClass,
                                                 action: function (dialog) {
                                                     self.saveConfigDetail().then(function (result) {
                                                         if (result.ErrorMessages === null) {
@@ -247,6 +360,7 @@
                                                             self.enableDetail();
                                                             self.sort();
                                                             dialog.close();
+                                                            enableButtons(true);
                                                         } else {
                                                             $("#validation-container").show();
                                                             $("#validation-container").html("");
@@ -268,6 +382,7 @@
 
                         self.showDeleteDetailDialog = function (row) {
                             var id = (row.id !== undefined ? row.id : 0);
+                            enableButtons(false);
 
                             if (id > 0) {
                                 self.highlightRow(row);
@@ -275,8 +390,7 @@
                                 return;
                             }
 
-                            var title = "<span class='glyphicon glyphicon-trash'></span>";
-                                                        
+                            var title = "<span class='glyphicon glyphicon-trash' style='color: #fff'></span>";                        
                             var cd = self.getConfigDetail(id);
 
                             BootstrapDialog.show({
@@ -289,6 +403,7 @@
                                         label: "No",
                                         action: function (dialog) {
                                             dialog.close();
+                                            enableButtons(true);
                                         }
                                     }, {
                                         label: "Yes, Delete",
@@ -299,6 +414,7 @@
                                                 createConfigDetailArray(lists.ConfigDetailList);
                                                 self.enableDetail();
                                                 dialog.close();
+                                                enableButtons(true);
                                             });
                                         }
                                     }
@@ -306,87 +422,24 @@
                             });
                         };
 
-                        self.showConfigEditDialog = function (id) {
-                            $("body").css("cursor", "progress");
-                            var title = "<span class='glyphicon glyphicon-pencil'></span>";
-
-                            if (id > 0) {
-                                title = title + " Edit Configuration";
-                            } else {
-                                title = title + " Duplicate Configuration";
-                            }
-
-                            $.get(site.url + "PhidgetConfig/GetConfigEditView/" + id,
-                                { selectedConfigid: self.selectedConfig() })
-                                .done(function (message) {
-                                    BootstrapDialog.show({
-                                        title: title,
-                                        message: $("<div></div>").append(message),
-                                        onshown: function () {
-                                            $("body").css("cursor", "default");
-                                            $("#txtDescription").focus();
-                                        },
-                                        closable: false,
-                                        buttons: [
-                                            {
-                                                label: "Cancel",
-                                                action: function (dialog) {
-                                                    dialog.close();
-                                                }
-                                            }, {
-                                                label: "OK",
-                                                cssClass: "btn-primary",
-                                                action: function (dialog) {
-                                                    self.saveConfig(id).then(function (result) {
-                                                        if (result.ErrorMessages === null) {
-                                                            $.extend(lists, result);
-                                                            createConfigArray(lists.ConfigList);
-                                                            createConfigDetailArray(lists.ConfigDetailList);
-                                                            self.selectedConfig(result.SelectedId);
-                                                            activeConfig = result.ConfigList.filter(function (value) { return value.IsActive; })[0];
-                                                            self.activeConfig(activeConfig.Id);
-                                                            self.activeConfigDesc(activeConfig.Description);
-                                                            if (activeConfig.IsActiveEventLog === true)
-                                                                self.activeEventLogDesc("On");
-                                                            else
-                                                                self.activeEventLogDesc("Off");
-                                                            self.enableDetail();
-                                                            dialog.close();
-                                                        } else {
-                                                            $("#validation-container").show();
-                                                            $("#validation-container").html("");
-                                                            var html = "<ul>";
-                                                            for (var i = 0; i < result.ErrorMessages.length; i++) {
-                                                                var msg = result.ErrorMessages[i];
-                                                                html = html + "<li>" + msg + "</li>";
-                                                            }
-                                                            html = html + "</ul>";
-                                                            $("#validation-container").append(html);
-                                                        }
-                                                    });
-                                                }
-                                            }
-                                        ]
-                                    });
-                            });
-                        };
-
-                        self.showConfigActivateDialog = function (id) {
-                            var title = "<span class='glyphicon glyphicon-ok'></span>";
+                        self.showActivatConfigDialog = function (id) {
+                            var title = "<span class='glyphicon glyphicon-ok' style='color: #fff'></span>";
                             if (id <= 0) return;
+                            enableButtons(false);
 
                             BootstrapDialog.show({
-                                title: title + " Configuration Activation",
+                                title: title + " Activate Configuration",
                                 message: "Activate the configuration <b>" + self.selectedConfigDesc() + "</b>?",
                                 closable: false,
                                 buttons: [
                                     {
-                                        label: "No",
+                                        label: "Cancel",
                                         action: function (dialog) {
                                             dialog.close();
+                                            enableButtons(true);
                                         }
                                     }, {
-                                        label: "Yes",
+                                        label: "OK",
                                         cssClass: "btn-primary",
                                         action: function (dialog) {
                                             self.activateConfig().then(function(result) {
@@ -403,6 +456,7 @@
                                                     self.activeEventLogDesc("Off");
                                                 self.enableDetail();
                                                 dialog.close();
+                                                enableButtons(true);
                                             });
                                         }
                                     }

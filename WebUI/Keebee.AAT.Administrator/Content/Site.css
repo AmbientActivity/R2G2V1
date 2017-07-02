@@ -130,11 +130,52 @@ video {
     color: #c12e2a;
 }
 
-/* dialog */
-.modal-content {
-    width: 470px;
+.modal-dialog{
+    position: relative;
+    display: table; /* <-- This makes the trick */
+    overflow-y: auto;    
+    overflow-x: auto;
+    width: auto;
+    min-width: 300px;   
 }
 
+/*.modal-header {
+    padding:9px 15px;
+    border-bottom:1px solid #eee;
+    background-color: #000;
+    -webkit-border-top-left-radius: 5px;
+    -webkit-border-top-right-radius: 5px;
+    -moz-border-radius-topleft: 5px;
+    -moz-border-radius-topright: 5px;
+     border-top-left-radius: 5px;
+     border-top-right-radius: 5px;
+ }*/
+
+/* dialog container */
+.container-login {
+    padding: 0;
+    width: 300px;
+}
+.container-resident-edit {
+    padding: 0;
+    width: 250px;
+}
+.container-profile-picture {
+    margin: 0;
+    padding: 0 0 5px 5px;
+    background-color: #f6f7fc;
+    border: 1px solid  #ccc;
+    border-radius: 3px;
+    width: 240px;
+}
+.container-config-edit {
+    padding: 0;
+    width: 370px;
+}
+.container-config-detail-edit {
+    padding: 0;
+    width: 300px;
+}
 /* row */
 .row {
     padding: 5px;
@@ -149,23 +190,36 @@ video {
     padding: 0;
     margin-left: -11px;
 }
-.row-profile-picture-edit {
+.row-profile-picture-label {
     padding: 0;
     margin-left: -11px;
+}
+.row-profile-picture-edit {
+    padding: 0 0 0 5px;
 }
 .row-config-controls {
     padding-left: 0;
     margin-bottom: 5px;
 }
-.row-banner {
+.row-residents-banner {
     margin-top: -12px;
 }
 
+/* radio button */
+.radio-gender-select {
+    padding-top: 0;
+    margin-top: 0;
+}
+
+/* resident manager heading and filters */
 .form-control-id {
     width: 100px;
 }
+.title-residents {
+    padding-top: 5px;
+}
 
- /* override bootstraps td settings for vertical-align */
+/* override bootstraps td settings for vertical-align */
 .table > tbody > tr > td {
   vertical-align: middle;
 }
@@ -180,7 +234,7 @@ video {
 /* remove border from sticky header and align center */
 .table-bordered > thead > tr > th,
 .table-bordered > thead > tr > td {
-    border: none;
+    /*border: none;*/
     vertical-align: middle;
 }
 .table-detail-container {
@@ -245,15 +299,6 @@ video {
 .panel-body-table-header {
     padding: 0;
 }
-.panel-profile-picture {
-    margin-bottom: 0;
-    border-color: #ccc;
-    width: 400px;
-}
-.panel-body-profile-picture {
-    padding: 5px 0 0 0;
-    background-color: #f6f7fc;
-}
 .panel-no-body {
     margin-bottom: 10px;
 }
@@ -273,6 +318,11 @@ video {
     height: 20px;
     margin-bottom: 5px;
 }
+.checkbox-form {
+    width: 20px;
+    height: 20px;
+    padding-top: 5px;
+}
 .checkbox-size {
     width: 15px;
     height: 15px;
@@ -287,9 +337,6 @@ input[type="checkbox"] {
     background: transparent;
 }
 /* table columns */
-.col-checkbox-selectall {
-    width: 1%;
-}
 .col-checkbox {
     width: 1%;
 }
@@ -317,6 +364,18 @@ input[type="checkbox"] {
 }
 .col-linked-profiles {
     width: 2%;
+}
+
+/* system profile */
+.col-filename-sp{
+    width: 60%;
+}
+.col-filetype-sp {
+    width: 10%;
+    text-align: center;
+}
+.col-filesize-sp {
+    width: 15%;
 }
 
 /* event logs / video captures */
@@ -384,8 +443,7 @@ input[type="checkbox"] {
 .glyphicon-pencil {
     color: #265a88;
 }
-.play-paused,
-.glyphicon-cd {
+.play-paused {
     color: #419641;
 }
 
@@ -426,19 +484,19 @@ input[type="checkbox"] {
 
 /* progress bar for profile picture upload */
 .progressBar {
-	    background-color: #419641;
-	    width: 0;
-	    height: 20px;
-	    margin-top: 10px;
-	    margin-bottom: 10px;
-	    -moz-border-radius: 5px;
-	    -webkit-border-radius: 5px;
-	    -o-border-radius: 5px;
-	    border-radius: 5px;
-	    -moz-transition: .25s ease-out;
-	    -webkit-transition: .25s ease-out;
-	    -o-transition: .25s ease-out;
-	    transition: .25s ease-out;
+	background-color: #419641;
+	width: 0;
+	height: 20px;
+	margin-top: 10px;
+	margin-bottom: 10px;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	-o-border-radius: 5px;
+	border-radius: 5px;
+	-moz-transition: .25s ease-out;
+	-webkit-transition: .25s ease-out;
+	-o-transition: .25s ease-out;
+	transition: .25s ease-out;
 }
 
 /* for the page loading gif */

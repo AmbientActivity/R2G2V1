@@ -31,7 +31,7 @@
 <div class="panel panel-default">
     <div class="panel-body panel-body-table-header">
         <!-- custom 'sticky' table header -->
-        <div id="table-header" class="container table-header-container" style="display: none">
+        <div id="table-header" class="container table-header-container" hidden>
             <table class="table table-bordered">
                 <thead>
                     <tr id="table-row-columns">
@@ -44,7 +44,7 @@
             </table>
         </div>
 
-        <div id="no-records-message" class="no-records-found" style="display: none"><h2>No video captures found</h2></div>
+        <div id="no-records-message" class="no-records-found" hidden><h2>No video captures found</h2></div>
 
         <div id="table-detail" class="table-detail-container container-height" hidden>
             <table data-bind="tableUpdated: videoCapturesTable" class="table table-striped table-bordered table-hover" id="tblVideoCapture">
@@ -59,25 +59,4 @@
         </div>
     </div>
 </div>
-
-@*<div class="panel-body">
-        <div id="loading-container" class="loading"><img src="~/Content/images/page-loading.gif" alt="Loading..."></div>
-        <table class="table table-striped table-bordered table-hover" id="tblVideoCapture" style="display: none">
-            <thead>
-            <tr>
-                <!-- ko foreach: columns -->
-                <th data-bind="click: $parent.sort, attr: { id: 'videocapture-col-' + sortKey }, css: cssClass"><a href="javascript:void(0)" data-bind="text: title"></a></th>
-                <!-- /ko -->
-            </tr>
-            </thead>
-
-            <tbody data-bind="foreach: videoCapturesTable">
-            <tr data-bind="click: $parent.highlightRow, attr: {id: 'row_' +  filename}">
-                <td><a href="javascript:void(0)" data-bind="text: filename, click: download"></a></td>
-                <td data-bind="text: path"></td>
-                <td data-bind="text: filesize"></td>
-            </tr>
-            </tbody>
-        </table>
-    </div>*@
 

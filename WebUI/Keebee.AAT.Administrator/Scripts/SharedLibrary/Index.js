@@ -125,37 +125,48 @@ function DisableScreen() {
                                 var tooltipLink = $("#link_" + id);
                                 if (tooltipLink.length > 0)
                                     tooltipLink.tooltip({ delay: { show: 100, hide: 100 } });
-                        }
-                     }
+                            }
+                         }
 
-                    // if there are no rows in the table, hide the table and display a message
-                    var table = element.parentNode; // get the table element
-                    var noRowsMessage = $("#no-records-message");
-                    var mediaPathTypeId = $("#mediaPathTypeId").val();
+                        // if there are no rows in the table, hide the table and display a message
+                        var table = element.parentNode;
+                        var noRowsMessage = $("#no-records-message");
+                        var mediaPathTypeId = $("#mediaPathTypeId").val();
 
-                    var description = lists.MediaPathTypeList.filter(function(value) {
+                        var description = lists.MediaPathTypeList.filter(function(value) {
+                                return value.Id === Number(mediaPathTypeId);
+                            })[0].ShortDescription;
+
+                        var category = lists.MediaPathTypeList.filter(function (value) {
                             return value.Id === Number(mediaPathTypeId);
-                        })[0].ShortDescription;
+                        })[0].Category.toLowerCase();
 
-                            var tableDetailElement = $("#table-detail");
-                            var tableHeaderElement = $("#table-header");
+                        var colThumbnail = $("#col-thumbnail");
+                        if (category !== "audio")
+                            colThumbnail.html("<div class='virtualPlaceholderImage'></div>");
+                        else
+                            colThumbnail.html("");
 
-                            if (table.rows.length > 0) {
-                                tableHeaderElement.show();
-                                tableDetailElement.show();
-                                noRowsMessage.hide();
+                        var tableDetailElement = $("#table-detail");
+                        var tableHeaderElement = $("#table-header");
 
-                                // determine if there is table overflow (to cause a scrollbar)
-                                // if so, increase the right margin of last column header 
-                                var colRight = $("#sort-right");
+                        if (table.rows.length > 0) {
+                            tableHeaderElement.show();
+                            tableDetailElement.show();
+                            noRowsMessage.hide();
 
-                                if (table.clientHeight > site.getMaxClientHeight) {
-                                    colRight.addClass("table-scrollbar");
-                                    tableDetailElement.addClass("container-height");
-                                } else {
-                                    colRight.removeClass("table-scrollbar");
-                                    tableDetailElement.removeClass("container-height");
-                                }
+                            // determine if there is table overflow (to cause a scrollbar)
+                            // if so, unhide the scrollbar header column
+                            var colScrollbar = $("#col-scrollbar");
+
+                            if (table.clientHeight > site.getMaxClientHeight) {
+                                colScrollbar.prop("hidden", false);
+                                colScrollbar.attr("style", "width: 1%;");
+                                tableDetailElement.addClass("container-height");
+                            } else {
+                                colScrollbar.prop("hidden", true);
+                                tableDetailElement.removeClass("container-height");
+                            }
 
                             } else {
                                 tableHeaderElement.hide();
@@ -259,9 +270,9 @@ function DisableScreen() {
 
                         self.columns = ko.computed(function () {
                             var arr = [];
-                            arr.push({ sortKey: "filename" });
-                            arr.push({ sortKey: "filetype" });
-                            arr.push({ sortKey: "filesize" });
+                            arr.push({ title: "Filename", sortKey: "filename", cssClass: "col-filename-sl" });
+                            arr.push({ title: "Type", sortKey: "filetype", cssClass: "col-filetype" });
+                            arr.push({ title: "Size", sortKey: "filesize", cssClass: "col-filesize" });
                             return arr;
                         });
 

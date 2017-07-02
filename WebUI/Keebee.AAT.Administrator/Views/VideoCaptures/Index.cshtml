@@ -8,23 +8,59 @@
 <h3>Video Capture Manager</h3>
 
 <script type="text/javascript">
-    $(document).ready(function() {
+    $(document).ready(function () {
         videocaptures.index.init();
     });
 </script>
 
-<div class="panel panel-default">
-    <div class="panel-heading">
+<div class="panel panel-default panel-no-body">
+    <div class="panel-heading panel-heading-controls">
         <ul class="nav nav-pills">
             <li>
                 <input id="txtSearchFilename" type="text" class="form-control" placeholder="Name" data-bind="value: filenameSearch, valueUpdate: 'keyup'" />
             </li>
-            <li class="pull-right">
+            <li class="pull-right total-files">
                 <label>Total:</label> <span data-bind="text: totalVideoCaptures()"></span>
             </li>
         </ul>
     </div>
-    <div class="panel-body">
+</div>
+
+<div id="loading-container" class="loading"><img src="~/Content/images/page-loading.gif" alt="Loading..."></div>
+
+<div class="panel panel-default">
+    <div class="panel-body panel-body-table-header">
+        <!-- custom 'sticky' table header -->
+        <div id="table-header" class="container table-header-container" style="display: none">
+            <table class="table table-bordered">
+                <thead>
+                    <tr id="table-row-columns">
+                        <!-- ko foreach: columns -->
+                        <th data-bind="attr: { id: 'col-' + sortKey}, click: $parent.sort, css: cssClass"><a href="javascript:void(0)" data-bind="text: title"></a></th>
+                        <!-- /ko -->
+                        <td id="col-scrollbar" hidden></td>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+
+        <div id="no-records-message" class="no-records-found" style="display: none"><h2>No video captures found</h2></div>
+
+        <div id="table-detail" class="table-detail-container container-height" hidden>
+            <table data-bind="tableUpdated: videoCapturesTable" class="table table-striped table-bordered table-hover" id="tblVideoCapture">
+                <tbody data-bind="foreach: videoCapturesTable, tableRender: videoCapturesTable">
+                    <tr data-bind="attr: { click: $parent.highlightRow, id: 'row_' + filename }">
+                        <td class="col-filename-vc"><a href="javascript:void(0)" data-bind="text: filename, click: download"></a></td>
+                        <td class="col-path" data-bind="text: path"></td>
+                        <td class="col-filesize" data-bind="text: filesize"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@*<div class="panel-body">
         <div id="loading-container" class="loading"><img src="~/Content/images/page-loading.gif" alt="Loading..."></div>
         <table class="table table-striped table-bordered table-hover" id="tblVideoCapture" style="display: none">
             <thead>
@@ -43,6 +79,5 @@
             </tr>
             </tbody>
         </table>
-    </div>
-</div>
+    </div>*@
 

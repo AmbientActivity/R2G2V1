@@ -101,7 +101,6 @@ function DisableScreen() {
                     $("#table-header").show();
                     $("#table-detail").show();
                     cmdAdd.prop("disabled", false);
-                    //$("#uploadbutton").prop("disabled", false);
 
                     ko.bindingHandlers.tableUpdated = {
                         update: function (element, valueAccessor, allBindings) {
@@ -114,24 +113,37 @@ function DisableScreen() {
                     ko.bindingHandlers.tableRender = {
                         update: function (element, valueAccessor) {
                             ko.utils.unwrapObservable(valueAccessor());
+
                             for (var index = 0, length = element.childNodes.length; index < length; index++) {
                                 var node = element.childNodes[index];
                                 if (node.nodeType === 1) {
                                     var id = node.id.replace("row_", "");
+
                                     var tooltipElement = $("#thumb_" + id);
                                     if (tooltipElement.length > 0)
                                         tooltipElement.tooltip({ delay: { show: 100, hide: 100 } });
                                 }
                             }
+
                             // if there are no rows in the table, hide the table and display a message
-                            var table = element.parentNode; // get the table element
+                            var table = element.parentNode;
                             var noMediaMessage = $("#no-records-message");
                             var mediaPathTypeId = $("#mediaPathTypeId").val();
 
-                            var description = lists.MediaPathTypeList.filter(function (value) {
+                            var description = lists.MediaPathTypeList.filter(function(value) {
                                 return value.Id === Number(mediaPathTypeId);
                             })[0].ShortDescription;
 
+                            var category = lists.MediaPathTypeList.filter(function (value) {
+                                return value.Id === Number(mediaPathTypeId);
+                            })[0].Category.toLowerCase();
+
+                            var colThumbnail = $("#col-thumbnail");
+                            if (category !== "audio")
+                                colThumbnail.html("<div class='virtualPlaceholderImage'></div>");
+                            else
+                                colThumbnail.html("");
+                            
                             var tableDetailElement = $("#table-detail");
                             var tableHeaderElement = $("#table-header");
 
@@ -141,14 +153,16 @@ function DisableScreen() {
                                 noMediaMessage.hide();
 
                                 // determine if there is table overflow (to cause a scrollbar)
-                                // if so, increase the right margin of last column header 
-                                var colRight = $("#sort-right");
+                                // if so, unhide the scrollbar header column
+                                // and adjust the width of the filename column
+                                var colScrollbar = $("#col-scrollbar");
 
                                 if (table.clientHeight > site.getMaxClientHeight) {
-                                    colRight.addClass("table-scrollbar");
+                                    colScrollbar.prop("hidden", false);
+                                    colScrollbar.attr("style", "width: 1%;");
                                     tableDetailElement.addClass("container-height");
                                 } else {
-                                    colRight.removeClass("table-scrollbar");
+                                    colScrollbar.prop("hidden", true);
                                     tableDetailElement.removeClass("container-height");
                                 }
 
@@ -242,8 +256,9 @@ function DisableScreen() {
 
                         self.columns = ko.computed(function () {
                             var arr = [];
-                            arr.push({ sortKey: "filename" });
-                            arr.push({ sortKey: "islinked", boolean: true });
+                            arr.push({ title: "Filename", sortKey: "filename", cssClass: "col-filename" });
+                            arr.push({ title: "Type", sortKey: "filetype", cssClass: "col-filetype" });
+                            arr.push({ sortKey: "islinked", cssClass: "col-islinked", boolean: true });
                             return arr;
                         });
 

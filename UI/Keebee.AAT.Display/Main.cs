@@ -21,18 +21,14 @@ namespace Keebee.AAT.Display
 {
     public partial class Main : Form
     {
+        #region declaration
+
         internal enum ResponseValueChangeType
         {
             Increase = 0,
             Decrease = 1,
             NoDifference = 2
         }
-
-        // api client
-        private readonly IPublicMediaFilesClient _publicMediaFilesClient;
-        private readonly IConfigsClient _configsClient;
-
-        #region declaration
 
         private SystemEventLogger _systemEventLogger;
         public SystemEventLogger EventLogger
@@ -45,6 +41,10 @@ namespace Keebee.AAT.Display
         {
             set { _ambientPlaylist = value; }
         }
+
+        // api client
+        private readonly IPublicMediaFilesClient _publicMediaFilesClient;
+        private readonly IConfigsClient _configsClient;
 
         // delegate
         private delegate void ResumeAmbientDelegate();
@@ -347,7 +347,7 @@ namespace Keebee.AAT.Display
                     case ResponseTypeId.OffScreen:
                         ShowOffScreen();
                         break;
-                    default:  // any generic swf activities that don't require any media
+                    default:  // any generic swf activities that don't require media
                         if (_activeConfigDetail.InteractiveActivityTypeId > 0)
                             PlayActivity(responseTypeId);
                         break;

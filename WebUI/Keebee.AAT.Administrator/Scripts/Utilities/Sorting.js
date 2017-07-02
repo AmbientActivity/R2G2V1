@@ -87,18 +87,23 @@
             }
 
             function sortTextOrNumber(a, b) {
-                var valuea;
-                var valueb;
+                var valuea = null;
+                var valueb = null;
 
                 if (isNaN(a[config.sortKey])) {
-                    valuea = a[config.sortKey].toString().toLowerCase();
-                    valueb = b[config.sortKey].toString().toLowerCase();
+                    if (a[config.sortKey] !== null)
+                        valuea = a[config.sortKey].toString().toLowerCase();
+
+                    if (b[config.sortKey] !== null)
+                        valueb = b[config.sortKey].toString().toLowerCase();
                 } else {
                     valuea = a[config.sortKey];
                     valueb = b[config.sortKey];
                 }
 
                 if (config.descending) {
+                    if (valuea === null) return 0;
+                    if (valueb === null) return 1;
                     if (valuea > valueb) {
                         return -1;
                     } else if (valuea < valueb) {
@@ -107,6 +112,8 @@
                         return sortPrimary(a, b, false);
                     }
                 } else {
+                    if (valuea === null) return 1;
+                    if (valueb === null) return 0;
                     if (valuea < valueb) {
                         return -1;
                     } else if (valuea > valueb) {

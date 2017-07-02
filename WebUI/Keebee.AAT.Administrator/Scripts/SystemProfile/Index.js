@@ -34,7 +34,8 @@
                     $.extend(lists, data);
 
                     $("#loading-container").hide();
-                    $("#tblFile").show();
+                    $("#table-header").show();
+                    $("#table-detail").show();
                     $("#add").prop("disabled", false);
 
                     ko.bindingHandlers.tableUpdated = {
@@ -58,7 +59,7 @@
                                 }
                             }
                             // if there are no rows in the table, hide the table and display a message
-                            var table = element.parentNode; // get the table element
+                            var table = element.parentNode;
                             var noRowsMessage = $("#no-records-message");
                             var mediaPathTypeId = $("#mediaPathTypeId").val();
 
@@ -75,14 +76,16 @@
                                 noRowsMessage.hide();
 
                                 // determine if there is table overflow (to cause a scrollbar)
-                                // if so, increase the right margin of last column header 
-                                var colRight = $("#sort-right");
+                                // if so, unhide the scrollbar header column
+                                // and adjust the width of the filename column
+                                var colScrollbar = $("#col-scrollbar");
 
                                 if (table.clientHeight > site.getMaxClientHeight) {
-                                    colRight.addClass("table-scrollbar");
+                                    colScrollbar.prop("hidden", false);
+                                    colScrollbar.attr("style", "width: 1%;");
                                     tableDetailElement.addClass("container-height");
                                 } else {
-                                    colRight.removeClass("table-scrollbar");
+                                    colScrollbar.prop("hidden", true);
                                     tableDetailElement.removeClass("container-height");
                                 }
 
@@ -157,9 +160,9 @@
 
                         self.columns = ko.computed(function () {
                             var arr = [];
-                            arr.push({ sortKey: "filename" });
-                            arr.push({ sortKey: "filetype" });
-                            arr.push({ sortKey: "filesize" });
+                            arr.push({ title: "Filename", sortKey: "filename", cssClass: "col-filename" });
+                            arr.push({ title: "Type", sortKey: "filetype", cssClass: "col-filetype" });
+                            arr.push({ title: "Size", sortKey: "filesize", cssClass: "col-filesize" });
                             return arr;
                         });
 

@@ -45,7 +45,6 @@
                     ko.bindingHandlers.tableUpdated = {
                         update: function (element, valueAccessor, allBindings) {
                             ko.unwrap(valueAccessor());
-                            $("#txtSearchFirstName").focus();
                             isBinding = false;
                         }
                     }
@@ -75,7 +74,7 @@
                                 }
                             }
                             // if there are no rows in the table, hide the table and display a message
-                            var table = element.parentNode; // get the table element
+                            var table = element.parentNode;
                             var noMediaMessage = $("#no-records-message");
 
                             var tableDetailElement = $("#table-detail");
@@ -88,15 +87,15 @@
 
                                 // determine if there is table overflow (to cause a scrollbar)
                                 // if so, increase the right margin of last column header 
-                                var colRight = $("#sort-right");
+                                var colRight = $("#column-right");
 
                                 if (table.clientHeight > site.getMaxClientHeight) {
-                                    colRight.removeClass("col-date");
-                                    colRight.addClass("col-date-scrollbar");
+                                    colRight.removeClass("col-profile-picture");
+                                    colRight.addClass("col-profile-picture-scrollbar");
                                     tableDetailElement.addClass("container-height");
                                 } else {
-                                    colRight.removeClass("col-date-scrollbar");
-                                    colRight.addClass("col-date");
+                                    colRight.removeClass("col-profile-picture-scrollbar");
+                                    colRight.addClass("col-profile-picture");
                                     tableDetailElement.removeClass("container-height");
                                 }
 
@@ -107,6 +106,7 @@
                                 noMediaMessage.show();
                             }
                         }
+                        //$("#txtSearchFirstName").focus();
                     }
 
                     ko.applyBindings(new ResidentViewModel());
@@ -158,9 +158,10 @@
 
                         self.columns = ko.computed(function () {
                             var arr = [];
-                            arr.push({ title: "ID", sortKey: "id", cssClass: "col-id" });
+                            
                             arr.push({ title: "First Name", sortKey: "firstname", cssClass: "col-firstname" });
                             arr.push({ title: "Last Name", sortKey: "lastname", cssClass: "col-lastname" });
+                            arr.push({ title: "ID", sortKey: "id", cssClass: "col-id" });
                             arr.push({ title: "Gender", sortKey: "gender", cssClass: "col-gender" });
 
                             if (config.isVideoCaptureServiceInstalled === "1")

@@ -18,5 +18,6 @@ namespace Keebee.AAT.Administrator.ViewModels
         public string FileType { get; set; }
         public int FileSize { get; set; }
         public string Path { get; set; }
+        public DateTime FileDate { get; set; }
     }
 }

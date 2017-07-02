@@ -17,6 +17,11 @@ namespace Keebee.AAT.BusinessRules
         {
             try
             {
+                if (!ServiceUtilities.IsInstalled(ServiceUtilities.ServiceType.StateMachine))
+                {
+                    return "The State Machine Service is not installed";
+                }
+
                 var isInstalled = ServiceUtilities.IsInstalled(type);
                 string msg = null;
 

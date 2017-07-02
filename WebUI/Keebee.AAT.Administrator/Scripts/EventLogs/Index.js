@@ -8,8 +8,10 @@
 ; (function ($) {
     eventlogs.index = {
         init: function () {
-            var sortDescending = false;
+            var sortDescending = true;
             var currentSortKey = "filename";
+            var primarySortKey = "filename";
+            var isBinding = true;
 
             var lists = {
                 EventLogList: []
@@ -20,7 +22,53 @@
                     $.extend(lists, data);
 
                     $("#loading-container").hide();
-                    $("#tblEventLog").show();
+                    $("#table-header").show();
+                    $("#table-detail").show();
+
+                    ko.bindingHandlers.tableUpdated = {
+                        update: function (element, valueAccessor, allBindings) {
+                            ko.unwrap(valueAccessor());
+                            $("#txtSearchFilename").focus();
+                            isBinding = false;
+                        }
+                    }
+
+                    ko.bindingHandlers.tableRender = {
+                        update: function (element, valueAccessor) {
+                            ko.utils.unwrapObservable(valueAccessor());
+
+                            var table = element.parentNode;
+                            var noRowsMessage = $("#no-records-message");
+
+                            var tableDetailElement = $("#table-detail");
+                            var tableHeaderElement = $("#table-header");
+
+                            if (table.rows.length > 0) {
+                                tableHeaderElement.show();
+                                tableDetailElement.show();
+                                noRowsMessage.hide();
+
+                                // determine if there is table overflow (to cause a scrollbar)
+                                // if so, unhide the scrollbar header column
+                                // and adjust the width of the filename column
+                                var colScrollbar = $("#col-scrollbar");
+
+                                if (table.clientHeight > site.getMaxClientHeight) {
+                                    colScrollbar.prop("hidden", false);
+                                    colScrollbar.attr("style", "width: 1%;");
+                                    tableDetailElement.addClass("container-height");
+                                } else {
+                                    colScrollbar.prop("hidden", true);
+                                    tableDetailElement.removeClass("container-height");
+                                }
+
+                            } else {
+                                tableHeaderElement.hide();
+                                tableDetailElement.hide();
+                                noRowsMessage.show();
+                            }
+                        }
+                    }
 
                     ko.applyBindings(new EventLogViewModel());
 
@@ -60,9 +108,9 @@
 
                         self.columns = ko.computed(function () {
                             var arr = [];
-                            arr.push({ title: "Name", sortable: true, sortKey: "filename", numeric: false, cssClass: "" });
-                            arr.push({ title: "Path", sortable: true, sortKey: "path", numeric: false, cssClass: "" });
+                            arr.push({ title: "Filename", sortable: true, sortKey: "filename", numeric: false, cssClass: "col-filename-el" });
                             arr.push({ title: "Type", sortable: true, sortKey: "filetype", numeric: false, cssClass: "col-filetype" });
+                            arr.push({ title: "Path", sortable: true, sortKey: "path", numeric: false, cssClass: "col-path" });
                             arr.push({ title: "Size", sortable: true, sortKey: "filesize", numeric: true, cssClass: "col-filesize" });
                             return arr;
                         });
@@ -74,6 +122,7 @@
                         self.selectedEventLog(self.eventLogs()[0]);
 
                         self.sort = function (header) {
+                            if (isBinding) return;
                             var sortKey = header.sortKey;
 
                             if (sortKey !== currentSortKey) {
@@ -84,31 +133,19 @@
 
                             currentSortKey = sortKey;
 
-                            $(self.columns()).each(function (index, value) {
-                                if (value.sortKey === sortKey) {
-                                    self.eventLogs.sort(function (a, b) {
-                                        if (value.numeric) {
-                                            if (sortDescending) {
-                                                return a[sortKey] > b[sortKey]
-                                                        ? -1 : a[sortKey] < b[sortKey] || a.filename > b.filename ? 1 : 0;
-                                            } else {
-                                                return a[sortKey] < b[sortKey]
-                                                    ? -1 : a[sortKey] > b[sortKey] || a.filename > b.filename ? 1 : 0;
-                                            }
-                                        } else {
-                                            if (sortDescending) {
-                                                return a[sortKey].toString().toLowerCase() > b[sortKey].toString().toLowerCase()
-                                                    ? -1 : a[sortKey].toString().toLowerCase() < b[sortKey].toString().toLowerCase()
-                                                    || a.filename.toLowerCase() > b.filename.toLowerCase() ? 1 : 0;
-                                            } else {
-                                                return a[sortKey].toString().toLowerCase() < b[sortKey].toString().toLowerCase()
-                                                    ? -1 : a[sortKey].toString().toLowerCase() > b[sortKey].toString().toLowerCase()
-                                                    || a.filename.toLowerCase() > b.filename.toLowerCase() ? 1 : 0;
-                                            }
-                                        }
-                                    });
-                                }
-                            });
+                            var isboolean = false;
+                            if (typeof header.boolean !== "undefined") {
+                                isboolean = header.boolean;
+                            }
+                            self.eventLogs(utilities.sorting.sortArray(
+                                {
+                                    fileArray: self.eventLogs(),
+                                    columns: self.columns(),
+                                    sortKey: sortKey,
+                                    primarySortKey: primarySortKey,
+                                    descending: sortDescending,
+                                    boolean: isboolean
+                                }));
                         };
 
                         self.filteredEventLogs = ko.computed(function () {

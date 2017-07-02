@@ -41,14 +41,11 @@ namespace Keebee.AAT.Administrator.Controllers
 
         [HttpGet]
         [Authorize]
-        public FileResult Download(string streamId)
+        public FileResult Download(Guid streamId)
         {
             var mediaFilesCLient = new MediaFilesClient();
-            var mediaFile = mediaFilesCLient.Get(new Guid(streamId));
+            var mediaFile = mediaFilesCLient.Get(streamId);
             var file = System.IO.File.ReadAllBytes($@"{mediaFile.Path}/{mediaFile.Filename}");
-
-            //TODO: figure out why this doesn't return the same thing as above
-            //var file = _opsClient.GetMediaFileStream(new Guid(streamId));
 
             return File(file, "application/vnd.ms-excel", mediaFile.Filename);
         }
@@ -75,13 +72,18 @@ namespace Keebee.AAT.Administrator.Controllers
             var media = paths.Single();
 
             var list = media.Files
-                .Select(mediaFile => new EventLogViewModel
+                .Select(file =>
                 {
-                    StreamId = mediaFile.StreamId,
-                    Filename = mediaFile.Filename,
-                    FileType = mediaFile.FileType,
-                    FileSize = mediaFile.FileSize,
-                    Path = Exports.EventLogPath
+                    var filename = file.Filename.Replace($".{file.FileType}", string.Empty);
+                    //TODO: might be good to parse the date from the filename and display it in a separate column
+                    return new EventLogViewModel
+                    {
+                        StreamId = file.StreamId,
+                        Filename = filename,
+                        FileType = file.FileType.ToUpper(),
+                        FileSize = file.FileSize,
+                        Path = Exports.EventLogPath
+                    };
                 }).OrderByDescending(x => x.Filename);
 
             return list;

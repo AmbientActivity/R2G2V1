@@ -54,7 +54,7 @@ video {
 
 @media (min-width: 800px) {
   .container {
-    /*width: 1000px;*/
+    /*width: 850px;*/
   }
 }
 @media (min-width: 500px) {
@@ -161,79 +161,35 @@ video {
     margin-top: -12px;
 }
 
-/* video capture */
-#tblVideoCapture > tbody > tr > th, #tblVideoCapture > tbody > tr > td {
-    padding: 8px 5px 3px 8px;
-}
-
-/* event log */
-#tblEventLog > tbody > tr > th, #tblEventLog > tbody > tr > td {
-    padding: 5px 5px 5px 8px;
-}
-
-/* media file */
-#tblFile > tbody > tr > th, #tblFile > tbody > tr > td {
-    padding: 5px 5px 5px 8px;
-}
-
-/* residents */
-#tblResident > tbody > tr > th, #tblResident > tbody > tr > td {
-    padding: 5px 5px 5px 8px;
-}
-
-#tblSharedFile > tbody > tr > th, #tblSharedFile > tbody > tr > td {
-    padding: 5px 5px 5px 8px;
-}
 .form-control-id {
-    width: 60px;
-}
-
-/* turn off bootstrap vertical-align: top */
-.table tbody > tr > td.vert-align {
-    vertical-align: middle;
-    display: inline-block;
-    float: none;
+    width: 100px;
 }
 
  /* override bootstraps td settings for vertical-align */
-.table > thead > tr > th,
-.table > tbody > tr > th,
-.table > tfoot > tr > th,
-.table > thead > tr > td,
-.table > tbody > tr > td,
-.table > tfoot > tr > td {
+.table > tbody > tr > td {
   vertical-align: middle;
 }
 
 /* table */
-table td {
-    border: 1px solid #e8e5e5;
+.table {
+    margin-bottom: 0;
 }
-
 .table-striped tbody tr.highlight td {
     background-color: #e6f3ff;
 }
-
+/* remove border from sticky header and align center */
+.table-bordered > thead > tr > th,
+.table-bordered > thead > tr > td {
+    /*border: none;*/
+    vertical-align: middle;
+}
 .table-detail-container {
     overflow-y: auto;
 }
-
 .table-header-container {
     margin: 0;
     padding: 0;
     width: 100%;
-}
-
-.table-header-container > div > div > a.sort {
-    font-size: 15px;
-}
-
-thead {
-    padding: -10px;
-
-}
-.table {
-    margin-bottom: 0;
 }
 
 /* filter */
@@ -286,7 +242,7 @@ thead {
     padding-left: 5px;
     margin: 0;
 }
-.panel-body-media {
+.panel-body-table-header {
     padding: 0;
 }
 .panel-profile-picture {
@@ -315,95 +271,108 @@ thead {
 .checkbox-size-lg {
     width: 20px;
     height: 20px;
-}
-.checkbox-selectall {
-    width: 30px;
-    padding-left: 2px;
-    margin-right: 45px;
+    margin-bottom: 5px;
 }
 .checkbox-size {
     width: 15px;
     height: 15px;
 }
+input[type="checkbox"] {
+  margin-top: 0;
+}
 
-/* table column */
-.col-right {
-    float: right;
+.virtualPlaceholderImage {
+    display: block;
+    width: 40px;
+    background: transparent;
+}
+/* table columns */
+.col-checkbox-selectall {
+    width: 1%;
 }
 .col-checkbox {
-    width: 30px;
-}
-.col-filename {
-    width: auto;
-}
-.col-filetype {
-    width: 50px;
-}
-.col-filesize {
-    width: 80px;
-    margin-right: 33px;
-}
-.col-filesize-sm {
-    width: 80px;
-    margin-right: 10px;
-}
-.col-checkmark {
-    width: 30px;
-    margin-right: 2px;
-}
-.table-scrollbar {
-   margin-right: 15px;
-}
-.col-glyphicon {
-    width: 30px;
-    text-align: center;
+    width: 1%;
 }
 .col-thumbnail {
-    width: 55px;
+    width: 5%;
     text-align: center;
 }
-.col-thumbnail-row {
-    width: 50px;
+.col-filename {
+    width: 70%;
+}
+.col-filetype {
+    width: 5%;
     text-align: center;
 }
+.col-filesize {
+    width: 10%;
+}
+.col-islinked {
+    width: 2%;
+    text-align: center;
+}
+/* shared library */
+.col-filename-sl {
+    width: 72%;
+}
+.col-linked-profiles {
+    width: 2%;
+}
+
+/* event logs / video captures */
+.col-filename-el {
+    width: 50%;
+}
+.col-path {
+    width: 20%;
+}
+
 /* resident table */
-.col-id {
-    width: 40px;
+.col-glyphicon {
+    width: 4%;
+    text-align: center;
 }
 .col-firstname {
-    width: 180px;
+    width: 25%;
 }
 .col-lastname {
-    width: 180px;
+    width: 20%;
+}
+.col-id {
+    width: 5%;
 }
 .col-gender {
-    width: 40px;
+    width: 8%;
     text-align: center;
 }
 .col-capturable {
-    width: 60px;
+    width: 7%;
     text-align: center;
 }
 .col-date {
-    width: 115px;
+    width: 10%;
+    text-align: center;
 }
-.col-date-scrollbar {
-    width: 130px;
+.col-profile-picture {
+    width: 10%;
+    text-align: center;
 }
-.col-date-row {
-    width: 90px;
+.col-profile-picture-scrollbar {
+    width: 11.5%;
+    text-align: center;
 }
 
 /* font-awesome */
 .fa-resident {
-    font-size: 30px;
-    padding-left: 10px;
-    padding-right: 10px;
+    font-size: 20px;
 }
 
 /* bootstrap glyphicon */
+.glyphicon-transparent {
+    color: transparent;
+}
 .glyphicon-resident {
-    font-size: 20px;
+    font-size: 16px;
     padding-right: 5px;
 }
 .glyphicon-play, .glyphicon-pause {
@@ -415,13 +384,8 @@ thead {
 .glyphicon-pencil {
     color: #265a88;
 }
-.play-paused {
-    color: #419641;
-}
+.play-paused,
 .glyphicon-cd {
-    color: #419641;
-}
-.play-paused {
     color: #419641;
 }
 
@@ -488,4 +452,5 @@ thead {
     margin: auto; 
     text-align: center;
 }
+    
     

@@ -1,6 +1,7 @@
 ﻿using System;
 using Keebee.AAT.ApiClient.Models;
 using System.Collections.Generic;
+using System.Net;
 using Newtonsoft.Json;
 using RestSharp;
 
@@ -13,7 +14,7 @@ namespace Keebee.AAT.ApiClient.Clients
         User GetByUsername(string username);
         int GetCount();
         int Post(User user);
-        void Patch(int id, User user);
+        string Patch(int id, User user);
         string Delete(int id);
     }
 
@@ -55,12 +56,21 @@ namespace Keebee.AAT.ApiClient.Clients
             return count;
         }
 
-        public void Patch(int id, User user)
+        public string Patch(int id, User user)
         {
             var request = new RestRequest($"users/{id}", Method.PATCH);
             var json = request.JsonSerializer.Serialize(user);
             request.AddParameter("application/json", json, ParameterType.RequestBody);
             Execute(request);
+
+            var response = Execute(request);
+
+            string msg = null;
+
+            if (response.StatusCode != HttpStatusCode.NoContent)
+                msg = response.StatusDescription;
+
+            return msg;
         }
 
         public int Post(User user)

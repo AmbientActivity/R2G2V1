@@ -1,5 +1,5 @@
 ﻿/*!
- * 1.0 Keebee AAT Copyright © 2015
+ * 1.0 Keebee AAT Copyright © 2017
  * Utilities/ImageViewer.js
  * Author: John Charlton
  * Date: 2017-06
@@ -29,24 +29,19 @@
                 id: "modal-viewer",
                 type: BootstrapDialog.TYPE_INFO,
                 title: config.filename + "." + config.fileType.toLowerCase(),
-                closable: true,
-                onclick: function (dialog) {
-                    dialog.close();
-                }
+                closable: true
             });
 
             return new Promise(function(resolve) {
                 $.get(site.url +
-                        config.controller +
-                        "/GetImageViewerView?streamId=" +
-                        config.streamId +
-                        "&fileType=" +
-                        config.fileType)
+                        config.controller + "/GetImageViewerView?streamId=" + config.streamId +
+                        "&fileType=" + config.fileType)
                     .done(function(message) {
 
                         imageViewer.realize();
                         var header = imageViewer.getModalHeader();
                         header.css({ backgroundColor: "#000", padding: "10px", border: "none" });
+                        header.find(".close").css({ color: "#f0f0f0", opacity: "1" });
 
                         var body = imageViewer.getModalBody();
                         body.css({ "padding": "0" });

@@ -377,27 +377,15 @@ function DisableScreen() {
                         self.previewVideo = function (row) {
                             $("#thumb_" + row.id).tooltip("hide");
 
-                            var src = site.getApiUrl + "videos/" + row.streamid;
-                            var filetype = row.filetype.toLowerCase();
-
-                            BootstrapDialog.show({
-                                type: BootstrapDialog.TYPE_INFO,
-                                title: row.filename + "." + row.filetype.toLowerCase(),
-                                width: "auto",
-                                message: $("<div></div>").append(videoPlayer),
-                                onshown: function () {
-                                    videoPlayer.attr("src", src);
-                                },
-                                closable: false,
-                                buttons: [{
-                                    label: "Close",
-                                    action: function (dialog) {
-                                        videoPlayer.attr("src", "");
-                                        videoPlayer.attr("type", "video/" + filetype);
-                                        dialog.close();
-                                        enableDetail();
-                                    }
-                                }]
+                            utilities.video.show({
+                                src: site.getApiUrl + "videos/" + row.streamid,
+                                player: videoPlayer,
+                                filename: row.filename,
+                                fileType: row.filetype.toLowerCase()
+                            }).then(function () {
+                                $("#modal-video").on("hidden.bs.modal", function () {
+                                    videoPlayer.attr("src", "");
+                                });
                             });
                         };
 

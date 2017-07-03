@@ -324,6 +324,7 @@
     <Content Include="Scripts\Utilities\InProgressDialog.js" />
     <Content Include="Scripts\Utilities\JobExecution.js" />
     <Content Include="Scripts\Utilities\Sorting.js" />
+    <Content Include="Scripts\Utilities\VideoViewer.js" />
     <Content Include="Scripts\VideoCaptures\Index.js" />
     <Content Include="Scripts\_references.js" />
     <Content Include="Web.config" />

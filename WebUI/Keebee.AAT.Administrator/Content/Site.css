@@ -193,6 +193,9 @@ video {
     height: auto;
     background-color: yellow;
 }
+.container-video-preview {
+    width: 400px;
+}
 
 /* row */
 .row {

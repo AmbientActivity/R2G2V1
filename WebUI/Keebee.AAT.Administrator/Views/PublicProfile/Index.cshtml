@@ -14,12 +14,14 @@
         });
 </script>
 
+<!-- audio player -->
 <audio id="audio-player" controls autoplay data-bind="event: { ended: audioEnded }">
     <source type="audio/mp3" src="" />
 </audio>
 
+<!-- video player -->
 <div hidden>
-    <video id="video-player" controls controlsList="nodownload" autoplay><source type="video/mp4" src="" /></video>
+    <video id="video-player"></video>
 </div>
 
 <!-- need to post this back to the controller -->

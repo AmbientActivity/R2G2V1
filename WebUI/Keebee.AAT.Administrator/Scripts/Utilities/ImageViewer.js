@@ -25,6 +25,16 @@
 
             $.extend(config, options);
 
+            var imageViewer = new BootstrapDialog({
+                id: "modal-viewer",
+                type: BootstrapDialog.TYPE_INFO,
+                title: config.filename + "." + config.fileType.toLowerCase(),
+                closable: true,
+                onclick: function (dialog) {
+                    dialog.close();
+                }
+            });
+
             return new Promise(function(resolve) {
                 $.get(site.url +
                         config.controller +
@@ -33,36 +43,20 @@
                         "&fileType=" +
                         config.fileType)
                     .done(function(message) {
-                        var imageViewer = new BootstrapDialog({
-                            type: BootstrapDialog.TYPE_INFO,
-                            title: config.filename + "." + config.fileType.toLowerCase(),
-                            message: $("<div></div>").append(message),
-                            closable: false,
-                            buttons: [
-                                {
-                                    label: "Close",
-                                    cssClass: "btn-sm",
-                                    action: function(dialog) {
-                                        dialog.close();
-                                        resolve();
-                                    }
-                                }
-                            ]
-                        });
 
                         imageViewer.realize();
                         var header = imageViewer.getModalHeader();
-                        header.css({ "background-color": "#000" });
-                        header.css({ "padding": "10px" });
-                        header.css({ "border": "none" });
+                        header.css({ backgroundColor: "#000", padding: "10px", border: "none" });
 
                         var body = imageViewer.getModalBody();
                         body.css({ "padding": "0" });
+                        body.append("<div></div>").append(message);
 
                         var footer = imageViewer.getModalFooter();
-                        footer.css({ "padding": "5px"});
-                        footer.css({ "background-color": "#000" });
-                        footer.css({ "border": "none" });
+                        footer.css({ padding: "5px", backgroundColor: "#000", border: "none", display: "block", "text-align": "center" });
+                        footer.find(".bootstrap-dialog-footer")
+                            .css({ display: "inline" })
+                            .append("<span>Click image to close</span>");
 
                         imageViewer.open();
                     })

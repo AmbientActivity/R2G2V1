@@ -1,5 +1,12 @@
 ﻿@model Keebee.AAT.Administrator.ViewModels.ImageViewerViewModel
 
 <div class="container container-image-viewer">    
-    <img id="image-preview" style="margin: 0 auto;" width="@Model.Width" height="@Model.Height" src="@Model.Base64String" alt="" />
+
+    <img id="image-preview" style="margin: 0 auto;" width="@Model.Width" height="@Model.Height" src="@Model.Base64String" alt="" onclick="javascript:closeViewer();"/>
+    
+    <script>
+        function closeViewer() {
+            $("#modal-viewer").modal("hide");
+        }
+    </script>
 </div>

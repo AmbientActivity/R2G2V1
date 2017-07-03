@@ -20,6 +20,7 @@ textarea {
 }
 hr {
     margin: 5px;
+    color: #5b5959;
 }
 img {
     image-orientation: from-image;
@@ -42,9 +43,10 @@ a:hover, a:visited, a:link, a:active {
     padding-top: 6px;
 }
 .login-banner {
-    margin: 18px 0 15px 0;
+    margin: 18px 0 15px 15px;
     text-align: center;
-    color: #f0f0f0;
+    font-size: 1.4em;
+    color: #e4e0e0;
 }
 
 /* audio and video tags */
@@ -154,12 +156,12 @@ video {
 
 /* container */
 .container-login {
-    width: 400px;
+    width: 360px;
     margin: 30px auto 30px;
     padding-bottom: 20px;
-    /*background-color: #f6f7fc;*/
-    border: 2px solid  #e3e1e1;
-    border-radius: 3px;
+    border: 1px solid  #716d6d;
+    border-radius: 5px;
+    box-shadow: rgba(0,0,0,0.6) 0 0 10px;
 }
 
 .container-resident-edit {
@@ -208,8 +210,8 @@ video {
     margin-top: -12px;
 }
 .row-login-banner {
-    padding: 0;
-    background-color: #2b5880;
+    padding: 5px;
+    background-color: #101112;
     margin-bottom: 20px;
 }
 .row-login-button {

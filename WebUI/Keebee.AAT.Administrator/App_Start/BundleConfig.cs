@@ -27,6 +27,7 @@ namespace Keebee.AAT.Administrator
             bundles.Add(new ScriptBundle("~/bundles/CustomScripts").Include(
                 "~/Scripts/Site/Namespaces.js",
                 "~/Scripts/Site/Site.js",
+                "~/Scripts/Account/Services.js",
                 "~/Scripts/Residents/Index.js",
                 "~/Scripts/Residents/_ResidentEdit.js",
                 "~/Scripts/ResidentProfile/Index.js",
@@ -38,7 +39,6 @@ namespace Keebee.AAT.Administrator
                 "~/Scripts/SystemProfile/Index.js",
                 "~/Scripts/PublicProfile/Index.js",
                 "~/Scripts/Services/Index.js",
-                "~/Scripts/Utilities/Account.js",
                 "~/Scripts/Utilities/InProgressDialog.js",
                 "~/Scripts/Utilities/JobExecution.js",
                 "~/Scripts/Utilities/Sorting.js",

@@ -67,18 +67,18 @@ namespace Keebee.AAT.Administrator.Controllers
             int userId;
 
             var rules = new AccountRules();
-            var errmsg = rules.ValidatePasswordChange(username, vm.OldPassword, vm.NewPassword, vm.RetypedNewPassword, out userId);
-            var success = (userId > 0);
+            var errMsg = rules.ValidatePasswordChange(username, vm.OldPassword, vm.NewPassword, vm.RetypedNewPassword, out userId);
+            var success = (userId > 0 && errMsg == null);
 
             if (success)
             {
-                rules.ChangePassword(userId, vm.NewPassword);
+                errMsg = rules.ChangePassword(userId, vm.NewPassword);
             }
 
             return Json(new
             {
-                Success = success,
-                ErrorMessage = errmsg
+                Success = (errMsg == null),
+                ErrorMessage = errMsg
             }, JsonRequestBehavior.AllowGet);
         }
 

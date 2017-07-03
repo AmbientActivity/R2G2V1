@@ -7,7 +7,7 @@
 
 ; (function ($) {
 
-    utilities.account = {
+    account.services = {
         init: function () {
             var lnkChangePassword = $("#change-password");
             var cmdLogin = $("#login");
@@ -15,55 +15,17 @@
 
             $("#error-container").hide();
 
-            cmdLogin.click(function (e) {
+            $("#login-container").keyup(function (e) {
                 e.stopImmediatePropagation(); // stop from firing twice
-
-                $("#login-container").hide();
-                $("body").css("cursor", "progress");
-                cmdLogin.prop("disabled", true);
-
-                var jsonData = getCredentials();
-
-                $.get(site.url + "Account/AttemptToLogin", jsonData)
-                    .done(function (result) {
-                        cmdLogin.prop("disabled", false);
-                        $("body").css("cursor", "default");
-                        if (result.Success) {
-                            $("#login-container").hide();
-                            $("#validation-container").hide();
-                            $("#error-container").hide();
-
-                            $("#load-message").html("<h3>Loggin in...</h3>");
-                            $("#loading-container").show();
-                            window.location.href = site.url + "Home";
-                        } else {
-                            $("#login-container").show();
-                            $("#validation-container").show();
-
-                            $("#validation-container").html("");
-                            var html = "<br/><ul><li>" + result.ErrorMessage + "</li></ul>";
-                            $("#validation-container").append(html);
-                        }
-                    })
-                    .error(function (result) {
-                        $("#validation-container").hide();
-                        $("#loading-container").hide();
-                        $("#error-container").html("");
-                        $("#error-container")
-                            .append("<div><h3>Login Error</h3><div>")
-                            .append("<div>" + result + "</div>");
-                        $("#error-container").show();
-                    });
+                if (e.keyCode === 13) {
+                    login();
+                }
             });
 
-            function getCredentials() {
-                var username = $.trim($("#ddlUsernames").val());
-                var password = $.trim($("#txtPassword").val());
-
-                return {
-                    Username: username, Password: password
-                };
-            };
+            cmdLogin.click(function (e) {
+                e.stopImmediatePropagation(); // stop from firing twice
+                login();
+            });
 
             cmdLogOff.click(function () {
                 $.get(site.url + "Account/LogOff")
@@ -146,6 +108,54 @@
 
                 return {
                     OldPassword: oldpassword, NewPassword: newpassword, RetypedNewPassword: retypepassword
+                };
+            };
+
+            function login() {
+                $("#login-container").hide();
+                $("body").css("cursor", "progress");
+                cmdLogin.prop("disabled", true);
+
+                var jsonData = getCredentials();
+
+                $.get(site.url + "Account/AttemptToLogin", jsonData)
+                    .done(function (result) {
+                        cmdLogin.prop("disabled", false);
+                        $("body").css("cursor", "default");
+                        if (result.Success) {
+                            $("#login-container").hide();
+                            $("#validation-container").hide();
+                            $("#error-container").hide();
+
+                            $("#load-message").html("<h3>Loggin in...</h3>");
+                            $("#loading-container").show();
+                            window.location.href = site.url + "Home";
+                        } else {
+                            $("#login-container").show();
+                            $("#validation-container").show();
+
+                            $("#validation-container").html("");
+                            var html = "<br/><ul><li>" + result.ErrorMessage + "</li></ul>";
+                            $("#validation-container").append(html);
+                        }
+                    })
+                    .error(function (result) {
+                        $("#validation-container").hide();
+                        $("#loading-container").hide();
+                        $("#error-container").html("");
+                        $("#error-container")
+                            .append("<div><h3>Login Error</h3><div>")
+                            .append("<div>" + result + "</div>");
+                        $("#error-container").show();
+                    });
+            }
+
+            function getCredentials() {
+                var username = $.trim($("#ddlUsernames").val());
+                var password = $.trim($("#txtPassword").val());
+
+                return {
+                    Username: username, Password: password
                 };
             };
         }

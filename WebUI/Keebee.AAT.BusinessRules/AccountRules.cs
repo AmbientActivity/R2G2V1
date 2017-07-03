@@ -93,12 +93,12 @@ namespace Keebee.AAT.BusinessRules
             return errmsg;
         }
 
-        public void ChangePassword(int userId, string password)
+        public string ChangePassword(int userId, string password)
         {
             var passwordHash = GeneratePasswordHash(password);
-
             var user = new User {Password = passwordHash};
-            _usersClient.Patch(userId, user);
+
+            return _usersClient.Patch(userId, user);
         }
 
         private static bool VerifyHashPassword(string password, string hash)

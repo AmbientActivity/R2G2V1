@@ -13,11 +13,18 @@
             var cmdLogin = $("#login");
             var cmdLogOff = $("#logoff");
 
-            $("body").keyup(function (e) {
+            $("#txtPassword").focus();
+
+            $("#txtPassword").keyup(function (e) {
                 e.stopImmediatePropagation(); // stop from firing twice
                 if (e.keyCode === 13) {
                     login();
                 }
+            });
+
+            // make sure password always has focus
+            $("#ddlUsernames").change(function (e) {
+                $("#txtPassword").focus();
             });
 
             cmdLogin.click(function (e) {
@@ -152,6 +159,7 @@
                             window.location.href = site.url + "Home";
                         } else {
                             showValidation(result);
+                            $("#txtPassword").focus();
                         }
                     })
                     .error(function (result) {

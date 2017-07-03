@@ -11,8 +11,8 @@ namespace Keebee.AAT.BusinessRules
     {
         public static class PreviewConstants
         {
-            public const int MaxImagePreviewgWidth = 437;
-            public const int MaxImagePreviewHeight = 333;
+            public const int MaxImagePreviewgWidth = 500;
+            public const int MaxImagePreviewHeight = 500;
         }
 
         private struct ImageSize
@@ -29,8 +29,7 @@ namespace Keebee.AAT.BusinessRules
         }
 
         public ImageViewerModel GetImageViewerModel(Guid streamId, string fileType)
-        {
-            const int maxWidth = PreviewConstants.MaxImagePreviewgWidth;        
+        {   
             var file = _mediaFileStreamsClient.Get(streamId);
 
             // get image from stream
@@ -47,10 +46,6 @@ namespace Keebee.AAT.BusinessRules
             var resizedImage = (Image) new Bitmap(image, 
                 new Size {Height = newSize.Height, Width = newSize.Width});
 
-            // calculate padding
-            var paddingLeft = (newSize.Width < maxWidth)
-                ? $"{(maxWidth - newSize.Width) / 2}px" : "0";
-
             // convert back to stream
             var stream = new MemoryStream();
             resizedImage.Save(stream, GetImageFormat(file.FileType));
@@ -64,7 +59,6 @@ namespace Keebee.AAT.BusinessRules
                 FileType = fileType,
                 Width = newSize.Width,
                 Height = newSize.Height,
-                PaddingLeft = paddingLeft,
                 Base64String = $"{prefix},{base64String}"
             };
         }
@@ -93,8 +87,8 @@ namespace Keebee.AAT.BusinessRules
                 // if the picture is "less square" than the screen
                 else
                 {
-                    newWidth = dialogWidth;
-                    newHeight = (int)(newWidth / imageRatio);
+                    newHeight = dialogHeight;
+                    newWidth = (int)(newHeight * imageRatio);
                 }
             }
 

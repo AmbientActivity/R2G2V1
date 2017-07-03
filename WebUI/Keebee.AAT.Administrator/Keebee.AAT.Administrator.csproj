@@ -320,6 +320,7 @@
     <Content Include="Scripts\Site\Namespaces.js" />
     <Content Include="Scripts\Site\Site.js" />
     <Content Include="Scripts\SystemProfile\Index.js" />
+    <Content Include="Scripts\Utilities\ImageViewer.js" />
     <Content Include="Scripts\Utilities\InProgressDialog.js" />
     <Content Include="Scripts\Utilities\JobExecution.js" />
     <Content Include="Scripts\Utilities\Sorting.js" />

@@ -157,7 +157,7 @@ video {
 /* container */
 .container-login {
     width: 360px;
-    margin: 30px auto 30px;
+    margin: 80px auto 100px;
     padding-bottom: 20px;
     border: 1px solid  #716d6d;
     border-radius: 5px;
@@ -186,6 +186,12 @@ video {
 .container-config-detail-edit {
     padding: 0;
     width: 300px;
+}
+.container-image-viewer {
+    padding: 0;
+    width: auto;
+    height: auto;
+    background-color: yellow;
 }
 
 /* row */

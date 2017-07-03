@@ -210,7 +210,6 @@ namespace Keebee.AAT.Administrator.Controllers
                 FileType = m.FileType,
                 Width = m.Width,
                 Height = m.Height,
-                PaddingLeft = m.PaddingLeft,
                 Base64String = m.Base64String
             });
         }

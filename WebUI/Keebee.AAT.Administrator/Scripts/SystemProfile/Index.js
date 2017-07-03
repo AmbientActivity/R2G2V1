@@ -365,38 +365,12 @@
 
                         self.previewImage = function (row) {
                             $("#thumb_" + row.id).tooltip("hide");
-
-                            $.get(site.url + "PublicProfile/GetImageViewerView?streamId=" + row.streamid + "&fileType=" + row.filetype)
-                                .done(function (message) {
-                                    BootstrapDialog.show({
-                                        type: BootstrapDialog.TYPE_INFO,
-                                        title: row.filename + "." + row.filetype.toLowerCase(),
-                                        message: $("<div></div>").append(message),
-                                        closable: false,
-                                        buttons: [{
-                                            label: "Close",
-                                            action: function (dialog) {
-                                                dialog.close();
-                                                $("#txtSearchFilename").focus();
-                                            }
-                                        }]
-                                    });
-                                })
-                                .error(function (message) {
-                                    BootstrapDialog.show({
-                                        type: BootstrapDialog.TYPE_DANGER,
-                                        title: "Error",
-                                        message: $("<div></div>").append(message),
-                                        closable: false,
-                                        buttons: [{
-                                            label: "Close",
-                                            action: function (dialog) {
-                                                dialog.close();
-                                                $("#txtSearchFilename").focus();
-                                            }
-                                        }]
-                                    });
-                                });
+                            utilities.image.show({
+                                controller: "SystemProfile",
+                                streamId: row.streamid,
+                                filename: row.filename,
+                                fileType: row.filetype
+                            }).then(function () { enableDetail() });;
                         };
 
                         self.previewVideo = function (row) {

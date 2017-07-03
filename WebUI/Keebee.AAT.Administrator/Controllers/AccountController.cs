@@ -11,7 +11,14 @@ namespace Keebee.AAT.Administrator.Controllers
 {
     public class AccountController : Controller
     {
+        [HttpGet]
         public ActionResult Login(LoginViewModel vm)
+        {
+            return View();
+        }
+
+        [HttpGet]
+        public ActionResult AttemptToLogin(LoginViewModel vm)
         {
             Response.Cache.SetCacheability(HttpCacheability.NoCache);
 
@@ -37,7 +44,7 @@ namespace Keebee.AAT.Administrator.Controllers
         public ActionResult LogOff()
         {
             FormsAuthentication.SignOut();
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Login");
         }
 
         [HttpGet]

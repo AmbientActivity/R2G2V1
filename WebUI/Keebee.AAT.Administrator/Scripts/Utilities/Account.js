@@ -1,6 +1,6 @@
 ﻿/*!
  * 1.0 Keebee AAT Copyright © 2016
- * Account/Utilities.js
+ * Utilities/Account.js
  * Author: John Charlton
  * Date: 2016-10
  */
@@ -13,21 +13,50 @@
             var cmdLogin = $("#login");
             var cmdLogOff = $("#logoff");
 
-            function attemptToLogin() {
-                return new Promise(function(resolve, reject) {
-                    var jsonData = getLoginDetailFromDialog();
+            $("#error-container").hide();
 
-                    $.get(site.url + "Account/Login", jsonData)
-                        .done(function (result) {
-                            resolve(result);
-                        })
-                        .error(function (result) {
-                            reject(result);
-                        });
-                });
-            }
+            cmdLogin.click(function (e) {
+                e.stopImmediatePropagation(); // stop from firing twice
 
-            function getLoginDetailFromDialog() {
+                $("#login-container").hide();
+                $("body").css("cursor", "progress");
+                cmdLogin.prop("disabled", true);
+
+                var jsonData = getCredentials();
+
+                $.get(site.url + "Account/AttemptToLogin", jsonData)
+                    .done(function (result) {
+                        cmdLogin.prop("disabled", false);
+                        $("body").css("cursor", "default");
+                        if (result.Success) {
+                            $("#login-container").hide();
+                            $("#validation-container").hide();
+                            $("#error-container").hide();
+
+                            $("#load-message").html("<h3>Loggin in...</h3>");
+                            $("#loading-container").show();
+                            window.location.href = site.url + "Home";
+                        } else {
+                            $("#login-container").show();
+                            $("#validation-container").show();
+
+                            $("#validation-container").html("");
+                            var html = "<br/><ul><li>" + result.ErrorMessage + "</li></ul>";
+                            $("#validation-container").append(html);
+                        }
+                    })
+                    .error(function (result) {
+                        $("#validation-container").hide();
+                        $("#loading-container").hide();
+                        $("#error-container").html("");
+                        $("#error-container")
+                            .append("<div><h3>Login Error</h3><div>")
+                            .append("<div>" + result + "</div>");
+                        $("#error-container").show();
+                    });
+            });
+
+            function getCredentials() {
                 var username = $.trim($("#ddlUsernames").val());
                 var password = $.trim($("#txtPassword").val());
 
@@ -35,47 +64,6 @@
                     Username: username, Password: password
                 };
             };
-
-            cmdLogin.click(function () {
-                $("body").css("cursor", "progress");
-                $.get(site.url + "Account/GetLoginView", false)
-                    .done(function (message) {
-                        BootstrapDialog.show({
-                            title: "R2G2 Login",
-                            message: $("<div></div>").append(message),
-                            onshown: function () {
-                                $("body").css("cursor", "default");
-                                $("#txtPassword").focus();
-                            },
-                            closable: false,
-                            buttons: [
-                                {
-                                    label: "Cancel",
-                                    action: function (dialog) {
-                                        dialog.close();
-                                    }
-                                }, {
-                                    label: "OK",
-                                    cssClass: "btn-primary",
-                                    hotkey: 13,  // enter
-                                    action: function (dialog) {
-                                        attemptToLogin().then(function (result) {
-                                            if (result.Success) {
-                                                dialog.close();
-                                                location.reload();
-                                            } else {
-                                                $("#validation-container").show();
-                                                $("#validation-container").html("");
-                                                var html = "<br/><ul><li>" + result.ErrorMessage + "</li></ul>";
-                                                $("#validation-container").append(html);
-                                            }
-                                        });
-                                    }
-                                }
-                            ]
-                        });
-                    });
-            });
 
             cmdLogOff.click(function () {
                 $.get(site.url + "Account/LogOff")

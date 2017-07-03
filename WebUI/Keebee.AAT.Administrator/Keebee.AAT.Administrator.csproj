@@ -179,8 +179,10 @@
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\Buttons.css" />
     <Content Include="Content\font-awesome.css" />
     <Content Include="Content\font-awesome.min.css" />
+    <Content Include="Content\images\loading.gif" />
     <Content Include="Content\images\mac-bar.png" />
     <Content Include="Content\images\page-loading.gif" />
     <Content Include="Content\images\ProfilePicturePlaceholder.jpg" />
@@ -192,7 +194,7 @@
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
     <Content Include="READ_ME.txt" />
-    <Content Include="Scripts\Account\Utilities.js" />
+    <Content Include="Scripts\Utilities\Account.js" />
     <Content Include="Scripts\bootstrap-datepicker.js" />
     <Content Include="Scripts\bootstrap-datepicker.min.js" />
     <Content Include="Scripts\bootstrap-dialog.js" />
@@ -336,7 +338,6 @@
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="UploadHandler.ashx" />
     <Content Include="Views\Account\_ChangePassword.cshtml" />
-    <Content Include="Views\Account\_Login.cshtml" />
     <Content Include="Views\EventLogs\Export.cshtml" />
     <Content Include="Views\EventLogs\Index.cshtml" />
     <Content Include="Views\Maintenance\Index.cshtml" />
@@ -356,6 +357,7 @@
     <Content Include="Views\SystemProfile\Index.cshtml" />
     <Content Include="Views\VideoCaptures\Export.cshtml" />
     <Content Include="Views\VideoCaptures\Index.cshtml" />
+    <Content Include="Views\Account\Login.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

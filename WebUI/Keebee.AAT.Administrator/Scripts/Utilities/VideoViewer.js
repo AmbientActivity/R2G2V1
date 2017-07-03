@@ -25,8 +25,8 @@
 
             $.extend(config, options);
 
-            return new Promise(function(resolve, reject) {
-                var videoViewer = new BootstrapDialog({
+            return new Promise(function(resolve) {
+                var bootstrapDialog = new BootstrapDialog({
                     id: "modal-video",
                     type: BootstrapDialog.TYPE_INFO,
                     title: config.filename,
@@ -41,21 +41,23 @@
                     }
                 });
 
-                videoViewer.realize();
-                var header = videoViewer.getModalHeader();
+                bootstrapDialog.realize();
+                bootstrapDialog.getModalDialog().css("width", "600px");
+
+                var header = bootstrapDialog.getModalHeader();
                 header.css({ backgroundColor: "#000", padding: "10px", border: "none" });
                 header.find(".close").css({ color: "#f0f0f0", opacity: "1" });
 
-                var body = videoViewer.getModalBody();
+                var body = bootstrapDialog.getModalBody();
                 body.css({ "padding": "0" });
                 body.append("<div class='container-video-preview'></div>").append(config.player);
 
-                var content = videoViewer.getModalContent();
+                var content = bootstrapDialog.getModalContent();
                 content.css({ backgroundColor: "#000" });
 
-                videoViewer.getModalFooter().hide();
+                bootstrapDialog.getModalFooter().hide();
 
-                videoViewer.open();
+                bootstrapDialog.open();
             });
         }
     }

@@ -25,7 +25,7 @@
 
             $.extend(config, options);
 
-            var imageViewer = new BootstrapDialog({
+            var bootstrapDialog = new BootstrapDialog({
                 id: "modal-viewer",
                 type: BootstrapDialog.TYPE_INFO,
                 title: config.filename + "." + config.fileType.toLowerCase(),
@@ -38,22 +38,22 @@
                         "&fileType=" + config.fileType)
                     .done(function(message) {
 
-                        imageViewer.realize();
-                        var header = imageViewer.getModalHeader();
+                        bootstrapDialog.realize();
+                        var header = bootstrapDialog.getModalHeader();
                         header.css({ backgroundColor: "#000", padding: "10px", border: "none" });
                         header.find(".close").css({ color: "#f0f0f0", opacity: "1" });
 
-                        var body = imageViewer.getModalBody();
+                        var body = bootstrapDialog.getModalBody();
                         body.css({ "padding": "0" });
                         body.append("<div></div>").append(message);
 
-                        var footer = imageViewer.getModalFooter();
+                        var footer = bootstrapDialog.getModalFooter();
                         footer.css({ padding: "5px", backgroundColor: "#000", border: "none", display: "block", "text-align": "center" });
                         footer.find(".bootstrap-dialog-footer")
                             .css({ display: "inline" })
                             .append("<span>Click image to close</span>");
 
-                        imageViewer.open();
+                        bootstrapDialog.open();
                     })
                     .error(function(message) {
                         BootstrapDialog.show({

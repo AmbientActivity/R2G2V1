@@ -79,29 +79,14 @@ namespace Keebee.AAT.Administrator.Controllers
         {
             var r = JsonConvert.DeserializeObject<ResidentEditViewModel>(resident);
             var residentId = r.Id;
-            var rules = new ResidentRules();
-            string errorMsg = null;
 
-            IEnumerable<string> validateMsgs = rules.Validate(r.FirstName, r.LastName, r.Gender, residentId == 0);
-
-            if (residentId > 0)
-            {
-                if (validateMsgs == null)
-                {
-                    errorMsg = UpdateResident(r);
-                }
-            }
-            else
-            {
-                if (validateMsgs == null)
-                {
-                    errorMsg = AddResident(r, out residentId);
-                }
-            }
+            var errorMsg = residentId > 0 
+                ? UpdateResident(r) 
+                : AddResident(r, out residentId);
 
             var residentList = GetResidentList().ToArray();
 
-            var success = (null == validateMsgs) && (null == errorMsg) && (residentId > 0);
+            var success = (null == errorMsg) && (residentId > 0);
             if (success)
             {
                 if (ServiceUtilities.IsInstalled(ServiceUtilities.ServiceType.BluetoothBeaconWatcher))
@@ -116,7 +101,7 @@ namespace Keebee.AAT.Administrator.Controllers
                 ResidentList = residentList,
                 SelectedId = residentId,
                 Success = success,
-                ValidationMessages = validateMsgs,
+                ValidationMessages = string.Empty,
                 ErrorMessage = errorMsg
             }, JsonRequestBehavior.AllowGet);
         }
@@ -193,6 +178,24 @@ namespace Keebee.AAT.Administrator.Controllers
             webImg.Resize(96, 96, true, true).Crop(1, 1);
 
             return Convert.ToBase64String(croppedImage.GetBytes());
+        }
+
+        [HttpPost]
+        [Authorize]
+        public JsonResult Validate(string resident)
+        {
+            var r = JsonConvert.DeserializeObject<ResidentEditViewModel>(resident);
+            var rules = new ResidentRules();
+
+            IEnumerable<string> validateMsgs = rules.Validate(r.FirstName, r.LastName, r.Gender, r.Id == 0);
+
+            var success = (null == validateMsgs);
+
+            return Json(new
+            {
+                Success = success,
+                ValidationMessages = validateMsgs,
+            }, JsonRequestBehavior.AllowGet);
         }
 
         private static ResidentsViewModel LoadResidentsViewModel(

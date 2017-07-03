@@ -1,4 +1,6 @@
-﻿.btn-edit { 
+﻿/* edit */
+
+.btn-edit { 
   color: #ffffff; 
   background-color: #346B9A; 
   border-color: #021F69; 
@@ -42,4 +44,53 @@ fieldset[disabled] .btn-edit.active {
 .btn-edit .badge { 
   color: #346B9A; 
   background-color: #ffffff; 
+}
+
+
+/* add */
+
+.btn-add { 
+  color: #FFFFFF; 
+  background-color: #53B853; 
+  border-color: #028202; 
+} 
+ 
+.btn-add:hover, 
+.btn-add:focus, 
+.btn-add:active, 
+.btn-add.active, 
+.open .dropdown-toggle.btn-add { 
+  color: #FFFFFF; 
+  background-color: #238737; 
+  border-color: #028202; 
+} 
+ 
+.btn-add:active, 
+.btn-add.active, 
+.open .dropdown-toggle.btn-add { 
+  background-image: none; 
+} 
+ 
+.btn-add.disabled, 
+.btn-add[disabled], 
+fieldset[disabled] .btn-add, 
+.btn-add.disabled:hover, 
+.btn-add[disabled]:hover, 
+fieldset[disabled] .btn-add:hover, 
+.btn-add.disabled:focus, 
+.btn-add[disabled]:focus, 
+fieldset[disabled] .btn-add:focus, 
+.btn-add.disabled:active, 
+.btn-add[disabled]:active, 
+fieldset[disabled] .btn-add:active, 
+.btn-add.disabled.active, 
+.btn-add[disabled].active, 
+fieldset[disabled] .btn-add.active { 
+  background-color: #53B853; 
+  border-color: #028202; 
+} 
+ 
+.btn-add .badge { 
+  color: #53B853; 
+  background-color: #FFFFFF; 
 }

@@ -239,7 +239,7 @@
                             var id = (typeof row.id !== "undefined" ? row.id : 0);
                             var title = "<span class='glyphicon glyphicon-pencil' style='color: #fff'></span>";
                             var type = BootstrapDialog.TYPE_PRIMARY;
-                            var btnClass = "btn-primary";
+                            var btnClass = "btn-edit";
 
                             if (id > 0) {
                                 self.highlightRow(row);
@@ -280,7 +280,7 @@
                                                  hotkey: 13,  // enter
                                                  action: function (dialog) {
                                                      self.saveResident().then(function (result) {
-                                                         if (result.ValidationMessages === null) {
+                                                         if (result.ValidationMessages.length === 0) {
                                                              lists.ResidentList = result.ResidentList;
                                                              createResidentArray(lists.ResidentList);
                                                              self.selectedResident(self.getResident(result.SelectedId));
@@ -428,20 +428,28 @@
                                 var residentdetail = self.getResidentDetailFromDialog();
                                 var jsonData = JSON.stringify(residentdetail);
 
-                                utilities.job.execute(
-                                {
-                                    type: "POST",
-                                    controller: "Residents",
-                                    action: "Save",
-                                    title: "Save Resident",
-                                    params: { resident: jsonData }
-                                })
-                                .then(function(result) {
-                                    resolve(result);
-                                })
-                                .catch(function(result) {
-                                    reject(result);
-                                });
+                                $.post(site.url + "Residents/Validate", { resident: jsonData })
+                                    .done(function (result) {
+                                        if (result.Success) {
+                                            utilities.job.execute({
+                                                type: "POST",
+                                                controller: "Residents",
+                                                action: "Save",
+                                                title: "Save Resident",
+                                                waitMessage: "Saving...",
+                                                params: { resident: jsonData }
+                                            })
+                                            .then(function(saveResult) {
+                                                resolve(saveResult);
+                                            });
+
+                                        } else {
+                                            resolve(result);
+                                        }
+                                    })
+                                    .error(function (result) {
+                                        reject(result);
+                                    });
                             });
                         };
                     };

@@ -37,8 +37,7 @@
                                     controller: "Maintenance",
                                     action: "RestartServices",
                                     title: "Service Utilities",
-                                    waitMessage: "Restarting services...",
-                                    successVerbage: "All services restarted successfully"
+                                    waitMessage: "Restarting services..."
                                 });
                             }
                         }

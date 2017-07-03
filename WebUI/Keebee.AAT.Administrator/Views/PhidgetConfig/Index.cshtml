@@ -29,12 +29,12 @@
             <select class="form-control" data-bind="options: configs, optionsValue: 'id', optionsText: 'description', value: selectedConfig, event: { change: enableDetail }, css: 'select-config'"></select>
         </div>
         <div id="col-button-container"class="col-sm-6" hidden>
-            <a id="add" href="javascript:void(0)" class="btn btn-success btn-md" data-bind="click: showEditDialog(true), css: 'glyphicon glyphicon-duplicate button-text'"></a>
-            <a id="edit" href="javascript:void(0)" class="btn btn-primary btn-md" data-bind="click: showEditDialog(false), css: 'glyphicon glyphicon-pencil button-text'"></a>
+            <a id="add" href="javascript:void(0)" class="btn btn-add btn-md" data-bind="click: showEditDialog(true), css: 'glyphicon glyphicon-duplicate button-text'"></a>
+            <a id="edit" href="javascript:void(0)" class="btn btn-edit btn-md" data-bind="click: showEditDialog(false), css: 'glyphicon glyphicon-pencil button-text'"></a>
             <a id="delete" href="javascript:void(0)" class="btn btn-danger btn-md" data-bind="click: showDeleteDialog, css: 'glyphicon glyphicon-trash button-text'"></a>
         </div>
         <div class="activate-button">
-            <button id="activate" class="btn btn-primary btn-md" data-bind="click: showActivatConfigDialog" disabled>Activate</button>
+            <button id="activate" class="btn btn-edit btn-md" data-bind="click: showActivatConfigDialog" disabled>Activate</button>
         </div>
     </div>
 
@@ -42,7 +42,7 @@
         <div class="panel-heading">
             <ul class="nav nav-pills">
                 <li>
-                    <button id="add-detail" class="btn btn-success btn-md" data-bind="click: showEditDetailDialog" disabled>Add Detail</button>
+                    <button id="add-detail" class="btn btn-add btn-md" data-bind="click: showEditDetailDialog" disabled>Add Detail</button>
                 </li>
                 <li class="pull-right record-total">
                     <label>Total:</label> <span data-bind="text: totalConfigDetails()"></span>

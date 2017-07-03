@@ -37,8 +37,6 @@ namespace Keebee.AAT.Operations.Controllers
             // List all supported media types; 
 
             MimeNames = new ReadOnlyDictionary<string, string>(mimeNames);
-
-            //InvalidFileNameChars = Array.AsReadOnly(Path.GetInvalidFileNameChars());
         }
 
         public HttpResponseMessage Get(Guid id)
@@ -59,6 +57,7 @@ namespace Keebee.AAT.Operations.Controllers
             {
                 long totalLength = streamer.FileInfo.Length;
                 var range = rangeHeader.Ranges.First();
+
                 streamer.Start = range.From ?? 0;
                 streamer.End = range.To ?? totalLength - 1;
 

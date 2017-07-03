@@ -13,9 +13,7 @@
             var cmdLogin = $("#login");
             var cmdLogOff = $("#logoff");
 
-            $("#error-container").hide();
-
-            $("#login-container").keyup(function (e) {
+            $("body").keyup(function (e) {
                 e.stopImmediatePropagation(); // stop from firing twice
                 if (e.keyCode === 13) {
                     login();
@@ -35,7 +33,7 @@
             });
 
             lnkChangePassword.click(function () {
-                var title = "<span class='glyphicon glyphicon-pencil'></span>";
+                var title = "<span class='glyphicon glyphicon-pencil' style='color: #fff'></span>";
 
                 $.get(site.url + "Account/GetChangePasswordView")
                     .done(function (message) {
@@ -111,8 +109,35 @@
                 };
             };
 
-            function login() {
+            function showSpinner() {
+                // hide login containers
                 $("#login-container").hide();
+                $("#validation-container").hide();
+                $("#error-container").hide();
+
+                $("#spinner-container").show();
+            }
+
+            function showValidation(result) {
+                $("#login-container").show();
+                $("#validation-container").show();
+
+                $("#validation-container").html("");
+                var html = "<br/><ul><li>" + result.ErrorMessage + "</li></ul>";
+                $("#validation-container").append(html);
+            }
+
+            function showError(result) {
+                $("#validation-container").hide();
+                $("#spinner-container").hide();
+                $("#error-container").html("");
+                $("#error-container")
+                    .append("<div><h3>Login Error</h3><div>")
+                    .append("<div>" + result + "</div>");
+                $("#error-container").show();
+            }
+
+            function login() {
                 $("body").css("cursor", "progress");
                 cmdLogin.prop("disabled", true);
 
@@ -123,30 +148,14 @@
                         cmdLogin.prop("disabled", false);
                         $("body").css("cursor", "default");
                         if (result.Success) {
-                            $("#login-container").hide();
-                            $("#validation-container").hide();
-                            $("#error-container").hide();
-
-                            $("#load-message").html("<h3>Loggin in...</h3>");
-                            $("#loading-container").show();
+                            showSpinner();
                             window.location.href = site.url + "Home";
                         } else {
-                            $("#login-container").show();
-                            $("#validation-container").show();
-
-                            $("#validation-container").html("");
-                            var html = "<br/><ul><li>" + result.ErrorMessage + "</li></ul>";
-                            $("#validation-container").append(html);
+                            showValidation(result);
                         }
                     })
                     .error(function (result) {
-                        $("#validation-container").hide();
-                        $("#loading-container").hide();
-                        $("#error-container").html("");
-                        $("#error-container")
-                            .append("<div><h3>Login Error</h3><div>")
-                            .append("<div>" + result + "</div>");
-                        $("#error-container").show();
+                        showError(result);
                     });
             }
 

@@ -163,7 +163,10 @@ video {
     border-radius: 5px;
     box-shadow: rgba(0,0,0,0.6) 0 0 10px;
 }
-
+.container-change-password {
+    padding: 0;
+    width: 250px;
+}
 .container-resident-edit {
     padding: 0;
     width: 250px;

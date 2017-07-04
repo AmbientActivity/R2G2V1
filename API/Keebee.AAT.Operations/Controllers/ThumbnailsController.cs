@@ -56,7 +56,7 @@ namespace Keebee.AAT.Operations.Controllers
                 thumbnail = _thumbnailService.Get(id);
             });
 
-            if (thumbnail == null) return new DynamicJsonObject(new ExpandoObject());
+            if (thumbnail == null) return null;
 
             dynamic exObj = new ExpandoObject();
             exObj.StreamId = thumbnail.StreamId;

@@ -31,7 +31,12 @@ namespace Keebee.AAT.ApiClient.Clients
         {
             var request = new RestRequest($"thumbnails/{id}", Method.GET);
             var data = Execute(request);
-            var thumbnail = JsonConvert.DeserializeObject<Thumbnail>(data.Content);
+
+            var thumbnail = new Thumbnail();
+            if (data != null)
+            {
+                thumbnail = JsonConvert.DeserializeObject<Thumbnail>(data.Content);
+            }
 
             return thumbnail;
         }

@@ -49,16 +49,18 @@ namespace Keebee.AAT.Operations.Controllers
         [HttpGet]
         public async Task<DynamicJsonObject> Get(Guid id)
         {
-            var thumbnail = new Thumbnail();
+            Thumbnail thumbnail = null;
 
             await Task.Run(() =>
             {
                 thumbnail = _thumbnailService.Get(id);
             });
 
+            if (thumbnail == null) thumbnail = new Thumbnail();
+
             dynamic exObj = new ExpandoObject();
-            exObj.StreamId = thumbnail.StreamId;
-            exObj.Image = thumbnail.Image;
+            exObj.StreamId = thumbnail?.StreamId;
+            exObj.Image = thumbnail?.Image;
 
             return new DynamicJsonObject(exObj);
         }

@@ -222,14 +222,14 @@ namespace Keebee.AAT.Administrator.Controllers
         public JsonResult DeleteSelected(int[] ids, int residentId, int mediaPathTypeId)
         {
             bool success;
-            var errorMsg = string.Empty;
+            var errMsg = string.Empty;
 
             try
             {
                 var activeResident = _activeResidentClient.Get();
                 if (activeResident.Resident.Id == residentId)
                 {
-                    errorMsg = "The resident is currently engaging with R2G2. Media cannot be deleted at this time.";
+                    errMsg = "The resident is currently engaging with R2G2. Media cannot be deleted at this time.";
                 }
                 else
                 {
@@ -251,33 +251,34 @@ namespace Keebee.AAT.Administrator.Controllers
                                 if (file == null) continue;
 
                                 var fileManager = new FileManager { EventLogger = _systemEventLogger };
-                                errorMsg = fileManager.DeleteFile($@"{file.Path}\{file.Filename}");
+                                errMsg = fileManager.DeleteFile($@"{file.Path}\{file.Filename}");
 
-                                if (errorMsg.Length == 0)
+                                if (errMsg.Length == 0)
                                     _residentMediaFilesClient.Delete(id);
                                 else
                                     break;
 
                                 if (ResidentRules.IsMediaTypeThumbnail(mediaPathTypeId))
                                 {
-                                    errorMsg = _thumbnailsClient.Delete(resdientMediaFile.MediaFile.StreamId);
+                                    errMsg = _thumbnailsClient.Delete(resdientMediaFile.MediaFile.StreamId) 
+                                        ?? string.Empty;
                                 }
                             }
                         }
                     }
                 }
-                success = (errorMsg?.Length == 0);
+                success = (errMsg.Length == 0);
             }
             catch (Exception ex)
             {
                 success = false;
-                errorMsg = ex.Message;
+                errMsg = ex.Message;
             }
 
             return Json(new
             {
                 Success = success,
-                ErrorMessage = errorMsg,
+                ErrorMessage = errMsg,
                 FileList = GetFiles(residentId)
             }, JsonRequestBehavior.AllowGet);
         }

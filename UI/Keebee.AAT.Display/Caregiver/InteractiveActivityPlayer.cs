@@ -86,7 +86,7 @@ namespace Keebee.AAT.Display.Caregiver
 
         private void ConfigureComponents()
         {
-            btnClose.BringToFront();
+            btnExit.BringToFront();
 
             matchingGame1.Dock = DockStyle.Fill;
             matchingGame1.Hide();

@@ -19,7 +19,9 @@ namespace Keebee.AAT.Display.Caregiver
             set { _images = value; }
         }
 
-        private bool _isPlaying = false;
+        private bool _isPlaying;
+        private const bool AutoStart = true;
+
 
 #if DEBUG
         private const int AutoModeLabelFontSize = 8;
@@ -88,18 +90,24 @@ namespace Keebee.AAT.Display.Caregiver
         private void PlayButtonClick(object sender, EventArgs e)
         {
             if (!_isPlaying)
-            {
-                slideViewerFlash1.ShowNext();
-                slideViewerFlash1.StartTimer();
-                btnPlay.BackgroundImage = imageList1.Images[1];
-                _isPlaying = true;
-            }
+                Play();
             else
-            {
-                slideViewerFlash1.StopTimer();
-                btnPlay.BackgroundImage = imageList1.Images[0];
-                _isPlaying = false;
-            }
+                Pause();
+        }
+
+        private void Play()
+        {
+            slideViewerFlash1.ShowNext();
+            slideViewerFlash1.StartTimer();
+            btnPlay.BackgroundImage = imageList1.Images[1];
+            _isPlaying = true;
+        }
+
+        private void Pause()
+        {
+            slideViewerFlash1.StopTimer();
+            btnPlay.BackgroundImage = imageList1.Images[0];
+            _isPlaying = false;
         }
 
         private void CloseButtonClick(object sender, EventArgs e)
@@ -110,7 +118,9 @@ namespace Keebee.AAT.Display.Caregiver
         private void ImageViewerShown(object sender, EventArgs e)
         {
             slideViewerFlash1.SystemEventLogger = _systemEventLogger;
-            slideViewerFlash1.Play(_images, autoStart: false);
+            btnPlay.BackgroundImage = imageList1.Images[1];
+            _isPlaying = true;
+            slideViewerFlash1.Play(_images, autoStart: AutoStart);
         }
 
         private void ImageViewerFormClosing(object sender, FormClosingEventArgs e)

@@ -231,6 +231,8 @@ namespace Keebee.AAT.Display.Caregiver
             tbMedia.TabPages[TabIndexActivities].Font = new Font(FontFamily, TabPageFontSize);
             tbMedia.TabPages[TabIndexHomeMovies].Font = new Font(FontFamily, TabPageFontSize);
             tbMedia.TabPages[TabIndexImagesPersonal].Font = new Font(FontFamily, TabPageFontSize);
+
+            ShowPersonalMediaTabs(false);
         }
 
         private void ConfigureListViewMedia(ListViewLarge lv)
@@ -918,7 +920,8 @@ namespace Keebee.AAT.Display.Caregiver
                             Shapes = totalShapes,
                             Sounds = totalSounds,
                             DifficultyLevel = difficultyLevel,
-                            IsActiveEventLog = _config.IsActiveEventLog
+                            IsActiveEventLog = _config.IsActiveEventLog,
+                            SwfFile = swfFile
                         };
                         StopAudio();
                         matchingGamePlayer.ShowDialog();

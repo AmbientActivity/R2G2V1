@@ -89,7 +89,7 @@ namespace Keebee.AAT.Display.Caregiver
             this.tableLayoutPanel1.ColumnCount = 3;
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 100F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 68F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 70F));
             this.tableLayoutPanel1.Controls.Add(this.btnClose, 2, 0);
             this.tableLayoutPanel1.Controls.Add(this.tbMedia, 0, 1);
             this.tableLayoutPanel1.Controls.Add(this.cboResident, 1, 0);
@@ -106,9 +106,9 @@ namespace Keebee.AAT.Display.Caregiver
             // btnClose
             // 
             this.btnClose.BackgroundImage = global::Keebee.AAT.Display.Properties.Resources.close;
-            this.btnClose.Location = new System.Drawing.Point(575, 3);
+            this.btnClose.Location = new System.Drawing.Point(573, 3);
             this.btnClose.Name = "btnClose";
-            this.btnClose.Size = new System.Drawing.Size(62, 65);
+            this.btnClose.Size = new System.Drawing.Size(64, 64);
             this.btnClose.TabIndex = 21;
             this.btnClose.UseSelectable = true;
             this.btnClose.Click += new System.EventHandler(this.CloseButtonClick);
@@ -151,6 +151,7 @@ namespace Keebee.AAT.Display.Caregiver
             this.lvImagesGeneral.GridLines = false;
             this.lvImagesGeneral.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Clickable;
             this.lvImagesGeneral.Location = new System.Drawing.Point(3, 3);
+            this.lvImagesGeneral.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.lvImagesGeneral.MultiSelect = true;
             this.lvImagesGeneral.Name = "lvImagesGeneral";
             this.lvImagesGeneral.Size = new System.Drawing.Size(620, 244);

@@ -115,9 +115,9 @@
             // btnClose
             // 
             this.btnClose.BackgroundImage = global::Keebee.AAT.Display.Properties.Resources.close;
-            this.btnClose.Location = new System.Drawing.Point(571, 292);
+            this.btnClose.Location = new System.Drawing.Point(573, 292);
             this.btnClose.Name = "btnClose";
-            this.btnClose.Size = new System.Drawing.Size(66, 65);
+            this.btnClose.Size = new System.Drawing.Size(64, 64);
             this.btnClose.TabIndex = 20;
             this.btnClose.UseSelectable = true;
             this.btnClose.Click += new System.EventHandler(this.CloseButtonClick);
@@ -126,7 +126,7 @@
             // 
             this.btnPrevious.BackgroundImage = global::Keebee.AAT.Display.Properties.Resources.arrow_left;
             this.btnPrevious.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
-            this.btnPrevious.Location = new System.Drawing.Point(166, 292);
+            this.btnPrevious.Location = new System.Drawing.Point(167, 292);
             this.btnPrevious.Name = "btnPrevious";
             this.btnPrevious.Size = new System.Drawing.Size(150, 64);
             this.btnPrevious.TabIndex = 18;
@@ -137,7 +137,7 @@
             // 
             this.btnNext.BackgroundImage = global::Keebee.AAT.Display.Properties.Resources.arrow_right;
             this.btnNext.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
-            this.btnNext.Location = new System.Drawing.Point(322, 292);
+            this.btnNext.Location = new System.Drawing.Point(323, 292);
             this.btnNext.Name = "btnNext";
             this.btnNext.Size = new System.Drawing.Size(150, 64);
             this.btnNext.TabIndex = 19;

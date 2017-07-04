@@ -148,15 +148,15 @@ namespace Keebee.AAT.Administrator.Controllers
         public JsonResult DeleteSelected(int[] ids, int mediaPathTypeId)
         {
             bool success;
-            string errormessage;
+            string errorMsg;
 
             try
             {
                 var rules = new PublicProfileRules();
 
-                errormessage = rules.CanDeleteMultiple(ids.Length, mediaPathTypeId);
-                if (errormessage.Length > 0)
-                    throw new Exception(errormessage);
+                errorMsg = rules.CanDeleteMultiple(ids.Length, mediaPathTypeId);
+                if (errorMsg.Length > 0)
+                    throw new Exception(errorMsg);
 
                 foreach (var id in ids)
                 {
@@ -173,32 +173,32 @@ namespace Keebee.AAT.Administrator.Controllers
                         if (file == null) continue;
 
                         // delete the link
-                        errormessage = _publicMediaFilesClient.Delete(id);
-                        if (errormessage.Length > 0)
-                            throw new Exception(errormessage);
+                        errorMsg = _publicMediaFilesClient.Delete(id);
+                        if (errorMsg.Length > 0)
+                            throw new Exception(errorMsg);
 
                         var fileManager = new FileManager { EventLogger = _systemEventLogger };
                         fileManager.DeleteFile($@"{file.Path}\{file.Filename}");
 
                         if (SharedLibraryRules.IsMediaTypeThumbnail(mediaPathTypeId))
                         {
-                            errormessage = _thumbnailsClient.Delete(publicMediaFile.MediaFile.StreamId);
+                            errorMsg = _thumbnailsClient.Delete(publicMediaFile.MediaFile.StreamId);
                         }
                     }
                 }
 
-                success = true;
+                success = (errorMsg?.Length == 0);
             }
             catch (Exception ex)
             {
                 success = false;
-                errormessage = ex.Message;
+                errorMsg = ex.Message;
             }
 
             return Json(new
             {
                 Success = success,
-                ErrorMessage = errormessage,
+                ErrorMessage = errorMsg,
                 FileList = GetMediaFiles()
             }, JsonRequestBehavior.AllowGet);
         }

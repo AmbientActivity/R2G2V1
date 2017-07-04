@@ -366,7 +366,7 @@ Try
         Remove-Item $path -recurse -Force
     }
     New-Item -ItemType Directory -Force -Path $path | Out-Null
-    Copy-Item C:\Users\$env:USERNAME\Source\Repos\R2G2V1\Thumbnail\Keebee.AAT.GenerateThumbnails\bin\Release\* $path -recurse -Force
+    Copy-Item C:\Users\$env:USERNAME\Source\Repos\R2G2V1\Install\Keebee.AAT.GenerateThumbnails\bin\Release\* $path -recurse -Force
 
     Write-Host "done.”
 

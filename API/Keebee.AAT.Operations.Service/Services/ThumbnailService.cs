@@ -111,10 +111,8 @@ namespace Keebee.AAT.Operations.Service.Services
             }
             catch
             {
-                thumbnail = null;
+                return;
             }
-
-            if (thumbnail == null) return;
 
             container.DeleteObject(thumbnail);
             container.SaveChanges();

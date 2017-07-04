@@ -235,9 +235,9 @@ namespace Keebee.AAT.BusinessRules
                 case MediaPathTypeId.Music:
                 case MediaPathTypeId.RadioShows:
                 case MediaPathTypeId.MatchingGameSounds:
-                    return true;
-                default:
                     return false;
+                default:
+                    return true;
             }
         }
     }

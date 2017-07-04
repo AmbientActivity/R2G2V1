@@ -208,5 +208,18 @@ namespace Keebee.AAT.BusinessRules
 
             return availableFiles;
         }
+
+        public static bool IsMediaTypeThumbnail(int mediaPathTypeId)
+        {
+            switch (mediaPathTypeId)
+            {
+                case MediaPathTypeId.Music:
+                case MediaPathTypeId.RadioShows:
+                case MediaPathTypeId.MatchingGameSounds:
+                    return false;
+                default:
+                    return true;
+            }
+        }
     }
 }

@@ -38,10 +38,10 @@
     <video id="video-player"></video>
 </div>
 
+@{Html.BeginForm();}
+
 <!-- need to post this back to the controller -->
 <input id="mediaPathTypeId" name="mediaPathTypeId" type="hidden" value="@Model.SelectedMediaPathType" />
-
-@{Html.BeginForm();}
 
 <div id="uploader-html-container" hidden>
     @Html.Raw(@Model.UploaderHtml)

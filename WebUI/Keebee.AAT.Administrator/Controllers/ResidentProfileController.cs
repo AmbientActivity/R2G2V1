@@ -257,6 +257,11 @@ namespace Keebee.AAT.Administrator.Controllers
                                     _residentMediaFilesClient.Delete(id);
                                 else
                                     break;
+
+                                if (ResidentRules.IsMediaTypeThumbnail(mediaPathTypeId))
+                                {
+                                    errormessage = _thumbnailsClient.Delete(resdientMediaFile.MediaFile.StreamId);
+                                }
                             }
                         }
                     }
@@ -328,8 +333,11 @@ namespace Keebee.AAT.Administrator.Controllers
 
             if (errorMessage != null) return errorMessage;
 
-            var thumbnailGenerator = new ThumbnailGenerator();
-            errorMessage = thumbnailGenerator.Generate(streamId);
+            if (ResidentRules.IsMediaTypeThumbnail(mediaPathTypeId))
+            {
+                var thumbnailGenerator = new ThumbnailGenerator();
+                errorMessage = thumbnailGenerator.Generate(streamId);
+            }
 
             return errorMessage;
         }

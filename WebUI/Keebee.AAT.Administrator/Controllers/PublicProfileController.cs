@@ -179,6 +179,11 @@ namespace Keebee.AAT.Administrator.Controllers
 
                         var fileManager = new FileManager { EventLogger = _systemEventLogger };
                         fileManager.DeleteFile($@"{file.Path}\{file.Filename}");
+
+                        if (SharedLibraryRules.IsMediaTypeThumbnail(mediaPathTypeId))
+                        {
+                            errormessage = _thumbnailsClient.Delete(publicMediaFile.MediaFile.StreamId);
+                        }
                     }
                 }
 
@@ -282,8 +287,11 @@ namespace Keebee.AAT.Administrator.Controllers
 
             if (errorMessage != null) return errorMessage;
 
-            var thumbnailGenerator = new ThumbnailGenerator();
-            errorMessage = thumbnailGenerator.Generate(streamId);
+            if (PublicProfileRules.IsMediaTypeThumbnail(mediaPathTypeId))
+            {
+                var thumbnailGenerator = new ThumbnailGenerator();
+                errorMessage = thumbnailGenerator.Generate(streamId);
+            }
 
             return errorMessage;
         }

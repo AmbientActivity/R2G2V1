@@ -262,5 +262,18 @@ namespace Keebee.AAT.BusinessRules
                 ? $"data:image/jpg;base64,{Convert.ToBase64String(binaryData)}"
                 : null;
         }
+
+        public static bool IsMediaTypeThumbnail(int mediaPathTypeId)
+        {
+            switch (mediaPathTypeId)
+            {
+                case MediaPathTypeId.Music:
+                case MediaPathTypeId.RadioShows:
+                case MediaPathTypeId.MatchingGameSounds:
+                    return false;
+                default:
+                    return true;
+            }
+        }
     }
 }

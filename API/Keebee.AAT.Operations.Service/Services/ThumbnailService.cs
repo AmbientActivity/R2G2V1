@@ -103,14 +103,21 @@ namespace Keebee.AAT.Operations.Service.Services
         {
             var container = new Container(new Uri(ODataHost.Url));
 
-            var thumbnail = container.Thumbnails.Where(e => e.StreamId == id);
+            Thumbnail thumbnail;
 
-            if (thumbnail != null)
+            try
             {
-                var t = thumbnail.FirstOrDefault();
-                container.DeleteObject(t);
-                container.SaveChanges();
+                thumbnail = container.Thumbnails.Where(e => e.StreamId == id).FirstOrDefault();
             }
+            catch
+            {
+                thumbnail = null;
+            }
+
+            if (thumbnail == null) return;
+
+            container.DeleteObject(thumbnail);
+            container.SaveChanges();
         }
     }
 }

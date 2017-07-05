@@ -171,6 +171,7 @@ namespace Keebee.AAT.Shared
         public const int OffScreen = 9;
         public const int VolumeControl = 10;
         public const int PaintingActivity = 11;
+        public const int BalloonPoppingGame = 12;
     }
 
     public static class MediaPlayerControl

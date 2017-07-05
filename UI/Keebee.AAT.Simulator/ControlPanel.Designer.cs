@@ -43,6 +43,7 @@
             this.btnKillDisplay = new System.Windows.Forms.Button();
             this.label5 = new System.Windows.Forms.Label();
             this.grpInterfaceKit = new System.Windows.Forms.GroupBox();
+            this.btnVolumeControl = new System.Windows.Forms.Button();
             this.btnPaintingActivity = new System.Windows.Forms.Button();
             this.btnOffScreen = new System.Windows.Forms.Button();
             this.btnCaregiver = new System.Windows.Forms.Button();
@@ -52,7 +53,7 @@
             this.btnTelevisionRight = new System.Windows.Forms.Button();
             this.btnTelevisionLeft = new System.Windows.Forms.Button();
             this.bnRadioLeft = new System.Windows.Forms.Button();
-            this.btnVolumeControl = new System.Windows.Forms.Button();
+            this.btnBalloonPoppingGame = new System.Windows.Forms.Button();
             this.grpMediaSource.SuspendLayout();
             this.grpAutoResident.SuspendLayout();
             this.grpAutoSensor.SuspendLayout();
@@ -230,6 +231,7 @@
             // 
             // grpInterfaceKit
             // 
+            this.grpInterfaceKit.Controls.Add(this.btnBalloonPoppingGame);
             this.grpInterfaceKit.Controls.Add(this.btnVolumeControl);
             this.grpInterfaceKit.Controls.Add(this.btnPaintingActivity);
             this.grpInterfaceKit.Controls.Add(this.btnOffScreen);
@@ -251,6 +253,18 @@
             this.grpInterfaceKit.TabIndex = 10;
             this.grpInterfaceKit.TabStop = false;
             this.grpInterfaceKit.Text = "Repsonse";
+            // 
+            // btnVolumeControl
+            // 
+            this.btnVolumeControl.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnVolumeControl.Location = new System.Drawing.Point(213, 151);
+            this.btnVolumeControl.Name = "btnVolumeControl";
+            this.btnVolumeControl.Size = new System.Drawing.Size(96, 36);
+            this.btnVolumeControl.TabIndex = 39;
+            this.btnVolumeControl.Text = "Volume Control";
+            this.btnVolumeControl.UseMnemonic = false;
+            this.btnVolumeControl.UseVisualStyleBackColor = true;
+            this.btnVolumeControl.Click += new System.EventHandler(this.VolumeControlClick);
             // 
             // btnPaintingActivity
             // 
@@ -354,17 +368,17 @@
             this.bnRadioLeft.UseVisualStyleBackColor = true;
             this.bnRadioLeft.Click += new System.EventHandler(this.RadioLeftButtonClick);
             // 
-            // btnVolumeControl
+            // btnBalloonPoppingGame
             // 
-            this.btnVolumeControl.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnVolumeControl.Location = new System.Drawing.Point(112, 153);
-            this.btnVolumeControl.Name = "btnVolumeControl";
-            this.btnVolumeControl.Size = new System.Drawing.Size(96, 36);
-            this.btnVolumeControl.TabIndex = 39;
-            this.btnVolumeControl.Text = "Volume Control";
-            this.btnVolumeControl.UseMnemonic = false;
-            this.btnVolumeControl.UseVisualStyleBackColor = true;
-            this.btnVolumeControl.Click += new System.EventHandler(this.VolumeControlClick);
+            this.btnBalloonPoppingGame.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnBalloonPoppingGame.Location = new System.Drawing.Point(112, 151);
+            this.btnBalloonPoppingGame.Name = "btnBalloonPoppingGame";
+            this.btnBalloonPoppingGame.Size = new System.Drawing.Size(96, 36);
+            this.btnBalloonPoppingGame.TabIndex = 40;
+            this.btnBalloonPoppingGame.Text = "Balloon Popping";
+            this.btnBalloonPoppingGame.UseMnemonic = false;
+            this.btnBalloonPoppingGame.UseVisualStyleBackColor = true;
+            this.btnBalloonPoppingGame.Click += new System.EventHandler(this.BalloonPoppingGameClick);
             // 
             // ControlPanel
             // 
@@ -419,6 +433,7 @@
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.Button btnPaintingActivity;
         private System.Windows.Forms.Button btnVolumeControl;
+        private System.Windows.Forms.Button btnBalloonPoppingGame;
     }
 }
 

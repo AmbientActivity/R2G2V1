@@ -256,6 +256,11 @@ namespace Keebee.AAT.Simulator
             ExecuteResponse(ResponseTypeId.PaintingActivity, PhidgetTypeId.Input4);
         }
 
+        private void BalloonPoppingGameClick(object sender, EventArgs e)
+        {
+            ExecuteResponse(ResponseTypeId.BalloonPoppingGame, PhidgetTypeId.Input5);
+        }
+
         private void VolumeControlClick(object sender, EventArgs e)
         {
             ExecuteResponse(ResponseTypeId.VolumeControl, PhidgetTypeId.Input2);

@@ -10,7 +10,7 @@ namespace Keebee.AAT.ConvertVideos
     {
         private const string AccesptedCodec = "h264";
 
-        public void GenerateVideos(string PathRoot)
+        public void GenerateVideos(string pathRoot)
         {
             try
             {
@@ -20,17 +20,17 @@ namespace Keebee.AAT.ConvertVideos
                 Console.WriteLine("----------------------");
                 Console.WriteLine();
 #endif
-                var pathConvertedRoot = Path.Combine(PathRoot, "converted");
+                var pathConvertedRoot = Path.Combine(pathRoot, "converted");
 
                 // Data structure to hold names of subfolders to be examined for files
                 var dirs = new Stack<string>(20);
 
-                dirs.Push(PathRoot);
+                dirs.Push(pathRoot);
 
                 while (dirs.Count > 0)
                 {
                     var currentDir = dirs.Pop();
-                    var surrentSubDir = currentDir.Replace($@"{PathRoot}\", string.Empty);
+                    var surrentSubDir = currentDir.Replace($@"{pathRoot}\", string.Empty);
                     var subDirs = Directory.GetDirectories(currentDir);
                     var files = Directory.GetFiles(currentDir);
 

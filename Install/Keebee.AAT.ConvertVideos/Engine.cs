@@ -3,17 +3,16 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Linq;
 
 
 namespace Keebee.AAT.GenerateVideos
 {
     public class Engine
     {
-        private const string PathRoot = @"C:\Media\SharedLibrary\videos";
-        private const string PathConvertedRoot = @"C:\Media\SharedLibrary\videos\converted";
         private const string AccesptedCodec = "h264";
 
-        public void GenerateVideos()
+        public void GenerateVideos(string PathRoot)
         {
             try
             {
@@ -23,11 +22,14 @@ namespace Keebee.AAT.GenerateVideos
                 Console.WriteLine("----------------------");
                 Console.WriteLine();
 #endif
-                IEnumerable<string> paths = new Collection<string> {"ambient", "cats", "tv-shows"};
+                var root = new DirectoryInfo(PathRoot);
+                var pathConvertedRoot = Path.Combine(PathRoot, "converted");
 
-                foreach (var path in paths)
+                var folders = root.EnumerateDirectories().OrderBy(x => x.Name);
+
+                foreach (var folder in folders)
                 {
-                    var pathFull = Path.Combine($@"{PathRoot}", path);
+                    var pathFull = Path.Combine($@"{PathRoot}", folder.Name);
                     var files = Directory.GetFiles(pathFull);
 
                     foreach (var file in files)
@@ -38,7 +40,7 @@ namespace Keebee.AAT.GenerateVideos
                             var filename = Path.GetFileName(file);
                             if (filename == null) continue;
 #if DEBUG
-                            Console.WriteLine($@"File: {path}\{filename}");
+                            Console.WriteLine($@"File: {folder}\{filename}");
 #endif
                             // generate
                             string errorMessage;
@@ -55,13 +57,14 @@ namespace Keebee.AAT.GenerateVideos
                                 Console.WriteLine(" ---> GOOD");
 #endif
                             }
-                            else
+                            else // possibly needs converting
                             {
 #if DEBUG
                                 Console.WriteLine(" ---> UNACCEPTABLE");
 #endif
-                                var pathConverted = Path.Combine(PathConvertedRoot, path);
+                                var pathConverted = Path.Combine(pathConvertedRoot, folder.Name);
 
+                                // see if it was already done
                                 if (File.Exists(Path.Combine(pathConverted, filename)))
                                 {
 #if DEBUG
@@ -74,9 +77,8 @@ namespace Keebee.AAT.GenerateVideos
                                         : " ---> UNACCEPTABLE (NEEDS INVESTIGATING)");
 #endif
                                 }
-                                else
+                                else // convert
                                 {
-                                    // convert
 #if DEBUG
                                     Console.Write("Converting...");
 #endif

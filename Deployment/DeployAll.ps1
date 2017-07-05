@@ -34,7 +34,10 @@ $pathVideoCaptureFileCleanup = "VideoCaptureFileCleanup\"
 $pathBackup = "Backup\"
 
 # thumbnail generator
-$pathThumbnailGenerator = $pathDeployments + "Install\Thumbnail\"
+$pathThumbnailGenerator = $pathDeployments + "Install\Assembly\ThumbnailGenerator\"
+
+# video converter
+$pathVideoConverter = $pathDeployments + "Install\Assembly\VideoConverter\"
 
 # install scripts
 $pathInstallRoot = $pathDeployments + "Install\"
@@ -367,6 +370,22 @@ Try
     }
     New-Item -ItemType Directory -Force -Path $path | Out-Null
     Copy-Item C:\Users\$env:USERNAME\Source\Repos\R2G2V1\Install\Keebee.AAT.GenerateThumbnails\bin\Release\* $path -recurse -Force
+
+    Write-Host "done.”
+
+        # -------------------- Video Conversion --------------------
+
+    # videos
+    Write-Host "Deploying Video Converter...” -NoNewline
+
+    # thumbnail installation path
+    $path = $pathVideoConverter + $pathVersion
+    If(test-path $path)
+    {
+        Remove-Item $path -recurse -Force
+    }
+    New-Item -ItemType Directory -Force -Path $path | Out-Null
+    Copy-Item C:\Users\$env:USERNAME\Source\Repos\R2G2V1\Install\Keebee.AAT.ConvertVideos\bin\Debug\* $path -recurse -Force
 
     Write-Host "done.”
 

@@ -47,7 +47,7 @@ namespace Keebee.AAT.Administrator.Controllers
 
         // GET: Resident
         [Authorize]
-        public ActionResult Index(int? id, string idsearch, string firstname, string lastname, string sortcolumn,
+        public ActionResult Index(int? id, string firstname, string lastname, string idsearch, string sortcolumn,
             int? sortdescending)
         {
             return

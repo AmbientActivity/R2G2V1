@@ -366,7 +366,8 @@
                                                     action: "Delete",
                                                     type: "POST",
                                                     params: { id: id },
-                                                    title: "Delete Resident"
+                                                    title: "Delete Resident",
+                                                    waitMessage: "Deleteing..."
                                                 })
                                                 .then(function (result) {
                                                     dialog.close();

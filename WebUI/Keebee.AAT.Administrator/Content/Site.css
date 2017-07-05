@@ -152,6 +152,7 @@ video {
 
 .modal-body {
     padding-top: 10px;
+    padding-bottom: 10px;
 }
 
 /* container */
@@ -243,10 +244,6 @@ video {
     padding-top: 5px;
 }
 
-/* override bootstraps td settings for vertical-align */
-.table > tbody > tr > td {
-  vertical-align: middle;
-}
 
 /* table */
 .table {
@@ -269,7 +266,10 @@ video {
     padding: 0;
     width: 100%;
 }
-
+.table > tbody > tr > td {
+    vertical-align: middle;
+    padding: 5px 5px 5px 5px;
+}
 /* filter */
 .select-filter {
     min-width: 200px;
@@ -447,7 +447,7 @@ input[type="checkbox"] {
 
 /* font-awesome */
 .fa-resident {
-    font-size: 20px;
+    font-size: 23px;
 }
 
 /* bootstrap glyphicon */

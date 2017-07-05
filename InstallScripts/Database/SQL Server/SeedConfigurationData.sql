@@ -69,6 +69,7 @@ SET IDENTITY_INSERT [dbo].[ResponseTypeCategories] OFF
 SET IDENTITY_INSERT [dbo].[InteractiveActivityTypes] ON 
 INSERT [dbo].[InteractiveActivityTypes] ([Id], [Description], [SwfFile]) VALUES (1, N'Matching Game', 'MatchingGame.swf')
 INSERT [dbo].[InteractiveActivityTypes] ([Id], [Description], [SwfFile]) VALUES (2, N'Painting Activity', 'PaintingActivity.swf')
+INSERT [dbo].[InteractiveActivityTypes] ([Id], [Description], [SwfFile]) VALUES (3, N'Balloon Popping Game', 'BalloonPoppingGame.swf')
 SET IDENTITY_INSERT [dbo].[InteractiveActivityTypes] OFF
 
 -- response types
@@ -84,6 +85,7 @@ INSERT [dbo].[ResponseTypes] ([Id], [ResponseTypeCategoryId], [Description], [In
 INSERT [dbo].[ResponseTypes] ([Id], [ResponseTypeCategoryId], [Description], [InteractiveActivityTypeId], [IsSystem]) VALUES (9, 5, 'Off Screen', null, 0)
 INSERT [dbo].[ResponseTypes] ([Id], [ResponseTypeCategoryId], [Description], [InteractiveActivityTypeId], [IsSystem]) VALUES (10, 5, 'Volume Control', null, 1)
 INSERT [dbo].[ResponseTypes] ([Id], [ResponseTypeCategoryId], [Description], [InteractiveActivityTypeId], [IsSystem]) VALUES (11, 4, 'Painting Activity', 2, 0)
+INSERT [dbo].[ResponseTypes] ([Id], [ResponseTypeCategoryId], [Description], [InteractiveActivityTypeId], [IsSystem]) VALUES (12, 4, 'Balloon Popping Game', 3, 0)
 SET IDENTITY_INSERT [dbo].[ResponseTypes] OFF
 
 -- media path type categories

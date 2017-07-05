@@ -593,7 +593,7 @@ function DisableScreen() {
                             var mediaPathTypeId = $("#mediaPathTypeId").val();
 
                             self.clearStreams();
-                            utilities.inprogress.show()
+                            utilities.inprogress.show({ message: "Deleting..." })
                                 .then(function(dialog) {
                                     $.post(site.url + "SharedLibrary/DeleteSelected/",
                                         {

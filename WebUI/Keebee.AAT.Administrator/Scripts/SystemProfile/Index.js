@@ -275,7 +275,6 @@
                         });
 
                         self.showLinkFromSharedLibarayDialog = function () {
-                            $("body").css("cursor", "progress");
                             var title = "<span class='glyphicon glyphicon-link' style='color: #fff'></span>";
                             var mediaPathTypeDesc = self.mediaPathType().shortdescription;
 
@@ -518,7 +517,7 @@
 
                         self.deleteSelected = function () {
                             var ids = self.selectedIds();
-                            utilities.inprogress.show()
+                            utilities.inprogress.show({ message: "Deleting..." })
                                 .then(function(dialog) {
                                     $.post(site.url + "SystemProfile/DeleteSelected/",
                                         {

@@ -374,6 +374,7 @@ namespace Keebee.AAT.Display.Caregiver
             try
             {
                 lvTVShows.Items.Clear();
+                _imageListTVShows.Images.Clear();
 
                 var files = GetMediaFiles(MediaPathTypeId.TVShows, ResponseTypeId.Television);
 
@@ -411,6 +412,7 @@ namespace Keebee.AAT.Display.Caregiver
             try
             {
                 lvHomeMovies.Items.Clear();
+                _imageListHomeMovies.Images.Clear();
 
                 var files = GetMediaFiles(MediaPathTypeId.HomeMovies, ResponseTypeId.Television);
 
@@ -449,6 +451,7 @@ namespace Keebee.AAT.Display.Caregiver
             try
             {
                 lvImagesGeneral.Items.Clear();
+                _imageListImagesGeneral.Images.Clear();
 
                 var files = GetMediaFiles(MediaPathTypeId.ImagesGeneral, ResponseTypeId.SlideShow).ToArray();
 

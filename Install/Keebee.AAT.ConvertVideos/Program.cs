@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Keebee.AAT.GenerateVideos
+namespace Keebee.AAT.ConvertVideos
 {
     internal class Program
     {

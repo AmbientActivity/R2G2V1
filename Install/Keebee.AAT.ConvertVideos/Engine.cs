@@ -1,12 +1,10 @@
 ﻿using Keebee.AAT.VideoConversion;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 
-
-namespace Keebee.AAT.GenerateVideos
+namespace Keebee.AAT.ConvertVideos
 {
     public class Engine
     {
@@ -22,15 +20,19 @@ namespace Keebee.AAT.GenerateVideos
                 Console.WriteLine("----------------------");
                 Console.WriteLine();
 #endif
-                var root = new DirectoryInfo(PathRoot);
                 var pathConvertedRoot = Path.Combine(PathRoot, "converted");
 
-                var folders = root.EnumerateDirectories().OrderBy(x => x.Name);
+                // Data structure to hold names of subfolders to be examined for files
+                var dirs = new Stack<string>(20);
 
-                foreach (var folder in folders)
+                dirs.Push(PathRoot);
+
+                while (dirs.Count > 0)
                 {
-                    var pathFull = Path.Combine($@"{PathRoot}", folder.Name);
-                    var files = Directory.GetFiles(pathFull);
+                    var currentDir = dirs.Pop();
+                    var surrentSubDir = currentDir.Replace($@"{PathRoot}\", string.Empty);
+                    var subDirs = Directory.GetDirectories(currentDir);
+                    var files = Directory.GetFiles(currentDir);
 
                     foreach (var file in files)
                     {
@@ -40,14 +42,13 @@ namespace Keebee.AAT.GenerateVideos
                             var filename = Path.GetFileName(file);
                             if (filename == null) continue;
 #if DEBUG
-                            Console.WriteLine($@"File: {folder}\{filename}");
+                            Console.WriteLine($@"File: {currentDir}\{filename}");
 #endif
                             // generate
                             string errorMessage;
 
-                            var codecName = VideoConverter.GetCodecName(Path.Combine(pathFull, filename), out errorMessage);
+                            var codecName = VideoConverter.GetCodecName(Path.Combine(currentDir, filename), out errorMessage);
                             if (errorMessage != null) throw new Exception(errorMessage);
-
 #if DEBUG
                             Console.Write($"Codec: {codecName}");
 #endif
@@ -62,7 +63,7 @@ namespace Keebee.AAT.GenerateVideos
 #if DEBUG
                                 Console.WriteLine(" ---> UNACCEPTABLE");
 #endif
-                                var pathConverted = Path.Combine(pathConvertedRoot, folder.Name);
+                                var pathConverted = Path.Combine(pathConvertedRoot, surrentSubDir);
 
                                 // see if it was already done
                                 if (File.Exists(Path.Combine(pathConverted, filename)))
@@ -82,10 +83,9 @@ namespace Keebee.AAT.GenerateVideos
 #if DEBUG
                                     Console.Write("Converting...");
 #endif
-                                    var byteArray = VideoConverter.Convert(Path.Combine(pathFull, filename),
+                                    var byteArray = VideoConverter.Convert(Path.Combine(currentDir, filename),
                                         out errorMessage);
                                     if (errorMessage != null) throw new Exception(errorMessage);
-
 #if DEBUG
                                     Console.WriteLine("done.");
 #endif
@@ -115,6 +115,10 @@ namespace Keebee.AAT.GenerateVideos
 #endif
                         }
                     }
+                    // Push the subdirectories onto the stack for traversal.
+                    // This could also be done before handing the files.
+                    foreach (var dir in subDirs.Select(x => x))
+                        dirs.Push(dir);
                 }
 #if DEBUG
                 Console.WriteLine("Completed.");

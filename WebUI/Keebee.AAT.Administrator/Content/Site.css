@@ -251,12 +251,6 @@ video {
 .table-striped tbody tr.highlight td {
     background-color: #e6f3ff;
 }
-/* remove border from sticky header and align center */
-.table-bordered > thead > tr > th,
-.table-bordered > thead > tr > td {
-    border: none;
-    vertical-align: middle;
-}
 .table-detail-container {
     overflow-y: auto;
 }
@@ -265,7 +259,28 @@ video {
     padding: 0;
     width: 100%;
 }
+/* default table style */
+.table-bordered > thead > tr > th {
+    border: none;
+    vertical-align: middle;
+    padding: 8px 8px 5px 6px;
+}
+.table-bordered > tbody > tr > td {
+    vertical-align: middle;
+    padding: 10px;
+}
+/* override default */
+.table#tblFileHeader > thead > tr > th {
+    border: none;
+    vertical-align: middle;
+    padding: 5px 8px 5px 7px;
+}
 .table#tblFile > tbody > tr > td {
+    vertical-align: middle;
+    padding: 5px 6px 5px 8px;
+}
+.table#tblResidentHeader > thead > tr > th {
+    border: none;
     vertical-align: middle;
     padding: 5px 5px 5px 5px;
 }
@@ -273,7 +288,6 @@ video {
     vertical-align: middle;
     padding: 5px 5px 5px 5px;
 }
-
 /* filter */
 .select-filter {
     min-width: 200px;
@@ -352,8 +366,8 @@ video {
     padding-top: 5px;
 }
 .checkbox-size {
-    width: 15px;
-    height: 15px;
+    width: 17px;
+    height: 17px;
 }
 input[type="checkbox"] {
   margin-top: 0;
@@ -364,6 +378,7 @@ input[type="checkbox"] {
     width: 40px;
     background: transparent;
 }
+
 /* table columns */
 .col-checkbox {
     width: 1%;

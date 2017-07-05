@@ -70,10 +70,10 @@
     <div class="panel-body panel-body-table-header">
         <!-- use separate table for sticky headers -->
         <div id="table-header" class="container table-header-container" hidden>
-            <table class="table table-bordered">
+            <table class="table table-bordered" id="tblFileHeader">
                 <thead>
                 <tr>
-                    <th class="col-checkbox"><input class="form-control checkbox-size" type="checkbox" id="chk_all" data-bind="checked: selectAllIsSelected, click: selectAllRows" /></th>
+                    <th class="col-checkbox"><input class="form-control checkbox-size-lg" type="checkbox" id="chk_all" data-bind="checked: selectAllIsSelected, click: selectAllRows" /></th>
                     <th id="col-thumbnail" class="col-thumbnail"></th>
                     <!-- ko foreach: columns -->
                     <!-- ko if: sortKey !== 'islinked' -->
@@ -117,7 +117,7 @@
                     <td class="col-filename" data-bind="click: $parent.resetFocus, text: filename"></td>
                     <td class="col-filetype" data-bind="click: $parent.resetFocus, text: filetype"></td>
                     <!-- ko if: islinked -->
-                    <td class="col-islinked"data-bind="click: $parent.resetFocus"><span class="glyphicon glyphicon-ok"></span></td>
+                    <td class="col-islinked"data-bind="click: $parent.resetFocus"><span class="glyphicon glyphicon-ok glyphicon-lg"></span></td>
                     <!-- /ko -->
                     <!-- ko if: !islinked -->
                     <td class="col-islinked"></td>

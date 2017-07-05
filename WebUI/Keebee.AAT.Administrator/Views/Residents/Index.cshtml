@@ -54,7 +54,7 @@
     <div class="panel-body panel-body-table-header">
         <!-- use separate table for sticky headers -->
         <div id="table-header" class="container table-header-container" hidden>
-            <table class="table" >
+            <table class="table" id="tblResidentHeader">
                 <thead>
                 <tr>
                     <th class="col-glyphicon"></th>
@@ -97,7 +97,7 @@
                     <!-- /ko -->
                     <!-- ko if: $parent.isVideoCaptureServiceInstalled === '1' -->
                     <!-- ko if: allowvideocapturing -->
-                    <td class="col-capturable"><span class="glyphicon glyphicon-ok"></span></td>
+                    <td class="col-capturable"><span class="glyphicon glyphicon-ok glyphicon-lg"></span></td>
                     <!-- /ko -->
                     <!-- ko if: !allowvideocapturing -->
                     <td class="col-capturable"></td>

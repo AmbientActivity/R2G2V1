@@ -102,18 +102,19 @@
                 }
 
                 if (config.descending) {
-                    if (valuea === null) return 0;
+                    if (valuea === null) return -1;
                     if (valueb === null) return 1;
                     if (valuea > valueb) {
                         return -1;
-                    } else if (valuea < valueb) {
+                    } 
+                    else if (valuea < valueb) {
                         return 1;
                     } else {
                         return sortPrimary(a, b, false);
                     }
                 } else {
                     if (valuea === null) return 1;
-                    if (valueb === null) return 0;
+                    if (valueb === null) return -1;
                     if (valuea < valueb) {
                         return -1;
                     } else if (valuea > valueb) {

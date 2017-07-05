@@ -205,8 +205,9 @@
 			e.target.reset();
 			score++;
 			
-			// R2G2 - need to restart the timer whenever a balloon is popped
+			// R2G2 - need to reset the timer whenever a balloon is popped
 			clearTimeout(activityTimeout);
+			setTimeout(timedFunctionGame, timeoutValue);
 		}
 
 		private function playsound(e:MouseEvent):void {

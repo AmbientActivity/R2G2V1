@@ -58,8 +58,8 @@
             <table data-bind="tableUpdated: configDetails"  class="table table-striped table-bordered table-hover" id="tblConfigDetail" hidden>
                 <thead>
                     <tr>
-                        <th class="col-glyphicon"></th>
-                        <th class="col-glyphicon"></th>
+                        <th class="col-glyphicon col-glyphicon-lg"></th>
+                        <th class="col-glyphicon col-glyphicon-lg"></th>
                         <!-- ko foreach: columns -->
                         <th data-bind="text: title, css: cssClass"></th>
                         <!-- /ko -->
@@ -69,12 +69,12 @@
                 <tbody data-bind="foreach: configDetailsTable, setTooltips: configDetailsTable">
                     <tr data-bind="click: $parent.highlightRow, attr: {id: 'row_' +  id}">
                         <!-- ko if: canedit -->
-                        <td><a href="javascript:void(0)" data-bind="click: $parent.showDeleteDetailDialog, css: 'glyphicon glyphicon-trash'"></a></td>
-                        <td><a data-bind="attr: { href: '#' }, click: $parent.showEditDetailDialog, css: 'glyphicon glyphicon-pencil'"></a></td>
+                        <td><a href="javascript:void(0)" data-bind="click: $parent.showDeleteDetailDialog, css: 'glyphicon glyphicon-trash glyphicon-lg'"></a></td>
+                        <td><a data-bind="attr: { href: '#' }, click: $parent.showEditDetailDialog, css: 'glyphicon glyphicon-pencil glyphicon-lg'"></a></td>
                         <!-- /ko -->
                         <!-- ko if: !canedit -->
-                        <td><span data-bind="css: 'glyphicon glyphicon-flag'"></span></td>
-                        <td><span data-bind="css: 'glyphicon glyphicon-flag'"></span></td>
+                        <td><span data-bind="css: 'glyphicon glyphicon-flag glyphicon-lg'"></span></td>
+                        <td><span data-bind="css: 'glyphicon glyphicon-flag glyphicon-lg'"></span></td>
                         <!-- /ko -->
                         <td data-bind="text: phidgettype"></td>
                         <td data-bind="text: phidgetstyletype"></td>

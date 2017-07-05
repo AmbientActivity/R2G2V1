@@ -413,6 +413,10 @@ namespace Keebee.AAT.Simulator
                     interactiveActivityTypeId = InteractiveActivityTypeId.PaintingActivity;
                     swfFile = "PaintingActivity.swf";
                     break;
+                case ResponseTypeId.BalloonPoppingGame:
+                    interactiveActivityTypeId = InteractiveActivityTypeId.BalloonPoppingGame;
+                    swfFile = "BalloonPoppingGame.swf";
+                    break;
             }
 
             var responseMessage = new ResponseMessage

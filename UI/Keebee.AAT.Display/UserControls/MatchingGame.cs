@@ -30,14 +30,13 @@ namespace Keebee.AAT.Display.UserControls
 
         private bool _isActiveEventLog;
         private bool _isAllowVideoCapture;
+        private int _initialDifficultyLevel;
+        private bool _enableGameTimeout;
 
         // delegate
         private delegate void RaiseMatchingGameTimeoutExpiredEventDelegate();
         private delegate void RaiseLogInteractiveActivityEventEventDelegate(string description, int difficultyLevel, bool? success);
         private delegate void RaiseStartVideoCaptureEventDelegate();
-
-        private int _initialDifficultyLevel;
-        private bool _enableGameTimeout;
 
         public MatchingGame()
         {

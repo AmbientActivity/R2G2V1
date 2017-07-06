@@ -16,23 +16,21 @@ namespace Keebee.AAT.Display.UserControls
             set { _systemEventLogger = value; }
         }
 
-        private int _activityTypeId;
-        private string _swfFile;
-
         // event handler
         public event EventHandler ActivityPlayerTimeoutExpiredEvent;
         public event EventHandler LogInteractiveActivityEventEvent;
         public event EventHandler StartVideoCaptureEvent;
 
+        private int _activityTypeId;
+        private string _swfFile;
         private bool _isActiveEventLog;
         private bool _isAllowVideoCapture;
+        private bool _enableGameTimeout;
 
         // delegate
         private delegate void RaiseActivityPlayerTimeoutExpiredDelegate();
         private delegate void RaiseLogInteractiveActvityEventEventDelegate(string description);
         private delegate void RaiseStartVideoCaptureDelegate();
-
-        private bool _enableGameTimeout;
 
         public ActivityPlayer()
         {

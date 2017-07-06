@@ -50,7 +50,8 @@ namespace Keebee.AAT.Operations.Controllers
                         x.InteractiveActivityType.Description,
                         x.InteractiveActivityType.SwfFile
                     } : null,
-                    x.IsSystem
+                    x.IsSystem,
+                    x.IsRandom
                 }).ToArray();
 
             return new DynamicJsonArray(jArray);
@@ -87,6 +88,7 @@ namespace Keebee.AAT.Operations.Controllers
                     responseType.InteractiveActivityType.SwfFile
                 } : null;
             exObj.IsSystem = responseType.IsSystem;
+            exObj.x.IsRandom = responseType.IsRandom;
 
             return new DynamicJsonObject(exObj);
         }

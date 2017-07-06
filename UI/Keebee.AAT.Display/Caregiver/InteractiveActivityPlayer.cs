@@ -130,7 +130,7 @@ namespace Keebee.AAT.Display.Caregiver
                 default:
                     activityPlayer1.Show();
                     activityPlayer1.SystemEventLogger = _systemEventLogger;
-                    activityPlayer1.Play(false, _isActiveEventLog, false, _interactiveActivityTypeId, _swfFile);
+                    activityPlayer1.Play(_interactiveActivityTypeId, _swfFile, false, _isActiveEventLog, false);
                     activityPlayer1.Select();
                     break;
             }

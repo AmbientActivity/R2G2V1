@@ -45,7 +45,18 @@ namespace Keebee.AAT.Display.UserControls
             axShockwaveFlash1.Dock = DockStyle.Fill;
         }
 
-        public void Play(bool enableTimeout, bool isActiveEventLog, bool isAllowVideoCapture, int activityTypeId, string swfFile)
+        private void ConfigureFlashActiveX()
+        {
+            Controls.Remove(axShockwaveFlash1);
+            axShockwaveFlash1 = new AxShockwaveFlash();
+            axShockwaveFlash1.BeginInit();
+            axShockwaveFlash1.Dock = DockStyle.Fill;
+            axShockwaveFlash1.Name = "axShockwaveFlash1";
+            axShockwaveFlash1.FlashCall += FlashCall;
+            axShockwaveFlash1.EndInit();
+            Controls.Add(axShockwaveFlash1);
+        }
+        public void Play(int activityTypeId, string swfFile, bool enableTimeout, bool isActiveEventLog, bool isAllowVideoCapture)
         {
             _enableGameTimeout = enableTimeout;
             _isActiveEventLog = isActiveEventLog;
@@ -60,8 +71,11 @@ namespace Keebee.AAT.Display.UserControls
         {
             try
             {
+                ConfigureFlashActiveX();
+
                 var enableTimeout = _enableGameTimeout ? 1 : 0;
                 var swf = Path.Combine(Application.StartupPath, _swfFile);
+
                 axShockwaveFlash1.LoadMovie(0, swf);
 
                 axShockwaveFlash1.CallFunction("<invoke name=\"playActivity\"><arguments>" +

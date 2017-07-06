@@ -20,6 +20,7 @@ namespace Keebee.AAT.Shared
         public int PhidgetStyleTypeId { get; set; }
         public int ResponseTypeId { get; set; }
         public bool IsSystemReponseType { get; set; }
+        public bool IsRandomReponseType { get; set; }
         public int InteractiveActivityTypeId { get; set; }
         public string SwfFile { get; set; }
     }
@@ -38,7 +39,14 @@ namespace Keebee.AAT.Shared
         public bool IsActiveEventLog { get; set; }
         public ResidentMessage Resident { get; set; }
         public ConfigDetailMessage ConfigDetail { get; set; }
-        public int[] ResponseTypeIds { get; set; }
+        public RandomResponseTypeMessage[] RandomResponseTypes { get; set; }
+    }
+
+    public class RandomResponseTypeMessage
+    {
+        public int Id { get; set; }
+        public int InteractiveActivityTypeId { get; set; }
+        public string SwfFile { get; set; }
     }
 
     public class DisplayMessage

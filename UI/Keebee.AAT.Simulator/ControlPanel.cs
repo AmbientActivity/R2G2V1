@@ -6,6 +6,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System;
+using System.Collections.ObjectModel;
 using System.Windows.Forms;
 using System.Configuration;
 using System.Diagnostics;
@@ -14,8 +15,7 @@ using Timer = System.Threading.Timer;
 
 namespace Keebee.AAT.Simulator
 {
-
-    enum StepDirectionType
+    internal enum StepDirectionType
     {
         Left = 0,
         Right = 1
@@ -23,6 +23,22 @@ namespace Keebee.AAT.Simulator
 
     public partial class ControlPanel : Form
     {
+        // for the random response types when the on/off button is clicked
+        private readonly IEnumerable<RandomResponseTypeMessage> _randomResponseTypes = new Collection<RandomResponseTypeMessage>
+            {
+                GetResponseTypeMessage(ResponseTypeId.SlideShow),
+                GetResponseTypeMessage(ResponseTypeId.MatchingGame),
+                GetResponseTypeMessage(ResponseTypeId.PaintingActivity),
+                GetResponseTypeMessage(ResponseTypeId.BalloonPoppingGame)
+            };
+
+        #region declaration
+
+        // constant
+        private const string MatchingGame = "MatchingGame.swf";
+        private const string PaintingActivity = "PaintingActivity.swf";
+        private const string BalloonPoppingGame = "BalloonPoppingGame.swf";
+
         // data
         private readonly IResidentsClient _residentsClient;
         private Resident[] _residents;
@@ -62,6 +78,8 @@ namespace Keebee.AAT.Simulator
         private int _currentRadio4Value;
         private int _currentTelevsion5Value;
 
+        #endregion
+
         public ControlPanel()
         {
             InitializeComponent();
@@ -99,6 +117,8 @@ namespace Keebee.AAT.Simulator
             _totalResidents = _residents.Count();
         }
 
+        #region initialization
+
         private void LoadResidentDropDown()
         {
             var arrayList = new ArrayList();
@@ -130,9 +150,13 @@ namespace Keebee.AAT.Simulator
             _messageQueueBluetoothBeaconWatcher.Send(CreateMessageBodyForBluetoothBeaconWatcher(new Resident { Id = PublicProfileSource.Id, GameDifficultyLevel =  1}));
         }
 
+        #endregion
+
+        #region button click
+
         private void KillDisplayButtonClick(object sender, EventArgs e)
         {
-            ExecuteResponse(ResponseTypeId.KillDisplay, PhidgetTypeId.Input1, MaxValue - 1, true);
+            ExecuteResponse(ResponseTypeId.KillDisplay, PhidgetTypeId.Sensor0, MaxValue - 1, true);
         }
 
         private void SlideShowButtonClick(object sender, EventArgs e)
@@ -142,17 +166,12 @@ namespace Keebee.AAT.Simulator
 
         private void MatchingGameButtonClick(object sender, EventArgs e)
         {
-            ExecuteResponse(ResponseTypeId.MatchingGame, PhidgetTypeId.Sensor1);
+            ExecuteResponse(ResponseTypeId.MatchingGame, PhidgetTypeId.Sensor0);
         }
 
         private void CatsButtonClick(object sender, EventArgs e)
         {
-            ExecuteResponse(ResponseTypeId.Cats, PhidgetTypeId.Sensor3);
-        }
-
-        private void OffScreenButtonClick(object sender, EventArgs e)
-        {
-            ExecuteResponse(ResponseTypeId.OffScreen, PhidgetTypeId.Sensor4, MaxValue - 1, false, new [] {ResponseTypeId.MatchingGame, ResponseTypeId.SlideShow, ResponseTypeId.PaintingActivity});
+            ExecuteResponse(ResponseTypeId.Cats, PhidgetTypeId.Sensor0);
         }
 
         private void RadioRightButtonClick(object sender, EventArgs e)
@@ -165,7 +184,7 @@ namespace Keebee.AAT.Simulator
             if (valueToSend <= 0) return;
 
             _messageQueuePhidgetContinuousRadio.Send($"{valueToSend}");
-            ExecuteResponse(ResponseTypeId.Radio, PhidgetTypeId.Sensor5, valueToSend);
+            ExecuteResponse(ResponseTypeId.Radio, PhidgetTypeId.Sensor0, valueToSend);
         }
 
         private void RadioLeftButtonClick(object sender, EventArgs e)
@@ -178,7 +197,7 @@ namespace Keebee.AAT.Simulator
             if (valueToSend <= 0) return;
 
             _messageQueuePhidgetContinuousRadio.Send($"{valueToSend}");
-            ExecuteResponse(ResponseTypeId.Radio, PhidgetTypeId.Sensor5, valueToSend);
+            ExecuteResponse(ResponseTypeId.Radio, PhidgetTypeId.Sensor0, valueToSend);
         }
 
         private void TelevisionRightButtonClick(object sender, EventArgs e)
@@ -190,7 +209,7 @@ namespace Keebee.AAT.Simulator
 
             if (valueToSend <= 0) return;
 
-            ExecuteResponse(ResponseTypeId.Television, PhidgetTypeId.Sensor6, valueToSend);
+            ExecuteResponse(ResponseTypeId.Television, PhidgetTypeId.Sensor0, valueToSend);
         }
 
         private void TelevisionLeftButtonClick(object sender, EventArgs e)
@@ -202,7 +221,7 @@ namespace Keebee.AAT.Simulator
 
             if (valueToSend <= 0) return;
 
-            ExecuteResponse(ResponseTypeId.Television, PhidgetTypeId.Sensor6, valueToSend);
+            ExecuteResponse(ResponseTypeId.Television, PhidgetTypeId.Sensor0, valueToSend);
         }
 
         private int GetCurrentStepValue(int responseType, StepDirectionType direction)
@@ -243,27 +262,69 @@ namespace Keebee.AAT.Simulator
 
         private void CaregiverButtonClick(object sender, EventArgs e)
         {
-            ExecuteResponse(ResponseTypeId.Caregiver, PhidgetTypeId.Input0, MaxValue - 1, true);
+            ExecuteResponse(ResponseTypeId.Caregiver, PhidgetTypeId.Sensor0, MaxValue - 1, true);
         }
 
         private void AmbientButtonClick(object sender, EventArgs e)
         {
-            ExecuteResponse(ResponseTypeId.Ambient, PhidgetTypeId.Sensor7, MaxValue - 1, true);
+            ExecuteResponse(ResponseTypeId.Ambient, PhidgetTypeId.Sensor0, MaxValue - 1, true);
         }
 
         private void PaintingActivityClick(object sender, EventArgs e)
         {
-            ExecuteResponse(ResponseTypeId.PaintingActivity, PhidgetTypeId.Input4);
+            ExecuteResponse(ResponseTypeId.PaintingActivity, PhidgetTypeId.Sensor0);
         }
 
         private void BalloonPoppingGameClick(object sender, EventArgs e)
         {
-            ExecuteResponse(ResponseTypeId.BalloonPoppingGame, PhidgetTypeId.Input5);
+            ExecuteResponse(ResponseTypeId.BalloonPoppingGame, PhidgetTypeId.Sensor0);
         }
 
         private void VolumeControlClick(object sender, EventArgs e)
         {
-            ExecuteResponse(ResponseTypeId.VolumeControl, PhidgetTypeId.Input2);
+            ExecuteResponse(ResponseTypeId.VolumeControl, PhidgetTypeId.Sensor0);
+        }
+
+        private void OffScreenButtonClick(object sender, EventArgs e)
+        {
+            ExecuteResponse(ResponseTypeId.OffScreen, PhidgetTypeId.Sensor4, MaxValue - 1, false);
+        }
+
+        private static RandomResponseTypeMessage GetResponseTypeMessage(int responseTypeId)
+        {
+            switch (responseTypeId)
+            {
+                case ResponseTypeId.SlideShow:
+                    return new RandomResponseTypeMessage
+                    {
+                        Id = responseTypeId,
+                        InteractiveActivityTypeId = 0,
+                        SwfFile = null
+                    };
+                case ResponseTypeId.MatchingGame:
+                    return new RandomResponseTypeMessage
+                    {
+                        Id = responseTypeId,
+                        InteractiveActivityTypeId = InteractiveActivityTypeId.MatchingGame,
+                        SwfFile = "MatchingGame.swf"
+                    };
+                case ResponseTypeId.PaintingActivity:
+                    return new RandomResponseTypeMessage
+                    {
+                        Id = responseTypeId,
+                        InteractiveActivityTypeId = InteractiveActivityTypeId.MatchingGame,
+                        SwfFile = "PaintingActivity.swf"
+                    };
+                case ResponseTypeId.BalloonPoppingGame:
+                    return new RandomResponseTypeMessage
+                    {
+                        Id = responseTypeId,
+                        InteractiveActivityTypeId = InteractiveActivityTypeId.MatchingGame,
+                        SwfFile = "BalloonPoppingGame.swf"
+                    };
+                default:
+                    return null;
+            }
         }
 
         private void ActivateResidentClick(object sender, EventArgs e)
@@ -278,21 +339,9 @@ namespace Keebee.AAT.Simulator
             _messageQueueBluetoothBeaconWatcher.Send(CreateMessageBodyForBluetoothBeaconWatcher(resident));
         }
 
-        private static string CreateMessageBodyForBluetoothBeaconWatcher(Resident resident)
-        {
-            var residentMessage = new ResidentMessage
-            {
-                Id = resident.Id,
-                Name = $"{resident.FirstName} {resident.LastName}".Trim(),
-                GameDifficultyLevel = resident.GameDifficultyLevel,
-                AllowVideoCapturing = resident.AllowVideoCapturing
-            };
+        #endregion
 
-            var serializer = new JavaScriptSerializer();
-            var messageBody = serializer.Serialize(residentMessage);
-
-            return messageBody;
-        }
+        #region timer
 
         private void TimerSensorTick(object sender)
         {
@@ -324,6 +373,10 @@ namespace Keebee.AAT.Simulator
             CreateMessageBodyForBluetoothBeaconWatcher(resident);
             _messageQueueBluetoothBeaconWatcher.Send(CreateMessageBodyForBluetoothBeaconWatcher(resident));
         }
+
+        #endregion
+
+        #region event handlers
 
         private void ControlPanelClosing(object sender, FormClosingEventArgs e)
         {
@@ -392,35 +445,66 @@ namespace Keebee.AAT.Simulator
             };
         }
 
-        private void ExecuteResponse(int responseTypeId, int phidgetTypeId, int sensorValue = MaxValue - 1, bool isSystem = false, int[] reponseTypeIds = null)
+        #endregion
+
+        #region helper
+
+        private void ExecuteResponse(int responseTypeId, int phidgetTypeId, int sensorValue = MaxValue - 1, bool isSystem = false)
         {
 #if !DEBUG
             if (Process.GetProcessesByName($"{AppSettings.Namespace}.{AppSettings.DisplayAppName}").Any())
 #endif
-            _messageQueueResponse.Send(CreateMessageBodyForResponse(responseTypeId, phidgetTypeId, isSystem, sensorValue, reponseTypeIds));
+            _messageQueueResponse.Send(CreateMessageBodyForResponse(responseTypeId, phidgetTypeId, isSystem, sensorValue));
         }
 
-        private string CreateMessageBodyForResponse(int responseTypeId, int phidgetTypeId, bool isSystem, int sensorValue, int[] reponseTypeIds)
+        private static int GetInteractiveActivityTypeId(int responseTypeId)
         {
-            var interactiveActivityTypeId = 0;
-            var swfFile = string.Empty;
-
             switch (responseTypeId)
             {
                 case ResponseTypeId.MatchingGame:
-                    interactiveActivityTypeId = InteractiveActivityTypeId.MatchingGame;
-                    swfFile = "MatchingGame.swf";
-                    break;
+                    return InteractiveActivityTypeId.MatchingGame;
                 case ResponseTypeId.PaintingActivity:
-                    interactiveActivityTypeId = InteractiveActivityTypeId.PaintingActivity;
-                    swfFile = "PaintingActivity.swf";
-                    break;
+                    return InteractiveActivityTypeId.PaintingActivity;
                 case ResponseTypeId.BalloonPoppingGame:
-                    interactiveActivityTypeId = InteractiveActivityTypeId.BalloonPoppingGame;
-                    swfFile = "BalloonPoppingGame.swf";
-                    break;
+                    return InteractiveActivityTypeId.BalloonPoppingGame;
+                default:
+                    return 0;
             }
+        }
 
+        private static string GetInteractiveActivityTypeSwf(int responseTypeId)
+        {
+            switch (responseTypeId)
+            {
+                case ResponseTypeId.MatchingGame:
+                    return MatchingGame;
+                case ResponseTypeId.PaintingActivity:
+                    return PaintingActivity;
+                case ResponseTypeId.BalloonPoppingGame:
+                    return BalloonPoppingGame;
+                default:
+                    return null;
+            }
+        }
+
+        private static string CreateMessageBodyForBluetoothBeaconWatcher(Resident resident)
+        {
+            var residentMessage = new ResidentMessage
+            {
+                Id = resident.Id,
+                Name = $"{resident.FirstName} {resident.LastName}".Trim(),
+                GameDifficultyLevel = resident.GameDifficultyLevel,
+                AllowVideoCapturing = resident.AllowVideoCapturing
+            };
+
+            var serializer = new JavaScriptSerializer();
+            var messageBody = serializer.Serialize(residentMessage);
+
+            return messageBody;
+        }
+
+        private string CreateMessageBodyForResponse(int responseTypeId, int phidgetTypeId, bool isSystem, int sensorValue)
+        {
             var responseMessage = new ResponseMessage
             {
                 SensorValue = sensorValue,
@@ -431,8 +515,8 @@ namespace Keebee.AAT.Simulator
                     PhidgetTypeId = phidgetTypeId,
                     IsSystemReponseType = isSystem,
                     ConfigId = ConfigId.Default,
-                    InteractiveActivityTypeId = interactiveActivityTypeId,
-                    SwfFile = swfFile
+                    InteractiveActivityTypeId = GetInteractiveActivityTypeId(responseTypeId),
+                    SwfFile = GetInteractiveActivityTypeSwf(responseTypeId)
                 },
                 Resident = new ResidentMessage
                 {
@@ -444,11 +528,13 @@ namespace Keebee.AAT.Simulator
                     AllowVideoCapturing = _currentResident.AllowVideoCapturing
                 },
                 IsActiveEventLog = false,
-                ResponseTypeIds = reponseTypeIds
+                RandomResponseTypes = _randomResponseTypes.ToArray()
             };
 
             var serializer = new JavaScriptSerializer();
             return serializer.Serialize(responseMessage);
         }
+
+        #endregion
     }
 }

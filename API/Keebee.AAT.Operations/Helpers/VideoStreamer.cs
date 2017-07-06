@@ -35,7 +35,7 @@ namespace Keebee.AAT.Operations.Helpers
                     }
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 // fail silently
             }

@@ -20,5 +20,7 @@ namespace Keebee.AAT.DataAccess.Models
         public int? InteractiveActivityTypeId { get; set; }
 
         public bool IsSystem { get; set; }
+
+        public bool IsRandom { get; set; }
     }
 }

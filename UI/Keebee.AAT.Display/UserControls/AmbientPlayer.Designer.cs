@@ -44,7 +44,7 @@
             this.lblInvitation.ForeColor = System.Drawing.Color.Black;
             this.lblInvitation.Location = new System.Drawing.Point(0, 0);
             this.lblInvitation.Name = "lblInvitation";
-            this.lblInvitation.Size = new System.Drawing.Size(574, 316);
+            this.lblInvitation.Size = new System.Drawing.Size(680, 360);
             this.lblInvitation.TabIndex = 1;
             this.lblInvitation.Text = "Invitation Message";
             this.lblInvitation.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -68,7 +68,7 @@
             this.Controls.Add(this.axWindowsMediaPlayer);
             this.Controls.Add(this.lblInvitation);
             this.Name = "AmbientPlayer";
-            this.Size = new System.Drawing.Size(574, 316);
+            this.Size = new System.Drawing.Size(680, 360);
             ((System.ComponentModel.ISupportInitialize)(this.axWindowsMediaPlayer)).EndInit();
             this.ResumeLayout(false);
 

@@ -20,10 +20,10 @@
     import flash.system.fscommand;
 	import flash.utils.setTimeout;
 	import flash.utils.clearTimeout;
+	import flash.events.TouchEvent
 	
     fscommand("fullscreen", "true");	
 	[SWF(width='1920',height='1080',backgroundColor='#FFFF00',frameRate='60' )]
-
 
 	public class Main extends MovieClip 
 	{		
@@ -61,45 +61,54 @@
 		private var textBox:TextField = new TextField;
 		private var textFormat:TextFormat = new TextFormat();		
 		
-		// R2G2 - need to add a timeout and on/off boolean
-		// When triggered by a phidget - times out
-		// When triggered by the Caregiver Interface - no time out
+		// R2G2 - timeout and enable/disable boolean
+		// When triggered by a phidget - timeout
+		// When triggered by the Caregiver Interface - no timeout
 		private var activityTimeout:uint;
 		private var timeoutValue:Number = 900000;  // 15 minutes
 		private var enableActivityTimeout:Boolean;
 		
 		public function Main():void {
+			
 			// R2G2 - need to add 2 entry points
 			// comment to test
-			ExternalInterface.addCallback("playActivity", playGame);
-			ExternalInterface.addCallback("stopActivity", stopGame);
+			ExternalInterface.addCallback("playActivity", playActivity);
+			ExternalInterface.addCallback("stopActivity", stopActivity);
 			
 			// uncomment to run locally
-			//playGame(1);
+			//playActivity(0);
 		}
 		
 		// R2G2 - need to add function for the entry point "playActivity"
 		// init() gets called from here instead of from Main()
-		// receive a parameter for timeout on/off (convert number to boolean)
-		private function playGame(enableTimeout:Number):void {
+		// receives a parameter to determine if the game should timeout on or off
+		// doesn't accept booleans properly so convert number to boolean
+		private function playActivity(enableTimeout:Number):void {
 			enableActivityTimeout = (enableTimeout == 1);
 			
-			if (enableActivityTimeout)
-				activityTimeout = setTimeout(timedFunctionGame, timeoutValue);
+			// R2G2 - need to set the timer for the beginning of the game
+			setTimer();
 			
 			init();
 		}
 		
-		// R2G2 - need to add function for the entry point "stopActivity"
-		// clear the timeout
-		private function stopGame():void {
+		// R2G2 - function for the entry point "stopActivity"
+		private function stopActivity():void {
+			
+			// clear the timeout
 			clearTimeout(activityTimeout);
+			
+			// remove all children
+			while (numChildren > 0) {
+				removeChildAt(0);
+			}
+			
+			// empty the balloons
+			balloons = [];
 		}
 		
 		private function init(e:Event = null):void {
-			removeEventListener(Event.ADDED_TO_STAGE, init);
-			// entry point
-
+			
 			//add start button
 			startButton.addChild(new StartButton());
 			startButton.addEventListener(MouseEvent.CLICK, startGame);
@@ -126,7 +135,6 @@
 			textBox.x = (stage.stageWidth / 2) - (textBox.width / 2);
 			textBox.y = (stage.stageHeight / 4) - (textBox.height / 2);
 			addChild(textBox);
-			
 		}
 		
 		private function balloonCheck(e:Event):void {
@@ -151,6 +159,13 @@
 						
 						restartButton.addEventListener(MouseEvent.CLICK, restartGame);
 						addChild(restartButton);
+						
+						// R2G2 - reset the timer
+						setTimer();
+						
+						// R2G2 - log event reporting the final score
+						LogInteractiveActivityEvent("Game over. " + score + " balloon(s) popped", false)
+			
 						return;
 					}
 				}
@@ -158,6 +173,12 @@
 		}
 		
 		private function restartGame(e:MouseEvent):void {
+			// R2G2 - need to reset the timer when a new is game started
+			setTimer();
+			
+			// R2G2 - log event reporting that a new game was started
+			LogInteractiveActivityEvent("New game initiated", false)
+						
 			balloons = [];
 			restartButton.removeEventListener(MouseEvent.CLICK, restartGame);
 			removeChild(restartButton);
@@ -170,6 +191,12 @@
 		}
 
 		private function startGame(e:MouseEvent):void {
+			// R2G2 - log event reporting that a new game was started
+			LogInteractiveActivityEvent("New game initiated", false)
+			
+			// R2G2 - need to reset the timer when a new is game started
+			setTimer();
+			
 			startButton.removeEventListener(MouseEvent.CLICK, startGame);
 			removeChild(startButton);
 			removeChild(textBox);
@@ -205,9 +232,11 @@
 			e.target.reset();
 			score++;
 			
-			// R2G2 - need to reset the timer whenever a balloon is popped
-			clearTimeout(activityTimeout);
-			setTimeout(timedFunctionGame, timeoutValue);
+			// R2G2 - log event that a balloon was popped
+			LogInteractiveActivityEvent("A balloon was popped", false)
+			
+			// R2G2 - reset the timeout
+			setTimer();
 		}
 
 		private function playsound(e:MouseEvent):void {
@@ -247,17 +276,25 @@
 			sound.play();
         }
 		
-		// R2G2 - need to add a function to call back to Display App for logging an event
+		// R2G2 - function to reset the timer
+		private function setTimer():void {
+			if (enableActivityTimeout) {
+				clearTimeout(activityTimeout);
+				activityTimeout = setTimeout(timedFunctionGame, timeoutValue);
+			}
+		}
+		
+		// R2G2 - function to call back to Display App for logging an event
 		private function LogInteractiveActivityEvent(description:String, isGameHasExpired:Boolean = false):void {
 			// comment the following line to test
 			ExternalInterface.call("FlashCall", description, isGameHasExpired);
 		}
 		
-		// R2G2 - need to add a function whichs sends an event back to Display App
+		// R2G2 - function to notify the Display App that the timeout has expired
 		// informing it that its timeout has expired and it can now be closed
 		private function timedFunctionGame():void {
+			stopActivity();
 			LogInteractiveActivityEvent("Game timeout has expired", true);
 		}
     }
-
 }

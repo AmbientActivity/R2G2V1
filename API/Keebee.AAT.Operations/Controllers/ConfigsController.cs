@@ -198,6 +198,7 @@ namespace Keebee.AAT.Operations.Controllers
                     cd.ResponseType.Id,
                     cd.ResponseType.Description,
                     cd.ResponseType.IsSystem,
+                    cd.ResponseType.IsRandom,
                     ResponseTypeCategory = new
                     {
                         cd.ResponseType.ResponseTypeCategory.Id,
@@ -257,6 +258,7 @@ namespace Keebee.AAT.Operations.Controllers
                     cd.ResponseType.Id,
                     cd.ResponseType.Description,
                     cd.ResponseType.IsSystem,
+                    cd.ResponseType.IsRandom,
                     ResponseTypeCategory = new
                     {
                         cd.ResponseType.ResponseTypeCategory.Id,

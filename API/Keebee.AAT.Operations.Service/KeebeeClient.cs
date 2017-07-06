@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-// Generation date: 2017-06-30 9:45:05 PM
+// Generation date: 2017-07-05 11:40:45 PM
 namespace Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models
 {
     /// <summary>
@@ -934,13 +934,15 @@ namespace Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models
         /// <param name="ID">Initial value of Id.</param>
         /// <param name="description">Initial value of Description.</param>
         /// <param name="isSystem">Initial value of IsSystem.</param>
+        /// <param name="isRandom">Initial value of IsRandom.</param>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        public static ResponseType CreateResponseType(int ID, string description, bool isSystem)
+        public static ResponseType CreateResponseType(int ID, string description, bool isSystem, bool isRandom)
         {
             ResponseType responseType = new ResponseType();
             responseType.Id = ID;
             responseType.Description = description;
             responseType.IsSystem = isSystem;
+            responseType.IsRandom = isRandom;
             return responseType;
         }
         /// <summary>
@@ -1058,6 +1060,29 @@ namespace Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models
         private bool _IsSystem;
         partial void OnIsSystemChanging(bool value);
         partial void OnIsSystemChanged();
+        /// <summary>
+        /// There are no comments for Property IsRandom in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        [global::Microsoft.OData.Client.OriginalNameAttribute("IsRandom")]
+        public bool IsRandom
+        {
+            get
+            {
+                return this._IsRandom;
+            }
+            set
+            {
+                this.OnIsRandomChanging(value);
+                this._IsRandom = value;
+                this.OnIsRandomChanged();
+                this.OnPropertyChanged("IsRandom");
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private bool _IsRandom;
+        partial void OnIsRandomChanging(bool value);
+        partial void OnIsRandomChanged();
         /// <summary>
         /// There are no comments for Property ResponseTypeCategory in the schema.
         /// </summary>
@@ -5987,6 +6012,7 @@ namespace Keebee.AAT.Operations.Service.KeebeeAAT
         <Property Name=""Description"" Type=""Edm.String"" Nullable=""false"" />
         <Property Name=""InteractiveActivityTypeId"" Type=""Edm.Int32"" />
         <Property Name=""IsSystem"" Type=""Edm.Boolean"" Nullable=""false"" />
+        <Property Name=""IsRandom"" Type=""Edm.Boolean"" Nullable=""false"" />
         <NavigationProperty Name=""ResponseTypeCategory"" Type=""Keebee.AAT.DataAccess.Models.ResponseTypeCategory"">
           <ReferentialConstraint Property=""ResponseTypeCategoryId"" ReferencedProperty=""Id"" />
         </NavigationProperty>

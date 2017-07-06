@@ -50,7 +50,7 @@
             this.BackColor = System.Drawing.SystemColors.ActiveCaptionText;
             this.Controls.Add(this.axWindowsMediaPlayer1);
             this.Name = "MediaPlayer";
-            this.Size = new System.Drawing.Size(404, 233);
+            this.Size = new System.Drawing.Size(680, 360);
             ((System.ComponentModel.ISupportInitialize)(this.axWindowsMediaPlayer1)).EndInit();
             this.ResumeLayout(false);
 

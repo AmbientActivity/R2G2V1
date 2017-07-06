@@ -38,7 +38,7 @@
             this.lblOff.ForeColor = System.Drawing.Color.White;
             this.lblOff.Location = new System.Drawing.Point(0, 0);
             this.lblOff.Name = "lblOff";
-            this.lblOff.Size = new System.Drawing.Size(483, 246);
+            this.lblOff.Size = new System.Drawing.Size(680, 360);
             this.lblOff.TabIndex = 0;
             this.lblOff.Text = "OFF";
             this.lblOff.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -50,7 +50,7 @@
             this.BackColor = System.Drawing.SystemColors.ActiveCaptionText;
             this.Controls.Add(this.lblOff);
             this.Name = "OffScreen";
-            this.Size = new System.Drawing.Size(483, 246);
+            this.Size = new System.Drawing.Size(680, 360);
             this.ResumeLayout(false);
 
         }

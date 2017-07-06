@@ -123,23 +123,21 @@ package
 		private var currentSwatch:Object;
 		private var currentColourSelection:String;
 		
-		//Setting the following NO_SCALE parameter helps avoid strange artifacts
-		//in the displayed bitmaps caused by repositioning of the swf within the html page.
-		//stage.scaleMode=StageScaleMode.NO_SCALE;
+		// Setting the following NO_SCALE parameter helps avoid strange artifacts
+		// in the displayed bitmaps caused by repositioning of the swf within the html page.
+		// stage.scaleMode=StageScaleMode.NO_SCALE;
 		
-		public function Main()
-		{
+		public function Main() {
 			// comment to test
-			ExternalInterface.addCallback("playActivity", playPaintingActivity);
-			ExternalInterface.addCallback("stopActivity", stopPaintingActivity);
+			ExternalInterface.addCallback("playActivity", playActivity);
+			ExternalInterface.addCallback("stopActivity", stopActivity);
 			
 			stage.displayState = StageDisplayState.FULL_SCREEN;
 			//playPaintingActivity(1);
 		}
 		
 		// called externally by the Windows UserControl
-		private function playPaintingActivity(enableTimeout:Number):void
-		{
+		private function playActivity(enableTimeout:Number):void {
 			enableActivityTimeout = (enableTimeout == 1);
 			
 			if (enableActivityTimeout)
@@ -149,13 +147,11 @@ package
 		}
 		
 		// called externally by the Windows UserControl
-		private function stopPaintingActivity():void
-		{
+		private function stopActivity():void {
 			clearTimeout(activityTimeout);
 		}
 		
-		private function init():void
-		{
+		private function init():void {
 			boardWidth = 1920 /*1280*/;
 			boardHeight = 978  /*718*/;
 			
@@ -327,11 +323,10 @@ package
 			bitmapHolder.addEventListener(MouseEvent.MOUSE_DOWN, startDraw);
 			
 			currentColourSelection = "Black"
-			LogInteractiveActivityEvent("New palette has been created (Brush colour: " + currentColourSelection + ")", false)
+			logInteractiveActivityEvent("New palette has been created (Brush colour: " + currentColourSelection + ")", false)
 		}
 		
-		private function createSwatches():void
-		{
+		private function createSwatches():void {
 			var swatchLength:Number = Math.floor(0.8 * controlPanel.height);
 			var space:Number = 5;
 			for (var i:Number = 0; i < swatchColors.length; i = i + 2)
@@ -345,8 +340,7 @@ package
 			}
 		}
 		
-		private function swatchClickHandler(evt:MouseEvent):void
-		{
+		private function swatchClickHandler(evt:MouseEvent):void {
 			if (enableActivityTimeout)
 			{
 				clearTimeout(activityTimeout);
@@ -363,11 +357,10 @@ package
 			paintColorB2 = thisSwatch.blue2;
 			
 			currentColourSelection = GetColourDescriptor(thisSwatch)
-			LogInteractiveActivityEvent("New colour was selected (" + currentColourSelection + ")")
+			logInteractiveActivityEvent("New colour was selected (" + currentColourSelection + ")")
 		}
 		
-		private function startDraw(evt:MouseEvent):void
-		{
+		private function startDraw(evt:MouseEvent):void {
 			if (enableActivityTimeout)
 			{
 				clearTimeout(activityTimeout);
@@ -392,8 +385,7 @@ package
 			//this.addEventListener(Event.ENTER_FRAME, drawLine);
 		}
 		
-		private function drawLine(evt:MouseEvent):void
-		{
+		private function drawLine(evt:MouseEvent):void {
 			mouseMoved = true;
 			
 			lineLayer.graphics.clear();
@@ -429,12 +421,9 @@ package
 			dy = smoothedMouseY - lastSmoothedMouseY;
 			dist = Math.sqrt(dx * dx + dy * dy);
 			
-			if (dist != 0)
-			{
+			if (dist != 0) {
 				lineRotation = Math.PI / 2 + Math.atan2(dy, dx);
-			}
-			else
-			{
+			} else {
 				lineRotation = 0;
 			}
 			
@@ -513,8 +502,7 @@ package
 		
 		}
 		
-		private function stopDraw(evt:MouseEvent):void
-		{
+		private function stopDraw(evt:MouseEvent):void {
 			//If the mouse didn't move, we will draw just a dot.  Its size will be randomized.
 			if (!mouseMoved)
 			{
@@ -542,19 +530,17 @@ package
 				undoStack.splice(0, 1);
 			}
 			
-			LogInteractiveActivityEvent("New brush stroke was applied", false)
+			logInteractiveActivityEvent("New brush stroke was applied", false)
 		}
 		
-		private function erase(evt:MouseEvent):void
-		{
+		private function erase(evt:MouseEvent):void {
 			tipLayer.graphics.clear();
 			drawBackground();
 			
-			LogInteractiveActivityEvent("The eraser was applied", false)
+			logInteractiveActivityEvent("The eraser was applied", false)
 		}
 		
-		private function drawBackground():void
-		{
+		private function drawBackground():void {
 			//We draw a background with a very subtle gradient effect so that the canvas darkens towards the edges.
 			var gradMat:Matrix = new Matrix();
 			gradMat.createGradientBox(1920, 998 /*1280,718*/, 0, 0, 0);
@@ -571,8 +557,7 @@ package
 			undoStack.push(undoBuffer);
 		}
 		
-		private function undo(evt:MouseEvent):void
-		{
+		private function undo(evt:MouseEvent):void {
 			if (undoStack.length > 1)
 			{
 				boardBitmapData.copyPixels(undoStack[undoStack.length - 2], boardBitmapData.rect, new Point(0, 0));
@@ -580,12 +565,11 @@ package
 			}
 			tipLayer.graphics.clear();
 			
-			LogInteractiveActivityEvent("The last brush stroke was undone", false)
+			logInteractiveActivityEvent("The last brush stroke was undone", false)
 		}
 		
 		//this function assists with creating colors for the gradients.
-		private function darkenColor(c:uint, factor:Number):uint
-		{
+		private function darkenColor(c:uint, factor:Number):uint {
 			var r:Number = (c >> 16);
 			var g:Number = (c >> 8) & 0xFF;
 			var b:Number = c & 0xFF;
@@ -597,19 +581,16 @@ package
 			return (newRed << 16) | (newGreen << 8) | (newBlue);
 		}
 		
-		private function LogInteractiveActivityEvent(description:String, isGameHasExpired:Boolean = false):void
-		{
+		private function logInteractiveActivityEvent(description:String, isGameHasExpired:Boolean = false):void {
 			// comment the following line to test
 			ExternalInterface.call("FlashCall", description, isGameHasExpired);
 		}
 		
-		private function timedFunctionGame():void
-		{
-			LogInteractiveActivityEvent("Game timeout has expired", true);
+		private function timedFunctionGame():void{
+			logInteractiveActivityEvent("Game timeout has expired", true);
 		}
 		
-		private function GetColourDescriptor(swatch:Object):String
-		{
+		private function GetColourDescriptor(swatch:Object):String{
 			if (swatch.red1 == 0 && swatch.green1 == 0 && swatch.blue1 == 178 && swatch.red2 == 0 && swatch.green2 == 0 && swatch.blue2 == 255)
 				return "Blue";
 			else if (swatch.red1 == 107 && swatch.green1 == 71 && swatch.blue1 == 35 && swatch.red2 == 153 && swatch.green2 == 102 && swatch.blue2 == 51)

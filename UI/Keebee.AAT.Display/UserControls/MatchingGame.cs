@@ -65,8 +65,11 @@ namespace Keebee.AAT.Display.UserControls
         {
             try
             {
-                var swf = Path.Combine(Application.StartupPath, _swfFile);
-                axShockwaveFlash1.LoadMovie(0, swf);
+                if (axShockwaveFlash1.Movie == null)
+                {
+                    var swf = Path.Combine(Application.StartupPath, _swfFile);
+                    axShockwaveFlash1.LoadMovie(0, swf);
+                }
 
                 if (!shapes.Any()) return;
                 if (!sounds.Any()) return;

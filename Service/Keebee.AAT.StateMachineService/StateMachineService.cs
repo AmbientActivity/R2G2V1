@@ -124,9 +124,14 @@ namespace Keebee.AAT.StateMachineService
                     ConfigDetail = configDetail,
                     Resident = _activeResident,
                     IsActiveEventLog = _activeConfig.IsActiveEventLog,
-                    ResponseTypeIds = _activeConfig.ConfigDetails
-                        .Select(c => c.ResponseTypeId)
-                        .Distinct().ToArray()
+                    RandomResponseTypes = _activeConfig.ConfigDetails
+                        .Where(c => c.IsRandomReponseType)
+                        .Select(c => new RandomResponseTypeMessage
+                        {
+                            Id = c.ResponseTypeId,
+                            InteractiveActivityTypeId = c.InteractiveActivityTypeId,
+                            SwfFile = c.SwfFile
+                        }).Distinct().ToArray()
                 };
 
                 if (_isInstalledVideoCapture)
@@ -146,6 +151,42 @@ namespace Keebee.AAT.StateMachineService
             catch (Exception ex)
             {
                 _systemEventLogger.WriteEntry($"ExecuteResponse: {ex.Message}", EventLogEntryType.Error);
+            }
+        }
+
+        private void LoadConfig()
+        {
+            if (_activeConfig != null) return;
+            try
+            {
+                var config = _configsClient.GetActiveDetails();
+                _activeConfig = new ConfigMessage
+                {
+                    Id = config.Id,
+                    Description = config.Description,
+                    IsActiveEventLog = config.IsActiveEventLog,
+                    ConfigDetails = config.ConfigDetails
+                        .Select(x => new
+                        ConfigDetailMessage
+                        {
+                            Id = x.Id,
+                            ConfigId = x.ConfigId,
+                            ResponseTypeId = x.ResponseType.Id,
+                            PhidgetTypeId = x.PhidgetType.Id,
+                            PhidgetStyleTypeId = x.PhidgetStyleType.Id,
+                            IsSystemReponseType = x.ResponseType.IsSystem,
+                            IsRandomReponseType = x.ResponseType.IsRandom,
+                            InteractiveActivityTypeId = x.ResponseType.InteractiveActivityType?.Id ?? 0,
+                            SwfFile = x.ResponseType.InteractiveActivityType?.SwfFile ?? string.Empty
+                        })
+                };
+
+                _systemEventLogger.WriteEntry($"The configuration '{config.Description}' has been activated");
+            }
+
+            catch (Exception ex)
+            {
+                _systemEventLogger.WriteEntry($"LoadConfig{Environment.NewLine}{ex.Message}", EventLogEntryType.Error);
             }
         }
 
@@ -287,41 +328,6 @@ namespace Keebee.AAT.StateMachineService
             var serializer = new JavaScriptSerializer();
             var display = serializer.Deserialize<DisplayMessage>(messageBody);
             return display;
-        }
-
-        private void LoadConfig()
-        {
-            if (_activeConfig != null) return;
-            try
-            {
-                var config = _configsClient.GetActiveDetails();
-                _activeConfig = new ConfigMessage
-                {
-                    Id = config.Id,
-                    Description = config.Description,
-                    IsActiveEventLog = config.IsActiveEventLog,
-                    ConfigDetails = config.ConfigDetails
-                        .Select(x => new
-                        ConfigDetailMessage
-                        {
-                            Id = x.Id,
-                            ConfigId = x.ConfigId,
-                            ResponseTypeId = x.ResponseType.Id,
-                            PhidgetTypeId = x.PhidgetType.Id,
-                            PhidgetStyleTypeId = x.PhidgetStyleType.Id,
-                            IsSystemReponseType = x.ResponseType.IsSystem,
-                            InteractiveActivityTypeId = x.ResponseType.InteractiveActivityType?.Id ?? 0,
-                            SwfFile = x.ResponseType.InteractiveActivityType?.SwfFile ?? string.Empty
-                        })
-                };
-
-                _systemEventLogger.WriteEntry($"The configuration '{config.Description}' has been activated");
-            }
-
-            catch (Exception ex)
-            {
-                _systemEventLogger.WriteEntry($"LoadConfig{Environment.NewLine}{ex.Message}", EventLogEntryType.Error);
-            }
         }
 
         #endregion

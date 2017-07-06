@@ -84,7 +84,7 @@ namespace Keebee.AAT.GenerateThumbnails
                 }
 #endif
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 // log error
             }
@@ -154,7 +154,7 @@ namespace Keebee.AAT.GenerateThumbnails
                 Console.ReadKey();
 #endif
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 // log error
             }

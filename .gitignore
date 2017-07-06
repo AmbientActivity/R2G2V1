@@ -193,3 +193,6 @@ ModelManifest.xml
 .BridgeCache
 .BridgeCacheT
 .DS_Store
+
+# thumbs.db
+thumbs.db

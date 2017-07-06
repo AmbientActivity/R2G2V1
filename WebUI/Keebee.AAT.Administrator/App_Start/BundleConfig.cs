@@ -56,6 +56,7 @@ namespace Keebee.AAT.Administrator
                 "~/Content/bootstrap-theme.css",
                 "~/Content/bootstrap-datepicker.css",
                 "~/Content/bootstrap-dialog.css",
+                "~/Content/font-awesome.css",
                 "~/Content/foundation-icons/foundation-icons.css",
                 "~/Content/site.css",
                 "~/Content/Buttons.css"));

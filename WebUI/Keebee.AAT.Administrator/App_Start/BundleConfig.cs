@@ -53,10 +53,10 @@ namespace Keebee.AAT.Administrator
 
             bundles.Add(new StyleBundle("~/bundles/CommonStyles").Include(
                 "~/Content/bootstrap.css",
-                "~/Content/font-awesome.css",
                 "~/Content/bootstrap-theme.css",
                 "~/Content/bootstrap-datepicker.css",
                 "~/Content/bootstrap-dialog.css",
+                "~/Content/foundation-icons/foundation-icons.css",
                 "~/Content/site.css",
                 "~/Content/Buttons.css"));
         }

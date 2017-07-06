@@ -54,24 +54,28 @@
     <div class="panel-body panel-body-table-header">
         <!-- use separate table for sticky headers -->
         <div id="table-header" class="container table-header-container" hidden>
-            <table class="table" id="tblResidentHeader">
+            <table class="table table-bordered" id="tblResidentHeader">
                 <thead>
                 <tr>
-                    <th class="col-glyphicon"></th>
-                    <th class="col-glyphicon"></th>
-                    <th class="col-glyphicon"></th>
+                    <th id="col-glyphicon_1" class="col-glyphicon"></th>
+                    <th id="col-glyphicon_2" class="col-glyphicon"></th>
+                    <th id="col-glyphicon_3" class="col-glyphicon"></th>
                     <!-- ko foreach: columns -->
                     <!-- ko if: sortKey === 'allowvideocapturing' -->
                     <th data-bind="click: $parent.sort({ sortKey: 'allowvideocapturing', boolean: true }), attr: { id: 'resident-col-' + sortKey }, css: cssClass"><a href="javascript:void(0)"><span class="glyphicon glyphicon-facetime-video glyphicon-lg"></span></a></th>
                     <!-- /ko -->
-                    <!-- ko if: sortKey !== 'allowvideocapturing' -->
+                    <!-- ko if: sortKey === 'gender' -->
+                    <th data-bind="click: $parent.sort({ sortKey: 'gender', boolean: true }), attr: { id: 'resident-col-' + sortKey }, css: cssClass"><a href="javascript:void(0)"><i class="fi-male-female fi-lg"></i></a></th>
+                    <!-- /ko -->
+                    <!-- ko if: sortKey !== 'allowvideocapturing' && sortKey !== 'gender' -->
                     <!-- ko if: sortKey !== 'dateupdated' -->
                     <th data-bind="click: $parent.sort, attr: { id: 'resident-col-' + sortKey, boolean: true }, css: cssClass"><a href="javascript:void(0)" data-bind="text: title"></a></th>
                     <!-- /ko -->
                     <!-- /ko -->
                     <!-- /ko -->
                     <th class="col-date"><a href="javascript:void(0)" data-bind="click: sort({ sortKey: 'dateupdated' })">Updated</a></th>
-                    <th id="column-right" class="col-profile-picture"></th>
+                    <th id="col-profile-picture" class="col-profile-picture"></th>
+                    <td id="col-scrollbar" hidden></td>
                 </tr>
                 </thead>
             </table>
@@ -90,10 +94,10 @@
                     <td class="col-lastname" data-bind="text: lastname"></td>
                     <td class="col-id" data-bind="text: id"></td>
                     <!-- ko if: gender === 'F' -->
-                    <td class="col-gender"><i class="fa fa-female fa-resident" aria-hidden="true"></i></td>
+                    <td class="col-gender"><i class="fi-female fi-elg" aria-hidden="true"></i></td>
                     <!-- /ko -->
                     <!-- ko if: gender === 'M' -->
-                    <td class="col-gender"><i class="fa fa-male fa-resident" aria-hidden="true"></i></td>
+                    <td class="col-gender"><i class="fi-male fi-elg" aria-hidden="true"></i></td>
                     <!-- /ko -->
                     <!-- ko if: $parent.isVideoCaptureServiceInstalled === '1' -->
                     <!-- ko if: allowvideocapturing -->

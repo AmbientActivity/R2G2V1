@@ -271,21 +271,15 @@ video {
 }
 /* override default */
 .table#tblFileHeader > thead > tr > th {
-    border: none;
-    vertical-align: middle;
     padding: 5px 8px 5px 7px;
 }
 .table#tblFile > tbody > tr > td {
-    vertical-align: middle;
     padding: 5px 6px 5px 8px;
 }
 .table#tblResidentHeader > thead > tr > th {
-    border: none;
-    vertical-align: middle;
     padding: 5px 5px 5px 5px;
 }
 .table#tblResident > tbody > tr > td {
-    vertical-align: middle;
     padding: 5px 5px 5px 5px;
 }
 /* filter */
@@ -372,7 +366,6 @@ video {
 input[type="checkbox"] {
   margin-top: 0;
 }
-
 .virtualPlaceholderImage {
     display: block;
     width: 40px;
@@ -431,14 +424,19 @@ input[type="checkbox"] {
 
 /* resident table */
 .col-glyphicon {
-    width: 4%;
+    width: 3%;
     text-align: center;
 }
+.virtualPlaceholderGlyphicon {
+    display: block;
+    width: 16px;
+    background: transparent;
+}
 .col-firstname {
-    width: 19%;
+    width: 25%;
 }
 .col-lastname {
-    width: 19%;
+    width: 25%;
 }
 .col-id {
     width: 7%;
@@ -460,15 +458,20 @@ input[type="checkbox"] {
     text-align: center;
 }
 .col-profile-picture-scrollbar {
-    width: 11.5%;
+    width: 10.1%;
     text-align: center;
 }
-
 /* font-awesome */
-.fa-resident {
+.fa-lg {
     font-size: 23px;
 }
-
+/* foundation-icon */
+.fi-lg {
+    font-size: 25px;
+}
+.fi-elg {
+    font-size: 30px;
+}
 /* bootstrap glyphicon */
 .glyphicon-transparent {
     color: transparent;
@@ -539,7 +542,6 @@ input[type="checkbox"] {
 	margin-bottom: 10px;
 	-moz-border-radius: 5px;
 	-webkit-border-radius: 5px;
-	-o-border-radius: 5px;
 	border-radius: 5px;
 	-moz-transition: .25s ease-out;
 	-webkit-transition: .25s ease-out;

@@ -83,22 +83,32 @@
                             var tableDetailElement = $("#table-detail");
                             var tableHeaderElement = $("#table-header");
 
+                            $("#col-glyphicon_1").html("<div class='virtualPlaceholderGlyphicon'></div>");
+                            $("#col-glyphicon_2").html("<div class='virtualPlaceholderGlyphicon'></div>");
+                            $("#col-glyphicon_3").html("<div class='virtualPlaceholderGlyphicon'></div>");
+                            $("#col-profile-picture").html("<div class='virtualPlaceholderImage'></div>");
+
                             if (table.rows.length > 0) {
                                 tableHeaderElement.show();
                                 tableDetailElement.show();
                                 noMediaMessage.hide();
 
                                 // determine if there is table overflow (to cause a scrollbar)
-                                // if so, increase the right margin of last column header 
-                                var colRight = $("#column-right");
+                                // if so, unhide the scrollbar header column
+                                // and adjust the width of the profile picture column
+                                var colScrollbar = $("#col-scrollbar");
+                                var colProfilePicture = $("#col-profile-picture");
 
                                 if (table.clientHeight > site.getMaxClientHeight) {
-                                    colRight.removeClass("col-profile-picture");
-                                    colRight.addClass("col-profile-picture-scrollbar");
+                                    colScrollbar.prop("hidden", false);
+                                    colScrollbar.attr("style", "width: 1%;");
+                                    colProfilePicture.removeClass("col-profile-picture");
+                                    colProfilePicture.addClass("col-profile-picture-scrollbar");
                                     tableDetailElement.addClass("container-height");
                                 } else {
-                                    colRight.removeClass("col-profile-picture-scrollbar");
-                                    colRight.addClass("col-profile-picture");
+                                    colScrollbar.prop("hidden", true);
+                                    colProfilePicture.removeClass("col-profile-picture-scrollbar");
+                                    colProfilePicture.addClass("col-profile-picture");
                                     tableDetailElement.removeClass("container-height");
                                 }
 

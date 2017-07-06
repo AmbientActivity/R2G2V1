@@ -81,7 +81,7 @@ namespace Keebee.AAT.BusinessRules
                     ConfigDetail = new ConfigDetailMessage { ResponseTypeId = ResponseTypeId.KillDisplay, IsSystemReponseType = true },
                     Resident = new ResidentMessage(),
                     IsActiveEventLog = false,
-                    ResponseTypeIds = null
+                    RandomResponseTypes = null
                 };
 
                 var serializer = new JavaScriptSerializer();

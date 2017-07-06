@@ -217,12 +217,15 @@ namespace Keebee.AAT.Display.UserControls
                 switch (e.newState)
                 {
                     case (int) WMPPlayState.wmppsMediaEnded:
-                        if (_currentIndex < _maxIndex)
-                            _currentIndex++;
-                        else
-                            _currentIndex = 0;
+                        if (_playlist.Length > 1)
+                        {
+                            if (_currentIndex < _maxIndex)
+                                _currentIndex++;
+                            else
+                                _currentIndex = 0;
 
-                        axWindowsMediaPlayer.URL = _playlist[_currentIndex];
+                            axWindowsMediaPlayer.URL = _playlist[_currentIndex];
+                        }
                         break;
 
                     case (int) WMPPlayState.wmppsReady:

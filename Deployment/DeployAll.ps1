@@ -1,13 +1,14 @@
 ﻿# setup
-$pathDeployments = "C:\Deployments\"
+$rootDrive = "C:"
+$pathDeployments = "$rootDrive\Deployments\"
 $pathVersion = "1.0.0.0\"
 
 # service paths
-$pathPhidgetServiceExe = "C:\Deployments\Services\PhidgetService\1.0.0.0\Keebee.AAT.PhidgetService.exe"
-$pathStateMachineServiceExe = "C:\Deployments\Services\StateMachineService\1.0.0.0\Keebee.AAT.StateMachineService.exe"
-$pathBluetoothBeaconServiceExe = "C:\Deployments\Services\BluetoothBeaconWatcherService\1.0.0.0\Keebee.AAT.BluetoothBeaconWatcherService.exe"
-$pathVideoCaptureServiceExe = "C:\Deployments\Services\VideoCaptureService\1.0.0.0\Keebee.AAT.VideoCaptureService.exe"
-$pathKeepIISAliveServiceExe = "C:\Deployments\Services\KeepIISAliveService\1.0.0.0\Keebee.AAT.KeepIISAliveService.exe"
+$pathPhidgetServiceExe = $pathDeployments + "Services\PhidgetService\" + $pathVersion + "Keebee.AAT.PhidgetService.exe"
+$pathStateMachineServiceExe = $pathDeployments + "Services\StateMachineService\" + $pathVersion + "Keebee.AAT.StateMachineService.exe"
+$pathBluetoothBeaconServiceExe = $pathDeployments + "Services\BluetoothBeaconWatcherService\" + $pathVersion + "Keebee.AAT.BluetoothBeaconWatcherService.exe"
+$pathVideoCaptureServiceExe = $pathDeployments + "Services\VideoCaptureService\" + $pathVersion + "Keebee.AAT.VideoCaptureService.exe"
+$pathKeepIISAliveServiceExe = $pathDeployments + "Services\KeepIISAliveService\" + $pathVersion + "Keebee.AAT.KeepIISAliveService.exe"
 
 $pathServicesRoot = $pathDeployments + "Services\"
 $pathStateMachine = "Services\StateMachineService\"
@@ -42,20 +43,23 @@ $pathVideoConverter = $pathDeployments + "Install\Assembly\VideoConverter\"
 # install scripts
 $pathInstallRoot = $pathDeployments + "Install\"
 
-# media
-$pathSharedLibrary = "Media\SharedLibrary\"
-$pathProfiles = "Media\Profiles\"
-$pathPublicProfile = "0\"
-$pathExportEventLog = "Media\Exports\EventLog\"
-$pathSourcePublicProfile = "\\$env:COMPUTERNAME\SQLEXPRESS\KeebeeAATFilestream\Media\Profiles\0\*"
-$pathSourceSharedLibrary = "\\$env:COMPUTERNAME\SQLEXPRESS\KeebeeAATFilestream\Media\SharedLibrary\*"
-
 # documentation paths
 $pathDocumentation = "Install\Documentation\"
 
 # source code
-$pathSourceCode = "C:\Users\$env:USERNAME\Source\Repos\R2G2V1\"
+$pathSourceCode = "$rootDrive\Users\$env:USERNAME\Source\Repos\R2G2V1\"
 $filenameVSSolution = "Keebee.AAT.sln"
+
+# media
+$pathSharedLibrary = "Media\SharedLibrary\"
+$pathProfiles = "Media\Profiles\"
+$pathPublicProfile = "0\"
+$pathResident1Profile = "1\"
+$pathExportEventLog = "Media\Exports\EventLog\"
+
+$pathSourcePublicProfile = "$pathSourceCode\Media\Profiles\$pathPublicProfile*"
+$pathSourceResident1Profile = "$pathSourceCode\Media\Profiles\$pathResident1Profile*"
+$pathSourceSharedLibrary = "$pathSourceCode\Media\SharedLibrary\*"
 
 Try
 {
@@ -249,6 +253,18 @@ Try
     $path = $pathDeployments + $pathProfiles + $pathPublicProfile
     New-Item -ItemType Directory -Force -Path $path | Out-Null
     Copy-Item $pathSourcePublicProfile $path -recurse -Force
+    Write-Host "done.”
+
+    # resident profile
+    Write-Host "Deploying Resident 1 Profile...” -NoNewline
+    $path = $pathDeployments + $pathProfiles + $pathResident1Profile
+    If(test-path $path)
+    {
+        Remove-Item $path -recurse -Force
+    }
+    $path = $pathDeployments + $pathProfiles + $pathResident1Profile
+    New-Item -ItemType Directory -Force -Path $path | Out-Null
+    Copy-Item $pathSourceResident1Profile $path -recurse -Force
     Write-Host "done.”
 
     # -------------------- SCHEDULED TASKS --------------------

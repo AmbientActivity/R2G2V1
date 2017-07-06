@@ -18,7 +18,7 @@
     New-WebApplication -Name "Keebee.AAT.Operations" -Site $siteName -PhysicalPath "C:\Deployments\Web\API\1.0.0.0" -ApplicationPool "DefaultAppPool" -Force | Out-Null
     Write-Host "done."
 
-    Write-Host "Creating Adminstrator Interface..." -NoNewline
+    Write-Host "Creating Administrator Interface..." -NoNewline
     New-WebApplication -Name $administratorAppName -Site $siteName -PhysicalPath 'C:\Deployments\Web\Administrator\1.0.0.0' -ApplicationPool "DefaultAppPool" -Force | Out-Null
     Write-Host "done.`n"
 

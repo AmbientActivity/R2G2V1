@@ -88,7 +88,7 @@ namespace Keebee.AAT.Operations.Controllers
                     responseType.InteractiveActivityType.SwfFile
                 } : null;
             exObj.IsSystem = responseType.IsSystem;
-            exObj.x.IsRandom = responseType.IsRandom;
+            exObj.IsRandom = responseType.IsRandom;
 
             return new DynamicJsonObject(exObj);
         }

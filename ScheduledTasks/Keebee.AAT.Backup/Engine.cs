@@ -134,7 +134,7 @@ namespace Keebee.AAT.Backup
                 directory.Create();
 
             var dateString = DateTime.Now.ToString("yyyy-MM-dd");
-            var filePath = $@"{pathLog}\BackupLog_{dateString.Replace("-", "_")}.log";
+            var filePath = Path.Combine(pathLog, $"BackupLog_{dateString.Replace("-", "_")}.log");
             if (File.Exists(filePath))
                 File.Delete(filePath);
 

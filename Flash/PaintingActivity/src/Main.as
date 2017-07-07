@@ -132,8 +132,12 @@ package
 			ExternalInterface.addCallback("playActivity", playActivity);
 			ExternalInterface.addCallback("stopActivity", stopActivity);
 			
-			stage.displayState = StageDisplayState.FULL_SCREEN;
-			//playPaintingActivity(1);
+			//playActivity(0);
+		}
+		
+		private function logInteractiveActivityEvent(description:String, isGameHasExpired:Boolean = false):void {
+			// comment the following line to test
+			ExternalInterface.call("FlashCall", description, isGameHasExpired);
 		}
 		
 		// called externally by the Windows UserControl
@@ -152,6 +156,8 @@ package
 		}
 		
 		private function init():void {
+			stage.displayState = StageDisplayState.FULL_SCREEN;
+			
 			boardWidth = 1920 /*1280*/;
 			boardHeight = 978  /*718*/;
 			
@@ -326,6 +332,10 @@ package
 			logInteractiveActivityEvent("New palette has been created (Brush colour: " + currentColourSelection + ")", false)
 		}
 		
+		private function timedFunctionGame():void{
+			logInteractiveActivityEvent("Game timeout has expired", true);
+		}
+		
 		private function createSwatches():void {
 			var swatchLength:Number = Math.floor(0.8 * controlPanel.height);
 			var space:Number = 5;
@@ -356,7 +366,7 @@ package
 			paintColorG2 = thisSwatch.green2;
 			paintColorB2 = thisSwatch.blue2;
 			
-			currentColourSelection = GetColourDescriptor(thisSwatch)
+			currentColourSelection = getColourDescriptor(thisSwatch)
 			logInteractiveActivityEvent("New colour was selected (" + currentColourSelection + ")")
 		}
 		
@@ -581,16 +591,7 @@ package
 			return (newRed << 16) | (newGreen << 8) | (newBlue);
 		}
 		
-		private function logInteractiveActivityEvent(description:String, isGameHasExpired:Boolean = false):void {
-			// comment the following line to test
-			ExternalInterface.call("FlashCall", description, isGameHasExpired);
-		}
-		
-		private function timedFunctionGame():void{
-			logInteractiveActivityEvent("Game timeout has expired", true);
-		}
-		
-		private function GetColourDescriptor(swatch:Object):String{
+		private function getColourDescriptor(swatch:Object):String{
 			if (swatch.red1 == 0 && swatch.green1 == 0 && swatch.blue1 == 178 && swatch.red2 == 0 && swatch.green2 == 0 && swatch.blue2 == 255)
 				return "Blue";
 			else if (swatch.red1 == 107 && swatch.green1 == 71 && swatch.blue1 == 35 && swatch.red2 == 153 && swatch.green2 == 102 && swatch.blue2 == 51)

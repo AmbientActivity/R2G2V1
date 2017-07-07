@@ -79,6 +79,12 @@
 			//playActivity(0);
 		}
 		
+		// R2G2 - function to call back to Display App for logging an event
+		private function LogInteractiveActivityEvent(description:String, isGameHasExpired:Boolean = false):void {
+			// comment the following line to test
+			ExternalInterface.call("FlashCall", description, isGameHasExpired);
+		}
+		
 		// R2G2 - need to add function for the entry point "playActivity"
 		// init() gets called from here instead of from Main()
 		// receives a parameter to determine if the game should timeout on or off
@@ -282,12 +288,6 @@
 				clearTimeout(activityTimeout);
 				activityTimeout = setTimeout(timedFunctionGame, timeoutValue);
 			}
-		}
-		
-		// R2G2 - function to call back to Display App for logging an event
-		private function LogInteractiveActivityEvent(description:String, isGameHasExpired:Boolean = false):void {
-			// comment the following line to test
-			ExternalInterface.call("FlashCall", description, isGameHasExpired);
 		}
 		
 		// R2G2 - function to notify the Display App that the timeout has expired

@@ -14,7 +14,8 @@ package
 	public class Main extends MovieClip 
 	{
 		// uncomment to test
-		//private var xmlStringTest:String = "<xml><images><pic>\\\\Dev1\\sqlexpress\\KeebeeAATFilestream\\Media\\Profiles\\0\\images\\general\\2008_01_30.jpg</pic></images></xml>"; 
+		//private const UserName:String = "R2G2";
+		//private var xmlStringTest:String = "<xml><images><pic>C:\\Users\\" + UserName + "\\Source\\Repos\\R2G2V1\\Media\\SharedLibrary\\images\\general\\ladybug.jpg</pic></images></xml>"; 
 	
 		private var clientWidth:Number = 1920;
 		private var clientHeight:Number = 1080;
@@ -43,6 +44,11 @@ package
 			//showImage(xmlStringTest);
 		}
 		
+		private function logInteractiveActivityEvent(description:String = null, isTimeoutExpired:Boolean = false):void {
+			// comment the following line to test
+		    ExternalInterface.call("FlashCall", description, isTimeoutExpired);
+		}
+		
 		// called externally by the Windows UserControl 
 		private function initializeMovie() : void {
 			movieClip = new MovieClip();
@@ -69,7 +75,7 @@ package
 			}
 			catch (error:Error)
 			{
-				ExternalInterface.call("FlashCall", error.message);
+				logInteractiveActivityEvent(error.message);
 			}
 		}
 		
@@ -84,7 +90,7 @@ package
 			}
 			catch(error:Error)
 			{
-				ExternalInterface.call("FlashCall", error.message);
+				logInteractiveActivityEvent(error.message);
 			}
 			
 			imageArray = null;
@@ -182,7 +188,7 @@ package
 
 		private function imageHidden():void {
 			// comment to test
-			ExternalInterface.call("FlashCall")
+			logInteractiveActivityEvent();
 		}
 	}
 }

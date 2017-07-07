@@ -53,17 +53,21 @@ package
 		private var timeoutValue:Number = 900000;
 		
 		// for standalone testing
+		
 		/*
-		private const ComputerName:String = "R2G2"; // John -> WIN10
-		private var xmlShapesTest:String = "<images><image><name>\\\\" + ComputerName + "\\sqlexpress\\KeebeeAATFilestream\\Media\\SharedLibrary\\activities\\matching-game\\shapes\\car.png</name></image><image><name>\\\\" + ComputerName + "\\sqlexpress\\KeebeeAATFilestream\\Media\\SharedLibrary\\activities\\matching-game\\shapes\\maple-leaf.png</name></image><image><name>\\\\" + ComputerName + "\\sqlexpress\\KeebeeAATFilestream\\Media\\SharedLibrary\\activities\\matching-game\\shapes\\parrot.png</name></image><image><name>\\\\" + ComputerName + "\\sqlexpress\\KeebeeAATFilestream\\Media\\SharedLibrary\\activities\\matching-game\\shapes\\moon.png</name></image><image><name>\\\\" + ComputerName + "\\sqlexpress\\KeebeeAATFilestream\\Media\\SharedLibrary\\activities\\matching-game\\shapes\\light-bulb.png</name></image><image><name>\\\\" + ComputerName + "\\sqlexpress\\KeebeeAATFilestream\\Media\\SharedLibrary\\activities\\matching-game\\shapes\\cat.png</name></image><image><name>\\\\" + ComputerName + "\\sqlexpress\\KeebeeAATFilestream\\Media\\SharedLibrary\\activities\\matching-game\\shapes\\dog.png</name></image><image><name>\\\\" + ComputerName + "\\sqlexpress\\KeebeeAATFilestream\\Media\\SharedLibrary\\activities\\matching-game\\shapes\\rabbit.png</name></image><image><name>\\\\" + ComputerName + "\\sqlexpress\\KeebeeAATFilestream\\Media\\SharedLibrary\\activities\\matching-game\\shapes\\flower.png</name></image><image><name>\\\\" + ComputerName + "\\sqlexpress\\KeebeeAATFilestream\\Media\\SharedLibrary\\activities\\matching-game\\shapes\\hemp.png</name></image><image><name>\\\\" + ComputerName + "\\sqlexpress\\KeebeeAATFilestream\\Media\\SharedLibrary\\activities\\matching-game\\shapes\\envelope.png</name></image><image><name>\\\\" + ComputerName + "\\sqlexpress\\KeebeeAATFilestream\\Media\\SharedLibrary\\activities\\matching-game\\shapes\\fish.png</name></image><image><name>\\\\" + ComputerName + "\\sqlexpress\\KeebeeAATFilestream\\Media\\SharedLibrary\\activities\\matching-game\\shapes\\umbrella.png</name></image><image><name>\\\\" + ComputerName + "\\sqlexpress\\KeebeeAATFilestream\\Media\\SharedLibrary\\activities\\matching-game\\shapes\\sun.png</name></image><image><name>\\\\" + ComputerName + "\\sqlexpress\\KeebeeAATFilestream\\Media\\SharedLibrary\\activities\\matching-game\\shapes\\phone.png</name></image><image><name>\\\\" + ComputerName + "\\sqlexpress\\KeebeeAATFilestream\\Media\\SharedLibrary\\activities\\matching-game\\shapes\\bicycle.png</name></image><image><name>\\\\" + ComputerName + "\\sqlexpress\\KeebeeAATFilestream\\Media\\SharedLibrary\\activities\\matching-game\\shapes\\butterfly.png</name></image><image><name>\\\\" + ComputerName + "\\sqlexpress\\KeebeeAATFilestream\\Media\\SharedLibrary\\activities\\matching-game\\shapes\\cloud.png</name></image><image><name>\\\\" + ComputerName + "\\sqlexpress\\KeebeeAATFilestream\\Media\\SharedLibrary\\activities\\matching-game\\shapes\\snail.png</name></image><image><name>\\\\" + ComputerName + "\\sqlexpress\\KeebeeAATFilestream\\Media\\SharedLibrary\\activities\\matching-game\\shapes\\bird.png</name></image><image><name>\\\\" + ComputerName + "\\sqlexpress\\KeebeeAATFilestream\\Media\\SharedLibrary\\activities\\matching-game\\shapes\\airplane.png</name></image><image><name>\\\\" + ComputerName + "\\sqlexpress\\KeebeeAATFilestream\\Media\\SharedLibrary\\activities\\matching-game\\shapes\\pine-tree.png</name></image><image><name>\\\\" + ComputerName + "\\sqlexpress\\KeebeeAATFilestream\\Media\\SharedLibrary\\activities\\matching-game\\shapes\\house.png</name></image></images>";
-		private var wouldYouLikeToMatchThePicturesTest:String = "\\\\" + ComputerName + "\\sqlexpress\\KeebeeAATFilestream\\Media\\SharedLibrary\\activities\\matching-game\\sounds\\would-you-like-to-match-the-pictures.mp3";
-		private var wouldYouLikeToMatchThePairsTest:String = "\\\\" + ComputerName + "\\sqlexpress\\KeebeeAATFilestream\\Media\\SharedLibrary\\activities\\matching-game\\sounds\\would-you-like-to-match-the-pairs.mp3";
-		private var correctTest:String = "\\\\" + ComputerName + "\\sqlexpress\\KeebeeAATFilestream\\Media\\SharedLibrary\\activities\\matching-game\\sounds\\correct.mp3";
-		private var goodJobTest:String = "\\\\" + ComputerName + "\\sqlexpress\\KeebeeAATFilestream\\Media\\SharedLibrary\\activities\\matching-game\\sounds\\good-job.mp3";
-		private var wellDoneTest:String = "\\\\" + ComputerName + "\\sqlexpress\\KeebeeAATFilestream\\Media\\SharedLibrary\\activities\\matching-game\\sounds\\well-done.mp3";
-		private var TryAgainTest:String = "\\\\" + ComputerName + "\\sqlexpress\\KeebeeAATFilestream\\Media\\SharedLibrary\\activities\\matching-game\\sounds\\try-again.mp3";
-		private var letsTryAgainTest:String = "\\\\" + ComputerName + "\\sqlexpress\\KeebeeAATFilestream\\Media\\SharedLibrary\\activities\\matching-game\\sounds\\lets-try-again.mp3";
-		private var letsTrySomethingDifferentTest:String = "\\\\" + ComputerName + "\\sqlexpress\\KeebeeAATFilestream\\Media\\SharedLibrary\\activities\\matching-game\\sounds\\lets-try-something-different.mp3";
+		private const UserName:String = "R2G2";  // <-- your windows username
+		private const PathShapesRoot:String = "C:\\Users\\" + UserName + "\\Source\\Repos\\R2G2V1\\Media\\SharedLibrary\\activities\\matching-game\\shapes\\";
+		private var xmlShapesTest:String = "<images><image><name>" + PathShapesRoot + "helicopter.png</name></image><image><name>" + PathShapesRoot + "phone.png</name></image><image><name>" + PathShapesRoot + "hammer-and-nail.png</name></image><image><name>" + PathShapesRoot + "fish.png</name></image><image><name>" + PathShapesRoot + "envelope.png</name></image><image><name>" + PathShapesRoot + "hand-drill.png</name></image><image><name>" + PathShapesRoot + "deer.png</name></image><image><name>" + PathShapesRoot + "crescent-moon.png</name></image><image><name>" + PathShapesRoot + "hot-air-ballon.png</name></image><image><name>" + PathShapesRoot + "camel.png</name></image><image><name>" + PathShapesRoot + "motorcycle.png</name></image><image><name>" + PathShapesRoot + "rhinoceros.png</name></image><image><name>" + PathShapesRoot + "cloud.png</name></image><image><name>" + PathShapesRoot + "dump-truck.png</name></image><image><name>" + PathShapesRoot + "moon.png</name></image><image><name>" + PathShapesRoot + "bear.png</name></image><image><name>" + PathShapesRoot + "atv.png</name></image><image><name>" + PathShapesRoot + "Elephant_2.png</name></image><image><name>" + PathShapesRoot + "modern-train.png</name></image><image><name>" + PathShapesRoot + "elephant.png</name></image><image><name>" + PathShapesRoot + "track-loader.png</name></image><image><name>" + PathShapesRoot + "chicken.png</name></image><image><name>" + PathShapesRoot + "bird.png</name></image><image><name>" + PathShapesRoot + "maple-leaf.png</name></image><image><name>" + PathShapesRoot + "umbrella.png</name></image><image><name>" + PathShapesRoot + "butterfly.png</name></image><image><name>" + PathShapesRoot + "parrot.png</name></image><image><name>" + PathShapesRoot + "pickup-truck.png</name></image><image><name>" + PathShapesRoot + "panther.png</name></image><image><name>" + PathShapesRoot + "horse.png</name></image><image><name>" + PathShapesRoot + "duck.png</name></image><image><name>" + PathShapesRoot + "snail.png</name></image><image><name>" + PathShapesRoot + "dog.png</name></image><image><name>" + PathShapesRoot + "cement-mixer.png</name></image><image><name>" + PathShapesRoot + "delivery-truck.png</name></image><image><name>" + PathShapesRoot + "car-headlights.png</name></image><image><name>" + PathShapesRoot + "clover-leaf.png</name></image><image><name>" + PathShapesRoot + "house.png</name></image><image><name>" + PathShapesRoot + "bus.png</name></image><image><name>" + PathShapesRoot + "bicycle.png</name></image><image><name>" + PathShapesRoot + "airplane.png</name></image><image><name>" + PathShapesRoot + "road-roller.png</name></image><image><name>" + PathShapesRoot + "monkey.png</name></image><image><name>" + PathShapesRoot + "crane.png</name></image><image><name>" + PathShapesRoot + "light-bulb.png</name></image><image><name>" + PathShapesRoot + "pine-tree.png</name></image><image><name>" + PathShapesRoot + "hemp.png</name></image><image><name>" + PathShapesRoot + "sun.png</name></image><image><name>" + PathShapesRoot + "cat.png</name></image><image><name>" + PathShapesRoot + "rabbit.png</name></image><image><name>" + PathShapesRoot + "steam-train.png</name></image><image><name>" + PathShapesRoot + "jet-airplane.png</name></image><image><name>" + PathShapesRoot + "bucket-loader.png</name></image><image><name>" + PathShapesRoot + "flower.png</name></image><image><name>" + PathShapesRoot + "sail-boat.png</name></image><image><name>" + PathShapesRoot + "cow.png</name></image><image><name>" + PathShapesRoot + "kangaroo.png</name></image><image><name>" + PathShapesRoot + "refrigerated-truck.png</name></image><image><name>" + PathShapesRoot + "pig.png</name></image></images>";
+		
+		private const PathSoundsRoot:String = "C:\\Users\\" + UserName + "\\Source\\Repos\\R2G2V1\\Media\\SharedLibrary\\activities\\matching-game\\sounds\\";
+		private var wouldYouLikeToMatchThePicturesTest:String = PathSoundsRoot + "would-you-like-to-match-the-pictures.mp3";
+		private var wouldYouLikeToMatchThePairsTest:String = PathSoundsRoot + "would-you-like-to-match-the-pairs.mp3";
+		private var correctTest:String = PathSoundsRoot + "correct.mp3";
+		private var goodJobTest:String = PathSoundsRoot + "good-job.mp3";
+		private var wellDoneTest:String = PathSoundsRoot + "well-done.mp3";
+		private var TryAgainTest:String = PathSoundsRoot + "try-again.mp3";
+		private var letsTryAgainTest:String = PathSoundsRoot + "lets-try-again.mp3";
+		private var letsTrySomethingDifferentTest:String = PathSoundsRoot + "lets-try-something-different.mp3";		
 		*/
 		
 		// media
@@ -130,7 +134,17 @@ package
 			//loadMedia(xmlShapesTest, wouldYouLikeToMatchThePicturesTest, wouldYouLikeToMatchThePairsTest, 
 			//	correctTest, goodJobTest, wellDoneTest, TryAgainTest, letsTryAgainTest, letsTrySomethingDifferentTest, 1, 1);
 				
+			// uncomment to test
 			//playMatchingGame();
+		}
+		
+		private function LogInteractiveActivityEvent(success:Number, description:String, isGameHasExpired:Boolean = false):void {
+			var successDesc:String = "NULL";
+			if (success == 0) successDesc = "FALSE";
+			else if (success == 1) successDesc = "TRUE";
+			
+			// comment the following line to test
+			ExternalInterface.call("FlashCall", currentLevel, successDesc, description, isGameHasExpired);
 		}
 		
 		// called externally by the Windows UserControl
@@ -386,7 +400,12 @@ package
 			var mainFilename:String = fullPathMainImage.substring(fullPathMainImage.lastIndexOf("\\") + 1, fullPathMainImage.length).toLowerCase();
 			
 			var fullPath:String = event.target.content.loaderInfo.url;
-			var filename:String = fullPath.substring(fullPath.lastIndexOf("\\") + 1, fullPath.length).toLowerCase();
+			
+			var lastIndexOfSlash:Number = fullPath.lastIndexOf("\\");
+			if (lastIndexOfSlash <= 0)
+				lastIndexOfSlash = fullPath.lastIndexOf("/");
+			
+			var filename:String = fullPath.substring(lastIndexOfSlash + 1, fullPath.length).toLowerCase();
 			
 			clickCount++;
 			
@@ -421,9 +440,9 @@ package
 		}
 		
 		private function RemoveExtension(filename:String):String {
-			var slashIndex:Number = filename.lastIndexOf( '\\' );
+			var slashIndex:Number = filename.lastIndexOf("\\");
 			var nameWithExtension:String = filename.substr( slashIndex + 1, filename.length );
-			var extensionIndex:Number = nameWithExtension.lastIndexOf( '.' );
+			var extensionIndex:Number = nameWithExtension.lastIndexOf(".");
 			var nameNoExtension:String = nameWithExtension.substr( 0, extensionIndex );
 			
 			return nameNoExtension;
@@ -439,15 +458,6 @@ package
 			mainImagePairs = [];
 			clickedImagesPairs = [];
 			clickedImagesPairsInstance = [];
-		}
-		
-		private function LogInteractiveActivityEvent(success:Number, description:String, isGameHasExpired:Boolean = false):void {
-			var successDesc:String = "NULL";
-			if (success == 0) successDesc = "FALSE";
-			else if (success == 1) successDesc = "TRUE";
-			
-			// comment the following line to test
-			ExternalInterface.call("FlashCall", currentLevel, successDesc, description, isGameHasExpired);
 		}
 			
 		// ----------------------- match-the-pairs (begin) -----------------------------

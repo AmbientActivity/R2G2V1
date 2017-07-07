@@ -4,7 +4,7 @@
   <output>
     <movie outputType="Application" />
     <movie input="" />
-    <movie path="..\Builds\BalloonPoppingGame.swf" />
+    <movie path="..\..\Builds\BalloonPoppingGame.swf" />
     <movie fps="60" />
     <movie width="1920" />
     <movie height="1080" />

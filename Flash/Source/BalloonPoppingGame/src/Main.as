@@ -86,8 +86,7 @@
 		
 		// R2G2 - playActivity()
 		// init() gets called from here instead of from Main()
-		// receives a parameter to determine if the game should timeout on or off
-		// doesn't accept booleans properly so convert number to boolean
+		// receives a parameter for timeout enable/disable
 		private function playActivity(enableTimeout:Number):void {
 			enableActivityTimeout = (enableTimeout == 1);
 			

@@ -5,8 +5,16 @@ using NReco.VideoConverter;
 
 namespace Keebee.AAT.VideoConversion
 {
+    public class ConversionProgressEventArgs : EventArgs
+    {
+        public TimeSpan Processed { get; set; }
+        public TimeSpan TotalDuration { get; set; }
+    }
+
     public static class VideoConverter
     {
+        public static event EventHandler ConversionProgress;
+
         public static byte[] Convert(string fullPath, out string errorMessage)
         {
             errorMessage = null;
@@ -16,8 +24,8 @@ namespace Keebee.AAT.VideoConversion
                 var ffMpeg = new FFMpegConverter();
                 var stream = new MemoryStream();
 
+                ffMpeg.ConvertProgress += ConvertProgress;
                 ffMpeg.ConvertMedia(fullPath, stream, Format.mp4);
-
                 file = stream.ToArray();
             }
             catch (Exception ex)
@@ -74,6 +82,17 @@ namespace Keebee.AAT.VideoConversion
             }
 
             return codec;
+        }
+
+        private static void ConvertProgress(object sender, ConvertProgressEventArgs e)
+        {
+            var args = new ConversionProgressEventArgs
+            {
+                Processed = e.Processed,
+                TotalDuration = e.TotalDuration
+            };
+
+            ConversionProgress?.Invoke(new object(), args);
         }
     }
 }

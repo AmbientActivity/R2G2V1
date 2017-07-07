@@ -120,16 +120,21 @@ namespace Keebee.AAT.ConvertVideos
                                     {
                                         text = "Converting...";
 #if DEBUG
-                                        Console.Write(text);
+                                        //Console.Write(text);
 #endif
                                         w.Write(text);
+#if DEBUG
+                                        VideoConverter.ConversionProgress += ConversionProgress;
+#endif
                                         var byteArray = VideoConverter.Convert(Path.Combine(currentDir, filename),
                                             out errorMessage);
                                         if (errorMessage != null) throw new Exception(errorMessage);
 
                                         text = "done.";
 #if DEBUG
-                                        Console.WriteLine(text);
+                                        Console.WriteLine("\rConverting...done.");
+#elif !DEBUG
+                                        Console.Write(text);
 #endif
                                         w.WriteLine(text);
 
@@ -204,5 +209,15 @@ namespace Keebee.AAT.ConvertVideos
             if (File.Exists(filePath))
                 File.Delete(filePath);
         }
+
+#if DEBUG
+        private static void ConversionProgress(object sender, EventArgs e)
+        {
+            var args = (ConversionProgressEventArgs) e;
+            var percentComplete = (decimal)args.Processed.Ticks / (decimal)args.TotalDuration.Ticks * 100;
+
+            Console.Write($"\rConverting...{decimal.Round(percentComplete)}%");
+        }
+#endif
     }
 }

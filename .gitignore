@@ -194,5 +194,22 @@ ModelManifest.xml
 .BridgeCacheT
 .DS_Store
 
-# thumbs.db
-thumbs.db
+#Thumbs.db
+Thumbs.db
+
+# ignore everything except .gitignore and folders that I care about:
+*
+!Profiles*
+!1*
+!0*
+!activities*
+!audio*
+!music*
+!radio-shows*
+!images*
+!general*
+!personal*
+!videos*
+!tv-shows*
+!home-movies*
+!.gitignore

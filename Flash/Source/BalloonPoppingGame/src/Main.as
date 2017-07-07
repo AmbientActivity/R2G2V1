@@ -69,7 +69,7 @@
 		
 		public function Main():void {
 			
-			// R2G2 - need to add 2 entry points
+			// R2G2 - add entry points for playActivity() and stopActivity()
 			// comment to test
 			ExternalInterface.addCallback("playActivity", playActivity);
 			ExternalInterface.addCallback("stopActivity", stopActivity);
@@ -84,7 +84,7 @@
 			ExternalInterface.call("FlashCall", description, isGameHasExpired);
 		}
 		
-		// R2G2 - need to add function for the entry point "playActivity"
+		// R2G2 - playActivity()
 		// init() gets called from here instead of from Main()
 		// receives a parameter to determine if the game should timeout on or off
 		// doesn't accept booleans properly so convert number to boolean
@@ -97,7 +97,7 @@
 			init();
 		}
 		
-		// R2G2 - function for the entry point "stopActivity"
+		// R2G2 - stopActivity()
 		private function stopActivity():void {
 			
 			// clear the timeout

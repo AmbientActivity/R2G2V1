@@ -131,11 +131,12 @@ package
 			ExternalInterface.addCallback("stopMatchingGame", stopMatchingGame);
 			
 			// uncomment to test
-			//loadMedia(xmlShapesTest, wouldYouLikeToMatchThePicturesTest, wouldYouLikeToMatchThePairsTest, 
-			//	correctTest, goodJobTest, wellDoneTest, TryAgainTest, letsTryAgainTest, letsTrySomethingDifferentTest, 1, 1);
+			/*
+			loadMedia(xmlShapesTest, wouldYouLikeToMatchThePicturesTest, wouldYouLikeToMatchThePairsTest, 
+				correctTest, goodJobTest, wellDoneTest, TryAgainTest, letsTryAgainTest, letsTrySomethingDifferentTest, 1, 1);
 				
-			// uncomment to test
-			//playMatchingGame();
+			playMatchingGame();
+			*/
 		}
 		
 		private function LogInteractiveActivityEvent(success:Number, description:String, isGameHasExpired:Boolean = false):void {

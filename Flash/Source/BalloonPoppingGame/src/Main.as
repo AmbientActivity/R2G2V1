@@ -21,9 +21,8 @@
 	import flash.utils.setTimeout;
 	import flash.utils.clearTimeout;
 	import flash.events.TouchEvent
-	
-    fscommand("fullscreen", "true");	
-	[SWF(width='1920',height='1080',backgroundColor='#FFFF00',frameRate='60' )]
+
+	[SWF(backgroundColor='#FFFF00', frameRate='60' )]
 
 	public class Main extends MovieClip 
 	{		

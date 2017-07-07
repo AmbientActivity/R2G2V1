@@ -197,8 +197,7 @@ ModelManifest.xml
 #Thumbs.db
 Thumbs.db
 
-# ignore everything except .gitignore and folders that I care about:
-*
+# folders to include
 !Profiles*
 !1*
 !0*

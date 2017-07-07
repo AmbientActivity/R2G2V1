@@ -4,7 +4,7 @@
   <output>
     <movie outputType="Application" />
     <movie input="" />
-    <movie path="..\..\UI\Keebee.AAT.Display\bin\Debug\MatchingGame.swf" />
+    <movie path="..\Builds\MatchingGame.swf" />
     <movie fps="30" />
     <movie width="1920" />
     <movie height="1080" />

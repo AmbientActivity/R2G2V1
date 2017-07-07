@@ -27,6 +27,7 @@ $pathDisplayRelease = "UI\Display\"
 $pathDisplayDebug = "UI\Display\"
 $pathSimulator = "UI\Simulator\"
 $pathBeaconMonitor = "UI\BeaconMonitor\"
+$pathFlashBuilds = "Flash\Builds\"
 
 # scheduled tasks
 $pathScheduledTasks = "ScheduledTasks\"
@@ -153,6 +154,7 @@ Try
     }
     New-Item -ItemType Directory -Force -Path $path | Out-Null
     Copy-Item C:\Users\$env:USERNAME\Source\Repos\R2G2V1\UI\Keebee.AAT.Display\bin\Release\* $path -recurse -Force
+    Copy-Item C:\Users\$env:USERNAME\Source\Repos\R2G2V1\Flash\Builds\* $path -recurse -Force
 
     $path = $pathDeployments + $pathDisplayDebug + $pathVersion + "Debug\"
     If(test-path $path)
@@ -161,6 +163,7 @@ Try
     }
     New-Item -ItemType Directory -Force -Path $path | Out-Null
     Copy-Item C:\Users\$env:USERNAME\Source\Repos\R2G2V1\UI\Keebee.AAT.Display\bin\Debug\* $path -recurse -Force
+    Copy-Item C:\Users\$env:USERNAME\Source\Repos\R2G2V1\Flash\Builds\* $path -recurse -Force
 
     # simulator
     $path = $pathDeployments + $pathSimulator + $pathVersion

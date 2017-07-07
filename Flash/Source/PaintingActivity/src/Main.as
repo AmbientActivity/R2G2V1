@@ -156,8 +156,6 @@ package
 		}
 		
 		private function init():void {
-			stage.displayState = StageDisplayState.FULL_SCREEN;
-			
 			boardWidth = 1920 /*1280*/;
 			boardHeight = 978  /*718*/;
 			

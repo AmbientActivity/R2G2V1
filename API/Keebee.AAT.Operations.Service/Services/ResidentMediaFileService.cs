@@ -40,7 +40,11 @@ namespace Keebee.AAT.Operations.Service.Services
             var media = container.ResidentMediaFiles.ByKey(id)
                 .Expand("Resident,MediaFile,MediaPathType($expand=MediaPathTypeCategory),ResponseType($expand=ResponseTypeCategory)");
 
-            return media.GetValue();
+            ResidentMediaFile result;
+            try { result = media.GetValue(); }
+            catch { result = null; }
+
+            return result;
         }
 
         public IEnumerable<ResidentMediaFile> GetForResident(int residentId)

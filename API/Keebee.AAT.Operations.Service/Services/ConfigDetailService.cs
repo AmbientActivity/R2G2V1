@@ -35,10 +35,13 @@ namespace Keebee.AAT.Operations.Service.Services
             var container = new Container(new Uri(ODataHost.Url));
 
             var configDetail = container.ConfigDetails.ByKey(id)
-                .Expand("Config,PhidgetType,PhidgetStyleType,ResponseType($expand=ResponseTypeCategory,InteractiveActivityType)")
-                .GetValue();
+                .Expand("Config,PhidgetType,PhidgetStyleType,ResponseType($expand=ResponseTypeCategory,InteractiveActivityType)");
 
-            return configDetail;
+            ConfigDetail result;
+            try { result = configDetail.GetValue(); }
+            catch { result = null; }
+
+            return result;
         }
 
         public ConfigDetail GetWithMedia(int id)

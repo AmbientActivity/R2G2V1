@@ -34,10 +34,13 @@ namespace Keebee.AAT.Operations.Service.Services
             var container = new Container(new Uri(ODataHost.Url));
 
             var mediaPathType = container.MediaPathTypes.ByKey(id)
-                .Expand("MediaPathTypeCategory")
-                .GetValue();
+                .Expand("MediaPathTypeCategory");
 
-            return mediaPathType;
+            MediaPathType result;
+            try { result = mediaPathType.GetValue(); }
+            catch { result = null; }
+
+            return result;
         }
 
         public IEnumerable<MediaPathType> Get(bool isSystem)

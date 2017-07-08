@@ -612,6 +612,7 @@
     <Content Include="Scripts\Utilities\ImageViewer.js" />
     <Content Include="Scripts\Utilities\InProgressDialog.js" />
     <Content Include="Scripts\Utilities\JobExecution.js" />
+    <Content Include="Scripts\Utilities\SharedLibrary.js" />
     <Content Include="Scripts\Utilities\Sorting.js" />
     <Content Include="Scripts\Utilities\VideoViewer.js" />
     <Content Include="Scripts\VideoCaptures\Index.js" />

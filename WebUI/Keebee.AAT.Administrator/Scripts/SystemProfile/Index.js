@@ -33,6 +33,7 @@
                 .done(function (data) {
                     $.extend(lists, data);
 
+                    $("#error-container").hide();
                     $("#loading-container").hide();
                     $("#table-header").show();
                     $("#table-detail").show();
@@ -200,8 +201,7 @@
                                 sortKey = currentSortKey;
                             }
 
-                            self.files(utilities.sorting.sortArray(
-                                {
+                            self.files(utilities.sorting.sortArray({
                                     fileArray: self.files(),
                                     columns: self.columns(),
                                     sortKey: sortKey,
@@ -274,56 +274,17 @@
                             });
                         });
 
-                        self.showLinkFromSharedLibarayDialog = function () {
-                            var title = "<span class='glyphicon glyphicon-link' style='color: #fff'></span>";
-                            var mediaPathTypeDesc = self.mediaPathType().shortdescription;
-
-                            $.get(site.url + "SystemProfile/GetSharedLibarayLinkView/", 
-                                { mediaPathTypeId: self.selectedMediaPathType() }, false)
-                                .done(function (message) {
-                                    if (message.length === 0) {
-                                        var hasHave = "has";
-                                        if (mediaPathTypeDesc.endsWith("s"))
-                                            hasHave = "have";
-
-                                        BootstrapDialog.show({
-                                            title: title + " Add <b>" + mediaPathTypeDesc + "</b> From Shared Library",
-                                            message: $("<div></div>").append("All available " + mediaPathTypeDesc + " " + hasHave + " already been added to the system profile."),
-                                            onshown: function () { $("body").css("cursor", "default"); },
-                                            closable: false,
-                                            buttons: [
-                                                {
-                                                    label: "OK",
-                                                    cssClass: "btn-primary",
-                                                    action: function (dialog) {
-                                                        dialog.close();
-                                                    }
-                                                }
-                                            ]
-                                        });
-                                    } else {
-                                        BootstrapDialog.show({
-                                            title: title + " Add <b>" + mediaPathTypeDesc + "</b> From Shared Library",
-                                            message: $("<div></div>").append(message),
-
-                                            closable: false,
-                                            buttons: [
-                                                {
-                                                    label: "Cancel",
-                                                    action: function (dialog) {
-                                                        dialog.close();
-                                                    }
-                                                }, {
-                                                    label: "OK",
-                                                    cssClass: "btn-primary",
-                                                    action: function (dialog) {
-                                                        self.addSharedFiles();
-                                                        dialog.close();
-                                                    }
-                                                }
-                                            ]
-                                        });
-                                    }
+                        self.showAddFromSharedLibrayDialog = function () {    
+                            utilities.sharedlibrary.show({
+                                controller: "SystemProfile",
+                                mediaPathTypeDesc: self.mediaPathType().shortdescription,
+                                params: { mediaPathTypeId: self.selectedMediaPathType() }
+                            })
+                            .then(function(result) {
+                                self.addSharedFiles(result);
+                            })
+                            .catch(function() {
+                                self.enableDetail();
                             });
                         };
 
@@ -516,118 +477,56 @@
                         };
 
                         self.deleteSelected = function () {
-                            var ids = self.selectedIds();
-                            utilities.inprogress.show({ message: "Deleting..." })
-                                .then(function(dialog) {
-                                    $.post(site.url + "SystemProfile/DeleteSelected/",
-                                        {
-                                            ids: ids,
-                                            mediaPathTypeId: self.selectedMediaPathType()
-                                        })
-                                        .done(function (result) {
-                                            dialog.close();
-                                            if (result.Success) {
-                                                lists.FileList = result.FileList;
-                                                createFileArray(lists.FileList);
-                                                self.sort({ afterSave: true });
-                                                self.selectedIds([]);
-                                                self.checkSelectAll(false);
-                                                self.enableDetail();
-                                            } else {
-                                                self.enableDetail();
-
-                                                BootstrapDialog.show({
-                                                    type: BootstrapDialog.TYPE_DANGER,
-                                                    title: "Delete Error",
-                                                    message: result.ErrorMessage
-                                                });
-                                            }
-                                        })
-                                        .error(function (result) {
-                                            dialog.close();
-                                            self.enableDetail();
-
-                                            BootstrapDialog.show({
-                                                type: BootstrapDialog.TYPE_DANGER,
-                                                title: "Delete Error",
-                                                message: "Unexpected Error\n" + result
-                                            });
-                                        });
-                                });
-                        };
-
-                        self.addSharedFiles = function () {
-                            var ids = [];
-                            $("input[name='shared_files']:checked").each(function (item, value) {
-                                ids.push(value.id);
-                            });
-
                             self.clearStreams();
 
-                            $.post(site.url + "SystemProfile/AddSharedMediaFiles/",
-                                {
-                                    streamIds: ids,
+                            utilities.job.execute({
+                                controller: "SystemProfile",
+                                action: "DeleteSelected",
+                                type: "POST",
+                                waitMessage: "Deleting...",
+                                params: {
+                                    ids: self.selectedIds(),
                                     mediaPathTypeId: self.selectedMediaPathType()
-                                })
-                                .done(function (result) {
-                                    if (result.Success) {
-                                        lists.FileList = result.FileList;
-                                        createFileArray(lists.FileList);
-                                        self.sort({ afterSave: true });
-                                        self.selectedIds([]);
-                                        self.checkSelectAll(false);
-                                        self.enableDetail();
-                                    } else {
-                                        self.enableDetail();
-
-                                        BootstrapDialog.show({
-                                            type: BootstrapDialog.TYPE_DANGER,
-                                            title: "Error Adding Shared Files",
-                                            message: result.ErrorMessage
-                                        });
-                                    }
-                                })
-                                .error(function (result) {
-                                    self.enableDetail();
-
-                                    BootstrapDialog.show({
-                                        type: BootstrapDialog.TYPE_DANGER,
-                                        title: "Error Adding Shared Files",
-                                        message: "Unexpected Error\n" + data
-                                    });
-                                });
+                                }
+                            })
+                            .then(function (result) {
+                                lists.FileList = result.FileList;
+                                createFileArray(lists.FileList);
+                                self.sort({ afterSave: true });
+                                self.selectedIds([]);
+                                self.checkSelectAll(false);
+                                self.enableDetail();
+                            })
+                            .catch(function () {
+                                self.enableDetail();
+                            });
                         };
 
-                        self.showImagePreview = function (row) {
-                            $.get(site.url + "SystemProfile/GetImageViewerView?streamId=" + row.streamid + "&fileType=" + row.filetype)
-                                .done(function (message) {
-                                    BootstrapDialog.show({
-                                        type: BootstrapDialog.TYPE_INFO,
-                                        title: "Image Viewer - " + row.filename + "." + row.filetype.toLowerCase(),
-                                        message: $("<div></div>").append(message),
-                                        closable: false,
-                                        buttons: [{
-                                            label: "Close",
-                                            action: function (dialog) {
-                                                dialog.close();
-                                            }
-                                        }]
-                                    });
+                        self.addSharedFiles = function (x) {
+                            self.clearStreams();
+                        
+                            utilities.job.execute(
+                                {
+                                    controller: "SystemProfile",
+                                    action: "AddSharedMediaFiles",
+                                    type: "POST",
+                                    waitMessage: "Adding...",
+                                    params: {
+                                        streamIds: x.streamIds,
+                                        mediaPathTypeId: self.selectedMediaPathType()
+                                    }
                                 })
-                                .error(function (message) {
-                                    BootstrapDialog.show({
-                                        type: BootstrapDialog.TYPE_DANGER,
-                                        title: "Error",
-                                        message: $("<div></div>").append(message),
-                                        closable: false,
-                                        buttons: [{
-                                            label: "Close",
-                                            action: function (dialog) {
-                                                dialog.close();
-                                            }
-                                        }]
-                                    });
-                            });
+                                .then(function (result) {
+                                    lists.FileList = result.FileList;
+                                    createFileArray(lists.FileList);
+                                    self.sort({ afterSave: true });
+                                    self.selectedIds([]);
+                                    self.checkSelectAll(false);
+                                    self.enableDetail();
+                                })
+                                .catch(function () {
+                                    self.enableDetail();
+                                });
                         };
 
                         self.checkSelectAll = function (checked) {
@@ -654,6 +553,14 @@
                             }
                         };
                     };
+                })
+            .error(function (data) {
+                $("#loading-container").hide();
+                $("#error-container")
+                    .html("<div><h2>Data load error:</h2></div>")
+                    .append(">div>" + data + "</div>")
+                    .append("<div><h3>Please try refreshing the page</h3></div>");
+                $("#error-container").show();
             });
         }
     }

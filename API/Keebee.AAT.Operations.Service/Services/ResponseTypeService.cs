@@ -33,10 +33,13 @@ namespace Keebee.AAT.Operations.Service.Services
             var container = new Container(new Uri(ODataHost.Url));
 
             var responseType = container.ResponseTypes.ByKey(id)
-                .Expand("ResponseTypeCategory,InteractiveActivityType")
-                .GetValue();
+                .Expand("ResponseTypeCategory,InteractiveActivityType");
 
-            return responseType;
+            ResponseType result;
+            try { result = responseType.GetValue(); }
+            catch { result = null; }
+
+            return result;
         }
 
         public int Post(ResponseType responseType)

@@ -31,18 +31,14 @@ namespace Keebee.AAT.Operations.Service.Services
         public Thumbnail Get(Guid streamId)
         {
             var container = new Container(new Uri(ODataHost.Url));
-            Thumbnail thumbnail;
 
-            try
-            {
-                thumbnail = container.Thumbnails.ByKey(streamId).GetValue();
-            }
-            catch
-            {
-                return null;
-            }
-            
-            return thumbnail;
+            var thumbnail = container.Thumbnails.ByKey(streamId);
+
+            Thumbnail result;
+            try { result = thumbnail.GetValue(); }
+            catch { result = null; }
+
+            return result;
         }
 
         public byte[] GetImage(Guid streamId)

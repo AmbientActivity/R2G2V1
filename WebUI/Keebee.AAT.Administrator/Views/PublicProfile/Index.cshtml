@@ -55,7 +55,7 @@
                         <span class="caret"></span>
                     </button>
                     <ul class="dropdown-menu">
-                        <li><a href="javascript:void(0)" id="add-shared" data-bind="click: showLinkFromSharedLibarayDialog">From Shared Library</a></li>
+                        <li><a href="javascript:void(0)" id="add-shared" data-bind="click: showAddFromSharedLibrayDialog">From Shared Library</a></li>
                         <li><a href="javascript:void(0)" id="uploadbutton" onclick="return" false;">From Your Computer</a></li>
                     </ul>
                 </div>
@@ -65,6 +65,7 @@
 </div>
 
 <div id="loading-container" class="loading"><img src="~/Content/images/page-loading.gif" alt="Loading..."></div>
+<div id="error-container" hidden></div>
 
 <div class="panel panel-default">
     <div class="panel-body panel-body-table-header">

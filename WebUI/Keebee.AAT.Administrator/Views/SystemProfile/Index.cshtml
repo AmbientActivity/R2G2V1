@@ -43,7 +43,7 @@
                 <label>Total:</label> <span data-bind="text: totalFilteredFiles()"></span>
             </li>
             <li>
-                <button id="add" class="btn btn-add" data-bind="click: showLinkFromSharedLibarayDialog" disabled>
+                <button id="add" class="btn btn-add" data-bind="click: showAddFromSharedLibrayDialog" disabled>
                     Add
                 </button>
             </li>
@@ -52,6 +52,7 @@
 </div>
 
 <div id="loading-container" class="loading"><img src="~/Content/images/page-loading.gif" alt="Loading..."></div>
+<div id="error-container" hidden></div>
 
 <div class="panel panel-default">
     <div class="panel-body panel-body-table-header">

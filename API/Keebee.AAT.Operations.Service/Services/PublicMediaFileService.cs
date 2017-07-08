@@ -30,7 +30,8 @@ namespace Keebee.AAT.Operations.Service.Services
             var container = new Container(new Uri(ODataHost.Url));
 
             var media = container.PublicMediaFiles
-                .Expand("MediaFile,MediaPathType($expand=MediaPathTypeCategory),ResponseType($expand=ResponseTypeCategory)")
+                .Expand(
+                    "MediaFile,MediaPathType($expand=MediaPathTypeCategory),ResponseType($expand=ResponseTypeCategory)")
                 .AsEnumerable();
 
             return media;
@@ -41,9 +42,14 @@ namespace Keebee.AAT.Operations.Service.Services
             var container = new Container(new Uri(ODataHost.Url));
 
             var media = container.PublicMediaFiles.ByKey(id)
-                .Expand("MediaFile,MediaPathType($expand=MediaPathTypeCategory),ResponseType($expand=ResponseTypeCategory)");
+                .Expand(
+                    "MediaFile,MediaPathType($expand=MediaPathTypeCategory),ResponseType($expand=ResponseTypeCategory)");
 
-            return media.GetValue();
+            PublicMediaFile result;
+            try { result = media.GetValue(); }
+            catch { result = null; }
+
+            return result;
         }
 
         public IEnumerable<PublicMediaFile> GetForResponseType(int responseTypdId)

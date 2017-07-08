@@ -33,6 +33,7 @@
                     $.extend(lists, data);
                     activeConfig = lists.ConfigList.filter(function (value) { return value.IsActive; })[0];
 
+                    $("#error-container").hide();
                     $("#loading-container").hide();
                     $("#tblConfigDetail").show();
                     $("#col-button-container").show();
@@ -613,6 +614,11 @@
                                 [0].description;
                         };
                     }
+                })
+            .error(function () {
+                $("#loading-container").hide();
+                $("#error-container").html("<div><h3>Data load error.  Please try refreshing the page</h3></div>");
+                $("#error-container").show();
             });
         }          
     }

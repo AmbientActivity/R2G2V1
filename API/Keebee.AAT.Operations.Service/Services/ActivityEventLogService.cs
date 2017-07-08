@@ -42,10 +42,13 @@ namespace Keebee.AAT.Operations.Service.Services
             var container = new Container(new Uri(ODataHost.Url));
 
             var activityEventLog = container.ActivityEventLogs.ByKey(id)
-                .Expand("Resident,ConfigDetail($expand=ResponseType($expand=ResponseTypeCategory))")
-                .GetValue();
+                .Expand("Resident,ConfigDetail($expand=ResponseType($expand=ResponseTypeCategory))");
 
-            return activityEventLog;
+            ActivityEventLog result;
+            try { result = activityEventLog.GetValue(); }
+            catch { result = null; }
+
+            return result;
         }
 
         public IEnumerable<ActivityEventLog> GetForDate(string date)

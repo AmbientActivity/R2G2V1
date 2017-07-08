@@ -1,5 +1,4 @@
 ﻿using Keebee.AAT.ApiClient.Clients;
-using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Keebee.AAT.ApiClientTests
@@ -23,7 +22,22 @@ namespace Keebee.AAT.ApiClientTests
         }
 
         [TestMethod]
-        public void GetResidentDoesNotExist()
+        public void TryGetNonExistentResident()
+        {
+            // Arrange
+            var client = new ResidentsClient();
+            const int residentId = -1;
+
+            // Act
+            var resident = client.Get(residentId);
+
+            // Assert
+            Assert.IsNotNull(resident);
+            Assert.IsNull(resident.FirstName);
+        }
+
+        [TestMethod]
+        public void GetResidentExists()
         {
             // Arrange
             var client = new ResidentsClient();

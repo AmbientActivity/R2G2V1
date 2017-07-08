@@ -7,6 +7,7 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
 namespace Keebee.AAT.DataAccess.Tests.Controllers
@@ -27,12 +28,15 @@ namespace Keebee.AAT.DataAccess.Tests.Controllers
             const int residentId = 1;
 
             // Act
-            var resident = _container.Residents.ByKey(residentId)
-                .GetValue();
+            var resident = _container.Residents.ByKey(residentId);
+
+            Resident result;
+            try { result = resident.GetValue(); }
+            catch { result = null; }
 
             // Assert
-            Assert.IsNotNull(resident);
-            Assert.AreEqual(resident.Id, residentId);
+            Assert.IsNotNull(result);
+            Assert.AreEqual(result.Id, residentId);
         }
 
         [TestMethod]

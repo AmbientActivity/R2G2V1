@@ -135,7 +135,7 @@ namespace Keebee.AAT.Administrator.Controllers
         public JsonResult DeleteSelected(Guid[] streamIds, int mediaPathTypeId, bool isSharable)
         {
             bool success;
-            var errormessage = string.Empty;
+            var errMsg = string.Empty;
             var rules = new SharedLibraryRules();
 
             var mediaPathTypes = _mediaPathTypesClient.Get()
@@ -150,12 +150,12 @@ namespace Keebee.AAT.Administrator.Controllers
                     // delete all the linkage if it's sharable media (non-system)
                     if (isSharable)
                     {
-                        errormessage = rules.DeleteSharedMediaFileLinks(streamId);
-                        if (errormessage.Length > 0)
-                            throw new Exception(errormessage);
+                        errMsg = rules.DeleteSharedMediaFileLinks(streamId);
+                        if (errMsg.Length > 0)
+                            throw new Exception(errMsg);
                     }
 
-                    errormessage = DeleteSharedLibraryFile(mediaFile, mediaPathTypeId);
+                    errMsg = DeleteSharedLibraryFile(mediaFile, mediaPathTypeId);
                 }
 
                 success = true;
@@ -163,13 +163,13 @@ namespace Keebee.AAT.Administrator.Controllers
             catch (Exception ex)
             {
                 success = false;
-                errormessage = ex.Message;
+                errMsg = ex.Message;
             }
 
             return Json(new
             {
                 Success = success,
-                ErrorMessage = errormessage,
+                ErrorMessage = !string.IsNullOrEmpty(errMsg) ? errMsg : null,
                 FileList = GetFileList(mediaPathTypes)
             }, JsonRequestBehavior.AllowGet);
         }

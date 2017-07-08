@@ -40,10 +40,13 @@ namespace Keebee.AAT.Operations.Service.Services
 
             var config = container.Configs
                 .ByKey(id)
-                .Expand("ConfigDetails($expand=PhidgetType,PhidgetStyleType,ResponseType)")
-                .GetValue();
+                .Expand("ConfigDetails($expand=PhidgetType,PhidgetStyleType,ResponseType)");
 
-            return config;
+            Config result;
+            try { result = config.GetValue(); }
+            catch { result = null; }
+
+            return result;
         }
 
         public Config GetActive()

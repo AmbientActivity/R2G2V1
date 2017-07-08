@@ -30,19 +30,15 @@ namespace Keebee.AAT.Operations.Service.Services
 
         public Resident Get(int id)
         {
-            Resident resident = null;
-            try
-            {
-                var container = new Container(new Uri(ODataHost.Url));
+            var container = new Container(new Uri(ODataHost.Url));
 
-                resident = container.Residents.ByKey(id)
-                    .GetValue();
-            }
-            catch
-            {
-                // ignored
-            }
-            return resident;
+            var resident = container.Residents.ByKey(id);
+
+            Resident result;
+            try { result = resident.GetValue(); }
+            catch { result = null; }
+
+            return result;
         }
 
         public Resident GetByNameGender(string firstName, string lastName, string gender)
@@ -61,9 +57,14 @@ namespace Keebee.AAT.Operations.Service.Services
         {
             var container = new Container(new Uri(ODataHost.Url));
 
-            return container.Residents.ByKey(id)
-                .Expand("MediaFiles($expand=MediaFile,MediaPathType($expand=MediaPathTypeCategory),ResponseType($expand=ResponseTypeCategory))")
-                .GetValue();
+            var resident = container.Residents.ByKey(id)
+                .Expand("MediaFiles($expand=MediaFile,MediaPathType($expand=MediaPathTypeCategory),ResponseType($expand=ResponseTypeCategory))");
+
+            Resident result;
+            try { result = resident.GetValue(); }
+            catch { result = null; }
+
+            return result;
         }
 
         public int Post(Resident resident)

@@ -98,6 +98,7 @@ function DisableScreen() {
                 .done(function (data) {
                     $.extend(lists, data);
 
+                    $("#error-container").hide();
                     $("#loading-container").hide();
                     $("#table-header").show();
                     $("#table-detail").show();
@@ -645,6 +646,14 @@ function DisableScreen() {
                                 })[0];
                         }
                     };
+                })
+            .error(function (data) {
+                $("#loading-container").hide();
+                $("#error-container")
+                    .html("<div><h2>Data load error:</h2></div>")
+                    .append(">div>" + data + "</div>")
+                    .append("<div><h3>Please try refreshing the page</h3></div>");
+                $("#error-container").show();
             });
         }
     }

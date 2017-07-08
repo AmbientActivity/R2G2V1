@@ -32,9 +32,13 @@ namespace Keebee.AAT.Operations.Service.Services
         {
             var container = new Container(new Uri(ODataHost.Url));
 
-            var user = container.Users.ByKey(id).GetValue();
+            var user = container.Users.ByKey(id);
 
-            return user;
+            User result;
+            try { result = user.GetValue(); }
+            catch { result = null; }
+
+            return result;
         }
 
         public User GetByUsername(string username)

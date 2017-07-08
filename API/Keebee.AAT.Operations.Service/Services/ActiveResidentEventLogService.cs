@@ -35,10 +35,13 @@ namespace Keebee.AAT.Operations.Service.Services
             var container = new Container(new Uri(ODataHost.Url));
 
             var activeResidentEventLog = container.ActiveResidentEventLogs.ByKey(id)
-                .Expand("Resident")
-                .GetValue();
+                .Expand("Resident");
 
-            return activeResidentEventLog;
+            ActiveResidentEventLog result;
+            try { result = activeResidentEventLog.GetValue(); }
+            catch { result = null; }
+
+            return result;
         }
 
         public IEnumerable<ActiveResidentEventLog> GetForDate(string date)

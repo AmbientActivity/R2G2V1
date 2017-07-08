@@ -3,7 +3,6 @@ using Keebee.AAT.Shared;
 using Keebee.AAT.BusinessRules;
 using Keebee.AAT.ApiClient.Clients;
 using Keebee.AAT.ApiClient.Models;
-using Keebee.AAT.ThumbnailGeneration;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
@@ -63,15 +62,15 @@ namespace Keebee.AAT.Administrator.Controllers
         public JsonResult DeleteSelected(int[] ids, int mediaPathTypeId)
         {
             bool success;
-            string errormessage;
+            string errMsg;
 
             try
             {
                 var rules = new PublicProfileRules();
 
-                errormessage = rules.CanDeleteMultiple(ids.Length, mediaPathTypeId);
-                if (errormessage.Length > 0)
-                    throw new Exception(errormessage);
+                errMsg = rules.CanDeleteMultiple(ids.Length, mediaPathTypeId);
+                if (errMsg.Length > 0)
+                    throw new Exception(errMsg);
 
                 foreach (var id in ids)
                 {
@@ -88,9 +87,7 @@ namespace Keebee.AAT.Administrator.Controllers
                         if (file == null) continue;
 
                         // delete the link
-                        errormessage = _publicMediaFilesClient.Delete(id);
-                        if (errormessage.Length > 0)
-                            throw new Exception(errormessage);
+                        errMsg = _publicMediaFilesClient.Delete(id);
                     }
                 }
 
@@ -99,13 +96,13 @@ namespace Keebee.AAT.Administrator.Controllers
             catch (Exception ex)
             {
                 success = false;
-                errormessage = ex.Message;
+                errMsg = ex.Message;
             }
 
             return Json(new
             {
                 Success = success,
-                ErrorMessage = errormessage,
+                ErrorMessage = !string.IsNullOrEmpty(errMsg) ? errMsg : null,
                 FileList = GetMediaFiles()
             }, JsonRequestBehavior.AllowGet);
         }
@@ -137,10 +134,12 @@ namespace Keebee.AAT.Administrator.Controllers
                 : null;
         }
 
+        [HttpPost]
+        [Authorize]
         public JsonResult AddSharedMediaFiles(Guid[] streamIds, int mediaPathTypeId)
         {
             bool success;
-            string errorMessage = null;
+            string errMsg = null;
 
             try
             {
@@ -157,13 +156,7 @@ namespace Keebee.AAT.Administrator.Controllers
                         };
 
                         int newId;
-                        errorMessage = _publicMediaFilesClient.Post(pmf, out newId);
-
-                        if (errorMessage != null)
-                        {
-                            var thumbnailGenerator = new ThumbnailGenerator();
-                            errorMessage = thumbnailGenerator.Generate(streamId);
-                        }
+                        errMsg = _publicMediaFilesClient.Post(pmf, out newId);
                     }
                 }
                 success = true;
@@ -171,13 +164,13 @@ namespace Keebee.AAT.Administrator.Controllers
             catch (Exception ex)
             {
                 success = false;
-                errorMessage = ex.Message;
+                errMsg = ex.Message;
             }
 
             return Json(new
             {
                 Success = success,
-                ErrorMessage = errorMessage,
+                ErrorMessage = !string.IsNullOrEmpty(errMsg) ? errMsg : null,
                 FileList = GetMediaFiles()
             }, JsonRequestBehavior.AllowGet);
         }

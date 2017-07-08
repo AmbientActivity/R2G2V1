@@ -199,7 +199,7 @@ namespace Keebee.AAT.Administrator.Controllers
             return Json(new
             {
                 Success = success,
-                ErrorMessage = errMsg,
+                ErrorMessage = !string.IsNullOrEmpty(errMsg) ? errMsg : null,
                 FileList = GetMediaFiles()
             }, JsonRequestBehavior.AllowGet);
         }
@@ -231,10 +231,12 @@ namespace Keebee.AAT.Administrator.Controllers
                 : null;
         }
 
+        [HttpPost]
+        [Authorize]
         public JsonResult AddSharedMediaFiles(Guid[] streamIds, int mediaPathTypeId)
         {
             bool success;
-            string errorMessage = null;
+            string errMsg = null;
 
             try
             {
@@ -251,7 +253,7 @@ namespace Keebee.AAT.Administrator.Controllers
                         };
 
                         int newId;
-                        errorMessage = _publicMediaFilesClient.Post(pmf, out newId);
+                        errMsg = _publicMediaFilesClient.Post(pmf, out newId);
                     }
                 }
                 success = true;
@@ -259,13 +261,13 @@ namespace Keebee.AAT.Administrator.Controllers
             catch (Exception ex)
             {
                 success = false;
-                errorMessage = ex.Message;
+                errMsg = ex.Message;
             }
 
             return Json(new
             {
                 Success = success,
-                ErrorMessage = errorMessage,
+                ErrorMessage = !string.IsNullOrEmpty(errMsg) ? errMsg : null,
                 FileList = GetMediaFiles()
             }, JsonRequestBehavior.AllowGet);
         }
@@ -284,21 +286,20 @@ namespace Keebee.AAT.Administrator.Controllers
             };
 
             int newId;
-            var errorMessage = _publicMediaFilesClient.Post(mf, out newId);
+            var errMsg = _publicMediaFilesClient.Post(mf, out newId);
 
-            if (errorMessage != null) return errorMessage;
+            if (errMsg != null) return errMsg;
 
             if (PublicProfileRules.IsMediaTypeThumbnail(mediaPathTypeId))
             {
                 var thumbnailGenerator = new ThumbnailGenerator();
-                errorMessage = thumbnailGenerator.Generate(streamId);
+                errMsg = thumbnailGenerator.Generate(streamId);
             }
 
-            return errorMessage;
+            return errMsg;
         }
 
-        private static PublicProfileViewModel LoadPublicProfileViewModel(
-                int? mediaPathTypeId)
+        private static PublicProfileViewModel LoadPublicProfileViewModel(int? mediaPathTypeId)
         {
             var vm = new PublicProfileViewModel
             {

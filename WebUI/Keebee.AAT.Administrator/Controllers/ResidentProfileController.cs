@@ -126,10 +126,10 @@ namespace Keebee.AAT.Administrator.Controllers
 
         [HttpPost]
         [Authorize]
-        public JsonResult AddFromSharedLibrary(Guid[] streamIds, int residentId, int mediaPathTypeId)
+        public JsonResult AddSharedMediaFiles(Guid[] streamIds, int residentId, int mediaPathTypeId)
         {
             bool success;
-            string errorMessage = null;
+            string errMsg = null;
 
             try
             {
@@ -149,7 +149,7 @@ namespace Keebee.AAT.Administrator.Controllers
                         };
 
                         int newId;
-                        errorMessage = _residentMediaFilesClient.Post(mf, out newId);
+                        errMsg = _residentMediaFilesClient.Post(mf, out newId);
                     }
                 }
                 success = true;
@@ -157,13 +157,13 @@ namespace Keebee.AAT.Administrator.Controllers
             catch (Exception ex)
             {
                 success = false;
-                errorMessage = ex.Message;
+                errMsg = ex.Message;
             }
 
             return Json(new
             {
                 Success = success,
-                ErrorMessage = errorMessage,
+                ErrorMessage = !string.IsNullOrEmpty(errMsg) ? errMsg : null,
                 FileList = GetFiles(residentId)
             }, JsonRequestBehavior.AllowGet);
         }
@@ -278,7 +278,7 @@ namespace Keebee.AAT.Administrator.Controllers
             return Json(new
             {
                 Success = success,
-                ErrorMessage = errMsg,
+                ErrorMessage = !string.IsNullOrEmpty(errMsg) ? errMsg : null,
                 FileList = GetFiles(residentId)
             }, JsonRequestBehavior.AllowGet);
         }

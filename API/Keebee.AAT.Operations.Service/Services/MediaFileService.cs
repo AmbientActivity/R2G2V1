@@ -35,7 +35,11 @@ namespace Keebee.AAT.Operations.Service.Services
 
             var media = container.MediaFiles.ByKey(streamId);
 
-            return media.GetValue();
+            MediaFile result;
+            try { result = media.GetValue(); }
+            catch { result = null; }
+
+            return result;
         }
 
         public IEnumerable<MediaFile> GetForResident(int residentId)

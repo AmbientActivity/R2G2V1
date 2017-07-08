@@ -118,11 +118,13 @@ function DisableScreen() {
                                 var node = element.childNodes[index];
                                 if (node.nodeType === 1) {
                                     var id = node.id.replace("row_", "");
+
                                     var tooltipElement = $("#thumb_" + id);
                                     if (tooltipElement.length > 0)
                                         tooltipElement.tooltip({ delay: { show: 100, hide: 100 } });
                                 }
                             }
+
                             // if there are no rows in the table, hide the table and display a message
                             var table = element.parentNode;
                             var noMediaMessage = $("#no-records-message");

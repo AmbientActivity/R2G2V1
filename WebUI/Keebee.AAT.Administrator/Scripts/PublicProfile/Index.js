@@ -113,7 +113,6 @@ function DisableScreen() {
                     ko.bindingHandlers.tableRender = {
                         update: function (element, valueAccessor) {
                             ko.utils.unwrapObservable(valueAccessor());
-
                             for (var index = 0, length = element.childNodes.length; index < length; index++) {
                                 var node = element.childNodes[index];
                                 if (node.nodeType === 1) {

@@ -40,7 +40,7 @@
                 <button id="delete" type="button" class="btn btn-md btn-default media-delete-button" disabled data-bind="click: showDeleteSelectedDialog"><i class="glyphicon glyphicon-trash"></i></button>
             </li>
             <li>
-                <input id="txtSearchFilename" type="text" class="form-control" placeholder="Search" data-bind="value: filenameSearch, valueUpdate: 'keyup'" />
+                <input id="txtSearchFilename" type="text" class="form-control description-filter" placeholder="Search" data-bind="value: filenameSearch, valueUpdate: 'keyup'" />
             </li>
             <li>
                 <select id="ddlMediaPathTypes" class="form-control select-filter" data-bind="options: mediaPathTypes, optionsValue: 'id', optionsText: 'description', value: selectedMediaPathType"></select>
@@ -70,9 +70,9 @@
     <div class="panel-body panel-body-table-header">
         <!-- use separate table for sticky headers -->
         <div id="table-header" class="container table-header-container" hidden>
-            <table class="table table-bordered" id="tblFileHeader">
+            <table class="table" id="tblFileHeader">
                 <thead>
-                <tr>
+                <tr id="table-row-columns">
                     <th class="col-checkbox"><input class="form-control checkbox-size-lg" type="checkbox" id="chk_all" data-bind="checked: selectAllIsSelected, click: selectAllRows" /></th>
                     <th id="col-thumbnail" class="col-thumbnail"></th>
                     <!-- ko foreach: columns -->
@@ -97,7 +97,7 @@
                 <tr data-bind="attr: { id: 'row_' + id }">
                     <td class="col-checkbox"><input type="checkbox" class="form-control checkbox-size" data-bind="attr: { id: 'chk_' + id }, checked: isselected, click: $parent.selectFile"/></td>
                     <!-- ko if: !$parent.isAudio() -->
-                    <td data-bind="attr: {id: 'col-thumbnail-' + id }"class="col-thumbnail">
+                    <td class="col-thumbnail">
                         <a href="javascript:void(0)" data-toggle="tooltip" title="Preview it" data-bind="attr: { id: 'thumb_' + id }, click: $parent.showPreview">
                             <img alt="" width="40" height="40" data-bind="attr: { src: thumbnail }">
                         </a>

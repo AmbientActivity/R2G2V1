@@ -32,7 +32,7 @@
                 inProgessDialog.realize();
                 inProgessDialog.getModalHeader().hide();
                 inProgessDialog.getModalFooter().hide();
-                inProgessDialog.getModalBody().css("background-color", "#59a8d0");
+                inProgessDialog.getModalBody().addClass("btn-edit");
                 inProgessDialog.getModalBody().css("color", "#fff");
                 inProgessDialog.open();
             });

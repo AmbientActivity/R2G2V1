@@ -378,9 +378,15 @@ function DisableScreen() {
                             params: { mediaPathTypeId: self.selectedMediaPathType() }
                         })
                         .then(function (result) {
-                            self.addSharedFiles(result);
+                            result.dialog.close();
+
+                            // allow the first dialog to completely close for a smoother effect
+                            setTimeout(function () {
+                                self.addSharedFiles(result.streamIds);
+                            }, 500);
                         })
-                        .catch(function () {
+                        .catch(function (dialog) {
+                            dialog.close();
                             enableDetail();
                         });
                     };
@@ -602,7 +608,7 @@ function DisableScreen() {
                         });
                     };
 
-                    self.addSharedFiles = function (x) {
+                    self.addSharedFiles = function (streamIds) {
                         self.clearStreams();
 
                         utilities.job.execute(
@@ -612,7 +618,7 @@ function DisableScreen() {
                                 type: "POST",
                                 waitMessage: "Adding...",
                                 params: {
-                                    streamIds: x.streamIds,
+                                    streamIds: streamIds,
                                     mediaPathTypeId: self.selectedMediaPathType()
                                 }
                             })

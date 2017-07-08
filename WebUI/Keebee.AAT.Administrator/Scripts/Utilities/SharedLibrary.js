@@ -66,29 +66,22 @@
                                     {
                                         label: "Cancel",
                                         action: function(dialog) {
-                                            dialog.close();
-                                            reject();
+                                            reject(dialog);
                                         }
                                     }, {
                                         label: "OK",
                                         cssClass: "btn-primary",
                                         action: function (dialog) {
-                                            
                                             $("input[name='shared_files']:checked").each(function (item, value) {
                                                 ids.push(value.id);
                                             });
-
-                                            dialog.close();
+                                            resolve({ dialog: dialog, streamIds: ids });
                                         }
                                     }
                                 ]
                             });
                             sharedLibraryDialog.realize();
                             sharedLibraryDialog.open();
-                            $(document).on("hidden.bs.modal", "#shared-library-modal", function () {
-                                $(document).off("hidden.bs.modal", "#shared-library-modal");
-                                resolve({ streamIds: ids });
-                            });
                         }
                     })
                     .error(function (result) {
@@ -102,8 +95,7 @@
                                     label: "OK",
                                     cssClass: "btn-primary",
                                     action: function(dialog) {
-                                        dialog.close();
-                                        reject();
+                                        reject(dialog);
                                     }
                                 }
                             ]

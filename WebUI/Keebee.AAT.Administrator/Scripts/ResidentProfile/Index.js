@@ -353,7 +353,23 @@ function DisableScreen() {
                     });
 
                     self.showAddFromSharedLibrayDialog = function () {
-                        self.showSharedLibrayLinkDialog();
+                        utilities.sharedlibrary.show({
+                            controller: "ResidentProfile",
+                            mediaPathTypeDesc: self.mediaPathType().shortdescription,
+                            params: { residentId: config.residentid, mediaPathTypeId: self.selectedMediaPathType() }
+                        })
+                        .then(function (result) {
+                            result.dialog.close();
+
+                            // allow the first dialog to completely close for a smoother effect
+                            setTimeout(function () {
+                                self.addSharedFiles(result.streamIds);
+                            }, 500);
+                        })
+                        .catch(function (dialog) {
+                            dialog.close();
+                            enableDetail();
+                        });
                     };
 
                     self.showPreview = function (row) {
@@ -459,20 +475,6 @@ function DisableScreen() {
                             currentlyPlaying.isplaying = false;
                             self.setGlyph(currentlyPlaying.id, false, false);
                         }
-                    };
-
-                    self.showSharedLibrayLinkDialog = function () {
-                        utilities.sharedlibrary.show({
-                            controller: "ResidentProfile",
-                            mediaPathTypeDesc: self.mediaPathType().shortdescription,
-                            params: { residentId: config.residentid, mediaPathTypeId: self.selectedMediaPathType() }
-                        })
-                        .then(function (result) {
-                            self.addSharedFiles(result);
-                        })
-                        .catch(function () {
-                            enableDetail();
-                        });
                     };
 
                     self.showDeleteSelectedDialog = function () {
@@ -586,7 +588,7 @@ function DisableScreen() {
                         });
                     };
 
-                    self.addSharedFiles = function (x) {
+                    self.addSharedFiles = function (streamIds) {
                         self.clearStreams();
 
                         utilities.job.execute(
@@ -596,7 +598,7 @@ function DisableScreen() {
                                 type: "POST",
                                 waitMessage: "Adding...",
                                 params: {
-                                    streamIds: x.streamIds,
+                                    streamIds: streamIds,
                                     residentId: config.residentid,
                                     mediaPathTypeId: self.selectedMediaPathType()
                                 }

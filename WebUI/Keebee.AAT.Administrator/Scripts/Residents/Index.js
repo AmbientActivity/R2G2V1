@@ -86,8 +86,7 @@
 
                             $("#col-glyphicon_1").html("<div class='virtualPlaceholderGlyphicon'></div>");
                             $("#col-glyphicon_2").html("<div class='virtualPlaceholderGlyphicon'></div>");
-                            $("#col-glyphicon_3").html("<div class='virtualPlaceholderGlyphicon'></div>");
-                           
+                            $("#col-glyphicon_3").html("<div class='virtualPlaceholderGlyphicon'></div>");                         
 
                             if (table.rows.length > 0) {
                                 tableHeaderElement.show();
@@ -452,11 +451,11 @@
                         };
                     };
                 })
-            .error(function (data) {
+            .error(function (result) {
                 $("#loading-container").hide();
                 $("#error-container")
                     .html("<div><h2>Data load error:</h2></div>")
-                    .append(">div>" + data + "</div>")
+                    .append("<div>" + result.data + "</div>")
                     .append("<div><h3>Please try refreshing the page</h3></div>");
                 $("#error-container").show();
             });

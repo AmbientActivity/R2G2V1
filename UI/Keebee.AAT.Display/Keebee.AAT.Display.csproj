@@ -76,6 +76,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Caregiver\Helpers\ActivityThumbnail.cs" />
     <Compile Include="Caregiver\Helpers\MediaFileQuery.cs" />
     <Compile Include="Caregiver\Helpers\ThumbnailHelper.cs" />
     <Compile Include="Caregiver\InteractiveActivityPlayer.cs">

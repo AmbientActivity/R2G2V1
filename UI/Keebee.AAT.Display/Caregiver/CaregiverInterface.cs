@@ -79,6 +79,7 @@ namespace Keebee.AAT.Display.Caregiver
         private ImageList _imageListImagesPersonal;
         private ImageList _imageListTVShows;
         private ImageList _imageListHomeMovies;
+        private ImageList _imageListActivities;
         private readonly ImageList _imageListAudio;
 
         private IEnumerable<ResponseTypePaths> _media;
@@ -304,6 +305,11 @@ namespace Keebee.AAT.Display.Caregiver
             lvActivities.View = View.Details;
             lvActivities.ColorListViewHeader(Color.SteelBlue, Color.White);
 
+            _imageListActivities = new ImageList
+            {
+                ImageSize = new Size(ThumbnailDimensions, ThumbnailDimensions)
+            };
+            lvActivities.SmallImageList = _imageListActivities;
             lvActivities.Columns.Add("", ThumbnailDimensions);
             lvActivities.Columns.Add("GameDifficultyLevel", 0);
             lvActivities.Columns.Add("Description", ListViewActivitiesColWidthName);
@@ -618,6 +624,14 @@ namespace Keebee.AAT.Display.Caregiver
                     {
                         BackColor = ((rowIndex & 1) == 0) ? Color.AliceBlue : Color.White
                     });
+
+                    var image = ActivityThumbnail.Get(rt.InteractiveActivityType.Id);
+                    if (image != null)
+                    {
+                        _imageListActivities.Images.Add(image);
+                        lvActivities.Items[rowIndex].ImageIndex = rowIndex;
+                    }
+
                     rowIndex++;
                 }
             }

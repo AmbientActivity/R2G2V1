@@ -278,6 +278,7 @@ video {
 }
 .table#tblResidentHeader > thead > tr > th {
     padding: 0 5px 0 5px;
+    border-bottom: 1px solid #ddd;
 }
 .table#tblResident > tbody > tr > td {
     padding: 5px 8px 5px 8px;
@@ -374,7 +375,11 @@ input[type="checkbox"] {
     width: 40px;
     background: transparent;
 }
-
+.virtualPlaceholderProfilePic {
+    display: block;
+    width: 45px;
+    background: transparent;
+}
 /* table columns */
 .col-checkbox {
     width: 1%;
@@ -428,12 +433,12 @@ input[type="checkbox"] {
 
 /* resident table */
 .col-glyphicon {
-    width: 5%;
+    width: 4%;
     text-align: center;
 }
 .virtualPlaceholderGlyphicon {
     display: block;
-    width: 16px;
+    width: 30px;
     background: transparent;
 }
 .col-firstname {
@@ -443,28 +448,29 @@ input[type="checkbox"] {
     width: 25%;
 }
 .col-id {
-    width: 7%;
+    width: 6%;
 }
 .col-gender {
-    width: 6%;
+    width: 5%;
     text-align: center;
 }
 .col-capturable {
-    width: 7%;
+    width: 5%;
+    text-align: center;
+}
+.col-capturable-scrollbar {
+    width: 5%;
     text-align: center;
 }
 .col-date {
-    width: 15%;
+    width: 12%;
     text-align: center;
 }
 .col-profile-picture {
     width: 10%;
     text-align: center;
 }
-.col-profile-picture-scrollbar {
-    width: 10.1%;
-    text-align: center;
-}
+
 /* font-awesome */
 .fa-lg {
     font-size: 23px;
@@ -481,7 +487,7 @@ input[type="checkbox"] {
     color: transparent;
 }
 .glyphicon-lg {
-    font-size: 20px;
+    font-size: 18px;
     padding-right: 5px;
 }
 .glyphicon-play, .glyphicon-pause {

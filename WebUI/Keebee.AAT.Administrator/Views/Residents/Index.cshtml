@@ -63,10 +63,10 @@
                     <th id="col-glyphicon_3" class="col-glyphicon"></th>
                     <!-- ko foreach: columns -->
                     <!-- ko if: sortKey === 'allowvideocapturing' -->
-                    <th data-bind="click: $parent.sort({ sortKey: 'allowvideocapturing', boolean: true }), attr: { id: 'resident-col-' + sortKey }, css: cssClass"><a href="javascript:void(0)"><span class="glyphicon glyphicon-facetime-video glyphicon-lg"></span></a></th>
+                    <th data-bind="click: $parent.sort({ sortKey: 'allowvideocapturing', boolean: true }), attr: { id: cssClass }, css: cssClass"><a href="javascript:void(0)"><span class="glyphicon glyphicon-facetime-video glyphicon-lg"></span></a></th>
                     <!-- /ko -->
                     <!-- ko if: sortKey === 'gender' -->
-                    <th data-bind="click: $parent.sort({ sortKey: 'gender', boolean: true }), attr: { id: 'resident-col-' + sortKey }, css: cssClass"><a href="javascript:void(0)"><i class="fi-male-female fi-lg"></i></a></th>
+                    <th data-bind="click: $parent.sort({ sortKey: 'gender', boolean: true }), attr: { id: cssClass }, css: cssClass"><a href="javascript:void(0)"><i class="fi-male-female fi-lg"></i></a></th>
                     <!-- /ko -->
                     <!-- ko if: sortKey !== 'allowvideocapturing' && sortKey !== 'gender' -->
                     <!-- ko if: sortKey !== 'dateupdated' -->
@@ -88,9 +88,9 @@
             <table data-bind="tableUpdated: residentsTable" class="table table-striped table-bordered table-hover" id="tblResident">
                 <tbody data-bind="foreach: residentsTable, tableRender: residentsTable">
                 <tr data-bind="click: $parent.highlightRow, attr: {id: 'row_' +  id}">
-                    <td class="col-glyphicon glyphicon-lg"><a href="javascript:void(0)" data-toggle="tooltip" title="Delete resident" data-bind="attr: { id: 'delete_' + id }, click: $parent.delete"><span class="glyphicon glyphicon-trash"></span></a></td>
-                    <td class="col-glyphicon glyphicon-lg"><a href="javascript:void(0)" data-toggle="tooltip" title="Edit resident details" data-bind="attr: { id: 'edit_' + id }, click: $parent.edit"><span class="glyphicon glyphicon-pencil"></span></a></td>
-                    <td class="col-glyphicon glyphicon-lg"><a href="javascript:void(0)" data-toggle="tooltip" title="Manage resident media" data-bind="attr: { id: 'profile_' + id }, click: $parent.editProfile"><span class="glyphicon glyphicon-cd"></span></a></td>    
+                    <td class="col-glyphicon"><a href="javascript:void(0)" data-toggle="tooltip" title="Delete resident" data-bind="attr: { id: 'delete_' + id }, click: $parent.delete"><span class="glyphicon glyphicon-trash glyphicon-lg"></span></a></td>
+                    <td class="col-glyphicon"><a href="javascript:void(0)" data-toggle="tooltip" title="Edit resident details" data-bind="attr: { id: 'edit_' + id }, click: $parent.edit"><span class="glyphicon glyphicon-pencil glyphicon-lg"></span></a></td>
+                    <td class="col-glyphicon"><a href="javascript:void(0)" data-toggle="tooltip" title="Manage resident media" data-bind="attr: { id: 'profile_' + id }, click: $parent.editProfile"><span class="glyphicon glyphicon-cd glyphicon-lg"></span></a></td>    
                     <td class="col-firstname" data-bind="text: firstname"></td>
                     <td class="col-lastname" data-bind="text: lastname"></td>
                     <td class="col-id" data-bind="text: id"></td>
@@ -111,10 +111,10 @@
                     <td class="col-date" data-bind="text: moment(dateupdated).format('ll')"></td>
                     <td class="col-profile-picture">
                         <!-- ko if: profilepicture === null -->
-                        <img data-bind="attr: { src: profilepictureplaceholder }" alt="" width="40" height="40" class="img-circle">
+                        <img data-bind="attr: { src: profilepictureplaceholder }" alt="" width="45" height="45" class="img-circle">
                         <!-- /ko -->
                         <!-- ko if: profilepicture !== null -->
-                        <img data-bind="attr: { src: profilepicture }" alt="" width="40" height="40" class="img-circle">
+                        <img data-bind="attr: { src: profilepicture }" alt="" width="45" height="45" class="img-circle">
                         <!-- /ko -->
                     </td>
                 </tr>

@@ -87,7 +87,7 @@
                             $("#col-glyphicon_1").html("<div class='virtualPlaceholderGlyphicon'></div>");
                             $("#col-glyphicon_2").html("<div class='virtualPlaceholderGlyphicon'></div>");
                             $("#col-glyphicon_3").html("<div class='virtualPlaceholderGlyphicon'></div>");
-                            $("#col-profile-picture").html("<div class='virtualPlaceholderImage'></div>");
+                           
 
                             if (table.rows.length > 0) {
                                 tableHeaderElement.show();
@@ -98,18 +98,18 @@
                                 // if so, unhide the scrollbar header column
                                 // and adjust the width of the profile picture column
                                 var colScrollbar = $("#col-scrollbar");
-                                var colProfilePicture = $("#col-profile-picture");
+                                var colCapturable = $("#col-capturable");
 
                                 if (table.clientHeight > site.getMaxClientHeight) {
                                     colScrollbar.prop("hidden", false);
                                     colScrollbar.attr("style", "width: 1%;");
-                                    colProfilePicture.removeClass("col-profile-picture");
-                                    colProfilePicture.addClass("col-profile-picture-scrollbar");
+                                    colCapturable.removeClass("col-capturable");
+                                    colCapturable.addClass("col-capturable-scrollbar");
                                     tableDetailElement.addClass("container-height");
                                 } else {
                                     colScrollbar.prop("hidden", true);
-                                    colProfilePicture.removeClass("col-profile-picture-scrollbar");
-                                    colProfilePicture.addClass("col-profile-picture");
+                                    colCapturable.removeClass("col-capturable-scrollbar");
+                                    colCapturable.addClass("col-capturable");
                                     tableDetailElement.removeClass("container-height");
                                 }
 

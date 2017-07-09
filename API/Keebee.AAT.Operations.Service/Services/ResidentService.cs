@@ -44,9 +44,10 @@ namespace Keebee.AAT.Operations.Service.Services
         public Resident GetByNameGender(string firstName, string lastName, string gender)
         {
             var container = new Container(new Uri(ODataHost.Url));
+            var lastname = lastName == null ? "null" : $"'{lastName}'";
 
             var residents = container.Residents
-                .AddQueryOption("$filter", $"FirstName eq '{firstName}' and LastName eq '{lastName}' and Gender eq '{gender}'")
+                .AddQueryOption("$filter", $"FirstName eq '{firstName}' and LastName eq {lastname} and Gender eq '{gender}'")
                 .Expand("MediaFiles($expand=MediaFile)")
                 .ToList();
 
@@ -93,8 +94,7 @@ namespace Keebee.AAT.Operations.Service.Services
             if (resident.FirstName != null)
                 r.FirstName = resident.FirstName;
 
-            if (resident.LastName != null)
-                r.LastName = resident.LastName;
+            r.LastName = resident.LastName;
 
             if (resident.Gender != null)
                 r.Gender = resident.Gender;

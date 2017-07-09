@@ -41,7 +41,7 @@ namespace Keebee.AAT.BusinessRules
             if (resident.Id == 0) return msgs.Count > 0 ? msgs : null;
 
             var g = (gender == "M") ? "male" : "female";
-            var residentName = (lastName.Length > 0) ? $"{firstName} {lastName}" : firstName;
+            var residentName = lastName != null ? $"{firstName} {lastName}" : firstName;
 
             msgs.Add($"A {g} resident with the name '{residentName}' already exists");
 

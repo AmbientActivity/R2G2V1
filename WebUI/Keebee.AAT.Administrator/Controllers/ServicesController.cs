@@ -46,6 +46,7 @@ namespace Keebee.AAT.Administrator.Controllers
 
             return Json(new
             {
+                Success = true,
                 ErrorMessage = msg,
                 ServiceSettings = new ServicesViewModel
                 {

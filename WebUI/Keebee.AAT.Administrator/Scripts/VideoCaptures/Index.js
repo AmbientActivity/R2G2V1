@@ -165,9 +165,12 @@
                     };
                 };
             })
-            .error(function () {
+            .error(function (data) {
                 $("#loading-container").hide();
-                $("#error-container").html("<div><h3>Data load error.  Please try refreshing the page</h3></div>");
+                $("#error-container")
+                    .html("<div><h2>Data load error:</h2></div>")
+                    .append(">div>" + data + "</div>")
+                    .append("<div><h3>Please try refreshing the page</h3></div>");
                 $("#error-container").show();
             });
         }

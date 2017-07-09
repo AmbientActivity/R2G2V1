@@ -91,7 +91,7 @@ namespace Keebee.AAT.Administrator.Controllers
                     }
                 }
 
-                success = true;
+                success = string.IsNullOrEmpty(errMsg);
             }
             catch (Exception ex)
             {
@@ -102,7 +102,7 @@ namespace Keebee.AAT.Administrator.Controllers
             return Json(new
             {
                 Success = success,
-                ErrorMessage = !string.IsNullOrEmpty(errMsg) ? errMsg : null,
+                ErrorMessage = !success ? errMsg : null,
                 FileList = GetMediaFiles()
             }, JsonRequestBehavior.AllowGet);
         }
@@ -159,7 +159,7 @@ namespace Keebee.AAT.Administrator.Controllers
                         errMsg = _publicMediaFilesClient.Post(pmf, out newId);
                     }
                 }
-                success = true;
+                success = string.IsNullOrEmpty(errMsg);
             }
             catch (Exception ex)
             {
@@ -170,7 +170,7 @@ namespace Keebee.AAT.Administrator.Controllers
             return Json(new
             {
                 Success = success,
-                ErrorMessage = !string.IsNullOrEmpty(errMsg) ? errMsg : null,
+                ErrorMessage = !success ? errMsg : null,
                 FileList = GetMediaFiles()
             }, JsonRequestBehavior.AllowGet);
         }

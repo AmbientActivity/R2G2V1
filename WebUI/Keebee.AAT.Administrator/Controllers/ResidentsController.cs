@@ -7,7 +7,6 @@ using Keebee.AAT.MessageQueuing;
 using Keebee.AAT.ApiClient.Clients;
 using Keebee.AAT.ApiClient.Models;
 using Keebee.AAT.Administrator.Extensions;
-using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -75,18 +74,31 @@ namespace Keebee.AAT.Administrator.Controllers
 
         [HttpPost]
         [Authorize]
-        public JsonResult Save(string resident)
+        public JsonResult Validate(ResidentEditViewModel resident)
         {
-            var r = JsonConvert.DeserializeObject<ResidentEditViewModel>(resident);
-            var residentId = r.Id;
+            var rules = new ResidentRules();
+            var errMsgs = rules.Validate(resident.FirstName, resident.LastName, resident.Gender, resident.Id == 0);
+
+            return Json(new
+            {
+                Success = true,
+                ErrorMessages = errMsgs,
+            }, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        [Authorize]
+        public JsonResult Save(ResidentEditViewModel resident)
+        {
+            var residentId = resident.Id;
 
             var errorMsg = residentId > 0 
-                ? UpdateResident(r) 
-                : AddResident(r, out residentId);
+                ? UpdateResident(resident) 
+                : AddResident(resident, out residentId);
 
             var residentList = GetResidentList().ToArray();
 
-            var success = (null == errorMsg) && (residentId > 0);
+            var success = (null == errorMsg);
             if (success)
             {
                 if (ServiceUtilities.IsInstalled(ServiceUtilities.ServiceType.BluetoothBeaconWatcher))
@@ -101,7 +113,6 @@ namespace Keebee.AAT.Administrator.Controllers
                 ResidentList = residentList,
                 SelectedId = residentId,
                 Success = success,
-                ValidationMessages = string.Empty,
                 ErrorMessage = errorMsg
             }, JsonRequestBehavior.AllowGet);
         }
@@ -178,24 +189,6 @@ namespace Keebee.AAT.Administrator.Controllers
             webImg.Resize(96, 96, true, true).Crop(1, 1);
 
             return Convert.ToBase64String(croppedImage.GetBytes());
-        }
-
-        [HttpPost]
-        [Authorize]
-        public JsonResult Validate(string resident)
-        {
-            var r = JsonConvert.DeserializeObject<ResidentEditViewModel>(resident);
-            var rules = new ResidentRules();
-
-            IEnumerable<string> validateMsgs = rules.Validate(r.FirstName, r.LastName, r.Gender, r.Id == 0);
-
-            var success = (null == validateMsgs);
-
-            return Json(new
-            {
-                Success = success,
-                ValidationMessages = validateMsgs,
-            }, JsonRequestBehavior.AllowGet);
         }
 
         private static ResidentsViewModel LoadResidentsViewModel(
@@ -283,7 +276,7 @@ namespace Keebee.AAT.Administrator.Controllers
             var r = new Resident
             {
                 FirstName = residentDetail.FirstName,
-                LastName = residentDetail.LastName,
+                LastName = !string.IsNullOrEmpty(residentDetail.LastName) ? residentDetail.LastName : null,
                 Gender = residentDetail.Gender,
                 GameDifficultyLevel = residentDetail.GameDifficultyLevel,
                 AllowVideoCapturing = residentDetail.AllowVideoCapturing,
@@ -305,7 +298,7 @@ namespace Keebee.AAT.Administrator.Controllers
                 msg = _residentsClient.Post(new Resident
                 {
                     FirstName = residentDetail.FirstName,
-                    LastName = residentDetail.LastName,
+                    LastName = !string.IsNullOrEmpty(residentDetail.LastName) ? residentDetail.LastName : null,
                     Gender = residentDetail.Gender,
                     GameDifficultyLevel = residentDetail.GameDifficultyLevel,
                     AllowVideoCapturing = residentDetail.AllowVideoCapturing,

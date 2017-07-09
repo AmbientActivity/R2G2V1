@@ -4,10 +4,11 @@ using Keebee.AAT.BusinessRules;
 using Keebee.AAT.Shared;
 using Keebee.AAT.ApiClient.Clients;
 using Keebee.AAT.ApiClient.Models;
+using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Web.Mvc;
-using Newtonsoft.Json;
 
 namespace Keebee.AAT.Administrator.Controllers
 {
@@ -65,30 +66,61 @@ namespace Keebee.AAT.Administrator.Controllers
 
         [HttpPost]
         [Authorize]
-        public JsonResult Save(string config, int selectedConfigId)
+        public JsonResult Validate(ConfigEditViewModel config, int selectedConfigId)
         {
-            var c = JsonConvert.DeserializeObject<ConfigEditViewModel>(config);
-            var configid = c.Id;
-            var rules = new PhidgetConfigRules();
+            IEnumerable<string> errMsgs;
 
-            var msgs = rules.Validate(c.Description, configid == 0);
-
-            if (msgs == null)
+            try
             {
-                if (configid > 0)
-                    UpdateConfig(c);
-                else
-                    configid = AddConfig(c, selectedConfigId);
+                var configid = config.Id;
+                var rules = new PhidgetConfigRules();
+
+                errMsgs = rules.Validate(config.Description, configid == 0);
+            }
+            catch (Exception ex)
+            {
+                errMsgs = new Collection<string> { ex.Message };
             }
 
-            var configs = _configsClient.Get().ToArray();
+            return Json(new
+            {
+                Success = true,
+                ErrorMessages = errMsgs
+            }, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        [Authorize]
+        public JsonResult Save(ConfigEditViewModel config, int selectedConfigId)
+        {
+            string errMsg;
+            var configs = new Config[0];
+            var configid = -1;
+
+            try
+            {
+                configid = config.Id;
+
+                errMsg = configid > 0 
+                    ? UpdateConfig(config) 
+                    : AddConfig(config, selectedConfigId, out configid);
+
+                configs = _configsClient.Get().ToArray();
+            }
+            catch (Exception ex)
+            {
+                errMsg = ex.Message;
+            }
+
+            var success = string.IsNullOrEmpty(errMsg);
+
             return Json(new
             {
                 SelectedId = configid,
                 ConfigList = GetConfigList(configs),
                 ConfigDetailList = GetConfigDetailList(configs),
-                Success = (null == msgs),
-                ErrorMessages = msgs
+                Success = success,
+                ErrorMessage = errMsg
             }, JsonRequestBehavior.AllowGet);
         }
 
@@ -96,41 +128,80 @@ namespace Keebee.AAT.Administrator.Controllers
         [Authorize]
         public JsonResult Delete(int id)
         {
-            _configsClient.Delete(id);
+            string errMsg;
 
-            var configs = _configsClient.Get().ToArray();
+            try
+            {
+                errMsg = _configsClient.Delete(id);
+            }
+            catch (Exception ex)
+            {
+                errMsg = ex.Message;
+            }
+
+            var success = string.IsNullOrEmpty(errMsg);
             return Json(new
             {
-                ConfigList = GetConfigList(configs),
-                Success = true,
+                ConfigList = GetConfigList(_configsClient.Get().ToArray()),
+                ErrorMessage = !success ? errMsg : null,
+                Success = success,
             }, JsonRequestBehavior.AllowGet);
         }
 
         [HttpPost]
         [Authorize]
-        public JsonResult SaveDetail(string configDetail)
+        public JsonResult ValidateDetail(ConfigDetailEditViewModel configDetail)
         {
-            var cd = JsonConvert.DeserializeObject<ConfigDetailEditViewModel>(configDetail);
-            var configDetailid = cd.Id;
-            var configurationRules = new PhidgetConfigRules();
+            IEnumerable<string> errMsgs;
 
-            var msgs = configurationRules.ValidateDetail(cd.Description, cd.PhidgetTypeId, cd.PhidgetStyleTypeId);
-
-            if (msgs == null)
+            try
             {
-                if (configDetailid > 0)
-                    UpdateConfigDetail(cd);
-                else
-                    configDetailid = AddConfigDetail(cd);
+                var configurationRules = new PhidgetConfigRules();
+
+                errMsgs = configurationRules.ValidateDetail(configDetail.Description, configDetail.PhidgetTypeId, configDetail.PhidgetStyleTypeId);
+            }
+            catch (Exception ex)
+            {
+                errMsgs = new Collection<string> { ex.Message };
             }
 
-            var configs = _configsClient.Get().ToArray();
+            return Json(new
+            {
+                Success = true,
+                ErrorMessages = errMsgs
+            }, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        [Authorize]
+        public JsonResult SaveDetail(ConfigDetailEditViewModel configDetail)
+        {
+            string errMsg;
+            var configDetailid = 0;
+            var configs = new Config[0];
+
+            try
+            {
+                configDetailid = configDetail.Id;
+
+                errMsg = configDetailid > 0 
+                    ? UpdateConfigDetail(configDetail) 
+                    : AddConfigDetail(configDetail, out configDetailid);
+
+                configs = _configsClient.Get().ToArray();
+            }
+            catch (Exception ex)
+            {
+                errMsg = ex.Message;
+            }
+
+            var success = string.IsNullOrEmpty(errMsg);
             return Json(new
             {
                 ConfigDetailList = GetConfigDetailList(configs),
                 SelectedId = configDetailid,
-                Success = (null == msgs),
-                ErrorMessages = msgs
+                Success = success,
+                ErrorMessages = errMsg
             }, JsonRequestBehavior.AllowGet);
         }
 
@@ -138,16 +209,29 @@ namespace Keebee.AAT.Administrator.Controllers
         [Authorize]
         public JsonResult DeleteDetail(int id, int configId, bool isActive)
         {
-            _configsClient.DeleteDetail(id);
+            string errMsg;
+            var configs = new Config[0];
 
-            if (isActive)
-                SendNewConfiguration(configId);
+            try
+            {
+                errMsg = _configsClient.DeleteDetail(id);
 
-            var configs = _configsClient.Get().ToArray();
+                if (isActive)
+                    SendNewConfiguration(configId);
+
+                configs = _configsClient.Get().ToArray();
+            }
+            catch (Exception ex)
+            {
+                errMsg = ex.Message;
+            }
+
+            var success = string.IsNullOrEmpty(errMsg);
             return Json(new
             {
                 ConfigDetailList = GetConfigDetailList(configs),
-                Success = true,
+                ErrorMessage = !success ? errMsg : null,
+                Success = success,
             }, JsonRequestBehavior.AllowGet);
         }
 
@@ -267,73 +351,116 @@ namespace Keebee.AAT.Administrator.Controllers
             return vm;
         }
 
-        private void UpdateConfig(ConfigViewModel config)
+        private string UpdateConfig(ConfigViewModel config)
         {
-            var c = new ConfigEdit
+            string errMsg;
+
+            try
             {
-                Description = config.Description,
-                IsActiveEventLog = config.IsActiveEventLog
-            };
+                var c = new ConfigEdit
+                {
+                    Description = config.Description,
+                    IsActiveEventLog = config.IsActiveEventLog
+                };
 
-            _configsClient.Patch(config.Id, c);
+                errMsg = _configsClient.Patch(config.Id, c);
 
-            if(config.IsActive)
-                SendNewConfiguration(config.Id);
+                if (config.IsActive)
+                    SendNewConfiguration(config.Id);
+            }
+            catch (Exception ex)
+            {
+                errMsg = ex.Message;
+            }
+
+            return errMsg;
         }
 
-        private int AddConfig(ConfigViewModel config, int selectedConfigId)
+        private string AddConfig(ConfigViewModel config, int selectedConfigId, out int newId)
         {
-            // config
-            var newConfig = new ConfigEdit
+            string errMsg;
+            newId = -1;
+
+            try
             {
-                Description = config.Description,
-                IsActiveEventLog = config.IsActiveEventLog
-            };
+                // duplicate config
+                var newConfig = new ConfigEdit
+                {
+                    Description = config.Description,
+                    IsActiveEventLog = config.IsActiveEventLog
+                };
 
-            var newId = _configsClient.Post(newConfig);
+                errMsg = _configsClient.Post(newConfig, out newId);
+                if (!string.IsNullOrEmpty(errMsg))
+                    throw new Exception(errMsg);
 
-            // config details
-            var rules = new PhidgetConfigRules();
-            rules.DuplicateConfigDetails(selectedConfigId, newId);
+                // duplicate config details
+                var rules = new PhidgetConfigRules();
+                errMsg = rules.DuplicateConfigDetails(selectedConfigId, newId);
+            }
+            catch (Exception ex)
+            {
+                errMsg = ex.Message;
+            }
 
-            return newId;
+            return errMsg;
         }
 
-        private void UpdateConfigDetail(ConfigDetailEditViewModel configDetail)
+        private string UpdateConfigDetail(ConfigDetailEditViewModel configDetail)
         {
-            var cd = new ConfigDetailEdit
+            string errMsg;
+            try
             {
-                Description = configDetail.Description,
-                Location = configDetail.Location,
-                PhidgetTypeId = configDetail.PhidgetTypeId,
-                PhidgetStyleTypeId = configDetail.PhidgetStyleTypeId,
-                ResponseTypeId = configDetail.ResponseTypeId
-            };
+                var cd = new ConfigDetailEdit
+                {
+                    Description = configDetail.Description,
+                    Location = configDetail.Location,
+                    PhidgetTypeId = configDetail.PhidgetTypeId,
+                    PhidgetStyleTypeId = configDetail.PhidgetStyleTypeId,
+                    ResponseTypeId = configDetail.ResponseTypeId
+                };
 
-            _configsClient.PatchDetail(configDetail.Id, cd);
+                errMsg = _configsClient.PatchDetail(configDetail.Id, cd);
+                if (errMsg != null) return errMsg;
 
-            if (configDetail.IsActive)
-                SendNewConfiguration(configDetail.ConfigId);
+                if (configDetail.IsActive)
+                    SendNewConfiguration(configDetail.ConfigId);
+            }
+            catch (Exception ex)
+            {
+                errMsg = ex.Message;
+            }
+
+            return errMsg;
         }
 
-        private int AddConfigDetail(ConfigDetailEditViewModel configDetail)
+        private string AddConfigDetail(ConfigDetailEditViewModel configDetail, out int newId)
         {
-            var cd = new ConfigDetailEdit
+            newId = -1;
+            string errMsg;
+
+            try
             {
-                ConfigId = configDetail.ConfigId,
-                Description = configDetail.Description,
-                Location = configDetail.Location,
-                PhidgetTypeId = configDetail.PhidgetTypeId,
-                PhidgetStyleTypeId = configDetail.PhidgetStyleTypeId,
-                ResponseTypeId = configDetail.ResponseTypeId
-            };
+                var cd = new ConfigDetailEdit
+                {
+                    ConfigId = configDetail.ConfigId,
+                    Description = configDetail.Description,
+                    Location = configDetail.Location,
+                    PhidgetTypeId = configDetail.PhidgetTypeId,
+                    PhidgetStyleTypeId = configDetail.PhidgetStyleTypeId,
+                    ResponseTypeId = configDetail.ResponseTypeId
+                };
 
-            var id = _configsClient.PostDetail(cd);
+                errMsg = _configsClient.PostDetail(cd, out newId);
 
-            if (configDetail.IsActive)
-                SendNewConfiguration(configDetail.ConfigId);
-
-            return id;
+                if (configDetail.IsActive)
+                    SendNewConfiguration(configDetail.ConfigId);
+            }
+            catch (Exception ex)
+            {
+                errMsg = ex.Message;
+            }
+            return errMsg;
         }
 
         private void SendNewConfiguration(int configId)

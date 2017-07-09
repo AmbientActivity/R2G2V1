@@ -30,10 +30,11 @@
                 });
 
                 inProgessDialog.realize();
+                inProgessDialog.getModalContent().css("width", "auto");
                 inProgessDialog.getModalHeader().hide();
                 inProgessDialog.getModalFooter().hide();
                 inProgessDialog.getModalBody().addClass("btn-edit");
-                inProgessDialog.getModalBody().css("color", "#fff");
+                inProgessDialog.getModalBody().css("color", "#fff");  
                 inProgessDialog.open();
             });
         }

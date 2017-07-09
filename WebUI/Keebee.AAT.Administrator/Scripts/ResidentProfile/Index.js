@@ -353,21 +353,39 @@ function DisableScreen() {
                     });
 
                     self.showAddFromSharedLibrayDialog = function () {
+                        self.clearStreams();
+
                         utilities.sharedlibrary.show({
                             controller: "ResidentProfile",
                             mediaPathTypeDesc: self.mediaPathType().shortdescription,
                             params: { residentId: config.residentid, mediaPathTypeId: self.selectedMediaPathType() }
                         })
                         .then(function (result) {
-                            result.dialog.close();
-
-                            // allow the first dialog to completely close for a smoother effect
-                            setTimeout(function () {
-                                self.addSharedFiles(result.streamIds);
-                            }, 500);
+                            utilities.job.execute({
+                                controller: "ResidentProfile",
+                                action: "AddSharedMediaFiles",
+                                type: "POST",
+                                waitMessage: "Adding...",
+                                params: {
+                                    streamIds: result.streamIds,
+                                    residentId: config.residentid,
+                                    mediaPathTypeId: self.selectedMediaPathType()
+                                }
+                            })
+                            .then(function (saveResult) {
+                                result.dialog.close();
+                                lists.FileList = saveResult.FileList;
+                                createFileArray(lists.FileList);
+                                self.sort({ afterSave: true });
+                                self.selectedIds([]);
+                                self.checkSelectAll(false);
+                                enableDetail();
+                            })
+                            .catch(function () {
+                                enableDetail();
+                            });
                         })
-                        .catch(function (dialog) {
-                            dialog.close();
+                        .catch(function () {
                             enableDetail();
                         });
                     };
@@ -586,34 +604,6 @@ function DisableScreen() {
                         .catch(function() {
                             enableDetail();
                         });
-                    };
-
-                    self.addSharedFiles = function (streamIds) {
-                        self.clearStreams();
-
-                        utilities.job.execute(
-                            {
-                                controller: "ResidentProfile",
-                                action: "AddSharedMediaFiles",
-                                type: "POST",
-                                waitMessage: "Adding...",
-                                params: {
-                                    streamIds: streamIds,
-                                    residentId: config.residentid,
-                                    mediaPathTypeId: self.selectedMediaPathType()
-                                }
-                            })
-                            .then(function(result) {
-                                lists.FileList = result.FileList;
-                                createFileArray(lists.FileList);
-                                self.sort({ afterSave: true });
-                                self.selectedIds([]);
-                                self.checkSelectAll(false);
-                                enableDetail();
-                            })
-                            .catch(function() {
-                                enableDetail();
-                            });
                     };
 
                     self.checkSelectAll = function (checked) {

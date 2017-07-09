@@ -74,9 +74,6 @@ namespace Keebee.AAT.Operations.Service.Services
             resident.DateCreated = DateTime.Now;
             resident.DateUpdated = DateTime.Now;
 
-            if (resident.LastName.Length == 0)
-                resident.LastName = null;
-
             if (resident.ProfilePicture == null)
                 resident.ProfilePicture = new byte[0];
 
@@ -96,9 +93,8 @@ namespace Keebee.AAT.Operations.Service.Services
             if (resident.FirstName != null)
                 r.FirstName = resident.FirstName;
 
-            r.LastName = (resident.LastName.Length > 0) 
-                ? resident.LastName
-                : null;
+            if (resident.LastName != null)
+                r.LastName = resident.LastName;
 
             if (resident.Gender != null)
                 r.Gender = resident.Gender;

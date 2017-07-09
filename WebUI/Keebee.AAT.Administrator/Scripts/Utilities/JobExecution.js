@@ -15,7 +15,7 @@
                 type: "GET",
                 dataType: "json",
                 title: null,
-                waitMessage: "One moment...",
+                waitMessage: null,
                 successVerbage: null,
                 params: {}
             };
@@ -24,77 +24,101 @@
                 if (options.controller === null) reject("Controller name cannot be null");
                 if (options.action === null) reject("Action name cannot be null");
                 if (options.title === null) reject("Title cannot be null");
-                if (options.waitMessage === null) reject("Wait Message cannot be null");
             }
 
             $.extend(config, options);
 
-            return new Promise(function(resolve, reject) {
-                utilities.inprogress.show({ message: config.waitMessage })
-                    .then(function(dialog) {
-                        $.ajax({
-                            type: config.type,
-                            url: site.url + config.controller + "/" + config.action,
-                            dataType: config.dataType,
-                            data: config.params,
-                            success: function (data) {
-                                dialog.close();
-
-                                if (data.ErrorMessage === null) {
-                                    if (config.successVerbage !== null) {
-                                        BootstrapDialog.show({
-                                            title: "Success",
-                                            closable: false,
-                                            type: BootstrapDialog.TYPE_SUCCESS,
-                                            message: config.successVerbage,
-                                            buttons: [
-                                                {
-                                                    label: "Close",
-                                                    action: function(dlg) {
-                                                        dlg.close();
-                                                    }
-                                                }
-                                            ]
-                                        });
-                                    }
+            return new Promise(function (resolve, reject) {
+                if (config.waitMessage !== null) {
+                    utilities.inprogress.show({ message: config.waitMessage })
+                        .then(function(dialog) {
+                            execute(dialog)
+                                .then(function(data) {
                                     resolve(data);
-                                } else {
+                                })
+                                .catch(function() {
+                                    reject();
+                                });
+                        });
+                } else {
+                    execute()
+                        .then(function (data) {
+                            resolve(data);
+                        })
+                        .catch(function () {
+                            reject();
+                        });
+                }
+            });
+
+            function execute(inProgressDialog) {
+                return new Promise(function (resolve, reject) {
+                    $.ajax({
+                        type: config.type,
+                        url: site.url + config.controller + "/" + config.action,
+                        dataType: config.dataType,
+                        data: config.params,
+                        success: function (data) {
+                            if (typeof inProgressDialog !== "undefined")
+                                inProgressDialog.close();
+
+                            if (data.Success) {
+                                if (config.successVerbage !== null) {
                                     BootstrapDialog.show({
-                                        title: "Error",
+                                        title: "Success",
                                         closable: false,
-                                        type: BootstrapDialog.TYPE_DANGER,
-                                        message: "The following error occured:\n" + data.ErrorMessage,
+                                        type: BootstrapDialog.TYPE_SUCCESS,
+                                        message: config.successVerbage,
                                         buttons: [
                                             {
                                                 label: "Close",
-                                                action: function(dlg) {
+                                                action: function (dlg) {
                                                     dlg.close();
                                                 }
                                             }
                                         ]
                                     });
-                                    reject(data);
                                 }
-                            },
-                            error: function (data) {
-                                dialog.close();
+                                resolve(data);
+                            } else {
                                 BootstrapDialog.show({
                                     title: "Error",
                                     closable: false,
                                     type: BootstrapDialog.TYPE_DANGER,
                                     message: "The following error occured:\n" + data.ErrorMessage,
-                                    buttons: [{
-                                        label: "Close",
-                                        action: function (dlg) {
-                                            dlg.close();
+                                    buttons: [
+                                        {
+                                            label: "Close",
+                                            action: function (dlg) {
+                                                dlg.close();
+                                            }
                                         }
-                                    }]
+                                    ]
                                 });
                                 reject(data);
                             }
-                        });
+                        },
+                        error: function (data) {
+                            if (typeof inProgressDialog !== "undefined")
+                                inProgressDialog.close();
+
+                            BootstrapDialog.show({
+                                title: "Error",
+                                closable: false,
+                                type: BootstrapDialog.TYPE_DANGER,
+                                message: "The following error occured:\n" + data.ErrorMessage,
+                                buttons: [{
+                                    label: "Close",
+                                    action: function (dlg) {
+                                        dlg.close();
+                                    }
+                                }]
+                            });
+                            reject(data);
+                        }
                     });
-            });
+                });
+            }
         }
     }
 })(jQuery);;

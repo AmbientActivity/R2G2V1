@@ -57,7 +57,6 @@
                             var ids = [];
                             var sharedLibraryDialog = new
                             BootstrapDialog({
-                                id: "shared-library-modal",
                                 title: title + " Add <b>" + config.mediaPathTypeDesc + "</b> From Shared Library",
                                 message: $("<div></div>").append(message),
 
@@ -65,8 +64,9 @@
                                 buttons: [
                                     {
                                         label: "Cancel",
-                                        action: function(dialog) {
-                                            reject(dialog);
+                                        action: function (dialog) {
+                                            dialog.close();
+                                            reject();
                                         }
                                     }, {
                                         label: "OK",

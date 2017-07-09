@@ -158,7 +158,7 @@ namespace Keebee.AAT.Administrator.Controllers
                     errMsg = DeleteSharedLibraryFile(mediaFile, mediaPathTypeId);
                 }
 
-                success = true;
+                success = string.IsNullOrEmpty(errMsg);
             }
             catch (Exception ex)
             {
@@ -169,7 +169,7 @@ namespace Keebee.AAT.Administrator.Controllers
             return Json(new
             {
                 Success = success,
-                ErrorMessage = !string.IsNullOrEmpty(errMsg) ? errMsg : null,
+                ErrorMessage = !success ? errMsg : null,
                 FileList = GetFileList(mediaPathTypes)
             }, JsonRequestBehavior.AllowGet);
         }

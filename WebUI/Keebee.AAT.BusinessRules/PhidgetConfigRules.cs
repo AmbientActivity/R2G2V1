@@ -1,4 +1,5 @@
-﻿using Keebee.AAT.BusinessRules.Models;
+﻿using System;
+using Keebee.AAT.BusinessRules.Models;
 using Keebee.AAT.Shared;
 using Keebee.AAT.ApiClient.Clients;
 using Keebee.AAT.ApiClient.Models;
@@ -92,22 +93,37 @@ namespace Keebee.AAT.BusinessRules
         }
 
         // duplicate
-        public void DuplicateConfigDetails(int selectedConfigId, int newConfigId)
+        public string DuplicateConfigDetails(int selectedConfigId, int newConfigId)
         {
-            var selectedConfig = _configsClient.GetWithDetails(selectedConfigId);
+            string errMsg = null;
 
-            foreach (var detail in selectedConfig.ConfigDetails)
+            try
             {
-                _configsClient.PostDetail(new ConfigDetailEdit
+                var selectedConfig = _configsClient.GetWithDetails(selectedConfigId);
+
+                foreach (var detail in selectedConfig.ConfigDetails)
                 {
-                    ConfigId = newConfigId,
-                    Description = detail.Description,
-                    Location = detail.Location,
-                    PhidgetTypeId = detail.PhidgetType.Id,
-                    PhidgetStyleTypeId = detail.PhidgetStyleType.Id,
-                    ResponseTypeId = detail.ResponseType.Id
-                });
+                    int newId;
+                    errMsg = _configsClient.PostDetail(new ConfigDetailEdit
+                    {
+                        ConfigId = newConfigId,
+                        Description = detail.Description,
+                        Location = detail.Location,
+                        PhidgetTypeId = detail.PhidgetType.Id,
+                        PhidgetStyleTypeId = detail.PhidgetStyleType.Id,
+                        ResponseTypeId = detail.ResponseType.Id
+                    }, out newId);
+
+                    if (!string.IsNullOrEmpty(errMsg))
+                        throw new Exception(errMsg);
+                }
             }
+            catch (Exception ex)
+            {
+                errMsg = ex.Message;
+            }
+
+            return errMsg;
         }
 
         // view model

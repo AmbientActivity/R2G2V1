@@ -242,7 +242,7 @@
                             return filteredResidents;
                         });
 
-                        self.showEditDialog = function (row) {
+                        self.edit = function (row) {
                             $("body").css("cursor", "progress");
                             cmdAdd.prop("disabled", true);
                             $("#edit_" + row.id).tooltip("hide");
@@ -258,8 +258,8 @@
 
                             if (id > 0) {
                                 title = title + " Edit Resident";
-                                var resident = self.getResident(id);
-                                self.selectedResident(resident);
+                                var r = self.getResident(id);
+                                self.selectedResident(r);
                             } else {
                                 title = title + " Add Resident";
                                 type = BootstrapDialog.TYPE_SUCCESS;
@@ -290,30 +290,51 @@
                                                  cssClass: btnClass,
                                                  hotkey: 13,  // enter
                                                  action: function (dialog) {
-                                                     self.saveResident().then(function (result) {
-                                                         if (result.ValidationMessages.length === 0) {
-                                                             lists.ResidentList = result.ResidentList;
-                                                             createResidentArray(lists.ResidentList);
-                                                             self.selectedResident(self.getResident(result.SelectedId));
-                                                             self.sort({ afterSave: true });
-                                                             self.highlightRow(self.selectedResident());
-                                                             dialog.close();
-                                                             cmdAdd.prop("disabled", false);
-                                                         } else {
-                                                             $("#validation-container").show();
-                                                             $("#validation-container").html("");
-                                                             var html = "<ul>";
-                                                             for (var i = 0; i < result.ValidationMessages.length; i++) {
-                                                                 var msg = result.ValidationMessages[i];
-                                                                 html = html + "<li>" + msg + "</li>";
-                                                             }
-                                                             html = html + "</ul>";
-                                                             $("#validation-container").append(html);
-                                                         }
-                                                     });
+
+                                                    var resident = self.getResidentDetailFromDialog();
+                                                     utilities.job.execute({
+                                                         controller: "Residents",
+                                                         action: "Validate",
+                                                         type: "POST",
+                                                         params: { resident: resident }
+                                                     })
+                                                         .then(function(validateResult) {
+                                                             if (validateResult.ErrorMessages === null) {
+                                                                 dialog.close();
+                                                                 utilities.job.execute({
+                                                                         type: "POST",
+                                                                         controller: "Residents",
+                                                                         action: "Save",
+                                                                         title: "Save Resident",
+                                                                         params: { resident: resident }
+                                                                     })
+                                                                     .then(function(saveResult) {
+                                                                         lists.ResidentList = saveResult.ResidentList;
+                                                                         createResidentArray(lists.ResidentList);
+                                                                         self.selectedResident(self.getResident(saveResult.SelectedId));
+                                                                         self.sort({ afterSave: true });
+                                                                         self.highlightRow(self.selectedResident());
+                                                                         cmdAdd.prop("disabled", false);
+                                                                     });
+                                                                 } else {
+                                                                     $("#validation-container").show();
+                                                                     $("#validation-container").html("");
+                                                                     var html = "<ul>";
+                                                                     for
+                                                                     (var i = 0;
+                                                                         i < validateResult.ErrorMessages.length;
+                                                                         i++) {
+                                                                         var msg = validateResult.ErrorMessages[i];
+                                                                         html = html + "<li>" + msg + "</li>";
+                                                                     }
+                                                                     html = html + "</ul>";
+                                                                     $("#validation-container").append(html);
+                                                                 }
+                                                         })
+                                                        .catch(function() {});
+                                                     }
                                                  }
-                                             }
-                                        ]
+                                            ]
                                     });
                             });                         
                         };
@@ -336,67 +357,62 @@
                             }
                         };
 
-                        self.showDeleteDialog = function (row) {
+                        self.delete = function (row) {
                             cmdAdd.prop("disabled", true);
                             $("#delete_" + row.id).tooltip("hide");
 
-                            return new Promise(function(resolve, reject) {
-                                self.highlightRow(row);
+                            self.highlightRow(row);
 
-                                var id = (typeof row.id !== "undefined" ? row.id : 0);
-                                if (id <= 0) return false;
-                                var r = self.getResident(id);
-                                var messageGender;
+                            var id = (typeof row.id !== "undefined" ? row.id : 0);
+                            if (id <= 0) return false;
+                            var r = self.getResident(id);
+                            var messageGender;
 
-                                if (r.gender === "M") messageGender = "his";
-                                else messageGender = "her";
+                            if (r.gender === "M") messageGender = "his";
+                            else messageGender = "her";
 
-                                var fullName = r.firstname;
-                                if (r.lastname != null) fullName = fullName + " " + r.lastname;
+                            var fullName = r.firstname;
+                            if (r.lastname != null) fullName = fullName + " " + r.lastname;
 
-                                BootstrapDialog.show({
-                                    type: BootstrapDialog.TYPE_DANGER,
-                                    title: "Delete Resident?",
-                                    message: "Permanently delete the resident <i><b>" + fullName + "</b></i>?\n\n" +
-                                            "<b>Warning:</b> All " + messageGender + " personal media files will be removed!",
-                                    closable: false,
-                                    buttons: [
-                                        {
-                                            label: "Cancel",
-                                            action: function (dialog) {
-                                                dialog.close();
-                                                cmdAdd.prop("disabled", false);
-                                            }
-                                        }, {
-                                            label: "Yes, Delete",
-                                            cssClass: "btn-danger",
-                                            action: function (dialog) {
-                                                utilities.job.execute(
-                                                {
-                                                    controller: "Residents",
-                                                    action: "Delete",
-                                                    type: "POST",
-                                                    params: { id: id },
-                                                    title: "Delete Resident",
-                                                    waitMessage: "Deleteing..."
-                                                })
-                                                .then(function (result) {
-                                                    dialog.close();
-                                                    lists.ResidentList = result.ResidentList;
-                                                    createResidentArray(lists.ResidentList);
-                                                    self.sort({ afterSave: true });
-                                                    resolve(result);
-                                                    cmdAdd.prop("disabled", false);
-                                                })
-                                                .catch(function () {
-                                                    dialog.close();
-                                                    reject(dialog);
-                                                    cmdAdd.prop("disabled", false);
-                                                });
-                                            }
+                            BootstrapDialog.show({
+                                type: BootstrapDialog.TYPE_DANGER,
+                                title: "Delete Resident?",
+                                message: "Permanently delete the resident <i><b>" + fullName + "</b></i>?\n\n" +
+                                        "<b>Warning:</b> All " + messageGender + " personal media files will be removed!",
+                                closable: false,
+                                buttons: [
+                                    {
+                                        label: "Cancel",
+                                        action: function (dialog) {
+                                            dialog.close();
+                                            cmdAdd.prop("disabled", false);
                                         }
-                                    ]
-                                });
+                                    }, {
+                                        label: "Yes, Delete",
+                                        cssClass: "btn-danger",
+                                        action: function (dialog) {
+                                            dialog.close();
+                                            utilities.job.execute(
+                                            {
+                                                controller: "Residents",
+                                                action: "Delete",
+                                                type: "POST",
+                                                params: { id: id },
+                                                title: "Delete Resident",
+                                                waitMessage: "Deleting..."
+                                            })
+                                            .then(function (result) {
+                                                lists.ResidentList = result.ResidentList;
+                                                createResidentArray(lists.ResidentList);
+                                                self.sort({ afterSave: true });
+                                                cmdAdd.prop("disabled", false);
+                                            })
+                                            .catch(function () {
+                                                cmdAdd.prop("disabled", false);
+                                            });
+                                        }
+                                    }
+                                ]
                             });
                         };
 
@@ -434,41 +450,14 @@
                                 Id: self.selectedResident().id, FirstName: firstname, LastName: lastname, Gender: gender, GameDifficultyLevel: gamedifficultylevel, AllowVideoCapturing: allowVideoCapturing, ProfilePicture: profilePicture
                             };
                         };
-
-                        self.saveResident = function () {
-                            return new Promise(function(resolve, reject) {
-                                var residentdetail = self.getResidentDetailFromDialog();
-                                var jsonData = JSON.stringify(residentdetail);
-
-                                $.post(site.url + "Residents/Validate", { resident: jsonData })
-                                    .done(function (result) {
-                                        if (result.Success) {
-                                            utilities.job.execute({
-                                                type: "POST",
-                                                controller: "Residents",
-                                                action: "Save",
-                                                title: "Save Resident",
-                                                waitMessage: "Saving...",
-                                                params: { resident: jsonData }
-                                            })
-                                            .then(function(saveResult) {
-                                                resolve(saveResult);
-                                            });
-
-                                        } else {
-                                            resolve(result);
-                                        }
-                                    })
-                                    .error(function (result) {
-                                        reject(result);
-                                    });
-                            });
-                        };
                     };
                 })
-            .error(function () {
+            .error(function (data) {
                 $("#loading-container").hide();
-                $("#error-container").html("<div><h3>Data load error.  Please try refreshing the page</h3></div>");
+                $("#error-container")
+                    .html("<div><h2>Data load error:</h2></div>")
+                    .append(">div>" + data + "</div>")
+                    .append("<div><h3>Please try refreshing the page</h3></div>");
                 $("#error-container").show();
             });
         }

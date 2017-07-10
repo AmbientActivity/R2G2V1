@@ -40,71 +40,46 @@
             });
 
             lnkChangePassword.click(function () {
-                var title = "<span class='glyphicon glyphicon-pencil' style='color: #fff'></span>";
+                utilities.partialview.show({
+                    url: site.url + "Account/GetChangePasswordView",
+                    type: BootstrapDialog.TYPE_PRIMARY,
+                    title: "<span class='glyphicon glyphicon-pencil' style='color: #fff'></span> Change Password",
+                    focus: "txtOldPassword",
+                    callback: function(dialog) {
+                        var jsonData = getChangePasswordDetailFromDialog();
 
-                $.get(site.url + "Account/GetChangePasswordView")
-                    .done(function (message) {
-                        BootstrapDialog.show({
-                            title: title + " Change Password",
-                            message: $("<div></div>").append(message),
-                            onshown: function () {
-                                $("#txtOldPassword").focus();
-                                $("#txtOldPassword").val("");
-                            },
-                            closable: false,
-                            buttons: [
-                                {
-                                    label: "Cancel",
-                                    action: function (dialog) {
-                                        dialog.close();
-                                    }
-                                }, {
-                                    label: "OK",
-                                    cssClass: "btn-primary",
-                                    action: function (dialog) {
-                                        attemptToChangePassword().then(function(result) {
-                                            if (result.Success) {
-                                                dialog.close();
-                                                BootstrapDialog.show({
-                                                    title: "Success",
-                                                    closable: false,
-                                                    type: BootstrapDialog.TYPE_SUCCESS,
-                                                    message: "Password successfully changed",
-                                                    buttons: [
-                                                    {
-                                                        label: "Close",
-                                                        action: function (d) {
-                                                            d.close();
-                                                        }
-                                                    }]
-                                                });
-                                            } else {
-                                                $("#validation-container").show();
-                                                $("#validation-container").html("");
-                                                var html = "<ul><li>" + result.ErrorMessage + "</li></ul>";
-                                                $("#validation-container").append(html);
-                                            }
-                                        });
-                                    }
-                                }
-                            ]
+                        utilities.job.execute({
+                            url: site.url + "Account/ValidatePasswordChange",
+                            type: "POST",
+                            params: jsonData
+                        })
+                        .then(function (validateResult) {
+                            if (validateResult.ValidationMessage === null) {
+                                dialog.close();
+
+                                utilities.job.execute({
+                                    url: site.url + "Account/ChangePassword",
+                                    type: "POST",
+                                    params: jsonData
+                                })
+                                .then(function() {
+                                    dialog.close();
+                                    utilities.alert.show({
+                                        type: BootstrapDialog.TYPE_SUCCESS,
+                                        title: "Password Change",
+                                        message: "Password successfully changed",
+                                    });
+                                });
+                            } else {
+                                $("#validation-container").show();
+                                $("#validation-container").html("");
+                                var html = "</br><ul><li>" + validateResult.ValidationMessage + "</li></ul>";
+                                $("#validation-container").append(html);
+                            }
                         });
-                    });
-            });
-
-            function attemptToChangePassword() {
-                return new Promise(function(resolve, reject) {
-                    var jsonData = getChangePasswordDetailFromDialog();
-
-                    $.get(site.url + "Account/AttemptToChangePassword", jsonData)
-                        .done(function(result) {
-                            resolve(result);
-                         })
-                         .error(function (result) {
-                            reject(result);
-                        });
+                    }
                 });
-            }
+            });
 
             function getChangePasswordDetailFromDialog() {
                 var oldpassword = $.trim($("#txtOldPassword").val());
@@ -116,6 +91,48 @@
                 };
             };
 
+            function login() {
+                $("body").css("cursor", "progress");
+                cmdLogin.prop("disabled", true);
+
+                var jsonData = getCredentials();
+
+                utilities.job.execute({
+                    url: site.url + "Account/ValidateUser",
+                    type: "POST",
+                    params: jsonData
+                })
+                .then(function (validateResult) {
+                    $("body").css("cursor", "default");
+                    if (validateResult.ValidationMessage === null) {
+                        utilities.job.execute({
+                            url: site.url + "Account/LoginUser",
+                            type: "POST",
+                            params: jsonData
+                        })
+                        .then(function () {
+                            showSpinner();
+                            window.location.href = site.url + "Home";
+                        })
+                        .catch(function (loginResult) {
+                            showError(loginResult.ErrorMessage);
+                        });
+                    } else {
+                        $("#login-container").show();
+                        $("#validation-container").show();
+
+                        $("#validation-container").html("");
+                        var html = "<br/><ul><li>" + validateResult.ValidationMessage + "</li></ul>";
+                        $("#validation-container").append(html);
+
+                        cmdLogin.prop("disabled", false);
+                    }
+                })
+                .catch(function (validateResult) {
+                    showError(validateResult.ErrorMessage);
+                });
+            }
+
             function showSpinner() {
                 // hide login containers
                 $("#login-container").hide();
@@ -125,46 +142,14 @@
                 $("#spinner-container").show();
             }
 
-            function showValidation(result) {
-                $("#login-container").show();
-                $("#validation-container").show();
-
-                $("#validation-container").html("");
-                var html = "<br/><ul><li>" + result.ErrorMessage + "</li></ul>";
-                $("#validation-container").append(html);
-            }
-
-            function showError(result) {
+            function showError(message) {
                 $("#validation-container").hide();
                 $("#spinner-container").hide();
                 $("#error-container").html("");
                 $("#error-container")
                     .append("<div><h3>Login Error</h3><div>")
-                    .append("<div>" + result + "</div>");
+                    .append("<div>" + message + "</div>");
                 $("#error-container").show();
-            }
-
-            function login() {
-                $("body").css("cursor", "progress");
-                cmdLogin.prop("disabled", true);
-
-                var jsonData = getCredentials();
-
-                $.get(site.url + "Account/AttemptToLogin", jsonData)
-                    .done(function (result) {
-                        cmdLogin.prop("disabled", false);
-                        $("body").css("cursor", "default");
-                        if (result.Success) {
-                            showSpinner();
-                            window.location.href = site.url + "Home";
-                        } else {
-                            showValidation(result);
-                            $("#txtPassword").focus();
-                        }
-                    })
-                    .error(function (result) {
-                        showError(result);
-                    });
             }
 
             function getCredentials() {

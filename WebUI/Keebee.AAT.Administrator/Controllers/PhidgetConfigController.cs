@@ -68,24 +68,26 @@ namespace Keebee.AAT.Administrator.Controllers
         [Authorize]
         public JsonResult Validate(ConfigEditViewModel config, int selectedConfigId)
         {
-            IEnumerable<string> errMsgs;
+            IEnumerable<string> validateMsgs = null;
+            string errMsg = null;
 
             try
             {
                 var configid = config.Id;
                 var rules = new PhidgetConfigRules();
 
-                errMsgs = rules.Validate(config.Description, configid == 0);
+                validateMsgs = rules.Validate(config.Description, configid == 0);
             }
             catch (Exception ex)
             {
-                errMsgs = new Collection<string> { ex.Message };
+                errMsg = ex.Message;
             }
 
             return Json(new
             {
-                Success = true,
-                ErrorMessages = errMsgs
+                Success = string.IsNullOrEmpty(errMsg),
+                ValidationMessages = validateMsgs,
+                ErrorMessage = errMsg,
             }, JsonRequestBehavior.AllowGet);
         }
 
@@ -152,23 +154,25 @@ namespace Keebee.AAT.Administrator.Controllers
         [Authorize]
         public JsonResult ValidateDetail(ConfigDetailEditViewModel configDetail)
         {
-            IEnumerable<string> errMsgs;
+            IEnumerable<string> validateMsgs = null;
+            string errMsg = null;
 
             try
             {
                 var configurationRules = new PhidgetConfigRules();
 
-                errMsgs = configurationRules.ValidateDetail(configDetail.Description, configDetail.PhidgetTypeId, configDetail.PhidgetStyleTypeId);
+                validateMsgs = configurationRules.ValidateDetail(configDetail.Description, configDetail.PhidgetTypeId, configDetail.PhidgetStyleTypeId);
             }
             catch (Exception ex)
             {
-                errMsgs = new Collection<string> { ex.Message };
+                errMsg = ex.Message;
             }
 
             return Json(new
             {
-                Success = true,
-                ErrorMessages = errMsgs
+                Success = string.IsNullOrEmpty(errMsg),
+                ValidationMessages = validateMsgs,
+                ErrorMessage = errMsg
             }, JsonRequestBehavior.AllowGet);
         }
 
@@ -201,7 +205,7 @@ namespace Keebee.AAT.Administrator.Controllers
                 ConfigDetailList = GetConfigDetailList(configs),
                 SelectedId = configDetailid,
                 Success = success,
-                ErrorMessages = errMsg
+                ErrorMessage = errMsg
             }, JsonRequestBehavior.AllowGet);
         }
 
@@ -239,18 +243,33 @@ namespace Keebee.AAT.Administrator.Controllers
         [Authorize]
         public JsonResult Activate(int configId)
         {
-            _configsClient.Activate(configId);
-            SendNewConfiguration(configId);
+            string errMsg;
+            Config[] configs = null;
 
-            var configs = _configsClient.Get().ToArray();
-            var vm = new
+            try
             {
+                errMsg = _configsClient.Activate(configId);
+
+                if (!string.IsNullOrEmpty(errMsg))
+                    throw new Exception(errMsg);
+
+                SendNewConfiguration(configId);
+
+                configs = _configsClient.Get().ToArray();
+            }
+            catch (Exception ex)
+            {
+                errMsg = ex.Message;
+            }
+
+            return Json(new
+            {
+                Success = string.IsNullOrEmpty(errMsg),
+                ErrorMessage = errMsg,
                 SelectedId = configId,
                 ConfigList = GetConfigList(configs),
                 ConfigDetailList = GetConfigDetailList(configs)
-            };
-
-            return Json(vm, JsonRequestBehavior.AllowGet);
+            }, JsonRequestBehavior.AllowGet);
         }
 
         private static IEnumerable<ConfigViewModel> GetConfigList(Config[] configs)

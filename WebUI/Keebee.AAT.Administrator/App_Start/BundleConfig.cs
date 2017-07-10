@@ -42,6 +42,7 @@ namespace Keebee.AAT.Administrator
                 "~/Scripts/Utilities/InProgress.js",
                 "~/Scripts/Utilities/Confirm.js",
                 "~/Scripts/Utilities/Alert.js",
+                "~/Scripts/Utilities/PartialView.js",
                 "~/Scripts/Utilities/JobExecution.js",
                 "~/Scripts/Utilities/Sorting.js",
                 "~/Scripts/Utilities/ImageViewer.js",

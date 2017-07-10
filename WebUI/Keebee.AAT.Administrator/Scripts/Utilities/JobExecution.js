@@ -10,20 +10,16 @@
     utilities.job = {
         execute: function (options) {
             var config = {
-                controller: null,
-                action: null,
+                url: null,
                 type: "GET",
                 dataType: "json",
-                title: null,
                 waitMessage: null,
                 successVerbage: null,
                 params: {}
             };
 
             if ((typeof options !== "undefined") && (options !== null)) {
-                if (options.controller === null) reject("Controller name cannot be null");
-                if (options.action === null) reject("Action name cannot be null");
-                if (options.title === null) reject("Title cannot be null");
+                if (options.url === null) reject("URL cannot be null");
             }
 
             $.extend(config, options);
@@ -55,7 +51,7 @@
                 return new Promise(function (resolve, reject) {
                     $.ajax({
                         type: config.type,
-                        url: site.url + config.controller + "/" + config.action,
+                        url: config.url,
                         dataType: config.dataType,
                         data: config.params,
                         success: function (data) {
@@ -81,14 +77,14 @@
                                 reject(data);
                             }
                         },
-                        error: function (data) {
+                        error: function (request) {
                             if (typeof inProgressDialog !== "undefined")
                                 inProgressDialog.close();
 
                             utilities.alert.show({
                                 title: "Error",
                                 type: BootstrapDialog.TYPE_DANGER,
-                                message: "The following error occured:\n" + data.ErrorMessage
+                                message: "The following error occured:\n" + request.responseText
                             });
                             reject(data);
                         }

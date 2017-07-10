@@ -44,11 +44,20 @@ namespace Keebee.AAT.Operations.Service.Services
         public User GetByUsername(string username)
         {
             var container = new Container(new Uri(ODataHost.Url));
+            User u;
 
-            var user = container.Users.AddQueryOption("$filter",$"Username eq '{username}'")
-                .FirstOrDefault();
+            var user = container.Users.AddQueryOption("$filter",$"Username eq '{username}'");
 
-            return user;
+            try
+            {
+                u = user.FirstOrDefault();
+            }
+            catch
+            {
+                u = null;
+            }
+
+            return u;
         }
 
         public int GetCount()

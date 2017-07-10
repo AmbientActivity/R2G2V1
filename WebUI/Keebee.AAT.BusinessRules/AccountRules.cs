@@ -1,4 +1,5 @@
-﻿using Keebee.AAT.BusinessRules.Models;
+﻿using System;
+using Keebee.AAT.BusinessRules.Models;
 using Keebee.AAT.ApiClient.Clients;
 using Keebee.AAT.ApiClient.Models;
 using System.Linq;
@@ -30,27 +31,74 @@ namespace Keebee.AAT.BusinessRules
             return id;
         }
 
-        public int AttemptToLogin(string username, string password, out string errmsg)
+        public string GetByUsername(string username, out User user)
         {
-            var user = _usersClient.GetByUsername(username);
-            errmsg = null;
+            string errMsg = null;
+            user = null;
 
-            if (user.Id == 0)
-                errmsg = "User does not exist";
-
-            if (errmsg == null)
+            try
             {
-                if (password == null)
-                    errmsg = "Password is required";
+                user = _usersClient.GetByUsername(username);
+            }
+            catch (Exception ex)
+            {
+                errMsg = ex.Message;
+
+            }
+            return errMsg;
+        }
+
+        public string Login(string username, string password, out int userId)
+        {
+            string errMsg = null;
+            userId = -1;
+
+            try
+            {
+                var user = _usersClient.GetByUsername(username);
+
+                if (user != null)
+                    userId = user.Id;
+            }
+            catch (Exception ex)
+            {
+                errMsg = ex.Message;
             }
 
-            if (errmsg == null)
+            return errMsg;
+        }
+
+        public string ValidationLogin(string username, string password, out string errMsg)
+        {
+            errMsg = null;
+            string validateMsg = null;
+
+            try
             {
-                if (!VerifyHashPassword(password, user.Password.Trim()))
-                    errmsg = "Invalid password";
+
+                var user = _usersClient.GetByUsername(username);
+
+                if (user.Id == 0)
+                    validateMsg = "User does not exist";
+
+                if (validateMsg == null)
+                {
+                    if (password == null)
+                        errMsg = "Password is required";
+                }
+
+                if (validateMsg == null)
+                {
+                    if (!VerifyHashPassword(password, user.Password.Trim()))
+                        validateMsg = "Invalid password";
+                }
+            }
+            catch (Exception ex)
+            {
+                errMsg = ex.Message;
             }
 
-            return (errmsg == null) ? user.Id : 0;
+            return validateMsg;
         }
 
         public string GetUserRoles(int userId)

@@ -16,184 +16,92 @@
             var cmdClearServiceLogs = $("#clear-service-logs");
 
             cmdRestart.click(function () {
-                BootstrapDialog.show({
+                utilities.confirm.show({
+                    type: BootstrapDialog.TYPE_PRIMARY,
                     title: "Service Utilities",
                     message: "Restart all R2G2 Windows Services?",
-                    closable: false,
-                    buttons: [
-                        {
-                            label: "Cancel",
-                            action: function (dialog) {
-                                dialog.close();
-                            }
-                        }, {
-                            label: "OK",
-                            cssClass: "btn-primary",
-                            action: function (dialog) {
-                                dialog.close();
-                                utilities.job.execute(
-                                {
-                                    type: "GET",
-                                    controller: "Maintenance",
-                                    action: "RestartServices",
-                                    title: "Service Utilities",
-                                    waitMessage: "Restarting services..."
-                                });
-                            }
-                        }
-                    ]
+                    buttonOKClass: "btn-edit"
+                })
+                .then(function(confirm) {
+                    if (confirm) {
+                        utilities.job.execute({
+                            url: site.url + "Maintenance/RestartServices",
+                            waitMessage: "Restarting services..."
+                        });
+                    }
                 });
             });
 
             cmdKillDisplay.click(function () {
-                BootstrapDialog.show({
+                utilities.confirm.show({
+                    type: BootstrapDialog.TYPE_PRIMARY,
                     title: "Kill Display",
                     message: "Kill the display application?",
-                    closable: false,
-                    buttons: [
-                        {
-                            label: "Cancel",
-                            action: function (dialog) {
-                                dialog.close();
-                            }
-                        }, {
-                            label: "OK",
-                            cssClass: "btn-primary",
-                            action: function (dialog) {
-                                dialog.close();
-                                killDisplay();
-                            }
-                        }
-                    ]
+                })
+                .then(function (confirm) {
+                    if (confirm) {
+                        utilities.job.execute({
+                            url: "Maintenance/KillDisplay",
+                            waitMessage: "Shutting down...",
+                            successVerbag: "Display has been shutdown."
+                        });
+                    }
                 });
             });
 
-            cmdClearServiceLogs.click(function() {
-                BootstrapDialog.show({
+            cmdClearServiceLogs.click(function () {
+                utilities.confirm.show({
+                    type: BootstrapDialog.TYPE_PRIMARY,
                     title: "Clear Service Logs",
                     message: "Clear all R2G2 Service logs?",
-                    closable: false,
-                    buttons: [
-                        {
-                            label: "Cancel",
-                            action: function (dialog) {
-                                dialog.close();
-                            }
-                        }, {
-                            label: "OK",
-                            cssClass: "btn-primary",
-                            action: function (dialog) {
-                                dialog.close();
-                                clearServiceLogs();
-                            }
-                        }
-                    ]
+                })
+                .then(function(confirm) {
+                    if (confirm) {
+                        utilities.job.execute({
+                            url: site.url + "Maintenance/ClearServiceLogs",
+                            waitMessage: "Clearing..."
+                        });
+                    }
                 });
             });         
 
             // --- obsolete
-            cmdReinstall.click(function() {
-                BootstrapDialog.show({
+            cmdReinstall.click(function () {
+                utilities.confirm.show({
+                    type: BootstrapDialog.TYPE_PRIMARY,
                     title: "Service Utilities",
-                    message: "Install or uninstall/reinstall all R2G2 Windows Services?",
-                    closable: false,
-                    buttons: [
-                        {
-                            label: "Cancel",
-                            action: function(dialog) {
-                                dialog.close();
-                            }
-                        }, {
-                            label: "OK",
-                            cssClass: "btn-primary",
-                            action: function(dialog) {
-                                dialog.close();
-                                utilities.job.execute(
-                                {
-                                    type: "GET",
-                                    controller: "Maintenance",
-                                    action: "ReinstallServices",
-                                    title: "Service Utilities",
-                                    waitMessage: "Installing services...",
-                                    successVerbage: "All services installed successfully"
-                                });
-                            }
-                        }
-                    ]
+                    message: "Install or uninstall/reinstall all R2G2 Windows Services?"
+                })
+                .then(function(confirm) {
+                    if (confirm) {
+                        utilities.job.execute({
+                            url: site.url + "Maintenance/ReinstallServices",
+                            action: "ReinstallServices",
+                            title: "Service Utilities",
+                            waitMessage: "Installing services...",
+                            successVerbage: "All services installed successfully"
+                        });
+                    }
                 });
             });
 
             cmdUninstall.click(function () {
-                BootstrapDialog.show({
+                utilities.confirm.show({
+                    type: BootstrapDialog.TYPE_PRIMARY,
                     title: "Service Utilities",
-                    message: "Uninstall all R2G2 Windows Services?",
-                    closable: false,
-                    buttons: [
-                        {
-                            label: "Cancel",
-                            action: function (dialog) {
-                                dialog.close();
-                            }
-                        }, {
-                            label: "OK",
-                            cssClass: "btn-primary",
-                            action: function (dialog) {
-                                dialog.close();
-                                utilities.job.execute(
-                                {
-                                    type: "GET",
-                                    controller: "Maintenance",
-                                    action: "UninstallServices",
-                                    title: "Service Utilities",
-                                    waitMessage: "Uninstalling services...",
-                                    successVerbage: "All services uninstalled successfully"
-                                });
-                            }
-                        }
-                    ]
+                    message: "Uninstall all R2G2 Windows Services?"
+                })
+                .then(function(confirm) {
+                    if (confirm) {
+                        utilities.job.execute({
+                            url: site.url + "Maintenance/UninstallServices",
+                            title: "Service Utilities",
+                            waitMessage: "Uninstalling services...",
+                            successVerbage: "All services uninstalled successfully"
+                        });
+                    }
                 });
             });
-
-            function killDisplay() {
-                $.get(site.url + "Maintenance/KillDisplay")
-                    .done(function (data) {
-                        if (data.length === 0)
-                            BootstrapDialog.show({
-                                title: "Success",
-                                closable: false,
-                                type: BootstrapDialog.TYPE_SUCCESS,
-                                message: "Display has been killed",
-                                buttons: [
-                                {
-                                    label: "Close",
-                                    action: function (dialog) {
-                                        dialog.close();
-                                    }
-                                }]
-                            });
-                });
-            }
-
-            function clearServiceLogs() {
-                $.get(site.url + "Maintenance/ClearServiceLogs")
-                    .done(function(data) {
-                        if (data.length !== 0)
-                            BootstrapDialog.show({
-                                title: "Error",
-                                closable: false,
-                                type: BootstrapDialog.TYPE_DANGER,
-                                message: "An error occurred clearing the Service Logs\n" + data,
-                                buttons: [
-                                    {
-                                        label: "OK",
-                                        action: function(dialog) {
-                                            dialog.close();
-                                        }
-                                    }
-                                ]
-                            });
-                    });
-            }
         }
     }
 })(jQuery);

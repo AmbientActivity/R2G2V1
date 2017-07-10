@@ -242,100 +242,76 @@
                         });
 
                         self.edit = function (row) {
-                            $("body").css("cursor", "progress");
                             cmdAdd.prop("disabled", true);
                             $("#edit_" + row.id).tooltip("hide");
 
                             var id = (typeof row.id !== "undefined" ? row.id : 0);
+                            var add = (id === 0);
+
+                            if (!add) { self.highlightRow(row); }
+
                             var title = "<span class='glyphicon glyphicon-pencil' style='color: #fff'></span>";
-                            var type = BootstrapDialog.TYPE_PRIMARY;
-                            var btnClass = "btn-edit";
+                            title = add
+                            ? title + " Add Resident"
+                            : title + " Edit Resident";
 
-                            if (id > 0) {
-                                self.highlightRow(row);
-                            }
-
-                            if (id > 0) {
-                                title = title + " Edit Resident";
+                            if (add) {
+                                self.selectedResident([]);
+                            } else {
                                 var r = self.getResident(id);
                                 self.selectedResident(r);
-                            } else {
-                                title = title + " Add Resident";
-                                type = BootstrapDialog.TYPE_SUCCESS;
-                                btnClass = "btn-success";
-                                self.selectedResident([]);
                             }
 
-                            $.get(site.url + "Residents/GetResidentEditView/" + id, false)
-                                .done(function (message) {
-                                    BootstrapDialog.show({
-                                        title: title,
-                                        type:type,
-                                        message: $("<div></div>").append(message),
-                                        onshown: function () {
-                                            $("body").css("cursor", "default");
-                                            $("#txtFirstName").focus();
-                                        },
-                                        closable: false,
-                                        buttons: [
-                                            {
-                                                label: "Cancel",
-                                                action: function (dialog) {
-                                                    dialog.close();
-                                                    cmdAdd.prop("disabled", false);
-                                                }
-                                            },{
-                                                 label: "Save",
-                                                 cssClass: btnClass,
-                                                 hotkey: 13,  // enter
-                                                 action: function (dialog) {
+                            utilities.partialview.show({
+                                url: site.url + "Residents/GetResidentEditView/" + id,
+                                type: add ? BootstrapDialog.TYPE_SUCCESS : BootstrapDialog.TYPE_PRIMARY,
+                                focus: "txtFirstName",
+                                title: title,
+                                buttonOK: "Save",
+                                buttonOKClass: add ? "btn-success" : "btn-edit",
+                                callback: function(dialog) {
+                                    var resident = self.getResidentDetailFromDialog();
 
-                                                    var resident = self.getResidentDetailFromDialog();
-                                                     utilities.job.execute({
-                                                         controller: "Residents",
-                                                         action: "Validate",
-                                                         type: "POST",
-                                                         params: { resident: resident }
-                                                     })
-                                                         .then(function(validateResult) {
-                                                             if (validateResult.ErrorMessages === null) {
-                                                                 dialog.close();
-                                                                 utilities.job.execute({
-                                                                         type: "POST",
-                                                                         controller: "Residents",
-                                                                         action: "Save",
-                                                                         title: "Save Resident",
-                                                                         params: { resident: resident }
-                                                                     })
-                                                                     .then(function(saveResult) {
-                                                                         lists.ResidentList = saveResult.ResidentList;
-                                                                         createResidentArray(lists.ResidentList);
-                                                                         self.selectedResident(self.getResident(saveResult.SelectedId));
-                                                                         self.sort({ afterSave: true });
-                                                                         self.highlightRow(self.selectedResident());
-                                                                         cmdAdd.prop("disabled", false);
-                                                                     });
-                                                                 } else {
-                                                                     $("#validation-container").show();
-                                                                     $("#validation-container").html("");
-                                                                     var html = "<ul>";
-                                                                     for
-                                                                     (var i = 0;
-                                                                         i < validateResult.ErrorMessages.length;
-                                                                         i++) {
-                                                                         var msg = validateResult.ErrorMessages[i];
-                                                                         html = html + "<li>" + msg + "</li>";
-                                                                     }
-                                                                     html = html + "</ul>";
-                                                                     $("#validation-container").append(html);
-                                                                 }
-                                                         })
-                                                        .catch(function() {});
-                                                     }
-                                                 }
-                                            ]
+                                    utilities.job.execute({
+                                        url: site.url + "Residents/Validate",
+                                        action: "Validate",
+                                        type: "POST",
+                                        params: { resident: resident }
+                                    })
+                                    .then(function(validateResult) {
+                                        if (validateResult.ValidationMessages === null) {
+                                            dialog.close();
+                                            utilities.job.execute({
+                                                    url: site.url + "Residents/Save",
+                                                    type: "POST",
+                                                    title: "Save Resident",
+                                                    params: { resident: resident }
+                                                })
+                                                .then(function(saveResult) {
+                                                    lists.ResidentList = saveResult.ResidentList;
+                                                    createResidentArray(lists.ResidentList);
+                                                    self.selectedResident(self.getResident(saveResult.SelectedId));
+                                                    self.sort({ afterSave: true });
+                                                    self.highlightRow(self.selectedResident());
+                                                    cmdAdd.prop("disabled", false);
+                                                });
+                                        } else {
+                                            $("#validation-container").show();
+                                            $("#validation-container").html("");
+                                            var html = "<ul>";
+                                            for
+                                            (var i = 0;
+                                                i < validateResult.ValidationMessages.length;
+                                                i++) {
+                                                var msg = validateResult.ValidationMessages[i];
+                                                html = html + "<li>" + msg + "</li>";
+                                            }
+                                            html = html + "</ul>";
+                                            $("#validation-container").append(html);
+                                        }
                                     });
-                            });                         
+                                }
+                            });
                         };
 
                         self.editProfile = function (row) {
@@ -360,58 +336,56 @@
                             cmdAdd.prop("disabled", true);
                             $("#delete_" + row.id).tooltip("hide");
 
+                            var id = (typeof row.id !== "undefined" ? row.id : 0);
+                            if (id <= 0) return;
+
                             self.highlightRow(row);
 
-                            var id = (typeof row.id !== "undefined" ? row.id : 0);
-                            if (id <= 0) return false;
-                            var r = self.getResident(id);
-                            var messageGender;
+                            // construct the confirm message
+                            var resident = self.getResident(id);
 
-                            if (r.gender === "M") messageGender = "his";
-                            else messageGender = "her";
+                            // name
+                            var fullName = (resident.lastname == null)
+                                ? resident.firstname
+                                : resident.firstname + " " + resident.lastname;
 
-                            var fullName = r.firstname;
-                            if (r.lastname != null) fullName = fullName + " " + r.lastname;
+                            // possesive
+                            var messageGender = (resident.gender.toUpperCase() === "M")
+                                ? "his"
+                                : "her";
 
-                            BootstrapDialog.show({
+                            // show confirm
+                            utilities.confirm.show({
                                 type: BootstrapDialog.TYPE_DANGER,
                                 title: "Delete Resident?",
-                                message: "Permanently delete the resident <i><b>" + fullName + "</b></i>?\n\n" +
-                                        "<b>Warning:</b> All " + messageGender + " personal media files will be removed!",
-                                closable: false,
-                                buttons: [
-                                    {
-                                        label: "Cancel",
-                                        action: function (dialog) {
-                                            dialog.close();
-                                            cmdAdd.prop("disabled", false);
-                                        }
-                                    }, {
-                                        label: "Yes, Delete",
-                                        cssClass: "btn-danger",
-                                        action: function (dialog) {
-                                            dialog.close();
-                                            utilities.job.execute(
-                                            {
-                                                controller: "Residents",
-                                                action: "Delete",
-                                                type: "POST",
-                                                params: { id: id },
-                                                title: "Delete Resident",
-                                                waitMessage: "Deleting..."
-                                            })
-                                            .then(function (result) {
-                                                lists.ResidentList = result.ResidentList;
-                                                createResidentArray(lists.ResidentList);
-                                                self.sort({ afterSave: true });
-                                                cmdAdd.prop("disabled", false);
-                                            })
-                                            .catch(function () {
-                                                cmdAdd.prop("disabled", false);
-                                            });
-                                        }
-                                    }
-                                ]
+                                message: "Permanently delete the resident <i><b>" +
+                                    fullName +
+                                    "</b></i>?\n\n" +
+                                    "<b>Warning:</b> All " +
+                                    messageGender +
+                                    " personal media files will be removed!",
+                                buttonOK: "Yes, Delete",
+                                buttonOKClass: "btn-danger"
+                            })
+                            .then(function(confirm) {
+                                if (confirm) {
+                                    utilities.job.execute({
+                                        url: site.url + "Residents/Delete",
+                                        type: "POST",
+                                        params: { id: id },
+                                        title: "Delete Resident",
+                                        waitMessage: "Deleting..."
+                                    })
+                                    .then(function(result) {
+                                        lists.ResidentList = result.ResidentList;
+                                        createResidentArray(lists.ResidentList);
+                                        self.sort({ afterSave: true });
+                                        cmdAdd.prop("disabled", false);
+                                    })
+                                    .catch(function() {
+                                        cmdAdd.prop("disabled", false);
+                                    });
+                                }
                             });
                         };
 

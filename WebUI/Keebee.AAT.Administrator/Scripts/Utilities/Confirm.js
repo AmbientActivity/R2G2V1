@@ -15,7 +15,7 @@
                 message: null,
                 buttonCancel: "Cancel",
                 buttonOK: "OK",
-                buttonOKClass: "btn-edit",
+                buttonOKClass: "btn-edit"
             };
 
             if ((typeof options !== "undefined") && (options !== null)) {
@@ -50,7 +50,6 @@
                     }]
                 });
             });
-
         }
     }
 })(jQuery);;

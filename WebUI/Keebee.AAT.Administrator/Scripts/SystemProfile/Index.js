@@ -278,15 +278,14 @@
                             self.clearStreams();
 
                             utilities.sharedlibrary.show({
-                                controller: "SystemProfile",
+                                url: site.url + "SystemProfile/GetSharedLibarayLinkView/",
                                 mediaPathTypeDesc: self.mediaPathType().shortdescription,
                                 params: { mediaPathTypeId: self.selectedMediaPathType() }
                             })
                             .then(function (result) {
                                 result.dialog.close();
                                 utilities.job.execute({
-                                    controller: "SystemProfile",
-                                    action: "AddSharedMediaFiles",
+                                    url: site.url + "SystemProfile/AddSharedMediaFiles",
                                     type: "POST",
                                     waitMessage: "Adding...",
                                     params: {
@@ -306,9 +305,6 @@
                                 .catch(function () {
                                     self.enableDetail();
                                 });
-                            })
-                            .catch(function () {
-                                self.enableDetail();
                             });
                         };
 
@@ -324,8 +320,7 @@
                             }).then(function (confirm) {
                                 if (confirm) {
                                     utilities.job.execute({
-                                        controller: "SystemProfile",
-                                        action: "DeleteSelected",
+                                        url: site.url + "SystemProfile/DeleteSelected",
                                         type: "POST",
                                         waitMessage: "Deleting...",
                                         params: {
@@ -339,10 +334,10 @@
                                         self.sort({ afterSave: true });
                                         self.selectedIds([]);
                                         self.checkSelectAll(false);
-                                        enableDetail();
+                                        self.enableDetail();
                                     })
                                     .catch(function () {
-                                        enableDetail();
+                                        self.enableDetail();
                                     });
                                 }
                             });

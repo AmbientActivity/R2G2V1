@@ -61,49 +61,38 @@
             });
 
             cmdSave.click(function () {
-                BootstrapDialog.show({
+                utilities.confirm.show({
+                    type: BootstrapDialog.TYPE_PRIMARY,
                     title: "Service Settings",
                     message: "Save settings?",
-                    closable: false,
-                    buttons: [
-                        {
-                            label: "Cancel",
-                            action: function (dialog) {
-                                dialog.close();
+                    buttonOKClass: "btn-edit"
+                })
+                .then(function(confirm) {
+                    if (confirm) {
+                        utilities.job.execute({
+                            url: site.url + "Services/SaveSettings",
+                            type: "GET",
+                            title: "Service Activation/Deactivation",
+                            waitMessage: "Saving settings...",
+                            params: {
+                                activateBeaconWatcher: $.trim(chkBeaconWatcher.is(":checked")),
+                                activateVideoCapture: $.trim(chkVideoCapture.is(":checked"))
                             }
-                        }, {
-                            label: "OK",
-                            cssClass: "btn-primary",
-                            action: function (dialog) {
-                                dialog.close();
-                                utilities.job.execute(
-                                {
-                                    controller: "Services",
-                                    action: "SaveSettings",
-                                    type: "GET",
-                                    title: "Service Activation/Deactivation",
-                                    waitMessage: "Saving settings...",
-                                    params: {
-                                        activateBeaconWatcher: $.trim(chkBeaconWatcher.is(":checked")),
-                                        activateVideoCapture: $.trim(chkVideoCapture.is(":checked"))
-                                    }
-                                }).then(function(data) {
-                                    if (data.ErrorMessage === null) {
-                                        var beaconServiceHasChanged = beaconWatcherServiceHasChanged();
+                        }).then(function (data) {
+                            if (data.ErrorMessage === null) {
+                                var beaconServiceHasChanged = beaconWatcherServiceHasChanged();
 
-                                        $.extend(config, data.ServiceSettings);
- 
-                                        chkBeaconWatcher.prop("checked", (config.IsInstalledBeaconWatcherService === 1));
-                                        chkVideoCapture.prop("checked", (config.IsInstalledVideoCaptureService === 1));
-                                        cmdSave.prop("disabled", true);
+                                $.extend(config, data.ServiceSettings);
 
-                                        if (beaconServiceHasChanged)
-                                            window.location.reload();                               
-                                    }
-                                });
+                                chkBeaconWatcher.prop("checked", (config.IsInstalledBeaconWatcherService === 1));
+                                chkVideoCapture.prop("checked", (config.IsInstalledVideoCaptureService === 1));
+                                cmdSave.prop("disabled", true);
+
+                                if (beaconServiceHasChanged)
+                                    window.location.reload();
                             }
-                        }
-                    ]
+                        });
+                    }
                 });
             });
         }

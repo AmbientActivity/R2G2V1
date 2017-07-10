@@ -15,7 +15,7 @@ namespace Keebee.AAT.ApiClient.Clients
         Config GetByDescription(string description);
         Config GetWithDetails(int id);
         Config GetActiveDetails();
-        void Activate(int id);
+        string Activate(int id);
         IEnumerable<ConfigDetail> GetDetails();
         ConfigDetail GetDetail(int detailId);
         string Post(ConfigEdit config, out int newId);
@@ -100,10 +100,17 @@ namespace Keebee.AAT.ApiClient.Clients
             return configDetail;
         }
 
-        public void Activate(int id)
+        public string Activate(int id)
         {
             var request = new RestRequest($"configs/{id}/activate", Method.GET);
-            Execute(request);
+            var response = Execute(request);
+
+            string msg = null;
+
+            if (response.StatusCode != HttpStatusCode.NoContent)
+                msg = response.StatusDescription;
+
+            return msg;
         }
 
         public string Post(ConfigEdit config, out int newId)

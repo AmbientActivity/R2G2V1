@@ -76,13 +76,24 @@ namespace Keebee.AAT.Administrator.Controllers
         [Authorize]
         public JsonResult Validate(ResidentEditViewModel resident)
         {
-            var rules = new ResidentRules();
-            var errMsgs = rules.Validate(resident.FirstName, resident.LastName, resident.Gender, resident.Id == 0);
+            IEnumerable<string> validateMsgs = null;
+            string errMsg = null;
+
+            try
+            {
+                var rules = new ResidentRules();
+                validateMsgs = rules.Validate(resident.FirstName, resident.LastName, resident.Gender, resident.Id == 0);
+            }
+            catch (Exception ex)
+            {
+                errMsg = ex.Message;
+            }
 
             return Json(new
             {
-                Success = true,
-                ErrorMessages = errMsgs,
+                Success = string.IsNullOrEmpty(errMsg),
+                ValidationMessages = validateMsgs,
+                ErrorMessage = errMsg
             }, JsonRequestBehavior.AllowGet);
         }
 

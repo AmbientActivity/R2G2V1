@@ -9,24 +9,22 @@ function CuteWebUI_AjaxUploader_OnPostback() {
     document.forms[0].submit();
 }
 
-function CuteWebUI_AjaxUploader_OnError(msg) {
-    BootstrapDialog.show({
+function CuteWebUI_AjaxUploader_OnError(message) {
+    utilities.alert.show({
         type: BootstrapDialog.TYPE_DANGER,
         title: "File Error",
-        message: msg
+        message: message
     });
-
     EnableScreen();
     return false;
 }
 
-function CuteWebUI_AjaxUploader_OnTaskError(obj, msg, reason) {
-    BootstrapDialog.show({
+function CuteWebUI_AjaxUploader_OnTaskError(obj, message, reason) {
+    utilities.alert.show({
         type: BootstrapDialog.TYPE_DANGER,
         title: "Task Error",
-        message: "Error uploading file <b>" + obj.FileName + "</b>.\nMessage: " + msg
+        message: "Error uploading file <b>" + obj.FileName + "</b>.\nMessage: " + message
     });
-
     EnableScreen();
     return false;
 }
@@ -356,15 +354,14 @@ function DisableScreen() {
                         self.clearStreams();
 
                         utilities.sharedlibrary.show({
-                            controller: "ResidentProfile",
+                            url: site.url + "ResidentProfile/GetSharedLibarayLinkView/",
                             mediaPathTypeDesc: self.mediaPathType().shortdescription,
                             params: { residentId: config.residentid, mediaPathTypeId: self.selectedMediaPathType() }
                         })
                         .then(function (result) {
                             result.dialog.close();
                             utilities.job.execute({
-                                controller: "ResidentProfile",
-                                action: "AddSharedMediaFiles",
+                                url: site.url + "ResidentProfile/AddSharedMediaFiles",
                                 type: "POST",
                                 waitMessage: "Adding...",
                                 params: {
@@ -384,9 +381,6 @@ function DisableScreen() {
                             .catch(function () {
                                 enableDetail();
                             });
-                        })
-                        .catch(function () {
-                            enableDetail();
                         });
                     };
 
@@ -402,8 +396,7 @@ function DisableScreen() {
                         }).then(function (confirm) {
                             if (confirm) {
                                 utilities.job.execute({
-                                    controller: "ResidentProfile",
-                                    action: "DeleteSelected",
+                                    url: site.url + "ResidentProfile/DeleteSelected",
                                     type: "POST",
                                     waitMessage: "Deleting...",
                                     params: {

@@ -87,32 +87,18 @@
                         var errorName = error.name;
 
                         if (errorName === "InvalidFileExtensionError") {
-                            BootstrapDialog.show({
-                                title: "Invalid File Extension",
+                            utilities.alert.show({
                                 type: BootstrapDialog.TYPE_WARNING,
+                                title: "Invalid File Extension",
                                 message: "Can only upload files of type jpg, png, gif or bmp",
-                                buttons: [
-                                    {
-                                        label: "OK",
-                                        action: function(dialog) {
-                                            dialog.close();
-                                        }
-                                    }
-                                ]
+                                buttonOK: "OK"
                             });
                         } else {
-                            BootstrapDialog.show({
-                                title: "Upload Error",
+                            utilities.alert.show({
                                 type: BootstrapDialog.TYPE_DANGER,
+                                title: "Upload Error",
                                 message: errorName + ": " + error.message,
-                                buttons: [
-                                    {
-                                        label: "OK",
-                                        action: function (dialog) {
-                                            dialog.close();
-                                        }
-                                    }
-                                ]
+                                buttonOK: "OK"
                             });
                         }
                     }

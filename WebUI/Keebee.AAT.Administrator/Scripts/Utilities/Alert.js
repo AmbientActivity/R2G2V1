@@ -14,6 +14,7 @@
                 title: null,
                 message: null,
                 buttonClose: "Close",
+                buttonOKClass: "btn-default"
             };
 
             if ((typeof options !== "undefined") && (options !== null)) {
@@ -28,12 +29,13 @@
             return new Promise(function(resolve) {
                 BootstrapDialog.show({
                     title: config.title,
-                    closable: true,
+                    closable: false,
                     type: config.type,
                     message: config.message,
                     buttons: [
                         {
                             label: config.buttonClose,
+                            cssClass: buttonOKClass,
                             action: function (dialog) {
                                 dialog.close();
                                 resolve();

@@ -107,7 +107,7 @@
                         <td class="col-filetype" data-bind="text: filetype"></td>
                         <td class="col-filesize" data-bind="text: filesize"></td>
                         <!-- ko if: $parent.isSharable() -->
-                        <td class="col-linked-profiles" ><a href="javascript:void(0)" data-toggle="tooltip" data-bind="attr: { id: 'link_' + streamid, title: 'Linked profiles: ' + numlinked }, click: $parent.showLinkedProfilesDialog, css: 'glyphicon glyphicon-link'"></a></td>
+                        <td class="col-linked-profiles" ><a href="javascript:void(0)" data-toggle="tooltip" data-bind="attr: { id: 'link_' + streamid, title: 'Linked profiles: ' + numlinked }, click: $parent.showLinkedProfiles, css: 'glyphicon glyphicon-link'"></a></td>
                         <!-- /ko -->
                     </tr>
                 </tbody>

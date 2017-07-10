@@ -10,24 +10,22 @@ function CuteWebUI_AjaxUploader_OnPostback() {
     document.forms[0].submit();
 }
 
-function CuteWebUI_AjaxUploader_OnError(msg) {
-    BootstrapDialog.show({
+function CuteWebUI_AjaxUploader_OnError(message) {
+    utilities.alert.show({
         type: BootstrapDialog.TYPE_DANGER,
         title: "File Error",
-        message: msg
+        message: message
     });
-
     EnableScreen();
     return false;
 }
 
-function CuteWebUI_AjaxUploader_OnTaskError(obj, msg, reason) {
-    BootstrapDialog.show({
+function CuteWebUI_AjaxUploader_OnTaskError(obj, message, reason) {
+    utilities.alert.show({
         type: BootstrapDialog.TYPE_DANGER,
         title: "Task Error",
-        message: "Error uploading file <b>" + obj.FileName + "</b>.\nMessage: " + msg
+        message: "Error uploading file <b>" + obj.FileName + "</b>.\nMessage: " + message
     });
-
     EnableScreen();
     return false;
 }
@@ -392,8 +390,7 @@ function DisableScreen() {
                             }).then(function (confirm) {
                                 if (confirm) {
                                     utilities.job.execute({
-                                        controller: "SharedLibrary",
-                                        action: "DeleteSelected",
+                                        url: site.url + "SharedLibrary/DeleteSelected",
                                         type: "POST",
                                         waitMessage: "Deleting...",
                                         params: {
@@ -520,26 +517,14 @@ function DisableScreen() {
                             }
                         };
 
-                        self.showLinkedProfilesDialog = function (row) {
-                            var title = "<span class='glyphicon glyphicon-link' style='color: #fff'></span>";
-
-                            $.get(site.url + "SharedLibrary/GetLinkedResidentsView/", { streamId: row.streamid })
-                                .done(function (message) {
-                                    BootstrapDialog.show({
-                                        title: title + " Linked Profiles",
-                                        message: $("<div></div>").append(message),
-
-                                        closable: false,
-                                        buttons: [
-                                            {
-                                                label: "OK",
-                                                cssClass: "btn-primary",
-                                                action: function (dialog) {
-                                                    dialog.close();
-                                                }
-                                            }
-                                        ]
-                                    });
+                        self.showLinkedProfiles = function (row) {
+                            utilities.partialview.show({
+                                url: site.url + "SharedLibrary/GetLinkedResidentsView/",
+                                title: "<span class='glyphicon glyphicon-link' style='color: #fff'></span>",
+                                params: { streamId: row.streamid },
+                                callback: function(dialog) {
+                                    dialog.close();
+                                }
                             });
                         };
 

@@ -10,7 +10,7 @@
     utilities.sharedlibrary = {
         show: function (options) {
             var config = {
-                controller: null,
+                url: null,
                 mediaPathTypeDesc: null,
                 params: {}
             };
@@ -25,7 +25,7 @@
             return new Promise(function (resolve, reject) {
                 var title = "<span class='glyphicon glyphicon-link' style='color: #fff'></span>";
 
-                $.get(site.url + config.controller + "/GetSharedLibarayLinkView/", config.params)
+                $.get(config.url, config.params)
                     .done(function(message) {
                         if (message.length === 0) {
                             var hasHave = "has";

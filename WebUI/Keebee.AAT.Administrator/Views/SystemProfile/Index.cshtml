@@ -31,7 +31,7 @@
     <div class="panel-heading panel-heading-controls">
         <ul class="nav nav-pills">
             <li>
-                <button id="delete" type="button" class="btn btn-md btn-default media-delete-button" disabled data-bind="click: showDeleteSelectedDialog"><i class="glyphicon glyphicon-trash"></i></button>
+                <button id="delete" type="button" class="btn btn-md btn-default media-delete-button" disabled data-bind="click: deleteSelected"><i class="glyphicon glyphicon-trash"></i></button>
             </li>
             <li>
                 <input id="txtSearchFilename" type="text" class="form-control" placeholder="Search" data-bind="value: filenameSearch, valueUpdate: 'keyup'" />
@@ -43,7 +43,7 @@
                 <label>Total:</label> <span data-bind="text: totalFilteredFiles()"></span>
             </li>
             <li>
-                <button id="add" class="btn btn-add" data-bind="click: showAddFromSharedLibrayDialog" disabled>
+                <button id="add" class="btn btn-add" data-bind="click: addFromSharedLibray" disabled>
                     Add
                 </button>
             </li>

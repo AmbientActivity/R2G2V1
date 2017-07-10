@@ -274,7 +274,7 @@
                             });
                         });
 
-                        self.showAddFromSharedLibrayDialog = function () {
+                        self.addFromSharedLibray = function () {
                             self.clearStreams();
 
                             utilities.sharedlibrary.show({
@@ -283,6 +283,7 @@
                                 params: { mediaPathTypeId: self.selectedMediaPathType() }
                             })
                             .then(function (result) {
+                                result.dialog.close();
                                 utilities.job.execute({
                                     controller: "SystemProfile",
                                     action: "AddSharedMediaFiles",
@@ -294,7 +295,7 @@
                                     }
                                 })
                                 .then(function (saveResult) {
-                                    result.dialog.close();
+                                    
                                     lists.FileList = saveResult.FileList;
                                     createFileArray(lists.FileList);
                                     self.sort({ afterSave: true });
@@ -311,27 +312,39 @@
                             });
                         };
 
-                        self.showDeleteSelectedDialog = function () {
-                            BootstrapDialog.show({
-                                type: BootstrapDialog.TYPE_DANGER,
+                        self.deleteSelected = function () {
+                            self.clearStreams();
+
+                            utilities.confirm.show({
                                 title: "Delete Files?",
                                 message: "Delete all selected files?",
-                                closable: false,
-                                buttons: [
-                                    {
-                                        label: "Cancel",
-                                        action: function (dialog) {
-                                            dialog.close();
+                                type: BootstrapDialog.TYPE_DANGER,
+                                buttonOK: "Yes, Delete",
+                                buttonOKClass: "btn-danger"
+                            }).then(function (confirm) {
+                                if (confirm) {
+                                    utilities.job.execute({
+                                        controller: "SystemProfile",
+                                        action: "DeleteSelected",
+                                        type: "POST",
+                                        waitMessage: "Deleting...",
+                                        params: {
+                                            ids: self.selectedIds(),
+                                            mediaPathTypeId: $("#mediaPathTypeId").val()
                                         }
-                                    }, {
-                                        label: "Yes, Delete",
-                                        cssClass: "btn-danger",
-                                        action: function (dialog) {
-                                            self.deleteSelected();
-                                            dialog.close();
-                                        }
-                                    }
-                                ]
+                                    })
+                                    .then(function (result) {
+                                        lists.FileList = result.FileList;
+                                        createFileArray(lists.FileList);
+                                        self.sort({ afterSave: true });
+                                        self.selectedIds([]);
+                                        self.checkSelectAll(false);
+                                        enableDetail();
+                                    })
+                                    .catch(function () {
+                                        enableDetail();
+                                    });
+                                }
                             });
                         };
 
@@ -499,32 +512,6 @@
                             });
                         };
 
-                        self.deleteSelected = function () {
-                            self.clearStreams();
-
-                            utilities.job.execute({
-                                controller: "SystemProfile",
-                                action: "DeleteSelected",
-                                type: "POST",
-                                waitMessage: "Deleting...",
-                                params: {
-                                    ids: self.selectedIds(),
-                                    mediaPathTypeId: self.selectedMediaPathType()
-                                }
-                            })
-                            .then(function (result) {
-                                lists.FileList = result.FileList;
-                                createFileArray(lists.FileList);
-                                self.sort({ afterSave: true });
-                                self.selectedIds([]);
-                                self.checkSelectAll(false);
-                                self.enableDetail();
-                            })
-                            .catch(function () {
-                                self.enableDetail();
-                            });
-                        };
-
                         self.checkSelectAll = function (checked) {
                             self.selectAllIsSelected(checked);
                             $("#chk_all").prop("checked", checked);
@@ -550,11 +537,11 @@
                         };
                     };
                 })
-            .error(function (result) {
+            .error(function (request) {
                 $("#loading-container").hide();
                 $("#error-container")
                     .html("<div><h2>Data load error:</h2></div>")
-                    .append("<div>" + result.data + "</div>")
+                    .append("<div>" + request.responseText + "</div>")
                     .append("<div><h3>Please try refreshing the page</h3></div>");
                 $("#error-container").show();
             });

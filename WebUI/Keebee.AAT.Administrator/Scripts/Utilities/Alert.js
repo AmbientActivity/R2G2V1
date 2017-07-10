@@ -1,0 +1,47 @@
+﻿/*!
+ * 1.0 Keebee AAT Copyright © 2015
+ * Utilities/Confirm.js
+ * Author: John Charlton
+ * Date: 2017-06
+ */
+
+; (function ($) {
+
+    utilities.alert = {
+        show: function (options) {
+            var config = {
+                type: BootstrapDialog.TYPE_INFO,
+                title: null,
+                message: null,
+                buttonClose: "Close",
+            };
+
+            if ((typeof options !== "undefined") && (options !== null)) {
+                if (options.type === null) reject("Type cannot be null");
+                if (options.title === null) reject("Title cannot be null");
+                if (options.message === null) reject("Message cannot be null");
+                if (options.buttonClose === null) reject("Close button text cannot be null");
+            }
+
+            $.extend(config, options);
+
+            return new Promise(function(resolve) {
+                BootstrapDialog.show({
+                    title: config.title,
+                    closable: true,
+                    type: config.type,
+                    message: config.message,
+                    buttons: [
+                        {
+                            label: config.buttonClose,
+                            action: function (dialog) {
+                                dialog.close();
+                                resolve();
+                            }
+                        }
+                    ]
+                });
+            });
+        }
+    }
+})(jQuery);;

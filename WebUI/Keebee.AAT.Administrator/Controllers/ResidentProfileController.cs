@@ -5,12 +5,13 @@ using Keebee.AAT.ApiClient.Models;
 using Keebee.AAT.BusinessRules;
 using Keebee.AAT.Shared;
 using Keebee.AAT.SystemEventLogging;
+using Keebee.AAT.ThumbnailGeneration;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Web.Mvc;
 using CuteWebUI;
-using Keebee.AAT.ThumbnailGeneration;
 
 namespace Keebee.AAT.Administrator.Controllers
 {
@@ -130,6 +131,7 @@ namespace Keebee.AAT.Administrator.Controllers
         {
             bool success;
             string errMsg = null;
+            var newIds = new Collection<int>();
 
             try
             {
@@ -150,9 +152,12 @@ namespace Keebee.AAT.Administrator.Controllers
 
                         int newId;
                         errMsg = _residentMediaFilesClient.Post(mf, out newId);
+                        if (errMsg != null) throw new Exception(errMsg);
+
+                        newIds.Add(newId);
                     }
                 }
-                success = string.IsNullOrEmpty(errMsg);
+                success = true;
             }
             catch (Exception ex)
             {
@@ -164,7 +169,8 @@ namespace Keebee.AAT.Administrator.Controllers
             {
                 Success = success,
                 ErrorMessage = !success ? errMsg : null,
-                FileList = GetFiles(residentId)
+                FileList = GetFiles(residentId),
+                NewIds = newIds,
             }, JsonRequestBehavior.AllowGet);
         }
 

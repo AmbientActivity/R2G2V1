@@ -64,36 +64,19 @@
 
                             if (data.Success) {
                                 if (config.successVerbage !== null) {
-                                    BootstrapDialog.show({
+                                    utilities.alert.show({
                                         title: "Success",
-                                        closable: false,
                                         type: BootstrapDialog.TYPE_SUCCESS,
-                                        message: config.successVerbage,
-                                        buttons: [
-                                            {
-                                                label: "Close",
-                                                action: function (dlg) {
-                                                    dlg.close();
-                                                }
-                                            }
-                                        ]
+                                        message: config.successVerbage
                                     });
                                 }
                                 resolve(data);
+
                             } else {
-                                BootstrapDialog.show({
+                                utilities.alert.show({
                                     title: "Error",
-                                    closable: false,
                                     type: BootstrapDialog.TYPE_DANGER,
-                                    message: "The following error occured:\n" + data.ErrorMessage,
-                                    buttons: [
-                                        {
-                                            label: "Close",
-                                            action: function (dlg) {
-                                                dlg.close();
-                                            }
-                                        }
-                                    ]
+                                    message: "The following error occured:\n" + data.ErrorMessage
                                 });
                                 reject(data);
                             }
@@ -102,17 +85,10 @@
                             if (typeof inProgressDialog !== "undefined")
                                 inProgressDialog.close();
 
-                            BootstrapDialog.show({
+                            utilities.alert.show({
                                 title: "Error",
-                                closable: false,
                                 type: BootstrapDialog.TYPE_DANGER,
-                                message: "The following error occured:\n" + data.ErrorMessage,
-                                buttons: [{
-                                    label: "Close",
-                                    action: function (dlg) {
-                                        dlg.close();
-                                    }
-                                }]
+                                message: "The following error occured:\n" + data.ErrorMessage
                             });
                             reject(data);
                         }

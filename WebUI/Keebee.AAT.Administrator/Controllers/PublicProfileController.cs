@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
 using System;
+using System.Collections.ObjectModel;
 
 namespace Keebee.AAT.Administrator.Controllers
 {
@@ -237,6 +238,7 @@ namespace Keebee.AAT.Administrator.Controllers
         {
             bool success;
             string errMsg = null;
+            var newIds = new Collection<int>();
 
             try
             {
@@ -254,9 +256,12 @@ namespace Keebee.AAT.Administrator.Controllers
 
                         int newId;
                         errMsg = _publicMediaFilesClient.Post(pmf, out newId);
+                        if (errMsg != null) throw new Exception(errMsg);
+
+                        newIds.Add(newId);
                     }
                 }
-                success = string.IsNullOrEmpty(errMsg);
+                success = true;
             }
             catch (Exception ex)
             {
@@ -268,7 +273,8 @@ namespace Keebee.AAT.Administrator.Controllers
             {
                 Success = success,
                 ErrorMessage = !success ? errMsg : null,
-                FileList = GetMediaFiles()
+                FileList = GetMediaFiles(),
+                NewIds = newIds
             }, JsonRequestBehavior.AllowGet);
         }
 

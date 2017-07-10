@@ -380,27 +380,40 @@ function DisableScreen() {
                             });
                         });
 
-                        self.showDeleteSelectedDialog = function () {
-                            BootstrapDialog.show({
-                                type: BootstrapDialog.TYPE_DANGER,
+                        self.deleteSelected = function () {
+                            self.clearStreams();
+
+                            utilities.confirm.show({
                                 title: "Delete Files?",
                                 message: "Delete all selected files?",
-                                closable: false,
-                                buttons: [
-                                    {
-                                        label: "Cancel",
-                                        action: function (dialog) {
-                                            dialog.close();
+                                type: BootstrapDialog.TYPE_DANGER,
+                                buttonOK: "Yes, Delete",
+                                buttonOKClass: "btn-danger"
+                            }).then(function (confirm) {
+                                if (confirm) {
+                                    utilities.job.execute({
+                                        controller: "SharedLibrary",
+                                        action: "DeleteSelected",
+                                        type: "POST",
+                                        waitMessage: "Deleting...",
+                                        params: {
+                                            streamIds: self.selectedStreamIds(),
+                                            mediaPathTypeId: $("#mediaPathTypeId").val(),
+                                            isSharable: self.isSharable()
                                         }
-                                    }, {
-                                        label: "Yes, Delete",
-                                        cssClass: "btn-danger",
-                                        action: function (dialog) {
-                                            self.deleteSelected();
-                                            dialog.close();
-                                        }
-                                    }
-                                ]
+                                    })
+                                    .then(function (result) {
+                                        lists.FileList = result.FileList;
+                                        createFileArray(lists.FileList);
+                                        self.sort({ afterSave: true });
+                                        self.selectedStreamIds([]);
+                                        self.checkSelectAll(false);
+                                        enableDetail();
+                                    })
+                                    .catch(function () {
+                                        enableDetail();
+                                    });
+                                }
                             });
                         };
 
@@ -589,51 +602,6 @@ function DisableScreen() {
                             });
                         };
 
-                        self.deleteSelected = function () {
-                            var streamIds = self.selectedStreamIds();
-                            var mediaPathTypeId = $("#mediaPathTypeId").val();
-
-                            self.clearStreams();
-                            utilities.inprogress.show({ message: "Deleting..." })
-                                .then(function(dialog) {
-                                    $.post(site.url + "SharedLibrary/DeleteSelected/",
-                                        {
-                                            streamIds: streamIds,
-                                            mediaPathTypeId: mediaPathTypeId,
-                                            isSharable: self.isSharable()
-                                        })
-                                        .done(function (result) {
-                                            dialog.close();
-                                            if (result.Success) {
-                                                lists.FileList = result.FileList;
-                                                createFileArray(lists.FileList);
-                                                self.sort({ afterSave: true });
-                                                self.selectedStreamIds([]);
-                                                self.checkSelectAll(false);
-                                                enableDetail();
-                                            } else {
-                                                enableDetail();
-
-                                                BootstrapDialog.show({
-                                                    type: BootstrapDialog.TYPE_DANGER,
-                                                    title: "Delete Error",
-                                                    message: result.ErrorMessage
-                                                });
-                                            }
-                                        })
-                                        .error(function (result) {
-                                            dialog.close();
-                                            enableDetail();
-
-                                            BootstrapDialog.show({
-                                                type: BootstrapDialog.TYPE_DANGER,
-                                                title: "Delete Error",
-                                                message: "Unexpected Error\n" + result
-                                            });
-                                        });
-                                });
-                        };
-
                         self.checkSelectAll = function (checked) {
                             self.selectAllIsSelected(checked);
                             $("#chk_all").prop("checked", checked);
@@ -647,11 +615,11 @@ function DisableScreen() {
                         }
                     };
                 })
-            .error(function (result) {
+            .error(function (request) {
                 $("#loading-container").hide();
                 $("#error-container")
                     .html("<div><h2>Data load error:</h2></div>")
-                    .append("<div>" + result.data + "</div>")
+                    .append("<div>" + request.responseText + "</div>")
                     .append("<div><h3>Please try refreshing the page</h3></div>");
                 $("#error-container").show();
             });

@@ -37,7 +37,7 @@
     <div class="panel-heading panel-heading-controls">
         <ul class="nav nav-pills">
             <li>
-                <button id="delete" type="button" class="btn btn-md btn-default media-delete-button" disabled data-bind="click: showDeleteSelectedDialog"><i class="glyphicon glyphicon-trash"></i></button>
+                <button id="delete" type="button" class="btn btn-md btn-default media-delete-button" disabled data-bind="click: deleteSelected"><i class="glyphicon glyphicon-trash"></i></button>
             </li>
             <li>
                 <input id="txtSearchFilename" type="text" class="form-control description-filter" placeholder="Search" data-bind="value: filenameSearch, valueUpdate: 'keyup'" />
@@ -55,7 +55,7 @@
                         <span class="caret"></span>
                     </button>
                     <ul class="dropdown-menu">
-                        <li><a href="javascript:void(0)" id="add-shared" data-bind="click: showAddFromSharedLibrayDialog">From Shared Library</a></li>
+                        <li><a href="javascript:void(0)" id="add-shared" data-bind="click: addFromSharedLibray">From Shared Library</a></li>
                         <li><a href="javascript:void(0)" id="uploadbutton" onclick="return" false;">From Your Computer</a></li>
                     </ul>
                 </div>

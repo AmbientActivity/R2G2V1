@@ -18,7 +18,7 @@
              @idsearch = @Model.IdSearch,
              @sortcolumn = @Model.SortColumn,
              @sortdescending = @Model.SortDescending
-         })'"><h4><span class="glyphicon glyphicon-chevron-left"></span>&nbsp;&nbsp;<b>Back To All Residents</b></h4></a>
+         })'"><h4><span class="glyphicon glyphicon-chevron-left"></span>&nbsp;&nbsp;<b>Back To AlSel Residents</b></h4></a>
 </div>
 
 <script type="text/javascript">
@@ -54,7 +54,7 @@
                 <button id="delete" type="button" class="btn btn-md btn-default media-delete-button" disabled data-bind="click: deleteSelected"><i class="glyphicon glyphicon-trash"></i></button>
             </li>
             <li>
-                <input id="txtSearchFilename" type="text" class="form-control description-filter" placeholder="Search" data-bind="value: filenameSearch, valueUpdate: 'keyup'" />
+                <input id="txtSearchFilename" type="text" class="form-control description-filter" placeholder="Filter Filename" data-bind="value: filenameSearch, valueUpdate: 'keyup'" />
             </li>
             <li>
                 <select id="ddlMediaPathTypes" class="form-control select-filter" data-bind="options: mediaPathTypes, optionsValue: 'id', optionsText: 'description', value: selectedMediaPathType"></select>

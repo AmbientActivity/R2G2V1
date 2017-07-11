@@ -15,6 +15,7 @@
                 focus: "",
                 buttonOK: "OK",
                 buttonOKClass: "btn-edit",
+                okOnly: false,
                 buttonCancel: "Cancel",
                 params: {},
                 callback: function () { },
@@ -37,22 +38,7 @@
                             $("#" + config.focus).focus();
                         },
                         closable: false,
-                        buttons: [
-                            {
-                                label: config.buttonCancel,
-                                action: function(dialog) {
-                                    dialog.close();
-                                    config.cancelled();
-                                }
-                            }, {
-                                label: config.buttonOK,
-                                hotkey: 13, // enter
-                                cssClass: config.buttonOKClass,
-                                action: function (dialog) {
-                                    config.callback(dialog);
-                                }
-                            }
-                        ]
+                        buttons: getButtons()
                     });
                 })
                 .error(function(request) {
@@ -62,6 +48,34 @@
                         message: "The following error occured:\n" + request.responseText
                     });
                 });
+
+            function getButtons() {
+                if (!config.okOnly) {
+                    return [{
+                            label: config.buttonCancel,
+                            action: function(dialog) {
+                                dialog.close();
+                                config.cancelled();
+                            }
+                        }, {
+                            label: config.buttonOK,
+                            hotkey: 13, // enter
+                            cssClass: config.buttonOKClass,
+                            action: function(dialog) {
+                                config.callback(dialog);
+                            }
+                        }];
+                } else {
+                    return [{
+                            label: config.buttonOK,
+                            hotkey: 13, // enter
+                            cssClass: config.buttonOKClass,
+                            action: function (dialog) {
+                                config.callback(dialog);
+                            }
+                        }];
+                }
             }
+        }
     }
 })(jQuery);;

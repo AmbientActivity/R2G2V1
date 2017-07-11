@@ -520,9 +520,10 @@ function DisableScreen() {
                         self.showLinkedProfiles = function (row) {
                             utilities.partialview.show({
                                 url: site.url + "SharedLibrary/GetLinkedResidentsView/",
-                                title: "<span class='glyphicon glyphicon-link' style='color: #fff'></span>",
+                                title: "<span class='glyphicon glyphicon-link' style='color: #fff'></span> Linked Profiles",
                                 params: { streamId: row.streamid },
-                                cancelled: function() {},
+                                buttonOK: "Close",
+                                okOnly: true,
                                 callback: function(dialog) {
                                     dialog.close();
                                 }

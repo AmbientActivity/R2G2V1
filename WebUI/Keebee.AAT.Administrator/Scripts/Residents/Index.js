@@ -269,6 +269,7 @@
                                 title: title,
                                 buttonOK: "Save",
                                 buttonOKClass: add ? "btn-success" : "btn-edit",
+                                cancelled: function () { cmdAdd.prop("disabled", false); },
                                 callback: function(dialog) {
                                     var resident = self.getResidentDetailFromDialog();
 
@@ -309,6 +310,9 @@
                                             html = html + "</ul>";
                                             $("#validation-container").append(html);
                                         }
+                                    })
+                                    .catch(function() {
+                                        cmdAdd.prop("disabled", false);
                                     });
                                 }
                             });

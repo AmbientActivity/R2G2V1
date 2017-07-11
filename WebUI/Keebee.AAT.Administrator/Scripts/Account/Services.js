@@ -45,6 +45,7 @@
                     type: BootstrapDialog.TYPE_PRIMARY,
                     title: "<span class='glyphicon glyphicon-pencil' style='color: #fff'></span> Change Password",
                     focus: "txtOldPassword",
+                    cancelled: function() {},
                     callback: function(dialog) {
                         var jsonData = getChangePasswordDetailFromDialog();
 

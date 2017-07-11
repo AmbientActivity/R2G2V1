@@ -194,57 +194,64 @@
                                 title: title,
                                 params: { selectedConfigid: self.selectedConfig() },
                                 focus: "txtDescription",
-                                buttonOKClass: add ? "btn-success" : "btn-edit"
-                            })
-                            .then(function (dialog) {
-                                var config = self.getConfigFromDialog();
-                                config.Id = id;
+                                buttonOKClass: add ? "btn-success" : "btn-edit",
+                                cancelled: function() {
+                                    self.enableDetail();
+                                    enableButtons(true);
+                                },
+                                callback: function(dialog) {
+                                    var config = self.getConfigFromDialog();
+                                    config.Id = id;
 
-                                utilities.job.execute({
-                                    url: site.url + "PhidgetConfig/Validate",
-                                    type: "POST",
-                                    params: { config: config, selectedConfigId: self.selectedConfig() }
-                                })
-                                .then(function(validateResult) {
-                                    if (validateResult.ValidationMessages === null) {
-                                        dialog.close();
-                                        utilities.job.execute({
-                                            url: site.url + "PhidgetConfig/Save",
+                                    utilities.job.execute({
+                                            url: site.url + "PhidgetConfig/Validate",
                                             type: "POST",
-                                            waitMessage: "Saving...",
-                                            params:
-                                                { config: config, selectedConfigId: self.selectedConfig() }
+                                            params: { config: config, selectedConfigId: self.selectedConfig() }
                                         })
-                                        .then(function(saveResult) {
-                                            $.extend(lists, saveResult);
-                                            createConfigArray(lists.ConfigList);
-                                            createConfigDetailArray(lists.ConfigDetailList);
-                                            self.selectedConfig(saveResult.SelectedId);
-                                            activeConfig = saveResult.ConfigList
-                                                .filter(function(value) { return value.IsActive; })[0];
-                                            self.activeConfig(activeConfig.Id);
-                                            self.activeConfigDesc(activeConfig.Description);
-                                            if (activeConfig.IsActiveEventLog === true)
-                                                self.activeEventLogDesc("On");
-                                            else
-                                                self.activeEventLogDesc("Off");
-                                            self.enableDetail();
-                                            enableButtons(true);
+                                        .then(function(validateResult) {
+                                            if (validateResult.ValidationMessages === null) {
+                                                dialog.close();
+                                                utilities.job.execute({
+                                                        url: site.url + "PhidgetConfig/Save",
+                                                        type: "POST",
+                                                        waitMessage: "Saving...",
+                                                        params:
+                                                        {
+                                                            config: config,
+                                                            selectedConfigId: self.selectedConfig()
+                                                        }
+                                                    })
+                                                    .then(function(saveResult) {
+                                                        $.extend(lists, saveResult);
+                                                        createConfigArray(lists.ConfigList);
+                                                        createConfigDetailArray(lists.ConfigDetailList);
+                                                        self.selectedConfig(saveResult.SelectedId);
+                                                        activeConfig = saveResult.ConfigList
+                                                            .filter(function(value) { return value.IsActive; })[0];
+                                                        self.activeConfig(activeConfig.Id);
+                                                        self.activeConfigDesc(activeConfig.Description);
+                                                        if (activeConfig.IsActiveEventLog === true)
+                                                            self.activeEventLogDesc("On");
+                                                        else
+                                                            self.activeEventLogDesc("Off");
+                                                        self.enableDetail();
+                                                        enableButtons(true);
+                                                    });
+                                            } else {
+                                                var validationContainer = $("#validation-container");
+                                                validationContainer.show();
+                                                validationContainer.html("");
+                                                var html = "</br><ul>";
+                                                for (var i = 0; i < validateResult.ValidationMessages.length; i++) {
+                                                    var msg = validateResult.ValidationMessages[i];
+                                                    html = html + "<li>" + msg + "</li>";
+                                                }
+                                                html = html + "</ul>";
+                                                validationContainer.append(html);
+                                            }
                                         });
-                                    } else {
-                                        var validationContainer = $("#validation-container");
-                                        validationContainer.show();
-                                        validationContainer.html("");
-                                        var html = "</br><ul>";
-                                        for (var i = 0; i < validateResult.ValidationMessages.length; i++) {
-                                            var msg = validateResult.ValidationMessages[i];
-                                            html = html + "<li>" + msg + "</li>";
-                                        }
-                                        html = html + "</ul>";
-                                        validationContainer.append(html);
                                     }
-                                });
-                            })
+                                })
                             .catch(function() {
                                 self.enableDetail();
                                 enableButtons(true);
@@ -274,7 +281,8 @@
                                     utilities.job.execute({
                                         url: site.url + "PhidgetConfig/Delete",
                                         type: "POST",
-                                        params: { id: id }
+                                        params: { id: id },
+                                        waitMessage:  "Deleting..."
                                     })
                                     .then(function (result) {
                                         lists.ConfigList = result.ConfigList;
@@ -322,6 +330,7 @@
                                 params: { id: id, configId: self.selectedConfig() },
                                 focus: "txtDescription",
                                 buttonOKClass: add ? "btn-success" : "btn-primary",
+                                cancelled: function () { enableButtons(true); },
                                 callback: function(dialog) {
                                     var configdetail = self.getConfigDetailFromDialog();
                                     configdetail.ConfigId = self.selectedConfig();
@@ -394,19 +403,20 @@
                                             id: id,
                                             configId: self.selectedConfig(),
                                             isActive: self.selectedConfig() === self.activeConfig()
-                                            }
-                                        })
-                                        .then(function (result) {
-                                            lists.ConfigDetailList = result.ConfigDetailList;
-                                            createConfigDetailArray(lists.ConfigDetailList);
-                                            self.enableDetail();
-                                            enableButtons(true);
-                                        })
-                                        .catch(function () {
-                                            self.enableDetail();
-                                            enableButtons(true);
-                                        });
-                                    }
+                                        },
+                                        waitMessage: "Deleting..."
+                                    })
+                                    .then(function (result) {
+                                        lists.ConfigDetailList = result.ConfigDetailList;
+                                        createConfigDetailArray(lists.ConfigDetailList);
+                                        self.enableDetail();
+                                        enableButtons(true);
+                                    })
+                                    .catch(function () {
+                                        self.enableDetail();
+                                        enableButtons(true);
+                                    });
+                                }
                             });
                         };
 

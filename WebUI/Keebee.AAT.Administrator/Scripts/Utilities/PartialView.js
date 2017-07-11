@@ -17,7 +17,8 @@
                 buttonOKClass: "btn-edit",
                 buttonCancel: "Cancel",
                 params: {},
-                callback: function() {}
+                callback: function () { },
+                cancelled: function () { }
             };
 
             if ((typeof options !== "undefined") && (options !== null)) {
@@ -41,6 +42,7 @@
                                 label: config.buttonCancel,
                                 action: function(dialog) {
                                     dialog.close();
+                                    config.cancelled();
                                 }
                             }, {
                                 label: config.buttonOK,

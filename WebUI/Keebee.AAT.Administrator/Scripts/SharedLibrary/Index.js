@@ -522,6 +522,7 @@ function DisableScreen() {
                                 url: site.url + "SharedLibrary/GetLinkedResidentsView/",
                                 title: "<span class='glyphicon glyphicon-link' style='color: #fff'></span>",
                                 params: { streamId: row.streamid },
+                                cancelled: function() {},
                                 callback: function(dialog) {
                                     dialog.close();
                                 }

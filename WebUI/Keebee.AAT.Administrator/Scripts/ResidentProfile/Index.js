@@ -62,13 +62,13 @@ function DisableScreen() {
 
 ; (function ($) {
     residentprofile.index = {
-        init: function (values) {
+        init: function (options) {
             var config = {
                 residentid: 0,
                 selectedMediaPathTypeId: 0
             };
 
-            $.extend(config, values);
+            $.extend(config, options);
 
             // buttons
             var cmdDelete = $("#delete");

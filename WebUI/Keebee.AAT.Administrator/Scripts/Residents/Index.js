@@ -7,7 +7,7 @@
 
 ; (function ($) {
     residents.index = {
-        init: function (values) {
+        init: function (options) {
 
             // buttons
             var cmdAdd = $("#add");
@@ -28,7 +28,7 @@
                 isVideoCaptureServiceInstalled: 0
             }
 
-            $.extend(config, values);
+            $.extend(config, options);
 
             if (config.sortcolumn.length > 0)
                 currentSortKey = config.sortcolumn;

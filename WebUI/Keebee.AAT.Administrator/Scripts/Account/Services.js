@@ -8,7 +8,7 @@
 ; (function ($) {
 
     account.services = {
-        init: function () {
+        init: function() {
             var lnkChangePassword = $("#change-password");
             var cmdLogin = $("#login");
             var cmdLogOff = $("#logoff");

@@ -1,20 +1,24 @@
 ﻿using Keebee.AAT.Administrator.ViewModels;
 using Keebee.AAT.BusinessRules;
+using Keebee.AAT.ApiClient.Models;
 using System;
-using System.Collections.ObjectModel;
 using System.Configuration;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Security;
-using Keebee.AAT.ApiClient.Models;
 
 namespace Keebee.AAT.Administrator.Controllers
 {
     public class AccountController : Controller
     {
         [HttpGet]
-        public ActionResult Login(LoginViewModel vm)
+        public ActionResult Login()
         {
+            if (Request.IsAuthenticated)
+            {
+                return Redirect(Url.Content("~/"));
+            }
+
             return View();
         }
 
@@ -89,12 +93,6 @@ namespace Keebee.AAT.Administrator.Controllers
         }
 
         [HttpGet]
-        public PartialViewResult GetLoginView()
-        {
-            return PartialView("_Login", LoadLoginViewModel());
-        }
-
-        [HttpGet]
         public PartialViewResult GetChangePasswordView()
         {
             return PartialView("_ChangePassword", new ChangePasswordViewModel());
@@ -163,21 +161,6 @@ namespace Keebee.AAT.Administrator.Controllers
                 ErrorMessage = errMsg,
                 ValidationMessage = validateMsg
             }, JsonRequestBehavior.AllowGet);
-        }
-
-        private static LoginViewModel LoadLoginViewModel()
-        {
-            var vm = new LoginViewModel
-            {
-                Usernames = new SelectList(new Collection<SelectListItem>
-                    {
-                        new SelectListItem {Value = "admin", Text = "Administrator"},
-                        new SelectListItem {Value = "caregiver", Text = "Caregiver"}
-                    },
-                    "Value", "Text", "caregiver")
-            };
-
-            return vm;
         }
 
         [HttpGet]

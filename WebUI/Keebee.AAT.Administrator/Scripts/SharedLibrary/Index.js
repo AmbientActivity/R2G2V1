@@ -62,14 +62,14 @@ function DisableScreen() {
 
 ; (function ($) {
     sharedlibrary.index = {
-        init: function (values) {
+        init: function (options) {
             
             var config = {
                 selectedMediaPathTypeId: 0,
                 streamIds: []
             };
 
-            $.extend(config, values);
+            $.extend(config, options);
 
             // buttons
             var cmdDelete = $("#delete");

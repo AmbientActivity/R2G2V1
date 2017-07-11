@@ -45,7 +45,8 @@
             this.stateMachineServiceInstaller.DisplayName = "Keebee AAT State Machine Service";
             this.stateMachineServiceInstaller.ServiceName = "StateMachineService";
             this.stateMachineServiceInstaller.ServicesDependedOn = new string[] {
-        "MSMQ"};
+        "MSMQ",
+        "MSSQL$SQLEXPRESS"};
             this.stateMachineServiceInstaller.StartType = System.ServiceProcess.ServiceStartMode.Automatic;
             this.stateMachineServiceInstaller.AfterInstall += new System.Configuration.Install.InstallEventHandler(this.stateMachineServiceInstaller_AfterInstall);
             // 

@@ -44,6 +44,8 @@
             this.keepIISAliveServiceInstaller.Description = "Keeps the Operations API and Administrator Interface alive";
             this.keepIISAliveServiceInstaller.DisplayName = "Keebee AAT Keep IIS Alive Service";
             this.keepIISAliveServiceInstaller.ServiceName = "KeepIISAliveService";
+            this.keepIISAliveServiceInstaller.ServicesDependedOn = new string[] {
+        "MSSQL$SQLEXPRESS"};
             this.keepIISAliveServiceInstaller.StartType = System.ServiceProcess.ServiceStartMode.Automatic;
             this.keepIISAliveServiceInstaller.AfterInstall += new System.Configuration.Install.InstallEventHandler(this.keepIISAliveServiceInstaller_AfterInstall);
             // 

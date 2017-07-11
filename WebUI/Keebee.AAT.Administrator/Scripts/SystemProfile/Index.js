@@ -180,7 +180,7 @@
                         self.sort = function (header) {
                             if (isBinding) return;
 
-                            var afterSave = typeof header.afterSave != "undefined" ? header.afterSave : false;
+                            var afterSave = typeof header.afterSave !== "undefined" ? header.afterSave : false;
                             var sortKey;
 
                             var isboolean = false;

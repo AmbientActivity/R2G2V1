@@ -15,7 +15,8 @@
             var currentSortKey = "firstname";
             var primarySortKey = "firstname";
             var sortDescending = false;
-            var isBinding = true;
+            var isBinding = true;   // <-- for initial page load only - used to stop the sort from being executed
+            var isRendering = true; // <-- for initial page load only - used to set focus to 'First Name' search input
 
             var config = {
                 selectedid: 0,
@@ -95,7 +96,9 @@
 
                                 // determine if there is table overflow (to cause a scrollbar)
                                 // if so, unhide the scrollbar header column
-                                // and adjust the width of the profile picture column
+                                // and adjust the width of the 'capturable' column
+                                // a bit clumsy but needed in order to have 'sticky' headers
+                                // with a resizable table
                                 var colScrollbar = $("#col-scrollbar");
                                 var colCapturable = $("#col-capturable");
 
@@ -117,6 +120,8 @@
                                 tableDetailElement.hide();
                                 noMediaMessage.show();
                             }
+                            if (isRendering) $("#txtSearchFirstName").focus();
+                            isRendering = false;
                         }
                     }
 
@@ -191,7 +196,7 @@
                         self.sort = function (header) {
                             if (isBinding) return;
 
-                            var afterSave = typeof header.afterSave != "undefined" ? header.afterSave : false;
+                            var afterSave = typeof header.afterSave !== "undefined" ? header.afterSave : false;
                             var sortKey;
 
                             if (!afterSave) {
@@ -227,7 +232,8 @@
                                 return (
                                     (self.firstNameSearch().length === 0 || r.firstname.toLowerCase().indexOf(self.firstNameSearch().toLowerCase()) !== -1)
                                     &&
-                                    (self.lastNameSearch().length === 0 || r.lastname.toLowerCase().indexOf(self.lastNameSearch().toLowerCase()) !== -1)
+                                    (self.lastNameSearch().length === 0 || (r.lastname !== null &&
+                                        r.lastname.toLowerCase().indexOf(self.lastNameSearch().toLowerCase()) !== -1))
                                     &&
                                     (self.idSearch().length === 0 || r.id.toString().indexOf(self.idSearch().toString()) !== -1)
                                 );

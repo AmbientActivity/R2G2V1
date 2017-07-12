@@ -376,11 +376,7 @@ input[type="checkbox"] {
     width: 40px;
     background: transparent;
 }
-.virtualPlaceholderProfilePic {
-    display: block;
-    width: 45px;
-    background: transparent;
-}
+
 /* table columns */
 .col-checkbox {
     width: 1%;
@@ -434,25 +430,33 @@ input[type="checkbox"] {
 
 /* resident table */
 .col-glyphicon {
-    width: 4%;
+    width: 3%;
     text-align: center;
 }
-.virtualPlaceholderGlyphicon {
+.col-glyphicon-media {
+    width: 8%;
+    text-align: center;
+}
+.col-profile-picture {
+    width: 7%;
+    text-align: center;
+}
+.virtualPlaceholderProfilePic {
     display: block;
-    width: 30px;
+    width: 40px;
     background: transparent;
 }
 .col-firstname {
-    width: 25%;
+    width: 17%;
 }
 .col-lastname {
-    width: 25%;
+    width: 17%;
 }
 .col-id {
     width: 6%;
 }
 .col-gender {
-    width: 5%;
+    width: 6%;
     text-align: center;
 }
 .col-capturable {
@@ -460,16 +464,17 @@ input[type="checkbox"] {
     text-align: center;
 }
 .col-capturable-scrollbar {
-    width: 5%;
+    width: 6%;
     text-align: center;
 }
 .col-date {
     width: 12%;
     text-align: center;
 }
-.col-profile-picture {
-    width: 10%;
-    text-align: center;
+.virtualPlaceholderGlyphicon {
+    display: block;
+    width: 30px;
+    background: transparent;
 }
 
 /* font-awesome */
@@ -508,6 +513,9 @@ input[type="checkbox"] {
 }
 .glyphicon-cd {
     color: #419641;
+}
+.glyphicon-facetime-video {
+    padding-left: 10px;
 }
 /* bootstrap - remove blue border when btn-link gets focus */
 .btn:focus,.btn:active {

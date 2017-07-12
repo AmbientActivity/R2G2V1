@@ -105,18 +105,18 @@
                                 // a bit clumsy but needed in order to have 'sticky' headers
                                 // with a resizable table
                                 var colScrollbar = $("#col-scrollbar");
-                                var colCapturable = $("#col-capturable");
+                                //var colCapturable = $("#col-capturable");
 
                                 if (table.clientHeight > site.getMaxClientHeight) {
                                     colScrollbar.prop("hidden", false);
                                     colScrollbar.attr("style", "width: 1%;");
-                                    colCapturable.removeClass("col-capturable");
-                                    colCapturable.addClass("col-capturable-scrollbar");
+                                    //colCapturable.removeClass("col-capturable");
+                                    //colCapturable.addClass("col-capturable-scrollbar");
                                     tableDetailElement.addClass("container-height");
                                 } else {
                                     colScrollbar.prop("hidden", true);
-                                    colCapturable.removeClass("col-capturable-scrollbar");
-                                    colCapturable.addClass("col-capturable");
+                                    //colCapturable.removeClass("col-capturable-scrollbar");
+                                    //colCapturable.addClass("col-capturable");
                                     tableDetailElement.removeClass("container-height");
                                 }
 

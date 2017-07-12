@@ -516,11 +516,11 @@ input[type="checkbox"] {
 
 /* button */
 .label-filter {
-    background-color: #a1acb4;
-    color: #faf5f5;
+    background-color: #f7f7f7;
+    color: #6a6969;/*#faf5f5;*/
     font-size: .8em;
     padding: 2px 5px 2px 5px;
-    border: 1px solid #829bb0;
+    border: 1px solid #afcde6;
 }
 .button-text {
     color: #fff;

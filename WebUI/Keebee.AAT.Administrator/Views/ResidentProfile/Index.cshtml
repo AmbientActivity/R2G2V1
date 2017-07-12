@@ -5,7 +5,11 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h3 class="page-banner"><img class="img-circle" src="@Model.ProfilePicture" alt="" width="60" height="60" /> Manage profile media for <i><b>@Model.FullName</b></i></h3>
+<h3 class="page-banner">
+    <a href="javascript:void(0)"data-bind="click: editResidentDetails">
+        <img id="banner-image" data-toggle="toolbar" data-placement="bottom" title="Edit resident details" class="img-circle" src="@Model.ProfilePicture" alt="" width="60" height="60"/>
+    </a> Manage profile media for <i><b id="fullname">@Model.FullName</b></i>
+</h3>
 
 <div class="pull-right back-to-residents-container">
     <a id="lnkGoBack" href="javascript:void(0)" onclick="location.href =
@@ -51,12 +55,14 @@
     <div class="panel-heading panel-heading-controls">
         <ul class="nav nav-pills">
             <li>
-                <button id="delete" type="button" class="btn btn-md btn-default media-delete-button" disabled data-bind="click: deleteSelected"><i class="glyphicon glyphicon-trash"></i></button>
+                <button id="delete" data-toggle="tooltip" title="Delete files" class="btn btn-default btn-md delete-media-button" disabled data-bind="click: deleteSelected"><i class="glyphicon glyphicon-trash"></i></button>
             </li>
             <li>
-                <input id="txtSearchFilename" type="text" class="form-control description-filter" placeholder="Filter Filename" data-bind="value: filenameSearch, valueUpdate: 'keyup'" />
+                <div class="label label-filter">Filename</div>
+                <input id="txtSearchFilename" type="text" class="form-control text-filter" placeholder="Filter" data-bind="value: filenameSearch, valueUpdate: 'keyup'"/>
             </li>
             <li>
+                <div class="label label-filter">Select Media Type</div>
                 <select id="ddlMediaPathTypes" class="form-control select-filter" data-bind="options: mediaPathTypes, optionsValue: 'id', optionsText: 'description', value: selectedMediaPathType"></select>
             </li>
             <li class="pull-right total-files">
@@ -64,7 +70,7 @@
             </li>
             <li>
                 <div class="dropdown">
-                    <button id="add" class="btn btn-add dropdown-toggle" type="button" data-toggle="dropdown" disabled>
+                    <button id="add" class="btn btn-add dropdown-toggle add-media-button" type="button" data-toggle="dropdown" disabled>
                         Add
                         <span class="caret"></span>
                     </button>

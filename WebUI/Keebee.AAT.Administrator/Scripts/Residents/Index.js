@@ -76,6 +76,11 @@
                                     if (tooltipDelete.length > 0) {
                                         tooltipDelete.tooltip({ delay: { show: 100, hide: 100 } });
                                     }
+
+                                    var tooltipProfilePicture = $("#profilepicture_" + id);
+                                    if (tooltipProfilePicture.length > 0) {
+                                        tooltipProfilePicture.tooltip({ delay: { show: 100, hide: 100 } });
+                                    }
                                 }
                             }
                             // if there are no rows in the table, hide the table and display a message
@@ -303,18 +308,10 @@
                                                     cmdAdd.prop("disabled", false);
                                                 });
                                         } else {
-                                            $("#validation-container").show();
-                                            $("#validation-container").html("");
-                                            var html = "<ul>";
-                                            for
-                                            (var i = 0;
-                                                i < validateResult.ValidationMessages.length;
-                                                i++) {
-                                                var msg = validateResult.ValidationMessages[i];
-                                                html = html + "<li>" + msg + "</li>";
-                                            }
-                                            html = html + "</ul>";
-                                            $("#validation-container").append(html);
+                                            utilities.validation.show({
+                                                container: "validation-container",
+                                                messages: validateResult.ValidationMessages
+                                            });
                                         }
                                     })
                                     .catch(function() {
@@ -395,6 +392,8 @@
                                     .catch(function() {
                                         cmdAdd.prop("disabled", false);
                                     });
+                                } else {
+                                    cmdAdd.prop("disabled", false);
                                 }
                             });
                         };
@@ -435,11 +434,11 @@
                         };
                     };
                 })
-            .error(function (result) {
+            .error(function (request) {
                 $("#loading-container").hide();
                 $("#error-container")
                     .html("<div><h2>Data load error:</h2></div>")
-                    .append("<div>" + result.data + "</div>")
+                    .append("<div>" + request.responseText + "</div>")
                     .append("<div><h3>Please try refreshing the page</h3></div>");
                 $("#error-container").show();
             });

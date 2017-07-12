@@ -12,11 +12,12 @@
     });
 </script>
 
-<div class="panel panel-default">
+<div class="panel panel-default panel-no-body">
     <div class="panel-heading panel-heading-controls">
         <ul class="nav nav-pills">
             <li>
-                <input id="txtSearchFilename" type="text" class="form-control" placeholder="Name" data-bind="value: filenameSearch, valueUpdate: 'keyup'" />
+                <div class="label label-filter">Filename</div>
+                <input id="txtSearchFilename" type="text" class="form-control text-filter" placeholder="Filter" data-bind="value: filenameSearch, valueUpdate: 'keyup'"/>
             </li>
             <li class="pull-right total-files">
                 <label>Total:</label> <span data-bind="text: totalEventLogs()"></span>

@@ -15,14 +15,15 @@
                 params: {}
             };
 
-            if ((typeof options !== "undefined") && (options !== null)) {
-                if (options.controller === null) reject("Controller cannot be null");
-                if (options.mediaPathTypeDesc === null) reject("MediaPathType cannot be null");
-            }
-
-            $.extend(config, options);
-
             return new Promise(function (resolve, reject) {
+
+                if ((typeof options !== "undefined") && (options !== null)) {
+                    if (options.controller === null) reject("Controller cannot be null");
+                    if (options.mediaPathTypeDesc === null) reject("MediaPathType cannot be null");
+                }
+
+                $.extend(config, options);
+
                 var title = "<span class='glyphicon glyphicon-link' style='color: #fff'></span>";
 
                 $.get(config.url, config.params)

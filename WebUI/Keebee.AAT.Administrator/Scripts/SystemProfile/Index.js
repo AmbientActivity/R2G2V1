@@ -131,6 +131,8 @@
                         createFileArray(lists.FileList);
                         createMediaPathTypeArray(lists.MediaPathTypeList);
 
+                        $("#delete").tooltip({ delay: { show: 100, hide: 100 } });
+
                         function createFileArray(list) {
                             self.files.removeAll();
                             $(list).each(function (index, value) {

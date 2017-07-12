@@ -14,7 +14,8 @@ function CuteWebUI_AjaxUploader_OnError(message) {
     utilities.alert.show({
         type: BootstrapDialog.TYPE_DANGER,
         title: "File Error",
-        message: message
+        message: message,
+        buttonOKClass: "btn-danger"
     });
     EnableScreen();
     return false;
@@ -24,7 +25,8 @@ function CuteWebUI_AjaxUploader_OnTaskError(obj, message, reason) {
     utilities.alert.show({
         type: BootstrapDialog.TYPE_DANGER,
         title: "Task Error",
-        message: "Error uploading file <b>" + obj.FileName + "</b>.\nMessage: " + message
+        message: "Error uploading file <b>" + obj.FileName + "</b>.\nMessage: " + message,
+        buttonOKClass: "btn-danger"
     });
     EnableScreen();
     return false;
@@ -39,25 +41,25 @@ function CuteWebUI_AjaxUploader_OnSelect() {
 }
 
 function EnableScreen() {
-    $("#uploader-html-container").prop("hidden", true);
-    $("#lnkGoBack").prop("hidden", false);
-    $("#lblGoBackDisabled").prop("hidden", true);
+    $("#uploader-html-container").hide();
+    $("#lnkGoBack").show();
+    $("#lblGoBackDisabled").hide();
     $("#txtSearchFilename").prop("disabled", false);
     $("#uploadbutton").prop("disabled", false);
     $("select").prop("disabled", false);
-    $("#main-menu").prop("hidden", false);
-    $("#menu-login").prop("hidden", false);
+    $("#main-menu").show();
+    $("#menu-login").show();
 }
 
 function DisableScreen() {
-    $("#uploader-html-container").prop("hidden", false);
-    $("#lnkGoBack").prop("hidden", true);
-    $("#lblGoBackDisabled").prop("hidden", false);
+    $("#uploader-html-container").show();
+    $("#lnkGoBack").hide();
+    $("#lblGoBackDisabled").show();
     $("#txtSearchFilename").prop("disabled", true);
     $("#uploadbutton").prop("disabled", true);
     $("select").prop("disabled", true);
-    $("#main-menu").prop("hidden", true);
-    $("#menu-login").prop("hidden", true);
+    $("#main-menu").hide();
+    $("#menu-login").hide();
 }
 
 ; (function ($) {
@@ -200,6 +202,8 @@ function DisableScreen() {
 
                         $("#uploadbutton").prop("disabled", false);
                         loadUploaderHtml();
+
+                        $("#delete").tooltip({ delay: { show: 100, hide: 100 } });
 
                         enableDetail();
 

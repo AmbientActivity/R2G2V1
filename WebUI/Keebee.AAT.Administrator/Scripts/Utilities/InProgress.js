@@ -13,13 +13,14 @@
                 message: "Saving..."
             };
 
-            if ((typeof options !== "undefined") && (options !== null)) {
-                if (options.message === null) reject("Wait Message cannot be null");
-            }
-
-            $.extend(config, options);
-
             return new Promise(function (resolve) {
+
+                if ((typeof options !== "undefined") && (options !== null)) {
+                    if (options.message === null) reject("Wait Message cannot be null");
+                }
+
+                $.extend(config, options);
+
                 var inProgessDialog = new
                 BootstrapDialog({
                     message: "<div class='message-please-wait'><h4>" + config.message + "</h4></div>",

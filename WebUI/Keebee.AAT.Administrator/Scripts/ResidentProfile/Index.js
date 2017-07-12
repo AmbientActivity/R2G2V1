@@ -13,7 +13,8 @@ function CuteWebUI_AjaxUploader_OnError(message) {
     utilities.alert.show({
         type: BootstrapDialog.TYPE_DANGER,
         title: "File Error",
-        message: message
+        message: message,
+        buttonOKClass: "btn-danger"
     });
     EnableScreen();
     return false;
@@ -23,7 +24,8 @@ function CuteWebUI_AjaxUploader_OnTaskError(obj, message, reason) {
     utilities.alert.show({
         type: BootstrapDialog.TYPE_DANGER,
         title: "Task Error",
-        message: "Error uploading file <b>" + obj.FileName + "</b>.\nMessage: " + message
+        message: "Error uploading file <b>" + obj.FileName + "</b>.\nMessage: " + message,
+        buttonOKClass: "btn-danger"
     });
     EnableScreen();
     return false;
@@ -38,25 +40,25 @@ function CuteWebUI_AjaxUploader_OnSelect() {
 }
 
 function EnableScreen() {
-    $("#uploader-html-container").prop("hidden", true);
+    $("#uploader-html-container").hide();
     $("#lnkGoBack").prop("hidden", false);
-    $("#lblGoBackDisabled").prop("hidden", true);
+    $("#lblGoBackDisabled").hide();
     $("#txtSearchFilename").prop("disabled", false);
     $("#add").prop("disabled", false);
     $("select").prop("disabled", false);
-    $("#main-menu").prop("hidden", false);
-    $("#menu-login").prop("hidden", false);
+    $("#main-menu").show();
+    $("#menu-login").show();
 }
 
 function DisableScreen() {
-    $("#uploader-html-container").prop("hidden", false);
-    $("#lnkGoBack").prop("hidden", true);
-    $("#lblGoBackDisabled").prop("hidden", false);
+    $("#uploader-html-container").show();
+    $("#lnkGoBack").hide();
+    $("#lblGoBackDisabled").show();
     $("#txtSearchFilename").prop("disabled", true);
     $("#add").prop("disabled", true);
-    $("#delete").prop("hidden", true);
+    $("#delete").hide();
     $("select").prop("disabled", true);
-    $("#main-menu").prop("hidden", true);
+    $("#main-menu").hide();
     $("#menu-login").prop("hidden", true);
 }
 
@@ -73,6 +75,7 @@ function DisableScreen() {
             // buttons
             var cmdDelete = $("#delete");
             var cmdAdd = $("#add");
+            var cmdAddShared = $("#add-shared");
 
             // audio player
             var audioPlayer = $("#audio-player");
@@ -196,6 +199,10 @@ function DisableScreen() {
 
                     createFileArray(lists.FileList);
                     createMediaPathTypeArray(lists.MediaPathTypeList);
+
+                    $("#delete").tooltip({ delay: { show: 100, hide: 100 } });
+                    $("#banner-image").tooltip({ delay: { show: 100, hide: 100 } });
+
                     enableDetail();
 
                     function createFileArray(list) {
@@ -246,9 +253,9 @@ function DisableScreen() {
                         cmdDelete.prop("disabled", (selected.length === 0));
 
                         if (self.isSharable())
-                            cmdAdd.show();
+                            cmdAddShared.show();
                         else
-                            cmdAdd.hide();
+                            cmdAddShared.hide();
 
                         $("#txtSearchFilename").focus();
                     };
@@ -600,6 +607,77 @@ function DisableScreen() {
                     self.resetFocus = function () {
                         enableDetail();
                     }
+
+                    self.editResidentDetails = function () {
+                        var id = config.residentid;
+
+                        utilities.partialview.show({
+                            url: site.url + "Residents/GetResidentEditView/" + id,
+                            type: BootstrapDialog.TYPE_PRIMARY,
+                            focus: "txtFirstName",
+                            title: "<span class='glyphicon glyphicon-pencil' style='color: #fff'></span> Edit Resident",
+                            buttonOK: "Save",
+                            buttonOKClass: "btn-edit",
+                            cancelled: function () {},
+                            callback: function (dialog) {
+                                var resident = self.getResidentDetailFromDialog();
+
+                                utilities.job.execute({
+                                    url: site.url + "Residents/Validate",
+                                    action: "Validate",
+                                    type: "POST",
+                                    params: { resident: resident }
+                                })
+                                .then(function (validateResult) {
+                                    if (validateResult.ValidationMessages === null) {
+                                        dialog.close();
+                                        utilities.job.execute({
+                                            url: site.url + "Residents/Save",
+                                            type: "POST",
+                                            title: "Save Resident",
+                                            params: { resident: resident }
+                                        })
+                                        .then(function (saveResult) {
+                                            var r = saveResult.ResidentList.filter(function (value) {
+                                                return value.Id === config.residentid;
+                                            })[0];
+                                             
+                                            var fullname = r.FirstName.concat(r.LastName != null ? (" " + r.LastName) : "");
+                                            var profilePicture = r.ProfilePicture;
+
+                                            $("#fullname").html(fullname);
+                                            $("#banner-image").attr("src", profilePicture);
+                                        });
+                                    } else {
+                                        utilities.validation.show({
+                                            container: "validation-container",
+                                            messages: validateResult.ValidationMessages
+                                        });
+                                    }
+                                })
+                                .catch(function () {
+                                    cmdAdd.prop("disabled", false);
+                                });
+                            }
+                        });
+                    };
+
+                    self.getResidentDetailFromDialog = function () {
+                        var firstname = $.trim($("#txtFirstName").val());
+                        var lastname = $.trim($("#txtLastName").val());
+                        var gender = $("#radGender").val();
+                        var gamedifficultylevel = $.trim($("#ddlGameDifficultyLevels").val());
+                        var allowVideoCapturing = $.trim($("#chkAllowVideoCapturing").is(":checked"));
+                        var profilePicture = null;
+
+                        if ($("#profile-picture").attr("alt") === "exists") {
+                            profilePicture = $("#profile-picture").attr("src").replace("data:image/jpg;base64,", "");
+                        }
+
+                        return {
+                            Id: config.residentid, FirstName: firstname, LastName: lastname, Gender: gender, GameDifficultyLevel: gamedifficultylevel, AllowVideoCapturing: allowVideoCapturing, ProfilePicture: profilePicture
+                        };
+                    };
                 };
             })
             .error(function (request) {

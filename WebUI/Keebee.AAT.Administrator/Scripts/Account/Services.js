@@ -69,13 +69,15 @@
                                         type: BootstrapDialog.TYPE_SUCCESS,
                                         title: "Password Change",
                                         message: "Password successfully changed",
+                                        buttonOKClass: "btn-success"
                                     });
                                 });
                             } else {
-                                $("#validation-container").show();
-                                $("#validation-container").html("");
-                                var html = "</br><ul><li>" + validateResult.ValidationMessage + "</li></ul>";
-                                $("#validation-container").append(html);
+                                utilities.validation.show({
+                                    container: "validation-container",
+                                    messages: [validateResult.ValidationMessage],
+                                    beginWithLineBreak: true
+                                });
                             }
                         });
                     }
@@ -120,17 +122,13 @@
                         });
                     } else {
                         $("#login-container").show();
-                        $("#validation-container").show();
-
-                        $("#validation-container").html("");
-                        var html = "<br/><ul><li>" + validateResult.ValidationMessage + "</li></ul>";
-                        $("#validation-container").append(html);
+                        utilities.validation.show({
+                            container: "validation-container",
+                            messages: [validateResult.ValidationMessage]
+                        });
 
                         cmdLogin.prop("disabled", false);
                     }
-                })
-                .catch(function (validateResult) {
-                    showError(validateResult.ErrorMessage);
                 });
             }
 

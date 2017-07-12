@@ -33,13 +33,16 @@
     <div class="panel-heading panel-heading-controls">
         <ul class="nav nav-pills">
             <li>
-                <input id="txtSearchFirstName" type="text" class="form-control" placeholder="First Name" data-bind="value: firstNameSearch, valueUpdate: 'keyup'" />
+                <div class="label label-filter">First Name</div>
+                <input id="txtSearchFirstName" type="text" class="form-control" placeholder="Filter" data-bind="value: firstNameSearch, valueUpdate: 'keyup'"/>
             </li>
             <li>
-                <input id="txtSearchLastName" type="text" class="form-control" placeholder="Last Name" data-bind="value: lastNameSearch, valueUpdate: 'keyup'" />
+                <div class="label label-filter">Last Name</div>
+                <input id="txtSearchLastName" type="text" class="form-control" placeholder="Filter" data-bind="value: lastNameSearch, valueUpdate: 'keyup'"/>
             </li>
             <li>
-                <input id="txtSearchId" type="text" class="form-control form-control-id" placeholder="ID" data-bind="value: idSearch, valueUpdate: 'keyup'" />
+                <div class="label label-filter">ID</div>
+                <input id="txtSearchId" type="text" class="form-control form-control-id" placeholder="Filter" data-bind="value: idSearch, valueUpdate: 'keyup'"/>
             </li>
             <li class="pull-right total-residents">
                 <label>Total:</label> <span data-bind="text: totalResidents()"></span>
@@ -110,12 +113,14 @@
                     <!-- /ko -->
                     <td class="col-date" data-bind="text: moment(dateupdated).format('ll')"></td>
                     <td class="col-profile-picture">
-                        <!-- ko if: profilepicture === null -->
-                        <img data-bind="attr: { src: profilepictureplaceholder }" alt="" width="45" height="45" class="img-circle">
-                        <!-- /ko -->
-                        <!-- ko if: profilepicture !== null -->
-                        <img data-bind="attr: { src: profilepicture }" alt="" width="45" height="45" class="img-circle">
-                        <!-- /ko -->
+                        <a href="javascript:void(0)" data-toggle="tooltip" title="Edit resident details" data-bind="attr: { id: 'profilepicture_' + id }, click: $parent.edit">
+                            <!-- ko if: profilepicture === null -->
+                            <img data-bind="attr: { src: profilepictureplaceholder }" alt="" width="45" height="45" class="img-circle">
+                            <!-- /ko -->
+                            <!-- ko if: profilepicture !== null -->
+                            <img data-bind="attr: { src: profilepicture }" alt="" width="45" height="45" class="img-circle">
+                            <!-- /ko -->
+                        </a>
                     </td>
                 </tr>
                 </tbody>

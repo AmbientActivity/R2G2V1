@@ -16,23 +16,23 @@
                 fileType: null
             };
 
-            if ((typeof options !== "undefined") && (options !== null)) {
-                if (options.streamId === null) reject("StreamId cannot be null");
-                if (options.filename === null) reject("Filename cannot be null");
-                if (options.fileType === null) reject("File Type cannot be null");
-                if (options.controller === null) reject("Controller name cannot be null");
-            }
+            return new Promise(function (resolve) {
+                if ((typeof options !== "undefined") && (options !== null)) {
+                    if (options.streamId === null) reject("StreamId cannot be null");
+                    if (options.filename === null) reject("Filename cannot be null");
+                    if (options.fileType === null) reject("File Type cannot be null");
+                    if (options.controller === null) reject("Controller name cannot be null");
+                }
 
-            $.extend(config, options);
+                $.extend(config, options);
 
-            var bootstrapDialog = new BootstrapDialog({
-                id: "modal-viewer",
-                type: BootstrapDialog.TYPE_INFO,
-                title: config.filename + "." + config.fileType.toLowerCase(),
-                closable: true
-            });
+                var bootstrapDialog = new BootstrapDialog({
+                    id: "modal-viewer",
+                    type: BootstrapDialog.TYPE_INFO,
+                    title: config.filename + "." + config.fileType.toLowerCase(),
+                    closable: true
+                });
 
-            return new Promise(function(resolve) {
                 $.get(site.url +
                         config.controller + "/GetImageViewerView?streamId=" + config.streamId +
                         "&fileType=" + config.fileType)

@@ -13,20 +13,21 @@
                 type: BootstrapDialog.TYPE_INFO,
                 title: null,
                 message: null,
-                buttonClose: "Close",
+                buttonClose: "OK",
                 buttonOKClass: "btn-default"
             };
 
-            if ((typeof options !== "undefined") && (options !== null)) {
-                if (options.type === null) reject("Type cannot be null");
-                if (options.title === null) reject("Title cannot be null");
-                if (options.message === null) reject("Message cannot be null");
-                if (options.buttonClose === null) reject("Close button text cannot be null");
-            }
+            return new Promise(function (resolve) {
 
-            $.extend(config, options);
+                if ((typeof options !== "undefined") && (options !== null)) {
+                    if (options.type === null) reject("Type cannot be null");
+                    if (options.title === null) reject("Title cannot be null");
+                    if (options.message === null) reject("Message cannot be null");
+                    if (options.buttonClose === null) reject("Close button text cannot be null");
+                }
 
-            return new Promise(function(resolve) {
+                $.extend(config, options);
+
                 BootstrapDialog.show({
                     title: config.title,
                     closable: false,
@@ -35,7 +36,7 @@
                     buttons: [
                         {
                             label: config.buttonClose,
-                            cssClass: buttonOKClass,
+                            cssClass: config.buttonOKClass,
                             action: function (dialog) {
                                 dialog.close();
                                 resolve();

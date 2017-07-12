@@ -22,10 +22,6 @@
                 cancelled: function () { }
             };
 
-            if ((typeof options !== "undefined") && (options !== null)) {
-                if (options.url === null) reject("URL cannot be null");
-            }
-
             $.extend(config, options);
 
             $.get(config.url, config.params)
@@ -45,7 +41,8 @@
                     utilities.alert.show({
                         title: "Partial View Load Error",
                         type: BootstrapDialog.TYPE_DANGER,
-                        message: "The following error occured:\n" + request.responseText
+                        message: "The following error occured:\n" + request.responseText,
+                        buttonOKClass: "btn-danger"
                     });
                 });
 

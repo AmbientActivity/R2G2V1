@@ -286,22 +286,23 @@ video {
 .table > thead:first-child > tr:first-child > td {
     border: none;
 }
+
 /* filter */
 .select-filter {
     min-width: 200px;
 }
-.description-filter {
+.text-filter {
     width: 250px;
 }
 
 /* total files counter */
 .total-files {
-    padding-top: 5px;
-    width: 75px;
+    padding-top: 20px;
+    width: 80px;
 }
 .total-residents {
-    padding-top: 5px;
-    width: 60px;
+    padding: 18px 10px 0 0;
+    width: 80px;
 }
 
 /* resident profile */
@@ -333,14 +334,14 @@ video {
 
 /* tables/panels */
 .panel-heading-controls {
-    padding-left: 5px;
+    padding: 8px 0 10px 10px;
     margin: 0;
 }
 .panel-body-table-header {
     padding: 0;
 }
 .panel-no-body {
-    margin-bottom: 10px;
+    margin-bottom: 8px;
 }
 /* no media found message */
 .no-records-found {
@@ -490,6 +491,9 @@ input[type="checkbox"] {
     font-size: 18px;
     padding-right: 5px;
 }
+.glyphicon-white {
+    color: #fff !important;
+}
 .glyphicon-play, .glyphicon-pause {
     font-size: 20px;
 }
@@ -505,15 +509,34 @@ input[type="checkbox"] {
 .glyphicon-cd {
     color: #419641;
 }
+/* bootstrap - remove blue border when btn-link gets focus */
+.btn:focus,.btn:active {
+   outline: none !important;
+}
+
 /* button */
+.label-filter {
+    background-color: #a1acb4;
+    color: #faf5f5;
+    font-size: .8em;
+    padding: 2px 5px 2px 5px;
+    border: 1px solid #829bb0;
+}
 .button-text {
     color: #fff;
 }
 .add-media-button {
-    width: 160px;
+    width: 80px;
+    height: 35px;
+    margin-top: 19px;
 }
 .upload-media-button {
     width: 165px;
+}
+.delete-media-button {
+    margin: 0 60px 0 0;
+    padding: 7px 9px 6px 9px;
+    margin: 18px 50px 0 -5px;
 }
 .activate-button {
     float: right;
@@ -525,9 +548,6 @@ input[type="checkbox"] {
 }
 .maintenance-button {
     width: 146px;
-}
-.media-delete-button {
-    margin-right: 40px;
 }
 .login-button {
     margin-top: 10px;

@@ -67,7 +67,7 @@ namespace Keebee.AAT.Administrator.Controllers
                 Response.Cache.SetCacheability(HttpCacheability.NoCache);
 
                 var rules = new AccountRules();
-                validateMsg = rules.ValidationLogin(vm.Username, vm.Password, out errMsg);
+                validateMsg = rules.ValidateLogin(vm.Username, vm.Password, out errMsg);
 
                 if (!string.IsNullOrEmpty(errMsg))
                     throw new Exception(errMsg);
@@ -80,7 +80,7 @@ namespace Keebee.AAT.Administrator.Controllers
             return Json(new
             {
                 Success = string.IsNullOrEmpty(errMsg),
-                ErrorMessage = string.IsNullOrEmpty(errMsg),
+                ErrorMessage = errMsg,
                 ValidationMessage = validateMsg
             }, JsonRequestBehavior.AllowGet);
         }

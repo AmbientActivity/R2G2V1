@@ -18,13 +18,14 @@
                 params: {}
             };
 
-            if ((typeof options !== "undefined") && (options !== null)) {
-                if (options.url === null) reject("URL cannot be null");
-            }
-
-            $.extend(config, options);
-
             return new Promise(function (resolve, reject) {
+
+                if ((typeof options !== "undefined") && (options !== null)) {
+                    if (options.url === null) reject("URL cannot be null");
+                }
+
+                $.extend(config, options);
+
                 if (config.waitMessage !== null) {
                     utilities.inprogress.show({ message: config.waitMessage })
                         .then(function(dialog) {
@@ -63,7 +64,8 @@
                                     utilities.alert.show({
                                         title: "Success",
                                         type: BootstrapDialog.TYPE_SUCCESS,
-                                        message: config.successVerbage
+                                        message: config.successVerbage,
+                                        buttonOKClass: "btn-success"
                                     });
                                 }
                                 resolve(data);
@@ -72,7 +74,8 @@
                                 utilities.alert.show({
                                     title: "Error",
                                     type: BootstrapDialog.TYPE_DANGER,
-                                    message: "The following error occured:\n" + data.ErrorMessage
+                                    message: "The following error occured:\n" + data.ErrorMessage,
+                                    buttonOKClass: "btn-danger"
                                 });
                                 reject(data);
                             }
@@ -84,7 +87,8 @@
                             utilities.alert.show({
                                 title: "Error",
                                 type: BootstrapDialog.TYPE_DANGER,
-                                message: "The following error occured:\n" + request.responseText
+                                message: "The following error occured:\n" + request.responseText,
+                                buttonOKClass: "btn-danger"
                             });
                             reject(data);
                         }

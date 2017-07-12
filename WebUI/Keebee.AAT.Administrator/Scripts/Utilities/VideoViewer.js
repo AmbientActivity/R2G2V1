@@ -16,16 +16,17 @@
                 fileType: null
             };
 
-            if ((typeof options !== "undefined") && (options !== null)) {
-                if (options.src === null) reject("Sourse cannot be null");
-                if (options.player === null) reject("Player cannot be null");
-                if (options.filename === null) reject("Filename cannot be null");
-                if (options.fileType === null) reject("File Type cannot be null");
-            }
+            return new Promise(function (resolve) {
 
-            $.extend(config, options);
+                if ((typeof options !== "undefined") && (options !== null)) {
+                    if (options.src === null) reject("Sourse cannot be null");
+                    if (options.player === null) reject("Player cannot be null");
+                    if (options.filename === null) reject("Filename cannot be null");
+                    if (options.fileType === null) reject("File Type cannot be null");
+                }
 
-            return new Promise(function(resolve) {
+                $.extend(config, options);
+
                 var bootstrapDialog = new BootstrapDialog({
                     id: "modal-video",
                     type: BootstrapDialog.TYPE_INFO,

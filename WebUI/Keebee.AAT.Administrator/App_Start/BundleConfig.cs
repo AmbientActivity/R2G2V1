@@ -48,6 +48,7 @@ namespace Keebee.AAT.Administrator
                 "~/Scripts/Utilities/ImageViewer.js",
                 "~/Scripts/Utilities/VideoViewer.js",
                 "~/Scripts/Utilities/SharedLibrary.js",
+                "~/Scripts/Utilities/Validation.js",
                 "~/Scripts/Maintenance/Index.js"));
 
             bundles.Add(new ScriptBundle("~/bundles/Bootstrap").Include(

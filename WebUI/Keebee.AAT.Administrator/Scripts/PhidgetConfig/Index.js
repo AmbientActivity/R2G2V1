@@ -38,16 +38,42 @@
                     $("#tblConfigDetail").show();
                     $("#col-button-container").show();
 
-                    cmdAdd.prop("hidden", true);
-                    cmdEdit.prop("hidden", false);
-                    cmdDelete.prop("hidden", false);
+                    cmdAdd.show();
+                    cmdEdit.show();
+                    cmdDelete.show();
                     cmdActivate.prop("disabled", false);
                     cmdAddDetail.prop("disabled", false);
+
+                    var tooltipProps = { delay: { show: 100, hide: 100 } };
+                    cmdAdd.tooltip(tooltipProps);
+                    cmdEdit.tooltip(tooltipProps);
+                    cmdDelete.tooltip(tooltipProps);
+                    cmdActivate.tooltip(tooltipProps);
+                    cmdAddDetail.tooltip(tooltipProps);
 
                     ko.bindingHandlers.tableUpdated = {
                         update: function (element, valueAccessor, allBindings) {
                             ko.unwrap(valueAccessor());
                             isBinding = false;
+                        }
+                    }
+
+                    ko.bindingHandlers.tableRender = {
+                        update: function (element, valueAccessor) {
+                            ko.utils.unwrapObservable(valueAccessor());
+                            for (var index = 0, length = element.childNodes.length; index < length; index++) {
+                                var node = element.childNodes[index];
+                                if (node.nodeType === 1) {
+                                    var id = node.id.replace("row_", "");
+                                    var tolltipDelete = $("#delete_" + id);
+                                    if (tolltipDelete.length > 0)
+                                        tolltipDelete.tooltip({ delay: { show: 100, hide: 100 } });
+
+                                    var tolltipEdit = $("#edit_" + id);
+                                    if (tolltipEdit.length > 0)
+                                        tolltipEdit.tooltip({ delay: { show: 100, hide: 100 } });
+                                }
+                            }
                         }
                     }
 
@@ -180,6 +206,8 @@
                         self.editConfig = function (add) {
                             if (isBinding) return;
 
+                            cmdAdd.tooltip("hide");
+                            cmdEdit.tooltip("hide");
                             enableButtons(false);
 
                             var id = 0;   
@@ -238,16 +266,11 @@
                                                         enableButtons(true);
                                                     });
                                             } else {
-                                                var validationContainer = $("#validation-container");
-                                                validationContainer.show();
-                                                validationContainer.html("");
-                                                var html = "</br><ul>";
-                                                for (var i = 0; i < validateResult.ValidationMessages.length; i++) {
-                                                    var msg = validateResult.ValidationMessages[i];
-                                                    html = html + "<li>" + msg + "</li>";
-                                                }
-                                                html = html + "</ul>";
-                                                validationContainer.append(html);
+                                                utilities.validation.show({
+                                                    container: "validation-container",
+                                                    messages: validateResult.ValidationMessages,
+                                                    beginWithLineBreak: true
+                                                });
                                             }
                                         });
                                     }
@@ -264,6 +287,7 @@
                             var id = self.selectedConfig();
                             if (id <= 0) return;
 
+                            $("#delete").tooltip("hide");
                             enableButtons(false);
                            
                             var title = "<span class='glyphicon glyphicon-trash' style='color: #fff'></span>";
@@ -282,22 +306,24 @@
                                         url: site.url + "PhidgetConfig/Delete",
                                         type: "POST",
                                         params: { id: id },
-                                        waitMessage:  "Deleting..."
+                                        waitMessage: "Deleting..."
                                     })
-                                    .then(function (result) {
+                                    .then(function(result) {
                                         lists.ConfigList = result.ConfigList;
                                         createConfigArray(lists.ConfigList);
                                         self.enableDetail();
                                         var activeId = lists.ConfigList
-                                            .filter(function (value) { return value.IsActive === true })[0]
+                                            .filter(function(value) { return value.IsActive === true })[0]
                                             .Id;
                                         self.selectedConfig(activeId);
                                         enableButtons(true);
                                     })
-                                    .catch(function () {
+                                    .catch(function() {
                                         dialog.close();
                                         enableButtons(true);
                                     });
+                                } else {
+                                    enableButtons(true);
                                 }
                             });
                         };
@@ -305,6 +331,8 @@
                         self.editDetail = function (row) {
                             if (isBinding) return;
 
+                            $("#edit_" + row.id).tooltip("hide");
+                            cmdAddDetail.tooltip("hide");
                             enableButtons(false);
 
                             var id = (row.id !== undefined) ? row.id : 0;
@@ -359,15 +387,11 @@
                                                         enableButtons(true);
                                                     });
                                             } else {
-                                                $("#validation-container").show();
-                                                $("#validation-container").html("");
-                                                var html = "</br><ul>";
-                                                for (var i = 0; i < validateResult.ValidationMessages.length; i++) {
-                                                    var msg = validateResult.ValidationMessages[i];
-                                                    html = html + "<li>" + msg + "</li>";
-                                                }
-                                                html = html + "</ul>";
-                                                $("#validation-container").append(html);
+                                                utilities.validation.show({
+                                                    container: "validation-container",
+                                                    messages: validateResult.ValidationMessages,
+                                                    beginWithLineBreak: true
+                                                });
                                             }
                                         })
                                         .catch(function() {
@@ -379,6 +403,9 @@
 
                         self.deleteDetail = function (row) {
                             var id = (row.id !== undefined ? row.id : 0);
+
+                            $("#delete_" + row.id).tooltip("hide");
+
                             enableButtons(false);
 
                             if (id > 0) self.highlightRow(row);
@@ -406,16 +433,18 @@
                                         },
                                         waitMessage: "Deleting..."
                                     })
-                                    .then(function (result) {
+                                    .then(function(result) {
                                         lists.ConfigDetailList = result.ConfigDetailList;
                                         createConfigDetailArray(lists.ConfigDetailList);
                                         self.enableDetail();
                                         enableButtons(true);
                                     })
-                                    .catch(function () {
+                                    .catch(function() {
                                         self.enableDetail();
                                         enableButtons(true);
                                     });
+                                } else {
+                                    enableButtons(true);
                                 }
                             });
                         };
@@ -423,6 +452,8 @@
                         self.activateConfig = function (id) {
                             var title = "<span class='glyphicon glyphicon-ok' style='color: #fff'></span>";
                             if (id <= 0) return;
+
+                            cmdActivate.tooltip("hide");
                             enableButtons(false);
 
                             utilities.confirm.show({

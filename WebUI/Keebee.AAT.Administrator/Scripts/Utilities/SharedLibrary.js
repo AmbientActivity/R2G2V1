@@ -24,7 +24,7 @@
 
                 $.extend(config, options);
 
-                var title = "<span class='glyphicon glyphicon-link' style='color: #fff'></span>";
+                var title = "<i class='fa fa-share-alt fa-md' style='color: #fff'></i>";
 
                 $.get(config.url, config.params)
                     .done(function(message) {

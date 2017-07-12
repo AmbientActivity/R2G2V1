@@ -101,22 +101,14 @@
 
                                 // determine if there is table overflow (to cause a scrollbar)
                                 // if so, unhide the scrollbar header column
-                                // and adjust the width of the 'capturable' column
-                                // a bit clumsy but needed in order to have 'sticky' headers
-                                // with a resizable table
                                 var colScrollbar = $("#col-scrollbar");
-                                //var colCapturable = $("#col-capturable");
 
                                 if (table.clientHeight > site.getMaxClientHeight) {
                                     colScrollbar.prop("hidden", false);
                                     colScrollbar.attr("style", "width: 1%;");
-                                    //colCapturable.removeClass("col-capturable");
-                                    //colCapturable.addClass("col-capturable-scrollbar");
                                     tableDetailElement.addClass("container-height");
                                 } else {
                                     colScrollbar.prop("hidden", true);
-                                    //colCapturable.removeClass("col-capturable-scrollbar");
-                                    //colCapturable.addClass("col-capturable");
                                     tableDetailElement.removeClass("container-height");
                                 }
 
@@ -183,12 +175,11 @@
                             arr.push({ title: "First Name", sortKey: "firstname", cssClass: "col-firstname" });
                             arr.push({ title: "Last Name", sortKey: "lastname", cssClass: "col-lastname" });
                             arr.push({ title: "ID", sortKey: "id", cssClass: "col-id" });
+                            arr.push({ title: "Updated", sortKey: "dateupdated", cssClass: "col-date" });
                             arr.push({ title: "Gender", sortKey: "gender", cssClass: "col-gender" });
 
                             if (config.isVideoCaptureServiceInstalled === "1")
                                 arr.push({ title: "Capturable", sortKey: "allowvideocapturing", cssClass: "col-capturable", boolean: true });
-
-                            arr.push({ sortKey: "dateupdated" });
                             return arr;
                         });
 

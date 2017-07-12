@@ -463,10 +463,6 @@ input[type="checkbox"] {
     width: 5%;
     text-align: center;
 }
-.col-capturable-scrollbar {
-    width: 6%;
-    text-align: center;
-}
 .col-date {
     width: 12%;
     text-align: center;
@@ -478,6 +474,9 @@ input[type="checkbox"] {
 }
 
 /* font-awesome */
+.fa-md {
+    font-size: 18px;
+}
 .fa-lg {
     font-size: 23px;
 }

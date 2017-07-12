@@ -63,19 +63,21 @@
                 <tr>
                     <th id="col-profile-picture" class="col-profile-picture"></th>
                     <!-- ko foreach: columns -->
-                    <!-- ko if: sortKey === 'allowvideocapturing' -->
-                    <th data-bind="click: $parent.sort({ sortKey: 'allowvideocapturing', boolean: true }), attr: { id: cssClass }, css: cssClass"><a href="javascript:void(0)"><span class="glyphicon glyphicon-facetime-video glyphicon-lg"></span></a></th>
+                    
+                    <!-- ko if: sortKey !== 'gender' && sortKey !== 'allowvideocapturing' -->
+                    <th data-bind="click: $parent.sort, attr: { id: 'resident-col-' + sortKey, boolean: true }, css: cssClass"><a href="javascript:void(0)" data-bind="text: title"></a></th>
                     <!-- /ko -->
+
                     <!-- ko if: sortKey === 'gender' -->
                     <th data-bind="click: $parent.sort({ sortKey: 'gender', boolean: true }), attr: { id: cssClass }, css: cssClass"><a href="javascript:void(0)"><i class="fi-male-female fi-lg"></i></a></th>
                     <!-- /ko -->
-                    <!-- ko if: sortKey !== 'allowvideocapturing' && sortKey !== 'gender' -->
-                    <!-- ko if: sortKey !== 'dateupdated' -->
-                    <th data-bind="click: $parent.sort, attr: { id: 'resident-col-' + sortKey, boolean: true }, css: cssClass"><a href="javascript:void(0)" data-bind="text: title"></a></th>
+                    
+                    <!-- ko if: sortKey === 'allowvideocapturing' -->
+                    <th data-bind="click: $parent.sort({ sortKey: 'allowvideocapturing', boolean: true }), attr: { id: cssClass }, css: cssClass"><a href="javascript:void(0)"><span class="glyphicon glyphicon-facetime-video glyphicon-lg"></span></a></th>
                     <!-- /ko -->
+
                     <!-- /ko -->
-                    <!-- /ko -->
-                    <th class="col-date"><a href="javascript:void(0)" data-bind="click: sort({ sortKey: 'dateupdated' })">Updated</a></th>
+                    @*<th class="col-date"><a href="javascript:void(0)" data-bind="click: sort({ sortKey: 'dateupdated' })">Updated</a></th>*@
                     <th class="col-glyphicon col-glyphicon-media">Media</th>
                     <th id="col-glyphicon_2" class="col-glyphicon"></th>
                     <th id="col-glyphicon_3" class="col-glyphicon"></th>
@@ -104,6 +106,7 @@
                     <td class="col-firstname" data-bind="text: firstname"></td>
                     <td class="col-lastname" data-bind="text: lastname"></td>
                     <td class="col-id" data-bind="text: id"></td>
+                    <td class="col-date" data-bind="text: moment(dateupdated).format('ll')"></td>
                     <!-- ko if: gender === 'F' -->
                     <td class="col-gender"><i class="fi-female fi-elg" aria-hidden="true"></i></td>
                     <!-- /ko -->
@@ -118,7 +121,7 @@
                     <td class="col-capturable"></td>
                     <!-- /ko -->
                     <!-- /ko -->
-                    <td class="col-date" data-bind="text: moment(dateupdated).format('ll')"></td>
+                    
                     <td class="glyphicon col-glyphicon-media"><a href="javascript:void(0)" data-toggle="tooltip" title="Manage resident media" data-bind="attr: { id: 'profile_' + id }, click: $parent.editProfile"><span class="glyphicon glyphicon-cd glyphicon-lg"></span></a></td>
                     <td class="col-glyphicon"><a href="javascript:void(0)" data-toggle="tooltip" title="Edit resident details" data-bind="attr: { id: 'edit_' + id }, click: $parent.edit"><span class="glyphicon glyphicon-pencil glyphicon-lg"></span></a></td>               
                     <td class="col-glyphicon"><a href="javascript:void(0)" data-toggle="tooltip" title="Delete resident" data-bind="attr: { id: 'delete_' + id }, click: $parent.delete"><span class="glyphicon glyphicon-trash glyphicon-lg"></span></a></td>

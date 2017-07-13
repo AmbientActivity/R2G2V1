@@ -103,26 +103,38 @@ namespace Keebee.AAT.Administrator.Controllers
         [Authorize]
         public JsonResult GetData(int id, int mediaPathTypeId)
         {
-            var mediaPathTypes = _mediaPathTypesClient.Get()
-                .Where(x => !x.IsSystem)
-                .OrderBy(p => p.Description);
+            string errMsg = null;
+            var fileList = new MediaFileViewModel[0];
+            var mediaPathTypeList = new MediaPathType[0];
 
-            var fileList = GetFiles(id);
-
-            var vm = new
+            try
             {
-                FileList = fileList,
-                MediaPathTypeList = mediaPathTypes.Select(x => new
-                {
-                    x.Id,
-                    x.Category,
-                    x.Description,
-                    x.ShortDescription,
-                    x.IsSharable
-                })
-            };
+                fileList = GetFiles(id).ToArray();
 
-            return Json(vm, JsonRequestBehavior.AllowGet);
+                mediaPathTypeList = _mediaPathTypesClient.Get()
+                    .Where(x => !x.IsSystem)
+                    .OrderBy(p => p.Description)
+                    .Select(x => new MediaPathType
+                    {
+                        Id = x.Id,
+                        Category = x.Category,
+                        Description = x.Description,
+                        ShortDescription = x.ShortDescription,
+                        IsSharable = x.IsSharable
+                    }).ToArray();
+            }
+            catch (Exception ex)
+            {
+                errMsg = ex.Message;
+            }
+
+            return Json(new
+            {
+                Success = string.IsNullOrEmpty(errMsg),
+                ErrorMessage = errMsg,
+                FileList = fileList,
+                MediaPathTypeList = mediaPathTypeList
+            }, JsonRequestBehavior.AllowGet);
         }
 
         [HttpPost]
@@ -176,17 +188,6 @@ namespace Keebee.AAT.Administrator.Controllers
 
         [HttpGet]
         [Authorize]
-        public PartialViewResult GetSharedLibarayLinkView(int residentId, int mediaPathTypeId)
-        {
-            var vm = LoadSharedLibaryAddViewModel(residentId, mediaPathTypeId);
-
-            return vm.SharedFiles.Any()
-                ? PartialView("_SharedLibraryLink", vm)
-                : null;
-        }
-
-        [HttpGet]
-        [Authorize]
         public JsonResult GetUploaderHtml(int mediaPathTypeId)
         {
             string html;
@@ -227,7 +228,6 @@ namespace Keebee.AAT.Administrator.Controllers
         [Authorize]
         public JsonResult DeleteSelected(int[] ids, int residentId, int mediaPathTypeId)
         {
-            bool success;
             var errMsg = string.Empty;
 
             try
@@ -273,18 +273,16 @@ namespace Keebee.AAT.Administrator.Controllers
                         }
                     }
                 }
-                success = string.IsNullOrEmpty(errMsg);
             }
             catch (Exception ex)
             {
-                success = false;
                 errMsg = ex.Message;
             }
 
             return Json(new
             {
-                Success = success,
-                ErrorMessage = !success ? errMsg : null,
+                Success = string.IsNullOrEmpty(errMsg),
+                ErrorMessage =  errMsg,
                 FileList = GetFiles(residentId)
             }, JsonRequestBehavior.AllowGet);
         }
@@ -347,24 +345,6 @@ namespace Keebee.AAT.Administrator.Controllers
             }
 
             return errorMessage;
-        }
-
-        private static SharedLibraryLinkViewModel LoadSharedLibaryAddViewModel(int residentId, int mediaPathTypeId)
-        {
-            var rules = new ResidentRules();
-            var files = rules.GetAvailableSharedMediaFiles(residentId, mediaPathTypeId).ToArray();
-
-            var vm = new SharedLibraryLinkViewModel
-            {
-                SharedFiles = files
-                .Select(f => new SharedLibraryFileViewModel
-                {
-                    StreamId = f.StreamId,
-                    Filename = f.Filename
-                })
-            };
-
-            return vm;
         }
 
         private IEnumerable<MediaFileViewModel> GetFiles(int id)

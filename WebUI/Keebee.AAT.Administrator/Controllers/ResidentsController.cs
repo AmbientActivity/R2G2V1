@@ -57,12 +57,24 @@ namespace Keebee.AAT.Administrator.Controllers
         [Authorize]
         public JsonResult GetData()
         {
-            var vm = new
-            {
-                ResidentList = GetResidentList()
-            };
+            string errMsg = null;
+            var residentList = new ResidentViewModel[0];
 
-            return Json(vm, JsonRequestBehavior.AllowGet);
+            try
+            {
+                residentList = GetResidentList().ToArray();
+            }
+            catch (Exception ex)
+            {
+                errMsg = ex.Message;
+            }
+
+            return Json(new
+            {
+                Success = string.IsNullOrEmpty(errMsg),
+                EerrorMessage = errMsg,
+                ResidentList = residentList
+            }, JsonRequestBehavior.AllowGet);
         }
 
         [HttpGet]

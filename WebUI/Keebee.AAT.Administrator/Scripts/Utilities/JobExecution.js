@@ -87,10 +87,10 @@
                             utilities.alert.show({
                                 title: "Error",
                                 type: BootstrapDialog.TYPE_DANGER,
-                                message: "The following error occured:\n" + request.responseText,
+                                message: "The following error occured:\n" + request.statusText,
                                 buttonOKClass: "btn-danger"
                             });
-                            reject(data);
+                            reject();
                         }
                     });
                 });

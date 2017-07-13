@@ -94,8 +94,10 @@ function DisableScreen() {
                 MediaPathTypeList: []
             };
 
-            $.get(site.url + "PublicProfile/GetData?" + "mediaPathTypeId=" + $("#mediaPathTypeId").val())
-            .done(function(data) {
+            utilities.job.execute({
+                url: site.url + "PublicProfile/GetData?" + "mediaPathTypeId=" + $("#mediaPathTypeId").val()
+            })
+            .then(function(data) {
                 $.extend(lists, data);
 
                 $("#error-container").hide();
@@ -176,7 +178,7 @@ function DisableScreen() {
                     }
                 }
 
-                ko.applyBindings(new FileViewModel());
+                ko.applyBindings(new FileViewModel(), document.getElementById("public-profile"));
 
                 function FileViewModel() {
                     var tblFile = $("#tblFile");
@@ -377,34 +379,35 @@ function DisableScreen() {
 
                     self.addFromSharedLibray = function () {
                         self.clearStreams();
+                        var mediaPathTypeDesc = self.mediaPathType().shortdescription;
 
-                        utilities.sharedlibrary.show({
-                            url: site.url + "PublicProfile/GetSharedLibarayLinkView/",
-                            mediaPathTypeDesc: self.mediaPathType().shortdescription,
-                            params: { mediaPathTypeId: self.selectedMediaPathType() }
-                        })
-                        .then(function (result) {
-                            result.dialog.close();
-                            utilities.job.execute({
-                                url: site.url + "PublicProfile/AddSharedMediaFiles",
-                                type: "POST",
-                                waitMessage: "Adding...",
-                                params: {
-                                    streamIds: result.streamIds,
-                                    mediaPathTypeId: self.selectedMediaPathType()
-                                }
+                        sharedlibraryadd.view.show({
+                                profileId: 0,
+                                mediaPathTypeId: self.selectedMediaPathType(),
+                                mediaPathTypeDesc: mediaPathTypeDesc,
+                                mediaPathTypeCategory: self.mediaPathType().category
                             })
-                            .then(function (saveResult) {
-                                lists.FileList = saveResult.FileList;
-                                createFileArray(lists.FileList);
-                                self.sort({ afterSave: true });
-                                self.selectedIds([]);
-                                self.checkSelectAll(false);
-                                enableDetail();
-                            })
-                            .catch(function () {
-                                enableDetail();
-                            });
+                            .then(function(result) {
+                                utilities.job.execute({
+                                    url: site.url + "PublicProfile/AddSharedMediaFiles",
+                                    type: "POST",
+                                    waitMessage: "Adding...",
+                                    params: {
+                                        streamIds: result.streamIds,
+                                        mediaPathTypeId: self.selectedMediaPathType()
+                                    }
+                                })
+                                .then(function(saveResult) {
+                                    lists.FileList = saveResult.FileList;
+                                    createFileArray(lists.FileList);
+                                    self.sort({ afterSave: true });
+                                    self.selectedIds([]);
+                                    self.checkSelectAll(false);
+                                    enableDetail();
+                                })
+                                .catch(function() {
+                                    enableDetail();
+                                });
                         });
                     };
 
@@ -627,11 +630,11 @@ function DisableScreen() {
                     }
                 };
             })
-            .error(function (request) {
+            .catch(function (data) {
                 $("#loading-container").hide();
                 $("#error-container")
                     .html("<div><h2>Data load error:</h2></div>")
-                    .append("<div>" + request.responseText + "</div>")
+                    .append("<div>" + data.ErrorMessage + "</div>")
                     .append("<div><h3>Please try refreshing the page</h3></div>");
                 $("#error-container").show();
             });

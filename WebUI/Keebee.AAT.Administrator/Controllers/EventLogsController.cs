@@ -54,12 +54,24 @@ namespace Keebee.AAT.Administrator.Controllers
         [Authorize]
         public JsonResult GetData()
         {
-            var vm = new
-            {
-                EventLogList = GetEventLogList()
-            };
+            string errMsg = null;
+            var eventLogList = new EventLogViewModel[0];
 
-            return Json(vm, JsonRequestBehavior.AllowGet);
+            try
+            {
+                eventLogList = GetEventLogList().ToArray();
+            }
+            catch (Exception ex)
+            {
+                errMsg = ex.Message;
+            }
+
+            return Json(new
+            {
+                Success = string.IsNullOrEmpty(errMsg),
+                ErrorMessage = errMsg,
+                EventLogList = eventLogList
+            }, JsonRequestBehavior.AllowGet);
         }
 
         private static IEnumerable<EventLogViewModel> GetEventLogList()

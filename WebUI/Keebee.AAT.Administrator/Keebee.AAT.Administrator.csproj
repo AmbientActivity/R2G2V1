@@ -156,6 +156,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Controllers\SharedLibraryAddController.cs" />
     <Content Include="Content\favicons\android-icon-144x144.png" />
     <Content Include="Content\favicons\android-icon-192x192.png" />
     <Content Include="Content\favicons\android-icon-36x36.png" />
@@ -182,6 +183,7 @@
     <Content Include="Content\favicons\ms-icon-150x150.png" />
     <Content Include="Content\favicons\ms-icon-310x310.png" />
     <Content Include="Content\favicons\ms-icon-70x70.png" />
+    <Content Include="Scripts\SharedLibraryAdd\_Index.js" />
     <Content Include="Scripts\Utilities\PartialView.js" />
     <Compile Include="ViewModels\ConfigViewModel.cs" />
     <Compile Include="ViewModels\EventLogViewModel.cs" />
@@ -644,7 +646,7 @@
     <Content Include="Scripts\Utilities\ImageViewer.js" />
     <Content Include="Scripts\Utilities\InProgress.js" />
     <Content Include="Scripts\Utilities\JobExecution.js" />
-    <Content Include="Scripts\Utilities\SharedLibrary.js" />
+    <Content Include="Scripts\SharedLibraryAdd\PartialView.js" />
     <Content Include="Scripts\Utilities\Sorting.js" />
     <Content Include="Scripts\Utilities\VideoViewer.js" />
     <Content Include="Scripts\VideoCaptures\Index.js" />
@@ -682,6 +684,7 @@
     <Content Include="Views\VideoCaptures\Export.cshtml" />
     <Content Include="Views\VideoCaptures\Index.cshtml" />
     <Content Include="Views\Account\Login.cshtml" />
+    <Content Include="Views\SharedLibraryAdd\_Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Scripts\Utilities\Validation.js" />
@@ -727,6 +730,7 @@
   <ItemGroup>
     <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />
   </ItemGroup>
+  <ItemGroup />
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>

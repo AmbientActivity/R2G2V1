@@ -17,8 +17,10 @@
                 EventLogList: []
             };
 
-            $.get(site.url + "EventLogs/GetData/")
-            .done(function (data) {
+            utilities.job.execute({
+                url: site.url + "EventLogs/GetData/"
+            })
+            .then(function (data) {
                 $.extend(lists, data);
 
                 $("#loading-container").hide();
@@ -169,11 +171,11 @@
                     };
                 };
             })
-            .error(function (result) {
+            .catch(function (data) {
                 $("#loading-container").hide();
                 $("#error-container")
                     .html("<div><h2>Data load error:</h2></div>")
-                    .append("<div>" + result.data + "</div>")
+                    .append("<div>" + data.ErrorMessage + "</div>")
                     .append("<div><h3>Please try refreshing the page</h3></div>");
                 $("#error-container").show();
             });

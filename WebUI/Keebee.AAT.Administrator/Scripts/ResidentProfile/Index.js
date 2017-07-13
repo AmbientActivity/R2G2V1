@@ -94,9 +94,10 @@ function DisableScreen() {
                 MediaPathTypeList: []
             };
             
-            $.get(site.url + "ResidentProfile/GetData/" + config.residentid
-                    + "?mediaPathTypeId=" + $("#mediaPathTypeId").val())
-            .done(function (data) {
+            utilities.job.execute({
+                url: site.url + "ResidentProfile/GetData/" + config.residentid + "?mediaPathTypeId=" + $("#mediaPathTypeId").val()
+            })
+            .then(function (data) {
                 $.extend(lists, data);
 
                 $("#error-container").hide();
@@ -250,7 +251,7 @@ function DisableScreen() {
                         var selected = self.files()
                             .filter(function (value) { return value.isselected; });
 
-                        cmdDelete.prop("disabled", (selected.length === 0));
+                        cmdDelete.prop("disabled", selected.length === 0);
 
                         if (self.isSharable())
                             cmdAddShared.show();
@@ -359,25 +360,26 @@ function DisableScreen() {
 
                     self.addFromSharedLibray = function () {
                         self.clearStreams();
+                        var mediaPathTypeDesc = self.mediaPathType().shortdescription;
 
-                        utilities.sharedlibrary.show({
-                            url: site.url + "ResidentProfile/GetSharedLibarayLinkView/",
-                            mediaPathTypeDesc: self.mediaPathType().shortdescription,
-                            params: { residentId: config.residentid, mediaPathTypeId: self.selectedMediaPathType() }
+                        sharedlibraryadd.view.show({
+                            profileId: config.residentid,
+                            mediaPathTypeId: self.selectedMediaPathType(),
+                            mediaPathTypeDesc: mediaPathTypeDesc,
+                            mediaPathTypeCategory: self.mediaPathType().category
                         })
-                        .then(function (result) {
-                            result.dialog.close();
+                        .then(function(streamIds) {
                             utilities.job.execute({
                                 url: site.url + "ResidentProfile/AddSharedMediaFiles",
                                 type: "POST",
                                 waitMessage: "Adding...",
                                 params: {
-                                    streamIds: result.streamIds,
+                                    streamIds: streamIds,
                                     residentId: config.residentid,
                                     mediaPathTypeId: self.selectedMediaPathType()
                                 }
                             })
-                            .then(function (saveResult) {
+                            .then(function(saveResult) {
                                 lists.FileList = saveResult.FileList;
                                 createFileArray(lists.FileList);
                                 self.sort({ afterSave: true });
@@ -385,7 +387,7 @@ function DisableScreen() {
                                 self.checkSelectAll(false);
                                 enableDetail();
                             })
-                            .catch(function () {
+                            .catch(function() {
                                 enableDetail();
                             });
                         });
@@ -680,11 +682,11 @@ function DisableScreen() {
                     };
                 };
             })
-            .error(function (request) {
+            .catch(function (error) {
                 $("#loading-container").hide();
                 $("#error-container")
                     .html("<div><h2>Data load error:</h2></div>")
-                    .append("<div>" + request.responseText + "</div>")
+                    .append("<div>" + error + "</div>")
                     .append("<div><h3>Please try refreshing the page</h3></div>");
                 $("#error-container").show();
             });

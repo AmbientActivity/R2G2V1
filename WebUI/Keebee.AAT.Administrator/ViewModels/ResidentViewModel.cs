@@ -43,6 +43,14 @@ namespace Keebee.AAT.Administrator.ViewModels
         public IEnumerable<SharedLibraryFileViewModel> SharedFiles { get; set; }
     }
 
+    public class SharedLibraryAddViewModel
+    {
+        public int ProfileId { get; set; }
+        public int MediaPathTypeId { get; set; }
+        public string MediaPathTypeDesc { get; set; }
+        public string MediaPathTypeCategory { get; set; }
+    }
+
     public class ResidentProfileViewModel
     {
         public int ResidentId { get; set; }

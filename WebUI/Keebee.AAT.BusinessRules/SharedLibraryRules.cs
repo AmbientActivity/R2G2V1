@@ -177,18 +177,6 @@ namespace Keebee.AAT.BusinessRules
             return mediaPathType;
         }
 
-        public IEnumerable<object> GetMediaPathTypeList(IEnumerable<MediaPathType> mediaPathTypes)
-        {
-            return mediaPathTypes.Select(x => new
-            {
-                x.Id,
-                x.Category,
-                x.Description,
-                x.ShortDescription,
-                IsSharable = true
-            }).OrderBy(x => x.Description);
-        }
-
         public IEnumerable<Resident> GetLinkedProfiles(Guid streamId)
         {
             var mediaResponseTypes = _publicMediaFilesClient.GetLinkedForStreamId(streamId).ToArray();

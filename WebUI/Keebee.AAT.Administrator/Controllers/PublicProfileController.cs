@@ -59,7 +59,7 @@ namespace Keebee.AAT.Administrator.Controllers
                     return View(vm);
 
                 // POST:
-                var fileManager = new FileManager { EventLogger = _systemEventLogger };
+                var fileManager = new FileManager {EventLogger = _systemEventLogger};
 
                 // for multiple files the value is string : guid/guid/guid 
                 foreach (var strguid in myuploader.Split('/'))
@@ -80,7 +80,7 @@ namespace Keebee.AAT.Administrator.Controllers
                     if (msg.Length == 0)
                     {
                         file.MoveTo(filePath);
-                        msg = AddPublicMediaFile(file.FileName, (int)mediaPathTypeId, mediaPath);
+                        msg = AddPublicMediaFile(file.FileName, (int) mediaPathTypeId, mediaPath);
                         vm.ErrorMessage = msg;
                     }
                 }
@@ -93,25 +93,38 @@ namespace Keebee.AAT.Administrator.Controllers
         [Authorize]
         public JsonResult GetData(int mediaPathTypeId)
         {
-            var mediaPathTypes = _mediaPathTypesClient.Get()
-                .Where(x => x.IsSharable)
-                .Where(x => !x.IsSystem)
-                .OrderBy(p => p.Description);
-            var fileList = GetMediaFiles();
+            string errMsg = null;
+            var fileList = new MediaFileViewModel[0];
+            var mediaPathTypeList = new MediaPathType[0];
 
-            var vm = new
+            try
             {
-                FileList = fileList,
-                MediaPathTypeList = mediaPathTypes.Select(x => new
-                {
-                    x.Id,
-                    x.Category,
-                    x.Description,
-                    x.ShortDescription
-                })
-            };
+                fileList = GetFiles().ToArray();
 
-            return Json(vm, JsonRequestBehavior.AllowGet);
+                mediaPathTypeList = _mediaPathTypesClient.Get()
+                    .Where(x => x.IsSharable)
+                    .Where(x => !x.IsSystem)
+                    .OrderBy(p => p.Description)
+                    .Select(x => new MediaPathType
+                    {
+                        Id = x.Id,
+                        Category = x.Category,
+                        Description = x.Description,
+                        ShortDescription = x.ShortDescription
+                    }).ToArray();
+            }
+            catch (Exception ex)
+            {
+                errMsg = ex.Message;
+            }
+
+            return Json(new
+            {
+                Success = string.IsNullOrEmpty(errMsg),
+                ErrorMessage = errMsg,
+                FileList = fileList,
+                MediaPathTypeList = mediaPathTypeList
+            }, JsonRequestBehavior.AllowGet);
         }
 
         [HttpGet]
@@ -148,7 +161,6 @@ namespace Keebee.AAT.Administrator.Controllers
         [Authorize]
         public JsonResult DeleteSelected(int[] ids, int mediaPathTypeId)
         {
-            bool success;
             string errMsg;
 
             try
@@ -183,25 +195,21 @@ namespace Keebee.AAT.Administrator.Controllers
 
                         if (SharedLibraryRules.IsMediaTypeThumbnail(mediaPathTypeId))
                         {
-                            errMsg = _thumbnailsClient.Delete(publicMediaFile.MediaFile.StreamId)
-                                ?? string.Empty;
+                            errMsg = _thumbnailsClient.Delete(publicMediaFile.MediaFile.StreamId);
                         }
                     }
                 }
-
-                success = string.IsNullOrEmpty(errMsg);
             }
             catch (Exception ex)
             {
-                success = false;
                 errMsg = ex.Message;
             }
 
             return Json(new
             {
-                Success = success,
-                ErrorMessage = !success ? errMsg : null,
-                FileList = GetMediaFiles()
+                Success = string.IsNullOrEmpty(errMsg),
+                ErrorMessage = errMsg,
+                FileList = GetFiles()
             }, JsonRequestBehavior.AllowGet);
         }
 
@@ -221,22 +229,10 @@ namespace Keebee.AAT.Administrator.Controllers
             });
         }
 
-        [HttpGet]
-        [Authorize]
-        public PartialViewResult GetSharedLibarayLinkView(int mediaPathTypeId)
-        {
-            var vm = LoadSharedLibaryAddViewModel(mediaPathTypeId);
-
-            return vm.SharedFiles.Any()
-                ? PartialView("_SharedLibraryLink", vm) 
-                : null;
-        }
-
         [HttpPost]
         [Authorize]
         public JsonResult AddSharedMediaFiles(Guid[] streamIds, int mediaPathTypeId)
         {
-            bool success;
             string errMsg = null;
             var newIds = new Collection<int>();
 
@@ -261,19 +257,17 @@ namespace Keebee.AAT.Administrator.Controllers
                         newIds.Add(newId);
                     }
                 }
-                success = true;
             }
             catch (Exception ex)
             {
-                success = false;
                 errMsg = ex.Message;
             }
 
             return Json(new
             {
-                Success = success,
-                ErrorMessage = !success ? errMsg : null,
-                FileList = GetMediaFiles(),
+                Success = string.IsNullOrEmpty(errMsg),
+                ErrorMessage =  errMsg,
+                FileList = GetFiles(),
                 NewIds = newIds
             }, JsonRequestBehavior.AllowGet);
         }
@@ -316,25 +310,7 @@ namespace Keebee.AAT.Administrator.Controllers
             return vm;
         }
 
-        private static SharedLibraryLinkViewModel LoadSharedLibaryAddViewModel(int mediaPathTypeId)
-        {
-            var rules = new PublicProfileRules();
-            var files = rules.GetAvailableSharedMediaFiles(mediaPathTypeId);
-
-            var vm = new SharedLibraryLinkViewModel
-            {
-                SharedFiles = files
-                .Select(f => new SharedLibraryFileViewModel
-                {
-                    StreamId = f.StreamId,
-                    Filename = f.Filename
-                })
-            };
-
-            return vm;
-        }
-
-        private IEnumerable<MediaFileViewModel> GetMediaFiles()
+        private IEnumerable<MediaFileViewModel> GetFiles()
         {
             var list = new List<MediaFileViewModel>();
             var mediaResponseTypes = _publicMediaFilesClient.Get(isSystem: false).ToArray();

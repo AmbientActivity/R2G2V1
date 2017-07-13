@@ -1,4 +1,5 @@
-﻿using Keebee.AAT.Administrator.ViewModels;
+﻿using System;
+using Keebee.AAT.Administrator.ViewModels;
 using Keebee.AAT.Shared;
 using Keebee.AAT.BusinessRules;
 using System.Collections.Generic;
@@ -46,12 +47,24 @@ namespace Keebee.AAT.Administrator.Controllers
         [Authorize]
         public JsonResult GetData()
         {
-            var vm = new
-            {
-                VideoCaptureList = GetVideoCaptureList()
-            };
+            string errMsg = null;
+            var videoCaptureList = new VideoCaptureViewModel[0];
 
-            return Json(vm, JsonRequestBehavior.AllowGet);
+            try
+            {
+                videoCaptureList = GetVideoCaptureList().ToArray();
+            }
+            catch (Exception ex)
+            {
+                errMsg = ex.Message;
+            }
+
+            return Json(new
+            {
+                Success = string.IsNullOrEmpty(errMsg),
+                ErrorMessage = errMsg,
+                VideoCaptureList = videoCaptureList
+            }, JsonRequestBehavior.AllowGet);
         }
 
         [HttpGet]

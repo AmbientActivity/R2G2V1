@@ -25,26 +25,26 @@
             $.extend(config, options);
 
             $.get(config.url, config.params)
-                .done(function(message) {
-                    BootstrapDialog.show({
-                        type: config.type,
-                        title: config.title,
-                        message: $("<div></div>").append(message),
-                        onshown: function() {
-                            $("#" + config.focus).focus();
-                        },
-                        closable: false,
-                        buttons: getButtons()
-                    });
-                })
-                .error(function(request) {
-                    utilities.alert.show({
-                        title: "Partial View Load Error",
-                        type: BootstrapDialog.TYPE_DANGER,
-                        message: "The following error occured:\n" + request.responseText,
-                        buttonOKClass: "btn-danger"
-                    });
+            .done(function(message) {
+                BootstrapDialog.show({
+                    type: config.type,
+                    title: config.title,
+                    message: $("<div></div>").append(message),
+                    onshown: function() {
+                        $("#" + config.focus).focus();
+                    },
+                    closable: false,
+                    buttons: getButtons()
                 });
+            })
+            .error(function(error) {
+                utilities.alert.show({
+                    title: "Partial View Load Error",
+                    type: BootstrapDialog.TYPE_DANGER,
+                    message: "The following error occured:\n" + error.statusText,
+                    buttonOKClass: "btn-danger"
+                });
+            });
 
             function getButtons() {
                 if (!config.okOnly) {

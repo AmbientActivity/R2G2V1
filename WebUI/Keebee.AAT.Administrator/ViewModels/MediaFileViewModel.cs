@@ -23,9 +23,8 @@ namespace Keebee.AAT.Administrator.ViewModels
         public string Thumbnail { get; set; }
     }
 
-    public class SharedLibraryFileViewModel
+    public class SharedLibraryFileViewModel : MediaFileViewModel
     {
-        public Guid StreamId { get; set; }
-        public string Filename { get; set; }
+        public int NumLinkedProfiles { get; set; }
     }
 }

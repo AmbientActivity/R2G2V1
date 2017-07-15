@@ -9,9 +9,10 @@ using Keebee.AAT.ThumbnailGeneration;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Drawing;
 using System.Linq;
+using System.Web;
 using System.Web.Mvc;
-using CuteWebUI;
 
 namespace Keebee.AAT.Administrator.Controllers
 {
@@ -40,63 +41,9 @@ namespace Keebee.AAT.Administrator.Controllers
 
         // GET: ResidentProfile
         [Authorize]
-        public ActionResult Index(
-            int id,
-            string idsearch,
-            string firstname,
-            string lastname,
-            string sortcolumn,
-            int? mediaPathTypeId,
-            string myuploader,
-            int? sortdescending)
+        public ActionResult Index(int id, string idsearch, string firstname, string lastname, string sortcolumn, int? sortdescending)
         {
-            // first time loading
-            if (mediaPathTypeId == null) mediaPathTypeId = MediaPathTypeId.Music;
-
-            var vm = LoadResidentProfileViewModel(id, idsearch, firstname, lastname, mediaPathTypeId, sortcolumn, sortdescending);
-
-            using (var uploader = new MvcUploader(System.Web.HttpContext.Current))
-            {
-                uploader.UploadUrl = Response.ApplyAppPathModifier("~/UploadHandler.ashx");
-                uploader.Name = "myuploader";
-                uploader.AllowedFileExtensions = ResidentRules.GetAllowedExtensions(mediaPathTypeId);
-                uploader.MultipleFilesUpload = true;
-                uploader.InsertButtonID = "uploadbutton";
-                vm.UploaderHtml = uploader.Render();
-
-                // GET:
-                if (string.IsNullOrEmpty(myuploader))
-                    return View(vm);
-
-                // POST:
-                var fileManager = new FileManager { EventLogger = _systemEventLogger };
-                var rules = new ResidentRules();
-
-                // for multiple files the value is string : guid/guid/guid 
-                foreach (var strguid in myuploader.Split('/'))
-                {
-                    var fileguid = new Guid(strguid);
-                    var file = uploader.GetUploadedFile(fileguid);
-                    if (file?.FileName == null) continue;
-
-                    if (!ResidentRules.IsValidFile(file.FileName, mediaPathTypeId)) continue;
-
-                    var mediaPath = rules.GetMediaPath(mediaPathTypeId);
-                    var filePath = $@"{_mediaSourcePath.ProfileRoot}\{id}\{mediaPath}\{file.FileName}";
-
-                    // delete it if it already exists
-                    var msg = fileManager.DeleteFile(filePath);
-
-                    if (msg.Length == 0)
-                    {
-                        file.MoveTo(filePath);
-                        msg = AddResidentMediaFile(id, file.FileName, (int)mediaPathTypeId, mediaPath);
-                        vm.ErrorMessage = msg;
-                    }
-                }
-            }
-
-            return View(vm);
+            return View(LoadResidentProfileViewModel(id, idsearch, firstname, lastname, sortcolumn, sortdescending));
         }
 
         [HttpGet]
@@ -120,7 +67,10 @@ namespace Keebee.AAT.Administrator.Controllers
                         Category = x.Category,
                         Description = x.Description,
                         ShortDescription = x.ShortDescription,
-                        IsSharable = x.IsSharable
+                        IsSharable = x.IsSharable,
+                        Path = x.Path,
+                        AllowedExts = x.AllowedExts.Replace(" ", string.Empty),
+                        AllowedTypes = x.AllowedTypes.Replace(" ", string.Empty)
                     }).ToArray();
             }
             catch (Exception ex)
@@ -139,9 +89,85 @@ namespace Keebee.AAT.Administrator.Controllers
 
         [HttpPost]
         [Authorize]
+        public JsonResult AddFiles(string[] filenames, string mediaPath, int mediaPathTypeId, int residentId)
+        {
+            string errMsg = null;
+
+            try
+            {
+                foreach (var filename in filenames)
+                {
+                    errMsg = AddResidentMediaFile(filename, mediaPathTypeId, mediaPath, residentId);
+                    if (!string.IsNullOrEmpty(errMsg))
+                        throw new Exception(errMsg);
+                }
+            }
+            catch (Exception ex)
+            {
+                errMsg = ex.Message;
+            }
+
+            return Json(new
+            {
+                Success = string.IsNullOrEmpty(errMsg),
+                ErrorMessage = errMsg,
+                FileList = GetFiles(residentId)
+            }, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        [Authorize]
+        public JsonResult UploadFile(HttpPostedFileBase file, string mediaPath, int mediaPathTypeId, string mediaPathTypeCategory, int residentId)
+        {
+            string errMsg = null;
+            string filename = null;
+
+            try
+            {
+                if (file != null)
+                {
+                    filename = file.FileName;
+                    var filePath = $@"{_mediaSourcePath.ProfileRoot}\{residentId}\{mediaPath}\{file.FileName}";
+
+                    // delete it if it already exists
+                    var fileManager = new FileManager { EventLogger = _systemEventLogger };
+                    var msg = fileManager.DeleteFile(filePath);
+
+                    if (msg.Length == 0)
+                    {
+                        if (mediaPathTypeCategory == MediaPathTypeCategoryDescription.Image)
+                        {
+                            var image = Image.FromStream(file.InputStream);
+                            var orientedImage = image.Orient();
+                            var scaled = orientedImage.Scale();
+                            scaled.Save(filePath);
+                        }
+                        else
+                        {
+                            file.SaveAs(filePath);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                errMsg = ex.Message;
+            }
+
+            return Json(new
+            {
+                Success = string.IsNullOrEmpty(errMsg),
+                ErrorMessage = errMsg,
+                Filename = filename,
+                MediaPath = mediaPath,
+                MediaPathTypeId = mediaPathTypeId
+            }, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        [Authorize]
         public JsonResult AddSharedMediaFiles(Guid[] streamIds, int residentId, int mediaPathTypeId)
         {
-            bool success;
             string errMsg = null;
             var newIds = new Collection<int>();
 
@@ -169,42 +195,18 @@ namespace Keebee.AAT.Administrator.Controllers
                         newIds.Add(newId);
                     }
                 }
-                success = true;
             }
             catch (Exception ex)
             {
-                success = false;
                 errMsg = ex.Message;
             }
 
             return Json(new
             {
-                Success = success,
-                ErrorMessage = !success ? errMsg : null,
+                Success = string.IsNullOrEmpty(errMsg),
+                ErrorMessage = errMsg,
                 FileList = GetFiles(residentId),
                 NewIds = newIds,
-            }, JsonRequestBehavior.AllowGet);
-        }
-
-        [HttpGet]
-        [Authorize]
-        public JsonResult GetUploaderHtml(int mediaPathTypeId)
-        {
-            string html;
-            using (var uploader = new MvcUploader(System.Web.HttpContext.Current))
-            {
-                uploader.UploadUrl = Response.ApplyAppPathModifier("~/UploadHandler.ashx");
-                uploader.Name = "myuploader";
-                uploader.AllowedFileExtensions = ResidentRules.GetAllowedExtensions(mediaPathTypeId); ;
-                uploader.MultipleFilesUpload = true;
-                uploader.InsertButtonID = "uploadbutton";
-                html = uploader.Render();
-            }
-
-            var rules = new ResidentRules();
-            return Json(new
-            {
-                UploaderHtml = html,
             }, JsonRequestBehavior.AllowGet);
         }
 
@@ -287,38 +289,7 @@ namespace Keebee.AAT.Administrator.Controllers
             }, JsonRequestBehavior.AllowGet);
         }
 
-        private ResidentProfileViewModel LoadResidentProfileViewModel(
-            int id,
-            string idsearch,
-            string firstname,
-            string lastname,
-            int? mediaPathTypeId,
-            string sortcolumn,
-            int? sortdescending)
-        {
-            var resident = _residentsClient.Get(id);
-            var fullName = (resident.LastName != null)
-                ? $"{resident.FirstName} {resident.LastName}"
-                : resident.FirstName;
-            var rules = new ResidentRules();
-
-            var vm = new ResidentProfileViewModel
-            {
-                ResidentId = resident.Id,
-                FullName = fullName,
-                ProfilePicture = ResidentRules.GetProfilePicture(resident.ProfilePicture) ?? ResidentRules.GetProfilePicturePlaceholder(),
-                IdSearch = idsearch,
-                FirstNameSearch = firstname,
-                LastNameSearch = lastname,
-                SortColumn = sortcolumn,
-                SortDescending = sortdescending,
-                SelectedMediaPathType = mediaPathTypeId ?? MediaPathTypeId.Music
-            };
-
-            return vm;
-        }
-
-        private string AddResidentMediaFile(int residentId, string filename, int mediaPathTypeId, string mediaPathType)
+        private string AddResidentMediaFile(string filename, int mediaPathTypeId, string mediaPathType, int residentId)
         {
             var fileManager = new FileManager { EventLogger = _systemEventLogger };
             var streamId = fileManager.GetStreamId($@"{residentId}\{mediaPathType}", filename);
@@ -345,6 +316,29 @@ namespace Keebee.AAT.Administrator.Controllers
             }
 
             return errorMessage;
+        }
+
+        private ResidentProfileViewModel LoadResidentProfileViewModel(int id, string idsearch, string firstname, string lastname, string sortcolumn, int? sortdescending)
+        {
+            var resident = _residentsClient.Get(id);
+            var fullName = (resident.LastName != null)
+                ? $"{resident.FirstName} {resident.LastName}"
+                : resident.FirstName;
+
+            var vm = new ResidentProfileViewModel
+            {
+                ResidentId = resident.Id,
+                FullName = fullName,
+                ProfilePicture = ResidentRules.GetProfilePicture(resident.ProfilePicture) ?? ResidentRules.GetProfilePicturePlaceholder(),
+                IdSearch = idsearch,
+                FirstNameSearch = firstname,
+                LastNameSearch = lastname,
+                SortColumn = sortcolumn,
+                SortDescending = sortdescending,
+                SelectedMediaPathTypeId = MediaPathTypeId.Music
+            };
+
+            return vm;
         }
 
         private IEnumerable<MediaFileViewModel> GetFiles(int id)

@@ -178,7 +178,7 @@ namespace Keebee.AAT.Administrator.Controllers
             var vm = new PublicProfileViewModel
             {
                 Title = PublicProfileSource.DescriptionSystem,
-                SelectedMediaPathType = MediaPathTypeId.Ambient
+                SelectedMediaPathTypeId = MediaPathTypeId.Ambient
             };
 
             return vm;

@@ -19,6 +19,10 @@ namespace Keebee.AAT.DataAccess.Models
         public string Description { get; set; }
         [Required]
         public string ShortDescription { get; set; }
+        [Required]
+        public string AllowedExts { get; set; }
+        [Required]
+        public string AllowedTypes { get; set; }
         public bool IsSystem { get; set; }
         public bool IsSharable { get; set; }
     }

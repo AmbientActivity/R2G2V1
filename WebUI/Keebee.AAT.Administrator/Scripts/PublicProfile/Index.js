@@ -5,64 +5,6 @@
  * Date: 2016-09
  */
 
-function CuteWebUI_AjaxUploader_OnPostback() {
-    utilities.inprogress.show({ message: "Saving..." });
-    document.forms[0].submit();
-}
-
-function CuteWebUI_AjaxUploader_OnError(message) {
-    utilities.alert.show({
-        type: BootstrapDialog.TYPE_DANGER,
-        title: "File Error",
-        message: message,
-        buttonOKClass: "btn-danger"
-    });
-    EnableScreen();
-    return false;
-}
-
-function CuteWebUI_AjaxUploader_OnTaskError(obj, message, reason) {
-    utilities.alert.show({
-        type: BootstrapDialog.TYPE_DANGER,
-        title: "Task Error",
-        message: "Error uploading file <b>" + obj.FileName + "</b>.\nMessage: " + message,
-        buttonOKClass: "btn-danger"
-    });
-
-    EnableScreen();
-    return false;
-}
-
-function CuteWebUI_AjaxUploader_OnStop() {
-    EnableScreen();
-}
-
-function CuteWebUI_AjaxUploader_OnSelect() {
-    DisableScreen();
-}
-
-function EnableScreen() {
-    $("#uploader-html-container").hide();
-    $("#lnkGoBack").show();
-    $("#lblGoBackDisabled").hide();
-    $("#txtSearchFilename").prop("disabled", false);
-    $("#add").prop("disabled", false);
-    $("select").prop("disabled", false);
-    $("#main-menu").show();
-    $("#menu-login").show();
-}
-
-function DisableScreen() {
-    $("#uploader-html-container").show();
-    $("#lnkGoBack").hide();
-    $("#lblGoBackDisabled").show();
-    $("#txtSearchFilename").prop("disabled", true);
-    $("#add").prop("disabled", true);
-    $("select").prop("disabled", true);
-    $("#main-menu").hide();
-    $("#menu-login").hide();
-}
-
 ; (function ($) {
     publicprofile.index = {
         init: function (options) {
@@ -95,7 +37,7 @@ function DisableScreen() {
             };
 
             utilities.job.execute({
-                url: site.url + "PublicProfile/GetData?" + "mediaPathTypeId=" + $("#mediaPathTypeId").val()
+                url: site.url + "PublicProfile/GetData?" + "mediaPathTypeId=" + config.selectedMediaPathTypeId
             })
             .then(function(data) {
                 $.extend(lists, data);
@@ -117,64 +59,134 @@ function DisableScreen() {
                 ko.bindingHandlers.tableRender = {
                     update: function (element, valueAccessor) {
                         ko.utils.unwrapObservable(valueAccessor());
-                        for (var index = 0, length = element.childNodes.length; index < length; index++) {
-                            var node = element.childNodes[index];
-                            if (node.nodeType === 1) {
-                                var id = node.id.replace("row_", "");
 
-                                var tooltipElement = $("#thumb_" + id);
-                                if (tooltipElement.length > 0)
-                                    tooltipElement.tooltip({ delay: { show: 100, hide: 100 } });
-                            }
-                        }
-
-                        // if there are no rows in the table, hide the table and display a message
                         var table = element.parentNode;
-                        var noMediaMessage = $("#no-records-message");
-                        var mediaPathTypeId = $("#mediaPathTypeId").val();
 
-                        var description = lists.MediaPathTypeList.filter(function(value) {
-                            return value.Id === Number(mediaPathTypeId);
-                        })[0].ShortDescription;
+                        // get the currently selected media path type id from the dropdown
+                        var mediaPathTypeSelector = $("#ddlMediaPathTypes");
+                        var mediaPathTypeId = mediaPathTypeSelector.val();
 
                         var category = lists.MediaPathTypeList.filter(function (value) {
                             return value.Id === Number(mediaPathTypeId);
                         })[0].Category.toLowerCase();
 
-                        var colThumbnail = $("#col-thumbnail");
-                        if (category !== "audio")
-                            colThumbnail.html("<div class='virtualPlaceholderImage'></div>");
-                        else
-                            colThumbnail.html("");
-                            
-                        var tableDetailElement = $("#table-detail");
-                        var tableHeaderElement = $("#table-header");
+                        formatTable(table, mediaPathTypeId, category);
+                    }
+                };
 
-                        if (table.rows.length > 0) {
-                            tableHeaderElement.show();
-                            tableDetailElement.show();
-                            noMediaMessage.hide();
+                ko.virtualElements.allowedBindings.audioRender = true;
+                ko.bindingHandlers.audioRender = {
+                    update: function (element, valueAccessor) {
 
-                            // determine if there is table overflow (to cause a scrollbar)
-                            // if so, unhide the scrollbar header column
-                            // and adjust the width of the filename column
-                            var colScrollbar = $("#col-scrollbar");
+                        // handler gets for all category types
+                        // only do this logic if this is a thumbnail column
+                        var mediaPathTypeSelector = $("#ddlMediaPathTypes");
+                        var mediaPathTypeId = mediaPathTypeSelector.val();
+                        var category = lists.MediaPathTypeList.filter(function (value) {
+                            return value.Id === Number(mediaPathTypeId);
+                        })[0].Category.toLowerCase();
 
-                            if (table.clientHeight > site.getMaxClientHeight) {
-                                colScrollbar.prop("hidden", false);
-                                colScrollbar.attr("style", "width: 1%;");
-                                tableDetailElement.addClass("container-height");
-                            } else {
-                                colScrollbar.prop("hidden", true);
-                                tableDetailElement.removeClass("container-height");
+                        if (category === "audio") {
+
+                            // get thumbnail column, find anchor element, set tooltip
+                            var audio = ko.virtualElements.firstChild(element);
+                            var row = audio.parentNode;
+
+                            // get expected number of rows
+                            var listLength = lists.FileList.filter(function (value) {
+                                return value.MediaPathTypeId === Number(mediaPathTypeId);
+                            }).length;
+
+                            // if last row do table formatting
+                            var table = row.parentNode;
+                            if (row === table.rows[listLength - 1]) {
+                                formatTable(table, mediaPathTypeId, category);
                             }
-
-                        } else {
-                            tableHeaderElement.hide();
-                            tableDetailElement.hide();
-                            noMediaMessage.html("<h2>No " + description.toLowerCase() + " found</h2>");
-                            noMediaMessage.show();
                         }
+                    }
+                }
+
+                ko.virtualElements.allowedBindings.thumbnailRender = true;
+                ko.bindingHandlers.thumbnailRender = {
+                    update: function (element, valueAccessor) {
+                        // handler gets for all category types
+                        // only do this logic if this is a thumbnail column
+                        var mediaPathTypeSelector = $("#ddlMediaPathTypes");
+                        var mediaPathTypeId = mediaPathTypeSelector.val();
+                        var category = lists.MediaPathTypeList.filter(function (value) {
+                            return value.Id === Number(mediaPathTypeId);
+                        })[0].Category.toLowerCase();
+
+                        if (category !== "audio") {
+
+                            // get thumbnail column, find anchor element, set tooltip
+                            var thumbnail = ko.virtualElements.firstChild(element);
+                            var row = thumbnail.parentNode;
+
+                                while (thumbnail) {
+                                    if (thumbnail.className === "col-thumbnail") {
+                                        var child = ko.virtualElements.firstChild(thumbnail);
+                                        var a = ko.virtualElements.nextSibling(child);
+                                         $(a).tooltip({ delay: { show: 100, hide: 100 } });
+                                    }
+                                    thumbnail = ko.virtualElements.nextSibling(thumbnail);
+                                }
+
+                                // get expected number of rows
+                                var listLength = lists.FileList.filter(function (value) {
+                                    return value.MediaPathTypeId === Number(mediaPathTypeId);
+                                }).length;
+
+                                // if last row do table formatting
+                                var table = row.parentNode;
+                                if (row === table.rows[listLength - 1]) {
+                                    formatTable(table, mediaPathTypeId, category);
+                            }
+                        }
+                    }
+                }
+
+                function formatTable(table, mediaPathTypeId, category) {
+
+                    var noMediaMessage = $("#no-records-message");
+
+                    var description = lists.MediaPathTypeList.filter(function(value) {
+                        return value.Id === Number(mediaPathTypeId);
+                    })[0].ShortDescription;
+
+                    var colThumbnail = $("#col-thumbnail");
+                    if (category !== "audio")
+                        colThumbnail.html("<div class='virtualPlaceholderImage'></div>");
+                    else
+                        colThumbnail.html("");
+                            
+                    var tableDetailElement = $("#table-detail");
+                    var tableHeaderElement = $("#table-header");
+
+                    if (table.rows.length > 0) {
+                        tableHeaderElement.show();
+                        tableDetailElement.show();
+                        noMediaMessage.hide();
+
+                        // determine if there is table overflow (to cause a scrollbar)
+                        // if so, unhide the scrollbar header column
+                        // and adjust the width of the filename column
+                        var colScrollbar = $("#col-scrollbar");
+
+                        if (table.clientHeight > site.getMaxClientHeight) {
+                            colScrollbar.prop("hidden", false);
+                            colScrollbar.attr("style", "width: 1%;");
+                            tableDetailElement.addClass("container-height");
+                        } else {
+                            colScrollbar.prop("hidden", true);
+                            tableDetailElement.removeClass("container-height");
+                        }
+
+                    } else {
+                        tableHeaderElement.hide();
+                        tableDetailElement.hide();
+                        noMediaMessage.html("<h2>No " + description.toLowerCase() + " found</h2>");
+                        noMediaMessage.show();
                     }
                 }
 
@@ -186,7 +198,7 @@ function DisableScreen() {
 
                     self.files = ko.observableArray([]);
                     self.mediaPathTypes = ko.observableArray([]);
-                    self.selectedMediaPathType = ko.observable(config.selectedMediaPathTypeId);
+
                     self.filenameSearch = ko.observable("");
                     self.totalFilteredFiles = ko.observable(0);
                     self.selectAllIsSelected = ko.observable(false);
@@ -200,7 +212,17 @@ function DisableScreen() {
                     createFileArray(lists.FileList);
                     createMediaPathTypeArray(lists.MediaPathTypeList);
 
+                    self.selectedMediaPathTypeId = ko.observable(config.selectedMediaPathTypeId);
+                    self.selectedMediaPathType = ko.observable(self.mediaPathTypes().filter(function (value) {
+                        return value.id === config.selectedMediaPathTypeId;
+                    })[0]);
+
                     $("#delete").tooltip({ delay: { show: 100, hide: 100 } });
+
+                    // when "Add" anchor is clicked, force click of the "file" element
+                    $("#upload").click(function () {
+                        $("#fileupload").trigger("click");
+                    });
 
                     enableDetail();
 
@@ -234,13 +256,16 @@ function DisableScreen() {
                                     id: value.Id,
                                     category: value.Category,
                                     description: value.Description,
-                                    shortdescription: value.ShortDescription
+                                    shortdescription: value.ShortDescription,
+                                    path: value.Path,
+                                    allowedexts: value.AllowedExts,
+                                    allowedtypes: value.AllowedTypes
                                 });
                             });
 
                         var pathType = self.mediaPathTypes()
                             .filter(function(value) {
-                                return value.id === self.selectedMediaPathType();
+                                return value.id === config.selectedMediaPathTypeId;
                             })[0];
 
                         self.isAudio(pathType.category.includes("Audio"));
@@ -302,24 +327,18 @@ function DisableScreen() {
                             }));
                     };
 
-                    self.reloadUploaderHtml = function() {
-                        var mediaPathTypeId = self.selectedMediaPathType();
-
-                        $.get(site.url + "PublicProfile/GetUploaderHtml?mediaPathTypeId=" + mediaPathTypeId)
-                            .done(function(result) {
-                                $("#uploader-html-container").html(result.UploaderHtml);
-                            });
-                    };
-
-                    self.selectedMediaPathType.subscribe(function (id) {
+                    self.selectedMediaPathTypeId.subscribe(function (id) {
                         if (typeof id === "undefined") return;
-                        $("#mediaPathTypeId").val(id);
-                        self.isAudio(self.mediaPathType().category.includes("Audio"));
 
-                        self.reloadUploaderHtml();
+                        self.selectedMediaPathType(self.mediaPathTypes().filter(function(value) {
+                            return value.id === id;
+                        })[0]);
+
+                        self.isAudio(self.selectedMediaPathType().category.includes("Audio"));
                         self.checkSelectAll(false);
                         self.selectAllRows();
                         self.clearStreams();
+                        self.initUploader();
                     });
 
                     self.filteredFiles = ko.computed(function() {
@@ -331,14 +350,14 @@ function DisableScreen() {
                                             .toLowerCase()
                                             .indexOf(self.filenameSearch().toLowerCase()) !==
                                             -1) &&
-                                    f.mediapathtypeid === self.selectedMediaPathType();
+                                    f.mediapathtypeid === self.selectedMediaPathType().id;
                             });
                     });
 
                     self.filteredFilesBySelection = ko.computed(function() {
                         return ko.utils.arrayFilter(self.files(),
                             function(f) {
-                                return (f.mediapathtypeid === self.selectedMediaPathType());
+                                return (f.mediapathtypeid === self.selectedMediaPathType().id);
                             });
                     });
 
@@ -377,15 +396,50 @@ function DisableScreen() {
                             });
                     });
 
+                    self.initUploader = ko.computed(function () {
+                        var mediaPathType = self.selectedMediaPathType();
+
+                        utilities.upload.init({
+                            url: site.url + "PublicProfile/UploadFile"
+                                + "?mediaPath=" + mediaPathType.path
+                                + "&mediaPathTypeId=" + mediaPathType.id
+                                + "&mediaPathTypeCategory=" + mediaPathType.category,
+                            allowedExts: mediaPathType.allowedexts.split(","),
+                            allowedTypes: mediaPathType.allowedtypes.split(","),
+                            callback: function (filenames) {
+                                if (filenames !== null) {
+                                    utilities.job.execute({
+                                        url: site.url + "PublicProfile/AddFiles",
+                                        type: "POST",
+                                        waitMessage: "Saving...",
+                                        params: {
+                                            filenames: filenames,
+                                            mediaPath: mediaPathType.path,
+                                            mediaPathTypeId: mediaPathType.id
+                                        }
+                                    })
+                                    .then(function(addResult) {
+                                        lists.FileList = addResult.FileList;
+                                        createFileArray(lists.FileList);
+                                        self.sort({ afterSave: true });
+                                        self.selectedIds([]);
+                                        self.checkSelectAll(false);
+                                        enableDetail();
+                                    });
+                                }
+                            }
+                        });
+                    });
+
                     self.addFromSharedLibray = function () {
                         self.clearStreams();
-                        var mediaPathTypeDesc = self.mediaPathType().shortdescription;
+                        var mediaPathTypeDesc = self.selectedMediaPathType().shortdescription;
 
                         sharedlibraryadd.view.show({
                                 profileId: 0,
-                                mediaPathTypeId: self.selectedMediaPathType(),
+                                mediaPathTypeId: self.selectedMediaPathType().id,
                                 mediaPathTypeDesc: mediaPathTypeDesc,
-                                mediaPathTypeCategory: self.mediaPathType().category
+                                mediaPathTypeCategory: self.selectedMediaPathType().category
                             })
                             .then(function(result) {
                                 utilities.job.execute({
@@ -394,7 +448,7 @@ function DisableScreen() {
                                     waitMessage: "Adding...",
                                     params: {
                                         streamIds: result.streamIds,
-                                        mediaPathTypeId: self.selectedMediaPathType()
+                                        mediaPathTypeId: self.selectedMediaPathType().id
                                     }
                                 })
                                 .then(function(saveResult) {
@@ -428,7 +482,7 @@ function DisableScreen() {
                                     waitMessage: "Deleting...",
                                     params: {
                                         ids: self.selectedIds(),
-                                        mediaPathTypeId: $("#mediaPathTypeId").val()
+                                        mediaPathTypeId: self.selectedMediaPathType().id
                                     }
                                 })
                                 .then(function (result) {
@@ -447,7 +501,7 @@ function DisableScreen() {
                     };
 
                     self.showPreview = function(row) {
-                        var pathCategory = self.mediaPathType().category;
+                        var pathCategory = self.selectedMediaPathType().category;
 
                         if (pathCategory.includes("Image"))
                             self.previewImage(row);
@@ -618,23 +672,16 @@ function DisableScreen() {
                         $("#chk_all").prop("checked", checked);
                     };
 
-                    self.mediaPathType = function() {
-                        return self.mediaPathTypes()
-                            .filter(function(value) {
-                                return value.id === self.selectedMediaPathType();
-                            })[0];
-                    };
-
                     self.resetFocus = function () {
                         enableDetail();
                     }
                 };
             })
-            .catch(function (data) {
+            .catch(function (error) {
                 $("#loading-container").hide();
                 $("#error-container")
                     .html("<div><h2>Data load error:</h2></div>")
-                    .append("<div>" + data.ErrorMessage + "</div>")
+                    .append("<div>" + error.message + "</div>")
                     .append("<div><h3>Please try refreshing the page</h3></div>");
                 $("#error-container").show();
             });

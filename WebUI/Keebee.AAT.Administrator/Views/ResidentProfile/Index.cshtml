@@ -21,16 +21,24 @@
              @lastname = @Model.LastNameSearch,
              @idsearch = @Model.IdSearch,
              @sortcolumn = @Model.SortColumn,
-             @sortdescending = @Model.SortDescending
+             @sortdescending = @Model.SortDescending,
          })'"><h4><span class="glyphicon glyphicon-chevron-left"></span>&nbsp;&nbsp;<b>Back To All Residents</b></h4></a>
 </div>
 
 <script type="text/javascript">
     $(document)
         .ready(function() {
-            residentprofile.index.init({ residentid: @Model.ResidentId, selectedMediaPathTypeId: @Model.SelectedMediaPathType });
+            residentprofile.index.init({
+                residentid: @Model.ResidentId, 
+                selectedMediaPathTypeId: @Model.SelectedMediaPathTypeId
+            });
         });
 </script>
+
+<!-- uploader -->
+<div class="upload-container">
+    <div id="uploads"></div>
+</div>
 
 <!-- audio player -->
 <audio id="audio-player" controls autoplay data-bind="event: { ended: audioEnded }">
@@ -40,15 +48,6 @@
 <!-- video player -->
 <div hidden>
     <video id="video-player"></video>
-</div>
-
-@{Html.BeginForm();}
-
-<!-- need to post this back to the controller -->
-<input id="mediaPathTypeId" name="mediaPathTypeId" type="hidden" value="@Model.SelectedMediaPathType" />
-
-<div id="uploader-html-container" hidden>
-    @Html.Raw(@Model.UploaderHtml)
 </div>
 
 <div class="panel panel-default panel-no-body">
@@ -63,7 +62,7 @@
             </li>
             <li>
                 <div class="label label-filter">Select Media Type</div>
-                <select id="ddlMediaPathTypes" class="form-control select-filter" data-bind="options: mediaPathTypes, optionsValue: 'id', optionsText: 'description', value: selectedMediaPathType"></select>
+                <select id="ddlMediaPathTypes" class="form-control select-filter" data-bind="options: mediaPathTypes, optionsValue: 'id', optionsText: 'description', value: selectedMediaPathTypeId"></select>
             </li>
             <li class="pull-right total-files">
                 <label>Total:</label> <span data-bind="text: totalFilteredFiles()"></span>
@@ -76,7 +75,10 @@
                     </button>
                     <ul class="dropdown-menu">
                         <li><a href="javascript:void(0)" id="add-shared" data-bind="click: addFromSharedLibray">From Shared Library</a></li>
-                        <li><a href="javascript:void(0)" id="uploadbutton" onclick="return" false;">From Your Computer</a></li>
+                        <li>
+                            <a id="upload" href="javascript:void(0)">From Your Computer</a>
+                            <input type="file" name="file" id="fileupload" multiple style="display: none" />
+                        </li>
                     </ul>
                 </div>
             </li>
@@ -118,21 +120,25 @@
                 <tr data-bind="attr: { id: 'row_' + id }">
                     <td class="col-checkbox"><input type="checkbox" class="form-control checkbox-size" data-bind="attr: { id: 'chk_' + id }, checked: isselected, click: $parent.selectFile"/></td>
                     <!-- ko if: !$parent.isAudio() -->
+                    <!-- ko thumbnailRender: filesTable -->
                     <td class="col-thumbnail">
                         <a href="javascript:void(0)" data-toggle="tooltip" title="Preview it" data-bind="attr: { id: 'thumb_' + id }, click: $parent.showPreview">
                             <img alt="" width="40" height="40" data-bind="attr: { src: thumbnail }">
                         </a>
                     </td>
                     <!-- /ko -->
+                    <!-- /ko -->
                     <!-- ko if: $parent.isAudio() -->
                     <!-- ko if: isplaying -->
-                    <td class="col-thumbnail"><a href="javascript:void(0)" data-bind="attr: { id: 'audio_' + id }, click: $parent.showPreview, css: 'glyphicon glyphicon-pause'"></a></td>
+                    <td class="col-thumbnail"><a href="javascript:void(0)" data-bind="attr: { id: 'audio_' + id }, click: $parent.showPreview, css: 'glyphicon glyphicon-pause play-paused'"></a></td>
                     <!-- /ko -->
                     <!-- ko if: ispaused -->
                     <td class="col-thumbnail"><a href="javascript:void(0)" data-bind="attr: { id: 'audio_' + id }, click: $parent.showPreview, css: 'glyphicon glyphicon-play play-paused'"></a></td>
                     <!-- /ko -->
                     <!-- ko if: !ispaused && !isplaying -->
+                    <!-- ko audioRender: filesTable -->
                     <td class="col-thumbnail"><a href="javascript:void(0)" data-bind="attr: { id: 'audio_' + id }, click: $parent.showPreview, css: 'glyphicon glyphicon-play'"></a></td>
+                    <!-- /ko -->
                     <!-- /ko -->
                     <!-- /ko -->
                     <td class="col-filename" data-bind="click: $parent.resetFocus, text: filename"></td>
@@ -149,4 +155,3 @@
         </div>
     </div>
 </div>
- @{Html.EndForm();}

@@ -6,12 +6,12 @@ using Keebee.AAT.SystemEventLogging;
 using Keebee.AAT.ApiClient.Clients;
 using Keebee.AAT.ApiClient.Models;
 using Keebee.AAT.ThumbnailGeneration;
-using CuteWebUI;
 using System.Linq;
 using System.Web.Mvc;
 using System;
 using System.Collections.Generic;
-using System.IO;
+using System.Drawing;
+using System.Web;
 
 namespace Keebee.AAT.Administrator.Controllers
 {
@@ -35,52 +35,13 @@ namespace Keebee.AAT.Administrator.Controllers
         }
 
         [Authorize]
-        public ActionResult Index(
-            int? mediaPathTypeId,
-            string myuploader)
+        public ActionResult Index()
         {
-            // first time loading
-            if (mediaPathTypeId == null) mediaPathTypeId = MediaPathTypeId.Music;
-
-            var vm = LoadSharedLibraryViewModel(mediaPathTypeId);
-
-            using (var uploader = new MvcUploader(System.Web.HttpContext.Current))
+            return View(new SharedLibraryViewModel
             {
-                // GET:
-                if (string.IsNullOrEmpty(myuploader))
-                    return View(vm);
-
-                // POST:
-                var fileManager = new FileManager {EventLogger = _systemEventLogger};
-
-                // for multiple files the value is string : guid/guid/guid 
-                foreach (var strguid in myuploader.Split('/'))
-                {
-                    var fileguid = new Guid(strguid);
-                    var file = uploader.GetUploadedFile(fileguid);
-                    if (file?.FileName == null) continue;
-
-                    if (!SharedLibraryRules.IsValidFile(file.FileName, mediaPathTypeId)) continue;
-
-                    var rules = new SharedLibraryRules();
-                    var mediaPathType = rules.GetMediaPathType(mediaPathTypeId);
-                    var pathRoot = _mediaSourcePath.MediaRoot;
-                    var pathMedia = $@"{_mediaSourcePath.SharedLibrary}\{mediaPathType.Path}\";
-                    var filePath = Path.Combine($@"{pathRoot}\{pathMedia}", file.FileName);
-
-                    // delete it if it already exists
-                    var msg = fileManager.DeleteFile(filePath);
-
-                    // add the new file to the folder and create a thumbnail
-                    if (msg.Length == 0)
-                    {
-                        msg = AddSharedLibraryFile(file, pathRoot, pathMedia, (int)mediaPathTypeId);
-                        vm.ErrorMessage = msg;
-                    }
-                }
-            }
-
-            return View(vm);
+                Title = "Shared Library",
+                SelectedMediaPathTypeId = MediaPathTypeId.Music
+            });
         }
 
         [HttpGet]
@@ -102,7 +63,10 @@ namespace Keebee.AAT.Administrator.Controllers
                         Category = x.Category,
                         Description = x.Description,
                         ShortDescription = x.ShortDescription,
-                        IsSharable = true
+                        IsSharable = true,
+                        Path = x.Path,
+                        AllowedExts = x.AllowedExts.Replace(" ", string.Empty),
+                        AllowedTypes = x.AllowedTypes.Replace(" ", string.Empty)
                     }).OrderBy(x => x.Description).ToArray();
 
                 fileList = GetFiles(mediaPathTypes).ToArray();
@@ -121,34 +85,47 @@ namespace Keebee.AAT.Administrator.Controllers
             }, JsonRequestBehavior.AllowGet);
         }
 
-        [HttpGet]
+        [HttpPost]
         [Authorize]
-        public JsonResult GetUploaderHtml(int mediaPathTypeId)
+        public JsonResult UploadFile(HttpPostedFileBase file, string mediaPath, int mediaPathTypeId, string mediaPathTypeCategory)
         {
-            string html;
-            using (var uploader = new MvcUploader(System.Web.HttpContext.Current))
+            string errMsg = null;
+
+            try
             {
-                uploader.UploadUrl = Response.ApplyAppPathModifier("~/UploadHandler.ashx");
-                uploader.Name = "myuploader";
-                uploader.AllowedFileExtensions = SharedLibraryRules.GetAllowedExtensions(mediaPathTypeId);
-                ;
-                uploader.MultipleFilesUpload = true;
-                uploader.InsertButtonID = "uploadbutton";
-                html = uploader.Render();
+                if (file != null)
+                {
+                    var filePath = $@"{_mediaSourcePath.MediaRoot}\{_mediaSourcePath.SharedLibrary}\{mediaPath}\{file.FileName}";
+
+                    // delete it if it already exists
+                    var fileManager = new FileManager { EventLogger = _systemEventLogger };
+                    var msg = fileManager.DeleteFile(filePath);
+
+                    if (msg.Length == 0)
+                    {
+                        if (mediaPathTypeCategory == MediaPathTypeCategoryDescription.Image)
+                        {
+                            var image = Image.FromStream(file.InputStream);
+                            var orientedImage = image.Orient();
+                            var scaled = orientedImage.Scale();
+                            scaled.Save(filePath);
+                        }
+                        else
+                        {
+                            file.SaveAs(filePath);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                errMsg = ex.Message;
             }
 
-            var rules = new SharedLibraryRules();
-            var responseTypes = rules.GetValidResponseTypes(mediaPathTypeId)
-                .OrderBy(r => r.Description);
-            ;
             return Json(new
             {
-                UploaderHtml = html,
-                ResponseTypeList = responseTypes.Select(x => new
-                {
-                    x.Id,
-                    x.Description
-                }),
+                Success = string.IsNullOrEmpty(errMsg),
+                ErrorMessage = errMsg
             }, JsonRequestBehavior.AllowGet);
         }
 
@@ -215,17 +192,6 @@ namespace Keebee.AAT.Administrator.Controllers
             });
         }
 
-        private static SharedLibraryViewModel LoadSharedLibraryViewModel(int? mediaPathTypeId)
-        {
-            var vm = new SharedLibraryViewModel
-            {
-                Title = "Shared Library",
-                SelectedMediaPathType = mediaPathTypeId ?? MediaPathTypeId.Music
-            };
-
-            return vm;
-        }
-
         private static LinkedProfilesViewModel LoadLinkedProfilesViewModel(Guid streamId)
         {
             var rules = new SharedLibraryRules();
@@ -270,31 +236,6 @@ namespace Keebee.AAT.Administrator.Controllers
                     };
                 }).OrderBy(x => x.Filename);
             });
-        }
-
-        private string AddSharedLibraryFile(MvcUploadFile file, string pathRoot, string pathMedia, int mediaPathTypeId)
-        {
-            string errorMessage = null;
-
-            try
-            {
-                file.MoveTo(Path.Combine($@"{pathRoot}\{pathMedia}", file.FileName));
-
-                var mediaFile = _mediaFilesClient.GetFromPath(pathMedia, file.FileName);
-                var streamId = mediaFile.StreamId;
-
-                if (SharedLibraryRules.IsMediaTypeThumbnail(mediaPathTypeId))
-                {
-                    var thumbnailGenerator = new ThumbnailGenerator();
-                    errorMessage = thumbnailGenerator.Generate(streamId);
-                }
-            }
-            catch (Exception ex)
-            {
-                errorMessage = ex.Message;
-            }
-
-            return errorMessage;
         }
 
         private string DeleteSharedLibraryFile(MediaFilePath mediaFile, int mediaPathTypeId)

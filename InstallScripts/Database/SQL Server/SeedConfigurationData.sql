@@ -97,16 +97,17 @@ SET IDENTITY_INSERT [dbo].[MediaPathTypeCategories] OFF
 
 -- media path types
 SET IDENTITY_INSERT [dbo].[MediaPathTypes] ON 
-INSERT [dbo].[MediaPathTypes] ([Id], [Path], [Description], [ShortDescription], [MediaPathTypeCategoryId], [IsSystem], [IsSharable]) VALUES (1, 'audio\music', 'Audio (Music)', 'Music', 1, 0, 1)
-INSERT [dbo].[MediaPathTypes] ([Id], [Path], [Description], [ShortDescription], [MediaPathTypeCategoryId], [IsSystem], [IsSharable]) VALUES (2, 'audio\radio-shows', 'Audio (Radio Shows)', 'Radio Shows', 1, 0, 1)
-INSERT [dbo].[MediaPathTypes] ([Id], [Path], [Description], [ShortDescription], [MediaPathTypeCategoryId], [IsSystem], [IsSharable]) VALUES (3, 'images\general', 'Images (General)', 'Images', 2, 0, 1)
-INSERT [dbo].[MediaPathTypes] ([Id], [Path], [Description], [ShortDescription], [MediaPathTypeCategoryId], [IsSystem], [IsSharable]) VALUES (4, 'images\personal', 'Images (Personal)', 'Images', 2, 0, 0)
-INSERT [dbo].[MediaPathTypes] ([Id], [Path], [Description], [ShortDescription], [MediaPathTypeCategoryId], [IsSystem], [IsSharable]) VALUES (5, 'videos\tv-shows', 'Videos (TV Shows)', 'TV Shows', 3, 0, 1)
-INSERT [dbo].[MediaPathTypes] ([Id], [Path], [Description], [ShortDescription], [MediaPathTypeCategoryId], [IsSystem], [IsSharable]) VALUES (6, 'videos\home-movies', 'Videos (Home Movies)', 'Home Movies', 3, 0, 0)
-INSERT [dbo].[MediaPathTypes] ([Id], [Path], [Description], [ShortDescription], [MediaPathTypeCategoryId], [IsSystem], [IsSharable]) VALUES (7, 'activities\matching-game\shapes', 'Matching Game (Shapes)', 'Shapes', 2, 0, 1)
-INSERT [dbo].[MediaPathTypes] ([Id], [Path], [Description], [ShortDescription], [MediaPathTypeCategoryId], [IsSystem], [IsSharable]) VALUES (8, 'activities\matching-game\sounds', 'Matching Game (Sounds)', 'Sounds', 1, 0, 1)
-INSERT [dbo].[MediaPathTypes] ([Id], [Path], [Description], [ShortDescription], [MediaPathTypeCategoryId], [IsSystem], [IsSharable]) VALUES (9, 'videos\ambient', 'Videos (Ambient)', 'Ambient Videos', 3, 1, 1)
-INSERT [dbo].[MediaPathTypes] ([Id], [Path], [Description], [ShortDescription], [MediaPathTypeCategoryId], [IsSystem], [IsSharable]) VALUES (10, 'videos\cats', 'Videos (Cats)', 'Cats Videos', 3, 1, 1)
+INSERT [dbo].[MediaPathTypes] ([Id], [Path], [Description], [ShortDescription], [AllowedExts], [AllowedTypes], [MediaPathTypeCategoryId], [IsSystem], [IsSharable]) VALUES (1, 'audio\music', 'Audio (Music)', 'Music', 'mp3', 'audio/mp3', 1, 0, 1)
+INSERT [dbo].[MediaPathTypes] ([Id], [Path], [Description], [ShortDescription], [AllowedExts], [AllowedTypes], [MediaPathTypeCategoryId], [IsSystem], [IsSharable]) VALUES (2, 'audio\radio-shows', 'Audio (Radio Shows)', 'Radio Shows','mp3', 'audio/mp3', 1, 0, 1)
+-- comma delimited text for AllowedExts and AllowedTypes cannot have any spaces!!
+INSERT [dbo].[MediaPathTypes] ([Id], [Path], [Description], [ShortDescription], [AllowedExts], [AllowedTypes], [MediaPathTypeCategoryId], [IsSystem], [IsSharable]) VALUES (3, 'images\general', 'Images (General)', 'Images', 'jpg, jpeg, jpe, jif, jfif, jfi, png, gif', 'image/pjpeg, image/jpeg, image/png, image/x-png, image/gif, image/x-gif', 2, 0, 1)
+INSERT [dbo].[MediaPathTypes] ([Id], [Path], [Description], [ShortDescription], [AllowedExts], [AllowedTypes], [MediaPathTypeCategoryId], [IsSystem], [IsSharable]) VALUES (4, 'images\personal', 'Images (Personal)', 'Images', 'jpg, jpeg, jpe, jif, jfif, jfi, png, gif', 'image/pjpeg, image/jpeg, image/png, image/x-png, image/gif, image/x-gif', 2, 0, 0)
+INSERT [dbo].[MediaPathTypes] ([Id], [Path], [Description], [ShortDescription], [AllowedExts], [AllowedTypes], [MediaPathTypeCategoryId], [IsSystem], [IsSharable]) VALUES (5, 'videos\tv-shows', 'Videos (TV Shows)', 'TV Shows', 'mp4', 'video/mp4', 3, 0, 1)
+INSERT [dbo].[MediaPathTypes] ([Id], [Path], [Description], [ShortDescription], [AllowedExts], [AllowedTypes], [MediaPathTypeCategoryId], [IsSystem], [IsSharable]) VALUES (6, 'videos\home-movies', 'Videos (Home Movies)', 'Home Movies', 'mp4', 'video/mp4', 3, 0, 0)
+INSERT [dbo].[MediaPathTypes] ([Id], [Path], [Description], [ShortDescription], [AllowedExts], [AllowedTypes], [MediaPathTypeCategoryId], [IsSystem], [IsSharable]) VALUES (7, 'activities\matching-game\shapes', 'Matching Game (Shapes)', 'Shapes', 'png', 'image/png', 2, 0, 1)
+INSERT [dbo].[MediaPathTypes] ([Id], [Path], [Description], [ShortDescription], [AllowedExts], [AllowedTypes], [MediaPathTypeCategoryId], [IsSystem], [IsSharable]) VALUES (8, 'activities\matching-game\sounds', 'Matching Game (Sounds)', 'Sounds', 'mp3', 'audio/mp3', 1, 0, 1)
+INSERT [dbo].[MediaPathTypes] ([Id], [Path], [Description], [ShortDescription], [AllowedExts], [AllowedTypes], [MediaPathTypeCategoryId], [IsSystem], [IsSharable]) VALUES (9, 'videos\ambient', 'Videos (Ambient)', 'Ambient Videos', 'mp4', 'video/mp4', 3, 1, 1)
+INSERT [dbo].[MediaPathTypes] ([Id], [Path], [Description], [ShortDescription], [AllowedExts], [AllowedTypes], [MediaPathTypeCategoryId], [IsSystem], [IsSharable]) VALUES (10, 'videos\cats', 'Videos (Cats)', 'Cats Videos', 'mp4', 'video/mp4', 3, 1, 1)
 SET IDENTITY_INSERT [dbo].[MediaPathTypes] OFF
 
 --- CONFIGURATION 1

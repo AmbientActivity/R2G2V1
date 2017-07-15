@@ -36,18 +36,18 @@ namespace Keebee.AAT.Administrator.Controllers
             var beaconWatcherPath = ConfigurationManager.AppSettings["BluetoothBeaconWatcherServiceLocation"];
             var videoCapturePath = ConfigurationManager.AppSettings["VideoCaptureServiceLocation"];
 
-            var msg =  rules.Install(ServiceUtilities.ServiceType.BluetoothBeaconWatcher, beaconWatcherPath, activateBeaconWatcher) ??
+            var errMsg =  rules.Install(ServiceUtilities.ServiceType.BluetoothBeaconWatcher, beaconWatcherPath, activateBeaconWatcher) ??
                        rules.Install(ServiceUtilities.ServiceType.VideoCapture, videoCapturePath, activateVideoCapture);
 
-            if (msg == null)
+            if (string.IsNullOrEmpty(errMsg))
             {
                 Session["IsBeaconWatcherServiceInstalled"] = activateBeaconWatcher ? "true" : "false";
             }
 
             return Json(new
             {
-                Success = true,
-                ErrorMessage = msg,
+                Success = string.IsNullOrEmpty(errMsg),
+                ErrorMessage = errMsg,
                 ServiceSettings = new ServicesViewModel
                 {
                     IsInstalledBeaconWatcherService = ServicesRules.IsInstalled(ServiceUtilities.ServiceType.BluetoothBeaconWatcher) ? 1 : 0,

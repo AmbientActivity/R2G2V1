@@ -366,7 +366,7 @@
                             streamId: row.streamid,
                             filename: row.filename,
                             fileType: row.filetype
-                        }).then(function () { enableDetail() });;
+                        }).then(function () { enableDetail() });
                     };
 
                     self.previewVideo = function (row) {

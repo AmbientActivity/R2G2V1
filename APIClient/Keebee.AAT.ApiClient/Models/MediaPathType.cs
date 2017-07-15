@@ -7,6 +7,8 @@
         public string Path { get; set; }
         public string Description { get; set; }
         public string ShortDescription { get; set; }
+        public string AllowedExts { get; set; }
+        public string AllowedTypes { get; set; }
         public bool IsSystem { get; set; }
         public bool IsSharable { get; set; }
     }

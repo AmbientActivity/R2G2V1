@@ -5,8 +5,7 @@ namespace Keebee.AAT.Administrator.ViewModels
     public class SharedLibraryViewModel
     {
         public string Title { get; set; }
-        public int? SelectedMediaPathType { get; set; }
-        public string UploaderHtml { get; set; }
+        public int SelectedMediaPathTypeId { get; set; }
         public string ErrorMessage { get; set; }
     }
 

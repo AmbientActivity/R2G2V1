@@ -24,10 +24,7 @@
             var progressBar = $("#progressBar");
 
             // initialize the remove button
-            if (imgProfilePicture.attr("alt") === "notexists")
-                cmdRemovePicture.prop("disabled", true);
-            else
-                cmdRemovePicture.prop("disabled", false);
+            cmdRemovePicture.prop("disabled", imgProfilePicture.attr("alt") === "notexists");
 
             $(function () {
                 // Bootstrappable btn-group with checkables inside

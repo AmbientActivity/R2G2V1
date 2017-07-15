@@ -36,4 +36,4 @@
             $("#" + config.container).append(html);
         }
     }
-})(jQuery);;
+})(jQuery);

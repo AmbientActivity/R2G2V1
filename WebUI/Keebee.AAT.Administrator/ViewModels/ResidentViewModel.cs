@@ -61,9 +61,7 @@ namespace Keebee.AAT.Administrator.ViewModels
         public string LastNameSearch { get; set; }
         public string SortColumn { get; set; }
         public int? SortDescending { get; set; }
-        public int? SelectedMediaPathType { get; set; }
-        public int? SelectedMediaSourceType { get; set; }
-        public string UploaderHtml { get; set; }
+        public int SelectedMediaPathTypeId { get; set; }
         public string ErrorMessage { get; set; }
     }
 }

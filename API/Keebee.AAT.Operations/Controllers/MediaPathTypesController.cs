@@ -41,6 +41,8 @@ namespace Keebee.AAT.Operations.Controllers
                     x.Path,
                     x.Description,
                     x.ShortDescription,
+                    x.AllowedExts,
+                    x.AllowedTypes,
                     x.IsSystem,
                     x.IsSharable
                 }).ToArray();
@@ -69,6 +71,8 @@ namespace Keebee.AAT.Operations.Controllers
             exObj.Path = mediaPathType.Path;
             exObj.Description = mediaPathType.Description;
             exObj.ShortDescription = mediaPathType.ShortDescription;
+            exObj.AllowedExts = mediaPathType.AllowedExts;
+            exObj.AllowedTypes = mediaPathType.AllowedTypes;
             exObj.IsSystem = mediaPathType.IsSystem;
             exObj.IsSharable = mediaPathType.IsSharable;
 
@@ -96,6 +100,8 @@ namespace Keebee.AAT.Operations.Controllers
                     x.Path,
                     x.Description,
                     x.ShortDescription,
+                    x.AllowedExts,
+                    x.AllowedTypes,
                     x.IsSystem,
                     x.IsSharable
                 }).ToArray();

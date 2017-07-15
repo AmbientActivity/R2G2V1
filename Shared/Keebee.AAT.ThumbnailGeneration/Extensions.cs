@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Keebee.AAT.Shared;
+using System;
 using System.Drawing;
 using System.Web.Helpers;
 
@@ -55,6 +56,14 @@ namespace Keebee.AAT.ThumbnailGeneration
             }
 
             return image;
+        }
+
+        public static Image Scale(this Image image)
+        {
+            var rnd = Math.Min(ScreenSize.Height / (decimal)image.Width, ScreenSize.Height / (decimal)image.Height);
+            var size = new Size((int)Math.Round(image.Width * rnd), (int)Math.Round(image.Height * rnd));
+
+            return new Bitmap(image, size);
         }
     }
 }

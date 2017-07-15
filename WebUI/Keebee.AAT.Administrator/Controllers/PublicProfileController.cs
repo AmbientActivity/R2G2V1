@@ -6,12 +6,13 @@ using Keebee.AAT.SystemEventLogging;
 using Keebee.AAT.ApiClient.Clients;
 using Keebee.AAT.ApiClient.Models;
 using Keebee.AAT.ThumbnailGeneration;
-using CuteWebUI;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
 using System;
 using System.Collections.ObjectModel;
+using System.Drawing;
+using System.Web;
 
 namespace Keebee.AAT.Administrator.Controllers
 {
@@ -23,7 +24,7 @@ namespace Keebee.AAT.Administrator.Controllers
         private readonly IThumbnailsClient _thumbnailsClient;
 
         private readonly SystemEventLogger _systemEventLogger;
-        private readonly MediaSourcePath _mediaPath = new MediaSourcePath();
+        private readonly MediaSourcePath _mediaSourcePath = new MediaSourcePath();
 
         public PublicProfileController()
         {
@@ -36,57 +37,13 @@ namespace Keebee.AAT.Administrator.Controllers
 
         // GET: PublicProfile
         [Authorize]
-        public ActionResult Index(
-            int? mediaPathTypeId,
-            string myuploader)
+        public ActionResult Index()
         {
-            // first time loading
-            if (mediaPathTypeId == null) mediaPathTypeId = MediaPathTypeId.Music;
-
-            var vm = LoadPublicProfileViewModel(mediaPathTypeId);
-
-            using (var uploader = new MvcUploader(System.Web.HttpContext.Current))
+            return View(new PublicProfileViewModel
             {
-                uploader.UploadUrl = Response.ApplyAppPathModifier("~/UploadHandler.ashx");
-                uploader.Name = "myuploader";
-                uploader.AllowedFileExtensions = PublicProfileRules.GetAllowedExtensions(mediaPathTypeId);
-                uploader.MultipleFilesUpload = true;
-                uploader.InsertButtonID = "uploadbutton";
-                vm.UploaderHtml = uploader.Render();
-
-                // GET:
-                if (string.IsNullOrEmpty(myuploader))
-                    return View(vm);
-
-                // POST:
-                var fileManager = new FileManager {EventLogger = _systemEventLogger};
-
-                // for multiple files the value is string : guid/guid/guid 
-                foreach (var strguid in myuploader.Split('/'))
-                {
-                    var fileguid = new Guid(strguid);
-                    var file = uploader.GetUploadedFile(fileguid);
-                    if (file?.FileName == null) continue;
-
-                    if (!PublicProfileRules.IsValidFile(file.FileName, mediaPathTypeId)) continue;
-
-                    var rules = new PublicProfileRules();
-                    var mediaPath = rules.GetMediaPath(mediaPathTypeId);
-                    var filePath = $@"{_mediaPath.ProfileRoot}\{PublicProfileSource.Id}\{mediaPath}\{file.FileName}";
-
-                    // delete it if it already exists
-                    var msg = fileManager.DeleteFile(filePath);
-
-                    if (msg.Length == 0)
-                    {
-                        file.MoveTo(filePath);
-                        msg = AddPublicMediaFile(file.FileName, (int) mediaPathTypeId, mediaPath);
-                        vm.ErrorMessage = msg;
-                    }
-                }
-            }
-
-            return View(vm);
+                Title = PublicProfileSource.Description,
+                SelectedMediaPathTypeId = MediaPathTypeId.Music
+            });
         }
 
         [HttpGet]
@@ -110,7 +67,10 @@ namespace Keebee.AAT.Administrator.Controllers
                         Id = x.Id,
                         Category = x.Category,
                         Description = x.Description,
-                        ShortDescription = x.ShortDescription
+                        ShortDescription = x.ShortDescription,
+                        Path = x.Path,
+                        AllowedExts = x.AllowedExts.Replace(" ", string.Empty),
+                        AllowedTypes = x.AllowedTypes.Replace(" ", string.Empty)
                     }).ToArray();
             }
             catch (Exception ex)
@@ -127,33 +87,80 @@ namespace Keebee.AAT.Administrator.Controllers
             }, JsonRequestBehavior.AllowGet);
         }
 
-        [HttpGet]
+        [HttpPost]
         [Authorize]
-        public JsonResult GetUploaderHtml(int mediaPathTypeId)
+        public JsonResult AddFiles(string[] filenames, string mediaPath, int mediaPathTypeId)
         {
-            string html;
-            using (var uploader = new MvcUploader(System.Web.HttpContext.Current))
+            string errMsg = null;
+
+            try
             {
-                uploader.UploadUrl = Response.ApplyAppPathModifier("~/UploadHandler.ashx");
-                uploader.Name = "myuploader";
-                uploader.AllowedFileExtensions = PublicProfileRules.GetAllowedExtensions(mediaPathTypeId); ;
-                uploader.MultipleFilesUpload = true;
-                uploader.InsertButtonID = "uploadbutton";
-                html = uploader.Render();
+                foreach (var filename in filenames)
+                {
+                    errMsg = AddPublicMediaFile(filename, mediaPathTypeId, mediaPath);
+                    if (!string.IsNullOrEmpty(errMsg))
+                        throw new Exception(errMsg);
+                }
+            }
+            catch (Exception ex)
+            {
+                errMsg = ex.Message;
             }
 
-            var rules = new PublicProfileRules();
-            var responseTypes = rules.GetValidResponseTypes(mediaPathTypeId)
-                .OrderBy(r => r.Description);
-            ;
             return Json(new
             {
-                UploaderHtml = html,
-                ResponseTypeList = responseTypes.Select(x => new
+                Success = string.IsNullOrEmpty(errMsg),
+                ErrorMessage = errMsg,
+                FileList = GetFiles()
+            }, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        [Authorize]
+        public JsonResult UploadFile(HttpPostedFileBase file, string mediaPath, int mediaPathTypeId, string mediaPathTypeCategory)
+        {
+            string errMsg = null;
+            string filename = null;
+
+            try
+            {
+                if (file != null)
                 {
-                    x.Id,
-                    x.Description
-                }),
+                    filename = file.FileName;
+                    var filePath = $@"{_mediaSourcePath.ProfileRoot}\{PublicProfileSource.Id}\{mediaPath}\{file.FileName}";
+
+                    // delete it if it already exists
+                    var fileManager = new FileManager {EventLogger = _systemEventLogger};
+                    var msg = fileManager.DeleteFile(filePath);
+
+                    if (msg.Length == 0)
+                    {
+                        if (mediaPathTypeCategory == MediaPathTypeCategoryDescription.Image)
+                        {
+                            var image = Image.FromStream(file.InputStream);
+                            var orientedImage = image.Orient();
+                            var scaled = orientedImage.Scale();
+                            scaled.Save(filePath);
+                        }
+                        else
+                        {
+                            file.SaveAs(filePath);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                errMsg = ex.Message;
+            }
+
+            return Json(new
+            {
+                Filename = filename,
+                MediaPath = mediaPath,
+                MediaPathTypeId = mediaPathTypeId,
+                Success = string.IsNullOrEmpty(errMsg),
+                ErrorMessage = errMsg
             }, JsonRequestBehavior.AllowGet);
         }
 
@@ -274,8 +281,11 @@ namespace Keebee.AAT.Administrator.Controllers
 
         private string AddPublicMediaFile(string filename, int mediaPathTypeId, string mediaPathType)
         {
+            string errMsg = null;
             var fileManager = new FileManager { EventLogger = _systemEventLogger };
+
             var streamId = fileManager.GetStreamId($@"{PublicProfileSource.Id}\{mediaPathType}", filename);
+            if (streamId == new Guid()) return null;
 
             var mf = new PublicMediaFileEdit
             {
@@ -286,28 +296,14 @@ namespace Keebee.AAT.Administrator.Controllers
             };
 
             int newId;
-            var errMsg = _publicMediaFilesClient.Post(mf, out newId);
+            errMsg = _publicMediaFilesClient.Post(mf, out newId);
 
             if (errMsg != null) return errMsg;
 
-            if (PublicProfileRules.IsMediaTypeThumbnail(mediaPathTypeId))
-            {
-                var thumbnailGenerator = new ThumbnailGenerator();
-                errMsg = thumbnailGenerator.Generate(streamId);
-            }
-
+            if (!PublicProfileRules.IsMediaTypeThumbnail(mediaPathTypeId)) return null;
+            var thumbnailGenerator = new ThumbnailGenerator();
+            errMsg = thumbnailGenerator.Generate(streamId);
             return errMsg;
-        }
-
-        private static PublicProfileViewModel LoadPublicProfileViewModel(int? mediaPathTypeId)
-        {
-            var vm = new PublicProfileViewModel
-            {
-                Title = PublicProfileSource.Description,
-                SelectedMediaPathType = mediaPathTypeId ?? MediaPathTypeId.Music
-            };
-
-            return vm;
         }
 
         private IEnumerable<MediaFileViewModel> GetFiles()
@@ -319,7 +315,7 @@ namespace Keebee.AAT.Administrator.Controllers
 
             if (!mediaPaths.Any()) return list;
 
-            var pathRoot = $@"{_mediaPath.ProfileRoot}\{PublicProfileSource.Id}";
+            var pathRoot = $@"{_mediaSourcePath.ProfileRoot}\{PublicProfileSource.Id}";
 
             foreach (var media in mediaResponseTypes)
             {

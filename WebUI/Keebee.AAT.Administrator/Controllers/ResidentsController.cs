@@ -73,7 +73,7 @@ namespace Keebee.AAT.Administrator.Controllers
             {
                 Success = string.IsNullOrEmpty(errMsg),
                 EerrorMessage = errMsg,
-                ResidentList = residentList
+                ResidentList = residentList,
             }, JsonRequestBehavior.AllowGet);
         }
 

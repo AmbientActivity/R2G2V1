@@ -128,4 +128,4 @@
             return config.fileArray;
         }
     }
-})(jQuery);;
+})(jQuery);

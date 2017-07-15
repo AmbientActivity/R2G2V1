@@ -5,70 +5,12 @@
  * Date: 2016-09
  */
 
-function CuteWebUI_AjaxUploader_OnPostback() {
-    utilities.inprogress.show({ message: "Saving..." });
-    document.forms[0].submit();
-}
-
-function CuteWebUI_AjaxUploader_OnError(message) {
-    utilities.alert.show({
-        type: BootstrapDialog.TYPE_DANGER,
-        title: "File Error",
-        message: message,
-        buttonOKClass: "btn-danger"
-    });
-    EnableScreen();
-    return false;
-}
-
-function CuteWebUI_AjaxUploader_OnTaskError(obj, message, reason) {
-    utilities.alert.show({
-        type: BootstrapDialog.TYPE_DANGER,
-        title: "Task Error",
-        message: "Error uploading file <b>" + obj.FileName + "</b>.\nMessage: " + message,
-        buttonOKClass: "btn-danger"
-    });
-    EnableScreen();
-    return false;
-}
-
-function CuteWebUI_AjaxUploader_OnStop() {
-    EnableScreen();
-}
-
-function CuteWebUI_AjaxUploader_OnSelect() {
-    DisableScreen();
-}
-
-function EnableScreen() {
-    $("#uploader-html-container").hide();
-    $("#lnkGoBack").show();
-    $("#lblGoBackDisabled").hide();
-    $("#txtSearchFilename").prop("disabled", false);
-    $("#uploadbutton").prop("disabled", false);
-    $("select").prop("disabled", false);
-    $("#main-menu").show();
-    $("#menu-login").show();
-}
-
-function DisableScreen() {
-    $("#uploader-html-container").show();
-    $("#lnkGoBack").hide();
-    $("#lblGoBackDisabled").show();
-    $("#txtSearchFilename").prop("disabled", true);
-    $("#uploadbutton").prop("disabled", true);
-    $("select").prop("disabled", true);
-    $("#main-menu").hide();
-    $("#menu-login").hide();
-}
-
 ; (function ($) {
     sharedlibrary.index = {
         init: function (options) {
             
             var config = {
-                selectedMediaPathTypeId: 0,
-                streamIds: []
+                selectedMediaPathTypeId: 0
             };
 
             $.extend(config, options);
@@ -95,7 +37,7 @@ function DisableScreen() {
             };
 
             utilities.job.execute({
-                url: site.url + "SharedLibrary/GetData?mediaPathTypeId=" + $("#mediaPathTypeId").val()
+                url: site.url + "SharedLibrary/GetData?mediaPathTypeId=" + config.selectedMediaPathTypeId
             })
             .then(function (data) {
                 $.extend(lists, data);
@@ -115,40 +57,105 @@ function DisableScreen() {
                 }
 
                 ko.bindingHandlers.tableRender = {
-                    update : function (element, valueAccessor) {
-                    ko.utils.unwrapObservable(valueAccessor());
-                    for (var index = 0, length = element.childNodes.length; index < length; index++) {
-                        var node = element.childNodes[index];
-                        if (node.nodeType === 1) {
-                            var id = node.id.replace("row_", "");
-                            var tolltipThumb = $("#thumb_" + id);
-                            if (tolltipThumb.length > 0)
-                                tolltipThumb.tooltip({ delay: { show: 100, hide: 100 } });
-
-                            var tooltipLink = $("#link_" + id);
-                            if (tooltipLink.length > 0)
-                                tooltipLink.tooltip({ delay: { show: 100, hide: 100 } });
+                    update: function(element, valueAccessor) {
+                        ko.utils.unwrapObservable(valueAccessor());
+                        for (var index = 0, length = element.childNodes.length; index < length; index++) {
+                            var node = element.childNodes[index];
+                            if (node.nodeType === 1) {
+                                var id = node.id.replace("row_", "");
+                                var colLink = $("#link_" + id);
+                                if (colLink.length > 0)
+                                    colLink.tooltip({ delay: { show: 100, hide: 100 } });
+                            }
                         }
-                        }
+                    }
+                }
 
-                    // if there are no rows in the table, hide the table and display a message
-                    var table = element.parentNode;
-                    var noRowsMessage = $("#no-records-message");
-                    var mediaPathTypeId = $("#mediaPathTypeId").val();
+                ko.virtualElements.allowedBindings.audioRender = true;
+                ko.bindingHandlers.audioRender = {
+                    update: function (element, valueAccessor) {
 
-                    var description = lists.MediaPathTypeList.filter(function(value) {
+                        // handler gets for all category types
+                        // only do this logic if this is an audio column
+                        var mediaPathTypeSelector = $("#ddlMediaPathTypes");
+                        var mediaPathTypeId = mediaPathTypeSelector.val();
+                        var category = lists.MediaPathTypeList.filter(function(value) {
                             return value.Id === Number(mediaPathTypeId);
-                        })[0].ShortDescription;
+                        })[0].Category.toLowerCase();
 
-                    var category = lists.MediaPathTypeList.filter(function (value) {
+                        if (category === "audio") {
+
+                            // get expected number of rows
+                            var listLength = lists.FileList.filter(function (value) {
+                                return value.MediaPathTypeId === Number(mediaPathTypeId);
+                            }).length;
+
+                            // get audio column, row and table elements
+                            var audio = ko.virtualElements.firstChild(element);
+                            var row = audio.parentNode;
+                            var table = row.parentNode;
+
+                            // if last row do table formatting
+                            if (row === table.rows[listLength - 1]) {
+                                formatTable(table, mediaPathTypeId, category);
+                            }
+                        }
+                    }
+                };
+
+                ko.virtualElements.allowedBindings.thumbnailRender = true;
+                ko.bindingHandlers.thumbnailRender = {
+                    update: function (element, valueAccessor) {
+
+                        // handler gets for all category types
+                        // only do this logic if this is a thumbnail column
+                        var mediaPathTypeSelector = $("#ddlMediaPathTypes");
+                        var mediaPathTypeId = mediaPathTypeSelector.val();
+                        var category = lists.MediaPathTypeList.filter(function(value) {
+                            return value.Id === Number(mediaPathTypeId);
+                        })[0].Category.toLowerCase();
+
+                        if (category !== "audio") {
+
+                            // get thumbnail column, find anchor element, set tooltip
+                            var thumbnail = ko.virtualElements.firstChild(element);
+                            var row = thumbnail.parentNode;
+                            while (thumbnail) {
+                                if (thumbnail.className === "col-thumbnail") {
+                                    var child = ko.virtualElements.firstChild(thumbnail);
+                                    var a = ko.virtualElements.nextSibling(child);
+                                    $(a).tooltip({ delay: { show: 100, hide: 100 } });
+                                }
+                                thumbnail = ko.virtualElements.nextSibling(thumbnail);
+                            }
+
+                            // get expected number of rows
+                            var listLength = lists.FileList.filter(function (value) {
+                                return value.MediaPathTypeId === Number(mediaPathTypeId);
+                            }).length;
+
+                            // if last row do table formatting
+                            var table = row.parentNode;
+                            if (row === table.rows[listLength - 1]) {
+                                formatTable(table, mediaPathTypeId, category);
+                            }
+                        }
+                    }
+                }
+
+                function formatTable(table, mediaPathTypeId, category) {
+                    var noRowsMessage = $("#no-records-message");
+
+                    var description = lists.MediaPathTypeList.filter(function (value) {
                         return value.Id === Number(mediaPathTypeId);
-                    })[0].Category.toLowerCase();
+                    })[0].ShortDescription;
 
                     var colThumbnail = $("#col-thumbnail");
-                    if (category !== "audio")
+                    if (category !== "audio") {
                         colThumbnail.html("<div class='virtualPlaceholderImage'></div>");
-                    else
+                    } else {
                         colThumbnail.html("");
+                    }
 
                     var tableDetailElement = $("#table-detail");
                     var tableHeaderElement = $("#table-header");
@@ -171,12 +178,11 @@ function DisableScreen() {
                             tableDetailElement.removeClass("container-height");
                         }
 
-                        } else {
-                            tableHeaderElement.hide();
-                            tableDetailElement.hide();
-                            noRowsMessage.html("<h2>No " +description.toLowerCase() + " found</h2>");
-                            noRowsMessage.show();
-                        }
+                    } else {
+                        tableHeaderElement.hide();
+                        tableDetailElement.hide();
+                        noRowsMessage.html("<h2>No " + description.toLowerCase() + " found</h2>");
+                        noRowsMessage.show();
                     }
                 }
 
@@ -188,7 +194,6 @@ function DisableScreen() {
 
                     self.files = ko.observableArray([]);
                     self.mediaPathTypes = ko.observableArray([]);
-                    self.selectedMediaPathType = ko.observable(config.selectedMediaPathTypeId);
                     self.filenameSearch = ko.observable("");
                     self.totalFilteredFiles = ko.observable(0);
                     self.selectAllIsSelected = ko.observable(false);
@@ -202,10 +207,16 @@ function DisableScreen() {
                     createFileArray(lists.FileList);
                     createMediaPathTypeArray(lists.MediaPathTypeList);
 
-                    $("#uploadbutton").prop("disabled", false);
-                    loadUploaderHtml();
-
                     $("#delete").tooltip({ delay: { show: 100, hide: 100 } });
+                    $("#upload").click(function () {
+                        $("#fileupload").trigger("click");
+                    });
+
+                    // media path type
+                    self.selectedMediaPathTypeId = ko.observable(config.selectedMediaPathTypeId);
+                    self.selectedMediaPathType = ko.observable(self.mediaPathTypes().filter(function (value) {
+                        return value.id === config.selectedMediaPathTypeId;
+                    })[0]);
 
                     enableDetail();
 
@@ -238,12 +249,15 @@ function DisableScreen() {
                                 category: value.Category,
                                 description: value.Description,
                                 shortdescription: value.ShortDescription,
-                                issharable: value.IsSharable
+                                issharable: value.IsSharable,
+                                path: value.Path,
+                                allowedexts: value.AllowedExts,
+                                allowedtypes: value.AllowedTypes
                             });
                         });
 
                         var mediaPathType = self.mediaPathTypes().filter(function (value) {
-                            return value.id === self.selectedMediaPathType();
+                            return value.id === config.selectedMediaPathTypeId;
                         })[0];
 
                         self.isAudio(mediaPathType.category.includes("Audio"));
@@ -262,15 +276,6 @@ function DisableScreen() {
                         }
 
                         $("#txtSearchFilename").focus();
-                    };
-
-                    function loadUploaderHtml() {
-                        var mediaPathTypeId = self.selectedMediaPathType();
-
-                        $.get(site.url + "SharedLibrary/GetUploaderHtml?mediaPathTypeId=" + mediaPathTypeId)
-                            .done(function (result) {
-                                $("#uploader-html-container").html(result.UploaderHtml);
-                            });
                     };
 
                     self.columns = ko.computed(function () {
@@ -315,23 +320,18 @@ function DisableScreen() {
                             }));
                     };
 
-                    self.reloadUploaderHtml = function () {
-                        loadUploaderHtml();
-                    };
-
-                    self.selectedMediaPathType.subscribe(function (id) {
+                    self.selectedMediaPathTypeId.subscribe(function (id) {
                         if (typeof id === "undefined") return;
-                        $("#mediaPathTypeId").val(id);
-                        self.reloadUploaderHtml();
+
                         self.checkSelectAll(false);
                         self.selectAllRows();
 
-                        var mediaPathType = self.mediaPathTypes().filter(function (value) {
-                            return value.id === self.selectedMediaPathType();
-                        })[0];
+                        self.selectedMediaPathType(self.mediaPathTypes().filter(function (value) {
+                            return value.id === id;
+                        })[0]);
 
-                        self.isAudio(mediaPathType.category.includes("Audio"));
-                        self.isSharable(mediaPathType.issharable);
+                        self.isAudio(self.selectedMediaPathType().category.includes("Audio"));
+                        self.isSharable(self.selectedMediaPathType().issharable);
                         self.clearStreams();
                     });
 
@@ -340,13 +340,13 @@ function DisableScreen() {
                             return (
                                 self.filenameSearch().length === 0 ||
                                 f.filename.toLowerCase().indexOf(self.filenameSearch().toLowerCase()) !== -1) &&
-                                f.mediapathtypeid === self.selectedMediaPathType();
+                                f.mediapathtypeid === self.selectedMediaPathType().id;
                         });
                     });
 
                     self.filteredFilesBySelection = ko.computed(function () {
                         return ko.utils.arrayFilter(self.files(), function (f) {
-                            return (f.mediapathtypeid === self.selectedMediaPathType());
+                            return (f.mediapathtypeid === self.selectedMediaPathType().id);
                         });
                     });
 
@@ -384,6 +384,38 @@ function DisableScreen() {
                         });
                     });
 
+                    self.initUploader = ko.computed(function () {
+                        var mediaPathType = self.selectedMediaPathType();
+
+                        utilities.upload.init({
+                            url: site.url + "SharedLibrary/UploadFile"
+                                + "?mediaPath=" + mediaPathType.path
+                                + "&mediaPathTypeId=" + mediaPathType.id
+                                + "&mediaPathTypeCategory=" + mediaPathType.category,
+                            allowedExts: mediaPathType.allowedexts.split(","),
+                            allowedTypes: mediaPathType.allowedtypes.split(","),
+                            callback: function (filenames) {
+                                if (filenames !== null) {
+                                    utilities.job.execute({
+                                        url: site.url + "SharedLibrary/GetData",
+                                        waitMessage: "Saving...",
+                                        params: {
+                                            mediaPathTypeId: mediaPathType.id
+                                        }
+                                    })
+                                    .then(function (addResult) {
+                                        lists.FileList = addResult.FileList;
+                                        createFileArray(lists.FileList);
+                                        self.sort({ afterSave: true });
+                                        self.selectedStreamIds([]);
+                                        self.checkSelectAll(false);
+                                        enableDetail();
+                                    });
+                                }
+                            }
+                        });
+                    });
+
                     self.deleteSelected = function () {
                         self.clearStreams();
 
@@ -401,7 +433,7 @@ function DisableScreen() {
                                     waitMessage: "Deleting...",
                                     params: {
                                         streamIds: self.selectedStreamIds(),
-                                        mediaPathTypeId: $("#mediaPathTypeId").val(),
+                                        mediaPathTypeId: self.selectedMediaPathType().id,
                                         isSharable: self.isSharable()
                                     }
                                 })
@@ -421,7 +453,7 @@ function DisableScreen() {
                     };
 
                     self.showPreview = function (row) {
-                        var pathCategory = self.mediaPathType().category;
+                        var pathCategory = self.selectedMediaPathType().category;
 
                         if (pathCategory.includes("Image"))
                             self.previewImage(row);
@@ -599,20 +631,13 @@ function DisableScreen() {
                         self.selectAllIsSelected(checked);
                         $("#chk_all").prop("checked", checked);
                     };
-
-                    self.mediaPathType = function () {
-                        return self.mediaPathTypes()
-                            .filter(function (value) {
-                                return value.id === self.selectedMediaPathType();
-                            })[0];
-                    }
                 };
             })
-            .catch(function (data) {
+            .catch(function (error) {
                 $("#loading-container").hide();
                 $("#error-container")
                     .html("<div><h2>Data load error:</h2></div>")
-                    .append("<div>" + data.ErrorMessage + "</div>")
+                    .append("<div>" + error.message + "</div>")
                     .append("<div><h3>Please try refreshing the page</h3></div>");
                 $("#error-container").show();
             });

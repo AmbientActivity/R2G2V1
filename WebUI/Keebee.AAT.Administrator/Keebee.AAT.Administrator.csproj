@@ -50,10 +50,6 @@
       <HintPath>..\..\packages\Antlr.3.5.0.2\lib\Antlr3.Runtime.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="CuteWebUI.AjaxUploader, Version=4.0.0.0, Culture=neutral, PublicKeyToken=bc00d4b0e43ec38d, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\AjaxUploader.4.0.1.0\lib\CuteWebUI.AjaxUploader.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform, Version=1.0.5.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.5\lib\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll</HintPath>
       <Private>True</Private>
@@ -509,7 +505,6 @@
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
-    <Content Include="READ_ME.txt" />
     <Content Include="Scripts\Account\Services.js" />
     <Content Include="Scripts\bootstrap-datepicker.js" />
     <Content Include="Scripts\bootstrap-datepicker.min.js" />
@@ -648,6 +643,7 @@
     <Content Include="Scripts\Utilities\JobExecution.js" />
     <Content Include="Scripts\SharedLibraryAdd\PartialView.js" />
     <Content Include="Scripts\Utilities\Sorting.js" />
+    <Content Include="Scripts\Utilities\Upload.js" />
     <Content Include="Scripts\Utilities\VideoViewer.js" />
     <Content Include="Scripts\VideoCaptures\Index.js" />
     <Content Include="Scripts\_references.js" />
@@ -662,7 +658,6 @@
     <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
-    <Content Include="UploadHandler.ashx" />
     <Content Include="Views\Account\_ChangePassword.cshtml" />
     <Content Include="Views\EventLogs\Export.cshtml" />
     <Content Include="Views\EventLogs\Index.cshtml" />

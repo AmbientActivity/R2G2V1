@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-// Generation date: 2017-07-05 11:40:45 PM
+// Generation date: 2017-07-14 12:29:04 AM
 namespace Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models
 {
     /// <summary>
@@ -2798,6 +2798,8 @@ namespace Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models
         /// <param name="path">Initial value of Path.</param>
         /// <param name="description">Initial value of Description.</param>
         /// <param name="shortDescription">Initial value of ShortDescription.</param>
+        /// <param name="allowedExts">Initial value of AllowedExts.</param>
+        /// <param name="allowedTypes">Initial value of AllowedTypes.</param>
         /// <param name="isSystem">Initial value of IsSystem.</param>
         /// <param name="isSharable">Initial value of IsSharable.</param>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
@@ -2805,6 +2807,8 @@ namespace Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models
                     string path, 
                     string description, 
                     string shortDescription, 
+                    string allowedExts, 
+                    string allowedTypes, 
                     bool isSystem, 
                     bool isSharable)
         {
@@ -2813,6 +2817,8 @@ namespace Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models
             mediaPathType.Path = path;
             mediaPathType.Description = description;
             mediaPathType.ShortDescription = shortDescription;
+            mediaPathType.AllowedExts = allowedExts;
+            mediaPathType.AllowedTypes = allowedTypes;
             mediaPathType.IsSystem = isSystem;
             mediaPathType.IsSharable = isSharable;
             return mediaPathType;
@@ -2932,6 +2938,52 @@ namespace Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models
         private string _ShortDescription;
         partial void OnShortDescriptionChanging(string value);
         partial void OnShortDescriptionChanged();
+        /// <summary>
+        /// There are no comments for Property AllowedExts in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        [global::Microsoft.OData.Client.OriginalNameAttribute("AllowedExts")]
+        public string AllowedExts
+        {
+            get
+            {
+                return this._AllowedExts;
+            }
+            set
+            {
+                this.OnAllowedExtsChanging(value);
+                this._AllowedExts = value;
+                this.OnAllowedExtsChanged();
+                this.OnPropertyChanged("AllowedExts");
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private string _AllowedExts;
+        partial void OnAllowedExtsChanging(string value);
+        partial void OnAllowedExtsChanged();
+        /// <summary>
+        /// There are no comments for Property AllowedTypes in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        [global::Microsoft.OData.Client.OriginalNameAttribute("AllowedTypes")]
+        public string AllowedTypes
+        {
+            get
+            {
+                return this._AllowedTypes;
+            }
+            set
+            {
+                this.OnAllowedTypesChanging(value);
+                this._AllowedTypes = value;
+                this.OnAllowedTypesChanged();
+                this.OnPropertyChanged("AllowedTypes");
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private string _AllowedTypes;
+        partial void OnAllowedTypesChanging(string value);
+        partial void OnAllowedTypesChanged();
         /// <summary>
         /// There are no comments for Property IsSystem in the schema.
         /// </summary>
@@ -6120,6 +6172,8 @@ namespace Keebee.AAT.Operations.Service.KeebeeAAT
         <Property Name=""Path"" Type=""Edm.String"" Nullable=""false"" />
         <Property Name=""Description"" Type=""Edm.String"" Nullable=""false"" />
         <Property Name=""ShortDescription"" Type=""Edm.String"" Nullable=""false"" />
+        <Property Name=""AllowedExts"" Type=""Edm.String"" Nullable=""false"" />
+        <Property Name=""AllowedTypes"" Type=""Edm.String"" Nullable=""false"" />
         <Property Name=""IsSystem"" Type=""Edm.Boolean"" Nullable=""false"" />
         <Property Name=""IsSharable"" Type=""Edm.Boolean"" Nullable=""false"" />
         <NavigationProperty Name=""MediaPathTypeCategory"" Type=""Keebee.AAT.DataAccess.Models.MediaPathTypeCategory"">

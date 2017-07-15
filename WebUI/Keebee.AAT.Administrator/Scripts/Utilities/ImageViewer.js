@@ -48,7 +48,7 @@
                         body.append("<div></div>").append(message);
 
                         var footer = bootstrapDialog.getModalFooter();
-                        footer.css({ padding: "5px", backgroundColor: "#000", border: "none", display: "block", "text-align": "center" });
+                        footer.css({ padding: "5px", backgroundColor: "#000", color: "#f0f0f0", border: "none", display: "block", "text-align": "center" });
                         footer.find(".bootstrap-dialog-footer")
                             .css({ display: "inline" })
                             .append("<span>Click image to close</span>");
@@ -75,4 +75,4 @@
             });
         }
     }
-})(jQuery);;
+})(jQuery);

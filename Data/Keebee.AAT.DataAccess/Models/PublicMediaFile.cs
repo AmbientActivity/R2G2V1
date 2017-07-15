@@ -21,5 +21,8 @@ namespace Keebee.AAT.DataAccess.Models
         [ForeignKey("MediaPathType")]
         public int MediaPathTypeId { get; set; }
         public virtual MediaPathType MediaPathType { get; set; }
+
+        [Required]
+        public DateTime DateAdded { get; set; }
     }
 }

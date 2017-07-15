@@ -155,6 +155,7 @@ namespace Keebee.AAT.Operations.Service.Services
         {
             var container = new Container(new Uri(ODataHost.Url));
 
+            publicMediaFile.DateAdded = DateTime.Now;
             container.AddToPublicMediaFiles(publicMediaFile);
             container.SaveChanges();
 

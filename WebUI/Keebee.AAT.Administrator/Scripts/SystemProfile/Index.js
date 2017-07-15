@@ -7,14 +7,16 @@
 
 ; (function ($) {
     systemprofile.index = {
-        init: function () {
+        init: function (options) {
+
+            var config = {
+                selectedMediaPathTypeId: 0
+            };
+
+            $.extend(config, options);
 
             // buttons
             var cmdDelete = $("#delete");
-
-            // audio player
-            var audioPlayer = $("#audio-player");
-            var audioPlayerElement = document.getElementById("audio-player");
 
             // video player
             var videoPlayer = $("#video-player");
@@ -61,53 +63,48 @@
                                     tooltipElement.tooltip({ delay: { show: 100, hide: 100 } });
                             }
                         }
-                        // if there are no rows in the table, hide the table and display a message
                         var table = element.parentNode;
-                        var noRowsMessage = $("#no-records-message");
-                        var mediaPathTypeId = $("#mediaPathTypeId").val();
+                        formatTable(table);
+                    }
+                }
 
-                        var description = lists.MediaPathTypeList.filter(function (value) {
-                            return value.Id === Number(mediaPathTypeId);
-                        })[0].ShortDescription;
+                function formatTable(table) {
+                    var noRowsMessage = $("#no-rows-message");
 
-                        var category = lists.MediaPathTypeList.filter(function (value) {
-                            return value.Id === Number(mediaPathTypeId);
-                        })[0].Category.toLowerCase();
+                    var description = lists.MediaPathTypeList.filter(function (value) {
+                        return value.Id === config.selectedMediaPathTypeId;
+                    })[0].ShortDescription;
 
-                        var colThumbnail = $("#col-thumbnail");
-                        if (category !== "audio")
-                            colThumbnail.html("<div class='virtualPlaceholderImage'></div>");
-                        else
-                            colThumbnail.html("");
+                    var colThumbnail = $("#col-thumbnail");
+                    colThumbnail.html("<div class='virtualPlaceholderImage'></div>");
 
-                        var tableDetailElement = $("#table-detail");
-                        var tableHeaderElement = $("#table-header");
+                    var tableDetailElement = $("#table-detail");
+                    var tableHeaderElement = $("#table-header");
 
-                        if (table.rows.length > 0) {
-                            tableHeaderElement.show();
-                            tableDetailElement.show();
-                            noRowsMessage.hide();
+                    if (table.rows.length > 0) {
+                        tableHeaderElement.show();
+                        tableDetailElement.show();
+                        noRowsMessage.hide();
 
-                            // determine if there is table overflow (to cause a scrollbar)
-                            // if so, unhide the scrollbar header column
-                            // and adjust the width of the filename column
-                            var colScrollbar = $("#col-scrollbar");
+                        // determine if there is table overflow (to cause a scrollbar)
+                        // if so, unhide the scrollbar header column
+                        // and adjust the width of the filename column
+                        var colScrollbar = $("#col-scrollbar");
 
-                            if (table.clientHeight > site.getMaxClientHeight) {
-                                colScrollbar.prop("hidden", false);
-                                colScrollbar.attr("style", "width: 1%;");
-                                tableDetailElement.addClass("container-height");
-                            } else {
-                                colScrollbar.prop("hidden", true);
-                                tableDetailElement.removeClass("container-height");
-                            }
-
+                        if (table.clientHeight > site.getMaxClientHeight) {
+                            colScrollbar.prop("hidden", false);
+                            colScrollbar.attr("style", "width: 1%;");
+                            tableDetailElement.addClass("container-height");
                         } else {
-                            tableHeaderElement.hide();
-                            tableDetailElement.hide();
-                            noRowsMessage.html("<h2>No " + description.toLowerCase() + " found</h2>");
-                            noRowsMessage.show();
+                            colScrollbar.prop("hidden", true);
+                            tableDetailElement.removeClass("container-height");
                         }
+
+                    } else {
+                        tableHeaderElement.hide();
+                        tableDetailElement.hide();
+                        noRowsMessage.html("<h2>No " + description.toLowerCase() + " found</h2>");
+                        noRowsMessage.show();
                     }
                 }
 
@@ -119,12 +116,10 @@
 
                     self.files = ko.observableArray([]);
                     self.mediaPathTypes = ko.observableArray([]);
-                    self.selectedMediaPathType = ko.observable();
                     self.filenameSearch = ko.observable("");
                     self.totalFilteredFiles = ko.observable(0);
                     self.selectAllIsSelected = ko.observable(false);
                     self.selectedIds = ko.observable([]);
-                    self.isAudio = ko.observable(false);
 
                     // for audio previewing
                     self.currentStreamId = ko.observable(0);
@@ -132,6 +127,12 @@
 
                     createFileArray(lists.FileList);
                     createMediaPathTypeArray(lists.MediaPathTypeList);
+
+                    // media path type
+                    self.selectedMediaPathTypeId = ko.observable(config.selectedMediaPathTypeId);
+                    self.selectedMediaPathType = ko.observable(self.mediaPathTypes().filter(function (value) {
+                        return value.id === config.selectedMediaPathTypeId;
+                    })[0]);
 
                     $("#delete").tooltip({ delay: { show: 100, hide: 100 } });
 
@@ -166,11 +167,6 @@
                                 shortdescription: value.ShortDescription
                             });
                         });
-
-                        var mediaPathType = self.mediaPathTypes()[0];
-
-                        self.selectedMediaPathType(mediaPathType.id);
-                        self.isAudio(mediaPathType.category.includes("Audio"));
                     };
 
                     self.columns = ko.computed(function () {
@@ -215,53 +211,59 @@
                             }));
                     };
 
-                    self.selectedMediaPathType.subscribe(function (id) {
+                    self.selectedMediaPathTypeId.subscribe(function (id) {
                         if (typeof id === "undefined") return;
 
                         self.checkSelectAll(false);
                         self.selectAllRows();
 
-                        var mediaPathType = self.mediaPathTypes().filter(function (value) {
-                            return value.id === self.selectedMediaPathType();
-                        })[0];
+                        self.selectedMediaPathType(self.mediaPathTypes().filter(function (value) {
+                            return value.id === id;
+                        })[0]);
 
-                        self.isAudio(mediaPathType.category.includes("Audio"));
+                        self.displayNoRowsMessage();
                         self.clearStreams();
                     });
+
+                    self.displayNoRowsMessage = function () {
+                        // if no rows in table, display 'no rows found' message
+                        // ko.bindingHandlers do not fire if no rows exist (after changing the media path type)
+                        var noRowsMessage = $("#no-rows-message");
+                        var tableDetailElement = $("#table-detail");
+                        var tableHeaderElement = $("#table-header");
+
+                        if (self.filteredFiles().length === 0) {
+                            tableHeaderElement.hide();
+                            tableDetailElement.hide();
+                            noRowsMessage.html("<h2>No " +
+                                self.selectedMediaPathType().shortdescription.toLowerCase() +
+                                " found</h2>");
+                            noRowsMessage.show();
+                        } else {
+                            tableHeaderElement.show();
+                            tableDetailElement.show();
+                            noRowsMessage.hide();
+                        }
+                    };
 
                     self.filteredFiles = ko.computed(function () {
                         return ko.utils.arrayFilter(self.files(), function (f) {
                             return (
                                 self.filenameSearch().length === 0 ||
                                 f.filename.toLowerCase().indexOf(self.filenameSearch().toLowerCase()) !== -1) &&
-                                f.mediapathtypeid === self.selectedMediaPathType();
+                                f.mediapathtypeid === self.selectedMediaPathType().id;
                         });
                     });
 
                     self.filteredFilesBySelection = ko.computed(function () {
                         return ko.utils.arrayFilter(self.files(), function (f) {
-                            return (f.mediapathtypeid === self.selectedMediaPathType());
+                            return (f.mediapathtypeid === self.selectedMediaPathType().id);
                         });
                     });
 
                     self.filesTable = ko.computed(function () {
                         var filteredFiles = self.filteredFiles();
                         self.totalFilteredFiles(filteredFiles.length);
-
-                        // look for currently playing or paused audio and set flags
-                        var currentlyStreaming = filteredFiles.filter(function (value) {
-                            return value.id === self.currentRowId();
-                        })[0];
-
-                        if (currentlyStreaming !== null && typeof currentlyStreaming !== "undefined") {
-                            if (audioPlayerElement.paused) {
-                                currentlyStreaming.ispaused = true;
-                                currentlyStreaming.isplaying = false;
-                            } else {
-                                currentlyStreaming.isplaying = true;
-                                currentlyStreaming.ispaused = false;
-                            }
-                        }
 
                         return filteredFiles;
                     });
@@ -280,26 +282,25 @@
 
                     self.addFromSharedLibray = function () {
                         self.clearStreams();
-                        var mediaPathTypeDesc = self.mediaPathType().shortdescription;
+                        var mediaPathTypeDesc = self.selectedMediaPathType().shortdescription;
 
                         sharedlibraryadd.view.show({
                             profileId: 0,
-                            mediaPathTypeId: self.selectedMediaPathType(),
+                            mediaPathTypeId: self.selectedMediaPathType().id,
                             mediaPathTypeDesc: mediaPathTypeDesc,
-                            mediaPathTypeCategory: self.mediaPathType().category
+                            mediaPathTypeCategory: self.selectedMediaPathType().category
                         })
-                        .then(function(result) {
+                        .then(function (streamIds) {
                             utilities.job.execute({
                                 url: site.url + "SystemProfile/AddSharedMediaFiles",
                                 type: "POST",
                                 waitMessage: "Adding...",
                                 params: {
-                                    streamIds: result.streamIds,
-                                    mediaPathTypeId: self.selectedMediaPathType()
+                                    streamIds: streamIds,
+                                    mediaPathTypeId: self.selectedMediaPathType().id
                                 }
                             })
                             .then(function(saveResult) {
-
                                 lists.FileList = saveResult.FileList;
                                 createFileArray(lists.FileList);
                                 self.sort({ afterSave: true });
@@ -310,6 +311,9 @@
                             .catch(function() {
                                 self.enableDetail();
                             });
+                        })
+                        .catch(function () {
+                            self.enableDetail();
                         });
                     };
 
@@ -330,7 +334,7 @@
                                     waitMessage: "Deleting...",
                                     params: {
                                         ids: self.selectedIds(),
-                                        mediaPathTypeId: $("#mediaPathTypeId").val()
+                                        mediaPathTypeId: self.selectedMediaPathType().id
                                     }
                                 })
                                 .then(function (result) {
@@ -349,24 +353,10 @@
                     };
 
                     self.showPreview = function (row) {
-                        var pathCategory = self.mediaPathType().category;
+                        var pathCategory = self.selectedMediaPathType().category;
 
-                        if (pathCategory.includes("Image"))
-                            self.previewImage(row);
                         if (pathCategory.includes("Video"))
                             self.previewVideo(row);
-                        if (pathCategory.includes("Audio"))
-                            self.previewAudio(row);
-                    };
-
-                    self.previewImage = function (row) {
-                        $("#thumb_" + row.id).tooltip("hide");
-                        utilities.image.show({
-                            controller: "SystemProfile",
-                            streamId: row.streamid,
-                            filename: row.filename,
-                            fileType: row.filetype
-                        }).then(function () { enableDetail() });
                     };
 
                     self.previewVideo = function (row) {
@@ -384,60 +374,8 @@
                         });
                     };
 
-                    self.previewAudio = function (row) {
-                        if (self.currentStreamId() === row.streamid) {
-                            // already paused or playing                            
-                            if (audioPlayerElement.paused) {
-                                audioPlayerElement.play();
-                                self.setGlyph(row.streamid, true, true);
-                            } else {
-                                audioPlayerElement.pause();
-                                self.setGlyph(row.streamid, false, true);
-                            }
-                        } else {
-                            // end previous
-                            self.audioEnded();
-
-                            // play new selection
-                            self.setGlyph(row.streamid, true, true);
-                            audioPlayer.attr("type", "audio/" + row.filetype.toLowerCase());
-                            audioPlayer.attr("src", site.getApiUrl + "audio/" + row.streamid);
-
-                            // set current id's
-                            self.currentStreamId(row.streamid);
-                        }
-
-                        $("#txtSearchFilename").focus();
-                    };
-
-                    self.audioEnded = function () {
-                        self.setGlyph(self.currentStreamId(), false, false);
-                    };
-
-                    self.setGlyph = function (rowid, paused, success) {
-                        var glyphElement = tblFile.find("#audio_" + rowid);
-                        var cssPlay = "glyphicon-play";
-                        var cssPause = "glyphicon-pause";
-
-                        if (success) {
-                            cssPlay = cssPlay.concat(" play-paused");
-                            cssPause = cssPause.concat(" play-paused");
-                        } else {
-                            glyphElement.removeClass("play-paused");
-                        }
-
-                        if (paused) {
-                            glyphElement.removeClass(cssPlay);
-                            glyphElement.addClass(cssPause);
-                        } else {
-                            glyphElement.removeClass(cssPause);
-                            glyphElement.addClass(cssPlay);
-                        }
-                    };
-
                     self.clearStreams = function () {
                         videoPlayer.attr("src", "");
-                        audioPlayer.attr("src", "");
                         self.currentRowId(0);
                         self.currentStreamId(0);
 
@@ -517,13 +455,6 @@
                         $("#chk_all").prop("checked", checked);
                     };
 
-                    self.mediaPathType = function () {
-                        return self.mediaPathTypes()
-                            .filter(function (value) {
-                                return value.id === self.selectedMediaPathType();
-                            })[0];
-                    }
-
                     self.enableDetail = function () {
                         var selected = self.files()
                             .filter(function (value) { return value.isselected; });
@@ -537,11 +468,11 @@
                     };
                 };
             })
-            .catch(function (data) {
+            .catch(function (error) {
                 $("#loading-container").hide();
                 $("#error-container")
                     .html("<div><h2>Data load error:</h2></div>")
-                    .append("<div>" + data.ErrorMessage + "</div>")
+                    .append("<div>" + error.message + "</div>")
                     .append("<div><h3>Please try refreshing the page</h3></div>");
                 $("#error-container").show();
             });

@@ -14,6 +14,8 @@
                 addUrl: "",
                 allowedExts: [],
                 allowedTypes: [],
+                maxFileBytes: 5000000, //5MB in bytes
+                maxFileUploads: 10,
                 callback: function () { }
             };
 
@@ -29,7 +31,7 @@
                 $(this).simpleUpload(config.url, {
                     allowedExts: config.allowedExts,
                     allowedTypes: config.allowedTypes,
-                    maxFileSize: 1000000000, //1GB in bytes
+                    maxFileSize: config.maxFileBytes, //1GB in bytes
 
                     /*
                         * Each of these callbacks are executed for each file.
@@ -37,7 +39,7 @@
                         *
                         * "this" is an object that can carry data between callbacks for each file.
                         * Data related to the upload is stored in this.upload.
-                        */
+                    */
                     init: function (totalUploads) {
                         totalFiles = totalUploads;
                     },

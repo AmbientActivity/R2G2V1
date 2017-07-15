@@ -68,7 +68,7 @@
 
                         // if there are no rows in the table, hide the table and display a message
                         var table = element.parentNode;
-                        var noRowsMessage = $("#shared-no-records-message");
+                        var noRowsMessage = $("#shared-no-rows-message");
 
                         var colThumbnail = $("#col-shared-thumbnail");
                         if (config.mediaPathTypeCategory.toLowerCase() !== "audio")
@@ -417,7 +417,7 @@
                 $("#shared-loading-container").hide();
                 $("#shared-error-container")
                     .html("<div><h2>Data load error:</h2></div>")
-                    .append("<div>" + error + "</div>")
+                    .append("<div>" + error.message + "</div>")
                     .append("<div><h3>Please try refreshing the page</h3></div>");
                 $("#shared-error-container").show();
             });

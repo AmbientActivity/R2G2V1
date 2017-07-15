@@ -70,7 +70,9 @@ namespace Keebee.AAT.Administrator.Controllers
                         IsSharable = x.IsSharable,
                         Path = x.Path,
                         AllowedExts = x.AllowedExts.Replace(" ", string.Empty),
-                        AllowedTypes = x.AllowedTypes.Replace(" ", string.Empty)
+                        AllowedTypes = x.AllowedTypes.Replace(" ", string.Empty),
+                        MaxFileBytes = x.MaxFileBytes,
+                        MaxFileUploads = x.MaxFileUploads
                     }).ToArray();
             }
             catch (Exception ex)
@@ -190,7 +192,7 @@ namespace Keebee.AAT.Administrator.Controllers
 
                         int newId;
                         errMsg = _residentMediaFilesClient.Post(mf, out newId);
-                        if (errMsg != null) throw new Exception(errMsg);
+                        if (!string.IsNullOrEmpty(errMsg)) throw new Exception(errMsg);
 
                         newIds.Add(newId);
                     }
@@ -372,6 +374,7 @@ namespace Keebee.AAT.Administrator.Controllers
                         IsLinked = file.IsLinked,
                         Path = $@"{pathRoot}\{path.MediaPathType.Description}",
                         MediaPathTypeId = path.MediaPathType.Id,
+                        DateAdded = file.DateAdded,
                         Thumbnail = ResidentRules.GetThumbnail(thumb?.Image)
                     };
 

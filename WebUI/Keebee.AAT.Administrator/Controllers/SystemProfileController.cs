@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
 using System;
+using System.Collections.ObjectModel;
 
 namespace Keebee.AAT.Administrator.Controllers
 {
@@ -30,7 +31,11 @@ namespace Keebee.AAT.Administrator.Controllers
         [Authorize]
         public ActionResult Index()
         {
-            return View(LoadPublicProfileViewModel());
+            return View(new PublicProfileViewModel
+            {
+                Title = PublicProfileSource.DescriptionSystem,
+                SelectedMediaPathTypeId = MediaPathTypeId.Ambient
+            });
         }
 
         [HttpGet]
@@ -136,8 +141,8 @@ namespace Keebee.AAT.Administrator.Controllers
         [Authorize]
         public JsonResult AddSharedMediaFiles(Guid[] streamIds, int mediaPathTypeId)
         {
-            bool success;
             string errMsg = null;
+            var newIds = new Collection<int>();
 
             try
             {
@@ -155,33 +160,24 @@ namespace Keebee.AAT.Administrator.Controllers
 
                         int newId;
                         errMsg = _publicMediaFilesClient.Post(pmf, out newId);
+                        if (!string.IsNullOrEmpty(errMsg)) throw new Exception(errMsg);
+
+                        newIds.Add(newId);
                     }
                 }
-                success = string.IsNullOrEmpty(errMsg);
             }
             catch (Exception ex)
             {
-                success = false;
                 errMsg = ex.Message;
             }
 
             return Json(new
             {
-                Success = success,
-                ErrorMessage = !success ? errMsg : null,
-                FileList = GetFiles()
+                Success = string.IsNullOrEmpty(errMsg),
+                ErrorMessage = errMsg,
+                FileList = GetFiles(),
+                MewIds = newIds
             }, JsonRequestBehavior.AllowGet);
-        }
-
-        private static PublicProfileViewModel LoadPublicProfileViewModel()
-        {
-            var vm = new PublicProfileViewModel
-            {
-                Title = PublicProfileSource.DescriptionSystem,
-                SelectedMediaPathTypeId = MediaPathTypeId.Ambient
-            };
-
-            return vm;
         }
 
         private IEnumerable<MediaFileViewModel> GetFiles()
@@ -217,6 +213,7 @@ namespace Keebee.AAT.Administrator.Controllers
                             Path = $@"{pathRoot}\{path.MediaPathType.Path}",
                             IsLinked = file.IsLinked,
                             MediaPathTypeId = path.MediaPathType.Id,
+                            DateAdded = file.DateAdded,
                             Thumbnail = SystemProfileRules.GetThumbnail(thumb?.Image)
                         };
 

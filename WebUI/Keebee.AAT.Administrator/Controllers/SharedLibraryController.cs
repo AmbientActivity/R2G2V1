@@ -66,7 +66,9 @@ namespace Keebee.AAT.Administrator.Controllers
                         IsSharable = true,
                         Path = x.Path,
                         AllowedExts = x.AllowedExts.Replace(" ", string.Empty),
-                        AllowedTypes = x.AllowedTypes.Replace(" ", string.Empty)
+                        AllowedTypes = x.AllowedTypes.Replace(" ", string.Empty),
+                        MaxFileBytes = x.MaxFileBytes,
+                        MaxFileUploads = x.MaxFileUploads
                     }).OrderBy(x => x.Description).ToArray();
 
                 fileList = GetFiles(mediaPathTypes).ToArray();

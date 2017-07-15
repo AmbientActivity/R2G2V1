@@ -43,6 +43,8 @@ namespace Keebee.AAT.Operations.Controllers
                     x.ShortDescription,
                     x.AllowedExts,
                     x.AllowedTypes,
+                    x.MaxFileBytes,
+                    x.MaxFileUploads,
                     x.IsSystem,
                     x.IsSharable
                 }).ToArray();
@@ -73,6 +75,8 @@ namespace Keebee.AAT.Operations.Controllers
             exObj.ShortDescription = mediaPathType.ShortDescription;
             exObj.AllowedExts = mediaPathType.AllowedExts;
             exObj.AllowedTypes = mediaPathType.AllowedTypes;
+            exObj.MaxFileSize = mediaPathType.MaxFileBytes;
+            exObj.MaxFileUploads = mediaPathType.MaxFileUploads;
             exObj.IsSystem = mediaPathType.IsSystem;
             exObj.IsSharable = mediaPathType.IsSharable;
 
@@ -102,6 +106,8 @@ namespace Keebee.AAT.Operations.Controllers
                     x.ShortDescription,
                     x.AllowedExts,
                     x.AllowedTypes,
+                    x.MaxFileBytes,
+                    x.MaxFileUploads,
                     x.IsSystem,
                     x.IsSharable
                 }).ToArray();

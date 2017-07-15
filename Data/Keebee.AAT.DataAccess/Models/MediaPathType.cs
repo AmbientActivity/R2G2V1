@@ -23,6 +23,8 @@ namespace Keebee.AAT.DataAccess.Models
         public string AllowedExts { get; set; }
         [Required]
         public string AllowedTypes { get; set; }
+        public long MaxFileBytes { get; set; }
+        public int MaxFileUploads { get; set; }
         public bool IsSystem { get; set; }
         public bool IsSharable { get; set; }
     }

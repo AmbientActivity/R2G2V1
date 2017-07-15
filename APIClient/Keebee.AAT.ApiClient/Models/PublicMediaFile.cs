@@ -8,6 +8,7 @@ namespace Keebee.AAT.ApiClient.Models
         public MediaFile MediaFile { get; set; }
         public MediaPathType MediaPathType { get; set; }
         public ResponseType ResponseType { get; set; }
+        public DateTime DateAdded { get; set; }
     }
 
     public class PublicMediaFileEdit

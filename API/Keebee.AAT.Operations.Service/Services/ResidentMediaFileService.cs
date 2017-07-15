@@ -110,6 +110,7 @@ namespace Keebee.AAT.Operations.Service.Services
         {
             var container = new Container(new Uri(ODataHost.Url));
 
+            residentMediaFile.DateAdded = DateTime.Now;
             container.AddToResidentMediaFiles(residentMediaFile);
             container.SaveChanges();
 

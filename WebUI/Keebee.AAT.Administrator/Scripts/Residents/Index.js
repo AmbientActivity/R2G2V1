@@ -87,7 +87,7 @@
                         }
                         // if there are no rows in the table, hide the table and display a message
                         var table = element.parentNode;
-                        var noMediaMessage = $("#no-records-message");
+                        var noMediaMessage = $("#no-rows-message");
 
                         var tableDetailElement = $("#table-detail");
                         var tableHeaderElement = $("#table-header");
@@ -428,11 +428,11 @@
                     };
                 };
             })
-            .catch(function (data) {
+            .catch(function (error) {
                 $("#loading-container").hide();
                 $("#error-container")
                     .html("<div><h2>Data load error:</h2></div>")
-                    .append("<div>" + data.ErrorMessage + "</div>")
+                    .append("<div>" + error.error + "</div>")
                     .append("<div><h3>Please try refreshing the page</h3></div>");
                 $("#error-container").show();
             });

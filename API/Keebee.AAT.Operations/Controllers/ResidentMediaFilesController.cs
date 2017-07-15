@@ -65,26 +65,27 @@ namespace Keebee.AAT.Operations.Controllers
                             Paths = mf.MediaFiles
                                 .GroupBy(pt => pt.MediaPathType)
                                 .Select(files => new { files.First().MediaPathType, Files = files })
-                                .Select(pt => new
+                                .Select(rmf => new
                                 {
                                     MediaPathType = new
-                                        {
-                                            pt.MediaPathType.Id,
-                                            Category = pt.MediaPathType.MediaPathTypeCategory.Description,
-                                            pt.MediaPathType.Path,
-                                            pt.MediaPathType.Description,
-                                            pt.MediaPathType.ShortDescription
-                                        },
-                                    Files = pt.Files.Select(f => new
-                                        {
-                                                f.Id,
-                                                f.StreamId,
-                                                f.MediaFile.Filename,
-                                                f.MediaFile.FileType,
-                                                f.MediaFile.FileSize,
-                                                f.IsLinked
+                                    {
+                                        rmf.MediaPathType.Id,
+                                        Category = rmf.MediaPathType.MediaPathTypeCategory.Description,
+                                        rmf.MediaPathType.Path,
+                                        rmf.MediaPathType.Description,
+                                        rmf.MediaPathType.ShortDescription
+                                    },
+                                    Files = rmf.Files.Select(f => new
+                                    {
+                                        f.Id,
+                                        f.StreamId,
+                                        f.MediaFile.Filename,
+                                        f.MediaFile.FileType,
+                                        f.MediaFile.FileSize,
+                                        f.IsLinked,
+                                        f.DateAdded
                                     })
-                                    }).OrderBy(o => o.MediaPathType.Id)
+                                }).OrderBy(o => o.MediaPathType.Id)
                         }).OrderBy(o => o.ResponseType.Id)
                 }).OrderBy(o => o.Resident.Id).ToArray();
 
@@ -109,38 +110,39 @@ namespace Keebee.AAT.Operations.Controllers
 
             exObj.Id = residentMediaFile.Id;
             exObj.Resident = new
-                {
-                    residentMediaFile.Resident.Id,
-                    residentMediaFile.Resident.FirstName,
-                    residentMediaFile.Resident.LastName,
-                    residentMediaFile.Resident.Gender,
-                    residentMediaFile.Resident.GameDifficultyLevel
-                };
+            {
+                residentMediaFile.Resident.Id,
+                residentMediaFile.Resident.FirstName,
+                residentMediaFile.Resident.LastName,
+                residentMediaFile.Resident.Gender,
+                residentMediaFile.Resident.GameDifficultyLevel
+            };
             exObj.ResponseType = new
-                {
-                    residentMediaFile.ResponseType.Id,
-                    residentMediaFile.ResponseType.Description,
-                    ResponseTypeCatgory = new
-                        {
-                            residentMediaFile.ResponseType.ResponseTypeCategory.Id,
-                            residentMediaFile.ResponseType.ResponseTypeCategory.Description
-                        }
-                };
+            {
+                residentMediaFile.ResponseType.Id,
+                residentMediaFile.ResponseType.Description,
+                ResponseTypeCatgory = new
+                    {
+                        residentMediaFile.ResponseType.ResponseTypeCategory.Id,
+                        residentMediaFile.ResponseType.ResponseTypeCategory.Description
+                    }
+            };
             exObj.MediaPathType = new
-                {
-                    residentMediaFile.MediaPathType.Id,
-                    Category = residentMediaFile.MediaPathType.MediaPathTypeCategory.Description,
-                    residentMediaFile.MediaPathType.Path,
-                    residentMediaFile.MediaPathType.Description,
-                    residentMediaFile.MediaPathType.ShortDescription
-                };
+            {
+                residentMediaFile.MediaPathType.Id,
+                Category = residentMediaFile.MediaPathType.MediaPathTypeCategory.Description,
+                residentMediaFile.MediaPathType.Path,
+                residentMediaFile.MediaPathType.Description,
+                residentMediaFile.MediaPathType.ShortDescription
+            };
             exObj.MediaFile = new
-                {
-                    residentMediaFile.MediaFile.StreamId,
-                    residentMediaFile.MediaFile.Filename,
-                    residentMediaFile.MediaFile.FileType,
-                    residentMediaFile.MediaFile.FileSize,
-                    residentMediaFile.IsLinked
+            {
+                residentMediaFile.MediaFile.StreamId,
+                residentMediaFile.MediaFile.Filename,
+                residentMediaFile.MediaFile.FileType,
+                residentMediaFile.MediaFile.FileSize,
+                residentMediaFile.IsLinked,
+                residentMediaFile.DateAdded
             };
 
             return new DynamicJsonObject(exObj);
@@ -175,26 +177,27 @@ namespace Keebee.AAT.Operations.Controllers
                         }
                     },
                     Paths = mf.MediaFiles
-                        .GroupBy(pt => pt.MediaPathType)
+                        .GroupBy(rmf => rmf.MediaPathType)
                         .Select(files => new { files.First().MediaPathType, Files = files })
-                        .Select(pt => new
+                        .Select(rmf => new
                         {
                             MediaPathType = new
                             {
-                                pt.MediaPathType.Id,
-                                Category = pt.MediaPathType.MediaPathTypeCategory.Description,
-                                pt.MediaPathType.Path,
-                                pt.MediaPathType.Description,
-                                pt.MediaPathType.ShortDescription
+                                rmf.MediaPathType.Id,
+                                Category = rmf.MediaPathType.MediaPathTypeCategory.Description,
+                                rmf.MediaPathType.Path,
+                                rmf.MediaPathType.Description,
+                                rmf.MediaPathType.ShortDescription
                             },
-                            Files = pt.Files.Select(f => new
+                            Files = rmf.Files.Select(f => new
                             {
                                 f.Id,
                                 f.StreamId,
                                 f.MediaFile.Filename,
                                 f.MediaFile.FileType,
                                 f.MediaFile.FileSize,
-                                f.IsLinked
+                                f.IsLinked,
+                                f.DateAdded
                             })
                         }).OrderBy(o => o.MediaPathType.Id)
                 }).OrderBy(o => o.ResponseType.Id).ToArray();
@@ -219,24 +222,25 @@ namespace Keebee.AAT.Operations.Controllers
             var jArray = residentMedia
                 .GroupBy(pt => pt.MediaPathType)
                 .Select(files => new { files.First().MediaPathType, Files = files })
-                .Select(pt => new
+                .Select(rmf => new
                 {
                     MediaPathType = new
                     {
-                        pt.MediaPathType.Id,
-                        Category = pt.MediaPathType.MediaPathTypeCategory.Description,
-                        pt.MediaPathType.Path,
-                        pt.MediaPathType.Description,
-                        pt.MediaPathType.ShortDescription
+                        rmf.MediaPathType.Id,
+                        Category = rmf.MediaPathType.MediaPathTypeCategory.Description,
+                        rmf.MediaPathType.Path,
+                        rmf.MediaPathType.Description,
+                        rmf.MediaPathType.ShortDescription
                     },
-                    Files = pt.Files.Select(f => new
+                    Files = rmf.Files.Select(f => new
                     {
                         f.Id,
                         f.StreamId,
                         f.MediaFile.Filename,
                         f.MediaFile.FileType,
                         f.MediaFile.FileSize,
-                        f.IsLinked
+                        f.IsLinked,
+                        f.DateAdded
                     })
                 }).OrderBy(o => o.MediaPathType.Id).ToArray();
 
@@ -307,24 +311,25 @@ namespace Keebee.AAT.Operations.Controllers
                             Paths = mf.MediaFiles
                                 .GroupBy(pt => pt.MediaPathType)
                                 .Select(files => new {files.First().MediaPathType, Files = files})
-                                .Select(pt => new
+                                .Select(rmf => new
                                 {
                                     MediaPathType = new
                                     {
-                                        pt.MediaPathType.Id,
-                                        Category = pt.MediaPathType.MediaPathTypeCategory.Description,
-                                        pt.MediaPathType.Path,
-                                        pt.MediaPathType.Description,
-                                        pt.MediaPathType.ShortDescription
+                                        rmf.MediaPathType.Id,
+                                        Category = rmf.MediaPathType.MediaPathTypeCategory.Description,
+                                        rmf.MediaPathType.Path,
+                                        rmf.MediaPathType.Description,
+                                        rmf.MediaPathType.ShortDescription
                                     },
-                                    Files = pt.Files.Select(f => new
+                                    Files = rmf.Files.Select(f => new
                                     {
                                         f.Id,
                                         f.StreamId,
                                         f.MediaFile.Filename,
                                         f.MediaFile.FileType,
                                         f.MediaFile.FileSize,
-                                        f.IsLinked
+                                        f.IsLinked,
+                                        f.DateAdded
                                     })
                                 }).OrderBy(o => o.MediaPathType.Id)
                         }).OrderBy(o => o.ResponseType.Id)
@@ -378,24 +383,25 @@ namespace Keebee.AAT.Operations.Controllers
                             Paths = mf.MediaFiles
                                 .GroupBy(pt => pt.MediaPathType)
                                 .Select(files => new { files.First().MediaPathType, Files = files })
-                                .Select(pt => new
+                                .Select(rmf => new
                                 {
                                     MediaPathType = new
                                     {
-                                        pt.MediaPathType.Id,
-                                        Category = pt.MediaPathType.MediaPathTypeCategory.Description,
-                                        pt.MediaPathType.Path,
-                                        pt.MediaPathType.Description,
-                                        pt.MediaPathType.ShortDescription
+                                        rmf.MediaPathType.Id,
+                                        Category = rmf.MediaPathType.MediaPathTypeCategory.Description,
+                                        rmf.MediaPathType.Path,
+                                        rmf.MediaPathType.Description,
+                                        rmf.MediaPathType.ShortDescription
                                     },
-                                    Files = pt.Files.Select(f => new
+                                    Files = rmf.Files.Select(f => new
                                     {
                                         f.Id,
                                         f.StreamId,
                                         f.MediaFile.Filename,
                                         f.MediaFile.FileType,
                                         f.MediaFile.FileSize,
-                                        f.IsLinked
+                                        f.IsLinked,
+                                        f.DateAdded
                                     })
                                 }).OrderBy(o => o.MediaPathType.Id)
                         }).OrderBy(o => o.ResponseType.Id)

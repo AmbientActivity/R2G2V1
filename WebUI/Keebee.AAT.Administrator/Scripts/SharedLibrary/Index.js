@@ -56,9 +56,11 @@
                     }
                 }
 
+                // non-virtual elements
                 ko.bindingHandlers.tableRender = {
                     update: function(element, valueAccessor) {
                         ko.utils.unwrapObservable(valueAccessor());
+
                         for (var index = 0, length = element.childNodes.length; index < length; index++) {
                             var node = element.childNodes[index];
                             if (node.nodeType === 1) {
@@ -68,58 +70,57 @@
                                     colLink.tooltip({ delay: { show: 100, hide: 100 } });
                             }
                         }
+
+                        // get the currently selected media path type id from the dropdown
+                        var table = element.parentNode;
+                        var mediaPathTypeSelector = $("#ddlMediaPathTypes");
+                        var mediaPathTypeId = mediaPathTypeSelector.val();
+                        var category = getMediaPathTypeCategory(mediaPathTypeId);
+
+                        formatTable(table, mediaPathTypeId, category);
                     }
                 }
 
+                // virtual elements (audio)
                 ko.virtualElements.allowedBindings.audioRender = true;
                 ko.bindingHandlers.audioRender = {
                     update: function (element, valueAccessor) {
-
-                        // handler gets for all category types
-                        // only do this logic if this is an audio column
+                        // handler triggers only when rows are ADDED
+                        // only do this logic if this is an audio column (as opposed to thumbnail)
                         var mediaPathTypeSelector = $("#ddlMediaPathTypes");
                         var mediaPathTypeId = mediaPathTypeSelector.val();
-                        var category = lists.MediaPathTypeList.filter(function(value) {
-                            return value.Id === Number(mediaPathTypeId);
-                        })[0].Category.toLowerCase();
+                        var category = getMediaPathTypeCategory(mediaPathTypeId);
 
                         if (category === "audio") {
-
-                            // get expected number of rows
-                            var listLength = lists.FileList.filter(function (value) {
-                                return value.MediaPathTypeId === Number(mediaPathTypeId);
-                            }).length;
-
-                            // get audio column, row and table elements
+                            // get audio column, find the parent row
                             var audio = ko.virtualElements.firstChild(element);
                             var row = audio.parentNode;
-                            var table = row.parentNode;
 
                             // if last row do table formatting
-                            if (row === table.rows[listLength - 1]) {
+                            var table = row.parentNode;
+                            if (row === table.rows[getNumFilteredRows(mediaPathTypeId) - 1]) {
                                 formatTable(table, mediaPathTypeId, category);
                             }
                         }
                     }
                 };
 
+                // virtual elements (thumbnail)
                 ko.virtualElements.allowedBindings.thumbnailRender = true;
                 ko.bindingHandlers.thumbnailRender = {
                     update: function (element, valueAccessor) {
-
-                        // handler gets for all category types
-                        // only do this logic if this is a thumbnail column
+                        // handler triggers only when rows are ADDED
+                        // only do this logic if this is a thumbnail column (as opposed to audio)
                         var mediaPathTypeSelector = $("#ddlMediaPathTypes");
                         var mediaPathTypeId = mediaPathTypeSelector.val();
-                        var category = lists.MediaPathTypeList.filter(function(value) {
-                            return value.Id === Number(mediaPathTypeId);
-                        })[0].Category.toLowerCase();
+                        var category = getMediaPathTypeCategory(mediaPathTypeId);
 
                         if (category !== "audio") {
 
                             // get thumbnail column, find anchor element, set tooltip
                             var thumbnail = ko.virtualElements.firstChild(element);
                             var row = thumbnail.parentNode;
+
                             while (thumbnail) {
                                 if (thumbnail.className === "col-thumbnail") {
                                     var child = ko.virtualElements.firstChild(thumbnail);
@@ -129,22 +130,34 @@
                                 thumbnail = ko.virtualElements.nextSibling(thumbnail);
                             }
 
-                            // get expected number of rows
-                            var listLength = lists.FileList.filter(function (value) {
-                                return value.MediaPathTypeId === Number(mediaPathTypeId);
-                            }).length;
-
                             // if last row do table formatting
                             var table = row.parentNode;
-                            if (row === table.rows[listLength - 1]) {
+                            if (row === table.rows[getNumFilteredRows(mediaPathTypeId) - 1]) {
                                 formatTable(table, mediaPathTypeId, category);
                             }
                         }
                     }
                 }
 
+                function getMediaPathTypeCategory(mediaPathTypeId) {
+                    return lists.MediaPathTypeList.filter(function (value) {
+                        return value.Id === Number(mediaPathTypeId);
+                    })[0].Category.toLowerCase();
+                }
+
+                function getNumFilteredRows(mediaPathTypeId) {
+                    // get expected number of rows
+                    var searchFilename = $("#txtSearchFilename");
+                    return lists.FileList.filter(function (f) {
+                        return (
+                            searchFilename.val().length === 0 ||
+                                f.Filename.toLowerCase().indexOf(searchFilename.val().toLowerCase()) !== -1)
+                            && f.MediaPathTypeId === Number(mediaPathTypeId);
+                    }).length;
+                }
+
                 function formatTable(table, mediaPathTypeId, category) {
-                    var noRowsMessage = $("#no-records-message");
+                    var noRowsMessage = $("#no-rows-message");
 
                     var description = lists.MediaPathTypeList.filter(function (value) {
                         return value.Id === Number(mediaPathTypeId);
@@ -165,8 +178,8 @@
                         tableDetailElement.show();
                         noRowsMessage.hide();
 
-                        // determine if there is table overflow (to cause a scrollbar)
-                        // if so, unhide the scrollbar header column
+                        // determine if there is table overflow (causing a scrollbar)
+                        // if so, show the scrollbar header column
                         var colScrollbar = $("#col-scrollbar");
 
                         if (table.clientHeight > site.getMaxClientHeight) {
@@ -208,9 +221,6 @@
                     createMediaPathTypeArray(lists.MediaPathTypeList);
 
                     $("#delete").tooltip({ delay: { show: 100, hide: 100 } });
-                    $("#upload").click(function () {
-                        $("#fileupload").trigger("click");
-                    });
 
                     // media path type
                     self.selectedMediaPathTypeId = ko.observable(config.selectedMediaPathTypeId);
@@ -252,7 +262,9 @@
                                 issharable: value.IsSharable,
                                 path: value.Path,
                                 allowedexts: value.AllowedExts,
-                                allowedtypes: value.AllowedTypes
+                                allowedtypes: value.AllowedTypes,
+                                maxfilebytes: value.MaxFileBytes,
+                                maxfileuploads: value.MaxFileUploads
                             });
                         });
 
@@ -330,10 +342,33 @@
                             return value.id === id;
                         })[0]);
 
+                        self.displayNoRowsMessage();
                         self.isAudio(self.selectedMediaPathType().category.includes("Audio"));
                         self.isSharable(self.selectedMediaPathType().issharable);
                         self.clearStreams();
+                        enableDetail();
                     });
+
+                    self.displayNoRowsMessage = function () {
+                        // if no rows in table, display 'no rows found' message
+                        // ko.bindingHandlers do not fire if no rows exist (after changing the media path type)
+                        var noRowsMessage = $("#no-rows-message");
+                        var tableDetailElement = $("#table-detail");
+                        var tableHeaderElement = $("#table-header");
+
+                        if (self.filteredFiles().length === 0) {
+                            tableHeaderElement.hide();
+                            tableDetailElement.hide();
+                            noRowsMessage.html("<h2>No " +
+                                self.selectedMediaPathType().shortdescription.toLowerCase() +
+                                " found</h2>");
+                            noRowsMessage.show();
+                        } else {
+                            tableHeaderElement.show();
+                            tableDetailElement.show();
+                            noRowsMessage.hide();
+                        }
+                    };
 
                     self.filteredFiles = ko.computed(function () {
                         return ko.utils.arrayFilter(self.files(), function (f) {
@@ -394,6 +429,8 @@
                                 + "&mediaPathTypeCategory=" + mediaPathType.category,
                             allowedExts: mediaPathType.allowedexts.split(","),
                             allowedTypes: mediaPathType.allowedtypes.split(","),
+                            maxFileBytes: mediaPathType.maxfilebytes,
+                            maxFileUploads: mediaPathType.maxfileuploads,
                             callback: function (filenames) {
                                 if (filenames !== null) {
                                     utilities.job.execute({

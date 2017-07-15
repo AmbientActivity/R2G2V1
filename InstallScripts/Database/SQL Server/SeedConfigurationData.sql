@@ -97,17 +97,48 @@ SET IDENTITY_INSERT [dbo].[MediaPathTypeCategories] OFF
 
 -- media path types
 SET IDENTITY_INSERT [dbo].[MediaPathTypes] ON 
-INSERT [dbo].[MediaPathTypes] ([Id], [Path], [Description], [ShortDescription], [AllowedExts], [AllowedTypes], [MediaPathTypeCategoryId], [IsSystem], [IsSharable]) VALUES (1, 'audio\music', 'Audio (Music)', 'Music', 'mp3', 'audio/mp3', 1, 0, 1)
-INSERT [dbo].[MediaPathTypes] ([Id], [Path], [Description], [ShortDescription], [AllowedExts], [AllowedTypes], [MediaPathTypeCategoryId], [IsSystem], [IsSharable]) VALUES (2, 'audio\radio-shows', 'Audio (Radio Shows)', 'Radio Shows','mp3', 'audio/mp3', 1, 0, 1)
--- comma delimited text for AllowedExts and AllowedTypes cannot have any spaces!!
-INSERT [dbo].[MediaPathTypes] ([Id], [Path], [Description], [ShortDescription], [AllowedExts], [AllowedTypes], [MediaPathTypeCategoryId], [IsSystem], [IsSharable]) VALUES (3, 'images\general', 'Images (General)', 'Images', 'jpg, jpeg, jpe, jif, jfif, jfi, png, gif', 'image/pjpeg, image/jpeg, image/png, image/x-png, image/gif, image/x-gif', 2, 0, 1)
-INSERT [dbo].[MediaPathTypes] ([Id], [Path], [Description], [ShortDescription], [AllowedExts], [AllowedTypes], [MediaPathTypeCategoryId], [IsSystem], [IsSharable]) VALUES (4, 'images\personal', 'Images (Personal)', 'Images', 'jpg, jpeg, jpe, jif, jfif, jfi, png, gif', 'image/pjpeg, image/jpeg, image/png, image/x-png, image/gif, image/x-gif', 2, 0, 0)
-INSERT [dbo].[MediaPathTypes] ([Id], [Path], [Description], [ShortDescription], [AllowedExts], [AllowedTypes], [MediaPathTypeCategoryId], [IsSystem], [IsSharable]) VALUES (5, 'videos\tv-shows', 'Videos (TV Shows)', 'TV Shows', 'mp4', 'video/mp4', 3, 0, 1)
-INSERT [dbo].[MediaPathTypes] ([Id], [Path], [Description], [ShortDescription], [AllowedExts], [AllowedTypes], [MediaPathTypeCategoryId], [IsSystem], [IsSharable]) VALUES (6, 'videos\home-movies', 'Videos (Home Movies)', 'Home Movies', 'mp4', 'video/mp4', 3, 0, 0)
-INSERT [dbo].[MediaPathTypes] ([Id], [Path], [Description], [ShortDescription], [AllowedExts], [AllowedTypes], [MediaPathTypeCategoryId], [IsSystem], [IsSharable]) VALUES (7, 'activities\matching-game\shapes', 'Matching Game (Shapes)', 'Shapes', 'png', 'image/png', 2, 0, 1)
-INSERT [dbo].[MediaPathTypes] ([Id], [Path], [Description], [ShortDescription], [AllowedExts], [AllowedTypes], [MediaPathTypeCategoryId], [IsSystem], [IsSharable]) VALUES (8, 'activities\matching-game\sounds', 'Matching Game (Sounds)', 'Sounds', 'mp3', 'audio/mp3', 1, 0, 1)
-INSERT [dbo].[MediaPathTypes] ([Id], [Path], [Description], [ShortDescription], [AllowedExts], [AllowedTypes], [MediaPathTypeCategoryId], [IsSystem], [IsSharable]) VALUES (9, 'videos\ambient', 'Videos (Ambient)', 'Ambient Videos', 'mp4', 'video/mp4', 3, 1, 1)
-INSERT [dbo].[MediaPathTypes] ([Id], [Path], [Description], [ShortDescription], [AllowedExts], [AllowedTypes], [MediaPathTypeCategoryId], [IsSystem], [IsSharable]) VALUES (10, 'videos\cats', 'Videos (Cats)', 'Cats Videos', 'mp4', 'video/mp4', 3, 1, 1)
+INSERT [dbo].[MediaPathTypes] ([Id], [Path], [Description], [ShortDescription], [AllowedExts], [AllowedTypes], [MaxFileBytes], [MaxFileUploads], [MediaPathTypeCategoryId], [IsSystem], [IsSharable]) 
+VALUES (1, 'audio\music', 'Audio (Music)', 'Music', 
+'mp3', 'audio/mp3', 10000000, 10, 1, 0, 1) -- 10 mb per song / 10 uploads at a time
+
+INSERT [dbo].[MediaPathTypes] ([Id], [Path], [Description], [ShortDescription], [AllowedExts], [AllowedTypes], [MaxFileBytes], [MaxFileUploads], [MediaPathTypeCategoryId], [IsSystem], [IsSharable])
+VALUES (2, 'audio\radio-shows', 'Audio (Radio Shows)', 'Radio Shows',
+'mp3', 'audio/mp3', 50000000, 5, 1, 0, 1) -- 50 mb per radio show / 5 uploads at a time
+
+INSERT [dbo].[MediaPathTypes] ([Id], [Path], [Description], [ShortDescription], [AllowedExts], [AllowedTypes], [MaxFileBytes], [MaxFileUploads], [MediaPathTypeCategoryId], [IsSystem], [IsSharable]) 
+VALUES (3, 'images\general', 'Images (General)', 'Images', 
+'jpg, jpeg, jpe, jif, jfif, jfi, png, gif', 'image/pjpeg, image/jpeg, image/png, image/x-png, image/gif, image/x-gif', 
+5000000, 50, 2, 0, 1) -- 5 mb per image / 20 uploads at a time
+
+INSERT [dbo].[MediaPathTypes] ([Id], [Path], [Description], [ShortDescription],[AllowedExts], [AllowedTypes], [MaxFileBytes], [MaxFileUploads], [MediaPathTypeCategoryId], [IsSystem], [IsSharable]) 
+VALUES (4, 'images\personal', 'Images (Personal)', 'Images', 
+'jpg, jpeg, jpe, jif, jfif, jfi, png, gif', 'image/pjpeg, image/jpeg, image/png, image/x-png, image/gif, image/x-gif', 
+5000000, 50, 2, 0, 0) -- 5 mb per image / 20 uploads at a time
+
+INSERT [dbo].[MediaPathTypes] ([Id], [Path], [Description], [ShortDescription],[AllowedExts], [AllowedTypes], [MaxFileBytes], [MaxFileUploads], [MediaPathTypeCategoryId], [IsSystem], [IsSharable]) 
+VALUES (5, 'videos\tv-shows', 'Videos (TV Shows)', 'TV Shows', 
+'mp4', 'video/mp4', 1000000000, 3, 3, 0, 1) -- 1 gb per tv show / 3 uploads at a time
+
+INSERT [dbo].[MediaPathTypes] ([Id], [Path], [Description], [ShortDescription],[AllowedExts], [AllowedTypes], [MaxFileBytes], [MaxFileUploads], [MediaPathTypeCategoryId], [IsSystem], [IsSharable]) 
+VALUES (6, 'videos\home-movies', 'Videos (Home Movies)', 'Home Movies', 
+'mp4', 'video/mp4', 1000000000, 3, 3, 0, 0) -- 1 gb per home movie / 3 uploads at a time
+
+INSERT [dbo].[MediaPathTypes] ([Id], [Path], [Description], [ShortDescription],[AllowedExts], [AllowedTypes], [MaxFileBytes], [MaxFileUploads], [MediaPathTypeCategoryId], [IsSystem], [IsSharable]) 
+VALUES (7, 'activities\matching-game\shapes', 'Matching Game (Shapes)', 'Shapes', 
+'png', 'image/png', 5000000, 20, 2, 0, 1)  -- 5 mb per shape / 20 uploads at a time
+
+INSERT [dbo].[MediaPathTypes] ([Id], [Path], [Description], [ShortDescription],[AllowedExts], [AllowedTypes], [MaxFileBytes], [MaxFileUploads], [MediaPathTypeCategoryId], [IsSystem], [IsSharable]) 
+VALUES (8, 'activities\matching-game\sounds', 'Matching Game (Sounds)', 'Sounds', 
+'mp3', 'audio/mp3', 1000000, 10, 1, 0, 1)  -- 1 mb per sound / 10 uploads at a time
+
+INSERT [dbo].[MediaPathTypes] ([Id], [Path], [Description], [ShortDescription],[AllowedExts], [AllowedTypes], [MaxFileBytes], [MaxFileUploads], [MediaPathTypeCategoryId], [IsSystem], [IsSharable]) 
+VALUES (9, 'videos\ambient', 'Videos (Ambient)', 'Ambient Videos', 
+'mp4', 'video/mp4', 3000000000, 1, 3, 1, 1)  -- 3 gb per video / 3 uploads at a time
+
+INSERT [dbo].[MediaPathTypes] ([Id], [Path], [Description], [ShortDescription],[AllowedExts], [AllowedTypes], [MaxFileBytes], [MaxFileUploads], [MediaPathTypeCategoryId], [IsSystem], [IsSharable]) 
+VALUES (10, 'videos\cats', 'Videos (Cats)', 'Cats Videos', 
+'mp4', 'video/mp4', 1000000000, 3, 3, 1, 1)  -- 1 gb per video / 3 uploads at a time
+
 SET IDENTITY_INSERT [dbo].[MediaPathTypes] OFF
 
 --- CONFIGURATION 1

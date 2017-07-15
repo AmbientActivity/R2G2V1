@@ -20,6 +20,7 @@ namespace Keebee.AAT.Administrator.ViewModels
         public string Path { get; set; }
         public int MediaPathTypeId { get; set; }
         public bool IsLinked { get; set; }
+        public DateTime DateAdded { get; set; }
         public string Thumbnail { get; set; }
     }
 

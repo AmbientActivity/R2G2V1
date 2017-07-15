@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-// Generation date: 2017-07-14 12:29:04 AM
+// Generation date: 2017-07-15 4:09:34 PM
 namespace Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models
 {
     /// <summary>
@@ -2800,6 +2800,8 @@ namespace Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models
         /// <param name="shortDescription">Initial value of ShortDescription.</param>
         /// <param name="allowedExts">Initial value of AllowedExts.</param>
         /// <param name="allowedTypes">Initial value of AllowedTypes.</param>
+        /// <param name="maxFileBytes">Initial value of MaxFileBytes.</param>
+        /// <param name="maxFileUploads">Initial value of MaxFileUploads.</param>
         /// <param name="isSystem">Initial value of IsSystem.</param>
         /// <param name="isSharable">Initial value of IsSharable.</param>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
@@ -2809,6 +2811,8 @@ namespace Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models
                     string shortDescription, 
                     string allowedExts, 
                     string allowedTypes, 
+                    long maxFileBytes, 
+                    int maxFileUploads, 
                     bool isSystem, 
                     bool isSharable)
         {
@@ -2819,6 +2823,8 @@ namespace Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models
             mediaPathType.ShortDescription = shortDescription;
             mediaPathType.AllowedExts = allowedExts;
             mediaPathType.AllowedTypes = allowedTypes;
+            mediaPathType.MaxFileBytes = maxFileBytes;
+            mediaPathType.MaxFileUploads = maxFileUploads;
             mediaPathType.IsSystem = isSystem;
             mediaPathType.IsSharable = isSharable;
             return mediaPathType;
@@ -2984,6 +2990,52 @@ namespace Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models
         private string _AllowedTypes;
         partial void OnAllowedTypesChanging(string value);
         partial void OnAllowedTypesChanged();
+        /// <summary>
+        /// There are no comments for Property MaxFileBytes in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        [global::Microsoft.OData.Client.OriginalNameAttribute("MaxFileBytes")]
+        public long MaxFileBytes
+        {
+            get
+            {
+                return this._MaxFileBytes;
+            }
+            set
+            {
+                this.OnMaxFileBytesChanging(value);
+                this._MaxFileBytes = value;
+                this.OnMaxFileBytesChanged();
+                this.OnPropertyChanged("MaxFileBytes");
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private long _MaxFileBytes;
+        partial void OnMaxFileBytesChanging(long value);
+        partial void OnMaxFileBytesChanged();
+        /// <summary>
+        /// There are no comments for Property MaxFileUploads in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        [global::Microsoft.OData.Client.OriginalNameAttribute("MaxFileUploads")]
+        public int MaxFileUploads
+        {
+            get
+            {
+                return this._MaxFileUploads;
+            }
+            set
+            {
+                this.OnMaxFileUploadsChanging(value);
+                this._MaxFileUploads = value;
+                this.OnMaxFileUploadsChanged();
+                this.OnPropertyChanged("MaxFileUploads");
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private int _MaxFileUploads;
+        partial void OnMaxFileUploadsChanging(int value);
+        partial void OnMaxFileUploadsChanged();
         /// <summary>
         /// There are no comments for Property IsSystem in the schema.
         /// </summary>
@@ -3311,12 +3363,14 @@ namespace Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models
         /// </summary>
         /// <param name="ID">Initial value of Id.</param>
         /// <param name="isLinked">Initial value of IsLinked.</param>
+        /// <param name="dateAdded">Initial value of DateAdded.</param>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        public static ResidentMediaFile CreateResidentMediaFile(int ID, bool isLinked)
+        public static ResidentMediaFile CreateResidentMediaFile(int ID, bool isLinked, global::System.DateTimeOffset dateAdded)
         {
             ResidentMediaFile residentMediaFile = new ResidentMediaFile();
             residentMediaFile.Id = ID;
             residentMediaFile.IsLinked = isLinked;
+            residentMediaFile.DateAdded = dateAdded;
             return residentMediaFile;
         }
         /// <summary>
@@ -3457,6 +3511,29 @@ namespace Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models
         private global::System.Nullable<int> _MediaPathTypeId;
         partial void OnMediaPathTypeIdChanging(global::System.Nullable<int> value);
         partial void OnMediaPathTypeIdChanged();
+        /// <summary>
+        /// There are no comments for Property DateAdded in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        [global::Microsoft.OData.Client.OriginalNameAttribute("DateAdded")]
+        public global::System.DateTimeOffset DateAdded
+        {
+            get
+            {
+                return this._DateAdded;
+            }
+            set
+            {
+                this.OnDateAddedChanging(value);
+                this._DateAdded = value;
+                this.OnDateAddedChanged();
+                this.OnPropertyChanged("DateAdded");
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private global::System.DateTimeOffset _DateAdded;
+        partial void OnDateAddedChanging(global::System.DateTimeOffset value);
+        partial void OnDateAddedChanged();
         /// <summary>
         /// There are no comments for Property Resident in the schema.
         /// </summary>
@@ -3673,12 +3750,14 @@ namespace Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models
         /// </summary>
         /// <param name="ID">Initial value of Id.</param>
         /// <param name="isLinked">Initial value of IsLinked.</param>
+        /// <param name="dateAdded">Initial value of DateAdded.</param>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        public static PublicMediaFile CreatePublicMediaFile(int ID, bool isLinked)
+        public static PublicMediaFile CreatePublicMediaFile(int ID, bool isLinked, global::System.DateTimeOffset dateAdded)
         {
             PublicMediaFile publicMediaFile = new PublicMediaFile();
             publicMediaFile.Id = ID;
             publicMediaFile.IsLinked = isLinked;
+            publicMediaFile.DateAdded = dateAdded;
             return publicMediaFile;
         }
         /// <summary>
@@ -3796,6 +3875,29 @@ namespace Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models
         private global::System.Nullable<int> _MediaPathTypeId;
         partial void OnMediaPathTypeIdChanging(global::System.Nullable<int> value);
         partial void OnMediaPathTypeIdChanged();
+        /// <summary>
+        /// There are no comments for Property DateAdded in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        [global::Microsoft.OData.Client.OriginalNameAttribute("DateAdded")]
+        public global::System.DateTimeOffset DateAdded
+        {
+            get
+            {
+                return this._DateAdded;
+            }
+            set
+            {
+                this.OnDateAddedChanging(value);
+                this._DateAdded = value;
+                this.OnDateAddedChanged();
+                this.OnPropertyChanged("DateAdded");
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private global::System.DateTimeOffset _DateAdded;
+        partial void OnDateAddedChanging(global::System.DateTimeOffset value);
+        partial void OnDateAddedChanged();
         /// <summary>
         /// There are no comments for Property MediaFile in the schema.
         /// </summary>
@@ -6174,6 +6276,8 @@ namespace Keebee.AAT.Operations.Service.KeebeeAAT
         <Property Name=""ShortDescription"" Type=""Edm.String"" Nullable=""false"" />
         <Property Name=""AllowedExts"" Type=""Edm.String"" Nullable=""false"" />
         <Property Name=""AllowedTypes"" Type=""Edm.String"" Nullable=""false"" />
+        <Property Name=""MaxFileBytes"" Type=""Edm.Int64"" Nullable=""false"" />
+        <Property Name=""MaxFileUploads"" Type=""Edm.Int32"" Nullable=""false"" />
         <Property Name=""IsSystem"" Type=""Edm.Boolean"" Nullable=""false"" />
         <Property Name=""IsSharable"" Type=""Edm.Boolean"" Nullable=""false"" />
         <NavigationProperty Name=""MediaPathTypeCategory"" Type=""Keebee.AAT.DataAccess.Models.MediaPathTypeCategory"">
@@ -6197,6 +6301,7 @@ namespace Keebee.AAT.Operations.Service.KeebeeAAT
         <Property Name=""StreamId"" Type=""Edm.Guid"" />
         <Property Name=""ResponseTypeId"" Type=""Edm.Int32"" />
         <Property Name=""MediaPathTypeId"" Type=""Edm.Int32"" />
+        <Property Name=""DateAdded"" Type=""Edm.DateTimeOffset"" Nullable=""false"" />
         <NavigationProperty Name=""Resident"" Type=""Keebee.AAT.DataAccess.Models.Resident"">
           <ReferentialConstraint Property=""ResidentId"" ReferencedProperty=""Id"" />
         </NavigationProperty>
@@ -6219,6 +6324,7 @@ namespace Keebee.AAT.Operations.Service.KeebeeAAT
         <Property Name=""StreamId"" Type=""Edm.Guid"" />
         <Property Name=""ResponseTypeId"" Type=""Edm.Int32"" />
         <Property Name=""MediaPathTypeId"" Type=""Edm.Int32"" />
+        <Property Name=""DateAdded"" Type=""Edm.DateTimeOffset"" Nullable=""false"" />
         <NavigationProperty Name=""MediaFile"" Type=""Keebee.AAT.DataAccess.Models.MediaFile"">
           <ReferentialConstraint Property=""StreamId"" ReferencedProperty=""StreamId"" />
         </NavigationProperty>

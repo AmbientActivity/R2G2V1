@@ -70,7 +70,9 @@ namespace Keebee.AAT.Administrator.Controllers
                         ShortDescription = x.ShortDescription,
                         Path = x.Path,
                         AllowedExts = x.AllowedExts.Replace(" ", string.Empty),
-                        AllowedTypes = x.AllowedTypes.Replace(" ", string.Empty)
+                        AllowedTypes = x.AllowedTypes.Replace(" ", string.Empty),
+                        MaxFileBytes = x.MaxFileBytes,
+                        MaxFileUploads = x.MaxFileUploads
                     }).ToArray();
             }
             catch (Exception ex)
@@ -259,7 +261,7 @@ namespace Keebee.AAT.Administrator.Controllers
 
                         int newId;
                         errMsg = _publicMediaFilesClient.Post(pmf, out newId);
-                        if (errMsg != null) throw new Exception(errMsg);
+                        if (!string.IsNullOrEmpty(errMsg)) throw new Exception(errMsg);
 
                         newIds.Add(newId);
                     }
@@ -337,6 +339,7 @@ namespace Keebee.AAT.Administrator.Controllers
                             IsLinked = file.IsLinked,
                             Path = $@"{pathRoot}\{path.MediaPathType.Path}",
                             MediaPathTypeId = path.MediaPathType.Id,
+                            DateAdded = file.DateAdded,
                             Thumbnail = thumb?.Image != null 
                                 ? $"data:image/jpg;base64,{ Convert.ToBase64String(thumb.Image)}" 
                                 : string.Empty

@@ -672,7 +672,6 @@
     <Content Include="Views\Services\Index.cshtml" />
     <Content Include="Views\Shared\_ImageViewer.cshtml" />
     <Content Include="Views\Shared\_LogOnPartial.cshtml" />
-    <Content Include="Views\Shared\_SharedLibraryLink.cshtml" />
     <Content Include="Views\SharedLibrary\Index.cshtml" />
     <Content Include="Views\SharedLibrary\_LinkedResidentMedia.cshtml" />
     <Content Include="Views\SystemProfile\Index.cshtml" />

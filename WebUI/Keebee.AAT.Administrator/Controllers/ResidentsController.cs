@@ -58,7 +58,7 @@ namespace Keebee.AAT.Administrator.Controllers
         public JsonResult GetData()
         {
             string errMsg = null;
-            var residentList = new ResidentViewModel[0];
+            ResidentViewModel[] residentList = null;
 
             try
             {

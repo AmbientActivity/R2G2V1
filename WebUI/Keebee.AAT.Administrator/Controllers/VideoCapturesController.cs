@@ -48,7 +48,7 @@ namespace Keebee.AAT.Administrator.Controllers
         public JsonResult GetData()
         {
             string errMsg = null;
-            var videoCaptureList = new VideoCaptureViewModel[0];
+            VideoCaptureViewModel[] videoCaptureList = null;
 
             try
             {
@@ -80,7 +80,7 @@ namespace Keebee.AAT.Administrator.Controllers
         {
             var root = new DirectoryInfo(VideoCaptures.Path);
 
-            if (!root.Exists) return null;
+            if (!root.Exists) return new VideoCaptureViewModel[0];
 
             var folders = root.EnumerateDirectories().OrderBy(x => x.Name);
 

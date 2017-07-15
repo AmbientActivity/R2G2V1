@@ -51,8 +51,8 @@ namespace Keebee.AAT.Administrator.Controllers
         public JsonResult GetData(int mediaPathTypeId)
         {
             string errMsg = null;
-            var fileList = new MediaFileViewModel[0];
-            var mediaPathTypeList = new MediaPathType[0];
+            MediaFileViewModel[] fileList = null;
+            MediaPathType[] mediaPathTypeList = null;
 
             try
             {

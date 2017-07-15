@@ -6,7 +6,6 @@ using Keebee.AAT.ApiClient.Clients;
 using Keebee.AAT.ApiClient.Models;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Web.Mvc;
 
@@ -40,14 +39,25 @@ namespace Keebee.AAT.Administrator.Controllers
         [Authorize]
         public JsonResult GetData()
         {
-            var configs = _configsClient.Get().ToArray();
-            var vm = new
+            string errMsg = null;
+            var configs = new Config[0];
+
+            try
             {
+                configs = _configsClient.Get().ToArray();
+            }
+            catch (Exception ex)
+            {
+                errMsg = ex.Message;
+            }
+
+            return Json(new
+            {
+                Success = string.IsNullOrEmpty(errMsg),
+                ErrorMessage = errMsg,
                 ConfigList = GetConfigList(configs),
                 ConfigDetailList = GetConfigDetailList(configs)
-            };
-
-            return Json(vm, JsonRequestBehavior.AllowGet);
+            }, JsonRequestBehavior.AllowGet);
         }
 
         [HttpGet]

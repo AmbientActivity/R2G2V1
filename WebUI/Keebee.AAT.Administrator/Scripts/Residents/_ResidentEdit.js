@@ -23,6 +23,10 @@
             var progressDesc = $("#progress");
             var progressBar = $("#progressBar");
 
+            var maxFileSize = 5000000; //5MB in bytes
+            var allowedExts = ["jpg", "jpeg", "png", "gif"];
+            var allowedTypes = ["image/jpg", "image/jpeg", "image/png", "image/gif"];
+
             // initialize the remove button
             cmdRemovePicture.prop("disabled", imgProfilePicture.attr("alt") === "notexists");
 
@@ -52,9 +56,9 @@
             inputFileUpload.change(function () {
                 $(this).simpleUpload(site.url + "Residents/UploadProfilePicture",
                 {
-                    allowedExts: ["jpg", "jpeg", "png", "gif"],
-                    allowedTypes: ["image/jpg", "image/jpeg", "image/png", "image/gif"],
-                    maxFileSize: 5000000, //5MB in bytes
+                    allowedExts: allowedExts,
+                    allowedTypes: allowedTypes,
+                    maxFileSize: maxFileSize,
 
                     start: function (file) {
                         progressBar.show();
@@ -81,23 +85,31 @@
                     },
 
                     error: function (error) {
-                        var errorName = error.name;
+                        var message;
 
-                        if (errorName === "InvalidFileExtensionError") {
-                            utilities.alert.show({
-                                type: BootstrapDialog.TYPE_WARNING,
-                                title: "Invalid File Extension",
-                                message: "Can only upload files of type jpg, png, gif or bmp",
-                                buttonOKClass: "btn-danger"
-                            });
-                        } else {
-                            utilities.alert.show({
-                                type: BootstrapDialog.TYPE_DANGER,
-                                title: "Upload Error",
-                                message: errorName + ": " + error.message,
-                                buttonOKClass: "btn-danger"
-                            });
+                        if (error.name === "MaxFileSizeError") {
+                            message = "<div>" + filename + " - Maximum file size exceeded</div>";
+                            message = message.concat("<div><b>Maximum allowed size:</b> " + maxFileSize + " bytes</div>");
                         }
+
+                        else if (error.name === "InvalidFileExtensionError") {
+                            message = "<div>" + filename + " - Invalid file extension</div>";
+                            message = message.concat("<div><b>Allowed extensions:</b> " + allowedExts.toString() + "</div>");
+                        }
+
+                        else if (error.name === "InvalidFileTypeError") {
+                            message = "<div>" + filename + " - Invalid file type</div>";
+                            message = message.concat("<div><b>Allowed types:</b> " + allowedTypes.toString() + "</div>");
+                        }
+                        else {
+                            message = "<div><b>" + error.name + "</b>: " + error.message + "</div>";
+                        }
+
+                        utilities.alert.show({
+                            type: BootstrapDialog.TYPE_WARNING,
+                            title: "File Not Uploaded",
+                            message: message
+                        });
                     }
                 });
             });

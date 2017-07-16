@@ -33,14 +33,4 @@ If (!(test-path "$pathVideoBin\Release"))
 Copy-Item "$pathNReco\NReco.VideoInfo.dll" "$pathVideoBin\Debug" -recurse -Force
 Copy-Item "$pathNReco\NReco.VideoInfo.dll" "$pathVideoBin\Release" -recurse -Force
 
-# Ajax Uploader license
-$pathNAjaxUploaderLicense = "C:\Users\$env:USERNAME\Source\Repos\R2G2V1\3rdParty\AjaxUploader\ajaxuploader4.lic"
-$pathAdministratorBin = "C:\Users\$env:USERNAME\Source\Repos\R2G2V1\WebUI\Keebee.AAT.Administrator\bin\"
-
-If (!(test-path $pathAdministratorBin))
-{
-    New-Item -ItemType Directory -Force -Path $pathAdministratorBin | Out-Null
-}
-Copy-Item $pathNAjaxUploaderLicense $pathAdministratorBin -recurse -Force
-
 Write-Host "done.”

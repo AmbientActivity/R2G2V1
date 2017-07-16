@@ -1,6 +1,6 @@
 ﻿$server = $env:COMPUTERNAME + "\SQLEXPRESS"
 $database = "KeebeeAAT"
-$path = "C:\Deployments\Install\Database\SQL Server\"
+$path = "C:\Users\$env:USERNAME\Source\Repos\R2G2V1\DebugScripts\Database\"
 
 Try
 {

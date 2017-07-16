@@ -91,12 +91,12 @@ namespace Keebee.AAT.Operations.Service.Services
             var r = container.Residents.Where(e => e.Id == id).SingleOrDefault();
             if (r == null) return;
 
-            if (resident.FirstName != null)
+            if (!string.IsNullOrEmpty(resident.FirstName))
                 r.FirstName = resident.FirstName;
 
             r.LastName = resident.LastName;
 
-            if (resident.Gender != null)
+            if (!string.IsNullOrEmpty(resident.Gender))
                 r.Gender = resident.Gender;
 
             if (resident.GameDifficultyLevel > 0)

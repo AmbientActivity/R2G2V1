@@ -449,22 +449,18 @@
                                         self.checkSelectAll(false);
                                         enableDetail();
                                     })
-                                    .catch(function (error) {
-                                        utilities.alert.show({
-                                            message: "An unexpected error occurred:\n" + error,
-                                            type: BootstrapDialog.TYPE_DANGER
-                                        });
+                                    .catch(function () {
                                         enableDetail();
                                     });
                                 }
                                 if (rejected.length > 0) {
                                     var rejectedMessage = "";
                                     $(rejected).each(function (index, value) {
-                                        rejectedMessage += value + "\n";
+                                        rejectedMessage = "<p>" + rejectedMessage.concat(value + "</p>");
                                     });
                                     utilities.alert.show({
-                                        title: "Files Not Uploaded",
-                                        message: "The following files were rejected:\n" + rejectedMessage,
+                                        title: "Some <b>" + mediaPathType.category.toLowerCase() + "</b> files not were not uploaded",
+                                        message: rejectedMessage,
                                         type: BootstrapDialog.TYPE_WARNING
                                     });
                                 }

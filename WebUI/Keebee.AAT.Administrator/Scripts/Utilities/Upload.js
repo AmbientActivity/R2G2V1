@@ -25,6 +25,7 @@
 
             $("input[type=file]").change(function () {
                 var totalFiles;
+                var isTooManyFiles = false;
                 var pendingFile = 1;
                 var successful = [];
                 var rejected = [];
@@ -33,7 +34,7 @@
                     allowedExts: config.allowedExts,
                     allowedTypes: config.allowedTypes,
                     maxFileSize: config.maxFileBytes,
-
+                    //limit: config.maxFileUploads,
                     /*
                     * Each of these callbacks are executed for each file
                     * To add callbacks that are executed only once, see init() and finish().
@@ -43,28 +44,43 @@
                     */
                     init: function (totalUploads) {
                         totalFiles = totalUploads;
+
+                        isTooManyFiles = (totalFiles > config.maxFileUploads);
+
                         successful = [];
                         rejected = [];
                     },
 
                     start: function (file) {
-                        disableScreen();
+                        if (isTooManyFiles) {
+                            this.upload.cancel();
 
-                        this.block = $('<div class="block"></div>');
-                        this.progressBar = $('<div class="progressBar"></div>');
-                        this.cancelButton = $('<div class="cancelButton">x</div>');
+                        } else {
 
-                        var that = this;
-                        this.cancelButton.click(function () {
-                            that.upload.cancel();
-                        });
+                            disableScreen();
 
-                        this.block.html("");
-                        this.block.append(this.progressBar).append(this.cancelButton);
+                            this.block = $('<div class="block"></div>');
+                            this.progressBar = $('<div class="progressBar"></div>');
+                            this.cancelButton = $('<div class="cancelButton">x</div>');
 
-                        this.block.append("<div>Uploading <b>" + file.name + "</b> (" + pendingFile + " of " + totalFiles + " file(s))...</div>");
-                        $("#uploads").append(this.block);
-                        pendingFile++;
+                            var that = this;
+                            this.cancelButton.click(function() {
+                                that.upload.cancel();
+                            });
+
+                            this.block.html("");
+                            this.block.append(this.progressBar).append(this.cancelButton);
+
+                            this.block.append("<div>Uploading <b>" +
+                                file.name +
+                                "</b> (" +
+                                pendingFile +
+                                " of " +
+                                totalFiles +
+                                " files)...</div>");
+                            $("#uploads").append(this.block);
+                            pendingFile++;
+                        }
                     },
 
                     progress: function (progress) {
@@ -74,7 +90,8 @@
                         //upload successful
 
                         this.progressBar.remove();
-
+                        this.block.html("");
+                        this.block.append("<div><b>" + data.Filename + "</b> (Succeeded)</div>");
                         /*
                         * Just because the success callback is called doesn't mean your
                         * application logic was successful, so check application success.
@@ -99,13 +116,50 @@
                     finish: function () {
                         $("#uploads").html("");
                         enableScreen();
+
+                        if (isTooManyFiles) {
+                            rejected = ["<p>Too many files were selected for a single upload.</p>" +
+                                "<div><b>You selected:</b> " + totalFiles + "</div>" + 
+                                "<div><b>Maximum allowed:</b> " + config.maxFileUploads + "</div>"];
+                        }
                         config.callback(successful, rejected);
                     },
                     error: function (error) {
+                        var message = "";
                         var html = this.block[0].innerHTML;
                         // extract filename
-                        var filename = html.substring(html.indexOf("<b>"), html.indexOf("</b>") + 4);
-                        rejected.push(filename + " - " + error.message);
+                        var filename = html.substring(html.indexOf("<b>") + 3, html.indexOf("</b>"));
+
+                        if (error.name === "MaxFileSizeError") {
+                            var maxSizeDesc = "";
+
+                            if (config.maxFileBytes >= 1000 && config.maxFileBytes < 1000000)
+                                maxSizeDesc = config.maxFileBytes / 1000 + " KB";
+                            else if (config.maxFileBytes >= 1000000 && config.maxFileBytes < 1000000000)
+                                maxSizeDesc = config.maxFileBytes / 1000000 + " MB";
+                            else if (config.maxFileBytes >= 1000000000)
+                                maxSizeDesc = config.maxFileBytes / 1000000000 + " GB";
+                            else
+                                maxSizeDesc = config.maxFileBytes + " Bytes";
+
+                            message = "<div><b>File:</b> " + filename + "</div>";
+                            message = message.concat("<div><b>Issue:</b> Maximum file size exceeded</div>");
+                            message = message.concat("<div><b>Maximum:</b> " + maxSizeDesc + "</div>");
+                        }
+
+                        if (error.name === "InvalidFileExtensionError") {
+                            message = "<div><b>File:</b> " + filename + "</div>";
+                            message = message.concat("<div><b>Issue:</b> Invalid file extension</div>");
+                            message = message.concat("<div><b>Accepted:</b> " + config.allowedExts.toString() + "</div>");
+                        }
+
+                        if (error.name === "InvalidFileTypeError") {
+                            message = "<div><b>File:</b> " + filename + "</div>";
+                            message = message.concat("<div><b>Issue:</b> Invalid file type</div>");
+                            message = message.concat("<div><b>Accepted:</b> " + config.allowedTypes.toString() + "</div>");
+                        }
+
+                        rejected.push(message);
                         this.progressBar.remove();
                     }
                 });

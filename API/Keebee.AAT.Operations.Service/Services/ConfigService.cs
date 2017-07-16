@@ -111,7 +111,7 @@ namespace Keebee.AAT.Operations.Service.Services
             var c = container.Configs.Where(e => e.Id == id).SingleOrDefault();
             if (c == null) return;
 
-            if (config.Description != null)
+            if (!string.IsNullOrEmpty(config.Description))
                 c.Description = config.Description;
 
             c.IsActiveEventLog = config.IsActiveEventLog;

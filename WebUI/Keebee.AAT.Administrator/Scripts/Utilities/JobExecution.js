@@ -86,7 +86,7 @@
                             utilities.alert.show({
                                 title: "Error",
                                 type: BootstrapDialog.TYPE_DANGER,
-                                message: "The following error occured:\n" + request.statusText
+                                message: "The following error occured:\n" + request.responseText.substring(0, 1000)
                             });
                             reject();
                         }

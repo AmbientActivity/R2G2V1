@@ -26,26 +26,28 @@
             $("input[type=file]").change(function () {
                 var totalFiles;
                 var pendingFile = 1;
-                var filenames = [];
+                var successful = [];
+                var rejected = [];
 
                 $(this).simpleUpload(config.url, {
                     allowedExts: config.allowedExts,
                     allowedTypes: config.allowedTypes,
-                    maxFileSize: config.maxFileBytes, //1GB in bytes
+                    maxFileSize: config.maxFileBytes,
 
                     /*
-                        * Each of these callbacks are executed for each file.
-                        * To add callbacks that are executed only once, see init() and finish().
-                        *
-                        * "this" is an object that can carry data between callbacks for each file.
-                        * Data related to the upload is stored in this.upload.
+                    * Each of these callbacks are executed for each file
+                    * To add callbacks that are executed only once, see init() and finish().
+                    *
+                    * "this" is an object that can carry data between callbacks for each file.
+                    * Data related to the upload is stored in this.upload.
                     */
                     init: function (totalUploads) {
                         totalFiles = totalUploads;
+                        successful = [];
+                        rejected = [];
                     },
 
                     start: function (file) {
-                        //upload started
                         disableScreen();
 
                         this.block = $('<div class="block"></div>');
@@ -74,41 +76,38 @@
                         this.progressBar.remove();
 
                         /*
-                            * Just because the success callback is called doesn't mean your
-                            * application logic was successful, so check application success.
-                            *
-                            * Data as returned by the server on...
-                            * success:	{"success":true,"format":"..."}
-                            * error:	{"success":false,"error":{"code":1,"message":"..."}}
-                            */
+                        * Just because the success callback is called doesn't mean your
+                        * application logic was successful, so check application success.
+                        *
+                        * Data as returned by the server on...
+                        * success:	{"success":true,"format":"..."}
+                        * error:	{"success":false,"error":{"code":1,"message":"..."}}
+                        */
                  
                         if (data.Success) {
                             if (data.Filename !== null)
-                                filenames.push(data.Filename);
+                                successful.push(data.Filename);
 
                             this.block.fadeOut(400, function () { });
                         } else {
-                            //our application returned an error
-                            var message = data.ErrorMessage;
-                            var errorDiv = $('<div class="error"></div>').text(message);
-                            this.block.append(errorDiv);
+                            var message = data.ErrorMessage; // optionally display this
                         }
                     },
-
                     cancel: function () {
                         this.block.fadeOut(400, function () { });
                     },
                     finish: function () {
                         $("#uploads").html("");
                         enableScreen();
-                        config.callback(filenames);
+                        config.callback(successful, rejected);
                     },
                     error: function (error) {
-                        //upload failed
+                        var block = this.block;
+                        var html = block[0].innerHTML;
+                        // extract filename from inner html
+                        var filename = html.substring(html.indexOf("<b>"), html.indexOf("</b>") + 4);
+                        rejected.push(filename + " - " + error.message);
                         this.progressBar.remove();
-                        var message = error.ErrorMessage;
-                        var errorDiv = $('<div class="error"></div>').text(message);
-                        this.block.append(errorDiv);
                     }
                 });
             });

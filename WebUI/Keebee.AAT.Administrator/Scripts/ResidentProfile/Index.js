@@ -407,6 +407,7 @@
 
                     self.initUploader = ko.computed(function () {
                         var mediaPathType = self.selectedMediaPathType();
+                        $("#fileupload").prop("accept", mediaPathType.allowedtypes);
 
                         utilities.upload.init({
                             url: site.url + "ResidentProfile/UploadFile"

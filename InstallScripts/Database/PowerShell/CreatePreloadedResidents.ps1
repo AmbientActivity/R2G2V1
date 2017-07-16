@@ -37,6 +37,8 @@ Try
 
                     Write-Host "Transferring Profile $residentId..." -NoNewline  
                     Copy-Item "$pathDeployments\$pathProfiles\$residentId" $pathSqlProfiles -Recurse -Force
+                    # get rid of Thumbs.db
+                    get-childitem $pathSqlProfiles\$residentId -include *.db -recurse | foreach ($_) {remove-item $_.fullname}
                     Write-Host "done."
 
                     # create sql statement

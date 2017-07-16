@@ -180,6 +180,7 @@
     <Content Include="Content\favicons\ms-icon-310x310.png" />
     <Content Include="Content\favicons\ms-icon-70x70.png" />
     <Content Include="Scripts\SharedLibraryAdd\_Index.js" />
+    <Content Include="Scripts\SharedLibrary\_LinkedProfiles.js" />
     <Content Include="Scripts\Utilities\PartialView.js" />
     <Compile Include="ViewModels\ConfigViewModel.cs" />
     <Compile Include="ViewModels\EventLogViewModel.cs" />
@@ -673,7 +674,7 @@
     <Content Include="Views\Shared\_ImageViewer.cshtml" />
     <Content Include="Views\Shared\_LogOnPartial.cshtml" />
     <Content Include="Views\SharedLibrary\Index.cshtml" />
-    <Content Include="Views\SharedLibrary\_LinkedResidentMedia.cshtml" />
+    <Content Include="Views\SharedLibrary\_LinkedProfiles.cshtml" />
     <Content Include="Views\SystemProfile\Index.cshtml" />
     <Content Include="Views\VideoCaptures\Export.cshtml" />
     <Content Include="Views\VideoCaptures\Index.cshtml" />

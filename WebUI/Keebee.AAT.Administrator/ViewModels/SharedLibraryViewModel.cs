@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿using System;
 
 namespace Keebee.AAT.Administrator.ViewModels
 {
@@ -11,7 +11,6 @@ namespace Keebee.AAT.Administrator.ViewModels
 
     public class LinkedProfilesViewModel
     {
-        public IEnumerable<ResidentViewModel> Profiles { get; set; }
-        public string NoAvailableMediaMessage { get; set; }
+        public Guid StreamId { get; set; }
     }
 }

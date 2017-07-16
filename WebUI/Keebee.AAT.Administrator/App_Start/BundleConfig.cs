@@ -36,6 +36,7 @@ namespace Keebee.AAT.Administrator
                 "~/Scripts/VideoCaptures/Index.js",
                 "~/Scripts/PhidgetConfig/Index.js",
                 "~/Scripts/SharedLibrary/Index.js",
+                "~/Scripts/SharedLibrary/_LinkedProfiles.js",
                 "~/Scripts/SharedLibraryAdd/_Index.js",
                 "~/Scripts/SharedLibraryAdd/PartialView.js",
                 "~/Scripts/SystemProfile/Index.js",

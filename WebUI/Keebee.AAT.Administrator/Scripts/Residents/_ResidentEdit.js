@@ -52,8 +52,8 @@
             inputFileUpload.change(function () {
                 $(this).simpleUpload(site.url + "Residents/UploadProfilePicture",
                 {
-                    allowedExts: ["jpg", "jpeg", "png", "gif, bmp"],
-                    allowedTypes: ["image/jpg", "image/jpeg", "image/png", "image/gif", "image/bmp"],
+                    allowedExts: ["jpg", "jpeg", "png", "gif"],
+                    allowedTypes: ["image/jpg", "image/jpeg", "image/png", "image/gif"],
                     maxFileSize: 5000000, //5MB in bytes
 
                     start: function (file) {

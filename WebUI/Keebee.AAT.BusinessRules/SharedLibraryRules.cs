@@ -201,7 +201,8 @@ namespace Keebee.AAT.BusinessRules
                     {
                         Id = x.Resident.Id,
                         FirstName = x.Resident.FirstName,
-                        LastName = x.Resident.LastName
+                        LastName = x.Resident.LastName,
+                        ProfilePicture = x.Resident.ProfilePicture
                     }).OrderBy(x => x.LastName).ThenBy(x => x.FirstName);
                 residentProfiles.AddRange(residents);
             }

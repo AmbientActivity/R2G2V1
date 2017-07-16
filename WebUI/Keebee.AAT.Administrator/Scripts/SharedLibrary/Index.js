@@ -184,7 +184,7 @@
 
                         if (table.clientHeight > site.getMaxClientHeight) {
                             colScrollbar.prop("hidden", false);
-                            colScrollbar.attr("style", "width: 1%;");
+                            colScrollbar.attr("style", "width: 1%; border-bottom: 1.5px solid #ddd;");
                             tableDetailElement.addClass("container-height");
                         } else {
                             colScrollbar.prop("hidden", true);
@@ -593,11 +593,20 @@
                     };
 
                     self.showLinkedProfiles = function (row) {
+                        $("#link_" + row.streamid).tooltip("hide");
+                        var numLinked = self.files()
+                            .filter(function(value) {
+                                return value.streamid === row.streamid;
+                            })[0].numlinked;
+
                         utilities.partialview.show({
-                            url: site.url + "SharedLibrary/GetLinkedResidentsView/",
-                            title: "<span class='glyphicon glyphicon-link' style='color: #fff'></span> Linked Profiles",
+                            url: site.url + "SharedLibrary/GetLinkedProfilesView/",
+                            title: "<span class='glyphicon glyphicon-link' style='color: #fff'></span> Linked Profiles (" + numLinked + ")",
+                            type: BootstrapDialog.TYPE_PRIMARY,
                             params: { streamId: row.streamid },
+                            focus: "",
                             buttonOK: "Close",
+                            buttonOKClass: "btn-default",
                             okOnly: true,
                             callback: function(dialog) {
                                 dialog.close();

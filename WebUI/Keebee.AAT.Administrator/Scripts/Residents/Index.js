@@ -85,43 +85,47 @@
                                 }
                             }
                         }
-                        // if there are no rows in the table, hide the table and display a message
                         var table = element.parentNode;
-                        var noMediaMessage = $("#no-rows-message");
-
-                        var tableDetailElement = $("#table-detail");
-                        var tableHeaderElement = $("#table-header");
-
-                        $("#col-glyphicon_1").html("<div class='virtualPlaceholderGlyphicon'></div>");
-                        $("#col-glyphicon_2").html("<div class='virtualPlaceholderGlyphicon'></div>");
-                        $("#col-glyphicon_3").html("<div class='virtualPlaceholderGlyphicon'></div>");                         
-
-                        if (table.rows.length > 0) {
-                            tableHeaderElement.show();
-                            tableDetailElement.show();
-                            noMediaMessage.hide();
-
-                            // determine if there is table overflow (to cause a scrollbar)
-                            // if so, unhide the scrollbar header column
-                            var colScrollbar = $("#col-scrollbar");
-
-                            if (table.clientHeight > site.getMaxClientHeight) {
-                                colScrollbar.prop("hidden", false);
-                                colScrollbar.attr("style", "width: 1%;");
-                                tableDetailElement.addClass("container-height");
-                            } else {
-                                colScrollbar.prop("hidden", true);
-                                tableDetailElement.removeClass("container-height");
-                            }
-
-                        } else {
-                            tableHeaderElement.hide();
-                            tableDetailElement.hide();
-                            noMediaMessage.show();
-                        }
-                        if (isRendering) $("#txtSearchFirstName").focus();
-                        isRendering = false;
+                        formatTable(table);
                     }
+                }
+
+                function formatTable(table) {
+                    var noMediaMessage = $("#no-rows-message");
+
+                    var tableDetailElement = $("#table-detail");
+                    var tableHeaderElement = $("#table-header");
+
+                    $("#col-glyphicon_1").html("<div class='virtualPlaceholderGlyphicon'></div>");
+                    $("#col-glyphicon_2").html("<div class='virtualPlaceholderGlyphicon'></div>");
+                    $("#col-glyphicon_3").html("<div class='virtualPlaceholderGlyphicon'></div>");
+
+
+                    if (table.rows.length > 0) {
+                        tableHeaderElement.show();
+                        tableDetailElement.show();
+                        noMediaMessage.hide();
+
+                        // determine if there is table overflow (to cause a scrollbar)
+                        // if so, unhide the scrollbar header column
+                        var colScrollbar = $("#col-scrollbar");
+
+                        if (table.clientHeight > site.getMaxClientHeight) {
+                            colScrollbar.prop("hidden", false);
+                            colScrollbar.attr("style", "width: 1%; border-bottom: 1.5px solid #ddd;");
+                            tableDetailElement.addClass("container-height");
+                        } else {
+                            colScrollbar.prop("hidden", true);
+                            tableDetailElement.removeClass("container-height");
+                        }
+                        // if there are no rows in the table, hide the table and display a message
+                    } else {                         
+                        tableHeaderElement.hide();
+                        tableDetailElement.hide();
+                        noMediaMessage.show();
+                    }
+                    if (isRendering) $("#txtSearchFirstName").focus();
+                    isRendering = false;
                 }
 
                 ko.applyBindings(new ResidentViewModel());

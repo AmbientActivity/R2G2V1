@@ -74,8 +74,7 @@
                                 utilities.alert.show({
                                     title: "Error",
                                     type: BootstrapDialog.TYPE_DANGER,
-                                    message: "The following error occured:\n" + data.ErrorMessage,
-                                    buttonOKClass: "btn-danger"
+                                    message: "The following error occured:\n" + data.ErrorMessage
                                 });
                                 reject(data);
                             }
@@ -87,8 +86,7 @@
                             utilities.alert.show({
                                 title: "Error",
                                 type: BootstrapDialog.TYPE_DANGER,
-                                message: "The following error occured:\n" + request.statusText,
-                                buttonOKClass: "btn-danger"
+                                message: "The following error occured:\n" + request.statusText
                             });
                             reject();
                         }

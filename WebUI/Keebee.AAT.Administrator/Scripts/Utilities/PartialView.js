@@ -12,7 +12,8 @@
             var config = {
                 url: null,
                 title: null,
-                focus: "",
+                type: BootstrapDialog.TYPE_INFO,
+                focus: "txt",
                 buttonOK: "OK",
                 buttonOKClass: "btn-edit",
                 okOnly: false,
@@ -41,8 +42,7 @@
                 utilities.alert.show({
                     title: "Partial View Load Error",
                     type: BootstrapDialog.TYPE_DANGER,
-                    message: "The following error occured:\n" + error.statusText,
-                    buttonOKClass: "btn-danger"
+                    message: "The following error occured:\n" + error.statusText
                 });
             });
 

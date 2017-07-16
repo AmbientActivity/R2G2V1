@@ -93,7 +93,7 @@
 
                         if (table.clientHeight > site.getMaxClientHeight) {
                             colScrollbar.prop("hidden", false);
-                            colScrollbar.attr("style", "width: 1%;");
+                            colScrollbar.attr("style", "width: 1%; border-bottom: 1.5px solid #ddd;");
                             tableDetailElement.addClass("container-height");
                         } else {
                             colScrollbar.prop("hidden", true);

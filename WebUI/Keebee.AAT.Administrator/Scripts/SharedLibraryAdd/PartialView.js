@@ -66,8 +66,7 @@
                     utilities.alert.show({
                         title: "Partial View Load Error",
                         type: BootstrapDialog.TYPE_DANGER,
-                        message: "The following error occured:\n" + error.statusText,
-                        buttonOKClass: "btn-danger"
+                        message: "The following error occured:\n" + error.statusText
                     });
                 });
             });

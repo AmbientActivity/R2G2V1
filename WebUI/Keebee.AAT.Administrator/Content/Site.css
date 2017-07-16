@@ -292,7 +292,12 @@ video {
 .table > thead:first-child > tr:first-child > td {
     border: none;
 }
-
+.table#tblLinkedProfileHeader > thead > tr > th {
+    border-bottom: 1px solid #ddd;
+}
+.table#tblLinkedProfile > tbody > tr > td {
+    padding: 6px 6px 6px 8px;
+}
 /* filter */
 .select-filter {
     min-width: 200px;
@@ -411,7 +416,7 @@ input[type="checkbox"] {
 }
 .col-linked-profiles {
     width: 2%;
-    border-bottom: 1px;
+    border-bottom: 1.5px solid #ddd !important;
 }
 
 /* system profile */
@@ -424,6 +429,19 @@ input[type="checkbox"] {
 }
 .col-filesize-sp {
     width: 15%;
+}
+
+/* linked profiles */
+.virtualPlaceholderProfilePicSm {
+    display: block;
+    width: 55px;
+    background: transparent;
+}
+.col-profilename {
+    width: 90%;
+}
+.col-profilepicture {
+    width: 80%;
 }
 
 /* event logs / video captures */
@@ -576,8 +594,8 @@ input[type="checkbox"] {
     margin-top: -1px;
 }
 
-/* progress bar for profile picture upload */
-/*.progressBar {
+/* progress bar for resident profile picture upload */
+.progressBar {
 	background-color: #419641;
 	width: 0;
 	height: 20px;
@@ -590,8 +608,9 @@ input[type="checkbox"] {
 	-webkit-transition: .25s ease-out;
 	-o-transition: .25s ease-out;
 	transition: .25s ease-out;
-}*/
+}
 
+/* for media uploads */
 .upload-container {
     max-height: 300px;
     width: 100%;
@@ -658,6 +677,7 @@ input[type="checkbox"] {
 	font-size: 14px;
 	color: red;
 }
+
 /* for the page loading gif */
 .loading {
     margin: auto; 

@@ -1,4 +1,11 @@
-﻿;
+﻿/*!
+ * 1.0 Keebee AAT Copyright © 2016
+ * SharedLibraryAdd/_Index.js
+ * Author: John Charlton
+ * Date: 2017-07
+ */
+
+;
 (function($) {
     sharedlibraryadd.index = {
         init: function (options) {
@@ -90,7 +97,7 @@
 
                             if (table.clientHeight > site.getMaxClientHeight) {
                                 colScrollbar.prop("hidden", false);
-                                colScrollbar.attr("style", "width: 1%;");
+                                colScrollbar.attr("style", "width: 1%; border-bottom: 1.5px solid #ddd;");
                                 tableDetailElement.addClass("container-height");
                             } else {
                                 colScrollbar.prop("hidden", true);

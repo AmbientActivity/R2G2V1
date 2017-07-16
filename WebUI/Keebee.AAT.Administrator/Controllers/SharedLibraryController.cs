@@ -173,13 +173,6 @@ namespace Keebee.AAT.Administrator.Controllers
 
         [HttpGet]
         [Authorize]
-        public PartialViewResult GetLinkedResidentsView(Guid streamId)
-        {
-            return PartialView("_LinkedResidentMedia", LoadLinkedProfilesViewModel(streamId));
-        }
-
-        [HttpGet]
-        [Authorize]
         public PartialViewResult GetImageViewerView(Guid streamId, string fileType)
         {
             var rules = new ImageViewerRules();
@@ -194,23 +187,45 @@ namespace Keebee.AAT.Administrator.Controllers
             });
         }
 
-        private static LinkedProfilesViewModel LoadLinkedProfilesViewModel(Guid streamId)
+        [HttpGet]
+        [Authorize]
+        public PartialViewResult GetLinkedProfilesView(Guid streamId)
         {
-            var rules = new SharedLibraryRules();
-            var linkedProfiles = rules.GetLinkedProfiles(streamId);
+            return PartialView("_LinkedProfiles", new LinkedProfilesViewModel{ StreamId = streamId });
+        }
 
-            var vm = new LinkedProfilesViewModel
+        [HttpGet]
+        [Authorize]
+        public JsonResult GetDataLinkedProfiles(Guid streamId)
+        {
+            string errMsg = null;
+            ResidentViewModel[] profiles = null;
+
+            try
             {
-                Profiles = linkedProfiles.Select(r => new
+                var rules = new SharedLibraryRules();
+                profiles = rules.GetLinkedProfiles(streamId)
+                    .Select(r => new
                     ResidentViewModel
                     {
                         FirstName = r.FirstName,
-                        LastName = r.LastName
-                    }),
-                NoAvailableMediaMessage = "No profiles are linked to this file."
-            };
+                        LastName = r.LastName,
+                        ProfilePicture = ResidentRules.GetProfilePicture(r?.ProfilePicture),
+                        ProfilePicturePlaceholder = ResidentRules.GetProfilePicturePlaceholder()
+                    }).ToArray();
+            }
+            catch (Exception ex)
+            {
+                errMsg = ex.Message;
+            }
 
-            return vm;
+            return Json(new
+            {
+                Success = string.IsNullOrEmpty(errMsg),
+                ErrorMessage = errMsg,
+                Profiles = profiles
+
+            }, JsonRequestBehavior.AllowGet);
         }
 
         private IEnumerable<SharedLibraryFileViewModel> GetFiles(IEnumerable<MediaPathType> mediaPathTypes)

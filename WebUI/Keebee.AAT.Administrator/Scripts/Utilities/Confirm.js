@@ -15,7 +15,7 @@
                 message: null,
                 buttonCancel: "Cancel",
                 buttonOK: "OK",
-                buttonOKClass: "btn-edit"
+                buttonOKClass: "btn-default"
             };
 
             return new Promise(function (resolve) {

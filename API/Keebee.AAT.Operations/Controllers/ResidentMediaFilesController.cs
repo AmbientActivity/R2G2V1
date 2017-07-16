@@ -363,7 +363,8 @@ namespace Keebee.AAT.Operations.Controllers
                         x.Resident.FirstName,
                         x.Resident.LastName,
                         x.Resident.Gender,
-                        x.Resident.GameDifficultyLevel
+                        x.Resident.GameDifficultyLevel,
+                        x.Resident.ProfilePicture
                     },
                     ResponseTypePaths = x.Files
                         .GroupBy(rt => rt.ResponseType)

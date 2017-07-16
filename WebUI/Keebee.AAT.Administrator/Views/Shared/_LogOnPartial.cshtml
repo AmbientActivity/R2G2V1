@@ -7,7 +7,11 @@
                 <li><a href="javascript:void(0)" id="change-password">Change Password</a></li>
                 @if (User.IsInRole("Administrator"))
                 {
-                    <li><a href="javascript:void(0)" id="reset-caregiver">Reset Caregiver</a></li>
+                    <li>
+                        <a href="javascript:void(0)" id="reset-caregiver">Reset Caregiver</a>
+                        <hr />
+                    </li>
+                    
                 }
                 <li>@Html.ActionLink("Log Off", "LogOff", "Account")</li>
             </ul>

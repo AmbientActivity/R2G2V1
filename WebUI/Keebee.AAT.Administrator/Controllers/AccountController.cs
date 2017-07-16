@@ -98,6 +98,35 @@ namespace Keebee.AAT.Administrator.Controllers
             return PartialView("_ChangePassword", new ChangePasswordViewModel());
         }
 
+        [HttpGet]
+        public PartialViewResult GetResetCaregiverView()
+        {
+            return PartialView("_ResetCaregiver");
+        }
+
+        [HttpGet]
+        [Authorize]
+        public JsonResult ResetCaregiver()
+        {
+            string errMsg;
+
+            try
+            {
+                var rules = new AccountRules();
+                errMsg = rules.ResetCaregiver();
+            }
+            catch (Exception ex)
+            {
+                errMsg = ex.Message;
+            }
+
+            return Json(new
+            {
+                Success = true,
+                ErrorMessage = errMsg
+            }, JsonRequestBehavior.AllowGet);
+        }
+
         [HttpPost]
         [Authorize]
         public JsonResult ChangePassword(ChangePasswordViewModel vm)

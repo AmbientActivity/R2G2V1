@@ -5,6 +5,10 @@
             <a href="javascript:void(0)" id="menu-login" class="dropdown-toggle" data-toggle="dropdown">Welcome <span>@User.Identity.Name</span> <i class="fa fa-caret-down"></i></a>
             <ul class="dropdown-menu">
                 <li><a href="javascript:void(0)" id="change-password">Change Password</a></li>
+                @if (User.IsInRole("Administrator"))
+                {
+                    <li><a href="javascript:void(0)" id="reset-caregiver">Reset Caregiver</a></li>
+                }
                 <li>@Html.ActionLink("Log Off", "LogOff", "Account")</li>
             </ul>
         </li>

@@ -680,6 +680,7 @@
     <Content Include="Views\VideoCaptures\Index.cshtml" />
     <Content Include="Views\Account\Login.cshtml" />
     <Content Include="Views\SharedLibraryAdd\_Index.cshtml" />
+    <Content Include="Views\Account\_ResetCaregiver.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Scripts\Utilities\Validation.js" />

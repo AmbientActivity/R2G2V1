@@ -5,6 +5,7 @@ using Keebee.AAT.ApiClient.Models;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
+using Keebee.AAT.Shared;
 
 namespace Keebee.AAT.BusinessRules
 {
@@ -154,6 +155,14 @@ namespace Keebee.AAT.BusinessRules
             var user = new User {Password = passwordHash};
 
             return _usersClient.Patch(userId, user);
+        }
+
+        public string ResetCaregiver()
+        {
+            var caregiver = _usersClient.Get(UserId.Caregiver);
+            caregiver.Password = GeneratePasswordHash(UserDefaultPassword.Caregiver);
+
+            return _usersClient.Patch(UserId.Caregiver, caregiver);
         }
 
         private static bool VerifyHashPassword(string password, string hash)

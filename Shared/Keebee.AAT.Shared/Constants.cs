@@ -8,6 +8,17 @@ namespace Keebee.AAT.Shared
         public const string DisplayAppName = "Display";
     }
 
+    public static class UserDefaultPassword
+    {
+        public static string Administrator = "@dmin";
+        public static string Caregiver = "1234";
+    }
+    public static class UserId
+    {
+        public static int Administrator = 1;
+        public static int Caregiver = 2;
+    }
+
     public static class VideoCaptures
     {
         public const string Path = @"C:\VideoCaptures";

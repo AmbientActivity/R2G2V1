@@ -10,6 +10,7 @@
     account.services = {
         init: function() {
             var lnkChangePassword = $("#change-password");
+            var lnkResetCaregiver = $("#reset-caregiver");
             var cmdLogin = $("#login");
             var cmdLogOff = $("#logoff");
 
@@ -67,8 +68,8 @@
                                     dialog.close();
                                     utilities.alert.show({
                                         type: BootstrapDialog.TYPE_SUCCESS,
-                                        title: "Password Change",
-                                        message: "Password successfully changed",
+                                        title: "Success",
+                                        message: "Your password has successfully been changed.",
                                         buttonOKClass: "btn-success"
                                     });
                                 });
@@ -79,6 +80,41 @@
                                     beginWithLineBreak: true
                                 });
                             }
+                        })
+                        .catch(function (error) {
+                            utilities.alert.show({
+                                type: BootstrapDialog.TYPE_DANGER,
+                                message: "An unexpected error occurred.\n" + error
+                            });
+                        });
+                    }
+                });
+            });
+
+            lnkResetCaregiver.click(function() {
+                utilities.confirm.show({
+                    type: BootstrapDialog.TYPE_PRIMARY,
+                    title: "Password Reset",
+                    message: "Reset caregiver pawword?"
+                })
+                .then(function (confirm) {
+                    if (confirm) {
+                        utilities.job.execute({
+                            url: site.url + "Account/ResetCaregiver"
+                        })
+                        .then(function() {
+                            utilities.alert.show({
+                                type: BootstrapDialog.TYPE_SUCCESS,
+                                title: "Success",
+                                message: "Caregiver password has successfully been reset.",
+                                buttonOKClass: "btn-success"
+                            });
+                        })
+                        .catch(function(error) {
+                            utilities.alert.show({
+                                type: BootstrapDialog.TYPE_DANGER,
+                                message: "An unexpected error occurred.\n" + error
+                            });
                         });
                     }
                 });

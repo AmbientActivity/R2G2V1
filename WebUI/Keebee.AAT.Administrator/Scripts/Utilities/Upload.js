@@ -102,9 +102,8 @@
                         config.callback(successful, rejected);
                     },
                     error: function (error) {
-                        var block = this.block;
-                        var html = block[0].innerHTML;
-                        // extract filename from inner html
+                        var html = this.block[0].innerHTML;
+                        // extract filename
                         var filename = html.substring(html.indexOf("<b>"), html.indexOf("</b>") + 4);
                         rejected.push(filename + " - " + error.message);
                         this.progressBar.remove();

@@ -432,8 +432,8 @@
                             allowedTypes: mediaPathType.allowedtypes.split(","),
                             maxFileBytes: mediaPathType.maxfilebytes,
                             maxFileUploads: mediaPathType.maxfileuploads,
-                            callback: function (filenames) {
-                                if (filenames !== null) {
+                            callback: function (successful, rejected) {
+                                if (successful.length > 0) {
                                     utilities.job.execute({
                                         url: site.url + "SharedLibrary/GetData",
                                         waitMessage: "Saving...",
@@ -448,6 +448,24 @@
                                         self.selectedStreamIds([]);
                                         self.checkSelectAll(false);
                                         enableDetail();
+                                    })
+                                    .catch(function (error) {
+                                        utilities.alert.show({
+                                            message: "An unexpected error occurred:\n" + error,
+                                            type: BootstrapDialog.TYPE_DANGER
+                                        });
+                                        enableDetail();
+                                    });
+                                }
+                                if (rejected.length > 0) {
+                                    var rejectedMessage = "";
+                                    $(rejected).each(function (index, value) {
+                                        rejectedMessage += value + "\n";
+                                    });
+                                    utilities.alert.show({
+                                        title: "Files Not Uploaded",
+                                        message: "The following files were rejected:\n" + rejectedMessage,
+                                        type: BootstrapDialog.TYPE_WARNING
                                     });
                                 }
                             }

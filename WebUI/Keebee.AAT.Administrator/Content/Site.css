@@ -35,7 +35,7 @@ a:hover, a:visited, a:link, a:active {
    height: 550px;   
 }
 /* for the inner container overlow scroll bar */
-/* must correspond to maxClientHeight value in ~/Scripts/Site/Site.js */
+/* must correspond to maxClientHeightSharedLibraryAdd value in ~/Scripts/Site/Site.js */
 .container-height-sharedlibrary-add {
    height: 450px;   
 }

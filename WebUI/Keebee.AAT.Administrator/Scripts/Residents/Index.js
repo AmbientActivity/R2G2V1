@@ -14,7 +14,7 @@
 
             var currentSortKey = "firstname";
             var primarySortKey = "firstname";
-            var dateUpdatedSortKey = "dateupdated";
+            var dateCreatedSortKey = "datecreated";
             var sortDescending = false;
             var isBinding = true;   // <-- for initial page load only - used to stop the sort from being executed
             var isRendering = true; // <-- for initial page load only - used to set focus to 'First Name' search input
@@ -139,7 +139,7 @@
                 if (config.sortcolumn.length > 0)
                     $("#resident-col-" + config.sortcolumn).trigger("click");
 
-                function Resident(id, firstname, lastname, gender, gamedifficultylevel, allowvideocapturing, profilepicture, profilepictureplaceholder, dateupdated) {
+                function Resident(id, firstname, lastname, gender, gamedifficultylevel, allowvideocapturing, profilepicture, profilepictureplaceholder, datecreated, dateupdated) {
                     var self = this;
 
                     self.id = id;
@@ -149,6 +149,7 @@
                     self.allowvideocapturing = allowvideocapturing;
                     self.profilepicture = profilepicture;
                     self.profilepictureplaceholder = profilepictureplaceholder;
+                    self.datecreated = datecreated;
                     self.dateupdated = dateupdated;
                 }
 
@@ -172,27 +173,34 @@
                     function createResidentArray(list) {
                         self.residents.removeAll();
                         $(list).each(function (index, value) {
-                            pushResident(value);
+                            self.residents.push(new Resident(
+                                value.Id,
+                                value.FirstName,
+                                value.LastName,
+                                value.Gender,
+                                value.GameDifficultyLevel,
+                                value.AllowVideoCapturing,
+                                value.ProfilePicture,
+                                value.ProfilePicturePlaceholder,
+                                value.DateCreated,
+                                value.DateUpdated));
                         });
                     };
 
                     self.columns = ko.computed(function () {
                         var arr = [];
                             
-                        arr.push({ title: "First Name", sortKey: "firstname", cssClass: "col-firstname" });
-                        arr.push({ title: "Last Name", sortKey: "lastname", cssClass: "col-lastname" });
-                        arr.push({ title: "ID", sortKey: "id", cssClass: "col-id" });
-                        arr.push({ title: "Updated", sortKey: "dateupdated", cssClass: "col-date" });
-                        arr.push({ title: "Gender", sortKey: "gender", cssClass: "col-gender" });
+                        arr.push({ title: "First Name", sortKey: "firstname", visible: true, cssClass: "col-firstname" });
+                        arr.push({ title: "Last Name", sortKey: "lastname", visible: true, cssClass: "col-lastname" });
+                        arr.push({ title: "ID", sortKey: "id", visible: true, cssClass: "col-id" });
+                        arr.push({ title: "Created", sortKey: "datecreated", visible: false, cssClass: "col-date" });
+                        arr.push({ title: "Updated", sortKey: "dateupdated", visible: true, cssClass: "col-date" });
+                        arr.push({ title: "Gender", sortKey: "gender", visible: true, cssClass: "col-gender" });
 
                         if (config.isVideoCaptureServiceInstalled === "1")
-                            arr.push({ title: "Capturable", sortKey: "allowvideocapturing", cssClass: "col-capturable", boolean: true });
+                            arr.push({ title: "Capturable", sortKey: "allowvideocapturing", visible: true, cssClass: "col-capturable", boolean: true });
                         return arr;
                     });
-
-                    function pushResident(value) {
-                        self.residents.push(new Resident(value.Id, value.FirstName, value.LastName, value.Gender, value.GameDifficultyLevel, value.AllowVideoCapturing, value.ProfilePicture, value.ProfilePicturePlaceholder, value.DateUpdated));
-                    };
 
                     self.selectedResident(self.residents()[0]);
 
@@ -212,7 +220,7 @@
                                 sortDescending = !sortDescending;
                             }
                         } else if (afterSave) {
-                            sortKey = dateUpdatedSortKey;
+                            sortKey = dateCreatedSortKey;
                             sortDescending = true;
                         } else if (afterDelete) {
                             sortKey = currentSortKey;
@@ -223,6 +231,7 @@
                         if (typeof header.boolean !== "undefined") {
                             isboolean = header.boolean;
                         }
+                        var residents = self.residents();
                         self.residents(utilities.sorting.sortArray(
                             {
                                 fileArray: self.residents(),

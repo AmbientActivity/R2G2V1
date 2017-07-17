@@ -63,7 +63,7 @@
                 <tr>
                     <th id="col-profile-picture" class="col-profile-picture"></th>
                     <!-- ko foreach: columns -->
-                    
+                    <!-- ko if: visible -->
                     <!-- ko if: sortKey !== 'gender' && sortKey !== 'allowvideocapturing' -->
                     <th data-bind="click: $parent.sort, attr: { id: 'resident-col-' + sortKey, boolean: true }, css: cssClass"><a href="javascript:void(0)" data-bind="text: title"></a></th>
                     <!-- /ko -->
@@ -76,6 +76,7 @@
                     <th data-bind="click: $parent.sort({ sortKey: 'allowvideocapturing', boolean: true }), attr: { id: cssClass }, css: cssClass"><a href="javascript:void(0)"><span class="glyphicon glyphicon-facetime-video glyphicon-lg"></span></a></th>
                     <!-- /ko -->
 
+                    <!-- /ko -->
                     <!-- /ko -->
                     @*<th class="col-date"><a href="javascript:void(0)" data-bind="click: sort({ sortKey: 'dateupdated' })">Updated</a></th>*@
                     <th class="col-glyphicon col-glyphicon-media"><span class="media-heading">Media</span></th>

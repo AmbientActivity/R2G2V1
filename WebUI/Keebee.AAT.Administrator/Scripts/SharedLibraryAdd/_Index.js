@@ -95,13 +95,13 @@
                             // if so, unhide the scrollbar header column
                             var colScrollbar = $("#col-shared-scrollbar");
 
-                            if (table.clientHeight > site.getMaxClientHeight) {
+                            if (table.clientHeight > site.getMaxClientHeightSharedLibraryAdd) {
                                 colScrollbar.prop("hidden", false);
                                 colScrollbar.attr("style", "width: 1%; border-bottom: 1.5px solid #ddd;");
-                                tableDetailElement.addClass("container-height");
+                                tableDetailElement.addClass("container-height-sharedlibrary-add");
                             } else {
                                 colScrollbar.prop("hidden", true);
-                                tableDetailElement.removeClass("container-height");
+                                tableDetailElement.removeClass("container-height-sharedlibrary-add");
                             }
 
                         } else {

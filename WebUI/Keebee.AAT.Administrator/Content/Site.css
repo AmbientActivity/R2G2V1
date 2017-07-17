@@ -34,7 +34,11 @@ a:hover, a:visited, a:link, a:active {
 .container-height {
    height: 550px;   
 }
-
+/* for the inner container overlow scroll bar */
+/* must correspond to maxClientHeight value in ~/Scripts/Site/Site.js */
+.container-height-sharedlibrary-add {
+   height: 450px;   
+}
 /* for h3 banners at top of page */
 .page-banner {
     margin-top: 13px;

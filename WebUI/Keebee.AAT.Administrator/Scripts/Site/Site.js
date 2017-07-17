@@ -9,6 +9,7 @@ var site = (function () {
     var keebeeUrl = "/Keebee.AAT.Administrator/";
     var keebeeOperationsUrl = "/Keebee.AAT.Operations/api/";
     var maxClientHeight = 550;   // need this value to determine if scrollbar needs to be shown
+    var maxClientHeightSharedLibraryAdd = 450;   // need this value to determine if scrollbar needs to be shown
 
     var self = {
         getUrl: function() {
@@ -31,11 +32,13 @@ var site = (function () {
                 return rootUrl + keebeeOperationsUrl;
             }
         },
-        getMaxClientHeight: function () { return maxClientHeight; }
+        getMaxClientHeight: function () { return maxClientHeight; },
+        getMaxClientHeightSharedLibraryAdd: function () { return maxClientHeightSharedLibraryAdd; }
     };
     return {
         url: self.getUrl(),
         getApiUrl: self.getApiUrl(),
-        getMaxClientHeight: self.getMaxClientHeight()
+        getMaxClientHeight: self.getMaxClientHeight(),
+        getMaxClientHeightSharedLibraryAdd: self.getMaxClientHeightSharedLibraryAdd()
     }
 })();

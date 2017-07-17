@@ -315,7 +315,7 @@
                                                 lists.ResidentList = saveResult.ResidentList;
                                                 createResidentArray(lists.ResidentList);
                                                 self.selectedResident(self.getResident(saveResult.SelectedId));
-                                                self.sort({ afterSave: true });
+                                                self.sort({ afterSave: add });
                                                 self.highlightRow(self.selectedResident());
                                                 cmdAdd.prop("disabled", false);
                                             });

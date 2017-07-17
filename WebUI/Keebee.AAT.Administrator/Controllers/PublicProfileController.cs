@@ -91,17 +91,22 @@ namespace Keebee.AAT.Administrator.Controllers
 
         [HttpPost]
         [Authorize]
-        public JsonResult AddFiles(string[] filenames, string mediaPath, int mediaPathTypeId)
+        public JsonResult AddFiles(string[] filenames, string mediaPath, int mediaPathTypeId, string dateAdded)
         {
             string errMsg = null;
+            var newIds = new Collection<int>();
 
             try
             {
                 foreach (var filename in filenames)
                 {
-                    errMsg = AddPublicMediaFile(filename, mediaPathTypeId, mediaPath);
+                    int newId;
+                    errMsg = AddPublicMediaFileFromFilename(filename, mediaPathTypeId, mediaPath, dateAdded, out newId);
+
                     if (!string.IsNullOrEmpty(errMsg))
                         throw new Exception(errMsg);
+
+                    newIds.Add(newId);
                 }
             }
             catch (Exception ex)
@@ -113,7 +118,8 @@ namespace Keebee.AAT.Administrator.Controllers
             {
                 Success = string.IsNullOrEmpty(errMsg),
                 ErrorMessage = errMsg,
-                FileList = GetFiles()
+                FileList = GetFiles(),
+                NewIds = newIds
             }, JsonRequestBehavior.AllowGet);
         }
 
@@ -240,28 +246,23 @@ namespace Keebee.AAT.Administrator.Controllers
 
         [HttpPost]
         [Authorize]
-        public JsonResult AddSharedMediaFiles(Guid[] streamIds, int mediaPathTypeId)
+        public JsonResult AddSharedMediaFiles(Guid[] streamIds, int mediaPathTypeId, string dateAdded)
         {
             string errMsg = null;
             var newIds = new Collection<int>();
 
             try
             {
+                var rules = new PublicProfileRules();
                 if (streamIds != null)
                 {
                     foreach (var streamId in streamIds)
                     {
-                        var pmf = new PublicMediaFileEdit
-                        {
-                            StreamId = streamId,
-                            ResponseTypeId = PublicProfileRules.GetResponseTypeId(mediaPathTypeId),
-                            MediaPathTypeId = mediaPathTypeId,
-                            IsLinked = true
-                        };
-
                         int newId;
-                        errMsg = _publicMediaFilesClient.Post(pmf, out newId);
-                        if (!string.IsNullOrEmpty(errMsg)) throw new Exception(errMsg);
+                        errMsg = rules.AddMediaFile(streamId, mediaPathTypeId, dateAdded, true, out newId);
+
+                        if (!string.IsNullOrEmpty(errMsg))
+                            throw new Exception(errMsg);
 
                         newIds.Add(newId);
                     }
@@ -281,30 +282,24 @@ namespace Keebee.AAT.Administrator.Controllers
             }, JsonRequestBehavior.AllowGet);
         }
 
-        private string AddPublicMediaFile(string filename, int mediaPathTypeId, string mediaPathType)
+        private string AddPublicMediaFileFromFilename(string filename, int mediaPathTypeId, string mediaPathType, string dateAdded, out int newId)
         {
-            string errMsg = null;
+            newId = -1;
             var fileManager = new FileManager { EventLogger = _systemEventLogger };
 
             var streamId = fileManager.GetStreamId($@"{PublicProfileSource.Id}\{mediaPathType}", filename);
-            if (streamId == new Guid()) return null;
+            if (streamId == new Guid()) return $"Could not get StreamId for file <b>{filename}</b>";
 
-            var mf = new PublicMediaFileEdit
-            {
-                StreamId = streamId,
-                ResponseTypeId = PublicProfileRules.GetResponseTypeId(mediaPathTypeId),
-                MediaPathTypeId = mediaPathTypeId,
-                IsLinked = false
-            };
+            var rules = new PublicProfileRules();
+            var errMsg = rules.AddMediaFile(streamId, mediaPathTypeId, dateAdded, false, out newId);
 
-            int newId;
-            errMsg = _publicMediaFilesClient.Post(mf, out newId);
-
-            if (errMsg != null) return errMsg;
+            if (!string.IsNullOrEmpty(errMsg)) return errMsg;
 
             if (!PublicProfileRules.IsMediaTypeThumbnail(mediaPathTypeId)) return null;
+
             var thumbnailGenerator = new ThumbnailGenerator();
             errMsg = thumbnailGenerator.Generate(streamId);
+
             return errMsg;
         }
 

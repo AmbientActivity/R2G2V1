@@ -133,6 +133,21 @@ namespace Keebee.AAT.BusinessRules
             return isValid;
         }
 
+        public string AddMediaFile(Guid streamId, int residentId, int mediaPathTypeId, string dateAdded, bool isLinked, out int newId)
+        {
+            var mf = new ResidentMediaFileEdit
+            {
+                StreamId = streamId,
+                ResidentId = residentId,
+                ResponseTypeId = GetResponseTypeId(mediaPathTypeId),
+                MediaPathTypeId = mediaPathTypeId,
+                IsLinked = isLinked,
+                DateAdded = DateTime.Parse(dateAdded)
+            };
+
+            return _residentMediaFilesClient.Post(mf, out newId);
+        }
+
         public MediaFilePath GetMediaFile(int id)
         {
             var mediaFile = _residentMediaFilesClient.Get(id);

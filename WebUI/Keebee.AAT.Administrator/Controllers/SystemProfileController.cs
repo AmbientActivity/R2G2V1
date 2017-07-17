@@ -139,28 +139,23 @@ namespace Keebee.AAT.Administrator.Controllers
 
         [HttpPost]
         [Authorize]
-        public JsonResult AddSharedMediaFiles(Guid[] streamIds, int mediaPathTypeId)
+        public JsonResult AddSharedMediaFiles(Guid[] streamIds, int mediaPathTypeId, string dateAdded)
         {
             string errMsg = null;
             var newIds = new Collection<int>();
 
             try
             {
+                var rules = new PublicProfileRules();
                 if (streamIds != null)
                 {
                     foreach (var streamId in streamIds)
                     {
-                        var pmf = new PublicMediaFileEdit
-                        {
-                            StreamId = streamId,
-                            ResponseTypeId = PublicProfileRules.GetResponseTypeId(mediaPathTypeId),
-                            MediaPathTypeId = mediaPathTypeId,
-                            IsLinked = true
-                        };
-
                         int newId;
-                        errMsg = _publicMediaFilesClient.Post(pmf, out newId);
-                        if (!string.IsNullOrEmpty(errMsg)) throw new Exception(errMsg);
+                        errMsg = rules.AddMediaFile(streamId, mediaPathTypeId, dateAdded, true, out newId);
+
+                        if (!string.IsNullOrEmpty(errMsg))
+                            throw new Exception(errMsg);
 
                         newIds.Add(newId);
                     }
@@ -176,7 +171,7 @@ namespace Keebee.AAT.Administrator.Controllers
                 Success = string.IsNullOrEmpty(errMsg),
                 ErrorMessage = errMsg,
                 FileList = GetFiles(),
-                MewIds = newIds
+                NewIds = newIds
             }, JsonRequestBehavior.AllowGet);
         }
 

@@ -283,6 +283,7 @@
                     self.addFromSharedLibray = function () {
                         self.clearStreams();
                         var mediaPathTypeDesc = self.selectedMediaPathType().shortdescription;
+                        var date = new Date();
 
                         sharedlibraryadd.view.show({
                             profileId: 0,
@@ -297,7 +298,8 @@
                                 waitMessage: "Adding...",
                                 params: {
                                     streamIds: streamIds,
-                                    mediaPathTypeId: self.selectedMediaPathType().id
+                                    mediaPathTypeId: self.selectedMediaPathType().id,
+                                    dateAdded: date.toISOString()
                                 }
                             })
                             .then(function(saveResult) {
@@ -306,6 +308,7 @@
                                 self.sort({ afterSave: true });
                                 self.selectedIds([]);
                                 self.checkSelectAll(false);
+                                self.marqueeRows(saveResult.NewIds);
                                 self.enableDetail();
                             })
                             .catch(function() {
@@ -314,6 +317,15 @@
                         })
                         .catch(function () {
                             self.enableDetail();
+                        });
+                    };
+
+                    self.marqueeRows = function (rowIds) {
+                        $(rowIds).each(function (index, value) {
+                            $("#row_" + value).addClass("row-added");
+                            setTimeout(function () {
+                                $("#row_" + value).removeClass("row-added");
+                            }, 1500);
                         });
                     };
 

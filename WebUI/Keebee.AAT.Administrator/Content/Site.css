@@ -230,6 +230,10 @@ video {
 .row-login-button {
     padding: 0 5px;
 }
+.row-added > td {
+    background-color: #e6f7e6 !important;
+}
+
 /* radio button */
 .radio-gender-select {
     padding-top: 0;

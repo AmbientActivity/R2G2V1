@@ -27,5 +27,6 @@ namespace Keebee.AAT.ApiClient.Models
         public int MediaPathTypeId { get; set; }
         public int ResponseTypeId { get; set; }
         public bool IsLinked { get; set; }
+        public DateTime DateAdded { get; set; }
     }
 }

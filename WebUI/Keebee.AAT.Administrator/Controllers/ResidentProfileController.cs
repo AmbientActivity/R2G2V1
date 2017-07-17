@@ -91,17 +91,22 @@ namespace Keebee.AAT.Administrator.Controllers
 
         [HttpPost]
         [Authorize]
-        public JsonResult AddFiles(string[] filenames, string mediaPath, int mediaPathTypeId, int residentId)
+        public JsonResult AddFiles(string[] filenames, int residentId, string mediaPath, int mediaPathTypeId, string dateAdded)
         {
             string errMsg = null;
+            var newIds = new Collection<int>();
 
             try
             {
                 foreach (var filename in filenames)
                 {
-                    errMsg = AddResidentMediaFile(filename, mediaPathTypeId, mediaPath, residentId);
+                    int newId;
+                    errMsg = AddResidentMediaFileFromFilename(filename, residentId, mediaPathTypeId, mediaPath, dateAdded, out newId);
+
                     if (!string.IsNullOrEmpty(errMsg))
                         throw new Exception(errMsg);
+
+                    newIds.Add(newId);
                 }
             }
             catch (Exception ex)
@@ -113,7 +118,8 @@ namespace Keebee.AAT.Administrator.Controllers
             {
                 Success = string.IsNullOrEmpty(errMsg),
                 ErrorMessage = errMsg,
-                FileList = GetFiles(residentId)
+                FileList = GetFiles(residentId),
+                NewIds = newIds
             }, JsonRequestBehavior.AllowGet);
         }
 
@@ -168,31 +174,23 @@ namespace Keebee.AAT.Administrator.Controllers
 
         [HttpPost]
         [Authorize]
-        public JsonResult AddSharedMediaFiles(Guid[] streamIds, int residentId, int mediaPathTypeId)
+        public JsonResult AddSharedMediaFiles(Guid[] streamIds, int residentId, int mediaPathTypeId, string dateAdded)
         {
             string errMsg = null;
             var newIds = new Collection<int>();
 
             try
             {
-                var responseTypeId = ResidentRules.GetResponseTypeId(mediaPathTypeId);
-
+                var rules = new ResidentRules();
                 if (streamIds != null)
                 {
                     foreach (var streamId in streamIds)
                     {
-                        var mf = new ResidentMediaFileEdit
-                        {
-                            StreamId = streamId,
-                            ResidentId = residentId,
-                            ResponseTypeId = responseTypeId,
-                            MediaPathTypeId = mediaPathTypeId,
-                            IsLinked = true
-                        };
-
                         int newId;
-                        errMsg = _residentMediaFilesClient.Post(mf, out newId);
-                        if (!string.IsNullOrEmpty(errMsg)) throw new Exception(errMsg);
+                        errMsg = rules.AddMediaFile(streamId, residentId, mediaPathTypeId, dateAdded, true, out newId);
+
+                        if (!string.IsNullOrEmpty(errMsg))
+                            throw new Exception(errMsg);
 
                         newIds.Add(newId);
                     }
@@ -291,33 +289,25 @@ namespace Keebee.AAT.Administrator.Controllers
             }, JsonRequestBehavior.AllowGet);
         }
 
-        private string AddResidentMediaFile(string filename, int mediaPathTypeId, string mediaPathType, int residentId)
+        private string AddResidentMediaFileFromFilename(string filename, int residentId, int mediaPathTypeId, string mediaPathType, string dateAdded, out int newId)
         {
+            newId = -1;
             var fileManager = new FileManager { EventLogger = _systemEventLogger };
+
             var streamId = fileManager.GetStreamId($@"{residentId}\{mediaPathType}", filename);
-            var responseTypeId = ResidentRules.GetResponseTypeId(mediaPathTypeId);
+            if (streamId == new Guid()) return $"Could not get StreamId for file <b>{filename}</b>";
 
-            var mf = new ResidentMediaFileEdit
-            {
-                StreamId = streamId,
-                ResidentId = residentId,
-                ResponseTypeId = responseTypeId,
-                MediaPathTypeId = mediaPathTypeId,
-                IsLinked = false
-            };
+            var rules = new ResidentRules();
+            var errMsg = rules.AddMediaFile(streamId, residentId, mediaPathTypeId, dateAdded, false, out newId);
 
-            int newId;
-            var errorMessage = _residentMediaFilesClient.Post(mf, out newId);
+            if (!string.IsNullOrEmpty(errMsg)) return errMsg;
 
-            if (errorMessage != null) return errorMessage;
+            if (!ResidentRules.IsMediaTypeThumbnail(mediaPathTypeId)) return errMsg;
 
-            if (ResidentRules.IsMediaTypeThumbnail(mediaPathTypeId))
-            {
-                var thumbnailGenerator = new ThumbnailGenerator();
-                errorMessage = thumbnailGenerator.Generate(streamId);
-            }
+            var thumbnailGenerator = new ThumbnailGenerator();
+            errMsg = thumbnailGenerator.Generate(streamId);
 
-            return errorMessage;
+            return errMsg;
         }
 
         private ResidentProfileViewModel LoadResidentProfileViewModel(int id, string idsearch, string firstname, string lastname, string sortcolumn, int? sortdescending)

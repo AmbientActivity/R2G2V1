@@ -22,6 +22,20 @@ namespace Keebee.AAT.BusinessRules
             _mediaPathTypesClient = new MediaPathTypesClient();
         }
 
+        public string AddMediaFile(Guid streamId, int mediaPathTypeId, string dateAdded, bool isLinked, out int newId)
+        {
+            var mf = new PublicMediaFileEdit
+            {
+                StreamId = streamId,
+                ResponseTypeId = PublicProfileRules.GetResponseTypeId(mediaPathTypeId),
+                MediaPathTypeId = mediaPathTypeId,
+                IsLinked = isLinked,
+                DateAdded = DateTime.Parse(dateAdded)
+            };
+
+            return _publicMediaFilesClient.Post(mf, out newId);
+        }
+
         public IEnumerable<ResponseType> GetValidResponseTypes(int mediaPathTypeId)
         {
             var responseTypes = _responseTypesClient.Get();

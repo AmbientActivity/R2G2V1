@@ -443,6 +443,7 @@
                             maxFileUploads: mediaPathType.maxfileuploads,
                             callback: function (successful, rejected) {
                                 if (successful.length > 0) {
+                                    var date = new Date();
                                     utilities.job.execute({
                                         url: site.url + "PublicProfile/AddFiles",
                                         type: "POST",
@@ -450,7 +451,8 @@
                                         params: {
                                             filenames: successful,
                                             mediaPath: mediaPathType.path,
-                                            mediaPathTypeId: mediaPathType.id
+                                            mediaPathTypeId: mediaPathType.id,
+                                            dateAdded: date.toISOString()
                                         }
                                     })
                                     .then(function(addResult) {
@@ -459,6 +461,7 @@
                                         self.sort({ afterSave: true });
                                         self.selectedIds([]);
                                         self.checkSelectAll(false);
+                                        self.marqueeRows(addResult.NewIds);
                                         enableDetail();
                                     })
                                     .catch(function () {
@@ -483,6 +486,7 @@
                     self.addFromSharedLibray = function () {
                         self.clearStreams();
                         var mediaPathTypeDesc = self.selectedMediaPathType().shortdescription;
+                        var date = new Date();
 
                         sharedlibraryadd.view.show({
                             profileId: 0,
@@ -497,15 +501,17 @@
                                 waitMessage: "Adding...",
                                 params: {
                                     streamIds: streamIds,
-                                    mediaPathTypeId: self.selectedMediaPathType().id
+                                    mediaPathTypeId: self.selectedMediaPathType().id,
+                                    dateAdded: date.toISOString()
                                 }
                             })
-                            .then(function(saveResult) {
+                            .then(function (saveResult) {
                                 lists.FileList = saveResult.FileList;
                                 createFileArray(lists.FileList);
                                 self.sort({ afterSave: true });
                                 self.selectedIds([]);
                                 self.checkSelectAll(false);
+                                self.marqueeRows(saveResult.NewIds);
                                 enableDetail();
                             })
                             .catch(function() {
@@ -514,6 +520,15 @@
                         })
                         .catch(function () {
                             enableDetail();
+                        });
+                    };
+
+                    self.marqueeRows = function(rowIds) {
+                        $(rowIds).each(function (index, value) {
+                            $("#row_" + value).addClass("row-added");
+                            setTimeout(function () {
+                                $("#row_" + value).removeClass("row-added");
+                            }, 1500);
                         });
                     };
 

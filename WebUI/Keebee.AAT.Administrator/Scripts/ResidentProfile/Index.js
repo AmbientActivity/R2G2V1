@@ -302,7 +302,7 @@
 
                         var afterSave = typeof header.afterSave !== "undefined" ? header.afterSave : false;
                         var afterDelete = typeof header.afterDelete !== "undefined" ? header.afterDelete : false;
-                        var sortKey;
+                        var sortKey = currentSortKey;
 
                         if (!afterSave && !afterDelete) {
                             sortKey = header.sortKey;

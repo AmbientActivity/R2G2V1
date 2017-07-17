@@ -14,6 +14,7 @@
 
             var currentSortKey = "firstname";
             var primarySortKey = "firstname";
+            var dateUpdatedSortKey = "dateupdated";
             var sortDescending = false;
             var isBinding = true;   // <-- for initial page load only - used to stop the sort from being executed
             var isRendering = true; // <-- for initial page load only - used to set focus to 'First Name' search input
@@ -199,9 +200,10 @@
                         if (isBinding) return;
 
                         var afterSave = typeof header.afterSave !== "undefined" ? header.afterSave : false;
-                        var sortKey;
+                        var afterDelete = typeof header.afterDelete !== "undefined" ? header.afterDelete : false;
+                        var sortKey = currentSortKey;
 
-                        if (!afterSave) {
+                        if (!afterSave && !afterDelete) {
                             sortKey = header.sortKey;
 
                             if (sortKey !== currentSortKey) {
@@ -210,7 +212,10 @@
                                 sortDescending = !sortDescending;
                             }
                             currentSortKey = sortKey;
-                        } else {
+                        } else if (afterSave) {
+                            sortKey = dateUpdatedSortKey;
+                            sortDescending = true;
+                        } else if (afterDelete) {
                             sortKey = currentSortKey;
                         }
 
@@ -384,7 +389,7 @@
                                 .then(function(result) {
                                     lists.ResidentList = result.ResidentList;
                                     createResidentArray(lists.ResidentList);
-                                    self.sort({ afterSave: true });
+                                    self.sort({ afterDelete: true });
                                     cmdAdd.prop("disabled", false);
                                 })
                                 .catch(function() {

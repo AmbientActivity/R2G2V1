@@ -313,13 +313,13 @@
                             } else {
                                 sortDescending = !sortDescending;
                             }
-                            currentSortKey = sortKey;
                         } else if (afterSave) {
                             sortKey = dateAddedSortKey;
                             sortDescending = true;
                         } else if (afterDelete) {
                             sortKey = currentSortKey;
                         }
+                        currentSortKey = sortKey;
 
                         var isboolean = false;
                         if (typeof header.boolean !== "undefined") {

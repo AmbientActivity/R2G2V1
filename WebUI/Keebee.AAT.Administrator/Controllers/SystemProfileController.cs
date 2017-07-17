@@ -8,6 +8,7 @@ using System.Linq;
 using System.Web.Mvc;
 using System;
 using System.Collections.ObjectModel;
+using Microsoft.Ajax.Utilities;
 
 namespace Keebee.AAT.Administrator.Controllers
 {
@@ -139,7 +140,7 @@ namespace Keebee.AAT.Administrator.Controllers
 
         [HttpPost]
         [Authorize]
-        public JsonResult AddSharedMediaFiles(Guid[] streamIds, int mediaPathTypeId, string dateAdded)
+        public JsonResult AddSharedMediaFiles(Guid[] streamIds, int mediaPathTypeId)
         {
             string errMsg = null;
             var newIds = new Collection<int>();
@@ -147,6 +148,8 @@ namespace Keebee.AAT.Administrator.Controllers
             try
             {
                 var rules = new PublicProfileRules();
+                var dateAdded = DateTime.Now;
+
                 if (streamIds != null)
                 {
                     foreach (var streamId in streamIds)

@@ -91,13 +91,15 @@ namespace Keebee.AAT.Administrator.Controllers
 
         [HttpPost]
         [Authorize]
-        public JsonResult AddFiles(string[] filenames, string mediaPath, int mediaPathTypeId, string dateAdded)
+        public JsonResult AddFiles(string[] filenames, string mediaPath, int mediaPathTypeId)
         {
             string errMsg = null;
             var newIds = new Collection<int>();
 
             try
             {
+                var dateAdded = DateTime.Now;
+
                 foreach (var filename in filenames)
                 {
                     int newId;
@@ -246,16 +248,18 @@ namespace Keebee.AAT.Administrator.Controllers
 
         [HttpPost]
         [Authorize]
-        public JsonResult AddSharedMediaFiles(Guid[] streamIds, int mediaPathTypeId, string dateAdded)
+        public JsonResult AddSharedMediaFiles(Guid[] streamIds, int mediaPathTypeId)
         {
             string errMsg = null;
             var newIds = new Collection<int>();
 
             try
             {
-                var rules = new PublicProfileRules();
                 if (streamIds != null)
                 {
+                    var rules = new PublicProfileRules();
+                    var dateAdded = DateTime.Now;
+
                     foreach (var streamId in streamIds)
                     {
                         int newId;
@@ -282,7 +286,7 @@ namespace Keebee.AAT.Administrator.Controllers
             }, JsonRequestBehavior.AllowGet);
         }
 
-        private string AddPublicMediaFileFromFilename(string filename, int mediaPathTypeId, string mediaPathType, string dateAdded, out int newId)
+        private string AddPublicMediaFileFromFilename(string filename, int mediaPathTypeId, string mediaPathType, DateTime dateAdded, out int newId)
         {
             newId = -1;
             var fileManager = new FileManager { EventLogger = _systemEventLogger };

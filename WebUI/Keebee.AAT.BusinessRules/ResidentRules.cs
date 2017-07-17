@@ -133,7 +133,7 @@ namespace Keebee.AAT.BusinessRules
             return isValid;
         }
 
-        public string AddMediaFile(Guid streamId, int residentId, int mediaPathTypeId, string dateAdded, bool isLinked, out int newId)
+        public string AddMediaFile(Guid streamId, int residentId, int mediaPathTypeId, DateTime dateAdded, bool isLinked, out int newId)
         {
             var mf = new ResidentMediaFileEdit
             {
@@ -142,7 +142,7 @@ namespace Keebee.AAT.BusinessRules
                 ResponseTypeId = GetResponseTypeId(mediaPathTypeId),
                 MediaPathTypeId = mediaPathTypeId,
                 IsLinked = isLinked,
-                DateAdded = DateTime.Parse(dateAdded)
+                DateAdded = dateAdded
             };
 
             return _residentMediaFilesClient.Post(mf, out newId);

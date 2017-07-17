@@ -421,7 +421,6 @@
                             maxFileUploads: mediaPathType.maxfileuploads,
                             callback: function (successful, rejected) {
                                 if (successful.length > 0) {
-                                    var date = new Date();
                                     utilities.job.execute({
                                         url: site.url + "ResidentProfile/AddFiles",
                                         type: "POST",
@@ -430,8 +429,7 @@
                                             filenames: successful,
                                             residentId: config.residentid,
                                             mediaPath: mediaPathType.path,
-                                            mediaPathTypeId: mediaPathType.id,
-                                            dateAdded: date.toISOString()
+                                            mediaPathTypeId: mediaPathType.id
                                         }
                                     })
                                     .then(function (addResult) {
@@ -465,7 +463,6 @@
                     self.addFromSharedLibray = function () {
                         self.clearStreams();
                         var mediaPathTypeDesc = self.selectedMediaPathType().shortdescription;
-                        var date = new Date();;
 
                         sharedlibraryadd.view.show({
                             profileId: config.residentid,
@@ -481,8 +478,7 @@
                                 params: {
                                     streamIds: streamIds,
                                     residentId: config.residentid,
-                                    mediaPathTypeId: self.selectedMediaPathType().id,
-                                    dateAdded: date.toISOString()
+                                    mediaPathTypeId: self.selectedMediaPathType().id
                                 }
                             })
                             .then(function(saveResult) {

@@ -283,7 +283,6 @@
                     self.addFromSharedLibray = function () {
                         self.clearStreams();
                         var mediaPathTypeDesc = self.selectedMediaPathType().shortdescription;
-                        var date = new Date();
 
                         sharedlibraryadd.view.show({
                             profileId: 0,
@@ -298,8 +297,7 @@
                                 waitMessage: "Adding...",
                                 params: {
                                     streamIds: streamIds,
-                                    mediaPathTypeId: self.selectedMediaPathType().id,
-                                    dateAdded: date.toISOString()
+                                    mediaPathTypeId: self.selectedMediaPathType().id
                                 }
                             })
                             .then(function(saveResult) {

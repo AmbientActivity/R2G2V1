@@ -59,10 +59,12 @@ namespace Keebee.AAT.Operations.Service.Services
             var el = container.ResponseTypes.Where(e => e.Id == id).SingleOrDefault();
             if (el == null) return;
 
-            if (el.ResponseTypeCategoryId != null)
-                el.ResponseTypeCategoryId = responseType.ResponseTypeCategoryId;
-
-            if (el.Description != null)
+            el.ResponseTypeCategoryId = responseType.ResponseTypeCategoryId;
+            el.InteractiveActivityTypeId = responseType.InteractiveActivityTypeId;
+            el.IsSystem = responseType.IsSystem;
+            el.IsRandom = responseType.IsRandom;
+            
+            if (!string.IsNullOrEmpty(el.Description))
                 el.Description = responseType.Description;
 
             container.UpdateObject(el);

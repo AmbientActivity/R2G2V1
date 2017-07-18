@@ -58,6 +58,7 @@ namespace Keebee.AAT.Display.Caregiver
 
         private readonly ResidentsClient _residentsClient = new ResidentsClient();
         private readonly ResidentMediaFilesClient _residentMediaFilesClient = new ResidentMediaFilesClient();
+        private readonly InteractiveActivityTypesClient _interactiveActivityTypesClient = new InteractiveActivityTypesClient();
         private IEnumerable<Thumbnail> _thumbnails;
 
         // constants
@@ -83,6 +84,7 @@ namespace Keebee.AAT.Display.Caregiver
         private readonly ImageList _imageListAudio;
 
         private IEnumerable<ResponseTypePaths> _media;
+        private IEnumerable<InteractiveActivityType> _activityTypes;
 
         // playlist
         private string[] _musicPlaylist;
@@ -164,7 +166,7 @@ namespace Keebee.AAT.Display.Caregiver
             InitializeStartupPosition();
             LoadThumbnails();
             _currentResident = _publicProfile;
-
+            _activityTypes = _interactiveActivityTypesClient.Get();
         }
 
         #region initiialization
@@ -604,28 +606,22 @@ namespace Keebee.AAT.Display.Caregiver
                     ? _currentResident.GameDifficultyLevel
                     : 1;
 
-                var interactiveResponseTypes = _config.ConfigDetails
-                    .Where(rt => rt.ResponseType.InteractiveActivityType != null)
-                    .Select(rt => rt.ResponseType)
-                    .GroupBy(rt => rt.Id, (key, r) => r.FirstOrDefault())
-                    .ToArray();
-
                 var rowIndex = 0;
-                foreach (var rt in interactiveResponseTypes)
+                foreach (var at in _activityTypes)
                 {
                     lvActivities.Items.Add(new ListViewItem(new[]
                     {
                         string.Empty,
                         gameDifficulatyLevel.ToString(),
-                        rt.Description,
-                        rt.InteractiveActivityType.Id.ToString(),
-                        rt.InteractiveActivityType.SwfFile
+                        at.Description,
+                        at.Id.ToString(),
+                        at.SwfFile
                     })
                     {
                         BackColor = ((rowIndex & 1) == 0) ? Color.AliceBlue : Color.White
                     });
 
-                    var image = ActivityThumbnail.Get(rt.InteractiveActivityType.Id);
+                    var image = ActivityThumbnail.Get(at.Id);
                     if (image != null)
                     {
                         _imageListActivities.Images.Add(image);

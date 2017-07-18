@@ -80,6 +80,7 @@
     </Compile>
     <Compile Include="ODataHost.cs" />
     <Compile Include="Services\ActiveResidentService.cs" />
+    <Compile Include="Services\InteractiveActivityTypeService.cs" />
     <Compile Include="Services\MediaPathTypeService.cs" />
     <Compile Include="Services\PublicMediaFileService.cs" />
     <Compile Include="Services\ResidentMediaFileService.cs" />

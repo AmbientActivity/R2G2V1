@@ -37,11 +37,12 @@
             // 
             this.btnExit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnExit.BackColor = System.Drawing.SystemColors.ControlDarkDark;
+            this.btnExit.FontSize = MetroFramework.MetroButtonSize.Tall;
             this.btnExit.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
-            this.btnExit.Location = new System.Drawing.Point(577, -2);
+            this.btnExit.Location = new System.Drawing.Point(541, -1);
             this.btnExit.Margin = new System.Windows.Forms.Padding(0);
             this.btnExit.Name = "btnExit";
-            this.btnExit.Size = new System.Drawing.Size(64, 64);
+            this.btnExit.Size = new System.Drawing.Size(100, 64);
             this.btnExit.TabIndex = 2;
             this.btnExit.Text = "Exit";
             this.btnExit.UseCustomBackColor = true;
@@ -52,6 +53,7 @@
             // activityPlayer1
             // 
             this.activityPlayer1.BackColor = System.Drawing.Color.Yellow;
+            this.activityPlayer1.ForeColor = System.Drawing.SystemColors.ControlText;
             this.activityPlayer1.Location = new System.Drawing.Point(161, 12);
             this.activityPlayer1.Name = "activityPlayer1";
             this.activityPlayer1.Size = new System.Drawing.Size(118, 54);

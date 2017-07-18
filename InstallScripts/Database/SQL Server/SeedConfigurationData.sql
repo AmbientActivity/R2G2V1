@@ -14,8 +14,8 @@ SET IDENTITY_INSERT [dbo].[Roles] OFF
 
 -- users
 SET IDENTITY_INSERT [dbo].[Users] ON 
-INSERT [dbo].[Users] ([Id], [Username], [Password]) VALUES (1, 'admin', '81DC9BDB52D04DC20036DBD8313ED055') -- 1234
-INSERT [dbo].[Users] ([Id], [Username], [Password]) VALUES (2, 'caregiver', 'F11CE51888FFA4F1D96CBE1C1AA0C4DF') -- @dmin
+INSERT [dbo].[Users] ([Id], [Username], [Password]) VALUES (1, 'admin', 'F11CE51888FFA4F1D96CBE1C1AA0C4DF') -- @dmin
+INSERT [dbo].[Users] ([Id], [Username], [Password]) VALUES (2, 'caregiver', '81DC9BDB52D04DC20036DBD8313ED055') -- 1234
 SET IDENTITY_INSERT [dbo].[Users] OFF
 
 -- user roles

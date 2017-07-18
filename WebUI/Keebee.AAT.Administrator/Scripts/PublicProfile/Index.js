@@ -257,6 +257,7 @@
                                 self.mediaPathTypes.push(
                                 {
                                     id: value.Id,
+                                    responsetypeid: value.ResponseTypeId,
                                     category: value.Category,
                                     description: value.Description,
                                     shortdescription: value.ShortDescription,

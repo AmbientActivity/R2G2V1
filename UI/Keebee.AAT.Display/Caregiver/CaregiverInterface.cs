@@ -744,11 +744,11 @@ namespace Keebee.AAT.Display.Caregiver
 
         #region play media
 
-        private void DisplayImages(int mediaTypeId, Guid selectedStreamId, int? responseTypdId = null)
+        private void DisplayImages(int mediaTypeId, Guid selectedStreamId, int? responseTypeId = null)
         {
             try
             {
-                var images = GetFilePaths(mediaTypeId, responseTypdId, selectedStreamId);
+                var images = GetFilePaths(mediaTypeId, responseTypeId, selectedStreamId);
 
                 if (File.Exists(images[0]))
                 {

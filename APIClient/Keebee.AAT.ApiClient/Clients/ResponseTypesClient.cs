@@ -24,7 +24,7 @@ namespace Keebee.AAT.ApiClient.Clients
 
         public IEnumerable<ResponseType> GetRandomTypes()
         {
-            var request = new RestRequest($"responsetypes/randomtypes", Method.GET);
+            var request = new RestRequest("responsetypes/randomtypes", Method.GET);
             var data = Execute(request);
             var responseTypes = JsonConvert.DeserializeObject<IEnumerable<ResponseType>>(data.Content);
 

@@ -13,6 +13,8 @@ namespace Keebee.AAT.DataAccess.Models
 
         public virtual MediaPathTypeCategory MediaPathTypeCategory { get; set; }
 
+        public int ResponseTypeId { get; set; }
+
         [Required]
         public string Path { get; set; }
         [Required]

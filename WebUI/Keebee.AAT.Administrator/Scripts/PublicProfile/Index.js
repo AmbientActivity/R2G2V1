@@ -233,6 +233,7 @@
                             .each(function(index, value) {
                                 self.files.push({
                                     id: value.Id,
+                                    responsetypeid: value.ResponseTypeId,
                                     streamid: value.StreamId,
                                     filename: value.Filename,
                                     filetype: value.FileType,
@@ -450,7 +451,8 @@
                                         params: {
                                             filenames: successful,
                                             mediaPath: mediaPathType.path,
-                                            mediaPathTypeId: mediaPathType.id
+                                            mediaPathTypeId: mediaPathType.id,
+                                            responseTypeId: mediaPathType.responsetypeid
                                         }
                                     })
                                     .then(function(addResult) {
@@ -498,7 +500,8 @@
                                 waitMessage: "Adding...",
                                 params: {
                                     streamIds: streamIds,
-                                    mediaPathTypeId: self.selectedMediaPathType().id
+                                    mediaPathTypeId: self.selectedMediaPathType().id,
+                                    responseTypeId: self.selectedMediaPathType().responsetypeid
                                 }
                             })
                             .then(function (saveResult) {
@@ -545,7 +548,8 @@
                                     waitMessage: "Deleting...",
                                     params: {
                                         ids: self.selectedIds(),
-                                        mediaPathTypeId: self.selectedMediaPathType().id
+                                        mediaPathTypeId: self.selectedMediaPathType().id,
+                                        responseTypeId: self.selectedMediaPathType().responsetypeid
                                     }
                                 })
                                 .then(function (result) {

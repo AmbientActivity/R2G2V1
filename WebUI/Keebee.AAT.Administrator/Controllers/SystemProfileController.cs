@@ -56,6 +56,7 @@ namespace Keebee.AAT.Administrator.Controllers
                     .Select(x => new MediaPathType
                     {
                         Id = x.Id,
+                        ResponseTypeId = x.ResponseTypeId,
                         Category = x.Category,
                         Description = x.Description,
                         ShortDescription = x.ShortDescription
@@ -77,7 +78,7 @@ namespace Keebee.AAT.Administrator.Controllers
 
         [HttpPost]
         [Authorize]
-        public JsonResult DeleteSelected(int[] ids, int mediaPathTypeId)
+        public JsonResult DeleteSelected(int[] ids, int mediaPathTypeId, int responseTypeId)
         {
             string errMsg;
 
@@ -85,7 +86,7 @@ namespace Keebee.AAT.Administrator.Controllers
             {
                 var rules = new PublicProfileRules();
 
-                errMsg = rules.CanDeleteMultiple(ids.Length, mediaPathTypeId);
+                errMsg = rules.CanDeleteMultiple(ids.Length, mediaPathTypeId, responseTypeId);
                 if (errMsg.Length > 0)
                     throw new Exception(errMsg);
 
@@ -139,7 +140,7 @@ namespace Keebee.AAT.Administrator.Controllers
 
         [HttpPost]
         [Authorize]
-        public JsonResult AddSharedMediaFiles(Guid[] streamIds, int mediaPathTypeId)
+        public JsonResult AddSharedMediaFiles(Guid[] streamIds, int mediaPathTypeId, int responseTypeId)
         {
             string errMsg = null;
             var newIds = new Collection<int>();
@@ -154,7 +155,7 @@ namespace Keebee.AAT.Administrator.Controllers
                     foreach (var streamId in streamIds)
                     {
                         int newId;
-                        errMsg = rules.AddMediaFile(streamId, mediaPathTypeId, dateAdded, true, out newId);
+                        errMsg = rules.AddMediaFile(streamId, mediaPathTypeId, responseTypeId, dateAdded, true, out newId);
 
                         if (!string.IsNullOrEmpty(errMsg))
                             throw new Exception(errMsg);

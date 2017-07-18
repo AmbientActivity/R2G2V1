@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-// Generation date: 2017-07-15 4:09:34 PM
+// Generation date: 2017-07-18 5:17:55 PM
 namespace Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models
 {
     /// <summary>
@@ -2795,6 +2795,7 @@ namespace Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models
         /// Create a new MediaPathType object.
         /// </summary>
         /// <param name="ID">Initial value of Id.</param>
+        /// <param name="responseTypeId">Initial value of ResponseTypeId.</param>
         /// <param name="path">Initial value of Path.</param>
         /// <param name="description">Initial value of Description.</param>
         /// <param name="shortDescription">Initial value of ShortDescription.</param>
@@ -2806,6 +2807,7 @@ namespace Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models
         /// <param name="isSharable">Initial value of IsSharable.</param>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
         public static MediaPathType CreateMediaPathType(int ID, 
+                    int responseTypeId, 
                     string path, 
                     string description, 
                     string shortDescription, 
@@ -2818,6 +2820,7 @@ namespace Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models
         {
             MediaPathType mediaPathType = new MediaPathType();
             mediaPathType.Id = ID;
+            mediaPathType.ResponseTypeId = responseTypeId;
             mediaPathType.Path = path;
             mediaPathType.Description = description;
             mediaPathType.ShortDescription = shortDescription;
@@ -2875,6 +2878,29 @@ namespace Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models
         private global::System.Nullable<int> _MediaPathTypeCategoryId;
         partial void OnMediaPathTypeCategoryIdChanging(global::System.Nullable<int> value);
         partial void OnMediaPathTypeCategoryIdChanged();
+        /// <summary>
+        /// There are no comments for Property ResponseTypeId in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        [global::Microsoft.OData.Client.OriginalNameAttribute("ResponseTypeId")]
+        public int ResponseTypeId
+        {
+            get
+            {
+                return this._ResponseTypeId;
+            }
+            set
+            {
+                this.OnResponseTypeIdChanging(value);
+                this._ResponseTypeId = value;
+                this.OnResponseTypeIdChanged();
+                this.OnPropertyChanged("ResponseTypeId");
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private int _ResponseTypeId;
+        partial void OnResponseTypeIdChanging(int value);
+        partial void OnResponseTypeIdChanged();
         /// <summary>
         /// There are no comments for Property Path in the schema.
         /// </summary>
@@ -6271,6 +6297,7 @@ namespace Keebee.AAT.Operations.Service.KeebeeAAT
         </Key>
         <Property Name=""Id"" Type=""Edm.Int32"" Nullable=""false"" />
         <Property Name=""MediaPathTypeCategoryId"" Type=""Edm.Int32"" />
+        <Property Name=""ResponseTypeId"" Type=""Edm.Int32"" Nullable=""false"" />
         <Property Name=""Path"" Type=""Edm.String"" Nullable=""false"" />
         <Property Name=""Description"" Type=""Edm.String"" Nullable=""false"" />
         <Property Name=""ShortDescription"" Type=""Edm.String"" Nullable=""false"" />

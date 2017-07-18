@@ -38,6 +38,7 @@ namespace Keebee.AAT.Operations.Controllers
                 {
                     x.Id,
                     Category = x.MediaPathTypeCategory.Description,
+                    x.ResponseTypeId,
                     x.Path,
                     x.Description,
                     x.ShortDescription,
@@ -70,6 +71,7 @@ namespace Keebee.AAT.Operations.Controllers
 
             exObj.Id = mediaPathType.Id;
             exObj.Category = mediaPathType.MediaPathTypeCategory.Description;
+            exObj.ResponseTypeId = mediaPathType.ResponseTypeId;
             exObj.Path = mediaPathType.Path;
             exObj.Description = mediaPathType.Description;
             exObj.ShortDescription = mediaPathType.ShortDescription;
@@ -101,6 +103,7 @@ namespace Keebee.AAT.Operations.Controllers
                 {
                     x.Id,
                     Category = x.MediaPathTypeCategory.Description,
+                    x.ResponseTypeId,
                     x.Path,
                     x.Description,
                     x.ShortDescription,

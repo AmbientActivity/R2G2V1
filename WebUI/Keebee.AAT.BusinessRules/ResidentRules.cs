@@ -133,13 +133,13 @@ namespace Keebee.AAT.BusinessRules
             return isValid;
         }
 
-        public string AddMediaFile(Guid streamId, int residentId, int mediaPathTypeId, DateTime dateAdded, bool isLinked, out int newId)
+        public string AddMediaFile(Guid streamId, int residentId, int mediaPathTypeId, int responseTypeId, DateTime dateAdded, bool isLinked, out int newId)
         {
             var mf = new ResidentMediaFileEdit
             {
                 StreamId = streamId,
                 ResidentId = residentId,
-                ResponseTypeId = GetResponseTypeId(mediaPathTypeId),
+                ResponseTypeId = responseTypeId,
                 MediaPathTypeId = mediaPathTypeId,
                 IsLinked = isLinked,
                 DateAdded = dateAdded
@@ -198,59 +198,6 @@ namespace Keebee.AAT.BusinessRules
             return mediaPathTypeId != null
                 ? _mediaPathTypesClient.Get((int)mediaPathTypeId).ShortDescription
                 : _mediaPathTypesClient.Get(MediaPathTypeId.ImagesGeneral).ShortDescription;
-        }
-
-        public static int GetResponseTypeId(int mediaPathTypeId)
-        {
-            var responseTypeId = -1;
-
-            switch (mediaPathTypeId)
-            {
-                case MediaPathTypeId.ImagesPersonal:
-                case MediaPathTypeId.ImagesGeneral:
-                    responseTypeId = ResponseTypeId.SlideShow;
-                    break;
-                case MediaPathTypeId.HomeMovies:
-                case MediaPathTypeId.TVShows:
-                    responseTypeId = ResponseTypeId.Television;
-                    break;
-                case MediaPathTypeId.Music:
-                case MediaPathTypeId.RadioShows:
-                    responseTypeId = ResponseTypeId.Radio;
-                    break;
-                case MediaPathTypeId.MatchingGameShapes:
-                case MediaPathTypeId.MatchingGameSounds:
-                    responseTypeId = ResponseTypeId.MatchingGame;
-                    break;
-            }
-
-            return responseTypeId;
-        }
-
-        public IEnumerable<MediaFile> GetAvailableSharedMediaFiles(int residentId, int mediaPathTypeId)
-        {
-            var mediaSource = new MediaSourcePath();
-            var mediaPath = GetMediaPath(mediaPathTypeId);
-
-            var sharedPaths = _mediaFilesClient.GetForPath($@"{mediaSource.SharedLibrary}\{mediaPath}").ToArray();
-            var responseTypeId = GetResponseTypeId(mediaPathTypeId);
-
-            var paths = _residentMediaFilesClient.GetForResidentResponseType(residentId, responseTypeId);
-            IEnumerable<Guid> existingStreamIds = new List<Guid>();
-
-            if (paths != null)
-            {
-                existingStreamIds = paths
-                    .SelectMany(f => f.Files)
-                    .Where(f => f.IsLinked)
-                    .Select(f => f.StreamId);
-            }
-
-            var availableFiles = sharedPaths
-                .SelectMany(f => f.Files)
-                .Where(f => !existingStreamIds.Contains(f.StreamId));
-
-            return availableFiles;
         }
 
         public static string GetProfilePicture(byte[] binaryData)

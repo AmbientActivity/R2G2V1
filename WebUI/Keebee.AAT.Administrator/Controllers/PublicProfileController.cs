@@ -65,6 +65,7 @@ namespace Keebee.AAT.Administrator.Controllers
                     .Select(x => new MediaPathType
                     {
                         Id = x.Id,
+                        ResponseTypeId = x.ResponseTypeId,
                         Category = x.Category,
                         Description = x.Description,
                         ShortDescription = x.ShortDescription,
@@ -91,7 +92,7 @@ namespace Keebee.AAT.Administrator.Controllers
 
         [HttpPost]
         [Authorize]
-        public JsonResult AddFiles(string[] filenames, string mediaPath, int mediaPathTypeId)
+        public JsonResult AddFiles(string[] filenames, string mediaPath, int mediaPathTypeId, int responseTypeId)
         {
             string errMsg = null;
             var newIds = new Collection<int>();
@@ -103,7 +104,7 @@ namespace Keebee.AAT.Administrator.Controllers
                 foreach (var filename in filenames)
                 {
                     int newId;
-                    errMsg = AddPublicMediaFileFromFilename(filename, mediaPathTypeId, mediaPath, dateAdded, out newId);
+                    errMsg = AddPublicMediaFileFromFilename(filename, mediaPathTypeId, responseTypeId, mediaPath, dateAdded, out newId);
 
                     if (!string.IsNullOrEmpty(errMsg))
                         throw new Exception(errMsg);
@@ -176,7 +177,7 @@ namespace Keebee.AAT.Administrator.Controllers
 
         [HttpPost]
         [Authorize]
-        public JsonResult DeleteSelected(int[] ids, int mediaPathTypeId)
+        public JsonResult DeleteSelected(int[] ids, int mediaPathTypeId, int responseTypeId)
         {
             string errMsg;
 
@@ -184,7 +185,7 @@ namespace Keebee.AAT.Administrator.Controllers
             {
                 var rules = new PublicProfileRules();
 
-                errMsg = rules.CanDeleteMultiple(ids.Length, mediaPathTypeId);
+                errMsg = rules.CanDeleteMultiple(ids.Length, mediaPathTypeId, responseTypeId);
                 if (errMsg.Length > 0)
                     throw new Exception(errMsg);
 
@@ -248,7 +249,7 @@ namespace Keebee.AAT.Administrator.Controllers
 
         [HttpPost]
         [Authorize]
-        public JsonResult AddSharedMediaFiles(Guid[] streamIds, int mediaPathTypeId)
+        public JsonResult AddSharedMediaFiles(Guid[] streamIds, int mediaPathTypeId, int responseTypeId)
         {
             string errMsg = null;
             var newIds = new Collection<int>();
@@ -263,7 +264,7 @@ namespace Keebee.AAT.Administrator.Controllers
                     foreach (var streamId in streamIds)
                     {
                         int newId;
-                        errMsg = rules.AddMediaFile(streamId, mediaPathTypeId, dateAdded, true, out newId);
+                        errMsg = rules.AddMediaFile(streamId, mediaPathTypeId, responseTypeId, dateAdded, true, out newId);
 
                         if (!string.IsNullOrEmpty(errMsg))
                             throw new Exception(errMsg);
@@ -286,7 +287,7 @@ namespace Keebee.AAT.Administrator.Controllers
             }, JsonRequestBehavior.AllowGet);
         }
 
-        private string AddPublicMediaFileFromFilename(string filename, int mediaPathTypeId, string mediaPathType, DateTime dateAdded, out int newId)
+        private string AddPublicMediaFileFromFilename(string filename, int mediaPathTypeId, int responseTypeId, string mediaPathType, DateTime dateAdded, out int newId)
         {
             newId = -1;
             var fileManager = new FileManager { EventLogger = _systemEventLogger };
@@ -295,7 +296,7 @@ namespace Keebee.AAT.Administrator.Controllers
             if (streamId == new Guid()) return $"Could not get StreamId for file <b>{filename}</b>";
 
             var rules = new PublicProfileRules();
-            var errMsg = rules.AddMediaFile(streamId, mediaPathTypeId, dateAdded, false, out newId);
+            var errMsg = rules.AddMediaFile(streamId, mediaPathTypeId, responseTypeId, dateAdded, false, out newId);
 
             if (!string.IsNullOrEmpty(errMsg)) return errMsg;
 

@@ -164,6 +164,7 @@
                             self.mediaPathTypes.push(
                             {
                                 id: value.Id,
+                                responsetypeid: value.ResponseTypeId,
                                 category: value.Category,
                                 description: value.Description,
                                 shortdescription: value.ShortDescription
@@ -303,7 +304,8 @@
                                 waitMessage: "Adding...",
                                 params: {
                                     streamIds: streamIds,
-                                    mediaPathTypeId: self.selectedMediaPathType().id
+                                    mediaPathTypeId: self.selectedMediaPathType().id,
+                                    responseTypeId: self.selectedMediaPathType().responsetypeid
                                 }
                             })
                             .then(function(saveResult) {
@@ -350,7 +352,8 @@
                                     waitMessage: "Deleting...",
                                     params: {
                                         ids: self.selectedIds(),
-                                        mediaPathTypeId: self.selectedMediaPathType().id
+                                        mediaPathTypeId: self.selectedMediaPathType().id,
+                                        responseTypeId: self.selectedMediaPathType().responsetypeid
                                     }
                                 })
                                 .then(function (result) {

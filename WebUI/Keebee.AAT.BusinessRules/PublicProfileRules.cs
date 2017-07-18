@@ -22,12 +22,12 @@ namespace Keebee.AAT.BusinessRules
             _mediaPathTypesClient = new MediaPathTypesClient();
         }
 
-        public string AddMediaFile(Guid streamId, int mediaPathTypeId, DateTime dateAdded, bool isLinked, out int newId)
+        public string AddMediaFile(Guid streamId, int mediaPathTypeId, int responseTypeId, DateTime dateAdded, bool isLinked, out int newId)
         {
             var mf = new PublicMediaFileEdit
             {
                 StreamId = streamId,
-                ResponseTypeId = GetResponseTypeId(mediaPathTypeId),
+                ResponseTypeId = responseTypeId,
                 MediaPathTypeId = mediaPathTypeId,
                 IsLinked = isLinked,
                 DateAdded = dateAdded
@@ -82,10 +82,9 @@ namespace Keebee.AAT.BusinessRules
         }
 
         // when doing a bulk delete, ensure there is at least one media file remaining per response type
-        public string CanDeleteMultiple(int numSelected, int mediaPathTypeId)
+        public string CanDeleteMultiple(int numSelected, int mediaPathTypeId, int responseTypeId)
         {
             var result = string.Empty;
-            var responseTypeId = GetResponseTypeId(mediaPathTypeId);
             var mediaResponseTypes = _publicMediaFilesClient.GetForMediaPathType(mediaPathTypeId).ToArray();
 
             if (!mediaResponseTypes.Any()) return result;
@@ -165,68 +164,6 @@ namespace Keebee.AAT.BusinessRules
             }
 
             return isValid;
-        }
-
-        public static int GetResponseTypeId(int mediaPathTypeId)
-        {
-            var responseTypeId = -1;
-
-            switch (mediaPathTypeId)
-            {
-                case MediaPathTypeId.ImagesPersonal:
-                case MediaPathTypeId.ImagesGeneral:
-                    responseTypeId = ResponseTypeId.SlideShow;
-                    break;
-                case MediaPathTypeId.HomeMovies:
-                case MediaPathTypeId.TVShows:
-                    responseTypeId = ResponseTypeId.Television;
-                    break;
-                case MediaPathTypeId.Music:
-                case MediaPathTypeId.RadioShows:
-                    responseTypeId = ResponseTypeId.Radio;
-                    break;
-                case MediaPathTypeId.MatchingGameShapes:
-                case MediaPathTypeId.MatchingGameSounds:
-                    responseTypeId = ResponseTypeId.MatchingGame;
-                    break;
-                case MediaPathTypeId.Ambient:
-                    responseTypeId = ResponseTypeId.Ambient;
-                    break;
-                case MediaPathTypeId.Cats:
-                    responseTypeId = ResponseTypeId.Cats;
-                    break;
-                case MediaPathTypeId.Nature:
-                    responseTypeId = ResponseTypeId.Nature;
-                    break;
-                case MediaPathTypeId.Sports:
-                    responseTypeId = ResponseTypeId.Sports;
-                    break;
-            }
-
-            return responseTypeId;
-        }
-
-        public IEnumerable<MediaFile> GetAvailableSharedMediaFiles(int mediaPathTypeId)
-        {
-            var mediaSource = new MediaSourcePath();
-            var mediaPath = GetMediaPath(mediaPathTypeId);
-            var sharedPaths = _mediaFilesClient.GetForPath($@"{mediaSource.SharedLibrary}\{mediaPath}").ToArray();
-            var mediaResponseTypes = _publicMediaFilesClient.GetForMediaPathType(mediaPathTypeId).ToArray();
-            IEnumerable<Guid> existingStreamIds = new List<Guid>();
-
-            if (mediaResponseTypes.Any())
-            {
-                existingStreamIds = mediaResponseTypes.SelectMany(p => p.Paths)
-                    .SelectMany(f => f.Files)
-                    .Where(f => f.IsLinked)
-                    .Select(f => f.StreamId);
-            }
-
-            var availableFiles = sharedPaths
-                .SelectMany(f => f.Files)
-                .Where(f => !existingStreamIds.Contains(f.StreamId));
-
-            return availableFiles;
         }
 
         public static bool IsMediaTypeThumbnail(int mediaPathTypeId)

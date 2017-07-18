@@ -11,13 +11,13 @@ namespace Keebee.AAT.Operations.Service.Services
         IEnumerable<PublicMediaFile> Get();
         IEnumerable<PublicMediaFile> Get(bool isSystem);
         PublicMediaFile Get(int id);
-        IEnumerable<PublicMediaFile> GetForResponseType(int responseTypdId);
+        IEnumerable<PublicMediaFile> GetForResponseType(int responseTypeId);
         IEnumerable<PublicMediaFile> GetForMediaPathType(int mediaPathTypdId);
         IEnumerable<PublicMediaFile> GetForStreamId(Guid streamId);
         IEnumerable<PublicMediaFile> GetIdsForStreamId(Guid streamId);
         IEnumerable<PublicMediaFile> GetLinked();
         IEnumerable<PublicMediaFile> GetLinked(Guid streamId);
-        PublicMediaFile GetForResponseTypeFilename(int responseTypdId, string filename);
+        PublicMediaFile GetForResponseTypeFilename(int responseTypeId, string filename);
         int Post(PublicMediaFile publicMediaFile);
         void Patch(int id, PublicMediaFile publicMediaFile);
         void Delete(int id);
@@ -52,12 +52,12 @@ namespace Keebee.AAT.Operations.Service.Services
             return result;
         }
 
-        public IEnumerable<PublicMediaFile> GetForResponseType(int responseTypdId)
+        public IEnumerable<PublicMediaFile> GetForResponseType(int responseTypeId)
         {
             var container = new Container(new Uri(ODataHost.Url));
 
             var media = container.PublicMediaFiles
-                .AddQueryOption("$filter", $"ResponseTypeId eq {responseTypdId}")
+                .AddQueryOption("$filter", $"ResponseTypeId eq {responseTypeId}")
                 .Expand("MediaFile,MediaPathType($expand=MediaPathTypeCategory),ResponseType($expand=ResponseTypeCategory)")
                 .AsEnumerable();
 
@@ -139,12 +139,12 @@ namespace Keebee.AAT.Operations.Service.Services
             return media;
         }
 
-        public PublicMediaFile GetForResponseTypeFilename(int responseTypdId, string filename)
+        public PublicMediaFile GetForResponseTypeFilename(int responseTypeId, string filename)
         {
             var container = new Container(new Uri(ODataHost.Url));
 
             var media = container.PublicMediaFiles
-                .AddQueryOption("$filter", $"ResponseTypeId eq {responseTypdId} and " +
+                .AddQueryOption("$filter", $"ResponseTypeId eq {responseTypeId} and " +
                                            $"MediaFile/Filename eq '{filename.Replace("'", "''").Replace("&", "%26")}'")
                 .ToList();
 

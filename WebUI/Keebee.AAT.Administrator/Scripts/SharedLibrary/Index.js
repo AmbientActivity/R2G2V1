@@ -17,7 +17,6 @@
 
             // buttons
             var cmdDelete = $("#delete");
-            var cmdAdd = $("#add");
 
             // audio player
             var audioPlayer = $("#audio-player");
@@ -46,7 +45,7 @@
                 $("#loading-container").hide();
                 $("#table-header").show();
                 $("#table-detail").show();
-                cmdAdd.prop("disabled", false);
+                $("#add").removeAttr("disabled");
 
                 ko.bindingHandlers.tableUpdated = {
                         update: function (element, valueAccessor, allBindings) {

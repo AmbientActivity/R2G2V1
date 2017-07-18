@@ -35,6 +35,7 @@ namespace Keebee.AAT.Display.UserControls
 
         private int _maxIndex;
         private bool _isLoop;
+        private bool _isEnded;
 
         private string[] _files;
         private int _currentPlaylisIndex;
@@ -51,6 +52,7 @@ namespace Keebee.AAT.Display.UserControls
         {
             try
             {
+                _isEnded = false;
                 _isLoop = isLoop;
                 _maxIndex = files.Length - 1;
                 _isActiveEventLog = isActiveEventLog;
@@ -104,7 +106,8 @@ namespace Keebee.AAT.Display.UserControls
 
         public void Stop()
         {
-            axWindowsMediaPlayer1.Ctlcontrols.stop();
+            if (axWindowsMediaPlayer1.playState != WMPPlayState.wmppsMediaEnded)
+                axWindowsMediaPlayer1.Ctlcontrols.stop();
         }
 
         private void ConfigureComponents()
@@ -197,6 +200,8 @@ namespace Keebee.AAT.Display.UserControls
 
                 case (int)WMPPlayState.wmppsMediaEnded:
                     if (_isLoop) return;
+                    if (_isEnded) return;
+                    _isEnded = true;        // keep from calling this event multiple times
                     RaiseMediaCompleteEvent();
                     break;
             }

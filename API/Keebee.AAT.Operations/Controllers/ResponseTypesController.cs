@@ -93,6 +93,39 @@ namespace Keebee.AAT.Operations.Controllers
             return new DynamicJsonObject(exObj);
         }
 
+        // GET: api/ResponseTypes/randomtypes
+        [HttpGet]
+        [Route("randomtypes")]
+        public async Task<DynamicJsonArray> GetRandom()
+        {
+            IEnumerable<ResponseType> responseTypes = new Collection<ResponseType>();
+
+            await Task.Run(() =>
+            {
+                responseTypes = _responseTypeService.GetRandomTypes();
+            });
+
+            if (responseTypes == null) return new DynamicJsonArray(new object[0]);
+
+            var jArray = responseTypes
+                .Select(x => new
+                {
+                    x.Id,
+                    x.Description,
+                    InteractiveActivityType = (x.InteractiveActivityTypeId != null)
+                    ? new
+                    {
+                        x.InteractiveActivityType.Id,
+                        x.InteractiveActivityType.Description,
+                        x.InteractiveActivityType.SwfFile
+                    } : null,
+                    x.IsSystem,
+                    x.IsRandom
+                }).ToArray();
+
+            return new DynamicJsonArray(jArray);
+        }
+
         // POST: api/ResponseTypes
         [HttpPost]
         public int Post([FromBody]ResponseType responseType)

@@ -10,6 +10,7 @@ namespace Keebee.AAT.Operations.Service.Services
     {
         IEnumerable<ResponseType> Get();
         ResponseType Get(int id);
+        IEnumerable<ResponseType> GetRandomTypes();
         int Post(ResponseType responseType);
         void Patch(int id, ResponseType responseType);
         void Delete(int id);
@@ -40,6 +41,18 @@ namespace Keebee.AAT.Operations.Service.Services
             catch { result = null; }
 
             return result;
+        }
+
+        public IEnumerable<ResponseType> GetRandomTypes()
+        {
+            var container = new Container(new Uri(ODataHost.Url));
+
+            var responseTypes = container.ResponseTypes
+                .AddQueryOption("$filter", "IsRandom eq true")
+                .Expand("InteractiveActivityType")
+                .AsEnumerable();
+
+            return responseTypes;
         }
 
         public int Post(ResponseType responseType)

@@ -86,6 +86,8 @@ INSERT [dbo].[ResponseTypes] ([Id], [ResponseTypeCategoryId], [Description], [In
 INSERT [dbo].[ResponseTypes] ([Id], [ResponseTypeCategoryId], [Description], [InteractiveActivityTypeId], [IsSystem], [IsRandom]) VALUES (10, 5, 'Volume Control', null, 1, 0)
 INSERT [dbo].[ResponseTypes] ([Id], [ResponseTypeCategoryId], [Description], [InteractiveActivityTypeId], [IsSystem], [IsRandom]) VALUES (11, 4, 'Painting Activity', 2, 0, 1)
 INSERT [dbo].[ResponseTypes] ([Id], [ResponseTypeCategoryId], [Description], [InteractiveActivityTypeId], [IsSystem], [IsRandom]) VALUES (12, 4, 'Balloon Popping Game', 3, 0, 1)
+INSERT [dbo].[ResponseTypes] ([Id], [ResponseTypeCategoryId], [Description], [InteractiveActivityTypeId], [IsSystem], [IsRandom]) VALUES (13, 3, 'Nature Video', null, 0, 0)
+INSERT [dbo].[ResponseTypes] ([Id], [ResponseTypeCategoryId], [Description], [InteractiveActivityTypeId], [IsSystem], [IsRandom]) VALUES (14, 3, 'Sports Video', null, 0, 0)
 SET IDENTITY_INSERT [dbo].[ResponseTypes] OFF
 
 -- media path type categories
@@ -96,10 +98,11 @@ INSERT [dbo].[MediaPathTypeCategories] ([Id], [Description]) VALUES (3, 'Video')
 SET IDENTITY_INSERT [dbo].[MediaPathTypeCategories] OFF
 
 -- media path types
-SET IDENTITY_INSERT [dbo].[MediaPathTypes] ON 
+SET IDENTITY_INSERT [dbo].[MediaPathTypes] ON
+
 INSERT [dbo].[MediaPathTypes] ([Id], [Path], [Description], [ShortDescription], [AllowedExts], [AllowedTypes], [MaxFileBytes], [MaxFileUploads], [MediaPathTypeCategoryId], [IsSystem], [IsSharable]) 
 VALUES (1, 'audio\music', 'Audio (Music)', 'Music', 
-'mp3', 'audio/mp3', 10000000, 10, 1, 0, 1) -- 10 mb per song / 10 uploads at a time
+'mp3', 'audio/mp3', 15000000, 15, 1, 0, 1) -- 10 mb per song / 15 uploads at a time
 
 INSERT [dbo].[MediaPathTypes] ([Id], [Path], [Description], [ShortDescription], [AllowedExts], [AllowedTypes], [MaxFileBytes], [MaxFileUploads], [MediaPathTypeCategoryId], [IsSystem], [IsSharable])
 VALUES (2, 'audio\radio-shows', 'Audio (Radio Shows)', 'Radio Shows',
@@ -137,6 +140,14 @@ VALUES (9, 'videos\ambient', 'Videos (Ambient)', 'Ambient Videos',
 
 INSERT [dbo].[MediaPathTypes] ([Id], [Path], [Description], [ShortDescription],[AllowedExts], [AllowedTypes], [MaxFileBytes], [MaxFileUploads], [MediaPathTypeCategoryId], [IsSystem], [IsSharable]) 
 VALUES (10, 'videos\cats', 'Videos (Cats)', 'Cats Videos', 
+'mp4', 'video/mp4', 1000000000, 3, 3, 1, 1)  -- 1 gb per video / 3 uploads at a time
+
+INSERT [dbo].[MediaPathTypes] ([Id], [Path], [Description], [ShortDescription],[AllowedExts], [AllowedTypes], [MaxFileBytes], [MaxFileUploads], [MediaPathTypeCategoryId], [IsSystem], [IsSharable]) 
+VALUES (11, 'videos\nature', 'Videos (Nature)', 'Nature Videos', 
+'mp4', 'video/mp4', 1000000000, 3, 3, 1, 1)  -- 1 gb per video / 3 uploads at a time
+
+INSERT [dbo].[MediaPathTypes] ([Id], [Path], [Description], [ShortDescription],[AllowedExts], [AllowedTypes], [MaxFileBytes], [MaxFileUploads], [MediaPathTypeCategoryId], [IsSystem], [IsSharable]) 
+VALUES (12, 'videos\sports', 'Videos (Sports)', 'Sports Videos', 
 'mp4', 'video/mp4', 1000000000, 3, 3, 1, 1)  -- 1 gb per video / 3 uploads at a time
 
 SET IDENTITY_INSERT [dbo].[MediaPathTypes] OFF

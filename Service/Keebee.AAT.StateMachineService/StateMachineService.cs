@@ -5,6 +5,7 @@ using Keebee.AAT.SystemEventLogging;
 using Keebee.AAT.ApiClient.Clients;
 using Keebee.AAT.ApiClient.Models;
 using System;
+using System.Collections.Generic;
 using System.Web.Script.Serialization;
 using System.ServiceProcess;
 using System.Diagnostics;
@@ -17,6 +18,7 @@ namespace Keebee.AAT.StateMachineService
         // api client
         private readonly IActiveResidentClient _activeResidentClient;
         private readonly IConfigsClient _configsClient;
+        private readonly IResponseTypesClient _responseTypesClient;
 
         // message queue sender
         private readonly CustomMessageQueue _messageQueueResponse;
@@ -32,6 +34,9 @@ namespace Keebee.AAT.StateMachineService
         // active profile
         private ResidentMessage _activeResident;
 
+        // random response types (for "on/off" toggle)
+        private IEnumerable<ResponseType> _randomResponseTypes;
+
         // display state
         private bool _isDisplayActive;
 
@@ -45,6 +50,7 @@ namespace Keebee.AAT.StateMachineService
             _systemEventLogger = new SystemEventLogger(SystemEventLogType.StateMachineService);
             _activeResidentClient = new ActiveResidentClient();
             _configsClient = new ConfigsClient();
+            _responseTypesClient = new ResponseTypesClient();
 
             InitializeMessageQueueListeners();
 
@@ -124,13 +130,12 @@ namespace Keebee.AAT.StateMachineService
                     ConfigDetail = configDetail,
                     Resident = _activeResident,
                     IsActiveEventLog = _activeConfig.IsActiveEventLog,
-                    RandomResponseTypes = _activeConfig.ConfigDetails
-                        .Where(c => c.IsRandomReponseType)
-                        .Select(c => new RandomResponseTypeMessage
+                    RandomResponseTypes = _randomResponseTypes
+                        .Select(r => new RandomResponseTypeMessage
                         {
-                            Id = c.ResponseTypeId,
-                            InteractiveActivityTypeId = c.InteractiveActivityTypeId,
-                            SwfFile = c.SwfFile
+                            Id = r.Id,
+                            InteractiveActivityTypeId = r.InteractiveActivityType?.Id ?? 0,
+                            SwfFile = r.InteractiveActivityType?.SwfFile ?? string.Empty
                         }).Distinct().ToArray()
                 };
 
@@ -175,11 +180,13 @@ namespace Keebee.AAT.StateMachineService
                             PhidgetTypeId = x.PhidgetType.Id,
                             PhidgetStyleTypeId = x.PhidgetStyleType.Id,
                             IsSystemReponseType = x.ResponseType.IsSystem,
-                            IsRandomReponseType = x.ResponseType.IsRandom,
                             InteractiveActivityTypeId = x.ResponseType.InteractiveActivityType?.Id ?? 0,
                             SwfFile = x.ResponseType.InteractiveActivityType?.SwfFile ?? string.Empty
                         })
                 };
+
+                // reload random response types
+                _randomResponseTypes = _responseTypesClient.GetRandomTypes();
 
                 _systemEventLogger.WriteEntry($"The configuration '{config.Description}' has been activated");
             }

@@ -75,6 +75,8 @@ namespace Keebee.AAT.Shared
         public const int MatchingGameSounds = 8;
         public const int Ambient = 9;
         public const int Cats = 10;
+        public const int Nature = 11;
+        public const int Sports = 12;
     }
 
     public static class MediaPathTypeCategoryId
@@ -95,6 +97,8 @@ namespace Keebee.AAT.Shared
     {
         public const string AmbientDescription = "System (Ambient)";
         public const string CatsDescription = "System (Cats)";
+        public const string NatureDescription = "System (Nature)";
+        public const string SportsDescription = "System (Sports)";
         public const string AmbientShortDescription = "Videos";
         public const string CatsShortDescription = "Videos";
     }
@@ -184,6 +188,8 @@ namespace Keebee.AAT.Shared
         public const int VolumeControl = 10;
         public const int PaintingActivity = 11;
         public const int BalloonPoppingGame = 12;
+        public const int Nature = 13;
+        public const int Sports = 14;
     }
 
     public static class MediaPlayerControl

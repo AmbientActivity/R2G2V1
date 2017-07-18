@@ -301,11 +301,11 @@
                     self.sort = function (header) {
                         if (isBinding) return;
 
-                        var afterSave = typeof header.afterSave !== "undefined" ? header.afterSave : false;
+                        var afterAdd = typeof header.afterAdd !== "undefined" ? header.afterAdd : false;
                         var afterDelete = typeof header.afterDelete !== "undefined" ? header.afterDelete : false;
                         var sortKey = currentSortKey;
 
-                        if (!afterSave && !afterDelete) {
+                        if (!afterAdd && !afterDelete) {
                             sortKey = header.sortKey;
 
                             if (sortKey !== currentSortKey) {
@@ -313,7 +313,7 @@
                             } else {
                                 sortDescending = !sortDescending;
                             }
-                        } else if (afterSave) {
+                        } else if (afterAdd) {
                             sortKey = dateAddedSortKey;
                             sortDescending = true;
                         } else if (afterDelete) {
@@ -456,7 +456,7 @@
                                     .then(function(addResult) {
                                         lists.FileList = addResult.FileList;
                                         createFileArray(lists.FileList);
-                                        self.sort({ afterSave: true });
+                                        self.sort({ afterAdd: true });
                                         self.selectedIds([]);
                                         self.checkSelectAll(false);
                                         self.marqueeRows(addResult.NewIds);
@@ -504,7 +504,7 @@
                             .then(function (saveResult) {
                                 lists.FileList = saveResult.FileList;
                                 createFileArray(lists.FileList);
-                                self.sort({ afterSave: true });
+                                self.sort({ afterAdd: true });
                                 self.selectedIds([]);
                                 self.checkSelectAll(false);
                                 self.marqueeRows(saveResult.NewIds);
@@ -551,7 +551,7 @@
                                 .then(function (result) {
                                     lists.FileList = result.FileList;
                                     createFileArray(lists.FileList);
-                                    self.sort({ afterSave: true });
+                                    self.sort({ afterDelete: true });
                                     self.selectedIds([]);
                                     self.checkSelectAll(false);
                                     enableDetail();

@@ -60,7 +60,9 @@
                         <th class="col-checkbox"><input class="form-control checkbox-size-lg" type="checkbox" id="chk_all" data-bind="checked: selectAllIsSelected, click: selectAllRows" /></th>
                         <th id="col-thumbnail" class="col-thumbnail"></th>
                         <!-- ko foreach: columns -->
+                        <!-- if: visible -->
                         <th data-bind="attr: { id: 'col-' + sortKey}, click: $parent.sort, css: cssClass"><a href="javascript:void(0)" data-bind="text: title"></a></th>
+                        <!-- /ko -->
                         <!-- /ko -->
                         <td id="col-scrollbar" hidden></td>
                     </tr>

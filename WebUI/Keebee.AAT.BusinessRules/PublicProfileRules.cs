@@ -27,7 +27,7 @@ namespace Keebee.AAT.BusinessRules
             var mf = new PublicMediaFileEdit
             {
                 StreamId = streamId,
-                ResponseTypeId = PublicProfileRules.GetResponseTypeId(mediaPathTypeId),
+                ResponseTypeId = GetResponseTypeId(mediaPathTypeId),
                 MediaPathTypeId = mediaPathTypeId,
                 IsLinked = isLinked,
                 DateAdded = dateAdded
@@ -194,6 +194,12 @@ namespace Keebee.AAT.BusinessRules
                     break;
                 case MediaPathTypeId.Cats:
                     responseTypeId = ResponseTypeId.Cats;
+                    break;
+                case MediaPathTypeId.Nature:
+                    responseTypeId = ResponseTypeId.Nature;
+                    break;
+                case MediaPathTypeId.Sports:
+                    responseTypeId = ResponseTypeId.Sports;
                     break;
             }
 

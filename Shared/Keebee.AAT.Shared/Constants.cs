@@ -93,15 +93,6 @@ namespace Keebee.AAT.Shared
         public const string Video = "Video";
     }
 
-    public static class SystemMediaPathType
-    {
-        public const string AmbientDescription = "System (Ambient)";
-        public const string CatsDescription = "System (Cats)";
-        public const string NatureDescription = "System (Nature)";
-        public const string SportsDescription = "System (Sports)";
-        public const string AmbientShortDescription = "Videos";
-        public const string CatsShortDescription = "Videos";
-    }
     public static class MediaSourceType
     {
         public const string Personal = "Personal Content";

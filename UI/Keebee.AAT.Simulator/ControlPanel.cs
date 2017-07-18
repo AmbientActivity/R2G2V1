@@ -327,6 +327,16 @@ namespace Keebee.AAT.Simulator
             }
         }
 
+        private void NatureButtonClick(object sender, EventArgs e)
+        {
+            ExecuteResponse(ResponseTypeId.Nature, PhidgetTypeId.Sensor0);
+        }
+
+        private void SportsButtonClick(object sender, EventArgs e)
+        {
+            ExecuteResponse(ResponseTypeId.Sports, PhidgetTypeId.Sensor0);
+        }
+
         private void ActivateResidentClick(object sender, EventArgs e)
         {
             var id = Convert.ToInt32(cboResident.SelectedValue.ToString());

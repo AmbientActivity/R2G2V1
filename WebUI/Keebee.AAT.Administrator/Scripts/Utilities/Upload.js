@@ -169,7 +169,7 @@
                 $("#lnkGoBack").show();
                 $("#lblGoBackDisabled").hide();
                 $("#txtSearchFilename").prop("disabled", false);
-                $("#add").prop("disabled", false);
+                $("#add").removeAttr("disabled");
                 $("select").prop("disabled", false);
                 $("#main-menu").show();
                 $("#menu-login").show();
@@ -179,7 +179,7 @@
                 $("#lnkGoBack").hide();
                 $("#lblGoBackDisabled").show();
                 $("#txtSearchFilename").prop("disabled", true);
-                $("#add").prop("disabled", true);
+                $("#add").attr("disabled", "disabled");
                 $("select").prop("disabled", true);
                 $("#main-menu").hide();
                 $("#menu-login").hide();

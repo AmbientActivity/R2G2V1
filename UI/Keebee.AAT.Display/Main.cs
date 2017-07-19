@@ -84,7 +84,7 @@ namespace Keebee.AAT.Display
         private ConfigDetailMessage _activeConfigDetail;
 
         // list of all random response types (for the "on/off" toggle switch)
-        private RandomResponseTypeMessage[] _randomResponseTypes;
+        private ResponseTypeMessage[] _randomResponseTypes;
 
         // active profile
         private ResidentMessage _activeResident;
@@ -314,12 +314,7 @@ namespace Keebee.AAT.Display
         private void ExecuteResponse(int sensorValue, bool isSystem)
         {
             if (!isSystem)
-                // only execute if it's 'advanceable' or a new response
-                if (!(_isNewResponse || _pendingResponse.IsAdvanceable)) return;
-
-            if (_currentResponse.IsUninterrupted &&
-                _pendingResponse.Id != ResponseTypeId.VolumeControl) // volume control should always get executed
-                return;
+                if (!ShouldExecute()) return;
 
             try
             {
@@ -361,7 +356,7 @@ namespace Keebee.AAT.Display
                         break;
                 }
 
-                // save the current sensor values
+                // save the current sensor values for the 'advanceable' responses
                 switch (_pendingResponse.Id)
                 {
                     case ResponseTypeId.Radio:
@@ -382,6 +377,22 @@ namespace Keebee.AAT.Display
             {
                 _systemEventLogger.WriteEntry($"Main.ExecuteResponse: {ex.Message}", EventLogEntryType.Error);
             }
+        }
+
+        private bool ShouldExecute()
+        {
+            // only execute if:
+                // it's 'advanceable'
+                // OR it's the volume control
+                // OR it's a new response
+            // AND it's not uninterruptable 
+            var shouldExecute = (_isNewResponse 
+                    || _pendingResponse.IsAdvanceable
+                    || _pendingResponse.Id == ResponseTypeId.OffScreen
+                    || _pendingResponse.Id == ResponseTypeId.VolumeControl)
+                && !_currentResponse.IsUninterrupted;
+
+            return shouldExecute;
         }
 
         private void StopCurrentResponse(int responseTypeCategoryId = -1)
@@ -475,6 +486,9 @@ namespace Keebee.AAT.Display
                         PlayActivity(responseType.Id, responseType.InteractiveActivityTypeId, responseType.SwfFile);
                         break;
                 }
+
+                // override the current response which will be "Off Screen"
+                _currentResponse = responseType;  
             }
         }
 
@@ -489,20 +503,6 @@ namespace Keebee.AAT.Display
             lblActiveResident.Show();
 
             _residentDisplayTimer.Start();
-        }
-
-        private void SetCurrentResponseDetail(int responseTypeId, int responseTypeCategoryId)
-        {
-            _currentResponse.Id = responseTypeId;
-            _currentResponse.ResponseTypeCategoryId = responseTypeCategoryId;
-        }
-
-        private void SetPendingResponseDetail(ResponseTypeMessage responseType)
-        {
-            _pendingResponse.Id = responseType.Id;
-            _pendingResponse.ResponseTypeCategoryId = responseType.ResponseTypeCategoryId;
-            _pendingResponse.IsAdvanceable = responseType.IsAdvanceable;
-            _pendingResponse.IsUninterrupted = responseType.IsUninterrupted;
         }
 
         #endregion
@@ -547,7 +547,7 @@ namespace Keebee.AAT.Display
                     audioVideoPlayer1.Play(responseValue, mediaFiles, _currentIsActiveEventLog, false);
                     DisplayActiveResident();
 
-                    SetCurrentResponseDetail(responseTypeId, ResponseTypeCategoryId.Video);
+                    _currentResponse = _pendingResponse;
                 }
                 else
                 {
@@ -768,7 +768,7 @@ namespace Keebee.AAT.Display
                     offScreen1.Play();
                     DisplayActiveResident();
 
-                    SetCurrentResponseDetail(ResponseTypeId.OffScreen, ResponseTypeCategoryId.System);
+                    _currentResponse = _pendingResponse;
                 }
                 else
                 {
@@ -871,8 +871,6 @@ namespace Keebee.AAT.Display
                 _currentIsActiveEventLog = response.IsActiveEventLog;
                 _randomResponseTypes = response.RandomResponseTypes;
                 _currentPhidgetTypeId = response.ConfigDetail.PhidgetTypeId;
-
-                SetPendingResponseDetail(response.ConfigDetail.ResponseType);
 
                 ExecuteResponse(response.SensorValue, response.ConfigDetail.ResponseType.IsSystem);
             }

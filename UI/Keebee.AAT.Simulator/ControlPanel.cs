@@ -24,7 +24,7 @@ namespace Keebee.AAT.Simulator
     public partial class ControlPanel : Form
     {
         // for the random response types when the on/off button is clicked
-        private readonly IEnumerable<RandomResponseTypeMessage> _randomResponseTypes = new Collection<RandomResponseTypeMessage>
+        private readonly IEnumerable<ResponseTypeMessage> _randomResponseTypes = new Collection<ResponseTypeMessage>
             {
                 GetResponseTypeMessage(ResponseTypeId.SlideShow),
                 GetResponseTypeMessage(ResponseTypeId.MatchingGame),
@@ -349,33 +349,33 @@ namespace Keebee.AAT.Simulator
             ExecuteResponse(ResponseTypeId.OffScreen, PhidgetTypeId.Sensor4, MaxValue - 1, false);
         }
 
-        private static RandomResponseTypeMessage GetResponseTypeMessage(int responseTypeId)
+        private static ResponseTypeMessage GetResponseTypeMessage(int responseTypeId)
         {
             switch (responseTypeId)
             {
                 case ResponseTypeId.SlideShow:
-                    return new RandomResponseTypeMessage
+                    return new ResponseTypeMessage
                     {
                         Id = responseTypeId,
                         InteractiveActivityTypeId = 0,
                         SwfFile = null
                     };
                 case ResponseTypeId.MatchingGame:
-                    return new RandomResponseTypeMessage
+                    return new ResponseTypeMessage
                     {
                         Id = responseTypeId,
                         InteractiveActivityTypeId = InteractiveActivityTypeId.MatchingGame,
                         SwfFile = "MatchingGame.swf"
                     };
                 case ResponseTypeId.PaintingActivity:
-                    return new RandomResponseTypeMessage
+                    return new ResponseTypeMessage
                     {
                         Id = responseTypeId,
                         InteractiveActivityTypeId = InteractiveActivityTypeId.MatchingGame,
                         SwfFile = "PaintingActivity.swf"
                     };
                 case ResponseTypeId.BalloonPoppingGame:
-                    return new RandomResponseTypeMessage
+                    return new ResponseTypeMessage
                     {
                         Id = responseTypeId,
                         InteractiveActivityTypeId = InteractiveActivityTypeId.MatchingGame,

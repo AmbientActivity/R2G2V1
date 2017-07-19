@@ -913,6 +913,26 @@ namespace Keebee.AAT.Backup
                         $@"'{mediaPathType.Path}\' AND [FileType] = 'mp4'");
 
                     sw.WriteLine();
+                    // Nature Videos Linked
+                    mediaPathType = mediaPathTypes.Single(x => x.Id == MediaPathTypeId.Cats);
+                    sw.WriteLine("--- Activity 13 - ResponseType 'Nature' ---");
+                    sw.WriteLine(
+                        "INSERT INTO PublicMediaFiles (IsLinked, ResponseTypeId, MediaPathTypeId, StreamId, DateAdded)");
+                    sw.WriteLine(
+                        $"SELECT 1, {ResponseTypeId.Nature}, {mediaPathType.Id}, StreamId, GETDATE() FROM MediaFiles WHERE [Path] = @pathSharedLibrary + " +
+                        $@"'{mediaPathType.Path}\' AND [FileType] = 'mp4'");
+
+                    sw.WriteLine();
+                    // Sports Videos Linked
+                    mediaPathType = mediaPathTypes.Single(x => x.Id == MediaPathTypeId.Cats);
+                    sw.WriteLine("--- Activity 14 - ResponseType 'Sports' ---");
+                    sw.WriteLine(
+                        "INSERT INTO PublicMediaFiles (IsLinked, ResponseTypeId, MediaPathTypeId, StreamId, DateAdded)");
+                    sw.WriteLine(
+                        $"SELECT 1, {ResponseTypeId.Sports}, {mediaPathType.Id}, StreamId, GETDATE() FROM MediaFiles WHERE [Path] = @pathSharedLibrary + " +
+                        $@"'{mediaPathType.Path}\' AND [FileType] = 'mp4'");
+
+                    sw.WriteLine();
                 }
             }
             catch (Exception e)

@@ -131,9 +131,13 @@ namespace Keebee.AAT.StateMachineService
                     Resident = _activeResident,
                     IsActiveEventLog = _activeConfig.IsActiveEventLog,
                     RandomResponseTypes = _randomResponseTypes
-                        .Select(r => new RandomResponseTypeMessage
+                        .Select(r => new ResponseTypeMessage
                         {
                             Id = r.Id,
+                            ResponseTypeCategoryId = r.ResponseTypeCategory.Id,
+                            IsSystem = r.IsSystem,
+                            IsAdvanceable = r.IsAdvanceable,
+                            IsUninterrupted = r.IsUninterrupted,
                             InteractiveActivityTypeId = r.InteractiveActivityType?.Id ?? 0,
                             SwfFile = r.InteractiveActivityType?.SwfFile ?? string.Empty
                         }).Distinct().ToArray()

@@ -73,10 +73,12 @@
                         <span class="caret"></span>
                     </button>
                     <ul class="dropdown-menu">
+                        <!-- ko if: isSharable -->
                         <li><a href="javascript:void(0)" id="add-shared" data-bind="click: addFromSharedLibray">From Shared Library</a></li>
+                        <!-- /ko -->
                         <li>
                             <a id="upload" href="javascript:void(0)">From Your Computer</a>
-                            <input type="file" name="file" id="fileupload" multiple style="display: none" />
+                            <input type="file" name="file" id="fileupload" multiple style="display: none"/>
                         </li>
                     </ul>
                 </div>

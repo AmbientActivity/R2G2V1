@@ -190,11 +190,11 @@
     <Compile Include="UserControls\MatchingGame.Designer.cs">
       <DependentUpon>MatchingGame.cs</DependentUpon>
     </Compile>
-    <Compile Include="UserControls\MediaPlayer.cs">
+    <Compile Include="UserControls\AudioVideoPlayer.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="UserControls\MediaPlayer.Designer.cs">
-      <DependentUpon>MediaPlayer.cs</DependentUpon>
+    <Compile Include="UserControls\AudioVideoPlayer.Designer.cs">
+      <DependentUpon>AudioVideoPlayer.cs</DependentUpon>
     </Compile>
     <Compile Include="Caregiver\CustomControls\RepeatButton.cs">
       <SubType>Component</SubType>
@@ -270,8 +270,8 @@
     <EmbeddedResource Include="UserControls\MatchingGame.resx">
       <DependentUpon>MatchingGame.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="UserControls\MediaPlayer.resx">
-      <DependentUpon>MediaPlayer.cs</DependentUpon>
+    <EmbeddedResource Include="UserControls\AudioVideoPlayer.resx">
+      <DependentUpon>AudioVideoPlayer.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Caregiver\CustomControls\RepeatButton.resx">
       <DependentUpon>RepeatButton.cs</DependentUpon>

@@ -8,7 +8,7 @@ using WMPLib;
 
 namespace Keebee.AAT.Display.UserControls
 {
-    public partial class MediaPlayer : UserControl
+    public partial class AudioVideoPlayer : UserControl
     {
         private SystemEventLogger _systemEventLogger;
         public SystemEventLogger SystemEventLogger
@@ -40,7 +40,7 @@ namespace Keebee.AAT.Display.UserControls
         private string[] _files;
         private int _currentPlaylisIndex;
 
-        public MediaPlayer()
+        public AudioVideoPlayer()
         {
             InitializeComponent();
             ConfigureComponents();
@@ -68,7 +68,7 @@ namespace Keebee.AAT.Display.UserControls
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"MediaPlayer.Play: {ex.Message}", EventLogEntryType.Error);
+                _systemEventLogger.WriteEntry($"AudioVideoPlayer.Play: {ex.Message}", EventLogEntryType.Error);
             }
         }
 
@@ -84,7 +84,7 @@ namespace Keebee.AAT.Display.UserControls
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"MediaPlayer.PlayNext: {ex.Message}", EventLogEntryType.Error);
+                _systemEventLogger.WriteEntry($"AudioVideoPlayer.PlayNext: {ex.Message}", EventLogEntryType.Error);
             }
         }
 
@@ -100,7 +100,7 @@ namespace Keebee.AAT.Display.UserControls
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"MediaPlayer.PlayPrevious: {ex.Message}", EventLogEntryType.Error);
+                _systemEventLogger.WriteEntry($"AudioVideoPlayer.PlayPrevious: {ex.Message}", EventLogEntryType.Error);
             }
         }
 
@@ -152,7 +152,7 @@ namespace Keebee.AAT.Display.UserControls
                 }
                 catch (Exception ex)
                 {
-                    _systemEventLogger.WriteEntry($"MediaPlayer.PlayMedia: {ex.Message}", EventLogEntryType.Error);
+                    _systemEventLogger.WriteEntry($"AudioVideoPlayer.PlayMedia: {ex.Message}", EventLogEntryType.Error);
                 }
             }
         }

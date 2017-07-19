@@ -31,7 +31,7 @@ namespace Keebee.AAT.Display
         private void InitializeComponent()
         {
             this.lblActiveResident = new System.Windows.Forms.Label();
-            this.mediaPlayer1 = new Keebee.AAT.Display.UserControls.MediaPlayer();
+            this.audioVideoPlayer1 = new Keebee.AAT.Display.UserControls.AudioVideoPlayer();
             this.activityPlayer1 = new Keebee.AAT.Display.UserControls.ActivityPlayer();
             this.radioControl1 = new Keebee.AAT.Display.UserControls.RadioControl();
             this.offScreen1 = new Keebee.AAT.Display.UserControls.OffScreen();
@@ -53,13 +53,13 @@ namespace Keebee.AAT.Display
             this.lblActiveResident.TabIndex = 15;
             this.lblActiveResident.Text = "Public";
             // 
-            // mediaPlayer1
+            // audioVideoPlayer1
             // 
-            this.mediaPlayer1.BackColor = System.Drawing.SystemColors.ActiveCaptionText;
-            this.mediaPlayer1.Location = new System.Drawing.Point(0, 77);
-            this.mediaPlayer1.Name = "mediaPlayer1";
-            this.mediaPlayer1.Size = new System.Drawing.Size(116, 62);
-            this.mediaPlayer1.TabIndex = 19;
+            this.audioVideoPlayer1.BackColor = System.Drawing.SystemColors.ActiveCaptionText;
+            this.audioVideoPlayer1.Location = new System.Drawing.Point(0, 77);
+            this.audioVideoPlayer1.Name = "audioVideoPlayer1";
+            this.audioVideoPlayer1.Size = new System.Drawing.Size(116, 62);
+            this.audioVideoPlayer1.TabIndex = 19;
             // 
             // activityPlayer1
             // 
@@ -117,7 +117,7 @@ namespace Keebee.AAT.Display
             this.ClientSize = new System.Drawing.Size(680, 360);
             this.ControlBox = false;
             this.Controls.Add(this.ambientPlayer1);
-            this.Controls.Add(this.mediaPlayer1);
+            this.Controls.Add(this.audioVideoPlayer1);
             this.Controls.Add(this.activityPlayer1);
             this.Controls.Add(this.lblActiveResident);
             this.Controls.Add(this.radioControl1);
@@ -143,7 +143,7 @@ namespace Keebee.AAT.Display
         private RadioControl radioControl1;
         private System.Windows.Forms.Label lblActiveResident;
         private ActivityPlayer activityPlayer1;
-        private MediaPlayer mediaPlayer1;
+        private AudioVideoPlayer audioVideoPlayer1;
         private AmbientPlayer ambientPlayer1;
         #endregion
     }

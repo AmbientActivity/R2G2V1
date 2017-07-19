@@ -173,12 +173,12 @@ namespace Keebee.AAT.Display
             // response complete event handlers
             ambientPlayer1.ScreenTouchedEvent += AmbientScreenTouched;
             slideViewerFlash1.SlideShowCompleteEvent += SlideShowComplete;
-            mediaPlayer1.MediaPlayerCompleteEvent += MediaPlayerComplete;
+            audioVideoPlayer1.MediaPlayerCompleteEvent += MediaPlayerComplete;
             offScreen1.OffScreenCompleteEvent += OffScreenComplete;
             matchingGame1.MatchingGameTimeoutExpiredEvent += MatchingGameTimeoutExpired;
             matchingGame1.LogInteractiveActivityEventEvent += LogInteractiveActivityEvent;
             matchingGame1.StartVideoCaptureEvent += StartVideoCaptureEvent;
-            mediaPlayer1.LogVideoActivityEventEvent += LogVideoActivityEvent;
+            audioVideoPlayer1.LogVideoActivityEventEvent += LogVideoActivityEvent;
             activityPlayer1.ActivityPlayerTimeoutExpiredEvent += ActivityPlayerTimeoutExpired;
             activityPlayer1.LogInteractiveActivityEventEvent += LogInteractiveActivityEvent;
             activityPlayer1.StartVideoCaptureEvent += StartVideoCaptureEvent;
@@ -259,9 +259,9 @@ namespace Keebee.AAT.Display
             ambientPlayer1.BringToFront();
             ambientPlayer1.Show();
 
-            mediaPlayer1.Dock = DockStyle.Fill;
-            mediaPlayer1.SendToBack();
-            mediaPlayer1.Hide();
+            audioVideoPlayer1.Dock = DockStyle.Fill;
+            audioVideoPlayer1.SendToBack();
+            audioVideoPlayer1.Hide();
 
             radioControl1.Dock = DockStyle.Fill;
             radioControl1.SendToBack();
@@ -306,7 +306,7 @@ namespace Keebee.AAT.Display
             _activityEventLogger.EventLogger = _systemEventLogger;
 
             ambientPlayer1.SystemEventLogger = _systemEventLogger;
-            mediaPlayer1.SystemEventLogger = _systemEventLogger;
+            audioVideoPlayer1.SystemEventLogger = _systemEventLogger;
             slideViewerFlash1.SystemEventLogger = _systemEventLogger;
             matchingGame1.SystemEventLogger = _systemEventLogger;
         }
@@ -402,7 +402,7 @@ namespace Keebee.AAT.Display
                         slideViewerFlash1.Hide();
                         slideViewerFlash1.SendToBack();
                         slideViewerFlash1.Stop();
-                        mediaPlayer1.Stop();
+                        audioVideoPlayer1.Stop();
                         break;
                     case ResponseTypeId.MatchingGame:
                         matchingGame1.Hide();
@@ -418,10 +418,10 @@ namespace Keebee.AAT.Display
                         radioControl1.SendToBack();
                         if (responseTypeCategoryId != ResponseTypeCategoryId.Video)
                         {
-                            mediaPlayer1.SendToBack();
-                            mediaPlayer1.Hide();
+                            audioVideoPlayer1.SendToBack();
+                            audioVideoPlayer1.Hide();
                         }
-                        mediaPlayer1.Stop();
+                        audioVideoPlayer1.Stop();
                         break;
                     case ResponseTypeId.Ambient:
                         ambientPlayer1.Hide();
@@ -534,17 +534,17 @@ namespace Keebee.AAT.Display
                             radioControl1.BringToFront();
                             radioControl1.Show();
 #elif DEBUG
-                            mediaPlayer1.BringToFront();
-                            mediaPlayer1.Show();
+                            audioVideoPlayer1.BringToFront();
+                            audioVideoPlayer1.Show();
 #endif
                             break;
                         default:
-                            mediaPlayer1.BringToFront();
-                            mediaPlayer1.Show();
+                            audioVideoPlayer1.BringToFront();
+                            audioVideoPlayer1.Show();
                             break;
                     }
 
-                    mediaPlayer1.Play(responseValue, mediaFiles, _currentIsActiveEventLog, false);
+                    audioVideoPlayer1.Play(responseValue, mediaFiles, _currentIsActiveEventLog, false);
                     DisplayActiveResident();
 
                     SetCurrentResponse(responseTypeId, ResponseTypeCategoryId.Video);  // radio or television
@@ -556,10 +556,10 @@ namespace Keebee.AAT.Display
                     switch (changeType)
                     {
                         case ResponseValueChangeType.Increase:
-                            mediaPlayer1.PlayNext();
+                            audioVideoPlayer1.PlayNext();
                             break;
                         case ResponseValueChangeType.Decrease:
-                            mediaPlayer1.PlayPrevious();
+                            audioVideoPlayer1.PlayPrevious();
                             break;
                         case ResponseValueChangeType.NoDifference:
                             break;
@@ -625,7 +625,7 @@ namespace Keebee.AAT.Display
                 slideViewerFlash1.Play(images, autoStart: true);
 
                 music.Shuffle();
-                mediaPlayer1.Play(0, new[] { music.First() }, false, false);
+                audioVideoPlayer1.Play(0, new[] { music.First() }, false, false);
 
                 DisplayActiveResident();
 
@@ -908,7 +908,7 @@ namespace Keebee.AAT.Display
             try
             {
                 slideViewerFlash1.Hide();
-                mediaPlayer1.Stop();
+                audioVideoPlayer1.Stop();
                 ResumeAmbient();
             }
             catch (Exception ex)
@@ -921,7 +921,7 @@ namespace Keebee.AAT.Display
         {
             try
             {
-                mediaPlayer1.Hide();
+                audioVideoPlayer1.Hide();
                 ResumeAmbient();
                 _isNewResponse = true;
             }
@@ -1009,7 +1009,7 @@ namespace Keebee.AAT.Display
         {
             try
             {
-                var args = (MediaPlayer.LogVideoActivityEventEventArgs)e;
+                var args = (AudioVideoPlayer.LogVideoActivityEventEventArgs)e;
                 _activityEventLogger.Add(_activeConfigDetail.ConfigId, _activeConfigDetail.Id, _activeResident.Id, args.Description);
             }
             catch (Exception ex)
@@ -1070,7 +1070,7 @@ namespace Keebee.AAT.Display
             slideViewerFlash1.Dock = DockStyle.None;
             matchingGame1.Dock = DockStyle.None;
             activityPlayer1.Dock = DockStyle.None;
-            mediaPlayer1.Dock = DockStyle.None;
+            audioVideoPlayer1.Dock = DockStyle.None;
             radioControl1.Dock = DockStyle.None;
             offScreen1.Dock = DockStyle.None;
         }

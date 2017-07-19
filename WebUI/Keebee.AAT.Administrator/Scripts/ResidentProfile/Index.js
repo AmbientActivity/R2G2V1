@@ -284,7 +284,6 @@
                             .filter(function (value) { return value.isselected; });
 
                         cmdDelete.prop("disabled", selected.length === 0);
-                        cmdAddShared.prop("hidden", !self.isSharable());
 
                         $("#txtSearchFilename").focus();
                     };
@@ -341,12 +340,12 @@
 
                         self.checkSelectAll(false);
                         self.selectAllRows();
-                        self.isSharable(self.selectedMediaPathType().issharable);
-
+                        
                         self.selectedMediaPathType(self.mediaPathTypes().filter(function (value) {
                             return value.id === id;
                         })[0]);
 
+                        self.isSharable(self.selectedMediaPathType().issharable);
                         self.isAudio(self.selectedMediaPathType().category.includes("Audio"));
                         self.displayNoRowsMessage();
                         self.clearStreams();

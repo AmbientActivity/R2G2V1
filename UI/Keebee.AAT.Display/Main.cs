@@ -83,9 +83,6 @@ namespace Keebee.AAT.Display
         // active activity/response
         private ConfigDetailMessage _activeConfigDetail;
 
-        // list of all random response types (for the "on/off" toggle switch)
-        private ResponseTypeMessage[] _randomResponseTypes;
-
         // active profile
         private ResidentMessage _activeResident;
 
@@ -382,15 +379,14 @@ namespace Keebee.AAT.Display
         private bool ShouldExecute()
         {
             // only execute if:
-                // it's 'advanceable'
-                // OR it's the volume control
-                // OR it's a new response
+                // new response
+                // OR volume control
+                // OR 'advanceable'
             // AND it's not uninterruptable 
             var shouldExecute = (_isNewResponse 
                     || _pendingResponse.IsAdvanceable
-                    || _pendingResponse.Id == ResponseTypeId.OffScreen
                     || _pendingResponse.Id == ResponseTypeId.VolumeControl)
-                && !_currentResponse.IsUninterrupted;
+                && !_currentResponse.IsUninterrupted; // i.e. the caregiver screen
 
             return shouldExecute;
         }
@@ -446,49 +442,6 @@ namespace Keebee.AAT.Display
             catch (Exception ex)
             {
                 _systemEventLogger.WriteEntry($"Main.StopCurrentResponse: {ex.Message}", EventLogEntryType.Error);
-            }
-        }
-
-        private int _currentSequentialResponseTypeIndex = -1;
-        private void ExecuteRandom()
-        {
-            if (!_randomResponseTypes.Any())
-            {
-                ResumeAmbient();
-            }
-            else
-            {
-                if (_currentSequentialResponseTypeIndex < _randomResponseTypes.Length - 1)
-                    _currentSequentialResponseTypeIndex++;
-                else
-                    _currentSequentialResponseTypeIndex = 0;
-
-                var responseType = _randomResponseTypes[_currentSequentialResponseTypeIndex];
-
-                switch (responseType.Id)
-                {
-                    case ResponseTypeId.MatchingGame:
-                        PlayMatchingGame(responseType.SwfFile);
-                        break;
-                    case ResponseTypeId.SlideShow:
-                        PlaySlideShow();
-                        break;
-                    case ResponseTypeId.Radio:
-                        PlayMedia(ResponseTypeId.Radio, _currentRadioSensorValue);
-                        break;
-                    case ResponseTypeId.Television:
-                        PlayMedia(ResponseTypeId.Television, _currentTelevisionSensorValue);
-                        break;
-                    case ResponseTypeId.Cats:
-                        PlayMedia(ResponseTypeId.Cats, 0);
-                        break;
-                     default: // generic interactive activity
-                        PlayActivity(responseType.Id, responseType.InteractiveActivityTypeId, responseType.SwfFile);
-                        break;
-                }
-
-                // override the current response which will be "Off Screen"
-                _currentResponse = responseType;  
             }
         }
 
@@ -760,26 +713,13 @@ namespace Keebee.AAT.Display
             }
             else
             {
-                if (_currentResponse.Id != ResponseTypeId.OffScreen)
-                {
-                    StopCurrentResponse();
-                    offScreen1.BringToFront();
-                    offScreen1.Show();
-                    offScreen1.Play();
-                    DisplayActiveResident();
+                StopCurrentResponse();
+                offScreen1.BringToFront();
+                offScreen1.Show();
+                offScreen1.Play();
+                DisplayActiveResident();
 
-                    _currentResponse = _pendingResponse;
-                }
-                else
-                {
-                    offScreen1.Hide();
-                    offScreen1.Stop();
-
-                    // randomly execute one of the following reponse types
-                    ExecuteRandom();
-
-                    DisplayActiveResident();
-                }
+                _currentResponse = _pendingResponse;
             }
         }
 
@@ -869,7 +809,6 @@ namespace Keebee.AAT.Display
                 _activeResident = response.Resident;
                 _activeConfigDetail = response.ConfigDetail;
                 _currentIsActiveEventLog = response.IsActiveEventLog;
-                _randomResponseTypes = response.RandomResponseTypes;
                 _currentPhidgetTypeId = response.ConfigDetail.PhidgetTypeId;
 
                 ExecuteResponse(response.SensorValue, response.ConfigDetail.ResponseType.IsSystem);

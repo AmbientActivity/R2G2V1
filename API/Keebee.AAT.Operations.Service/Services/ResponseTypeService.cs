@@ -49,7 +49,7 @@ namespace Keebee.AAT.Operations.Service.Services
 
             var responseTypes = container.ResponseTypes
                 .AddQueryOption("$filter", "IsRandom eq true")
-                .Expand("InteractiveActivityType")
+                .Expand("ResponseTypeCategory,InteractiveActivityType")
                 .AsEnumerable();
 
             return responseTypes;

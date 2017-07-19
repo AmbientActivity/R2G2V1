@@ -30,12 +30,13 @@ namespace Keebee.AAT.StateMachineService
 
         // active config
         private ConfigMessage _activeConfig;
+        private ConfigDetailMessage _currentConfigDetail;
 
         // active profile
         private ResidentMessage _activeResident;
 
         // random response types (for "on/off" toggle)
-        private IEnumerable<ResponseType> _randomResponseTypes;
+        private ResponseTypeMessage[] _randomResponseTypes;
 
         // display state
         private bool _isDisplayActive;
@@ -120,27 +121,20 @@ namespace Keebee.AAT.StateMachineService
                 if (_activeConfig.ConfigDetails.All(x => x.PhidgetTypeId != phidgetTypeId))
                     return;
 
-                var configDetail =
-                    _activeConfig.ConfigDetails
+                var configDetail = _activeConfig.ConfigDetails
                     .Single(cd => cd.PhidgetTypeId == phidgetTypeId);
+
+                // for the OffScreen, need to alternate between the OffScreen and a 'random' response
+                if (configDetail.ResponseType.Id == ResponseTypeId.OffScreen 
+                    && _currentConfigDetail.ResponseType.Id == ResponseTypeId.OffScreen)
+                    configDetail.ResponseType = GetOffScreenResponse();
 
                 var responseMessage = new ResponseMessage
                 {
                     SensorValue = sensorValue,
                     ConfigDetail = configDetail,
                     Resident = _activeResident,
-                    IsActiveEventLog = _activeConfig.IsActiveEventLog,
-                    RandomResponseTypes = _randomResponseTypes
-                        .Select(r => new ResponseTypeMessage
-                        {
-                            Id = r.Id,
-                            ResponseTypeCategoryId = r.ResponseTypeCategory.Id,
-                            IsSystem = r.IsSystem,
-                            IsAdvanceable = r.IsAdvanceable,
-                            IsUninterrupted = r.IsUninterrupted,
-                            InteractiveActivityTypeId = r.InteractiveActivityType?.Id ?? 0,
-                            SwfFile = r.InteractiveActivityType?.SwfFile ?? string.Empty
-                        }).Distinct().ToArray()
+                    IsActiveEventLog = _activeConfig.IsActiveEventLog
                 };
 
                 if (_isInstalledVideoCapture)
@@ -156,11 +150,24 @@ namespace Keebee.AAT.StateMachineService
                 var serializer = new JavaScriptSerializer();
                 var responseMessageBody = serializer.Serialize(responseMessage);
                 _messageQueueResponse.Send(responseMessageBody);
+
+                _currentConfigDetail = configDetail;
             }
             catch (Exception ex)
             {
                 _systemEventLogger.WriteEntry($"ExecuteResponse: {ex.Message}", EventLogEntryType.Error);
             }
+        }
+
+        private int _currentSequentialResponseTypeIndex = -1;
+        private ResponseTypeMessage GetOffScreenResponse()
+        {
+            if (_currentSequentialResponseTypeIndex < _randomResponseTypes.Length - 1)
+                _currentSequentialResponseTypeIndex++;
+            else
+                _currentSequentialResponseTypeIndex = 0;
+
+            return _randomResponseTypes[_currentSequentialResponseTypeIndex];
         }
 
         private void LoadConfig()
@@ -196,7 +203,29 @@ namespace Keebee.AAT.StateMachineService
                 };
 
                 // reload random response types
-                _randomResponseTypes = _responseTypesClient.GetRandomTypes();
+                _randomResponseTypes = _responseTypesClient.GetRandomTypes()
+                    .Select( r => new ResponseTypeMessage
+                    {
+                        Id = r.Id,
+                        ResponseTypeCategoryId = r.ResponseTypeCategory.Id,
+                        IsSystem = r.IsSystem,
+                        IsAdvanceable = r.IsAdvanceable,
+                        IsUninterrupted = r.IsUninterrupted,
+                        InteractiveActivityTypeId = r.InteractiveActivityType?.Id ?? 0,
+                        SwfFile = r.InteractiveActivityType?.SwfFile ?? string.Empty
+                    }).ToArray();
+
+                // default the current config to ambient
+                if (_currentConfigDetail == null)
+                {
+                    if (_activeConfig.ConfigDetails.Any(x => x.ResponseType.Id == ResponseTypeId.Ambient))
+                    {
+                        _currentConfigDetail =
+                            _activeConfig.ConfigDetails.Single(x => x.ResponseType.Id == ResponseTypeId.Ambient);
+                    }
+                    else
+                        _systemEventLogger.WriteEntry($"The configuration '{config.Description}' does not contain an 'Ambient' response type!");
+                }
 
                 _systemEventLogger.WriteEntry($"The configuration '{config.Description}' has been activated");
             }

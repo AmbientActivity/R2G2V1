@@ -102,7 +102,7 @@ SET IDENTITY_INSERT [dbo].[MediaPathTypes] ON
 
 INSERT [dbo].[MediaPathTypes] ([Id], [Path], [Description], [ShortDescription], [AllowedExts], [AllowedTypes], [MaxFileBytes], [MaxFileUploads], [MediaPathTypeCategoryId], [ResponseTypeId], [IsSystem], [IsSharable]) 
 VALUES (1, 'audio\music', 'Audio (Music)', 'Music', 
-'mp3', 'audio/mp3', 15000000, 15, 1, 5, 0, 1) -- 10 mb per song / 15 uploads at a time
+'mp3', 'audio/mp3', 15000000, 15, 1, 5, 0, 1) -- 15 mb per song / 15 uploads at a time
 
 INSERT [dbo].[MediaPathTypes] ([Id], [Path], [Description], [ShortDescription], [AllowedExts], [AllowedTypes], [MaxFileBytes], [MaxFileUploads], [MediaPathTypeCategoryId], [ResponseTypeId], [IsSystem], [IsSharable])
 VALUES (2, 'audio\radio-shows', 'Audio (Radio Shows)', 'Radio Shows',

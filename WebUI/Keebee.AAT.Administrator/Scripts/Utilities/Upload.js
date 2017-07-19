@@ -27,8 +27,8 @@
                 var totalFiles;
                 var isTooManyFiles = false;
                 var pendingFile = 1;
-                var successful = [];
-                var rejected = [];
+                var successful = [0];
+                var rejected = [0];
 
                 $(this).simpleUpload(config.url, {
                     allowedExts: config.allowedExts,

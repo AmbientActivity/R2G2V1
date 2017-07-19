@@ -78,7 +78,14 @@ namespace Keebee.AAT.BusinessRules
                 var responseMessage = new ResponseMessage
                 {
                     SensorValue = 999,
-                    ConfigDetail = new ConfigDetailMessage { ResponseTypeId = ResponseTypeId.KillDisplay, IsSystemReponseType = true },
+                    ConfigDetail = new ConfigDetailMessage
+                    {
+                        ResponseType = new ResponseTypeMessage
+                        {
+                            Id = ResponseTypeId.KillDisplay,
+                            IsSystem = true
+                        },
+                    },
                     Resident = new ResidentMessage(),
                     IsActiveEventLog = false,
                     RandomResponseTypes = null

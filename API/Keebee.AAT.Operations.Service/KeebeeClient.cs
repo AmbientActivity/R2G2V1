@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-// Generation date: 2017-07-18 5:17:55 PM
+// Generation date: 2017-07-19 2:19:37 PM
 namespace Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models
 {
     /// <summary>
@@ -935,14 +935,23 @@ namespace Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models
         /// <param name="description">Initial value of Description.</param>
         /// <param name="isSystem">Initial value of IsSystem.</param>
         /// <param name="isRandom">Initial value of IsRandom.</param>
+        /// <param name="isAdvanceable">Initial value of IsAdvanceable.</param>
+        /// <param name="isUninterrupted">Initial value of IsUninterrupted.</param>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        public static ResponseType CreateResponseType(int ID, string description, bool isSystem, bool isRandom)
+        public static ResponseType CreateResponseType(int ID, 
+                    string description, 
+                    bool isSystem, 
+                    bool isRandom, 
+                    bool isAdvanceable, 
+                    bool isUninterrupted)
         {
             ResponseType responseType = new ResponseType();
             responseType.Id = ID;
             responseType.Description = description;
             responseType.IsSystem = isSystem;
             responseType.IsRandom = isRandom;
+            responseType.IsAdvanceable = isAdvanceable;
+            responseType.IsUninterrupted = isUninterrupted;
             return responseType;
         }
         /// <summary>
@@ -1083,6 +1092,52 @@ namespace Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models
         private bool _IsRandom;
         partial void OnIsRandomChanging(bool value);
         partial void OnIsRandomChanged();
+        /// <summary>
+        /// There are no comments for Property IsAdvanceable in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        [global::Microsoft.OData.Client.OriginalNameAttribute("IsAdvanceable")]
+        public bool IsAdvanceable
+        {
+            get
+            {
+                return this._IsAdvanceable;
+            }
+            set
+            {
+                this.OnIsAdvanceableChanging(value);
+                this._IsAdvanceable = value;
+                this.OnIsAdvanceableChanged();
+                this.OnPropertyChanged("IsAdvanceable");
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private bool _IsAdvanceable;
+        partial void OnIsAdvanceableChanging(bool value);
+        partial void OnIsAdvanceableChanged();
+        /// <summary>
+        /// There are no comments for Property IsUninterrupted in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        [global::Microsoft.OData.Client.OriginalNameAttribute("IsUninterrupted")]
+        public bool IsUninterrupted
+        {
+            get
+            {
+                return this._IsUninterrupted;
+            }
+            set
+            {
+                this.OnIsUninterruptedChanging(value);
+                this._IsUninterrupted = value;
+                this.OnIsUninterruptedChanged();
+                this.OnPropertyChanged("IsUninterrupted");
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private bool _IsUninterrupted;
+        partial void OnIsUninterruptedChanging(bool value);
+        partial void OnIsUninterruptedChanged();
         /// <summary>
         /// There are no comments for Property ResponseTypeCategory in the schema.
         /// </summary>
@@ -6193,6 +6248,8 @@ namespace Keebee.AAT.Operations.Service.KeebeeAAT
         <Property Name=""InteractiveActivityTypeId"" Type=""Edm.Int32"" />
         <Property Name=""IsSystem"" Type=""Edm.Boolean"" Nullable=""false"" />
         <Property Name=""IsRandom"" Type=""Edm.Boolean"" Nullable=""false"" />
+        <Property Name=""IsAdvanceable"" Type=""Edm.Boolean"" Nullable=""false"" />
+        <Property Name=""IsUninterrupted"" Type=""Edm.Boolean"" Nullable=""false"" />
         <NavigationProperty Name=""ResponseTypeCategory"" Type=""Keebee.AAT.DataAccess.Models.ResponseTypeCategory"">
           <ReferentialConstraint Property=""ResponseTypeCategoryId"" ReferencedProperty=""Id"" />
         </NavigationProperty>

@@ -231,7 +231,7 @@ namespace Keebee.AAT.PhidgetService
             {
                 if (sensorValue < _sensorThreshold) return;
 
-                if (configDetail.ResponseTypeId != ResponseTypeId.Radio)
+                if (configDetail.ResponseType.Id != ResponseTypeId.Radio)
                 {
                     _messageQueuePhidget.Send(CreateMessageBodyFromSensor(sensorId, sensorValue));
                 }
@@ -262,14 +262,14 @@ namespace Keebee.AAT.PhidgetService
                 }
 
                 // send continuous value
-                if (configDetail.ResponseTypeId == ResponseTypeId.Radio)
+                if (configDetail.ResponseType.Id == ResponseTypeId.Radio)
                     _messageQueuePhidgetContinuousRadio.Send($"{sensorValue}");
 
                 // send step value
                 var stepValue = PhidgetUtility.GetSensorStepValue(sensorValue);
                 if (stepValue > 0)
                 {
-                    if (configDetail.ResponseTypeId != ResponseTypeId.Radio)
+                    if (configDetail.ResponseType.Id != ResponseTypeId.Radio)
                     {
                         _messageQueuePhidget.Send(CreateMessageBodyFromSensor(sensorId, stepValue));
                     }
@@ -338,7 +338,7 @@ namespace Keebee.AAT.PhidgetService
                 SetDiscreteStepValue();
                 _messageQueuePhidget.Send(CreateMessageBodyFromSensor(inputId + 8, (int)_currentDiscreteStepValue));
 
-                if (configDetail.ResponseTypeId == ResponseTypeId.Radio)
+                if (configDetail.ResponseType.Id == ResponseTypeId.Radio)
                     _messageQueuePhidgetContinuousRadio.Send($"{(int)_currentDiscreteStepValue}");
 
             }
@@ -432,17 +432,19 @@ namespace Keebee.AAT.PhidgetService
                 Description = config.Description,
                 IsActiveEventLog = config.IsActiveEventLog,
                 ConfigDetails = config.ConfigDetails
-                                    .Select(x => new
-                                    ConfigDetailMessage
-                                    {
-                                        Id = x.Id,
-                                        ConfigId = x.ConfigId,
-                                        ResponseTypeId = x.ResponseType.Id,
-                                        PhidgetTypeId = x.PhidgetType.Id,
-                                        PhidgetStyleTypeId = x.PhidgetStyleType.Id,
-                                        IsSystemReponseType = x.ResponseType.IsSystem
-                                    }
-                                    )
+                    .Select(x => new
+                    ConfigDetailMessage
+                    {
+                        Id = x.Id,
+                        ConfigId = x.ConfigId,
+                        ResponseType = new ResponseTypeMessage
+                        {
+                            Id = x.ResponseType.Id,
+                            IsSystem = x.ResponseType.IsSystem
+                        },
+                        PhidgetTypeId = x.PhidgetType.Id,
+                        PhidgetStyleTypeId = x.PhidgetStyleType.Id,
+                    })
             };
             _systemEventLogger.WriteEntry($"The configuration '{config.Description}' has been activated");
         }

@@ -43,6 +43,8 @@ namespace Keebee.AAT.Simulator
         private readonly IResidentsClient _residentsClient;
         private Resident[] _residents;
 
+        private readonly IResponseTypesClient _responseTypesClient;
+
         // message queue sender
         private readonly CustomMessageQueue _messageQueuePhidget;
         private readonly CustomMessageQueue _messageQueueBluetoothBeaconWatcher;
@@ -88,6 +90,7 @@ namespace Keebee.AAT.Simulator
             _autoResidentInterval = Convert.ToInt32(ConfigurationManager.AppSettings["AutoResidentInterval"]);
 
             _residentsClient = new ResidentsClient();
+            _responseTypesClient = new ResponseTypesClient();
 
             // message queue senders
             _messageQueuePhidget = new CustomMessageQueue(new CustomMessageQueueArgs
@@ -462,9 +465,14 @@ namespace Keebee.AAT.Simulator
         private void ExecuteResponse(int responseTypeId, int phidgetTypeId, int sensorValue = MaxValue - 1, bool isSystem = false)
         {
 #if !DEBUG
-            if (Process.GetProcessesByName($"{AppSettings.Namespace}.{AppSettings.DisplayAppName}").Any())
+            if (Process.GetProcessesByName($"{AppSettings.Namespace}.{AppSettings.DisplayAppName}").Any()) 
+            {
 #endif
-            _messageQueueResponse.Send(CreateMessageBodyForResponse(responseTypeId, phidgetTypeId, isSystem, sensorValue));
+            var responseType = _responseTypesClient.Get(responseTypeId);
+            _messageQueueResponse.Send(CreateMessageBodyForResponse(responseType, phidgetTypeId, sensorValue));
+#if !DEBUG
+            }
+#endif
         }
 
         private static int GetInteractiveActivityTypeId(int responseTypeId)
@@ -513,7 +521,7 @@ namespace Keebee.AAT.Simulator
             return messageBody;
         }
 
-        private string CreateMessageBodyForResponse(int responseTypeId, int phidgetTypeId, bool isSystem, int sensorValue)
+        private string CreateMessageBodyForResponse(ResponseType responseType, int phidgetTypeId, int sensorValue)
         {
             var responseMessage = new ResponseMessage
             {
@@ -521,12 +529,17 @@ namespace Keebee.AAT.Simulator
                 ConfigDetail = new ConfigDetailMessage
                 {
                     Id = 1,
-                    ResponseTypeId = responseTypeId,
+                    ResponseType = new ResponseTypeMessage
+                    {
+                        Id = responseType.Id,
+                        IsSystem = responseType.IsSystem,
+                        InteractiveActivityTypeId = GetInteractiveActivityTypeId(responseType.Id),
+                        SwfFile = GetInteractiveActivityTypeSwf(responseType.Id),
+                        IsAdvanceable = responseType.IsAdvanceable,
+                        IsUninterrupted = responseType.IsUninterrupted
+                    },
                     PhidgetTypeId = phidgetTypeId,
-                    IsSystemReponseType = isSystem,
-                    ConfigId = ConfigId.Default,
-                    InteractiveActivityTypeId = GetInteractiveActivityTypeId(responseTypeId),
-                    SwfFile = GetInteractiveActivityTypeSwf(responseTypeId)
+                    ConfigId = ConfigId.Default,   
                 },
                 Resident = new ResidentMessage
                 {
@@ -545,6 +558,6 @@ namespace Keebee.AAT.Simulator
             return serializer.Serialize(responseMessage);
         }
 
-        #endregion
+#endregion
     }
 }

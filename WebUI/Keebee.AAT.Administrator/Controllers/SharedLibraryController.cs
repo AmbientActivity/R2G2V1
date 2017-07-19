@@ -10,6 +10,7 @@ using System.Linq;
 using System.Web.Mvc;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Web;
 
@@ -54,24 +55,8 @@ namespace Keebee.AAT.Administrator.Controllers
 
             try
             {
-                var mediaPathTypes = _mediaPathTypesClient.Get().Where(mp => mp.IsSharable).ToArray();
-
-                mediaPathTypeList = mediaPathTypes
-                    .Select(x => new MediaPathType
-                    {
-                        Id = x.Id,
-                        Category = x.Category,
-                        Description = x.Description,
-                        ShortDescription = x.ShortDescription,
-                        IsSharable = true,
-                        Path = x.Path,
-                        AllowedExts = x.AllowedExts.Replace(" ", string.Empty),
-                        AllowedTypes = x.AllowedTypes.Replace(" ", string.Empty),
-                        MaxFileBytes = x.MaxFileBytes,
-                        MaxFileUploads = x.MaxFileUploads
-                    }).OrderBy(x => x.Description).ToArray();
-
-                fileList = GetFiles(mediaPathTypes).ToArray();
+                mediaPathTypeList = GetMediaPathTypeList();
+                fileList = GetFiles().ToArray();
             }
             catch (Exception ex)
             {
@@ -92,11 +77,13 @@ namespace Keebee.AAT.Administrator.Controllers
         public JsonResult UploadFile(HttpPostedFileBase file, string mediaPath, int mediaPathTypeId, string mediaPathTypeCategory)
         {
             string errMsg = null;
+            string filename = null;
 
             try
             {
                 if (file != null)
                 {
+                    filename = file.FileName;
                     var filePath = $@"{_mediaSourcePath.MediaRoot}\{_mediaSourcePath.SharedLibrary}\{mediaPath}\{file.FileName}";
 
                     // delete it if it already exists
@@ -127,7 +114,48 @@ namespace Keebee.AAT.Administrator.Controllers
             return Json(new
             {
                 Success = string.IsNullOrEmpty(errMsg),
-                ErrorMessage = errMsg
+                ErrorMessage = errMsg,
+                Filename = filename
+            }, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        [Authorize]
+        public JsonResult AddFiles(string[] filenames, string mediaPath)
+        {
+            string errMsg = null;
+            var newIds = new Collection<Guid>();
+
+            try
+            {
+                var fileManager = new FileManager { EventLogger = _systemEventLogger };
+                var thumbnailGenerator = new ThumbnailGenerator();            
+
+                foreach (var filename in filenames)
+                {
+                    // create thumbnail
+                    var streamId = fileManager.GetStreamId($@"{_mediaSourcePath.SharedLibrary}\{mediaPath}", filename);
+                    if (streamId == new Guid()) throw new Exception($"Could not get StreamId for file <b>{filename}</b>");
+
+                    errMsg = thumbnailGenerator.Generate(streamId);
+
+                    if (!string.IsNullOrEmpty(errMsg))
+                        throw new Exception(errMsg);
+
+                    newIds.Add(streamId);
+                }
+            }
+            catch (Exception ex)
+            {
+                errMsg = ex.Message;
+            }
+
+            return Json(new
+            {
+                Success = string.IsNullOrEmpty(errMsg),
+                ErrorMessage = errMsg,
+                FileList = GetFiles(),
+                NewIds = newIds
             }, JsonRequestBehavior.AllowGet);
         }
 
@@ -137,11 +165,13 @@ namespace Keebee.AAT.Administrator.Controllers
         {
             var errMsg = string.Empty;
             var rules = new SharedLibraryRules();
+            MediaPathType[] mediaPathTypes = null;
 
-            var mediaPathTypes = _mediaPathTypesClient.Get()
-                .Where(mp => mp.Id != MediaPathTypeId.ImagesPersonal && mp.Id != MediaPathTypeId.HomeMovies).ToArray();
             try
             {
+                mediaPathTypes = _mediaPathTypesClient.Get()
+                    .Where(mp => mp.Id != MediaPathTypeId.ImagesPersonal && mp.Id != MediaPathTypeId.HomeMovies).ToArray();
+
                 foreach (var streamId in streamIds)
                 {
                     var mediaFile = _mediaFilesClient.Get(streamId);
@@ -228,14 +258,35 @@ namespace Keebee.AAT.Administrator.Controllers
             }, JsonRequestBehavior.AllowGet);
         }
 
-        private IEnumerable<SharedLibraryFileViewModel> GetFiles(IEnumerable<MediaPathType> mediaPathTypes)
+        private MediaPathType[] GetMediaPathTypeList()
+        {
+            var mediaPathTypes = _mediaPathTypesClient.Get().Where(mp => mp.IsSharable).ToArray();
+
+            return mediaPathTypes
+                .Select(x => new MediaPathType
+                {
+                    Id = x.Id,
+                    Category = x.Category,
+                    Description = x.Description,
+                    ShortDescription = x.ShortDescription,
+                    IsSharable = true,
+                    Path = x.Path,
+                    AllowedExts = x.AllowedExts.Replace(" ", string.Empty),
+                    AllowedTypes = x.AllowedTypes.Replace(" ", string.Empty),
+                    MaxFileBytes = x.MaxFileBytes,
+                    MaxFileUploads = x.MaxFileUploads
+                }).OrderBy(x => x.Description).ToArray();
+        }
+
+        private IEnumerable<SharedLibraryFileViewModel> GetFiles(IEnumerable<MediaPathType> mediaPathTypes = null)
         {
             var sharedMedia = _mediaFilesClient.GetWithLinkedData(_mediaSourcePath.SharedLibrary);
             var thumbnails = _thumbnailsClient.Get().ToArray();
+            var pathTypes = mediaPathTypes ?? _mediaPathTypesClient.Get().Where(mp => mp.IsSharable).ToArray();
 
             return sharedMedia.SelectMany(p =>
             {
-                var mediaPathType = SharedLibraryRules.GetMediaPathTypeFromRawPath(p.Path, mediaPathTypes);
+                var mediaPathType = SharedLibraryRules.GetMediaPathTypeFromRawPath(p.Path, pathTypes);
 
                 return p.Files.Select(f =>
                 {

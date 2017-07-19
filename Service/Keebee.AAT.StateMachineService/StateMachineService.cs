@@ -141,7 +141,7 @@ namespace Keebee.AAT.StateMachineService
 
                 if (_isInstalledVideoCapture)
                 {
-                    if (!configDetail.IsSystemReponseType)
+                    if (!configDetail.ResponseType.IsSystem)
                     {
                         if (_activeResident.AllowVideoCapturing)
                             // send a signal to the video capture service to start recording
@@ -176,12 +176,18 @@ namespace Keebee.AAT.StateMachineService
                         {
                             Id = x.Id,
                             ConfigId = x.ConfigId,
-                            ResponseTypeId = x.ResponseType.Id,
+                            ResponseType = new ResponseTypeMessage
+                            {
+                                Id = x.ResponseType.Id,
+                                ResponseTypeCategoryId = x.ResponseType.ResponseTypeCategory.Id,
+                                IsSystem = x.ResponseType.IsSystem,
+                                IsAdvanceable = x.ResponseType.IsAdvanceable,
+                                InteractiveActivityTypeId = x.ResponseType.InteractiveActivityType?.Id ?? 0,
+                                SwfFile = x.ResponseType.InteractiveActivityType?.SwfFile ?? string.Empty
+                            },    
+                            ResponseTypeCategoryId = x.ResponseType.ResponseTypeCategory.Id,
                             PhidgetTypeId = x.PhidgetType.Id,
-                            PhidgetStyleTypeId = x.PhidgetStyleType.Id,
-                            IsSystemReponseType = x.ResponseType.IsSystem,
-                            InteractiveActivityTypeId = x.ResponseType.InteractiveActivityType?.Id ?? 0,
-                            SwfFile = x.ResponseType.InteractiveActivityType?.SwfFile ?? string.Empty
+                            PhidgetStyleTypeId = x.PhidgetStyleType.Id
                         })
                 };
 

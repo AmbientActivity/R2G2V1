@@ -22,5 +22,7 @@ namespace Keebee.AAT.DataAccess.Models
         public bool IsSystem { get; set; }
 
         public bool IsRandom { get; set; }
+        public bool IsAdvanceable { get; set; }
+        public bool IsUninterrupted { get; set; }
     }
 }

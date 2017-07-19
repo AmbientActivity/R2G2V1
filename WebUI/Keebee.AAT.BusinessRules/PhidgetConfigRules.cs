@@ -188,11 +188,18 @@ namespace Keebee.AAT.BusinessRules
                         {
                             Id = x.Id,
                             ConfigId = config.Id,
-                            ResponseTypeId = x.ResponseType.Id,
+                            ResponseType = new ResponseTypeMessage
+                            {
+                                Id = x.ResponseType.Id,
+                                IsSystem = x.ResponseType.IsSystem,
+                                IsAdvanceable = x.ResponseType.IsAdvanceable,
+                                IsUninterrupted = x.ResponseType.IsUninterrupted,
+                                InteractiveActivityTypeId = x.ResponseType.InteractiveActivityType?.Id ?? 0,
+                                SwfFile = x.ResponseType.InteractiveActivityType?.SwfFile ?? string.Empty
+                            },
+                            
                             PhidgetTypeId = x.PhidgetType.Id,
                             PhidgetStyleTypeId = x.PhidgetStyleType.Id,
-                            InteractiveActivityTypeId = x.ResponseType.InteractiveActivityType?.Id ?? 0,
-                            SwfFile = x.ResponseType.InteractiveActivityType?.SwfFile ?? string.Empty
                         })
             };
 

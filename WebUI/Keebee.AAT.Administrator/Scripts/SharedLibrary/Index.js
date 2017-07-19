@@ -434,10 +434,12 @@
                             callback: function (successful, rejected) {
                                 if (successful.length > 0) {
                                     utilities.job.execute({
-                                        url: site.url + "SharedLibrary/GetData",
+                                        url: site.url + "SharedLibrary/AddFiles",
+                                        type: "POST",
                                         waitMessage: "Saving...",
                                         params: {
-                                            mediaPathTypeId: mediaPathType.id
+                                            filenames: successful,
+                                            mediaPath: mediaPathType.path
                                         }
                                     })
                                     .then(function (addResult) {
@@ -446,6 +448,7 @@
                                         self.sort({ afterSave: true });
                                         self.selectedStreamIds([]);
                                         self.checkSelectAll(false);
+                                        self.marqueeRows(addResult.NewIds);
                                         enableDetail();
                                     })
                                     .catch(function () {
@@ -466,6 +469,15 @@
                             }
                         });
                     });
+
+                    self.marqueeRows = function (rowIds) {
+                        $(rowIds).each(function (index, value) {
+                            $("#row_" + value).addClass("row-added");
+                            setTimeout(function () {
+                                $("#row_" + value).removeClass("row-added");
+                            }, 1500);
+                        });
+                    };
 
                     self.deleteSelected = function () {
                         self.clearStreams();

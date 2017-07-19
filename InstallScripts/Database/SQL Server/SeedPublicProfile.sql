@@ -4,84 +4,87 @@ USE [KeebeeAAT]
 TRUNCATE TABLE PublicMediaFiles
 */
 
-DECLARE @pathProfiles varchar(max)
-DECLARE @pathSharedLibrary varchar(max)
-DECLARE @mediaPathType varchar(max)
+DECLARE @profileId char(1) = '0'
+DECLARE @pathProfiles varchar(100)
+DECLARE @pathSharedLibrary varchar(100)
+DECLARE @mediaPathType varchar(100)
+DECLARE @allowedExts varchar(100)
 
 SET @pathProfiles = FileTableRootPath() + '\Media\Profiles\'
 SET @pathSharedLibrary = FileTableRootPath() + '\Media\SharedLibrary\'
 
 --- ResponseType 1 - "SlideShow" ---
-SELECT @mediaPathType = [Path] FROM MediaPathTypes WHERE Id = 3 -- images/general
 --- link from shared library
+SELECT @mediaPathType = [Path], @allowedExts = '''' + REPLACE(AllowedExts, ', ', ''', ''') + '''' FROM MediaPathTypes WHERE Id = 3 -- images/general
 INSERT INTO PublicMediaFiles (IsLinked, ResponseTypeId, MediaPathTypeId, StreamId, DateAdded)
-SELECT 1, 1, 3, StreamId, GETDATE() FROM MediaFiles WHERE [Path] = @pathSharedLibrary + @mediaPathType + '\' AND [FileType] IN ('jpg', 'jpeg', 'png', 'gif')
+SELECT 1, 1, 3, StreamId, GETDATE() FROM MediaFiles WHERE [Path] = @pathSharedLibrary + @mediaPathType + '\' AND (@allowedExts) LIKE '%' + [FileType] + '%'
+
 --- add from local profile
 INSERT INTO PublicMediaFiles (IsLinked, ResponseTypeId, MediaPathTypeId, StreamId, DateAdded)
-SELECT 0, 1, 3, StreamId, GETDATE() FROM MediaFiles WHERE [Path] = @pathProfiles + '0\' +  @mediaPathType + '\' AND [FileType] IN ('jpg', 'jpeg', 'png', 'gif')
+SELECT 0, 1, 3, StreamId, GETDATE() FROM MediaFiles WHERE [Path] = @pathProfiles + @profileId + '\' +  @mediaPathType + '\' AND  (@allowedExts) LIKE '%' + [FileType] + '%'
 
 --- ResponseType 2 - "MatchingGame" ---
 -- link from shared library
-SELECT @mediaPathType = [Path] FROM MediaPathTypes WHERE Id = 7 -- activities\matching-game\shapes\
+SELECT @mediaPathType = [Path], @allowedExts = '''' + REPLACE(AllowedExts, ', ', ''', ''') + ''''  FROM MediaPathTypes WHERE Id = 7 -- activities\matching-game\shapes\
 INSERT INTO PublicMediaFiles (IsLinked, ResponseTypeId, MediaPathTypeId, StreamId, DateAdded)
-SELECT 1, 2, 7, StreamId, GETDATE() FROM MediaFiles WHERE [Path] = @pathSharedLibrary + @mediaPathType + '\' AND [FileType] = 'png'
+SELECT 1, 2, 7, StreamId, GETDATE() FROM MediaFiles WHERE [Path] = @pathSharedLibrary + @mediaPathType + '\' AND  (@allowedExts) LIKE '%' + [FileType] + '%'
 --- add from local profile
 INSERT INTO PublicMediaFiles (IsLinked, ResponseTypeId, MediaPathTypeId, StreamId, DateAdded)
-SELECT 0, 2, 7, StreamId, GETDATE() FROM MediaFiles WHERE [Path] = @pathProfiles + '0\' + @mediaPathType + '\' AND [FileType] = 'png'
+SELECT 0, 2, 7, StreamId, GETDATE() FROM MediaFiles WHERE [Path] = @pathProfiles + @profileId + '\' + @mediaPathType + '\' AND  (@allowedExts) LIKE '%' + [FileType] + '%'
 
 -- link from shared library
-SELECT @mediaPathType = [Path] FROM MediaPathTypes WHERE Id = 8 -- activities\matching-game\sounds\
+SELECT @mediaPathType = [Path], @allowedExts = '''' + REPLACE(AllowedExts, ', ', ''', ''') + ''''  FROM MediaPathTypes WHERE Id = 8 -- activities\matching-game\sounds\
 INSERT INTO PublicMediaFiles (IsLinked, ResponseTypeId, MediaPathTypeId, StreamId, DateAdded)
-SELECT 1, 2, 8, StreamId, GETDATE() FROM MediaFiles WHERE [Path] = @pathSharedLibrary + @mediaPathType + '\' AND [FileType] = 'mp3'
+SELECT 1, 2, 8, StreamId, GETDATE() FROM MediaFiles WHERE [Path] = @pathSharedLibrary + @mediaPathType + '\' AND  (@allowedExts) LIKE '%' + [FileType] + '%'
 --- add from local profile
 INSERT INTO PublicMediaFiles (IsLinked, ResponseTypeId, MediaPathTypeId, StreamId, DateAdded)
-SELECT 0, 2, 8, StreamId, GETDATE() FROM MediaFiles WHERE [Path] = @pathProfiles + '0\' + @mediaPathType + '\' AND [FileType] = 'mp3'
+SELECT 0, 2, 8, StreamId, GETDATE() FROM MediaFiles WHERE [Path] = @pathProfiles + @profileId + '\' + @mediaPathType + '\' AND  (@allowedExts) LIKE '%' + [FileType] + '%'
 
 --- ResponseType 3 - ResponseType "Cats" ---
-SELECT @mediaPathType = [Path] FROM MediaPathTypes WHERE Id = 10 -- videos\cats\
+SELECT @mediaPathType = [Path], @allowedExts = '''' + REPLACE(AllowedExts, ', ', ''', ''') + ''''  FROM MediaPathTypes WHERE Id = 10 -- videos\cats\
 INSERT INTO PublicMediaFiles (IsLinked, ResponseTypeId, MediaPathTypeId, StreamId, DateAdded)
-SELECT 1, 3, 10, StreamId, GETDATE() FROM MediaFiles WHERE [Path] = @pathSharedLibrary + @mediaPathType + '\' AND [FileType] = 'mp4'
+SELECT 1, 3, 10, StreamId, GETDATE() FROM MediaFiles WHERE [Path] = @pathSharedLibrary + @mediaPathType + '\' AND  (@allowedExts) LIKE '%' + [FileType] + '%'
 
 --- ResponseType 5 - ResponseType "Radio" ---
 --- link from shared library
-SELECT @mediaPathType = [Path] FROM MediaPathTypes WHERE Id = 1 -- audio\music\
+SELECT @mediaPathType = [Path], @allowedExts = '''' + REPLACE(AllowedExts, ', ', ''', ''') + ''''  FROM MediaPathTypes WHERE Id = 1 -- audio\music\
 INSERT INTO PublicMediaFiles (IsLinked, ResponseTypeId, MediaPathTypeId, StreamId, DateAdded)
-SELECT 1, 5, 1, StreamId, GETDATE() FROM MediaFiles WHERE [Path] = @pathSharedLibrary + @mediaPathType + '\' AND [FileType] = 'mp3'
+SELECT 1, 5, 1, StreamId, GETDATE() FROM MediaFiles WHERE [Path] = @pathSharedLibrary + @mediaPathType + '\' AND  (@allowedExts) LIKE '%' + [FileType] + '%'
 --- add from local profile
 INSERT INTO PublicMediaFiles (IsLinked, ResponseTypeId, MediaPathTypeId, StreamId, DateAdded)
-SELECT 0, 5, 1, StreamId, GETDATE() FROM MediaFiles WHERE [Path] = @pathProfiles + '0\' + @mediaPathType + '\' AND [FileType] = 'mp3'
+SELECT 0, 5, 1, StreamId, GETDATE() FROM MediaFiles WHERE [Path] = @pathProfiles + @profileId + '\' + @mediaPathType + '\' AND  (@allowedExts) LIKE '%' + [FileType] + '%'
 
 --- link from shared library
-SELECT @mediaPathType = [Path] FROM MediaPathTypes WHERE Id = 2 -- audio\radio-shows\
+SELECT @mediaPathType = [Path], @allowedExts = '''' + REPLACE(AllowedExts, ', ', ''', ''') + ''''  FROM MediaPathTypes WHERE Id = 2 -- audio\radio-shows\
 INSERT INTO PublicMediaFiles (IsLinked, ResponseTypeId, MediaPathTypeId, StreamId, DateAdded)
-SELECT 1, 5, 2, StreamId, GETDATE() FROM MediaFiles WHERE [Path] = @pathSharedLibrary + @mediaPathType + '\' AND [FileType] = 'mp3'
+SELECT 1, 5, 2, StreamId, GETDATE() FROM MediaFiles WHERE [Path] = @pathSharedLibrary + @mediaPathType + '\' AND  (@allowedExts) LIKE '%' + [FileType] + '%'
 --- add from local profile
 INSERT INTO PublicMediaFiles (IsLinked, ResponseTypeId, MediaPathTypeId, StreamId, DateAdded)
-SELECT 0, 5, 2, StreamId, GETDATE() FROM MediaFiles WHERE [Path] = @pathProfiles + '0\' + @mediaPathType + '\' AND [FileType] = 'mp3'
+SELECT 0, 5, 2, StreamId, GETDATE() FROM MediaFiles WHERE [Path] = @pathProfiles + @profileId + '\' + @mediaPathType + '\' AND  (@allowedExts) LIKE '%' + [FileType] + '%'
 
 --- ResponseType 6 - ResponseType "Television" ---
-SELECT @mediaPathType = [Path] FROM MediaPathTypes WHERE Id = 5 -- videos\tv-shows\
+SELECT @mediaPathType = [Path], @allowedExts = '''' + REPLACE(AllowedExts, ', ', ''', ''') + ''''  FROM MediaPathTypes WHERE Id = 5 -- videos\tv-shows\
 --- link from shared library
 INSERT INTO PublicMediaFiles (IsLinked, ResponseTypeId, MediaPathTypeId, StreamId, DateAdded)
-SELECT 1, 6, 5, StreamId, GETDATE() FROM MediaFiles WHERE [Path] = @pathSharedLibrary + @mediaPathType + '\' AND [FileType] = 'mp4'
+SELECT 1, 6, 5, StreamId, GETDATE() FROM MediaFiles WHERE [Path] = @pathSharedLibrary + @mediaPathType + '\' AND  (@allowedExts) LIKE '%' + [FileType] + '%'
 --- add from local profile
 INSERT INTO PublicMediaFiles (IsLinked, ResponseTypeId, MediaPathTypeId, StreamId, DateAdded)
-SELECT 0, 6, 5, StreamId, GETDATE() FROM MediaFiles WHERE [Path] = @pathProfiles + '0\' + @mediaPathType + '\' AND [FileType] = 'mp4'
+SELECT 0, 6, 5, StreamId, GETDATE() FROM MediaFiles WHERE [Path] = @pathProfiles + @profileId + '\' + @mediaPathType + '\' AND  (@allowedExts) LIKE '%' + [FileType] + '%'
 
 --- ResponseType 8 - ResponseType "Ambient" ---
-SELECT @mediaPathType = [Path] FROM MediaPathTypes WHERE Id = 9 -- videos\ambient\
+SELECT @mediaPathType = [Path], @allowedExts = '''' + REPLACE(AllowedExts, ', ', ''', ''') + ''''  FROM MediaPathTypes WHERE Id = 9 -- videos\ambient\
 INSERT INTO PublicMediaFiles (IsLinked, ResponseTypeId, MediaPathTypeId, StreamId, DateAdded)
-SELECT 1, 8, 9, StreamId, GETDATE() FROM MediaFiles WHERE [Path] = @pathSharedLibrary + @mediaPathType + '\' AND [FileType] = 'mp4'
+SELECT 1, 8, 9, StreamId, GETDATE() FROM MediaFiles WHERE [Path] = @pathSharedLibrary + @mediaPathType + '\' AND  (@allowedExts) LIKE '%' + [FileType] + '%'
 
 --- ResponseType 13 - ResponseType "Nature" ---
-SELECT @mediaPathType = [Path] FROM MediaPathTypes WHERE Id = 11 -- videos\nature\
+SELECT @mediaPathType = [Path], @allowedExts = '''' + REPLACE(AllowedExts, ', ', ''', ''') + ''''  FROM MediaPathTypes WHERE Id = 11 -- videos\nature\
 INSERT INTO PublicMediaFiles (IsLinked, ResponseTypeId, MediaPathTypeId, StreamId, DateAdded)
-SELECT 1, 13, 11, StreamId, GETDATE() FROM MediaFiles WHERE [Path] = @pathSharedLibrary + @mediaPathType + '\' AND [FileType] = 'mp4'
+SELECT 1, 13, 11, StreamId, GETDATE() FROM MediaFiles WHERE [Path] = @pathSharedLibrary + @mediaPathType + '\' AND  (@allowedExts) LIKE '%' + [FileType] + '%'
 
 --- ResponseType 14 - ResponseType "Sports" ---
-SELECT @mediaPathType = [Path] FROM MediaPathTypes WHERE Id = 12 -- videos\sports\
+SELECT @mediaPathType = [Path], @allowedExts = '''' + REPLACE(AllowedExts, ', ', ''', ''') + ''''  FROM MediaPathTypes WHERE Id = 12 -- videos\sports\
 INSERT INTO PublicMediaFiles (IsLinked, ResponseTypeId, MediaPathTypeId, StreamId, DateAdded)
-SELECT 1, 14, 12, StreamId, GETDATE() FROM MediaFiles WHERE [Path] = @pathSharedLibrary + @mediaPathType + '\' AND [FileType] = 'mp4'
+SELECT 1, 14, 12, StreamId, GETDATE() FROM MediaFiles WHERE [Path] = @pathSharedLibrary + @mediaPathType + '\' AND  (@allowedExts) LIKE '%' + [FileType] + '%'
 
 -- VIEW THE RESULTS --
 

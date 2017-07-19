@@ -55,11 +55,11 @@ $filenameVSSolution = "Keebee.AAT.sln"
 $pathSharedLibrary = "Media\SharedLibrary\"
 $pathProfiles = "Media\Profiles\"
 $pathPublicProfile = "0\"
-$pathResident1Profile = "1\"
+$pathSampleResidentProfile = "1\"
 $pathExportEventLog = "Media\Exports\EventLog\"
 
 $pathSourcePublicProfile = "$pathSourceCode\Media\Profiles\$pathPublicProfile*"
-$pathSourceResident1Profile = "$pathSourceCode\Media\Profiles\$pathResident1Profile*"
+$pathSourceSampleResidentProfile = "$pathSourceCode\Media\Profiles\$pathSampleResidentProfile*"
 $pathSourceSharedLibrary = "$pathSourceCode\Media\SharedLibrary\*"
 
 Try
@@ -259,15 +259,15 @@ Try
     Write-Host "done.”
 
     # resident profile
-    Write-Host "Deploying Resident 1 Profile...” -NoNewline
-    $path = $pathDeployments + $pathProfiles + $pathResident1Profile
+    Write-Host "Deploying Sample Resident Profile...” -NoNewline
+    $path = $pathDeployments + $pathProfiles + $pathSampleResidentProfile
     If(test-path $path)
     {
         Remove-Item $path -recurse -Force
     }
-    $path = $pathDeployments + $pathProfiles + $pathResident1Profile
+    $path = $pathDeployments + $pathProfiles + $pathSampleResidentProfile
     New-Item -ItemType Directory -Force -Path $path | Out-Null
-    Copy-Item $pathSourceResident1Profile $path -recurse -Force
+    Copy-Item $pathSourceSampleResidentProfile $path -recurse -Force
     Write-Host "done.”
 
     # -------------------- SCHEDULED TASKS --------------------

@@ -77,8 +77,10 @@ namespace Keebee.AAT.Simulator
         private const int MaxValue = 1000;
         private const int StepIncrement = 200;
 
-        private int _currentRadio4Value;
-        private int _currentTelevsion5Value;
+        private int _currentRadioSensorValue;
+        private int _currentTelevsionSensorValue;
+        private int _currentNatureSensorValue;
+        private int _currentSportsSensorValue;
 
         #endregion
 
@@ -179,10 +181,10 @@ namespace Keebee.AAT.Simulator
 
         private void RadioRightButtonClick(object sender, EventArgs e)
         {
-            _currentRadio4Value = GetCurrentStepValue(ResponseTypeId.Radio, StepDirectionType.Right);
+            _currentRadioSensorValue = GetCurrentStepValue(ResponseTypeId.Radio, StepDirectionType.Right);
 
-            var valueToSend = (_currentRadio4Value == MaxValue)
-                ? _currentRadio4Value - 1 : _currentRadio4Value;
+            var valueToSend = (_currentRadioSensorValue == MaxValue)
+                ? _currentRadioSensorValue - 1 : _currentRadioSensorValue;
 
             if (valueToSend <= 0) return;
 
@@ -192,10 +194,10 @@ namespace Keebee.AAT.Simulator
 
         private void RadioLeftButtonClick(object sender, EventArgs e)
         {
-            _currentRadio4Value = GetCurrentStepValue(ResponseTypeId.Radio, StepDirectionType.Left);
+            _currentRadioSensorValue = GetCurrentStepValue(ResponseTypeId.Radio, StepDirectionType.Left);
 
-            var valueToSend = (_currentRadio4Value == MaxValue)
-                ? _currentRadio4Value - 1 : _currentRadio4Value;
+            var valueToSend = (_currentRadioSensorValue == MaxValue)
+                ? _currentRadioSensorValue - 1 : _currentRadioSensorValue;
 
             if (valueToSend <= 0) return;
 
@@ -205,10 +207,10 @@ namespace Keebee.AAT.Simulator
 
         private void TelevisionRightButtonClick(object sender, EventArgs e)
         {
-            _currentTelevsion5Value = GetCurrentStepValue(ResponseTypeId.Television, StepDirectionType.Right);
+            _currentTelevsionSensorValue = GetCurrentStepValue(ResponseTypeId.Television, StepDirectionType.Right);
 
-            var valueToSend = (_currentTelevsion5Value == MaxValue)
-                ? _currentTelevsion5Value - 1 : _currentTelevsion5Value;
+            var valueToSend = (_currentTelevsionSensorValue == MaxValue)
+                ? _currentTelevsionSensorValue - 1 : _currentTelevsionSensorValue;
 
             if (valueToSend <= 0) return;
 
@@ -217,14 +219,62 @@ namespace Keebee.AAT.Simulator
 
         private void TelevisionLeftButtonClick(object sender, EventArgs e)
         {
-            _currentTelevsion5Value = GetCurrentStepValue(ResponseTypeId.Television, StepDirectionType.Left);
+            _currentTelevsionSensorValue = GetCurrentStepValue(ResponseTypeId.Television, StepDirectionType.Left);
 
-            var valueToSend = (_currentTelevsion5Value == MaxValue)
-                ? _currentTelevsion5Value - 1 : _currentTelevsion5Value;
+            var valueToSend = (_currentTelevsionSensorValue == MaxValue)
+                ? _currentTelevsionSensorValue - 1 : _currentTelevsionSensorValue;
 
             if (valueToSend <= 0) return;
 
             ExecuteResponse(ResponseTypeId.Television, PhidgetTypeId.Sensor0, valueToSend);
+        }
+
+        private void NatureRightButtonClick(object sender, EventArgs e)
+        {
+            _currentNatureSensorValue = GetCurrentStepValue(ResponseTypeId.Nature, StepDirectionType.Right);
+
+            var valueToSend = (_currentNatureSensorValue == MaxValue)
+                ? _currentNatureSensorValue - 1 : _currentNatureSensorValue;
+
+            if (valueToSend <= 0) return;
+
+            ExecuteResponse(ResponseTypeId.Nature, PhidgetTypeId.Sensor0, valueToSend);
+        }
+
+        private void NatureLeftButtonClick(object sender, EventArgs e)
+        {
+            _currentNatureSensorValue = GetCurrentStepValue(ResponseTypeId.Nature, StepDirectionType.Left);
+
+            var valueToSend = (_currentNatureSensorValue == MaxValue)
+                ? _currentNatureSensorValue - 1 : _currentNatureSensorValue;
+
+            if (valueToSend <= 0) return;
+
+            ExecuteResponse(ResponseTypeId.Nature, PhidgetTypeId.Sensor0, valueToSend);
+        }
+
+        private void SportsRightButtonClick(object sender, EventArgs e)
+        {
+            _currentSportsSensorValue = GetCurrentStepValue(ResponseTypeId.Sports, StepDirectionType.Right);
+
+            var valueToSend = (_currentSportsSensorValue == MaxValue)
+                ? _currentSportsSensorValue - 1 : _currentSportsSensorValue;
+
+            if (valueToSend <= 0) return;
+
+            ExecuteResponse(ResponseTypeId.Sports, PhidgetTypeId.Sensor0, valueToSend);
+        }
+
+        private void SportsLeftButtonClick(object sender, EventArgs e)
+        {
+            _currentSportsSensorValue = GetCurrentStepValue(ResponseTypeId.Sports, StepDirectionType.Left);
+
+            var valueToSend = (_currentSportsSensorValue == MaxValue)
+                ? _currentSportsSensorValue - 1 : _currentSportsSensorValue;
+
+            if (valueToSend <= 0) return;
+
+            ExecuteResponse(ResponseTypeId.Sports, PhidgetTypeId.Sensor0, valueToSend);
         }
 
         private int GetCurrentStepValue(int responseType, StepDirectionType direction)
@@ -234,10 +284,16 @@ namespace Keebee.AAT.Simulator
             switch (responseType)
             {
                 case ResponseTypeId.Radio:
-                    currentValue = _currentRadio4Value;
+                    currentValue = _currentRadioSensorValue;
                     break;
                 case ResponseTypeId.Television:
-                    currentValue = _currentTelevsion5Value;
+                    currentValue = _currentTelevsionSensorValue;
+                    break;
+                case ResponseTypeId.Nature:
+                    currentValue = _currentNatureSensorValue;
+                    break;
+                case ResponseTypeId.Sports:
+                    currentValue = _currentSportsSensorValue;
                     break;
             }
 
@@ -328,16 +384,6 @@ namespace Keebee.AAT.Simulator
                 default:
                     return null;
             }
-        }
-
-        private void NatureButtonClick(object sender, EventArgs e)
-        {
-            ExecuteResponse(ResponseTypeId.Nature, PhidgetTypeId.Sensor0);
-        }
-
-        private void SportsButtonClick(object sender, EventArgs e)
-        {
-            ExecuteResponse(ResponseTypeId.Sports, PhidgetTypeId.Sensor0);
         }
 
         private void ActivateResidentClick(object sender, EventArgs e)

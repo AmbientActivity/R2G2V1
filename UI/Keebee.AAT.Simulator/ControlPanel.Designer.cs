@@ -43,6 +43,12 @@
             this.btnKillDisplay = new System.Windows.Forms.Button();
             this.label5 = new System.Windows.Forms.Label();
             this.grpInterfaceKit = new System.Windows.Forms.GroupBox();
+            this.label2 = new System.Windows.Forms.Label();
+            this.label1 = new System.Windows.Forms.Label();
+            this.button3 = new System.Windows.Forms.Button();
+            this.button4 = new System.Windows.Forms.Button();
+            this.button1 = new System.Windows.Forms.Button();
+            this.button2 = new System.Windows.Forms.Button();
             this.btnBalloonPoppingGame = new System.Windows.Forms.Button();
             this.btnVolumeControl = new System.Windows.Forms.Button();
             this.btnPaintingActivity = new System.Windows.Forms.Button();
@@ -54,8 +60,6 @@
             this.btnTelevisionRight = new System.Windows.Forms.Button();
             this.btnTelevisionLeft = new System.Windows.Forms.Button();
             this.bnRadioLeft = new System.Windows.Forms.Button();
-            this.btnNature = new System.Windows.Forms.Button();
-            this.btnSports = new System.Windows.Forms.Button();
             this.grpMediaSource.SuspendLayout();
             this.grpAutoResident.SuspendLayout();
             this.grpAutoSensor.SuspendLayout();
@@ -233,8 +237,12 @@
             // 
             // grpInterfaceKit
             // 
-            this.grpInterfaceKit.Controls.Add(this.btnSports);
-            this.grpInterfaceKit.Controls.Add(this.btnNature);
+            this.grpInterfaceKit.Controls.Add(this.label2);
+            this.grpInterfaceKit.Controls.Add(this.label1);
+            this.grpInterfaceKit.Controls.Add(this.button3);
+            this.grpInterfaceKit.Controls.Add(this.button4);
+            this.grpInterfaceKit.Controls.Add(this.button1);
+            this.grpInterfaceKit.Controls.Add(this.button2);
             this.grpInterfaceKit.Controls.Add(this.btnBalloonPoppingGame);
             this.grpInterfaceKit.Controls.Add(this.btnVolumeControl);
             this.grpInterfaceKit.Controls.Add(this.btnPaintingActivity);
@@ -257,6 +265,74 @@
             this.grpInterfaceKit.TabIndex = 10;
             this.grpInterfaceKit.TabStop = false;
             this.grpInterfaceKit.Text = "Repsonse";
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label2.Location = new System.Drawing.Point(341, 70);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(42, 15);
+            this.label2.TabIndex = 46;
+            this.label2.Text = "Sports";
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label1.Location = new System.Drawing.Point(238, 70);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(44, 15);
+            this.label1.TabIndex = 45;
+            this.label1.Text = "Nature";
+            // 
+            // button3
+            // 
+            this.button3.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.button3.Location = new System.Drawing.Point(363, 91);
+            this.button3.Name = "button3";
+            this.button3.Size = new System.Drawing.Size(48, 36);
+            this.button3.TabIndex = 43;
+            this.button3.Text = ">";
+            this.button3.UseMnemonic = false;
+            this.button3.UseVisualStyleBackColor = true;
+            this.button3.Click += new System.EventHandler(this.SportsRightButtonClick);
+            // 
+            // button4
+            // 
+            this.button4.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.button4.Location = new System.Drawing.Point(315, 91);
+            this.button4.Name = "button4";
+            this.button4.Size = new System.Drawing.Size(48, 36);
+            this.button4.TabIndex = 44;
+            this.button4.Text = "<";
+            this.button4.UseMnemonic = false;
+            this.button4.UseVisualStyleBackColor = true;
+            this.button4.Click += new System.EventHandler(this.SportsLeftButtonClick);
+            // 
+            // button1
+            // 
+            this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.button1.Location = new System.Drawing.Point(261, 91);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(48, 36);
+            this.button1.TabIndex = 41;
+            this.button1.Text = ">";
+            this.button1.UseMnemonic = false;
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.NatureRightButtonClick);
+            // 
+            // button2
+            // 
+            this.button2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.button2.Location = new System.Drawing.Point(213, 91);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(48, 36);
+            this.button2.TabIndex = 42;
+            this.button2.Text = "<";
+            this.button2.UseMnemonic = false;
+            this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.NatureLeftButtonClick);
             // 
             // btnBalloonPoppingGame
             // 
@@ -308,7 +384,7 @@
             // btnCaregiver
             // 
             this.btnCaregiver.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnCaregiver.Location = new System.Drawing.Point(213, 91);
+            this.btnCaregiver.Location = new System.Drawing.Point(10, 208);
             this.btnCaregiver.Name = "btnCaregiver";
             this.btnCaregiver.Size = new System.Drawing.Size(96, 36);
             this.btnCaregiver.TabIndex = 30;
@@ -330,7 +406,7 @@
             // btnCats
             // 
             this.btnCats.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnCats.Location = new System.Drawing.Point(315, 91);
+            this.btnCats.Location = new System.Drawing.Point(315, 151);
             this.btnCats.Name = "btnCats";
             this.btnCats.Size = new System.Drawing.Size(96, 36);
             this.btnCats.TabIndex = 28;
@@ -383,28 +459,6 @@
             this.bnRadioLeft.UseMnemonic = false;
             this.bnRadioLeft.UseVisualStyleBackColor = true;
             this.bnRadioLeft.Click += new System.EventHandler(this.RadioLeftButtonClick);
-            // 
-            // btnNature
-            // 
-            this.btnNature.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnNature.Location = new System.Drawing.Point(315, 151);
-            this.btnNature.Name = "btnNature";
-            this.btnNature.Size = new System.Drawing.Size(96, 36);
-            this.btnNature.TabIndex = 41;
-            this.btnNature.Text = "Nature";
-            this.btnNature.UseVisualStyleBackColor = true;
-            this.btnNature.Click += new System.EventHandler(this.NatureButtonClick);
-            // 
-            // btnSports
-            // 
-            this.btnSports.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnSports.Location = new System.Drawing.Point(10, 212);
-            this.btnSports.Name = "btnSports";
-            this.btnSports.Size = new System.Drawing.Size(96, 36);
-            this.btnSports.TabIndex = 42;
-            this.btnSports.Text = "Sports";
-            this.btnSports.UseVisualStyleBackColor = true;
-            this.btnSports.Click += new System.EventHandler(this.SportsButtonClick);
             // 
             // ControlPanel
             // 
@@ -460,8 +514,12 @@
         private System.Windows.Forms.Button btnPaintingActivity;
         private System.Windows.Forms.Button btnVolumeControl;
         private System.Windows.Forms.Button btnBalloonPoppingGame;
-        private System.Windows.Forms.Button btnSports;
-        private System.Windows.Forms.Button btnNature;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Button button3;
+        private System.Windows.Forms.Button button4;
+        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button button2;
     }
 }
 

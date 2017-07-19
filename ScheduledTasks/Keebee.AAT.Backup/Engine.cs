@@ -830,12 +830,16 @@ namespace Keebee.AAT.Backup
                     sw.WriteLine();
                     // Cats Videos Linked
                     mediaPathType = mediaPathTypes.Single(x => x.Id == MediaPathTypeId.Cats);
-                    sw.WriteLine("--- Activity 3 - ResponseType 'Cats' ---");
-                    sw.WriteLine(
-                        "INSERT INTO PublicMediaFiles (IsLinked, ResponseTypeId, MediaPathTypeId, StreamId, DateAdded)");
-                    sw.WriteLine(
-                        $"SELECT 1, {ResponseTypeId.Cats}, {mediaPathType.Id}, StreamId, GETDATE() FROM MediaFiles WHERE [Path] = @pathSharedLibrary + " +
-                        $@"'{mediaPathType.Path}\' AND [FileType] = 'mp4'");
+                    filenames = GetPublicProfileLinkedFilenames(ResponseTypeId.Cats, mediaPathType.Id, linkedMedia);
+                    if (filenames.Length > 0)
+                    {
+                        sw.WriteLine();
+                        sw.WriteLine(
+                            "INSERT INTO PublicMediaFiles (IsLinked, ResponseTypeId, MediaPathTypeId, StreamId, DateAdded)");
+                        sw.WriteLine(
+                            $@"SELECT 1, {ResponseTypeId.Cats}, {mediaPathType.Id}, StreamId, GETDATE() FROM MediaFiles WHERE [Path] = @pathSharedLibrary + '{mediaPathType.Path}\'");
+                        sw.WriteLine($"AND [Filename] IN ({filenames})");
+                    }
 
                     sw.WriteLine();
                     // Music
@@ -905,32 +909,44 @@ namespace Keebee.AAT.Backup
                     sw.WriteLine();
                     // Ambient Videos Linked
                     mediaPathType = mediaPathTypes.Single(x => x.Id == MediaPathTypeId.Ambient);
-                    sw.WriteLine("--- Activity 7 - ResponseType 'Ambient' ---");
-                    sw.WriteLine(
-                        "INSERT INTO PublicMediaFiles (IsLinked, ResponseTypeId, MediaPathTypeId, StreamId, DateAdded)");
-                    sw.WriteLine(
-                        $"SELECT 1, {ResponseTypeId.Ambient}, {mediaPathType.Id}, StreamId, GETDATE() FROM MediaFiles WHERE [Path] = @pathSharedLibrary + " +
-                        $@"'{mediaPathType.Path}\' AND [FileType] = 'mp4'");
+                    filenames = GetPublicProfileLinkedFilenames(ResponseTypeId.Ambient, mediaPathType.Id, linkedMedia);
+                    if (filenames.Length > 0)
+                    {
+                        sw.WriteLine();
+                        sw.WriteLine(
+                            "INSERT INTO PublicMediaFiles (IsLinked, ResponseTypeId, MediaPathTypeId, StreamId, DateAdded)");
+                        sw.WriteLine(
+                            $@"SELECT 1, {ResponseTypeId.Ambient}, {mediaPathType.Id}, StreamId, GETDATE() FROM MediaFiles WHERE [Path] = @pathSharedLibrary + '{mediaPathType.Path}\'");
+                        sw.WriteLine($"AND [Filename] IN ({filenames})");
+                    }
 
                     sw.WriteLine();
                     // Nature Videos Linked
-                    mediaPathType = mediaPathTypes.Single(x => x.Id == MediaPathTypeId.Cats);
-                    sw.WriteLine("--- Activity 13 - ResponseType 'Nature' ---");
-                    sw.WriteLine(
-                        "INSERT INTO PublicMediaFiles (IsLinked, ResponseTypeId, MediaPathTypeId, StreamId, DateAdded)");
-                    sw.WriteLine(
-                        $"SELECT 1, {ResponseTypeId.Nature}, {mediaPathType.Id}, StreamId, GETDATE() FROM MediaFiles WHERE [Path] = @pathSharedLibrary + " +
-                        $@"'{mediaPathType.Path}\' AND [FileType] = 'mp4'");
+                    mediaPathType = mediaPathTypes.Single(x => x.Id == MediaPathTypeId.Nature);
+                    filenames = GetPublicProfileLinkedFilenames(ResponseTypeId.Nature, mediaPathType.Id, linkedMedia);
+                    if (filenames.Length > 0)
+                    {
+                        sw.WriteLine();
+                        sw.WriteLine(
+                            "INSERT INTO PublicMediaFiles (IsLinked, ResponseTypeId, MediaPathTypeId, StreamId, DateAdded)");
+                        sw.WriteLine(
+                            $@"SELECT 1, {ResponseTypeId.Nature}, {mediaPathType.Id}, StreamId, GETDATE() FROM MediaFiles WHERE [Path] = @pathSharedLibrary + '{mediaPathType.Path}\'");
+                        sw.WriteLine($"AND [Filename] IN ({filenames})");
+                    }
 
                     sw.WriteLine();
                     // Sports Videos Linked
-                    mediaPathType = mediaPathTypes.Single(x => x.Id == MediaPathTypeId.Cats);
-                    sw.WriteLine("--- Activity 14 - ResponseType 'Sports' ---");
-                    sw.WriteLine(
-                        "INSERT INTO PublicMediaFiles (IsLinked, ResponseTypeId, MediaPathTypeId, StreamId, DateAdded)");
-                    sw.WriteLine(
-                        $"SELECT 1, {ResponseTypeId.Sports}, {mediaPathType.Id}, StreamId, GETDATE() FROM MediaFiles WHERE [Path] = @pathSharedLibrary + " +
-                        $@"'{mediaPathType.Path}\' AND [FileType] = 'mp4'");
+                    mediaPathType = mediaPathTypes.Single(x => x.Id == MediaPathTypeId.Sports);
+                    filenames = GetPublicProfileLinkedFilenames(ResponseTypeId.Sports, mediaPathType.Id, linkedMedia);
+                    if (filenames.Length > 0)
+                    {
+                        sw.WriteLine();
+                        sw.WriteLine(
+                            "INSERT INTO PublicMediaFiles (IsLinked, ResponseTypeId, MediaPathTypeId, StreamId, DateAdded)");
+                        sw.WriteLine(
+                            $@"SELECT 1, {ResponseTypeId.Sports}, {mediaPathType.Id}, StreamId, GETDATE() FROM MediaFiles WHERE [Path] = @pathSharedLibrary + '{mediaPathType.Path}\'");
+                        sw.WriteLine($"AND [Filename] IN ({filenames})");
+                    }
 
                     sw.WriteLine();
                 }

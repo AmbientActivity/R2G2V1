@@ -594,6 +594,8 @@ namespace Keebee.AAT.Backup
                             .Where(x => !x.Contains(RestorePublicProfileFilename))
                             .Where(x => !x.Contains(RestoreResidentsFilename))
                             .Where(x => !x.Contains(RestoreConfigurationsFilename))
+                            .Where(x => !x.Contains("ffmpeg.exe"))
+                            .Where(x => !x.Contains("ffprobe.exe"))
                             .ToArray();
                     }
 

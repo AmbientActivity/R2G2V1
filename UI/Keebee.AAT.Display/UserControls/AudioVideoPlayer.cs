@@ -106,7 +106,7 @@ namespace Keebee.AAT.Display.UserControls
 
         public void Stop()
         {
-            if (axWindowsMediaPlayer1.playState != WMPPlayState.wmppsMediaEnded)
+            if (axWindowsMediaPlayer1.playState == WMPPlayState.wmppsPlaying)
                 axWindowsMediaPlayer1.Ctlcontrols.stop();
         }
 

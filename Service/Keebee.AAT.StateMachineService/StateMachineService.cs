@@ -201,6 +201,7 @@ namespace Keebee.AAT.StateMachineService
                                 IsSystem = x.ResponseType.IsSystem,
                                 IsRandom = x.ResponseType.IsRandom,
                                 IsAdvanceable = x.ResponseType.IsAdvanceable,
+                                IsUninterrupted = x.ResponseType.IsUninterrupted,
                                 InteractiveActivityTypeId = x.ResponseType.InteractiveActivityType?.Id ?? 0,
                                 SwfFile = x.ResponseType.InteractiveActivityType?.SwfFile ?? string.Empty
                             },    

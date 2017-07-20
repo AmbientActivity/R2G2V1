@@ -66,7 +66,7 @@ namespace Keebee.AAT.Display
         // message queue listener
         private readonly CustomMessageQueue _messageQueueResponse;
 
-        // current sensor values
+        // current sensor values (for 'advanceable' response types)
         private int _currentRadioSensorValue;
         private int _currentTelevisionSensorValue;
         private int _currentNatureSensorValue;
@@ -310,8 +310,7 @@ namespace Keebee.AAT.Display
 
         private void ExecuteResponse(int sensorValue, bool isSystem)
         {
-            if (!isSystem)
-                if (!ShouldExecute()) return;
+            if (!ShouldExecute(isSystem)) return;
 
             try
             {
@@ -376,19 +375,21 @@ namespace Keebee.AAT.Display
             }
         }
 
-        private bool ShouldExecute()
+        private bool ShouldExecute(bool isSystem)
         {
-            // only execute if:
-                // new response
-                // OR volume control
-                // OR 'advanceable'
-            // AND it's not uninterruptable 
-            var shouldExecute = (_isNewResponse 
-                    || _pendingResponse.IsAdvanceable
-                    || _pendingResponse.Id == ResponseTypeId.VolumeControl)
-                && !_currentResponse.IsUninterrupted; // i.e. the caregiver screen
+            // dont'execute if current response is uninterrupted
+            if (_currentResponse.IsUninterrupted) return false;
 
-            return shouldExecute;
+            // execute if a system response
+            if (isSystem) return true;
+
+            // only execute if:
+            // new response
+            // OR 'advanceable'
+            // OR volume control
+            return _isNewResponse
+                    || _pendingResponse.IsAdvanceable
+                    || _pendingResponse.Id == ResponseTypeId.VolumeControl;
         }
 
         private void StopCurrentResponse(int responseTypeCategoryId = -1)

@@ -50,7 +50,7 @@ namespace Keebee.AAT.Simulator
 
         // responses
         private readonly ResponseTypeMessage[] _responseTypes;
-        private int _currentResponseTypeId = -1;
+        private int _currentResponseTypeId = ResponseTypeId.Ambient;
 
         // resident
         private int _currentResidentIndex = -1;

@@ -200,7 +200,7 @@ namespace Keebee.AAT.StateMachineService
                                 ResponseTypeCategoryId = x.ResponseType.ResponseTypeCategory.Id,
                                 IsSystem = x.ResponseType.IsSystem,
                                 IsRandom = x.ResponseType.IsRandom,
-                                IsAdvanceable = x.ResponseType.IsAdvanceable,
+                                IsRotational = x.ResponseType.IsRotational,
                                 IsUninterrupted = x.ResponseType.IsUninterrupted,
                                 InteractiveActivityTypeId = x.ResponseType.InteractiveActivityType?.Id ?? 0,
                                 SwfFile = x.ResponseType.InteractiveActivityType?.SwfFile ?? string.Empty
@@ -218,7 +218,7 @@ namespace Keebee.AAT.StateMachineService
                         Id = r.Id,
                         ResponseTypeCategoryId = r.ResponseTypeCategory.Id,
                         IsSystem = r.IsSystem,
-                        IsAdvanceable = r.IsAdvanceable,
+                        IsRotational = r.IsRotational,
                         IsUninterrupted = r.IsUninterrupted,
                         InteractiveActivityTypeId = r.InteractiveActivityType?.Id ?? 0,
                         SwfFile = r.InteractiveActivityType?.SwfFile ?? string.Empty

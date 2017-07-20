@@ -6,12 +6,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System;
-using System.Collections.ObjectModel;
-using System.Windows.Forms;
-using System.Configuration;
 using System.Diagnostics;
+using System.Windows.Forms;
 using System.Web.Script.Serialization;
-using Timer = System.Threading.Timer;
 
 namespace Keebee.AAT.Simulator
 {
@@ -23,6 +20,12 @@ namespace Keebee.AAT.Simulator
 
     public partial class ControlPanel : Form
     {
+        internal class RotationalResponse
+        {
+            public int Id { get; set; }
+            public int SensorValue { get; set; }
+        }
+
         // for the random response types when the on/off button is clicked
         private readonly ResponseTypeMessage[]  _randomResponseTypes;
 
@@ -33,28 +36,15 @@ namespace Keebee.AAT.Simulator
         private Resident[] _residents;
 
         // message queue sender
-        private readonly CustomMessageQueue _messageQueuePhidget;
         private readonly CustomMessageQueue _messageQueueBluetoothBeaconWatcher;
         private readonly CustomMessageQueue _messageQueueResponse;
         private readonly CustomMessageQueue _messageQueuePhidgetContinuousRadio;
-
-        // timer
-        private readonly int _autoResponseInterval;
-        private Timer _timerSensor;
-        private readonly int _autoResidentInterval;
-        private Timer _timerResident;
-
-        // activity
-        private int _currentSensorId = -1;
-        private const int MaxSensorId = 3;
 
         // responses
         private readonly ResponseTypeMessage[] _responseTypes;
         private int _currentResponseTypeId = ResponseTypeId.Ambient;
 
         // resident
-        private int _currentResidentIndex = -1;
-        private readonly int _totalResidents;
         private Resident _currentResident;
         private readonly Resident _publicResident = new Resident
         {
@@ -68,10 +58,8 @@ namespace Keebee.AAT.Simulator
         private const int MaxValue = 1000;
         private const int StepIncrement = 200;
 
-        private int _currentRadioSensorValue;
-        private int _currentTelevsionSensorValue;
-        private int _currentNatureSensorValue;
-        private int _currentSportsSensorValue;
+        // current sensor values (for 'rotational' response types)
+        private readonly RotationalResponse[] _rotationalResponses;
 
         #endregion
 
@@ -79,18 +67,9 @@ namespace Keebee.AAT.Simulator
         {
             InitializeComponent();
 
-            _autoResponseInterval = Convert.ToInt32(ConfigurationManager.AppSettings["AutoSensorInterval"]);
-            _autoResidentInterval = Convert.ToInt32(ConfigurationManager.AppSettings["AutoResidentInterval"]);
-
             _residentsClient = new ResidentsClient();
 
             // message queue senders
-            _messageQueuePhidget = new CustomMessageQueue(new CustomMessageQueueArgs
-            {
-                QueueName = MessageQueueType.Phidget
-
-            });
-
             _messageQueueBluetoothBeaconWatcher = new CustomMessageQueue(new CustomMessageQueueArgs
             {
                 QueueName = MessageQueueType.BluetoothBeaconWatcher
@@ -109,7 +88,6 @@ namespace Keebee.AAT.Simulator
             });
 
             LoadResidentDropDown();
-            _totalResidents = _residents.Count();
 
             IResponseTypesClient responseTypesClient = new ResponseTypesClient();
             _responseTypes = responseTypesClient.Get()
@@ -119,7 +97,7 @@ namespace Keebee.AAT.Simulator
                     ResponseTypeCategoryId = r.ResponseTypeCategory.Id,
                     IsSystem = r.IsSystem,
                     IsRandom = r.IsRandom,
-                    IsAdvanceable = r.IsAdvanceable,
+                    IsRotational = r.IsRotational,
                     IsUninterrupted = r.IsUninterrupted,
                     InteractiveActivityTypeId = r.InteractiveActivityType?.Id ?? 0,
                     SwfFile = r.InteractiveActivityType?.SwfFile ?? string.Empty
@@ -127,7 +105,10 @@ namespace Keebee.AAT.Simulator
 
             _randomResponseTypes = _responseTypes.Where(r => r.IsRandom).ToArray();
 
-
+            // initialize rotational response sensor values
+            _rotationalResponses = responseTypesClient.GeRotationalTypes()
+                .Select(r => new RotationalResponse { Id = r.Id, SensorValue = 0 })
+                .ToArray();
         }
 
         #region initialization
@@ -167,32 +148,19 @@ namespace Keebee.AAT.Simulator
 
         #region button click
 
-        private void KillDisplayButtonClick(object sender, EventArgs e)
-        {
-            ExecuteResponse(ResponseTypeId.KillDisplay, PhidgetTypeId.Sensor0, MaxValue - 1, true);
-        }
-
+        // image
         private void SlideShowButtonClick(object sender, EventArgs e)
         {
             ExecuteResponse(ResponseTypeId.SlideShow, PhidgetTypeId.Sensor0);
         }
 
-        private void MatchingGameButtonClick(object sender, EventArgs e)
-        {
-            ExecuteResponse(ResponseTypeId.MatchingGame, PhidgetTypeId.Sensor0);
-        }
-
-        private void CatsButtonClick(object sender, EventArgs e)
-        {
-            ExecuteResponse(ResponseTypeId.Cats, PhidgetTypeId.Sensor0);
-        }
-
+        // rotational
         private void RadioRightButtonClick(object sender, EventArgs e)
         {
-            _currentRadioSensorValue = GetCurrentStepValue(ResponseTypeId.Radio, StepDirectionType.Right);
+            var currentValue = GetCurrentStepValue(ResponseTypeId.Radio, StepDirectionType.Right);
 
-            var valueToSend = (_currentRadioSensorValue == MaxValue)
-                ? _currentRadioSensorValue - 1 : _currentRadioSensorValue;
+            var valueToSend = (currentValue == MaxValue)
+                ? currentValue - 1 : currentValue;
 
             if (valueToSend <= 0) return;
 
@@ -202,10 +170,10 @@ namespace Keebee.AAT.Simulator
 
         private void RadioLeftButtonClick(object sender, EventArgs e)
         {
-            _currentRadioSensorValue = GetCurrentStepValue(ResponseTypeId.Radio, StepDirectionType.Left);
+            var currentValue = GetCurrentStepValue(ResponseTypeId.Radio, StepDirectionType.Left);
 
-            var valueToSend = (_currentRadioSensorValue == MaxValue)
-                ? _currentRadioSensorValue - 1 : _currentRadioSensorValue;
+            var valueToSend = (currentValue == MaxValue)
+                ? currentValue - 1 : currentValue;
 
             if (valueToSend <= 0) return;
 
@@ -215,10 +183,10 @@ namespace Keebee.AAT.Simulator
 
         private void TelevisionRightButtonClick(object sender, EventArgs e)
         {
-            _currentTelevsionSensorValue = GetCurrentStepValue(ResponseTypeId.Television, StepDirectionType.Right);
+            var currentValue = GetCurrentStepValue(ResponseTypeId.Television, StepDirectionType.Right);
 
-            var valueToSend = (_currentTelevsionSensorValue == MaxValue)
-                ? _currentTelevsionSensorValue - 1 : _currentTelevsionSensorValue;
+            var valueToSend = (currentValue == MaxValue)
+                ? currentValue - 1 : currentValue;
 
             if (valueToSend <= 0) return;
 
@@ -227,10 +195,10 @@ namespace Keebee.AAT.Simulator
 
         private void TelevisionLeftButtonClick(object sender, EventArgs e)
         {
-            _currentTelevsionSensorValue = GetCurrentStepValue(ResponseTypeId.Television, StepDirectionType.Left);
+            var currentValue = GetCurrentStepValue(ResponseTypeId.Television, StepDirectionType.Left);
 
-            var valueToSend = (_currentTelevsionSensorValue == MaxValue)
-                ? _currentTelevsionSensorValue - 1 : _currentTelevsionSensorValue;
+            var valueToSend = (currentValue == MaxValue)
+                ? currentValue - 1 : currentValue;
 
             if (valueToSend <= 0) return;
 
@@ -239,10 +207,10 @@ namespace Keebee.AAT.Simulator
 
         private void NatureRightButtonClick(object sender, EventArgs e)
         {
-            _currentNatureSensorValue = GetCurrentStepValue(ResponseTypeId.Nature, StepDirectionType.Right);
+            var currentValue = GetCurrentStepValue(ResponseTypeId.Nature, StepDirectionType.Right);
 
-            var valueToSend = (_currentNatureSensorValue == MaxValue)
-                ? _currentNatureSensorValue - 1 : _currentNatureSensorValue;
+            var valueToSend = (currentValue == MaxValue)
+                ? currentValue - 1 : currentValue;
 
             if (valueToSend <= 0) return;
 
@@ -251,10 +219,10 @@ namespace Keebee.AAT.Simulator
 
         private void NatureLeftButtonClick(object sender, EventArgs e)
         {
-            _currentNatureSensorValue = GetCurrentStepValue(ResponseTypeId.Nature, StepDirectionType.Left);
+            var currentValue = GetCurrentStepValue(ResponseTypeId.Nature, StepDirectionType.Left);
 
-            var valueToSend = (_currentNatureSensorValue == MaxValue)
-                ? _currentNatureSensorValue - 1 : _currentNatureSensorValue;
+            var valueToSend = (currentValue == MaxValue)
+                ? currentValue - 1 : currentValue;
 
             if (valueToSend <= 0) return;
 
@@ -263,10 +231,10 @@ namespace Keebee.AAT.Simulator
 
         private void SportsRightButtonClick(object sender, EventArgs e)
         {
-            _currentSportsSensorValue = GetCurrentStepValue(ResponseTypeId.Sports, StepDirectionType.Right);
+            var currentValue = GetCurrentStepValue(ResponseTypeId.Sports, StepDirectionType.Right);
 
-            var valueToSend = (_currentSportsSensorValue == MaxValue)
-                ? _currentSportsSensorValue - 1 : _currentSportsSensorValue;
+            var valueToSend = (currentValue == MaxValue)
+                ? currentValue - 1 : currentValue;
 
             if (valueToSend <= 0) return;
 
@@ -275,37 +243,91 @@ namespace Keebee.AAT.Simulator
 
         private void SportsLeftButtonClick(object sender, EventArgs e)
         {
-            _currentSportsSensorValue = GetCurrentStepValue(ResponseTypeId.Sports, StepDirectionType.Left);
+            var currentValue = GetCurrentStepValue(ResponseTypeId.Sports, StepDirectionType.Left);
 
-            var valueToSend = (_currentSportsSensorValue == MaxValue)
-                ? _currentSportsSensorValue - 1 : _currentSportsSensorValue;
+            var valueToSend = (currentValue == MaxValue)
+                ? currentValue - 1 : currentValue;
 
             if (valueToSend <= 0) return;
 
             ExecuteResponse(ResponseTypeId.Sports, PhidgetTypeId.Sensor0, valueToSend);
         }
 
-        private int GetCurrentStepValue(int responseType, StepDirectionType direction)
+        private void MachineryRightButtonClick(object sender, EventArgs e)
         {
-            var currentValue = -1;
+            var currentValue = GetCurrentStepValue(ResponseTypeId.Machinery, StepDirectionType.Right);
 
-            switch (responseType)
-            {
-                case ResponseTypeId.Radio:
-                    currentValue = _currentRadioSensorValue;
-                    break;
-                case ResponseTypeId.Television:
-                    currentValue = _currentTelevsionSensorValue;
-                    break;
-                case ResponseTypeId.Nature:
-                    currentValue = _currentNatureSensorValue;
-                    break;
-                case ResponseTypeId.Sports:
-                    currentValue = _currentSportsSensorValue;
-                    break;
-            }
+            var valueToSend = (currentValue == MaxValue)
+                ? currentValue - 1 : currentValue;
 
-            if (currentValue < 0) return -1;
+            if (valueToSend <= 0) return;
+
+            ExecuteResponse(ResponseTypeId.Machinery, PhidgetTypeId.Sensor0, valueToSend);
+        }
+
+        private void MachineryLeftButtonClick(object sender, EventArgs e)
+        {
+            var currentValue = GetCurrentStepValue(ResponseTypeId.Machinery, StepDirectionType.Left);
+
+            var valueToSend = (currentValue == MaxValue)
+                ? currentValue - 1 : currentValue;
+
+            if (valueToSend <= 0) return;
+
+            ExecuteResponse(ResponseTypeId.Machinery, PhidgetTypeId.Sensor0, valueToSend);
+        }
+
+        private void AnimalsRightButtonClick(object sender, EventArgs e)
+        {
+            var currentValue = GetCurrentStepValue(ResponseTypeId.Animals, StepDirectionType.Right);
+
+            var valueToSend = (currentValue == MaxValue)
+                ? currentValue - 1 : currentValue;
+
+            if (valueToSend <= 0) return;
+
+            ExecuteResponse(ResponseTypeId.Animals, PhidgetTypeId.Sensor0, valueToSend);
+        }
+
+        private void AnimalsLeftButtonClick(object sender, EventArgs e)
+        {
+            var currentValue = GetCurrentStepValue(ResponseTypeId.Animals, StepDirectionType.Left);
+
+            var valueToSend = (currentValue == MaxValue)
+                ? currentValue - 1 : currentValue;
+
+            if (valueToSend <= 0) return;
+
+            ExecuteResponse(ResponseTypeId.Animals, PhidgetTypeId.Sensor0, valueToSend);
+        }
+
+        private void CuteRightButtonClick(object sender, EventArgs e)
+        {
+            var currentValue = GetCurrentStepValue(ResponseTypeId.Cute, StepDirectionType.Right);
+
+            var valueToSend = (currentValue == MaxValue)
+                ? currentValue - 1 : currentValue;
+
+            if (valueToSend <= 0) return;
+
+            ExecuteResponse(ResponseTypeId.Cute, PhidgetTypeId.Sensor0, valueToSend);
+        }
+
+        private void CuteLeftButtonClick(object sender, EventArgs e)
+        {
+            var currentValue = GetCurrentStepValue(ResponseTypeId.Cute, StepDirectionType.Left);
+
+            var valueToSend = (currentValue == MaxValue)
+                ? currentValue - 1 : currentValue;
+
+            if (valueToSend <= 0) return;
+
+            ExecuteResponse(ResponseTypeId.Cute, PhidgetTypeId.Sensor0, valueToSend);
+        }
+
+        private int GetCurrentStepValue(int responseTypeId, StepDirectionType direction)
+        {
+            var currentValue = _rotationalResponses.Single(r => r.Id == responseTypeId).SensorValue;
 
             switch (direction)
             {
@@ -327,6 +349,17 @@ namespace Keebee.AAT.Simulator
             return currentValue;
         }
 
+        // system
+        private void KillDisplayButtonClick(object sender, EventArgs e)
+        {
+            ExecuteResponse(ResponseTypeId.KillDisplay, PhidgetTypeId.Sensor0, MaxValue - 1, true);
+        }
+
+        private void CatsButtonClick(object sender, EventArgs e)
+        {
+            ExecuteResponse(ResponseTypeId.Cats, PhidgetTypeId.Sensor0);
+        }
+
         private void CaregiverButtonClick(object sender, EventArgs e)
         {
             ExecuteResponse(ResponseTypeId.Caregiver, PhidgetTypeId.Sensor0, MaxValue - 1, true);
@@ -335,16 +368,6 @@ namespace Keebee.AAT.Simulator
         private void AmbientButtonClick(object sender, EventArgs e)
         {
             ExecuteResponse(ResponseTypeId.Ambient, PhidgetTypeId.Sensor0, MaxValue - 1, true);
-        }
-
-        private void PaintingActivityClick(object sender, EventArgs e)
-        {
-            ExecuteResponse(ResponseTypeId.PaintingActivity, PhidgetTypeId.Sensor0);
-        }
-
-        private void BalloonPoppingGameClick(object sender, EventArgs e)
-        {
-            ExecuteResponse(ResponseTypeId.BalloonPoppingGame, PhidgetTypeId.Sensor0);
         }
 
         private void VolumeControlClick(object sender, EventArgs e)
@@ -357,41 +380,20 @@ namespace Keebee.AAT.Simulator
             ExecuteResponse(ResponseTypeId.OffScreen, PhidgetTypeId.Sensor4, MaxValue - 1, false);
         }
 
-        private static ResponseTypeMessage GetResponseTypeMessage(int responseTypeId)
+        // interactive activity
+        private void MatchingGameButtonClick(object sender, EventArgs e)
         {
-            switch (responseTypeId)
-            {
-                case ResponseTypeId.SlideShow:
-                    return new ResponseTypeMessage
-                    {
-                        Id = responseTypeId,
-                        InteractiveActivityTypeId = 0,
-                        SwfFile = null
-                    };
-                case ResponseTypeId.MatchingGame:
-                    return new ResponseTypeMessage
-                    {
-                        Id = responseTypeId,
-                        InteractiveActivityTypeId = InteractiveActivityTypeId.MatchingGame,
-                        SwfFile = "MatchingGame.swf"
-                    };
-                case ResponseTypeId.PaintingActivity:
-                    return new ResponseTypeMessage
-                    {
-                        Id = responseTypeId,
-                        InteractiveActivityTypeId = InteractiveActivityTypeId.MatchingGame,
-                        SwfFile = "PaintingActivity.swf"
-                    };
-                case ResponseTypeId.BalloonPoppingGame:
-                    return new ResponseTypeMessage
-                    {
-                        Id = responseTypeId,
-                        InteractiveActivityTypeId = InteractiveActivityTypeId.MatchingGame,
-                        SwfFile = "BalloonPoppingGame.swf"
-                    };
-                default:
-                    return null;
-            }
+            ExecuteResponse(ResponseTypeId.MatchingGame, PhidgetTypeId.Sensor0);
+        }
+        
+        private void PaintingActivityClick(object sender, EventArgs e)
+        {
+            ExecuteResponse(ResponseTypeId.PaintingActivity, PhidgetTypeId.Sensor0);
+        }
+
+        private void BalloonPoppingGameClick(object sender, EventArgs e)
+        {
+            ExecuteResponse(ResponseTypeId.BalloonPoppingGame, PhidgetTypeId.Sensor0);
         }
 
         private void ActivateResidentClick(object sender, EventArgs e)
@@ -408,93 +410,7 @@ namespace Keebee.AAT.Simulator
 
         #endregion
 
-        #region timer
-
-        private void TimerSensorTick(object sender)
-        {
-            if (_timerSensor == null) return;
-
-            if (_currentSensorId < MaxSensorId)
-                _currentSensorId++;
-            else
-                _currentSensorId = 0;
-
-            _messageQueuePhidget.Send(string.Format("{0}\"SensorId\":{1},\"SensorValue\":{2}{3}", "{", _currentSensorId, MaxValue - 1, "}"));
-        }
-
-        private void TimerResidentTick(object sender)
-        {
-            if (_timerResident == null) return;
-
-            if (_currentResidentIndex < (_totalResidents - 1))
-                _currentResidentIndex++;
-            else
-                _currentResidentIndex = 0;
-
-            var id = _residents[_currentResidentIndex].Id;
-
-            var resident = (id == PublicProfileSource.Id)
-                ? _publicResident
-                : _residents.Single(x => x.Id == id);
-
-            CreateMessageBodyForBluetoothBeaconWatcher(resident);
-            _messageQueueBluetoothBeaconWatcher.Send(CreateMessageBodyForBluetoothBeaconWatcher(resident));
-        }
-
-        #endregion
-
         #region event handlers
-
-        private void ControlPanelClosing(object sender, FormClosingEventArgs e)
-        {
-            _timerSensor?.Dispose();
-            _timerResident?.Dispose();
-        }
-
-        private void AutoResponseCheckChanged(object sender, EventArgs e)
-        {
-            // Search Auto Activity GroupBox
-            foreach (var result in from control in grpAutoSensor.Controls.OfType<RadioButton>() 
-                                   select control into radio where radio.Checked select radio.Text)
-            {
-                if (result == "On")
-                {
-                    if (_timerSensor == null)
-                    {
-                        _timerSensor = new Timer(TimerSensorTick, null, 0, _autoResponseInterval);
-                    }
-                }
-                else
-                {
-                    if (_timerSensor == null) continue;
-
-                    _timerSensor.Dispose();
-                    _timerSensor = null;
-                }
-            }
-        }
-
-        private void AutoResidentCheckChanged(object sender, EventArgs e)
-        {
-            foreach (var result in from control in grpAutoResident.Controls.OfType<RadioButton>() 
-                                   select control into radio where radio.Checked select radio.Text)
-            {
-                if (result == "On")
-                {
-                    if (_timerResident == null)
-                    {
-                        _timerResident = new Timer(TimerResidentTick, null, 0, _autoResidentInterval);
-                    }
-                }
-                else
-                {
-                    if (_timerResident == null) continue;
-
-                    _timerResident.Dispose();
-                    _timerResident = null;
-                }
-            }
-        }
 
         private void ResidentSelectedIndexChanged(object sender, EventArgs e)
         {
@@ -519,22 +435,29 @@ namespace Keebee.AAT.Simulator
         private void ExecuteResponse(int responseTypeId, int phidgetTypeId, int sensorValue = MaxValue - 1, bool isSystem = false)
         {
 #if !DEBUG
-            if (Process.GetProcessesByName($"{AppSettings.Namespace}.{AppSettings.DisplayAppName}").Any()) 
-            {
+            if (!Process.GetProcessesByName($"{AppSettings.Namespace}.{AppSettings.DisplayAppName}").Any())
+                return;
 #endif
-            var responseType = _responseTypes.Single(r => r.Id == responseTypeId);
+            var responseToExecute = _responseTypes.Single(r => r.Id == responseTypeId);
 
             // for the OffScreen, need to alternate between the OffScreen and a 'random' response
-            if (responseType.Id == ResponseTypeId.OffScreen
-                && _currentResponseTypeId == ResponseTypeId.OffScreen)
-                responseType = GetOffScreenResponse();
+            if (responseTypeId == ResponseTypeId.OffScreen && _currentResponseTypeId == ResponseTypeId.OffScreen)
+                responseToExecute = GetOffScreenResponse();
 
-            _messageQueueResponse.Send(CreateMessageBodyForResponse(responseType, phidgetTypeId, sensorValue));
-
-            _currentResponseTypeId = responseType.Id;
+            _messageQueueResponse.Send(CreateMessageBodyForResponse(responseToExecute, phidgetTypeId, sensorValue));
+            _currentResponseTypeId = responseToExecute.Id;
+            SaveCurrentRotationalSensorValue(responseTypeId, sensorValue);
 #if !DEBUG
-            }
 #endif
+        }
+
+        private void SaveCurrentRotationalSensorValue(int responseTypeId, int sensorValue)
+        {
+            if (_rotationalResponses.Any(r => r.Id == responseTypeId))
+            {
+                _rotationalResponses.Single(r => r.Id == responseTypeId)
+                    .SensorValue = sensorValue;
+            }
         }
 
         private int _currentSequentialResponseTypeIndex = -1;

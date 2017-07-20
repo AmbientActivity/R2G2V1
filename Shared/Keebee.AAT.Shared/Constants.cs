@@ -77,6 +77,9 @@ namespace Keebee.AAT.Shared
         public const int Cats = 10;
         public const int Nature = 11;
         public const int Sports = 12;
+        public const int Machinery = 13;
+        public const int Animals = 14;
+        public const int Cute = 15;
     }
 
     public static class MediaPathTypeCategoryId
@@ -181,6 +184,9 @@ namespace Keebee.AAT.Shared
         public const int BalloonPoppingGame = 12;
         public const int Nature = 13;
         public const int Sports = 14;
+        public const int Machinery = 15;
+        public const int Animals = 16;
+        public const int Cute = 17;
     }
 
     public static class MediaPlayerControl

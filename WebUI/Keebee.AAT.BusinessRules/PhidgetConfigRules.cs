@@ -192,7 +192,7 @@ namespace Keebee.AAT.BusinessRules
                             {
                                 Id = x.ResponseType.Id,
                                 IsSystem = x.ResponseType.IsSystem,
-                                IsAdvanceable = x.ResponseType.IsAdvanceable,
+                                IsRotational = x.ResponseType.IsRotational,
                                 IsUninterrupted = x.ResponseType.IsUninterrupted,
                                 InteractiveActivityTypeId = x.ResponseType.InteractiveActivityType?.Id ?? 0,
                                 SwfFile = x.ResponseType.InteractiveActivityType?.SwfFile ?? string.Empty

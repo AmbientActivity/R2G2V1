@@ -11,6 +11,7 @@ namespace Keebee.AAT.Operations.Service.Services
         IEnumerable<ResponseType> Get();
         ResponseType Get(int id);
         IEnumerable<ResponseType> GetRandomTypes();
+        IEnumerable<ResponseType> GetRotationalTypes();
         int Post(ResponseType responseType);
         void Patch(int id, ResponseType responseType);
         void Delete(int id);
@@ -55,6 +56,17 @@ namespace Keebee.AAT.Operations.Service.Services
             return responseTypes;
         }
 
+        public IEnumerable<ResponseType> GetRotationalTypes()
+        {
+            var container = new Container(new Uri(ODataHost.Url));
+
+            var responseTypes = container.ResponseTypes
+                .AddQueryOption("$filter", "IsRotational eq true")
+                .AsEnumerable();
+
+            return responseTypes;
+        }
+
         public int Post(ResponseType responseType)
         {
             var container = new Container(new Uri(ODataHost.Url));
@@ -81,7 +93,7 @@ namespace Keebee.AAT.Operations.Service.Services
             el.InteractiveActivityTypeId = responseType.InteractiveActivityTypeId;
             el.IsSystem = responseType.IsSystem;
             el.IsRandom = responseType.IsRandom;
-            el.IsAdvanceable = responseType.IsAdvanceable;
+            el.IsRotational = responseType.IsRotational;
 
             container.UpdateObject(el);
             container.SaveChanges();

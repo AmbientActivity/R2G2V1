@@ -374,7 +374,15 @@ namespace Keebee.AAT.Administrator.Controllers
                 Location = (configDetail != null) ? configDetail.Location : string.Empty,
                 PhidgetTypes = new SelectList(configEdit.PhidgetTypes, "Id", "Description", configDetail?.PhidgetType.Id),
                 PhidgetStyleTypes = new SelectList(configEdit.PhidgetStyleTypes, "Id", "Description", configDetail?.PhidgetStyleType.Id),
-                ResponseTypes = new SelectList(configEdit.ResponseTypes.OrderBy(x => x.Description), "Id", "Description", configDetail?.ResponseType.Id)
+                ResponseTypes = new SelectList(configEdit
+                    .ResponseTypes
+                    .Select(x => new
+                        {
+                            x.Id,
+                            Description = $"({x.ResponseTypeCategory.Description}) - {x.Description}"
+                        })
+                    .OrderBy(x => x.Description), 
+                    "Id", "Description", configDetail?.ResponseType.Id)
             };
 
             return vm;

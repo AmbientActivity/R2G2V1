@@ -52,7 +52,7 @@ namespace Keebee.AAT.Operations.Controllers
                     } : null,
                     x.IsSystem,
                     x.IsRandom,
-                    x.IsAdvanceable,
+                    x.IsRotational,
                     x.IsUninterrupted
                 }).ToArray();
 
@@ -91,15 +91,15 @@ namespace Keebee.AAT.Operations.Controllers
                 } : null;
             exObj.IsSystem = responseType.IsSystem;
             exObj.IsRandom = responseType.IsRandom;
-            exObj.IsAdvanceable = responseType.IsAdvanceable;
+            exObj.IsRotational = responseType.IsRotational;
             exObj.IsUninterrupted = responseType.IsUninterrupted;
 
             return new DynamicJsonObject(exObj);
         }
 
-        // GET: api/ResponseTypes/randomtypes
+        // GET: api/ResponseTypes/random
         [HttpGet]
-        [Route("randomtypes")]
+        [Route("random")]
         public async Task<DynamicJsonArray> GetRandom()
         {
             IEnumerable<ResponseType> responseTypes = new Collection<ResponseType>();
@@ -130,8 +130,32 @@ namespace Keebee.AAT.Operations.Controllers
                     } : null,
                     x.IsSystem,
                     x.IsRandom,
-                    x.IsAdvanceable,
+                    x.IsRotational,
                     x.IsUninterrupted
+                }).ToArray();
+
+            return new DynamicJsonArray(jArray);
+        }
+
+        // GET: api/ResponseTypes/advanceable
+        [HttpGet]
+        [Route("rotational")]
+        public async Task<DynamicJsonArray> GetRotational()
+        {
+            IEnumerable<ResponseType> responseTypes = new Collection<ResponseType>();
+
+            await Task.Run(() =>
+            {
+                responseTypes = _responseTypeService.GetRotationalTypes();
+            });
+
+            if (responseTypes == null) return new DynamicJsonArray(new object[0]);
+
+            var jArray = responseTypes
+                .Select(x => new
+                {
+                    x.Id,
+                    x.Description
                 }).ToArray();
 
             return new DynamicJsonArray(jArray);

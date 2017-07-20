@@ -10,6 +10,7 @@ namespace Keebee.AAT.ApiClient.Clients
         IEnumerable<ResponseType> Get();
         ResponseType Get(int id);
         IEnumerable<ResponseType> GetRandomTypes();
+        IEnumerable<ResponseType> GeRotationalTypes();
     }
 
     public class ResponseTypesClient : BaseClient, IResponseTypesClient
@@ -34,7 +35,16 @@ namespace Keebee.AAT.ApiClient.Clients
 
         public IEnumerable<ResponseType> GetRandomTypes()
         {
-            var request = new RestRequest("responsetypes/randomtypes", Method.GET);
+            var request = new RestRequest("responsetypes/random", Method.GET);
+            var data = Execute(request);
+            var responseTypes = JsonConvert.DeserializeObject<IEnumerable<ResponseType>>(data.Content);
+
+            return responseTypes;
+        }
+
+        public IEnumerable<ResponseType> GeRotationalTypes()
+        {
+            var request = new RestRequest("responsetypes/rotational", Method.GET);
             var data = Execute(request);
             var responseTypes = JsonConvert.DeserializeObject<IEnumerable<ResponseType>>(data.Content);
 

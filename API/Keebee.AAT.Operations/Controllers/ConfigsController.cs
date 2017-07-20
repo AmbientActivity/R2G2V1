@@ -199,7 +199,7 @@ namespace Keebee.AAT.Operations.Controllers
                     cd.ResponseType.Description,
                     cd.ResponseType.IsSystem,
                     cd.ResponseType.IsRandom,
-                    cd.ResponseType.IsAdvanceable,
+                    cd.ResponseType.IsRotational,
                     cd.ResponseType.IsUninterrupted,
                     ResponseTypeCategory = new
                     {
@@ -261,7 +261,7 @@ namespace Keebee.AAT.Operations.Controllers
                     cd.ResponseType.Description,
                     cd.ResponseType.IsSystem,
                     cd.ResponseType.IsRandom,
-                    cd.ResponseType.IsAdvanceable,
+                    cd.ResponseType.IsRotational,
                     cd.ResponseType.IsUninterrupted,
                     ResponseTypeCategory = new
                     {

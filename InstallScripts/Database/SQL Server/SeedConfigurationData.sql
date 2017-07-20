@@ -61,7 +61,7 @@ SET IDENTITY_INSERT [dbo].[ResponseTypeCategories] ON
 INSERT [dbo].[ResponseTypeCategories] ([Id], [Description]) VALUES (1, 'Image')
 INSERT [dbo].[ResponseTypeCategories] ([Id], [Description]) VALUES (2, 'Audio')
 INSERT [dbo].[ResponseTypeCategories] ([Id], [Description]) VALUES (3, 'Video')
-INSERT [dbo].[ResponseTypeCategories] ([Id], [Description]) VALUES (4, 'Interactive Activity')
+INSERT [dbo].[ResponseTypeCategories] ([Id], [Description]) VALUES (4, 'Activity')
 INSERT [dbo].[ResponseTypeCategories] ([Id], [Description]) VALUES (5, 'System')
 SET IDENTITY_INSERT [dbo].[ResponseTypeCategories] OFF
 
@@ -74,20 +74,23 @@ SET IDENTITY_INSERT [dbo].[InteractiveActivityTypes] OFF
 
 -- response types
 SET IDENTITY_INSERT [dbo].[ResponseTypes] ON 
-INSERT [dbo].[ResponseTypes] ([Id], [ResponseTypeCategoryId], [Description], [InteractiveActivityTypeId], [IsSystem], [IsRandom], [IsAdvanceable], [IsUninterrupted]) VALUES (1, 1, 'Slide Show', null, 0, 1, 0, 0)
-INSERT [dbo].[ResponseTypes] ([Id], [ResponseTypeCategoryId], [Description], [InteractiveActivityTypeId], [IsSystem], [IsRandom], [IsAdvanceable], [IsUninterrupted]) VALUES (2, 4, 'Memory Matching Game', 1, 0, 1, 0, 0)
-INSERT [dbo].[ResponseTypes] ([Id], [ResponseTypeCategoryId], [Description], [InteractiveActivityTypeId], [IsSystem], [IsRandom], [IsAdvanceable], [IsUninterrupted]) VALUES (3, 3, 'Cats Video', null, 0, 0, 0, 0)
-INSERT [dbo].[ResponseTypes] ([Id], [ResponseTypeCategoryId], [Description], [InteractiveActivityTypeId], [IsSystem], [IsRandom], [IsAdvanceable], [IsUninterrupted]) VALUES (4, 5, 'Kill Display',  null, 1, 0, 0, 0)
-INSERT [dbo].[ResponseTypes] ([Id], [ResponseTypeCategoryId], [Description], [InteractiveActivityTypeId], [IsSystem], [IsRandom], [IsAdvanceable], [IsUninterrupted]) VALUES (5, 2, 'Radio', null, 0, 0, 1, 0)
-INSERT [dbo].[ResponseTypes] ([Id], [ResponseTypeCategoryId], [Description], [InteractiveActivityTypeId], [IsSystem], [IsRandom], [IsAdvanceable], [IsUninterrupted]) VALUES (6, 3, 'Television', null, 0, 0, 1, 0)
-INSERT [dbo].[ResponseTypes] ([Id], [ResponseTypeCategoryId], [Description], [InteractiveActivityTypeId], [IsSystem], [IsRandom], [IsAdvanceable], [IsUninterrupted]) VALUES (7, 5, 'Caregiver', null, 1, 0, 0, 1)
-INSERT [dbo].[ResponseTypes] ([Id], [ResponseTypeCategoryId], [Description], [InteractiveActivityTypeId], [IsSystem], [IsRandom], [IsAdvanceable], [IsUninterrupted]) VALUES (8, 5, 'Ambient', null, 1, 0, 0, 0)
-INSERT [dbo].[ResponseTypes] ([Id], [ResponseTypeCategoryId], [Description], [InteractiveActivityTypeId], [IsSystem], [IsRandom], [IsAdvanceable], [IsUninterrupted]) VALUES (9, 5, 'Off Screen', null, 0, 0, 0, 0)
-INSERT [dbo].[ResponseTypes] ([Id], [ResponseTypeCategoryId], [Description], [InteractiveActivityTypeId], [IsSystem], [IsRandom], [IsAdvanceable], [IsUninterrupted]) VALUES (10, 5, 'Volume Control', null, 1, 0, 0, 1)
-INSERT [dbo].[ResponseTypes] ([Id], [ResponseTypeCategoryId], [Description], [InteractiveActivityTypeId], [IsSystem], [IsRandom], [IsAdvanceable], [IsUninterrupted]) VALUES (11, 4, 'Painting Activity', 2, 0, 1, 0, 0)
-INSERT [dbo].[ResponseTypes] ([Id], [ResponseTypeCategoryId], [Description], [InteractiveActivityTypeId], [IsSystem], [IsRandom], [IsAdvanceable], [IsUninterrupted]) VALUES (12, 4, 'Balloon Popping Game', 3, 0, 1, 0, 0)
-INSERT [dbo].[ResponseTypes] ([Id], [ResponseTypeCategoryId], [Description], [InteractiveActivityTypeId], [IsSystem], [IsRandom], [IsAdvanceable], [IsUninterrupted]) VALUES (13, 3, 'Nature Video', null, 0, 0, 1, 0)
-INSERT [dbo].[ResponseTypes] ([Id], [ResponseTypeCategoryId], [Description], [InteractiveActivityTypeId], [IsSystem], [IsRandom], [IsAdvanceable], [IsUninterrupted]) VALUES (14, 3, 'Sports Video', null, 0, 0, 1, 0)
+INSERT [dbo].[ResponseTypes] ([Id], [ResponseTypeCategoryId], [Description], [InteractiveActivityTypeId], [IsSystem], [IsRandom], [IsRotational], [IsUninterrupted]) VALUES (1, 1, 'Slide Show', null, 0, 1, 0, 0)
+INSERT [dbo].[ResponseTypes] ([Id], [ResponseTypeCategoryId], [Description], [InteractiveActivityTypeId], [IsSystem], [IsRandom], [IsRotational], [IsUninterrupted]) VALUES (2, 4, 'Memory Matching Game', 1, 0, 1, 0, 0)
+INSERT [dbo].[ResponseTypes] ([Id], [ResponseTypeCategoryId], [Description], [InteractiveActivityTypeId], [IsSystem], [IsRandom], [IsRotational], [IsUninterrupted]) VALUES (3, 3, 'Cats', null, 0, 0, 0, 0)
+INSERT [dbo].[ResponseTypes] ([Id], [ResponseTypeCategoryId], [Description], [InteractiveActivityTypeId], [IsSystem], [IsRandom], [IsRotational], [IsUninterrupted]) VALUES (4, 5, 'Kill Display',  null, 1, 0, 0, 0)
+INSERT [dbo].[ResponseTypes] ([Id], [ResponseTypeCategoryId], [Description], [InteractiveActivityTypeId], [IsSystem], [IsRandom], [IsRotational], [IsUninterrupted]) VALUES (5, 2, 'Radio', null, 0, 0, 1, 0)
+INSERT [dbo].[ResponseTypes] ([Id], [ResponseTypeCategoryId], [Description], [InteractiveActivityTypeId], [IsSystem], [IsRandom], [IsRotational], [IsUninterrupted]) VALUES (6, 3, 'Television', null, 0, 0, 1, 0)
+INSERT [dbo].[ResponseTypes] ([Id], [ResponseTypeCategoryId], [Description], [InteractiveActivityTypeId], [IsSystem], [IsRandom], [IsRotational], [IsUninterrupted]) VALUES (7, 5, 'Caregiver', null, 1, 0, 0, 1)
+INSERT [dbo].[ResponseTypes] ([Id], [ResponseTypeCategoryId], [Description], [InteractiveActivityTypeId], [IsSystem], [IsRandom], [IsRotational], [IsUninterrupted]) VALUES (8, 5, 'Ambient', null, 1, 0, 0, 0)
+INSERT [dbo].[ResponseTypes] ([Id], [ResponseTypeCategoryId], [Description], [InteractiveActivityTypeId], [IsSystem], [IsRandom], [IsRotational], [IsUninterrupted]) VALUES (9, 5, 'Off Screen', null, 0, 0, 0, 0)
+INSERT [dbo].[ResponseTypes] ([Id], [ResponseTypeCategoryId], [Description], [InteractiveActivityTypeId], [IsSystem], [IsRandom], [IsRotational], [IsUninterrupted]) VALUES (10, 5, 'Volume Control', null, 1, 0, 0, 1)
+INSERT [dbo].[ResponseTypes] ([Id], [ResponseTypeCategoryId], [Description], [InteractiveActivityTypeId], [IsSystem], [IsRandom], [IsRotational], [IsUninterrupted]) VALUES (11, 4, 'Painting Activity', 2, 0, 1, 0, 0)
+INSERT [dbo].[ResponseTypes] ([Id], [ResponseTypeCategoryId], [Description], [InteractiveActivityTypeId], [IsSystem], [IsRandom], [IsRotational], [IsUninterrupted]) VALUES (12, 4, 'Balloon Popping Game', 3, 0, 1, 0, 0)
+INSERT [dbo].[ResponseTypes] ([Id], [ResponseTypeCategoryId], [Description], [InteractiveActivityTypeId], [IsSystem], [IsRandom], [IsRotational], [IsUninterrupted]) VALUES (13, 3, 'Nature', null, 0, 0, 1, 0)
+INSERT [dbo].[ResponseTypes] ([Id], [ResponseTypeCategoryId], [Description], [InteractiveActivityTypeId], [IsSystem], [IsRandom], [IsRotational], [IsUninterrupted]) VALUES (14, 3, 'Sports', null, 0, 0, 1, 0)
+INSERT [dbo].[ResponseTypes] ([Id], [ResponseTypeCategoryId], [Description], [InteractiveActivityTypeId], [IsSystem], [IsRandom], [IsRotational], [IsUninterrupted]) VALUES (15, 3, 'Machinery', null, 0, 0, 1, 0)
+INSERT [dbo].[ResponseTypes] ([Id], [ResponseTypeCategoryId], [Description], [InteractiveActivityTypeId], [IsSystem], [IsRandom], [IsRotational], [IsUninterrupted]) VALUES (16, 3, 'Animals', null, 0, 0, 1, 0)
+INSERT [dbo].[ResponseTypes] ([Id], [ResponseTypeCategoryId], [Description], [InteractiveActivityTypeId], [IsSystem], [IsRandom], [IsRotational], [IsUninterrupted]) VALUES (17, 3, 'Cute', null, 0, 0, 1, 0)
 SET IDENTITY_INSERT [dbo].[ResponseTypes] OFF
 
 -- media path type categories
@@ -149,6 +152,18 @@ VALUES (11, 'videos\nature', 'Videos (Nature)', 'Nature Videos',
 INSERT [dbo].[MediaPathTypes] ([Id], [Path], [Description], [ShortDescription],[AllowedExts], [AllowedTypes], [MaxFileBytes], [MaxFileUploads], [MediaPathTypeCategoryId], [ResponseTypeId], [IsSystem], [IsSharable]) 
 VALUES (12, 'videos\sports', 'Videos (Sports)', 'Sports Videos', 
 'mp4', 'video/mp4', 1000000000, 3, 3, 14, 1, 1)  -- 1 gb per video / 3 uploads at a time
+
+INSERT [dbo].[MediaPathTypes] ([Id], [Path], [Description], [ShortDescription],[AllowedExts], [AllowedTypes], [MaxFileBytes], [MaxFileUploads], [MediaPathTypeCategoryId], [ResponseTypeId], [IsSystem], [IsSharable]) 
+VALUES (13, 'videos\machinery', 'Videos (Machinery)', 'Machinery Videos', 
+'mp4', 'video/mp4', 1000000000, 3, 3, 15, 1, 1)  -- 1 gb per video / 3 uploads at a time
+
+INSERT [dbo].[MediaPathTypes] ([Id], [Path], [Description], [ShortDescription],[AllowedExts], [AllowedTypes], [MaxFileBytes], [MaxFileUploads], [MediaPathTypeCategoryId], [ResponseTypeId], [IsSystem], [IsSharable]) 
+VALUES (14, 'videos\animals', 'Videos (Animals)', 'Animal Videos', 
+'mp4', 'video/mp4', 1000000000, 3, 3, 16, 1, 1)  -- 1 gb per video / 3 uploads at a time
+
+INSERT [dbo].[MediaPathTypes] ([Id], [Path], [Description], [ShortDescription],[AllowedExts], [AllowedTypes], [MaxFileBytes], [MaxFileUploads], [MediaPathTypeCategoryId], [ResponseTypeId], [IsSystem], [IsSharable]) 
+VALUES (15, 'videos\cute', 'Videos (Cute)', 'Cute Videos', 
+'mp4', 'video/mp4', 1000000000, 3, 3, 17, 1, 1)  -- 1 gb per video / 3 uploads at a time
 
 SET IDENTITY_INSERT [dbo].[MediaPathTypes] OFF
 

@@ -22,6 +22,12 @@ namespace Keebee.AAT.Display
     {
         #region declaration
 
+        internal class RotationalResponse
+        {
+            public int Id { get; set; }
+            public int SensorValue { get; set; }
+        }
+
         internal enum ResponseValueChangeType
         {
             Increase = 0,
@@ -66,16 +72,16 @@ namespace Keebee.AAT.Display
         // message queue listener
         private readonly CustomMessageQueue _messageQueueResponse;
 
-        // current sensor values (for 'advanceable' response types)
-        private int _currentRadioSensorValue;
-        private int _currentTelevisionSensorValue;
-        private int _currentNatureSensorValue;
-        private int _currentSportsSensorValue;
+        // current sensor values (for 'rotational' response types)
+        private readonly RotationalResponse[] _rotationalResponses;
 
         // current activity/response types
         private ResponseTypeMessage _pendingResponse;
         private ResponseTypeMessage _currentResponse;
         private int _currentPhidgetTypeId;
+
+        // ambient response
+        private readonly ResponseTypeMessage _ambientResponse;
 
         // active event logging
         private bool _currentIsActiveEventLog;
@@ -167,7 +173,7 @@ namespace Keebee.AAT.Display
             // response complete event handlers
             ambientPlayer1.ScreenTouchedEvent += AmbientScreenTouched;
             slideViewerFlash1.SlideShowCompleteEvent += SlideShowComplete;
-            audioVideoPlayer1.MediaPlayerCompleteEvent += MediaPlayerComplete;
+            audioVideoPlayer1.MediaPlayerCompleteEvent += AudioVideoPlayerComplete;
             offScreen1.OffScreenCompleteEvent += OffScreenComplete;
             matchingGame1.MatchingGameTimeoutExpiredEvent += MatchingGameTimeoutExpired;
             matchingGame1.LogInteractiveActivityEventEvent += LogInteractiveActivityEvent;
@@ -177,8 +183,15 @@ namespace Keebee.AAT.Display
             activityPlayer1.LogInteractiveActivityEventEvent += LogInteractiveActivityEvent;
             activityPlayer1.StartVideoCaptureEvent += StartVideoCaptureEvent;
 
-            // initialize current response object
-            _currentResponse = new ResponseTypeMessage { Id = ResponseTypeId.Ambient, IsSystem = true };
+            // initialize ambient and current responses
+            _ambientResponse = new ResponseTypeMessage { Id = ResponseTypeId.Ambient, IsSystem = true };
+            _currentResponse = _ambientResponse;
+
+            // initialize rotational response sensor values
+            var responseTypesClient = new ResponseTypesClient();
+            _rotationalResponses = responseTypesClient.GeRotationalTypes()
+                .Select(r => new RotationalResponse { Id = r.Id, SensorValue = 0 })
+                .ToArray();
 
             InitializeStartupPosition();
         }
@@ -330,7 +343,10 @@ namespace Keebee.AAT.Display
                     case ResponseTypeId.Cats:
                     case ResponseTypeId.Nature:
                     case ResponseTypeId.Sports:
-                        PlayMedia(_pendingResponse.Id, sensorValue);
+                    case ResponseTypeId.Machinery:
+                    case ResponseTypeId.Animals:
+                    case ResponseTypeId.Cute:
+                        PlayAudioVideo(_pendingResponse.Id, sensorValue);
                         break;
                     case ResponseTypeId.Caregiver:
                         ShowCaregiver();
@@ -352,22 +368,8 @@ namespace Keebee.AAT.Display
                         break;
                 }
 
-                // save the current sensor values for the 'advanceable' responses
-                switch (_pendingResponse.Id)
-                {
-                    case ResponseTypeId.Radio:
-                        _currentRadioSensorValue = sensorValue;
-                        break;
-                    case ResponseTypeId.Television:
-                        _currentTelevisionSensorValue = sensorValue;
-                        break;
-                    case ResponseTypeId.Nature:
-                        _currentNatureSensorValue = sensorValue;
-                        break;
-                    case ResponseTypeId.Sports:
-                        _currentSportsSensorValue = sensorValue;
-                        break;
-                }
+                SaveCurrentRotationalSensorValue(_pendingResponse.Id, sensorValue);
+
             }
             catch (Exception ex)
             {
@@ -385,10 +387,10 @@ namespace Keebee.AAT.Display
 
             // only execute if:
             // new response
-            // OR 'advanceable'
+            // OR 'rotational'
             // OR volume control
             return _isNewResponse
-                    || _pendingResponse.IsAdvanceable
+                    || _pendingResponse.IsRotational
                     || _pendingResponse.Id == ResponseTypeId.VolumeControl;
         }
 
@@ -414,6 +416,9 @@ namespace Keebee.AAT.Display
                     case ResponseTypeId.Cats:
                     case ResponseTypeId.Nature:
                     case ResponseTypeId.Sports:
+                    case ResponseTypeId.Machinery:
+                    case ResponseTypeId.Animals:
+                    case ResponseTypeId.Cute:
                         radioControl1.Hide();
                         radioControl1.SendToBack();
                         if (responseTypeCategoryId != ResponseTypeCategoryId.Video)
@@ -459,15 +464,24 @@ namespace Keebee.AAT.Display
             _residentDisplayTimer.Start();
         }
 
+        private void SaveCurrentRotationalSensorValue(int responseTypeId, int sensorValue)
+        {
+            if (_rotationalResponses.Any(r => r.Id == responseTypeId))
+            {
+                _rotationalResponses.Single(r => r.Id == responseTypeId)
+                    .SensorValue = sensorValue;
+            }
+        }
+
         #endregion
 
         #region callback
 
-        private void PlayMedia(int responseTypeId, int responseValue)
+        private void PlayAudioVideo(int responseTypeId, int responseValue)
         {
             if (InvokeRequired)
             {
-                Invoke(new PlayMediaDelegate(PlayMedia), responseTypeId, responseValue);
+                Invoke(new PlayMediaDelegate(PlayAudioVideo), responseTypeId, responseValue);
             }
             else
             {
@@ -505,7 +519,7 @@ namespace Keebee.AAT.Display
                 }
                 else
                 {
-                    var changeType = GetResponseValueChangeType(responseTypeId, responseValue);
+                    var changeType = GetSensorValueChangeType(responseTypeId, responseValue);
 
                     switch (changeType)
                     {
@@ -522,42 +536,26 @@ namespace Keebee.AAT.Display
             }
         }
 
-        private ResponseValueChangeType GetResponseValueChangeType(int responseTypeId, int responseValue)
+        private ResponseValueChangeType GetSensorValueChangeType(int responseTypeId, int sensorValue)
         {
-            int currentResponseValue;
-
-            switch (responseTypeId)
-            {
-                case ResponseTypeId.Radio:
-                    currentResponseValue = _currentRadioSensorValue;
-                    break;
-                case ResponseTypeId.Television:
-                    currentResponseValue = _currentTelevisionSensorValue;
-                    break;
-                case ResponseTypeId.Nature:
-                    currentResponseValue = _currentNatureSensorValue;
-                    break;
-                case ResponseTypeId.Sports:
-                    currentResponseValue = _currentSportsSensorValue;
-                    break;
-                default:
-                    return ResponseValueChangeType.NoDifference;
-            }
+            // save the current sensor values for the 'rotational' responses
+            var currentSensorValue = _rotationalResponses
+                .Single(r => r.Id == responseTypeId).SensorValue;
 
             // edge case 1 - going from Value5 to Value1 should be an INCREASE
-            if ((currentResponseValue == (int)RotationSensorStep.Value5) && (responseValue == (int)RotationSensorStep.Value1))
+            if ((currentSensorValue == (int)RotationSensorStep.Value5) && (sensorValue == (int)RotationSensorStep.Value1))
                 return ResponseValueChangeType.Increase;
 
             // edge case 2 - going from Value1 to Value5 should be a DECREASE
-            if ((currentResponseValue == (int)RotationSensorStep.Value1) && (responseValue == (int)RotationSensorStep.Value5))
+            if ((currentSensorValue == (int)RotationSensorStep.Value1) && (sensorValue == (int)RotationSensorStep.Value5))
                 return ResponseValueChangeType.Decrease;
 
             // no change
-            if (responseValue == currentResponseValue)
+            if (sensorValue == currentSensorValue)
                 return ResponseValueChangeType.NoDifference;
 
             // all other scenarios
-            return (responseValue > currentResponseValue)
+            return (sensorValue > currentSensorValue)
                     ? ResponseValueChangeType.Increase
                     : ResponseValueChangeType.Decrease;
         }
@@ -685,7 +683,7 @@ namespace Keebee.AAT.Display
                 ambientPlayer1.Show();
                 ambientPlayer1.Resume();
 
-                _currentResponse = _pendingResponse;
+                _currentResponse = _ambientResponse;
             }
         }
 
@@ -840,7 +838,7 @@ namespace Keebee.AAT.Display
                     case ResponseTypeId.Radio:
                     case ResponseTypeId.Television:
                         _isNewResponse = true;
-                        PlayMedia(responseTypeId, 0);
+                        PlayAudioVideo(responseTypeId, 0);
                         break;
                 }
             }
@@ -864,7 +862,7 @@ namespace Keebee.AAT.Display
             }
         }
 
-        private void MediaPlayerComplete(object sender, EventArgs e)
+        private void AudioVideoPlayerComplete(object sender, EventArgs e)
         {
             try
             {
@@ -874,7 +872,7 @@ namespace Keebee.AAT.Display
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"Main.MediaPlayerComplete: {ex.Message}", EventLogEntryType.Error);
+                _systemEventLogger.WriteEntry($"Main.AudioVideoPlayerComplete: {ex.Message}", EventLogEntryType.Error);
             }
         }
 
@@ -888,7 +886,7 @@ namespace Keebee.AAT.Display
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"Main.MediaPlayerComplete: {ex.Message}", EventLogEntryType.Error);
+                _systemEventLogger.WriteEntry($"Main.AudioVideoPlayerComplete: {ex.Message}", EventLogEntryType.Error);
             }
         }
 

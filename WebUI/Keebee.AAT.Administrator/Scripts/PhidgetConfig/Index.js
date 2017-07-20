@@ -337,14 +337,14 @@
                         cmdAddDetail.tooltip("hide");
                         enableButtons(false);
 
-                        var id = (row.id !== undefined) ? row.id : 0;
+                        var id = (typeof row.id !== "undefined") ? row.id : 0;
                         var add = (id === 0);
                         if (!add) { self.highlightRow(row); }
                        
                         var title = "<span class='glyphicon glyphicon-pencil' style='color: #fff'></span>";
                         title = add
-                            ? title + " Edit Configuration Item"
-                            : title + " Add Configuration Item";
+                            ? title + " Add Configuration Item"
+                            : title + " Edit Configuration Item";
 
                         if (add) {
                             self.selectedConfigDetail([]);

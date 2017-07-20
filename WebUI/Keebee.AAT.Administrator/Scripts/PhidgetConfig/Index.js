@@ -26,7 +26,7 @@
                 ConfigDetailList: []
             };
 
-            cmdDelete.prop("disabled", false);
+            cmdDelete.attr("disabled", "disabled");
 
             utilities.job.execute({
                 url: site.url + "PhidgetConfig/GetData/"
@@ -572,7 +572,11 @@
                         // COMMENTED - allow configuration to be activated at any time
 
                         // delete button
-                        cmdDelete.prop("disabled", !self.canDeleteConfig(configId));
+                        if (self.canDeleteConfig(configId)) {
+                            cmdDelete.removeAttr("disabled");
+                        } else {
+                            cmdDelete.attr("disabled", "disabled");
+                        }
                     };
 
                     self.canDeleteConfig = function (id) {

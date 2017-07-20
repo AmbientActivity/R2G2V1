@@ -103,8 +103,8 @@
             // 
             // btnKillDisplay
             // 
-            this.btnKillDisplay.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnKillDisplay.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.btnKillDisplay.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnKillDisplay.ForeColor = System.Drawing.SystemColors.ControlText;
             this.btnKillDisplay.Location = new System.Drawing.Point(315, 20);
             this.btnKillDisplay.Name = "btnKillDisplay";
             this.btnKillDisplay.Size = new System.Drawing.Size(94, 35);

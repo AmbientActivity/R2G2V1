@@ -199,6 +199,7 @@ namespace Keebee.AAT.StateMachineService
                                 Id = x.ResponseType.Id,
                                 ResponseTypeCategoryId = x.ResponseType.ResponseTypeCategory.Id,
                                 IsSystem = x.ResponseType.IsSystem,
+                                IsRandom = x.ResponseType.IsRandom,
                                 IsAdvanceable = x.ResponseType.IsAdvanceable,
                                 InteractiveActivityTypeId = x.ResponseType.InteractiveActivityType?.Id ?? 0,
                                 SwfFile = x.ResponseType.InteractiveActivityType?.SwfFile ?? string.Empty

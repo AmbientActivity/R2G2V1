@@ -27,6 +27,7 @@ namespace Keebee.AAT.Shared
         public int Id { get; set; }
         public int ResponseTypeCategoryId { get; set; }
         public bool IsSystem { get; set; }
+        public bool IsRandom { get; set; }
         public bool IsAdvanceable { get; set; }
         public bool IsUninterrupted { get; set; }
         public int InteractiveActivityTypeId { get; set; }

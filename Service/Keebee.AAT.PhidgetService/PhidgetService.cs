@@ -41,6 +41,8 @@ namespace Keebee.AAT.PhidgetService
     internal partial class PhidgetService : ServiceBase
     {
 
+        #region declaration
+
         // api client
         private readonly IConfigsClient _configsClient;
 
@@ -79,6 +81,8 @@ namespace Keebee.AAT.PhidgetService
         private int _totalInputs;
 
         private readonly InterfaceKit _interfaceKit;
+
+        #endregion
 
         public PhidgetService()
         {

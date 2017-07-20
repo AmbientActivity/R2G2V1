@@ -24,26 +24,13 @@ namespace Keebee.AAT.Simulator
     public partial class ControlPanel : Form
     {
         // for the random response types when the on/off button is clicked
-        private readonly IEnumerable<ResponseTypeMessage> _randomResponseTypes = new Collection<ResponseTypeMessage>
-            {
-                GetResponseTypeMessage(ResponseTypeId.SlideShow),
-                GetResponseTypeMessage(ResponseTypeId.MatchingGame),
-                GetResponseTypeMessage(ResponseTypeId.PaintingActivity),
-                GetResponseTypeMessage(ResponseTypeId.BalloonPoppingGame)
-            };
+        private readonly ResponseTypeMessage[]  _randomResponseTypes;
 
         #region declaration
-
-        // constant
-        private const string MatchingGame = "MatchingGame.swf";
-        private const string PaintingActivity = "PaintingActivity.swf";
-        private const string BalloonPoppingGame = "BalloonPoppingGame.swf";
 
         // data
         private readonly IResidentsClient _residentsClient;
         private Resident[] _residents;
-
-        private readonly IResponseTypesClient _responseTypesClient;
 
         // message queue sender
         private readonly CustomMessageQueue _messageQueuePhidget;
@@ -60,6 +47,10 @@ namespace Keebee.AAT.Simulator
         // activity
         private int _currentSensorId = -1;
         private const int MaxSensorId = 3;
+
+        // responses
+        private readonly ResponseTypeMessage[] _responseTypes;
+        private int _currentResponseTypeId = -1;
 
         // resident
         private int _currentResidentIndex = -1;
@@ -92,7 +83,6 @@ namespace Keebee.AAT.Simulator
             _autoResidentInterval = Convert.ToInt32(ConfigurationManager.AppSettings["AutoResidentInterval"]);
 
             _residentsClient = new ResidentsClient();
-            _responseTypesClient = new ResponseTypesClient();
 
             // message queue senders
             _messageQueuePhidget = new CustomMessageQueue(new CustomMessageQueueArgs
@@ -120,6 +110,24 @@ namespace Keebee.AAT.Simulator
 
             LoadResidentDropDown();
             _totalResidents = _residents.Count();
+
+            IResponseTypesClient responseTypesClient = new ResponseTypesClient();
+            _responseTypes = responseTypesClient.Get()
+                .Select(r => new ResponseTypeMessage
+                {
+                    Id = r.Id,
+                    ResponseTypeCategoryId = r.ResponseTypeCategory.Id,
+                    IsSystem = r.IsSystem,
+                    IsRandom = r.IsRandom,
+                    IsAdvanceable = r.IsAdvanceable,
+                    IsUninterrupted = r.IsUninterrupted,
+                    InteractiveActivityTypeId = r.InteractiveActivityType?.Id ?? 0,
+                    SwfFile = r.InteractiveActivityType?.SwfFile ?? string.Empty
+                }).ToArray();
+
+            _randomResponseTypes = _responseTypes.Where(r => r.IsRandom).ToArray();
+
+
         }
 
         #region initialization
@@ -514,41 +522,30 @@ namespace Keebee.AAT.Simulator
             if (Process.GetProcessesByName($"{AppSettings.Namespace}.{AppSettings.DisplayAppName}").Any()) 
             {
 #endif
-            var responseType = _responseTypesClient.Get(responseTypeId);
+            var responseType = _responseTypes.Single(r => r.Id == responseTypeId);
+
+            // for the OffScreen, need to alternate between the OffScreen and a 'random' response
+            if (responseType.Id == ResponseTypeId.OffScreen
+                && _currentResponseTypeId == ResponseTypeId.OffScreen)
+                responseType = GetOffScreenResponse();
+
             _messageQueueResponse.Send(CreateMessageBodyForResponse(responseType, phidgetTypeId, sensorValue));
+
+            _currentResponseTypeId = responseType.Id;
 #if !DEBUG
             }
 #endif
         }
 
-        private static int GetInteractiveActivityTypeId(int responseTypeId)
+        private int _currentSequentialResponseTypeIndex = -1;
+        private ResponseTypeMessage GetOffScreenResponse()
         {
-            switch (responseTypeId)
-            {
-                case ResponseTypeId.MatchingGame:
-                    return InteractiveActivityTypeId.MatchingGame;
-                case ResponseTypeId.PaintingActivity:
-                    return InteractiveActivityTypeId.PaintingActivity;
-                case ResponseTypeId.BalloonPoppingGame:
-                    return InteractiveActivityTypeId.BalloonPoppingGame;
-                default:
-                    return 0;
-            }
-        }
+            if (_currentSequentialResponseTypeIndex < _randomResponseTypes.Length - 1)
+                _currentSequentialResponseTypeIndex++;
+            else
+                _currentSequentialResponseTypeIndex = 0;
 
-        private static string GetInteractiveActivityTypeSwf(int responseTypeId)
-        {
-            switch (responseTypeId)
-            {
-                case ResponseTypeId.MatchingGame:
-                    return MatchingGame;
-                case ResponseTypeId.PaintingActivity:
-                    return PaintingActivity;
-                case ResponseTypeId.BalloonPoppingGame:
-                    return BalloonPoppingGame;
-                default:
-                    return null;
-            }
+            return _randomResponseTypes[_currentSequentialResponseTypeIndex];
         }
 
         private static string CreateMessageBodyForBluetoothBeaconWatcher(Resident resident)
@@ -567,23 +564,17 @@ namespace Keebee.AAT.Simulator
             return messageBody;
         }
 
-        private string CreateMessageBodyForResponse(ResponseType responseType, int phidgetTypeId, int sensorValue)
+        private string CreateMessageBodyForResponse(ResponseTypeMessage responseType, int phidgetTypeId, int sensorValue)
         {
+
+
             var responseMessage = new ResponseMessage
             {
                 SensorValue = sensorValue,
                 ConfigDetail = new ConfigDetailMessage
                 {
                     Id = 1,
-                    ResponseType = new ResponseTypeMessage
-                    {
-                        Id = responseType.Id,
-                        IsSystem = responseType.IsSystem,
-                        InteractiveActivityTypeId = GetInteractiveActivityTypeId(responseType.Id),
-                        SwfFile = GetInteractiveActivityTypeSwf(responseType.Id),
-                        IsAdvanceable = responseType.IsAdvanceable,
-                        IsUninterrupted = responseType.IsUninterrupted
-                    },
+                    ResponseType = responseType,
                     PhidgetTypeId = phidgetTypeId,
                     ConfigId = ConfigId.Default,   
                 },
@@ -596,8 +587,7 @@ namespace Keebee.AAT.Simulator
                     GameDifficultyLevel = _currentResident.GameDifficultyLevel,
                     AllowVideoCapturing = _currentResident.AllowVideoCapturing
                 },
-                IsActiveEventLog = false,
-                RandomResponseTypes = _randomResponseTypes.ToArray()
+                IsActiveEventLog = false
             };
 
             var serializer = new JavaScriptSerializer();

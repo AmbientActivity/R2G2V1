@@ -15,6 +15,8 @@ namespace Keebee.AAT.StateMachineService
 {
     public partial class StateMachineService : ServiceBase
     {
+        #region declaration
+
         // api client
         private readonly IActiveResidentClient _activeResidentClient;
         private readonly IConfigsClient _configsClient;
@@ -30,7 +32,6 @@ namespace Keebee.AAT.StateMachineService
 
         // active config
         private ConfigMessage _activeConfig;
-        private ConfigDetailMessage _currentConfigDetail;
 
         // active profile
         private ResidentMessage _activeResident;
@@ -38,11 +39,17 @@ namespace Keebee.AAT.StateMachineService
         // random response types (for "on/off" toggle)
         private ResponseTypeMessage[] _randomResponseTypes;
 
+        // current response type (needed for the "on/off" toggle)
+        private int _currentResponseTypeId = ResponseTypeId.Ambient;
+
+
         // display state
         private bool _isDisplayActive;
 
         // video capture
         private bool _isInstalledVideoCapture;
+
+        #endregion
 
         public StateMachineService()
         {
@@ -125,8 +132,8 @@ namespace Keebee.AAT.StateMachineService
                     .Single(cd => cd.PhidgetTypeId == phidgetTypeId);
 
                 // for the OffScreen, need to alternate between the OffScreen and a 'random' response
-                if (configDetail.ResponseType.Id == ResponseTypeId.OffScreen 
-                    && _currentConfigDetail.ResponseType.Id == ResponseTypeId.OffScreen)
+                if (configDetail.ResponseType.Id == ResponseTypeId.OffScreen  
+                    && _currentResponseTypeId == ResponseTypeId.OffScreen)
                     configDetail.ResponseType = GetOffScreenResponse();
 
                 var responseMessage = new ResponseMessage
@@ -151,7 +158,7 @@ namespace Keebee.AAT.StateMachineService
                 var responseMessageBody = serializer.Serialize(responseMessage);
                 _messageQueueResponse.Send(responseMessageBody);
 
-                _currentConfigDetail = configDetail;
+                _currentResponseTypeId = configDetail.ResponseType.Id;
             }
             catch (Exception ex)
             {
@@ -214,18 +221,6 @@ namespace Keebee.AAT.StateMachineService
                         InteractiveActivityTypeId = r.InteractiveActivityType?.Id ?? 0,
                         SwfFile = r.InteractiveActivityType?.SwfFile ?? string.Empty
                     }).ToArray();
-
-                // default the current config to ambient
-                if (_currentConfigDetail == null)
-                {
-                    if (_activeConfig.ConfigDetails.Any(x => x.ResponseType.Id == ResponseTypeId.Ambient))
-                    {
-                        _currentConfigDetail =
-                            _activeConfig.ConfigDetails.Single(x => x.ResponseType.Id == ResponseTypeId.Ambient);
-                    }
-                    else
-                        _systemEventLogger.WriteEntry($"The configuration '{config.Description}' does not contain an 'Ambient' response type!");
-                }
 
                 _systemEventLogger.WriteEntry($"The configuration '{config.Description}' has been activated");
             }

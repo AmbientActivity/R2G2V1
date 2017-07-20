@@ -91,7 +91,8 @@
                                 if (beaconServiceHasChanged)
                                     window.location.reload();
                             }
-                        });
+                        })
+                        .catch(function (){});
                     }
                 });
             });

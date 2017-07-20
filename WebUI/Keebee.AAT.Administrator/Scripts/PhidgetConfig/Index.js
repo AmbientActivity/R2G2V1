@@ -113,8 +113,8 @@
 
                     self.configs = ko.observableArray([]);
                     self.configDetails = ko.observableArray([]);
-                    self.activeConfig = ko.observable(activeConfig.Id);
-                    self.selectedConfig = ko.observable(activeConfig.Id);
+                    self.activeConfigId = ko.observable(activeConfig.Id);
+                    self.selectedConfigId = ko.observable(activeConfig.Id);
                     self.activeConfigDesc = ko.observable(activeConfig.Description);
                     self.IsActiveEventLog = ko.observable(activeConfig.IsActiveEventLog);
                     self.activeEventLogDesc = (activeConfig.IsActiveEventLog === true)
@@ -132,8 +132,14 @@
                         cmdAdd.prop("hidden", enable);
                         cmdEdit.prop("hidden", enable);
                         cmdDelete.prop("hidden", enable);
-                        cmdAddDetail.prop("disabled", !enable);
-                        cmdActivate.prop("disabled", !enable);
+
+                        if (enable) {
+                            cmdAddDetail.removeAttr("disabled");
+                            cmdActivate.removeAttr("disabled");
+                        } else {
+                            cmdAddDetail.attr("disabled", "disabled");
+                            cmdActivate.attr("disabled", "disabled");
+                        }
                     }
 
                     function createConfigDetailArray(list) {
@@ -190,7 +196,7 @@
 
                     self.filteredConfigDetails = ko.computed(function () {
                         return ko.utils.arrayFilter(self.configDetails(), function (c) {
-                            return (c.configid === self.selectedConfig());
+                            return (c.configid === self.selectedConfigId());
                         });
                     });
 
@@ -212,7 +218,7 @@
                         cmdEdit.tooltip("hide");
                         enableButtons(false);
 
-                        var id = 0;   
+                        var id = add ? 0 : self.selectedConfigId();   
                         var title = "<span class='glyphicon glyphicon-{glyphicon}' style='color: #fff'></span>" + " {action} Configuration";
                         title = add 
                             ? title.replace("{glyphicon}", "duplicate").replace("{action}", "Duplicate")
@@ -222,7 +228,7 @@
                             url: site.url + "PhidgetConfig/GetConfigEditView/" + id,
                             type: add ? BootstrapDialog.TYPE_SUCCESS : BootstrapDialog.TYPE_PRIMARY,
                             title: title,
-                            params: { selectedConfigid: self.selectedConfig() },
+                            params: { selectedConfigid: self.selectedConfigId() },
                             focus: "txtDescription",
                             buttonOKClass: add ? "btn-success" : "btn-edit",
                             cancelled: function() {
@@ -236,7 +242,7 @@
                                 utilities.job.execute({
                                         url: site.url + "PhidgetConfig/Validate",
                                         type: "POST",
-                                        params: { config: config, selectedConfigId: self.selectedConfig() }
+                                        params: { config: config, selectedConfigId: self.selectedConfigId() }
                                     })
                                     .then(function(validateResult) {
                                         if (validateResult.ValidationMessages === null) {
@@ -248,22 +254,30 @@
                                                     params:
                                                     {
                                                         config: config,
-                                                        selectedConfigId: self.selectedConfig()
+                                                        selectedConfigId: self.selectedConfigId()
                                                     }
                                                 })
                                                 .then(function(saveResult) {
                                                     $.extend(lists, saveResult);
                                                     createConfigArray(lists.ConfigList);
                                                     createConfigDetailArray(lists.ConfigDetailList);
-                                                    self.selectedConfig(saveResult.SelectedId);
+                                                    self.selectedConfigId(saveResult.SelectedId);
                                                     activeConfig = saveResult.ConfigList
                                                         .filter(function(value) { return value.IsActive; })[0];
-                                                    self.activeConfig(activeConfig.Id);
+                                                    self.activeConfigId(activeConfig.Id);
                                                     self.activeConfigDesc(activeConfig.Description);
                                                     if (activeConfig.IsActiveEventLog === true)
                                                         self.activeEventLogDesc("On");
                                                     else
                                                         self.activeEventLogDesc("Off");
+                                                    self.enableDetail();
+                                                    enableButtons(true);
+                                                })
+                                                .catch(function() {
+                                                    self.enableDetail();
+                                                    enableButtons(true);
+                                                })
+                                                .catch(function() {
                                                     self.enableDetail();
                                                     enableButtons(true);
                                                 });
@@ -275,18 +289,14 @@
                                             });
                                         }
                                     });
-                                }
-                            })
-                        .catch(function() {
-                            self.enableDetail();
-                            enableButtons(true);
+                            }
                         });
                     };
 
                     self.deleteConfig = function () {
                         if (isBinding) return;
                         if (cmdDelete.is("[disabled]")) return;
-                        var id = self.selectedConfig();
+                        var id = self.selectedConfigId();
                         if (id <= 0) return;
 
                         $("#delete").tooltip("hide");
@@ -317,7 +327,7 @@
                                     var activeId = lists.ConfigList
                                         .filter(function(value) { return value.IsActive === true })[0]
                                         .Id;
-                                    self.selectedConfig(activeId);
+                                    self.selectedConfigId(activeId);
                                     enableButtons(true);
                                 })
                                 .catch(function() {
@@ -333,12 +343,13 @@
                     self.editDetail = function (row) {
                         if (isBinding) return;
 
-                        $("#edit_" + row.id).tooltip("hide");
-                        cmdAddDetail.tooltip("hide");
-                        enableButtons(false);
-
                         var id = (typeof row.id !== "undefined") ? row.id : 0;
                         var add = (id === 0);
+
+                        $("#edit_" + id).tooltip("hide");
+                        cmdAddDetail.tooltip("hide");
+                        enableButtons(false);  
+                        
                         if (!add) { self.highlightRow(row); }
                        
                         var title = "<span class='glyphicon glyphicon-pencil' style='color: #fff'></span>";
@@ -357,13 +368,13 @@
                             url: "PhidgetConfig/GetConfigDetailEditView/" + id,
                             type: add ? BootstrapDialog.TYPE_SUCCESS : BootstrapDialog.TYPE_PRIMARY,
                             title: title,
-                            params: { id: id, configId: self.selectedConfig() },
+                            params: { id: id, configId: self.selectedConfigId() },
                             focus: "txtDescription",
                             buttonOKClass: add ? "btn-success" : "btn-primary",
                             cancelled: function () { enableButtons(true); },
                             callback: function(dialog) {
                                 var configdetail = self.getConfigDetailFromDialog();
-                                configdetail.ConfigId = self.selectedConfig();
+                                configdetail.ConfigId = self.selectedConfigId();
                                 utilities.job.execute({
                                         url: site.url + "PhidgetConfig/ValidateDetail",
                                         type: "POST",
@@ -430,8 +441,8 @@
                                     type: "POST",
                                     params: {
                                         id: id,
-                                        configId: self.selectedConfig(),
-                                        isActive: self.selectedConfig() === self.activeConfig()
+                                        configId: self.selectedConfigId(),
+                                        isActive: self.selectedConfigId() === self.activeConfigId()
                                     },
                                     waitMessage: "Deleting..."
                                 })
@@ -465,7 +476,7 @@
                         })
                         .then(function(confirm) {
                             if (confirm) {
-                                var configId = self.selectedConfig();
+                                var configId = self.selectedConfigId();
 
                                 utilities.job.execute({
                                     url: site.url + "PhidgetConfig/Activate/",
@@ -478,8 +489,8 @@
                                     createConfigDetailArray(lists.ConfigDetailList);
                                     activeConfig = result.ConfigList
                                         .filter(function(value) { return value.IsActive; })[0];
-                                    self.activeConfig(activeConfig.Id);
-                                    self.selectedConfig(activeConfig.Id);
+                                    self.activeConfigId(activeConfig.Id);
+                                    self.selectedConfigId(activeConfig.Id);
                                     self.activeConfigDesc(activeConfig.Description);
                                     if (activeConfig.IsActiveEventLog === true)
                                         self.activeEventLogDesc("On");
@@ -505,7 +516,7 @@
                         return {
                             Description: description,
                             IsActiveEventLog: isactiveeventlog,
-                            IsActive: self.selectedConfig() === self.activeConfig()
+                            IsActive: self.selectedConfigId() === self.activeConfigId()
                         };
                     };
 
@@ -529,14 +540,20 @@
                         var responsetypeid = $("#ddlResponseTypes").val();
 
                         return {
-                            Id: self.selectedConfigDetail().id, Description: description, Location: location, PhidgetTypeId: phidgettypeid, PhidgetStyleTypeId: phidgetstyletypeid, ResponseTypeId: responsetypeid, IsActive: self.selectedConfig() === self.activeConfig()
+                            Id: self.selectedConfigDetail().id,
+                            Description: description,
+                            Location: location,
+                            PhidgetTypeId: phidgettypeid,
+                            PhidgetStyleTypeId: phidgetstyletypeid,
+                            ResponseTypeId: responsetypeid,
+                            IsActive: self.selectedConfigId() === self.activeConfigId()
                         };
                     };
 
                     self.enableDetail = function () {
                         if (self.isLoadingConfigs()) return;
 
-                        var configId = self.selectedConfig();
+                        var configId = self.selectedConfigId();
 
                         // COMMENTED - allow configuration to be activated at any time
 
@@ -546,7 +563,7 @@
                         //}).length;
 
                         // activate  button
-                        //if (self.activeConfig() === configId || detailCount === 0) {
+                        //if (self.activeConfigId() === configId || detailCount === 0) {
                         //    $("#activate").prop("disabled", true);
                         //} else {
                         //    $("#activate").prop("disabled", false);
@@ -566,7 +583,7 @@
 
                     self.selectedConfigDesc = function () {
                         return self.configs()
-                            .filter(function (value) { return value.id === self.selectedConfig(); })
+                            .filter(function (value) { return value.id === self.selectedConfigId(); })
                             [0].description;
                     };
                 }

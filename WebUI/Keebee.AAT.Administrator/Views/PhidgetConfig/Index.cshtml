@@ -26,7 +26,7 @@
 <div class="container config-container">
     <div class="row row-config-controls">
         <div class="col-sm-4">
-            <select class="form-control" data-bind="options: configs, optionsValue: 'id', optionsText: 'description', value: selectedConfig, event: { change: enableDetail }, css: 'select-config'"></select>
+            <select class="form-control" data-bind="options: configs, optionsValue: 'id', optionsText: 'description', value: selectedConfigId, event: { change: enableDetail }, css: 'select-config'"></select>
         </div>
         <div id="col-button-container"class="col-sm-6" hidden>
             <a id="add" data-toggle="tooltip" title="Duplicate this configuration" href="javascript:void(0)" class="btn btn-add btn-md" data-bind="click: editConfig(true), css: 'glyphicon glyphicon-duplicate button-text'"></a>

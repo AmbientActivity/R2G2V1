@@ -705,20 +705,6 @@ namespace Keebee.AAT.Backup
             return fileString.ToString().TrimEnd(',');
         }
 
-        private static string GetSqlStringList(MediaPathType mediaPathType)
-        {
-            if (mediaPathType == null) return string.Empty;
-
-            // get media path type
-            var allowedExtsString = mediaPathType.AllowedExts;
-
-            var resultString = new StringBuilder();
-            foreach (var ext in allowedExtsString.Split(','))
-                resultString.Append($"'{ext.Trim()}',");
-
-            return resultString.ToString().TrimEnd(',');
-        }
-
         private static string GetResidentLinkedFilenames(int residentId, int responseTypeId, int mediaPathTypeId, ResidentMedia[] linkedMedia)
         {
             if (linkedMedia == null) return string.Empty;
@@ -969,6 +955,47 @@ namespace Keebee.AAT.Backup
                         sw.WriteLine($"AND [Filename] IN ({filenames})");
                     }
 
+                    sw.WriteLine();
+                    // Machinery Videos Linked
+                    mediaPathType = mediaPathTypes.Single(x => x.Id == MediaPathTypeId.Machinery);
+                    filenames = GetPublicProfileLinkedFilenames(ResponseTypeId.Machinery, mediaPathType.Id, linkedMedia);
+                    if (filenames.Length > 0)
+                    {
+                        sw.WriteLine();
+                        sw.WriteLine(
+                            "INSERT INTO PublicMediaFiles (IsLinked, ResponseTypeId, MediaPathTypeId, StreamId, DateAdded)");
+                        sw.WriteLine(
+                            $@"SELECT 1, {ResponseTypeId.Sports}, {mediaPathType.Id}, StreamId, GETDATE() FROM MediaFiles WHERE [Path] = @pathSharedLibrary + '{mediaPathType.Path}\'");
+                        sw.WriteLine($"AND [Filename] IN ({filenames})");
+                    }
+
+                    sw.WriteLine();
+                    // Animals Videos Linked
+                    mediaPathType = mediaPathTypes.Single(x => x.Id == MediaPathTypeId.Animals);
+                    filenames = GetPublicProfileLinkedFilenames(ResponseTypeId.Animals, mediaPathType.Id, linkedMedia);
+                    if (filenames.Length > 0)
+                    {
+                        sw.WriteLine();
+                        sw.WriteLine(
+                            "INSERT INTO PublicMediaFiles (IsLinked, ResponseTypeId, MediaPathTypeId, StreamId, DateAdded)");
+                        sw.WriteLine(
+                            $@"SELECT 1, {ResponseTypeId.Sports}, {mediaPathType.Id}, StreamId, GETDATE() FROM MediaFiles WHERE [Path] = @pathSharedLibrary + '{mediaPathType.Path}\'");
+                        sw.WriteLine($"AND [Filename] IN ({filenames})");
+                    }
+
+                    sw.WriteLine();
+                    // Cute Videos Linked
+                    mediaPathType = mediaPathTypes.Single(x => x.Id == MediaPathTypeId.Cute);
+                    filenames = GetPublicProfileLinkedFilenames(ResponseTypeId.Cute, mediaPathType.Id, linkedMedia);
+                    if (filenames.Length > 0)
+                    {
+                        sw.WriteLine();
+                        sw.WriteLine(
+                            "INSERT INTO PublicMediaFiles (IsLinked, ResponseTypeId, MediaPathTypeId, StreamId, DateAdded)");
+                        sw.WriteLine(
+                            $@"SELECT 1, {ResponseTypeId.Sports}, {mediaPathType.Id}, StreamId, GETDATE() FROM MediaFiles WHERE [Path] = @pathSharedLibrary + '{mediaPathType.Path}\'");
+                        sw.WriteLine($"AND [Filename] IN ({filenames})");
+                    }
                     sw.WriteLine();
                 }
             }

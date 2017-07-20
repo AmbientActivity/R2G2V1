@@ -86,6 +86,21 @@ SELECT @mediaPathType = [Path], @allowedExts = '''' + REPLACE(AllowedExts, ', ',
 INSERT INTO PublicMediaFiles (IsLinked, ResponseTypeId, MediaPathTypeId, StreamId, DateAdded)
 SELECT 1, 14, 12, StreamId, GETDATE() FROM MediaFiles WHERE [Path] = @pathSharedLibrary + @mediaPathType + '\' AND  (@allowedExts) LIKE '%' + [FileType] + '%'
 
+--- ResponseType 15 - ResponseType "Machinery" ---
+SELECT @mediaPathType = [Path], @allowedExts = '''' + REPLACE(AllowedExts, ', ', ''', ''') + ''''  FROM MediaPathTypes WHERE Id = 13 -- videos\machinery\
+INSERT INTO PublicMediaFiles (IsLinked, ResponseTypeId, MediaPathTypeId, StreamId, DateAdded)
+SELECT 1, 14, 12, StreamId, GETDATE() FROM MediaFiles WHERE [Path] = @pathSharedLibrary + @mediaPathType + '\' AND  (@allowedExts) LIKE '%' + [FileType] + '%'
+
+--- ResponseType 16 - ResponseType "Animals" ---
+SELECT @mediaPathType = [Path], @allowedExts = '''' + REPLACE(AllowedExts, ', ', ''', ''') + ''''  FROM MediaPathTypes WHERE Id = 14 -- videos\animals\
+INSERT INTO PublicMediaFiles (IsLinked, ResponseTypeId, MediaPathTypeId, StreamId, DateAdded)
+SELECT 1, 14, 12, StreamId, GETDATE() FROM MediaFiles WHERE [Path] = @pathSharedLibrary + @mediaPathType + '\' AND  (@allowedExts) LIKE '%' + [FileType] + '%'
+
+--- ResponseType 17 - ResponseType "Cute" ---
+SELECT @mediaPathType = [Path], @allowedExts = '''' + REPLACE(AllowedExts, ', ', ''', ''') + ''''  FROM MediaPathTypes WHERE Id = 15 -- videos\cute\
+INSERT INTO PublicMediaFiles (IsLinked, ResponseTypeId, MediaPathTypeId, StreamId, DateAdded)
+SELECT 1, 14, 12, StreamId, GETDATE() FROM MediaFiles WHERE [Path] = @pathSharedLibrary + @mediaPathType + '\' AND  (@allowedExts) LIKE '%' + [FileType] + '%'
+
 -- VIEW THE RESULTS --
 
 /*

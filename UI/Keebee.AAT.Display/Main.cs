@@ -49,7 +49,7 @@ namespace Keebee.AAT.Display
         private delegate void ResumeAmbientDelegate();
         private delegate void PlayMediaDelegate(int responseTypeId, int responseValue);
         private delegate void PlaySlideShowDelegate();
-        private delegate void PlayMatchingGameDelegate(string swfFile);
+        private delegate void PlayMatchingGameDelegate();
         private delegate void ShowCaregiverDelegate();
         private delegate void KillDisplayDelegate();
         private delegate void ShowOffScreenDelegate();
@@ -320,7 +320,7 @@ namespace Keebee.AAT.Display
                         PlaySlideShow();
                         break;
                     case ResponseTypeId.MatchingGame:
-                        PlayMatchingGame(_activeConfigDetail.ResponseType.SwfFile);
+                        PlayMatchingGame();
                         break;
                     case ResponseTypeId.KillDisplay:
                         KillDisplay();
@@ -596,11 +596,11 @@ namespace Keebee.AAT.Display
             }
         }
 
-        private void PlayMatchingGame(string swfFile)
+        private void PlayMatchingGame()
         {
             if (InvokeRequired)
             {
-                Invoke(new PlayMatchingGameDelegate(PlayMatchingGame), swfFile);
+                Invoke(new PlayMatchingGameDelegate(PlayMatchingGame));
             }
             else
             {
@@ -627,7 +627,7 @@ namespace Keebee.AAT.Display
                     _activityEventLogger.Add(_activeConfigDetail.ConfigId, _activeConfigDetail.Id, _activeResident.Id);
                     _interactiveActivityEventLogger.Add(_activeResident.Id, InteractiveActivityTypeId.MatchingGame, "New game has been initiated", _activeResident.GameDifficultyLevel);
                 }
-    
+
                 matchingGame1.Play(
                     totalShapes, 
                     totalSounds, 
@@ -635,7 +635,7 @@ namespace Keebee.AAT.Display
                     true, 
                     _currentIsActiveEventLog, 
                     _activeResident.AllowVideoCapturing,
-                    swfFile);
+                    _activeConfigDetail.ResponseType.SwfFile);
 
                 _currentResponse = _pendingResponse;
             }
@@ -834,7 +834,7 @@ namespace Keebee.AAT.Display
                         PlaySlideShow();
                         break;
                     case ResponseTypeId.MatchingGame:
-                        PlayMatchingGame(_activeConfigDetail.ResponseType.SwfFile);
+                        PlayMatchingGame();
                         break;
                     case ResponseTypeId.Cats:
                     case ResponseTypeId.Radio:

@@ -126,7 +126,7 @@
                     self.currentStreamId = ko.observable(0);
                     self.currentRowId = ko.observable(0);
 
-                    createFileArray(lists.FileList);
+                    createFileArray({ list: lists.FileList, insert: false });
                     createMediaPathTypeArray(lists.MediaPathTypeList);
 
                     // media path type
@@ -137,25 +137,56 @@
 
                     $("#delete").tooltip({ delay: { show: 100, hide: 100 } });
 
-                    function createFileArray(list) {
-                        self.files.removeAll();
-                        $(list).each(function (index, value) {
-                            self.files.push({
-                                id: value.Id,
-                                streamid: value.StreamId,
-                                filename: value.Filename,
-                                filetype: value.FileType,
-                                filesize: value.FileSize,
-                                path: value.Path,
-                                islinked: value.IsLinked,
-                                dateadded: value.DateAdded,
-                                mediapathtypeid: value.MediaPathTypeId,
-                                thumbnail: value.Thumbnail,
-                                isselected: false,
-                                isplaying: false,
-                                ispaused: false
-                            });
-                        });
+                    function createFileArray(params) {
+                        var cfg = {
+                            list: [],
+                            insert: false
+                        };
+
+                        $.extend(cfg, params);
+
+                        if (cfg.insert === false) {
+                            self.files.removeAll();
+                            $(cfg.list)
+                                .each(function (index, value) {
+                                    // do a "push"
+                                    self.files.push({
+                                        id: value.Id,
+                                        streamid: value.StreamId,
+                                        filename: value.Filename,
+                                        filetype: value.FileType,
+                                        filesize: value.FileSize,
+                                        islinked: value.IsLinked,
+                                        dateadded: value.DateAdded,
+                                        path: value.Path,
+                                        thumbnail: value.Thumbnail,
+                                        mediapathtypeid: value.MediaPathTypeId,
+                                        isselected: false,
+                                        isplaying: false,
+                                        ispaused: false
+                                    });
+                                });
+                        } else {
+                            $(cfg.list)
+                                .each(function (index, value) {
+                                    // do an "unshift"
+                                    self.files.unshift({
+                                        id: value.Id,
+                                        streamid: value.StreamId,
+                                        filename: value.Filename,
+                                        filetype: value.FileType,
+                                        filesize: value.FileSize,
+                                        islinked: value.IsLinked,
+                                        dateadded: value.DateAdded,
+                                        path: value.Path,
+                                        thumbnail: value.Thumbnail,
+                                        mediapathtypeid: value.MediaPathTypeId,
+                                        isselected: false,
+                                        isplaying: false,
+                                        ispaused: false
+                                    });
+                                });
+                        }
                     };
 
                     function createMediaPathTypeArray(list) {
@@ -308,13 +339,11 @@
                                     responseTypeId: self.selectedMediaPathType().responsetypeid
                                 }
                             })
-                            .then(function(saveResult) {
-                                lists.FileList = saveResult.FileList;
-                                createFileArray(lists.FileList);
-                                self.sort({ afterAdd: true });
+                            .then(function (addResult) {
+                                createFileArray({ list: addResult.FileList, insert: true });
                                 self.selectedIds([]);
                                 self.checkSelectAll(false);
-                                self.marqueeRows(saveResult.NewIds);
+                                self.marqueeRows(addResult.FileList);
                                 self.enableDetail();
                             })
                             .catch(function() {
@@ -326,11 +355,12 @@
                         });
                     };
 
-                    self.marqueeRows = function (rowIds) {
-                        $(rowIds).each(function (index, value) {
-                            $("#row_" + value).addClass("row-added");
+                    self.marqueeRows = function (fileList) {
+                        $(fileList).each(function (index, value) {
+                            var id = value.Id;
+                            $("#row_" + id).addClass("row-added");
                             setTimeout(function () {
-                                $("#row_" + value).removeClass("row-added");
+                                $("#row_" + id).removeClass("row-added");
                             }, 1500);
                         });
                     };
@@ -356,9 +386,8 @@
                                         responseTypeId: self.selectedMediaPathType().responsetypeid
                                     }
                                 })
-                                .then(function (result) {
-                                    lists.FileList = result.FileList;
-                                    createFileArray(lists.FileList);
+                                .then(function (deleteResult) {
+                                    self.deleteIds(deleteResult.DeletedIds);
                                     self.sort({ afterDelete: true });
                                     self.selectedIds([]);
                                     self.checkSelectAll(false);
@@ -437,7 +466,7 @@
                         if (row.isselected)
                             self.selectedIds().push(row.id);
                         else
-                            self.removeSelectedId(row.id);
+                            self.clearSelectedId(row.id);
 
                         self.highlightSelectedRows();
                         self.checkSelectAll(self.selectedIds().length === self.filteredFiles().length);
@@ -446,7 +475,7 @@
                         return true;
                     };
 
-                    self.removeSelectedId = function (id) {
+                    self.clearSelectedId = function (id) {
                         for (var i = self.selectedIds().length - 1; i >= 0; i--) {
                             if (self.selectedIds()[i] === id) {
                                 self.selectedIds().splice(i, 1);
@@ -485,6 +514,15 @@
                             }
                         }
                     };
+
+                    self.deleteIds = function (ids) {
+                        $(ids).each(function (index, value) {
+                            var idx = self.files().findIndex(function (row) {
+                                return row.id === value;
+                            });
+                            self.files.splice(idx, 1);
+                        });
+                    }
                 };
             })
             .catch(function (error) {

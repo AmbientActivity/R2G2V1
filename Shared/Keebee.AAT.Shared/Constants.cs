@@ -162,7 +162,7 @@ namespace Keebee.AAT.Shared
     public static class ResponseTypeCategoryId
     {
         public const int Image = 1;
-        public const int Music = 2;
+        public const int Audio = 2;
         public const int Video = 3;
         public const int Game = 4;
         public const int System = 6;

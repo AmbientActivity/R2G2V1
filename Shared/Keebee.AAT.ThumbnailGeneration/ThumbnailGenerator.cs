@@ -19,24 +19,25 @@ namespace Keebee.AAT.ThumbnailGeneration
             _thumbnailsClient = new ThumbnailsClient();
         }
 
-        public string Generate(Guid streamId)
+        public byte[] Generate(Guid streamId, out string errMsg)
         {
-            string errorMessage = null;
+            errMsg = null;
+            byte[] image = null;
 
             try
             {
-                var image = Get(streamId, out errorMessage);
-                if (errorMessage != null) throw new Exception(errorMessage);
+                image = Get(streamId, out errMsg);
+                if (errMsg != null) throw new Exception(errMsg);
 
-                errorMessage = Save(streamId, image, true);
-                if (errorMessage != null) throw new Exception(errorMessage);
+                errMsg = Save(streamId, image, true);
+                if (!string.IsNullOrEmpty(errMsg)) throw new Exception(errMsg);
             }
             catch (Exception ex)
             {
-                errorMessage = ex.Message;
+                errMsg = ex.Message;
             }
 
-            return errorMessage;
+            return image;
         }
 
         public byte[] GetAndSave(Guid streamId, bool overwrite, out string errorMessage)

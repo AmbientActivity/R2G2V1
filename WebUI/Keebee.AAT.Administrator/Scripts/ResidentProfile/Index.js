@@ -29,7 +29,6 @@
             var sortDescending = false;
             var currentSortKey = "filename";
             var primarySortKey = "filename";
-            var dateAddedSortKey = "dateadded";
             var isBinding = true;
 
             var lists = {
@@ -212,7 +211,7 @@
                     self.currentStreamId = ko.observable(0);
                     self.currentRowId = ko.observable(0);
 
-                    createFileArray(lists.FileList);
+                    createFileArray({ list: lists.FileList, insert: false });
                     createMediaPathTypeArray(lists.MediaPathTypeList);
 
                     // media path type
@@ -231,25 +230,56 @@
 
                     enableDetail();
 
-                    function createFileArray(list) {
-                        self.files.removeAll();
-                        $(list).each(function (index, value) {
-                            self.files.push({
-                                id: value.Id,
-                                streamid: value.StreamId,
-                                filename: value.Filename,
-                                filetype: value.FileType,
-                                filesize: value.FileSize,
-                                islinked: value.IsLinked,
-                                dateadded: value.DateAdded,
-                                thumbnail: value.Thumbnail,
-                                path: value.Path,
-                                mediapathtypeid: value.MediaPathTypeId,
-                                isselected: false,
-                                isplaying: false,
-                                ispaused: false
-                            });
-                        });
+                    function createFileArray(params) {
+                        var cfg = {
+                            list: [],
+                            insert: false
+                        };
+
+                        $.extend(cfg, params);
+
+                        if (cfg.insert === false) {
+                            self.files.removeAll();
+                            $(cfg.list)
+                                .each(function (index, value) {
+                                    // do a "push"
+                                    self.files.push({
+                                        id: value.Id,
+                                        streamid: value.StreamId,
+                                        filename: value.Filename,
+                                        filetype: value.FileType,
+                                        filesize: value.FileSize,
+                                        islinked: value.IsLinked,
+                                        dateadded: value.DateAdded,
+                                        path: value.Path,
+                                        thumbnail: value.Thumbnail,
+                                        mediapathtypeid: value.MediaPathTypeId,
+                                        isselected: false,
+                                        isplaying: false,
+                                        ispaused: false
+                                    });
+                                });
+                        } else {
+                            $(cfg.list)
+                                .each(function (index, value) {
+                                    // do an "unshift"
+                                    self.files.unshift({
+                                        id: value.Id,
+                                        streamid: value.StreamId,
+                                        filename: value.Filename,
+                                        filetype: value.FileType,
+                                        filesize: value.FileSize,
+                                        islinked: value.IsLinked,
+                                        dateadded: value.DateAdded,
+                                        path: value.Path,
+                                        thumbnail: value.Thumbnail,
+                                        mediapathtypeid: value.MediaPathTypeId,
+                                        isselected: false,
+                                        isplaying: false,
+                                        ispaused: false
+                                    });
+                                });
+                        }
                     };
 
                     function createMediaPathTypeArray(list) {
@@ -300,24 +330,13 @@
                     self.sort = function (header) {
                         if (isBinding) return;
 
-                        var afterAdd = typeof header.afterAdd !== "undefined" ? header.afterAdd : false;
-                        var afterDelete = typeof header.afterDelete !== "undefined" ? header.afterDelete : false;
-                        var sortKey = currentSortKey;
+                        var sortKey = header.sortKey;
 
-                        if (!afterAdd && !afterDelete) {
-                            sortKey = header.sortKey;
-
-                            if (sortKey !== currentSortKey) {
-                                sortDescending = false;
-                            } else {
-                                sortDescending = !sortDescending;
-                            }       
-                        } else if (afterAdd) {
-                            sortKey = dateAddedSortKey;
-                            sortDescending = true;
-                        } else if (afterDelete) {
-                            sortKey = currentSortKey;
-                        }
+                        if (sortKey !== currentSortKey) {
+                            sortDescending = false;
+                        } else {
+                            sortDescending = !sortDescending;
+                        }       
                         currentSortKey = sortKey;
 
                         var isboolean = false;
@@ -410,11 +429,10 @@
                         $("#fileupload").prop("accept", mediaPathType.allowedtypes);
 
                         utilities.upload.init({
-                            url: site.url + "ResidentProfile/UploadFile"
-                                + "?mediaPath=" + mediaPathType.path
-                                + "&mediaPathTypeId=" + mediaPathType.id
-                                + "&mediaPathTypeCategory=" + mediaPathType.category
-                                + "&residentId=" + config.residentid,
+                            url: site.url + "ResidentProfile/UploadFile?residentId=" + config.residentid +
+                                "&mediaPathTypeId=" + mediaPathType.id +
+                                "&mediaPath=" + mediaPathType.path +
+                                "&mediaPathTypeCategory=" + mediaPathType.category,
                             allowedExts: mediaPathType.allowedexts.split(","),
                             allowedTypes: mediaPathType.allowedtypes.split(","),
                             maxFileBytes: mediaPathType.maxfilebytes,
@@ -434,12 +452,10 @@
                                         }
                                     })
                                     .then(function (addResult) {
-                                        lists.FileList = addResult.FileList;
-                                        createFileArray(lists.FileList);
-                                        self.sort({ afterAdd: true });
+                                        createFileArray({ list: addResult.FileList, insert: true });
                                         self.selectedIds([]);
                                         self.checkSelectAll(false);
-                                        self.marqueeRows(addResult.NewIds);
+                                        self.marqueeRows(addResult.FileList);
                                         enableDetail();
                                     })
                                     .catch(function () {
@@ -483,13 +499,11 @@
                                     responseTypeId: self.selectedMediaPathType().responsetypeid
                                 }
                             })
-                            .then(function(saveResult) {
-                                lists.FileList = saveResult.FileList;
-                                createFileArray(lists.FileList);
-                                self.sort({ afterAdd: true });
+                            .then(function (addResult) {
+                                createFileArray({ list: addResult.FileList, insert: true });
                                 self.selectedIds([]);
                                 self.checkSelectAll(false);
-                                self.marqueeRows(saveResult.NewIds);
+                                self.marqueeRows(addResult.FileList);
                                 enableDetail();
                             })
                             .catch(function() {
@@ -501,11 +515,12 @@
                         });
                     };
 
-                    self.marqueeRows = function (rowIds) {
-                        $(rowIds).each(function (index, value) {
-                            $("#row_" + value).addClass("row-added");
+                    self.marqueeRows = function (fileList) {
+                        $(fileList).each(function (index, value) {
+                            var id = value.Id;
+                            $("#row_" + id).addClass("row-added");
                             setTimeout(function () {
-                                $("#row_" + value).removeClass("row-added");
+                                $("#row_" + id).removeClass("row-added");
                             }, 1500);
                         });
                     };
@@ -528,14 +543,11 @@
                                     params: {
                                         ids: self.selectedIds(),
                                         residentId: config.residentid,
-                                        mediaPathTypeId: self.selectedMediaPathType().id,
                                         responseTypeId: self.selectedMediaPathType().responsetypeid
                                     }
                                 })
-                                .then(function (result) {
-                                    lists.FileList = result.FileList;
-                                    createFileArray(lists.FileList);
-                                    self.sort({ afterDelete: true });
+                                .then(function (deleteResult) {
+                                    self.deleteSelectedIds(deleteResult.DeletedIds);
                                     self.selectedIds([]);
                                     self.checkSelectAll(false);
                                     enableDetail();
@@ -680,7 +692,7 @@
                         if (row.isselected)
                             self.selectedIds().push(row.id);
                         else
-                            self.removeSelectedId(row.id);
+                            self.clearSelectedId(row.id);
 
                         self.highlightSelectedRows();
                         self.checkSelectAll(self.selectedIds().length === self.filteredFiles().length);
@@ -689,7 +701,7 @@
                         return true;
                     };
 
-                    self.removeSelectedId = function (id) {
+                    self.clearSelectedId = function (id) {
                         for (var i = self.selectedIds().length - 1; i >= 0; i--) {
                             if (self.selectedIds()[i] === id) {
                                 self.selectedIds().splice(i, 1);
@@ -791,6 +803,15 @@
                             Id: config.residentid, FirstName: firstname, LastName: lastname, Gender: gender, GameDifficultyLevel: gamedifficultylevel, AllowVideoCapturing: allowVideoCapturing, ProfilePicture: profilePicture
                         };
                     };
+
+                    self.deleteSelectedIds = function () {
+                        $(self.selectedIds()).each(function (index, value) {
+                            var idx = self.files().findIndex(function (row) {
+                                return row.id === value;
+                            });
+                            self.files.splice(idx, 1);
+                        });
+                    }
                 };
             })
             .catch(function (error) {

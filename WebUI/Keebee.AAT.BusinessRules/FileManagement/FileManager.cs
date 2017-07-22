@@ -1,11 +1,12 @@
 ﻿using Keebee.AAT.ApiClient.Clients;
 using Keebee.AAT.Shared;
 using Keebee.AAT.SystemEventLogging;
+using Keebee.AAT.ApiClient.Models;
 using System;
 using System.Diagnostics;
 using System.IO;
 
-namespace Keebee.AAT.Administrator.FileManagement
+namespace Keebee.AAT.BusinessRules
 {
     public class FileManager
     {
@@ -24,11 +25,13 @@ namespace Keebee.AAT.Administrator.FileManagement
         public FileManager()
         {
             _mediaPathTypesClient = new MediaPathTypesClient();
-            _mediaFilesClient  = new MediaFilesClient();
+            _mediaFilesClient = new MediaFilesClient();
         }
 
         public string DeleteFile(string path)
         {
+            string errMsg = null;
+
             try
             {
                 if (File.Exists(path))
@@ -38,20 +41,22 @@ namespace Keebee.AAT.Administrator.FileManagement
             }
             catch (Exception ex)
             {
-                //_systemEventLogger.WriteEntry($"FileManagement.DeleteFile :{ex.Message}", EventLogEntryType.Error);
-                return ex.Message;
+                errMsg = ex.Message;
+                _systemEventLogger.WriteEntry($"FileManagement.DeleteFile :{ex.Message}", EventLogEntryType.Error);
             }
-            return string.Empty;
+
+            return errMsg;
         }
 
-        public void CreateFolders(int residentId)
+        public string CreateFolders(int profileId)
         {
+            string errMsg = null;
             try
             {
-                var mediaRoot = $@"{_mediaPath.ProfileRoot}\{residentId}";
+                var mediaRoot = $@"{_mediaPath.ProfileRoot}\{profileId}";
                 var paths = _mediaPathTypesClient.Get();
 
-                if (Directory.Exists(mediaRoot)) return;
+                if (Directory.Exists(mediaRoot)) return null;
 
                 var dirInfo = new DirectoryInfo(mediaRoot);
                 foreach (var path in paths)
@@ -61,15 +66,20 @@ namespace Keebee.AAT.Administrator.FileManagement
             }
             catch (Exception ex)
             {
+                errMsg = ex.Message;
                 _systemEventLogger.WriteEntry($"FileManagement.CreateFolders :{ex.Message}", EventLogEntryType.Error);
             }
+
+            return errMsg;
         }
 
-        public void DeleteFolders(int residentId)
+        public string DeleteFolders(int profileId)
         {
+            string errMsg = null;
+
             try
             {
-                var profilePath = $@"{_mediaPath.ProfileRoot}\{residentId}";
+                var profilePath = $@"{_mediaPath.ProfileRoot}\{profileId}";
 
                 if (Directory.Exists(profilePath))
                 {
@@ -80,14 +90,22 @@ namespace Keebee.AAT.Administrator.FileManagement
             }
             catch (Exception ex)
             {
+                errMsg = ex.Message;
                 _systemEventLogger.WriteEntry($"FileManagement.DeleteFolders :{ex.Message}", EventLogEntryType.Error);
             }
+
+            return errMsg;
         }
 
         public Guid GetStreamId(string path, string filename)
         {
             var file = _mediaFilesClient.GetFromPath(path, filename.Replace("&", "%26"));
             return file?.StreamId ?? new Guid();
+        }
+
+        public MediaFile GetMediaFile(string path, string filename)
+        {
+            return _mediaFilesClient.GetFromPath(path, filename.Replace("&", "%26"));
         }
     }
 }

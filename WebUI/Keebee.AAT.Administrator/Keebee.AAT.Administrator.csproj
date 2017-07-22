@@ -147,7 +147,6 @@
     <Compile Include="Controllers\VideoCapturesController.cs" />
     <Compile Include="Extensions\ImageExtensions.cs" />
     <Compile Include="Extensions\WebImageExtensions.cs" />
-    <Compile Include="FileManagement\FileManager.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>

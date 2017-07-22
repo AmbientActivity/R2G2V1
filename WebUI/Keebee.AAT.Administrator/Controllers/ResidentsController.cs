@@ -1,7 +1,6 @@
 ﻿using Keebee.AAT.Administrator.ViewModels;
 using Keebee.AAT.BusinessRules;
 using Keebee.AAT.Shared;
-using Keebee.AAT.Administrator.FileManagement;
 using Keebee.AAT.SystemEventLogging;
 using Keebee.AAT.MessageQueuing;
 using Keebee.AAT.ApiClient.Clients;
@@ -157,13 +156,12 @@ namespace Keebee.AAT.Administrator.Controllers
                 }
                 else
                 {
-                    var rules = new ResidentRules();
+                    var rules = new ResidentRules { EventLogger = _systemEventLogger };
                     errorMsg = rules.DeleteResident(id);
 
                     if (errorMsg == null)
                     {
-                        var fileManager = new FileManager {EventLogger = _systemEventLogger};
-                        fileManager.DeleteFolders(id);
+                        rules.DeleteFolders(id);
                     }
                 }
 
@@ -328,8 +326,8 @@ namespace Keebee.AAT.Administrator.Controllers
                     ProfilePicture = residentDetail.ProfilePicture != null ? Convert.FromBase64String(residentDetail.ProfilePicture) : null
                 }, out residentId);
 
-                var fileManager = new FileManager {EventLogger = _systemEventLogger};
-                fileManager.CreateFolders(residentId);
+                var rules = new ResidentRules { EventLogger = _systemEventLogger };
+                rules.CreateFolders(residentId);
             }
             catch (Exception ex)
             {

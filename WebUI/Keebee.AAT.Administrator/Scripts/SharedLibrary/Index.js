@@ -216,7 +216,7 @@
                     // for audio previewing
                     self.currentStreamId = ko.observable(0);
 
-                    createFileArray(lists.FileList);
+                    createFileArray({ list: lists.FileList, insert: false });
                     createMediaPathTypeArray(lists.MediaPathTypeList);
 
                     $("#delete").tooltip({ delay: { show: 100, hide: 100 } });
@@ -229,24 +229,52 @@
 
                     enableDetail();
 
-                    function createFileArray(list) {
-                        self.files.removeAll();
-                        $(list).each(function (index, value) {
-                            self.files.push({
+                    function createFileArray(params) {
+                        var cfg = {
+                            list: [],
+                            insert: false
+                        };
 
-                                streamid: value.StreamId,
-                                filename: value.Filename,
-                                filetype: value.FileType,
-                                filesize: value.FileSize,
-                                path: value.Path,
-                                mediapathtypeid: value.MediaPathTypeId,
-                                numlinked: value.NumLinkedProfiles,
-                                thumbnail: value.Thumbnail,
-                                isselected: false,
-                                isplaying: false,
-                                ispaused: false
-                            });
-                        });
+                        $.extend(cfg, params);
+
+                        if (cfg.insert === false) {
+                            self.files.removeAll();
+                            $(cfg.list)
+                                .each(function (index, value) {
+                                    // do a "push"
+                                    self.files.push({
+                                        streamid: value.StreamId,
+                                        filename: value.Filename,
+                                        filetype: value.FileType,
+                                        filesize: value.FileSize,
+                                        path: value.Path,
+                                        mediapathtypeid: value.MediaPathTypeId,
+                                        numlinked: value.NumLinkedProfiles,
+                                        thumbnail: value.Thumbnail,
+                                        isselected: false,
+                                        isplaying: false,
+                                        ispaused: false
+                                    });
+                                });
+                        } else {
+                            $(cfg.list)
+                                .each(function (index, value) {
+                                    // do an "unshift"
+                                    self.files.unshift({
+                                        streamid: value.StreamId,
+                                        filename: value.Filename,
+                                        filetype: value.FileType,
+                                        filesize: value.FileSize,
+                                        path: value.Path,
+                                        mediapathtypeid: value.MediaPathTypeId,
+                                        numlinked: value.NumLinkedProfiles,
+                                        thumbnail: value.Thumbnail,
+                                        isselected: false,
+                                        isplaying: false,
+                                        ispaused: false
+                                    });
+                                });
+                        }
                     };
 
                     function createMediaPathTypeArray(list) {
@@ -300,21 +328,14 @@
                     self.sort = function (header) {
                         if (isBinding) return;
 
-                        var afterSave = typeof header.afterSave !== "undefined" ? header.afterSave : false;
-                        var sortKey;
+                        var sortKey = header.sortKey;
 
-                        if (!afterSave) {
-                            sortKey = header.sortKey;
-
-                            if (sortKey !== currentSortKey) {
-                                sortDescending = false;
-                            } else {
-                                sortDescending = !sortDescending;
-                            }
-                            currentSortKey = sortKey;
+                        if (sortKey !== currentSortKey) {
+                            sortDescending = false;
                         } else {
-                            sortKey = currentSortKey;
+                            sortDescending = !sortDescending;
                         }
+                        currentSortKey = sortKey;
 
                         var isboolean = false;
                         if (typeof header.boolean !== "undefined") {
@@ -423,10 +444,9 @@
                         $("#fileupload").prop("accept", mediaPathType.allowedtypes);
 
                         utilities.upload.init({
-                            url: site.url + "SharedLibrary/UploadFile"
-                                + "?mediaPath=" + mediaPathType.path
-                                + "&mediaPathTypeId=" + mediaPathType.id
-                                + "&mediaPathTypeCategory=" + mediaPathType.category,
+                            url: site.url + "SharedLibrary/UploadFile?mediaPathTypeId=" + mediaPathType.id + 
+                                "&mediaPath=" + mediaPathType.path +
+                                "&mediaPathTypeCategory=" + mediaPathType.category,
                             allowedExts: mediaPathType.allowedexts.split(","),
                             allowedTypes: mediaPathType.allowedtypes.split(","),
                             maxFileBytes: mediaPathType.maxfilebytes,
@@ -439,16 +459,14 @@
                                         waitMessage: "Saving...",
                                         params: {
                                             filenames: successful,
-                                            mediaPath: mediaPathType.path
+                                            mediaPathTypeId: mediaPathType.id
                                         }
                                     })
                                     .then(function (addResult) {
-                                        lists.FileList = addResult.FileList;
-                                        createFileArray(lists.FileList);
-                                        self.sort({ afterSave: true });
+                                        createFileArray({ list: addResult.FileList, insert: true });
                                         self.selectedStreamIds([]);
                                         self.checkSelectAll(false);
-                                        self.marqueeRows(addResult.NewIds);
+                                        self.marqueeRows(addResult.FileList);
                                         enableDetail();
                                     })
                                     .catch(function () {
@@ -470,11 +488,12 @@
                         });
                     });
 
-                    self.marqueeRows = function (rowIds) {
-                        $(rowIds).each(function (index, value) {
-                            $("#row_" + value).addClass("row-added");
+                    self.marqueeRows = function (fileList) {
+                        $(fileList).each(function (index, value) {
+                            var id = value.StreamId;
+                            $("#row_" + id).addClass("row-added");
                             setTimeout(function () {
-                                $("#row_" + value).removeClass("row-added");
+                                $("#row_" + id).removeClass("row-added");
                             }, 1500);
                         });
                     };
@@ -500,10 +519,8 @@
                                         isSharable: self.isSharable()
                                     }
                                 })
-                                .then(function (result) {
-                                    lists.FileList = result.FileList;
-                                    createFileArray(lists.FileList);
-                                    self.sort({ afterSave: true });
+                                .then(function (deleteResult) {
+                                    self.deleteIds(deleteResult.DeletedIds);
                                     self.selectedStreamIds([]);
                                     self.checkSelectAll(false);
                                     enableDetail();
@@ -667,7 +684,7 @@
                         if (row.isselected)
                             self.selectedStreamIds().push(row.streamid);
                         else
-                            self.removeSelectedStreamId(row.streamid);
+                            self.clearSelectedId(row.streamid);
 
                         self.highlightSelectedRows();
                         self.checkSelectAll(self.selectedStreamIds().length === self.filteredFiles().length);
@@ -676,7 +693,7 @@
                         return true;
                     };
 
-                    self.removeSelectedStreamId = function (id) {
+                    self.clearSelectedId = function (id) {
                         for (var i = self.selectedStreamIds().length - 1; i >= 0; i--) {
                             if (self.selectedStreamIds()[i] === id) {
                                 self.selectedStreamIds().splice(i, 1);
@@ -703,6 +720,15 @@
                         self.selectAllIsSelected(checked);
                         $("#chk_all").prop("checked", checked);
                     };
+
+                    self.deleteIds = function (ids) {
+                        $(ids).each(function (index, value) {
+                            var idx = self.files().findIndex(function (row) {
+                                return row.streamid === value;
+                            });
+                            self.files.splice(idx, 1);
+                        });
+                    }
                 };
             })
             .catch(function (error) {

@@ -1,17 +1,16 @@
 ﻿using Keebee.AAT.Administrator.ViewModels;
 using Keebee.AAT.Shared;
-using Keebee.AAT.Administrator.FileManagement;
 using Keebee.AAT.BusinessRules;
 using Keebee.AAT.SystemEventLogging;
 using Keebee.AAT.ApiClient.Clients;
 using Keebee.AAT.ApiClient.Models;
-using Keebee.AAT.ThumbnailGeneration;
+using Keebee.AAT.BusinessRules.Models;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
 using System;
 using System.Collections.ObjectModel;
-using System.Drawing;
+using System.Diagnostics;
 using System.Web;
 
 namespace Keebee.AAT.Administrator.Controllers
@@ -21,6 +20,7 @@ namespace Keebee.AAT.Administrator.Controllers
         // api client
         private readonly IPublicMediaFilesClient _publicMediaFilesClient;
         private readonly IMediaPathTypesClient _mediaPathTypesClient;
+        private readonly IResponseTypesClient _responseTypesClient;
         private readonly IThumbnailsClient _thumbnailsClient;
 
         private readonly SystemEventLogger _systemEventLogger;
@@ -32,6 +32,7 @@ namespace Keebee.AAT.Administrator.Controllers
 
             _publicMediaFilesClient = new PublicMediaFilesClient();
             _mediaPathTypesClient = new MediaPathTypesClient();
+            _responseTypesClient = new ResponseTypesClient();
             _thumbnailsClient = new ThumbnailsClient();
         }
 
@@ -92,43 +93,7 @@ namespace Keebee.AAT.Administrator.Controllers
 
         [HttpPost]
         [Authorize]
-        public JsonResult AddFiles(string[] filenames, string mediaPath, int mediaPathTypeId, int responseTypeId)
-        {
-            string errMsg = null;
-            var newIds = new Collection<int>();
-
-            try
-            {
-                var dateAdded = DateTime.Now;
-
-                foreach (var filename in filenames)
-                {
-                    int newId;
-                    errMsg = AddPublicMediaFileFromFilename(filename, mediaPathTypeId, responseTypeId, mediaPath, dateAdded, out newId);
-
-                    if (!string.IsNullOrEmpty(errMsg))
-                        throw new Exception(errMsg);
-
-                    newIds.Add(newId);
-                }
-            }
-            catch (Exception ex)
-            {
-                errMsg = ex.Message;
-            }
-
-            return Json(new
-            {
-                Success = string.IsNullOrEmpty(errMsg),
-                ErrorMessage = errMsg,
-                FileList = GetFiles(),
-                NewIds = newIds
-            }, JsonRequestBehavior.AllowGet);
-        }
-
-        [HttpPost]
-        [Authorize]
-        public JsonResult UploadFile(HttpPostedFileBase file, string mediaPath, int mediaPathTypeId, string mediaPathTypeCategory)
+        public JsonResult UploadFile(HttpPostedFileBase file, int mediaPathTypeId, string mediaPath, string mediaPathTypeCategory)
         {
             string errMsg = null;
             string filename = null;
@@ -138,40 +103,106 @@ namespace Keebee.AAT.Administrator.Controllers
                 if (file != null)
                 {
                     filename = file.FileName;
-                    var filePath = $@"{_mediaSourcePath.ProfileRoot}\{PublicProfileSource.Id}\{mediaPath}\{file.FileName}";
+                    var rules = new PublicProfileRules { EventLogger = _systemEventLogger };
+                    var path = $@"{_mediaSourcePath.ProfileRoot}\{PublicProfileSource.Id}\{mediaPath}";
 
-                    // delete it if it already exists
-                    var fileManager = new FileManager {EventLogger = _systemEventLogger};
-                    var msg = fileManager.DeleteFile(filePath);
+                    errMsg = rules.SaveUploadedFile(filename, path, file.InputStream, mediaPathTypeCategory);
+                }
+            }
+            catch (Exception ex)
+            {
+                errMsg = ex.Message;
+                _systemEventLogger.WriteEntry($"PublicProfile.UploadFile: {errMsg}", EventLogEntryType.Error);
+            }
 
-                    if (msg.Length == 0)
+            return Json(new
+            {
+                Filename = filename,
+                Success = string.IsNullOrEmpty(errMsg),
+                ErrorMessage = errMsg
+            }, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        [Authorize]
+        public JsonResult AddFiles(string[] filenames, int mediaPathTypeId, int responseTypeId)
+        {
+            string errMsg = null;
+            var newFiles = new Collection<MediaFileEdit>();
+            const bool isLinked = false;
+
+            try
+            {
+                var dateAdded = DateTime.Now;
+                var rules = new PublicProfileRules { EventLogger = _systemEventLogger };
+                var responseType = _responseTypesClient.Get(responseTypeId);
+                var mediaPathType = _mediaPathTypesClient.Get(mediaPathTypeId);
+
+                foreach (var filename in filenames.OrderByDescending(x => x))
+                {
+                    MediaFileEdit newFile;
+                    errMsg = rules.AddMediaFileFromFilename(filename, mediaPathType, responseType, dateAdded, isLinked, out newFile);
+
+                    if (!string.IsNullOrEmpty(errMsg))
+                        throw new Exception(errMsg);
+
+                    newFiles.Add(newFile);
+                }
+            }
+            catch (Exception ex)
+            {
+                errMsg = ex.Message;
+                _systemEventLogger.WriteEntry($"PublicProfile.AddFiles: {errMsg}", EventLogEntryType.Error);
+            }
+
+            return Json(new
+            {
+                Success = string.IsNullOrEmpty(errMsg),
+                ErrorMessage = errMsg,
+                FileList = newFiles
+            }, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        [Authorize]
+        public JsonResult AddSharedMediaFiles(Guid[] streamIds, int mediaPathTypeId, int responseTypeId)
+        {
+            string errMsg = null;
+            var newFiles = new Collection<MediaFileEdit>();
+            const bool isLinked = true;
+
+            try
+            {
+                if (streamIds != null)
+                {
+                    var rules = new PublicProfileRules();
+                    var dateAdded = DateTime.Now;
+                    var responseType = _responseTypesClient.Get(responseTypeId);
+                    var mediaPathType = _mediaPathTypesClient.Get(mediaPathTypeId);
+
+                    foreach (var streamId in streamIds)
                     {
-                        if (mediaPathTypeCategory == MediaPathTypeCategoryDescription.Image)
-                        {
-                            var image = Image.FromStream(file.InputStream);
-                            var orientedImage = image.Orient();
-                            var scaled = orientedImage.Scale();
-                            scaled.Save(filePath);
-                        }
-                        else
-                        {
-                            file.SaveAs(filePath);
-                        }
+                        MediaFileEdit newFile;
+                        errMsg = rules.AddMediaFile(streamId, mediaPathType, responseType, dateAdded, isLinked, out newFile);
+
+                        if (!string.IsNullOrEmpty(errMsg))
+                            throw new Exception(errMsg);
+
+                        newFiles.Add(newFile);
                     }
                 }
             }
             catch (Exception ex)
             {
                 errMsg = ex.Message;
+                _systemEventLogger.WriteEntry($"PublicProfile.AddSharedMediaFiles: {errMsg}", EventLogEntryType.Error);
             }
 
             return Json(new
             {
-                Filename = filename,
-                MediaPath = mediaPath,
-                MediaPathTypeId = mediaPathTypeId,
                 Success = string.IsNullOrEmpty(errMsg),
-                ErrorMessage = errMsg
+                ErrorMessage = errMsg,
+                FileList = newFiles
             }, JsonRequestBehavior.AllowGet);
         }
 
@@ -180,54 +211,35 @@ namespace Keebee.AAT.Administrator.Controllers
         public JsonResult DeleteSelected(int[] ids, int mediaPathTypeId, int responseTypeId)
         {
             string errMsg;
+            var deletedIds = new Collection<int>();
 
             try
             {
-                var rules = new PublicProfileRules();
+                var rules = new PublicProfileRules { EventLogger = _systemEventLogger };
 
                 errMsg = rules.CanDeleteMultiple(ids.Length, mediaPathTypeId, responseTypeId);
-                if (errMsg.Length > 0)
-                    throw new Exception(errMsg);
+                if (!string.IsNullOrEmpty(errMsg)) throw new Exception(errMsg);
 
+                var responseType = _responseTypesClient.Get(responseTypeId);
                 foreach (var id in ids)
                 {
-                    var publicMediaFile = _publicMediaFilesClient.Get(id);
-                    if (publicMediaFile == null) continue;
+                    errMsg = rules.DeleteMediaFile(id, responseType);
+                    if (!string.IsNullOrEmpty(errMsg)) throw new Exception(errMsg);
 
-                    if (publicMediaFile.MediaFile.IsLinked)
-                    {
-                        _publicMediaFilesClient.Delete(id);
-                    }
-                    else
-                    {
-                        var file = rules.GetMediaFile(id);
-                        if (file == null) continue;
-
-                        // delete the link
-                        errMsg = _publicMediaFilesClient.Delete(id);
-                        if (errMsg.Length > 0)
-                            throw new Exception(errMsg);
-
-                        var fileManager = new FileManager { EventLogger = _systemEventLogger };
-                        fileManager.DeleteFile($@"{file.Path}\{file.Filename}");
-
-                        if (SharedLibraryRules.IsMediaTypeThumbnail(mediaPathTypeId))
-                        {
-                            errMsg = _thumbnailsClient.Delete(publicMediaFile.MediaFile.StreamId);
-                        }
-                    }
+                    deletedIds.Add(id);
                 }
             }
             catch (Exception ex)
             {
                 errMsg = ex.Message;
+                _systemEventLogger.WriteEntry($"PublicProfile.DeleteSelected: {errMsg}", EventLogEntryType.Error);
             }
 
             return Json(new
             {
                 Success = string.IsNullOrEmpty(errMsg),
                 ErrorMessage = errMsg,
-                FileList = GetFiles()
+                DeletedIds = deletedIds
             }, JsonRequestBehavior.AllowGet);
         }
 
@@ -245,67 +257,6 @@ namespace Keebee.AAT.Administrator.Controllers
                 Height = m.Height,
                 Base64String = m.Base64String
             });
-        }
-
-        [HttpPost]
-        [Authorize]
-        public JsonResult AddSharedMediaFiles(Guid[] streamIds, int mediaPathTypeId, int responseTypeId)
-        {
-            string errMsg = null;
-            var newIds = new Collection<int>();
-
-            try
-            {
-                if (streamIds != null)
-                {
-                    var rules = new PublicProfileRules();
-                    var dateAdded = DateTime.Now;
-
-                    foreach (var streamId in streamIds)
-                    {
-                        int newId;
-                        errMsg = rules.AddMediaFile(streamId, mediaPathTypeId, responseTypeId, dateAdded, true, out newId);
-
-                        if (!string.IsNullOrEmpty(errMsg))
-                            throw new Exception(errMsg);
-
-                        newIds.Add(newId);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                errMsg = ex.Message;
-            }
-
-            return Json(new
-            {
-                Success = string.IsNullOrEmpty(errMsg),
-                ErrorMessage =  errMsg,
-                FileList = GetFiles(),
-                NewIds = newIds
-            }, JsonRequestBehavior.AllowGet);
-        }
-
-        private string AddPublicMediaFileFromFilename(string filename, int mediaPathTypeId, int responseTypeId, string mediaPathType, DateTime dateAdded, out int newId)
-        {
-            newId = -1;
-            var fileManager = new FileManager { EventLogger = _systemEventLogger };
-
-            var streamId = fileManager.GetStreamId($@"{PublicProfileSource.Id}\{mediaPathType}", filename);
-            if (streamId == new Guid()) return $"Could not get StreamId for file <b>{filename}</b>";
-
-            var rules = new PublicProfileRules();
-            var errMsg = rules.AddMediaFile(streamId, mediaPathTypeId, responseTypeId, dateAdded, false, out newId);
-
-            if (!string.IsNullOrEmpty(errMsg)) return errMsg;
-
-            if (!PublicProfileRules.IsMediaTypeThumbnail(mediaPathTypeId)) return null;
-
-            var thumbnailGenerator = new ThumbnailGenerator();
-            errMsg = thumbnailGenerator.Generate(streamId);
-
-            return errMsg;
         }
 
         private IEnumerable<MediaFileViewModel> GetFiles()

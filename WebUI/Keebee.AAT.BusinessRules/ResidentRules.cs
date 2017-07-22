@@ -1,26 +1,29 @@
 ﻿using Keebee.AAT.Shared;
 using Keebee.AAT.ApiClient.Clients;
 using Keebee.AAT.ApiClient.Models;
+using Keebee.AAT.BusinessRules.Models;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
+using System.Diagnostics;
 using System.Linq;
 
 namespace Keebee.AAT.BusinessRules
 {
-    public class ResidentRules
+    public class ResidentRules : RulesBase
     {
         private readonly IResidentsClient _residentsClient;
         private readonly IResidentMediaFilesClient _residentMediaFilesClient;
         private readonly IMediaFilesClient _mediaFilesClient;
-        private readonly IMediaPathTypesClient _mediaPathTypesClient;
+        private readonly IResponseTypesClient _responseTypesClient;
+        private readonly IThumbnailsClient _thumbnailsClient;
 
         public ResidentRules()
         {
             _residentsClient = new ResidentsClient();
             _residentMediaFilesClient = new ResidentMediaFilesClient();
             _mediaFilesClient = new MediaFilesClient();
-            _mediaPathTypesClient = new MediaPathTypesClient();
+            _responseTypesClient = new ResponseTypesClient();
+            _thumbnailsClient = new ThumbnailsClient();
         }
 
         // validation
@@ -103,111 +106,14 @@ namespace Keebee.AAT.BusinessRules
             return result;
         }
 
-        public static bool IsValidFile(string filename, int? mediaPathTypeId)
-        {
-            if (mediaPathTypeId == null) return false;
-
-            var isValid = false;
-            var name = filename.ToLower();
-
-            switch (mediaPathTypeId)
-            {
-                case MediaPathTypeId.ImagesPersonal:
-                case MediaPathTypeId.ImagesGeneral:
-                    isValid = name.Contains("jpg") || name.Contains("jpeg") || name.Contains("png") || name.Contains("gif");
-                    break;
-                case MediaPathTypeId.HomeMovies:
-                case MediaPathTypeId.TVShows:
-                    isValid = name.Contains("mp4");
-                    break;
-                case MediaPathTypeId.Music:
-                case MediaPathTypeId.RadioShows:
-                case MediaPathTypeId.MatchingGameSounds:
-                    isValid = name.Contains("mp3");
-                    break;
-                case MediaPathTypeId.MatchingGameShapes:
-                    isValid = name.Contains("png");
-                    break;
-            }
-
-            return isValid;
-        }
-
-        public string AddMediaFile(Guid streamId, int residentId, int mediaPathTypeId, int responseTypeId, DateTime dateAdded, bool isLinked, out int newId)
-        {
-            var mf = new ResidentMediaFileEdit
-            {
-                StreamId = streamId,
-                ResidentId = residentId,
-                ResponseTypeId = responseTypeId,
-                MediaPathTypeId = mediaPathTypeId,
-                IsLinked = isLinked,
-                DateAdded = dateAdded
-            };
-
-            return _residentMediaFilesClient.Post(mf, out newId);
-        }
-
-        public MediaFilePath GetMediaFile(int id)
-        {
-            var mediaFile = _residentMediaFilesClient.Get(id);
-
-            return mediaFile == null
-                ? null
-                : _mediaFilesClient.Get(mediaFile.MediaFile.StreamId);
-        }
-
-        public static string GetAllowedExtensions(int? mediaPathTypeId)
-        {
-            if (mediaPathTypeId == null) return string.Empty;
-
-            var extensions = string.Empty;
-
-            switch (mediaPathTypeId)
-            {
-                case MediaPathTypeId.ImagesPersonal:
-                case MediaPathTypeId.ImagesGeneral:
-                    extensions = "*.jpg,*.png,*.gif";
-                    break;
-                case MediaPathTypeId.HomeMovies:
-                case MediaPathTypeId.TVShows:
-                    extensions = "*.mp4";
-                    break;
-                case MediaPathTypeId.Music:
-                case MediaPathTypeId.RadioShows:
-                case MediaPathTypeId.MatchingGameSounds:
-                    extensions = "*.mp3";
-                    break;
-                case MediaPathTypeId.MatchingGameShapes:
-                    extensions = "*.png";
-                    break;
-            }
-
-            return extensions;
-        }
-
-        public string GetMediaPath(int? mediaPathTypeId)
-        {
-            return mediaPathTypeId != null
-                ? _mediaPathTypesClient.Get((int)mediaPathTypeId).Path
-                : _mediaPathTypesClient.Get(MediaPathTypeId.ImagesGeneral).Path;
-        }
-
-        public string GetMediaPathShortDescription(int? mediaPathTypeId)
-        {
-            return mediaPathTypeId != null
-                ? _mediaPathTypesClient.Get((int)mediaPathTypeId).ShortDescription
-                : _mediaPathTypesClient.Get(MediaPathTypeId.ImagesGeneral).ShortDescription;
-        }
-
-        public static string GetProfilePicture(byte[] binaryData)
+        public static string GetProfilePicture(byte[] bytes)
         {
             string profilePicture = null;
-            if (binaryData != null)
+            if (bytes != null)
             {
-                profilePicture = (binaryData.Length == 0)
+                profilePicture = (bytes.Length == 0)
                     ? null
-                    : $"data:image/jpg;base64,{Convert.ToBase64String(binaryData)}";
+                    : $"data:image/jpg;base64,{Convert.ToBase64String(bytes)}";
             }
 
             return profilePicture;
@@ -225,17 +131,115 @@ namespace Keebee.AAT.BusinessRules
                 : null;
         }
 
-        public static bool IsMediaTypeThumbnail(int mediaPathTypeId)
+        public string AddMediaFileFromFilename(string filename, int residentId, MediaPathType mediaPathType, ResponseType responseType, DateTime dateAdded, bool isLinked, out MediaFileEdit newFile)
         {
-            switch (mediaPathTypeId)
+            string errMsg;
+            newFile = null;
+
+            try
             {
-                case MediaPathTypeId.Music:
-                case MediaPathTypeId.RadioShows:
-                case MediaPathTypeId.MatchingGameSounds:
-                    return false;
-                default:
-                    return true;
+                var mediaFile = GetMediaFile($@"{residentId}\{mediaPathType.Path}", filename);
+                if (mediaFile == null) return $"Could not get StreamId for file <b>{filename}</b>";
+
+                errMsg = AddMediaFile(mediaFile.StreamId, residentId, mediaPathType, responseType, dateAdded, isLinked, out newFile);
             }
+            catch (Exception ex)
+            {
+                errMsg = ex.Message;
+                EventLogger.WriteEntry($"ResidentRules.AddMediaFileFromFilename: {errMsg}", EventLogEntryType.Error);
+            }
+
+            return errMsg;
+        }
+
+        public string AddMediaFile(Guid streamId, int residentId, MediaPathType mediaPathType, ResponseType responseType, DateTime dateAdded, bool isLinked, out MediaFileEdit mediaFileEdit)
+        {
+            string errMsg;
+            mediaFileEdit = null;
+
+            try
+            {
+                var reesidentMediaFile = new ResidentMediaFileEdit
+                {
+                    StreamId = streamId,
+                    ResidentId = residentId,
+                    ResponseTypeId = responseType.Id,
+                    MediaPathTypeId = mediaPathType.Id,
+                    IsLinked = isLinked,
+                    DateAdded = dateAdded
+                };
+
+                int newId;
+                errMsg = _residentMediaFilesClient.Post(reesidentMediaFile, out newId);
+                if (!string.IsNullOrEmpty(errMsg)) return errMsg;
+
+                var mediaFile = _mediaFilesClient.Get(streamId);
+
+                byte[] thumb = null;
+                if (responseType.ResponseTypeCategory.Id != ResponseTypeCategoryId.Audio)
+                {
+                    thumb = _thumbnailsClient.Get(streamId)?.Image;
+                }
+
+                mediaFileEdit = GetMediaFileEdit(mediaFile, newId, mediaPathType, dateAdded, isLinked, thumb);
+            }
+            catch (Exception ex)
+            {
+                errMsg = ex.Message;
+                EventLogger.WriteEntry($"ResidentRules.AddMediaFile: {errMsg}", EventLogEntryType.Error);
+            }
+
+            return errMsg;
+        }
+
+        public string DeleteMediaFile(int id, ResponseType responseType)
+        {
+            string errMsg = null;
+
+            try
+            {
+                var residentMediaFile = _residentMediaFilesClient.Get(id);
+                if (residentMediaFile?.MediaFile == null) throw new Exception($"Could not find PublicMediaFile for id: {id}");
+
+                if (residentMediaFile.MediaFile.IsLinked)
+                {
+                    _residentMediaFilesClient.Delete(id);
+                }
+                else
+                {
+                    var mediaFilePath = GetMediaFilePath(id);
+                    if (mediaFilePath == null) throw new Exception($"Could not find MediaFilePath for id: {id}");
+
+                    // delete the link
+                    errMsg = _residentMediaFilesClient.Delete(id);
+                    if (errMsg.Length > 0) throw new Exception(errMsg);
+
+                    // delete the file
+                    errMsg = DeleteFile($@"{mediaFilePath.Path}\{mediaFilePath.Filename}");
+                    if (!string.IsNullOrEmpty(errMsg)) throw new Exception(errMsg);
+
+                    if (responseType.ResponseTypeCategory.Id != ResponseTypeCategoryId.Audio)
+                    {
+                        errMsg = _thumbnailsClient.Delete(residentMediaFile.MediaFile.StreamId);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                errMsg = ex.Message;
+                EventLogger.WriteEntry($"ResidentRules.DeleteMediaFile: {errMsg}", EventLogEntryType.Error);
+            }
+
+            return errMsg;
+        }
+
+        private MediaFilePath GetMediaFilePath(int id)
+        {
+            var mediaFile = _residentMediaFilesClient.Get(id);
+
+            return mediaFile == null
+                ? null
+                : _mediaFilesClient.Get(mediaFile.MediaFile.StreamId);
         }
     }
 }

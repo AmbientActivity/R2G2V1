@@ -143,14 +143,15 @@
                     var self = this;
 
                     self.id = id;
-                    self.firstname = firstname;
-                    self.lastname = lastname;
-                    self.gender = gender;
-                    self.allowvideocapturing = allowvideocapturing;
-                    self.profilepicture = profilepicture;
-                    self.profilepictureplaceholder = profilepictureplaceholder;
-                    self.datecreated = datecreated;
-                    self.dateupdated = dateupdated;
+                    self.firstname = ko.observable(firstname);
+                    self.lastname = ko.observable(lastname);
+                    self.gender = ko.observable(gender);
+                    self.gamedifficultylevel = ko.observable(gamedifficultylevel);
+                    self.allowvideocapturing = ko.observable(allowvideocapturing);
+                    self.profilepicture = ko.observable(profilepicture);
+                    self.profilepictureplaceholder = ko.observable(profilepictureplaceholder);
+                    self.datecreated = ko.observable(datecreated);
+                    self.dateupdated = ko.observable(dateupdated);
                 }
 
                 function ResidentViewModel() {
@@ -168,23 +169,51 @@
 
                     self.totalResidents = ko.observable(0);
 
-                    createResidentArray(lists.ResidentList);
+                    createResidentArray({ list: lists.ResidentList, insert: false });
 
-                    function createResidentArray(list) {
-                        self.residents.removeAll();
-                        $(list).each(function (index, value) {
-                            self.residents.push(new Resident(
-                                value.Id,
-                                value.FirstName,
-                                value.LastName,
-                                value.Gender,
-                                value.GameDifficultyLevel,
-                                value.AllowVideoCapturing,
-                                value.ProfilePicture,
-                                value.ProfilePicturePlaceholder,
-                                value.DateCreated,
-                                value.DateUpdated));
-                        });
+                    function createResidentArray(params) {
+                        var cfg = {
+                            list: [],
+                            insert: false
+                        };
+
+                        $.extend(cfg, params);
+
+                        if (cfg.insert === false) {
+                            self.residents.removeAll();
+                            $(cfg.list)
+                                .each(function(index, value) {
+                                    self.residents.push(new Resident(
+                                        value.Id,
+                                        value.FirstName,
+                                        value.LastName,
+                                        value.Gender,
+                                        value.GameDifficultyLevel,
+                                        value.AllowVideoCapturing,
+                                        value.ProfilePicture,
+                                        value.ProfilePicturePlaceholder,
+                                        value.DateCreated,
+                                        value.DateUpdated
+                                    ));
+                                });
+                        } else {
+                            $(cfg.list)
+                                .each(function (index, value) {
+                                    // do an "unshift"
+                                    self.residents.unshift(new Resident(
+                                    value.Id,
+                                    value.FirstName,
+                                    value.LastName,
+                                    value.Gender,
+                                    value.GameDifficultyLevel,
+                                    value.AllowVideoCapturing,
+                                    value.ProfilePicture,
+                                    value.ProfilePicturePlaceholder,
+                                    value.DateCreated,
+                                    value.DateUpdated
+                                ));
+                            });
+                        }
                     };
 
                     self.columns = ko.computed(function () {
@@ -311,12 +340,16 @@
                                                 title: "Save Resident",
                                                 params: { resident: resident }
                                             })
-                                            .then(function(saveResult) {
-                                                lists.ResidentList = saveResult.ResidentList;
-                                                createResidentArray(lists.ResidentList);
-                                                self.selectedResident(self.getResident(saveResult.SelectedId));
-                                                self.sort({ afterSave: add });
-                                                self.highlightRow(self.selectedResident());
+                                            .then(function (saveResult) {
+                                                if (add)
+                                                    createResidentArray({ list: saveResult.ResidentList, insert: true });
+                                                else
+                                                    self.updateResident(saveResult.ResidentList);
+
+                                                if (saveResult.ResidentList.length > 0) {
+                                                    self.selectedResident(self.getResident(saveResult.ResidentList[0].Id));
+                                                    self.highlightRow(self.selectedResident());
+                                                }
                                                 cmdAdd.prop("disabled", false);
                                             });
                                     } else {
@@ -364,12 +397,12 @@
                         var resident = self.getResident(id);
 
                         // name
-                        var fullName = (resident.lastname == null)
-                            ? resident.firstname
-                            : resident.firstname + " " + resident.lastname;
+                        var fullName = (resident.lastname() == null)
+                            ? resident.firstname()
+                            : resident.firstname() + " " + resident.lastname();
 
                         // possesive
-                        var messageGender = (resident.gender.toUpperCase() === "M")
+                        var messageGender = (resident.gender().toUpperCase() === "M")
                             ? "his"
                             : "her";
 
@@ -395,10 +428,12 @@
                                     title: "Delete Resident",
                                     waitMessage: "Deleting..."
                                 })
-                                .then(function(result) {
-                                    lists.ResidentList = result.ResidentList;
-                                    createResidentArray(lists.ResidentList);
-                                    self.sort({ afterDelete: true });
+                                .then(function () {
+                                    var idx = self.residents().findIndex(function (value) {
+                                        return value.id === id;
+                                    });
+                                    self.residents.splice(idx, 1);
+
                                     cmdAdd.prop("disabled", false);
                                 })
                                 .catch(function() {
@@ -420,6 +455,21 @@
                         });
 
                         return resident;
+                    };
+
+                    self.updateResident = function (residentList) {
+                        $(residentList).each(function(index, value) {
+                            var r = self.getResident(value.Id);
+
+                            r.firstname(value.FirstName);
+                            r.lastname(value.LastName);
+                            r.gender(value.Gender);
+                            r.gamedifficultylevel(value.GameDifficultyLevel);
+                            r.allowvideocapturing(value.AllowVideoCapturing);
+                            r.profilepicture(value.ProfilePicture);
+                            r.profilepictureplaceholder(value.ProfilePicturePlaceholder);
+                            r.dateupdated(value.DateUpdated);
+                        });
                     };
 
                     self.highlightRow = function (row) {

@@ -96,29 +96,29 @@
                 <tr data-bind="click: $parent.highlightRow, attr: {id: 'row_' +  id}">
                     <td class="col-profile-picture">
                         <a href="javascript:void(0)" data-toggle="tooltip" title="Edit resident details" data-bind="attr: { id: 'profilepicture_' + id }, click: $parent.edit">
-                            <!-- ko if: profilepicture === null -->
-                            <img data-bind="attr: { src: profilepictureplaceholder }" alt="" width="45" height="45" class="img-circle">
+                            <!-- ko if: profilepicture() === null -->
+                            <img data-bind="attr: { src: profilepictureplaceholder() }" alt="" width="45" height="45" class="img-circle">
                             <!-- /ko -->
-                            <!-- ko if: profilepicture !== null -->
-                            <img data-bind="attr: { src: profilepicture }" alt="" width="45" height="45" class="img-circle">
+                            <!-- ko if: profilepicture() !== null -->
+                            <img data-bind="attr: { src: profilepicture() }" alt="" width="45" height="45" class="img-circle">
                             <!-- /ko -->
                         </a>
                     </td>
-                    <td class="col-firstname" data-bind="text: firstname"></td>
-                    <td class="col-lastname" data-bind="text: lastname"></td>
+                    <td class="col-firstname" data-bind="text: firstname()"></td>
+                    <td class="col-lastname" data-bind="text: lastname()"></td>
                     <td class="col-id" data-bind="text: id"></td>
-                    <td class="col-date" data-bind="text: moment(dateupdated).format('ll')"></td>
-                    <!-- ko if: gender === 'F' -->
+                    <td class="col-date" data-bind="text: moment(dateupdated()).format('ll')"></td>
+                    <!-- ko if: gender() === 'F' -->
                     <td class="col-gender"><i class="fi-female fi-elg" aria-hidden="true"></i></td>
                     <!-- /ko -->
-                    <!-- ko if: gender === 'M' -->
+                    <!-- ko if: gender() === 'M' -->
                     <td class="col-gender"><i class="fi-male fi-elg" aria-hidden="true"></i></td>
                     <!-- /ko -->
                     <!-- ko if: $parent.isVideoCaptureServiceInstalled === '1' -->
-                    <!-- ko if: allowvideocapturing -->
+                    <!-- ko if: allowvideocapturing() -->
                     <td class="col-capturable"><span class="glyphicon glyphicon-ok glyphicon-lg"></span></td>
                     <!-- /ko -->
-                    <!-- ko if: !allowvideocapturing -->
+                    <!-- ko if: !allowvideocapturing() -->
                     <td class="col-capturable"></td>
                     <!-- /ko -->
                     <!-- /ko -->

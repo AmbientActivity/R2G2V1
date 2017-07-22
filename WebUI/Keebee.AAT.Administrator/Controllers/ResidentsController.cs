@@ -118,21 +118,24 @@ namespace Keebee.AAT.Administrator.Controllers
                 ? UpdateResident(resident) 
                 : AddResident(resident, out residentId);
 
-            var residentList = GetResidentList().ToArray();
-
             var success = (null == errorMsg);
             if (success)
             {
                 if (ServiceUtilities.IsInstalled(ServiceUtilities.ServiceType.BluetoothBeaconWatcher))
                 {
-                    // alert the bluetooth beacon watcher to reload its residents
-                    _messageQueueBluetoothBeaconWatcherReload.Send(CreateMessageBodyFromResidents(residentList));
+                    // send the bluetooth beacon watcher the updated resident
+                    _messageQueueBluetoothBeaconWatcherReload.Send(CreateMessageBodyFromResident(resident));
                 }
+                // get the profile picture to send back
+                var r = _residentsClient.Get(resident.Id);
+                resident.Id = residentId;
+                resident.ProfilePicture = ResidentRules.GetProfilePicture(r?.ProfilePicture);
+                resident.ProfilePicturePlaceholder = ResidentRules.GetProfilePicturePlaceholder();
             }
 
             return Json(new
             {
-                ResidentList = residentList,
+                ResidentList = new ResidentViewModel[] { resident },
                 SelectedId = residentId,
                 Success = success,
                 ErrorMessage = errorMsg
@@ -145,7 +148,6 @@ namespace Keebee.AAT.Administrator.Controllers
         {
             string errorMsg;
             bool success;
-            IEnumerable<ResidentViewModel> residentList = new Collection<ResidentViewModel>();
             
             try
             {
@@ -165,15 +167,14 @@ namespace Keebee.AAT.Administrator.Controllers
                     }
                 }
 
-                residentList = GetResidentList();
-
                 success = (errorMsg == null);
                 if (success)
                 {
                     if (ServiceUtilities.IsInstalled(ServiceUtilities.ServiceType.BluetoothBeaconWatcher))
                     {
-                        // send the bluetooth beacon watcher the new resident list
-                        _messageQueueBluetoothBeaconWatcherReload.Send(CreateMessageBodyFromResidents(residentList));
+                        // send the bluetooth beacon watcher the deleted resident
+                        _messageQueueBluetoothBeaconWatcherReload.Send(CreateMessageBodyFromResident(
+                            new ResidentViewModel{ Id = id, FirstName = string.Empty }, isDeleted: true));
                     }
                 }
             }
@@ -186,8 +187,7 @@ namespace Keebee.AAT.Administrator.Controllers
             return Json(new
             {
                 Success = success,
-                ErrorMessage = errorMsg,
-                ResidentList = residentList,
+                ErrorMessage = errorMsg
             }, JsonRequestBehavior.AllowGet);
         }
 
@@ -337,18 +337,17 @@ namespace Keebee.AAT.Administrator.Controllers
             return msg;
         }
 
-        private static string CreateMessageBodyFromResidents(IEnumerable<ResidentViewModel> residents)
+        private static string CreateMessageBodyFromResident(ResidentViewModel resident, bool isDeleted = false)
         {
-            var residentMessages = residents.Select(r => new ResidentMessage
+            var residentMessage = new ResidentBluetoothMessage
             {
-                Id = r.Id,
-                Name = $"{r.FirstName} {r.LastName}".Trim(),
-                GameDifficultyLevel = r.GameDifficultyLevel,
-                AllowVideoCapturing = r.AllowVideoCapturing
-            }).ToArray();
+                Id = resident.Id,
+                Name = $"{resident.FirstName} {resident.LastName}".Trim(),
+                IsDeleted = isDeleted
+            };
 
             var serializer = new JavaScriptSerializer();
-            var messageBody = serializer.Serialize(residentMessages);
+            var messageBody = serializer.Serialize(residentMessage);
 
             return messageBody;
         }

@@ -51,14 +51,12 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
         private int _activeResidentId;
 
         // residents
-        private ResidentMessage[] _residents;
+        private ResidentBluetoothMessage[] _residents;
 
-        private readonly ResidentMessage _publicResident = new ResidentMessage
+        private readonly ResidentBluetoothMessage _publicResident = new ResidentBluetoothMessage
         {
             Id = PublicProfileSource.Id,
-            Name = PublicProfileSource.Name,
-            GameDifficultyLevel = 1,
-            AllowVideoCapturing = false
+            Name = PublicProfileSource.Name
         };
 
         // timer
@@ -203,10 +201,10 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
                     _activeResidentId = residentId;
                 }
             }
-            //catch (InvalidOperationException)
-            //{
+            catch (InvalidOperationException)
+            {
                 // occurs when a beacon is removed from the beacon manager's list - ignore it
-            //}
+            }
             catch (Exception ex)
             {
                 _systemEventLogger.WriteEntry($"TimerElapsed{Environment.NewLine}{ex.Message}", EventLogEntryType.Error);
@@ -331,12 +329,10 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
                 var residents = _residentsClient.Get().ToArray();
                 if (!residents.Any()) return false;
 
-                _residents = residents.Select(r => new ResidentMessage
+                _residents = residents.Select(r => new ResidentBluetoothMessage
                 {
                     Id = r.Id,
-                    Name = $"{r.FirstName} {r.LastName}".Trim(),
-                    GameDifficultyLevel = r.GameDifficultyLevel,
-                    AllowVideoCapturing = r.AllowVideoCapturing
+                    Name = $"{r.FirstName} {r.LastName}".Trim()
                 }).ToArray();
 
                 _activeResidentId = PublicProfileSource.Id;
@@ -350,7 +346,7 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
             return false;
         }
 
-        private ResidentMessage GetResident(int id)
+        private ResidentBluetoothMessage GetResident(int id)
         {
             try
             {
@@ -363,7 +359,7 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
             }
         }
 
-        private static string GetSerializedResident(ResidentMessage resident)
+        private static string GetSerializedResident(ResidentBluetoothMessage resident)
         {
             var serializer = new JavaScriptSerializer();
             var messageBody = serializer.Serialize(resident);
@@ -373,19 +369,35 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
 
         private void MessageReceivedBluetoothBeaconWatcherReload(object source, MessageEventArgs e)
         {
-            IEnumerable<ResidentMessage> residents = null;
+            if (_residents == null) return;
+
+            ResidentBluetoothMessage resident = null;
             try
             {
                 var serializer = new JavaScriptSerializer();
-                residents = serializer.Deserialize<IEnumerable<ResidentMessage>>(e.MessageBody);
+                resident = serializer.Deserialize<ResidentBluetoothMessage>(e.MessageBody);
             }
             catch (Exception ex)
             {
                 _systemEventLogger.WriteEntry($"MessageReceivedBluetoothBeaconWatcherReload: {ex.Message}", EventLogEntryType.Error);
             }
 
-            if (residents != null)
-                _residents = residents.ToArray();
+            if (resident != null)
+            {
+                if (resident.IsDeleted)
+                {
+                    var newList = _residents.Where(x => x.Id != resident.Id).ToArray();
+                    _residents = newList;
+                }
+                else
+                {
+                    if (_residents.Any(x => x.Id == resident.Id))
+                    {
+                        var r = _residents.Single(x => x.Id == resident.Id);
+                        r.Name = resident.Name;
+                    }
+                }
+            }
         }
 
         private void MessageReceivedDisplayBluetoothBeaconWatcher(object source, MessageEventArgs e)

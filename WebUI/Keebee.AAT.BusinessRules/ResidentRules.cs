@@ -14,7 +14,6 @@ namespace Keebee.AAT.BusinessRules
         private readonly IResidentsClient _residentsClient;
         private readonly IResidentMediaFilesClient _residentMediaFilesClient;
         private readonly IMediaFilesClient _mediaFilesClient;
-        private readonly IResponseTypesClient _responseTypesClient;
         private readonly IThumbnailsClient _thumbnailsClient;
 
         public ResidentRules()
@@ -22,7 +21,6 @@ namespace Keebee.AAT.BusinessRules
             _residentsClient = new ResidentsClient();
             _residentMediaFilesClient = new ResidentMediaFilesClient();
             _mediaFilesClient = new MediaFilesClient();
-            _responseTypesClient = new ResponseTypesClient();
             _thumbnailsClient = new ThumbnailsClient();
         }
 

@@ -198,20 +198,13 @@ ModelManifest.xml
 Thumbs.db
 
 # folders to include
-!Profiles*
-!1*
-!0*
-!activities*
-!matching-game*
 !shapes*
 !sounds*
-!audio*
 !music*
 !radio-shows*
-!images*
 !general*
 !personal*
-!videos*
 !tv-shows*
 !home-movies*
+!EventLog*
 !.gitignore

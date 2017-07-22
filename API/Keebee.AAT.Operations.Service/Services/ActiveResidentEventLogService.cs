@@ -63,10 +63,13 @@ namespace Keebee.AAT.Operations.Service.Services
             string filter = $"DateEntry gt {from} and DateEntry lt {to}";
 
             var activeResidentEventLogs = container.ActiveResidentEventLogs.AddQueryOption("$filter", filter)
-                .Expand("Resident")
-                .ToList();
+                .Expand("Resident");
 
-            return activeResidentEventLogs;
+            var list = new List<ActiveResidentEventLog>();
+            try { list = activeResidentEventLogs.ToList(); }
+            catch { }
+
+            return list;
         }
 
         public IEnumerable<ActiveResidentEventLog> GetForResident(int residentId)

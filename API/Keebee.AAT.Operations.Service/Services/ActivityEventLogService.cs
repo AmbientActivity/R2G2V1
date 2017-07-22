@@ -71,10 +71,13 @@ namespace Keebee.AAT.Operations.Service.Services
 
             var activityEventLogs = container.ActivityEventLogs
                 .AddQueryOption("$filter", filter)
-                .Expand("Resident,ConfigDetail($expand=PhidgetType,ResponseType($expand=ResponseTypeCategory))")
-                .ToList();
+                .Expand("Resident,ConfigDetail($expand=PhidgetType,ResponseType($expand=ResponseTypeCategory))");
 
-            return activityEventLogs;
+            var list = new List<ActivityEventLog>();
+            try { list = activityEventLogs.ToList(); }
+            catch {}
+
+            return list;
         }
 
         public IEnumerable<ActivityEventLog> GetForConfig(int configId)

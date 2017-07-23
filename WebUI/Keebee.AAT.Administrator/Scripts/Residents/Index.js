@@ -141,7 +141,7 @@
                 function Resident(id, firstname, lastname, gender, gamedifficultylevel, allowvideocapturing, profilepicture, profilepictureplaceholder, datecreated, dateupdated) {
                     var self = this;
 
-                    self.id = id;
+                    self.id = ko.observable(id);
                     self.firstname = ko.observable(firstname);
                     self.lastname = ko.observable(lastname);
                     self.gender = ko.observable(gender);
@@ -265,12 +265,12 @@
                     self.filteredResidents = ko.computed(function () {
                         return ko.utils.arrayFilter(self.residents(), function (r) {
                             return (
-                                (self.firstNameSearch().length === 0 || r.firstname.toLowerCase().indexOf(self.firstNameSearch().toLowerCase()) !== -1)
+                                (self.firstNameSearch().length === 0 || r.firstname().toLowerCase().indexOf(self.firstNameSearch().toLowerCase()) !== -1)
                                 &&
-                                (self.lastNameSearch().length === 0 || (r.lastname !== null &&
-                                    r.lastname.toLowerCase().indexOf(self.lastNameSearch().toLowerCase()) !== -1))
+                                (self.lastNameSearch().length === 0 || (r.lastname() !== null &&
+                                    r.lastname().toLowerCase().indexOf(self.lastNameSearch().toLowerCase()) !== -1))
                                 &&
-                                (self.idSearch().length === 0 || r.id.toString().indexOf(self.idSearch().toString()) !== -1)
+                                (self.idSearch().length === 0 || r.id().toString().indexOf(self.idSearch().toString()) !== -1)
                             );
                         });
                     });
@@ -284,11 +284,14 @@
 
                     self.edit = function (row) {
                         cmdAdd.prop("disabled", true);
-                        $("#edit_" + row.id).tooltip("hide");
 
-                        var id = (typeof row.id !== "undefined" ? row.id : 0);
+                        var id = (typeof row.id !== "undefined")
+                            ? row.id()
+                            : 0;
+
+                        $("#edit_" + id).tooltip("hide");
+
                         var add = (id === 0);
-
                         if (!add) { self.highlightRow(row); }
 
                         var title = "<span class='glyphicon glyphicon-pencil' style='color: #fff'></span>";
@@ -357,9 +360,9 @@
                     };
 
                     self.editProfile = function (row) {
-                        $("#thumb_" + row.id).tooltip("hide");
+                        var id = row.id();
 
-                        var id = row.id;
+                        $("#thumb_" + id).tooltip("hide");
 
                         var sortdescending = 0;
                         if (sortDescending) sortdescending = "1";
@@ -376,11 +379,11 @@
 
                     self.delete = function (row) {
                         cmdAdd.prop("disabled", true);
-                        $("#delete_" + row.id).tooltip("hide");
 
-                        var id = (typeof row.id !== "undefined" ? row.id : 0);
+                        var id = (typeof row.id !== "undefined" ? row.id() : 0);
                         if (id <= 0) return;
 
+                        $("#delete_" + id).tooltip("hide");
                         self.highlightRow(row);
 
                         // construct the confirm message
@@ -435,7 +438,7 @@
                         var resident = null;
 
                         ko.utils.arrayForEach(self.residents(), function (item) {
-                            if (item.id === residentid) {
+                            if (item.id() === residentid) {
                                 resident = item;
                             }
                         });
@@ -459,7 +462,7 @@
                     };
 
                     self.highlightRow = function (row) {
-                        var r = tblResident.find("#row_" + row.id);
+                        var r = tblResident.find("#row_" + row.id());
                         $(r).addClass("highlight").siblings().removeClass("highlight");
                         $("#txtSearchFirstName").focus();
                     };
@@ -483,7 +486,7 @@
 
                     self.removeResident = function (id) {
                         var idx = self.residents().findIndex(function (value) {
-                            return value.id === id;
+                            return value.id() === id;
                         });
                         self.residents.splice(idx, 1);
                     }

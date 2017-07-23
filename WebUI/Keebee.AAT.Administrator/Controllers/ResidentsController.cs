@@ -49,7 +49,8 @@ namespace Keebee.AAT.Administrator.Controllers
             int? sortdescending)
         {
             return
-                View(LoadResidentsViewModel(id ?? 0, null, true, idsearch, firstname, lastname, sortcolumn, sortdescending));
+                View(LoadResidentsViewModel(id ?? 0, null, true, idsearch, firstname, lastname, sortcolumn,
+                    sortdescending));
         }
 
         [HttpGet]
@@ -112,33 +113,36 @@ namespace Keebee.AAT.Administrator.Controllers
         [Authorize]
         public JsonResult Save(ResidentEditViewModel resident)
         {
-            var residentId = resident.Id;
+            string errMsg;
 
-            var errorMsg = residentId > 0 
-                ? UpdateResident(resident) 
-                : AddResident(resident, out residentId);
-
-            var success = (null == errorMsg);
-            if (success)
+            try
             {
+                var residentId = resident.Id;
+
+                errMsg = residentId > 0
+                    ? UpdateResident(resident)
+                    : AddResident(resident, out residentId);
+
+                if (!string.IsNullOrEmpty(errMsg)) throw new Exception(errMsg);
+
                 if (ServiceUtilities.IsInstalled(ServiceUtilities.ServiceType.BluetoothBeaconWatcher))
-                {
                     // send the bluetooth beacon watcher the updated resident
                     _messageQueueBluetoothBeaconWatcherReload.Send(CreateMessageBodyFromResident(resident));
-                }
-                // get the profile picture to send back
-                var r = _residentsClient.Get(resident.Id);
+
                 resident.Id = residentId;
-                resident.ProfilePicture = ResidentRules.GetProfilePicture(r?.ProfilePicture);
+                resident.ProfilePicture = ResidentRules.GetProfilePicture(resident.ProfilePicture);
                 resident.ProfilePicturePlaceholder = ResidentRules.GetProfilePicturePlaceholder();
+            }
+            catch (Exception ex)
+            {
+                errMsg = ex.Message;
             }
 
             return Json(new
             {
-                ResidentList = new ResidentViewModel[] { resident },
-                SelectedId = residentId,
-                Success = success,
-                ErrorMessage = errorMsg
+                Success = string.IsNullOrEmpty(errMsg),
+                ErrorMessage = errMsg,
+                ResidentList = new ResidentViewModel[] { resident }
             }, JsonRequestBehavior.AllowGet);
         }
 

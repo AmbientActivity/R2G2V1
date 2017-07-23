@@ -117,6 +117,13 @@ namespace Keebee.AAT.BusinessRules
             return profilePicture;
         }
 
+        public static string GetProfilePicture(string base64String)
+        {
+            return !string.IsNullOrEmpty(base64String) 
+                ? $"data:image/jpg;base64,{base64String}" 
+                : string.Empty;
+        }
+
         public static string GetProfilePicturePlaceholder()
         {
             return $"data:image/jpg;base64,{ImagesBase64.ProfilePicturePlaceholder}";

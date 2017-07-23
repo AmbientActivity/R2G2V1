@@ -72,9 +72,6 @@ namespace Keebee.AAT.Operations.Service.Services
         {
             var container = new Container(new Uri(ODataHost.Url));
 
-            resident.DateCreated = DateTime.Now;
-            resident.DateUpdated = DateTime.Now;
-
             if (resident.ProfilePicture == null)
                 resident.ProfilePicture = new byte[0];
 
@@ -104,8 +101,6 @@ namespace Keebee.AAT.Operations.Service.Services
 
             r.AllowVideoCapturing = resident.AllowVideoCapturing;
             r.ProfilePicture = resident.ProfilePicture ?? new byte[0];
-
-            r.DateUpdated = DateTime.Now;
 
             container.UpdateObject(r);
             container.SaveChanges();

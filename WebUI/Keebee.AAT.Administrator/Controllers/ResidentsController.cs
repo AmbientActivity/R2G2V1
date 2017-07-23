@@ -45,11 +45,21 @@ namespace Keebee.AAT.Administrator.Controllers
 
         // GET: Resident
         [Authorize]
-        public ActionResult Index(int? id, string firstname, string lastname, string idsearch, string sortcolumn,
+        public ActionResult Index(
+            int? id, string 
+            firstname, 
+            string lastname, 
+            string idsearch, 
+            string sortcolumn,
             int? sortdescending)
         {
             return
-                View(LoadResidentsViewModel(id ?? 0, null, true, idsearch, firstname, lastname, sortcolumn,
+                View(LoadResidentsViewModel(
+                    id ?? 0,
+                    idsearch, 
+                    firstname, 
+                    lastname, 
+                    sortcolumn,
                     sortdescending));
         }
 
@@ -118,20 +128,30 @@ namespace Keebee.AAT.Administrator.Controllers
             try
             {
                 var residentId = resident.Id;
+                var date = DateTime.Now;
 
-                errMsg = residentId > 0
-                    ? UpdateResident(resident)
-                    : AddResident(resident, out residentId);
+                if (residentId > 0)
+                {
+                    resident.DateUpdated = date;
+                    errMsg = UpdateResident(resident);
+                }
+                else
+                {
+                    resident.DateCreated = date;
+                    resident.DateUpdated = date;
+                    errMsg = AddResident(resident, out residentId);
+                    resident.Id = residentId;
+                }
 
                 if (!string.IsNullOrEmpty(errMsg)) throw new Exception(errMsg);
 
-                if (ServiceUtilities.IsInstalled(ServiceUtilities.ServiceType.BluetoothBeaconWatcher))
-                    // send the bluetooth beacon watcher the updated resident
-                    _messageQueueBluetoothBeaconWatcherReload.Send(CreateMessageBodyFromResident(resident));
-
-                resident.Id = residentId;
+                resident.LastName = resident.LastName ?? string.Empty;
                 resident.ProfilePicture = ResidentRules.GetProfilePicture(resident.ProfilePicture);
                 resident.ProfilePicturePlaceholder = ResidentRules.GetProfilePicturePlaceholder();
+
+                // send the bluetooth beacon watcher service the updated resident
+                if (ServiceUtilities.IsInstalled(ServiceUtilities.ServiceType.BluetoothBeaconWatcher))
+                    _messageQueueBluetoothBeaconWatcherReload.Send(CreateMessageBodyFromResident(resident));
             }
             catch (Exception ex)
             {
@@ -216,8 +236,6 @@ namespace Keebee.AAT.Administrator.Controllers
 
         private static ResidentsViewModel LoadResidentsViewModel(
             int id, 
-            List<string> msgs, 
-            bool success, 
             string idsearch, 
             string firstname, 
             string lastname, 
@@ -227,9 +245,6 @@ namespace Keebee.AAT.Administrator.Controllers
             var vm = new ResidentsViewModel
             {
                 SelectedId = (int)id,
-                ErrorMessages = msgs,
-                Success = success,
-
                 IdSearch = idsearch,
                 FirstNameSearch = firstname,
                 LastNameSearch = lastname,
@@ -281,7 +296,7 @@ namespace Keebee.AAT.Administrator.Controllers
                 {
                     Id = resident.Id,
                     FirstName = resident.FirstName,
-                    LastName = resident.LastName,
+                    LastName = resident.LastName ?? string.Empty,
                     Gender = resident.Gender,
                     GameDifficultyLevel = resident.GameDifficultyLevel,
                     AllowVideoCapturing = resident.AllowVideoCapturing,
@@ -305,7 +320,8 @@ namespace Keebee.AAT.Administrator.Controllers
                 AllowVideoCapturing = residentDetail.AllowVideoCapturing,
                 ProfilePicture = residentDetail.ProfilePicture != null 
                     ? Convert.FromBase64String(residentDetail.ProfilePicture) 
-                    : null
+                    : null,
+                DateUpdated = residentDetail.DateUpdated
             };
 
             return _residentsClient.Patch(residentDetail.Id, r);
@@ -325,7 +341,9 @@ namespace Keebee.AAT.Administrator.Controllers
                     Gender = residentDetail.Gender,
                     GameDifficultyLevel = residentDetail.GameDifficultyLevel,
                     AllowVideoCapturing = residentDetail.AllowVideoCapturing,
-                    ProfilePicture = residentDetail.ProfilePicture != null ? Convert.FromBase64String(residentDetail.ProfilePicture) : null
+                    ProfilePicture = residentDetail.ProfilePicture != null ? Convert.FromBase64String(residentDetail.ProfilePicture) : null,
+                    DateCreated = residentDetail.DateCreated,
+                    DateUpdated = residentDetail.DateUpdated
                 }, out residentId);
 
                 var rules = new ResidentRules { EventLogger = _systemEventLogger };

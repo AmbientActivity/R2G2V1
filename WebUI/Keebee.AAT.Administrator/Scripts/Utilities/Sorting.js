@@ -128,8 +128,6 @@
                 }
 
                 if (config.descending) {
-                    if (valuea === null) return -1;
-                    if (valueb === null) return 1;
                     if (valuea > valueb) {
                         return -1;
                     } 
@@ -139,8 +137,6 @@
                         return sortPrimary(a, b, false);
                     }
                 } else {
-                    if (valuea === null) return 1;
-                    if (valueb === null) return -1;
                     if (valuea < valueb) {
                         return -1;
                     } else if (valuea > valueb) {
@@ -198,8 +194,6 @@
                 }
 
                 if (config.descending) {
-                    if (valuea === null) return -1;
-                    if (valueb === null) return 1;
                     if (valuea > valueb) {
                         return -1;
                     }
@@ -209,8 +203,6 @@
                         return sortPrimaryObservable(a, b, false);
                     }
                 } else {
-                    if (valuea === null) return 1;
-                    if (valueb === null) return -1;
                     if (valuea < valueb) {
                         return -1;
                     } else if (valuea > valueb) {

@@ -432,7 +432,6 @@
                                                     if (saveResult.ConfigDetailList.length > 0) {
                                                         self.marqueeRows(saveResult.ConfigDetailList);
                                                         self.selectedConfigDetail({});
-                                                        self.unHighlightRows();
                                                     }
 
                                                     self.enableDetail();

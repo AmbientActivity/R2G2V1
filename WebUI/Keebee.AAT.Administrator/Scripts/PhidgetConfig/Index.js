@@ -403,7 +403,7 @@
                             type: add ? BootstrapDialog.TYPE_SUCCESS : BootstrapDialog.TYPE_PRIMARY,
                             title: title,
                             params: { id: id, configId: self.selectedConfigId() },
-                            focus: "txtDescription",
+                            focus: "ddlPhidgetTypes",
                             buttonOKClass: add ? "btn-success" : "btn-primary",
                             cancelled: function () { enableButtons(true); },
                             callback: function(dialog) {

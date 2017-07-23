@@ -17,20 +17,26 @@
 
             $.extend(config, options);
 
+            initPhidgetDropdowns();
+
             $("#ddlPhidgetTypes").change(function(e) {
+                initPhidgetDropdowns();
+            });
+
+            function initPhidgetDropdowns() {
                 var phidgetTypeId = parseInt($("#ddlPhidgetTypes").val());
 
                 if (phidgetTypeId >= config.maxPhidgetTypeIdSensor) {
 
                     $($("#ddlPhidgetStyleTypes")
                             .find("option[value != '" + config.phidgetStyleTypeIdOnOff + "']"))
-                        .each(function(index, opt) {
+                        .each(function (index, opt) {
                             $(opt).hide();
                         });
 
                     $("#ddlPhidgetStyleTypes")
                         .find("option[value = '" + config.phidgetStyleTypeIdOnOff + "']")
-                        .each(function(index, opt) {
+                        .each(function (index, opt) {
                             $(opt).prop("selected", true);
                         });
 
@@ -39,14 +45,14 @@
                     // for "Sensor" phidgets, "On/Off" style is not allowed
                     $("#ddlPhidgetStyleTypes")
                         .find("option[value = '" + config.phidgetStyleTypeIdOnOff + "']")
-                        .each(function(index, opt) {
+                        .each(function (index, opt) {
                             $(opt).hide();
                             $(opt).prop("selected", false);
                         });
 
                     $("#ddlPhidgetStyleTypes")
                         .find("option[value != '" + config.phidgetStyleTypeIdOnOff + "']")
-                        .each(function(index, opt) {
+                        .each(function (index, opt) {
                             $(opt).show();
                             if (index === 0)
                                 $(opt).prop("selected", true);
@@ -54,7 +60,7 @@
 
                     $("#ddlPhidgetStyleTypes").val(config.phidgetStyleTypeIdTouch);
                 }
-            });
+            }
         }
     }
 })(jQuery);

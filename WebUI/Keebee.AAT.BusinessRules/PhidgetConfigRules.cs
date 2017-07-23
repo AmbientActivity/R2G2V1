@@ -127,7 +127,7 @@ namespace Keebee.AAT.BusinessRules
         }
 
         // view model
-        public ConfigModel GetConfigEditViewModel(int id, int configId)
+        public ConfigDetailModel GetConfigEditViewModel(int id, int configId)
         {
             var availableResponseTypes = _responseTypesClient.Get();
             var allPhidgetTypes = _phidgetTypesClient.Get().ToArray();
@@ -160,7 +160,7 @@ namespace Keebee.AAT.BusinessRules
                 availablePhidgetTypes = allPhidgetTypes.Where(pt => !usedPhidgetIds.Contains(pt.Id)).ToArray();
             }
 
-            return new ConfigModel
+            return new ConfigDetailModel
             {
                 Id = configDetail?.Id ?? 0,
                 ConfigDetail = configDetail,

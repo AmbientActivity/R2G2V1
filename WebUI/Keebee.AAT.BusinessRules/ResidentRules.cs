@@ -107,11 +107,12 @@ namespace Keebee.AAT.BusinessRules
         public static string GetProfilePicture(byte[] bytes)
         {
             string profilePicture = null;
+
             if (bytes != null)
             {
-                profilePicture = (bytes.Length == 0)
-                    ? null
-                    : $"data:image/jpg;base64,{Convert.ToBase64String(bytes)}";
+                profilePicture = (bytes.Length > 0)
+                    ? $"data:image/jpg;base64,{Convert.ToBase64String(bytes)}"
+                    : null;
             }
 
             return profilePicture;
@@ -121,7 +122,7 @@ namespace Keebee.AAT.BusinessRules
         {
             return !string.IsNullOrEmpty(base64String) 
                 ? $"data:image/jpg;base64,{base64String}" 
-                : string.Empty;
+                : null;
         }
 
         public static string GetProfilePicturePlaceholder()
@@ -136,7 +137,7 @@ namespace Keebee.AAT.BusinessRules
                 : null;
         }
 
-        public string AddMediaFileFromFilename(string filename, int residentId, MediaPathType mediaPathType, ResponseType responseType, DateTime dateAdded, bool isLinked, out MediaFileEdit newFile)
+        public string AddMediaFileFromFilename(string filename, int residentId, MediaPathType mediaPathType, ResponseType responseType, DateTime dateAdded, bool isLinked, out MediaFileModel newFile)
         {
             string errMsg;
             newFile = null;
@@ -157,10 +158,10 @@ namespace Keebee.AAT.BusinessRules
             return errMsg;
         }
 
-        public string AddMediaFile(Guid streamId, int residentId, MediaPathType mediaPathType, ResponseType responseType, DateTime dateAdded, bool isLinked, out MediaFileEdit mediaFileEdit)
+        public string AddMediaFile(Guid streamId, int residentId, MediaPathType mediaPathType, ResponseType responseType, DateTime dateAdded, bool isLinked, out MediaFileModel mediaFileModel)
         {
             string errMsg;
-            mediaFileEdit = null;
+            mediaFileModel = null;
 
             try
             {
@@ -186,7 +187,7 @@ namespace Keebee.AAT.BusinessRules
                     thumb = _thumbnailsClient.Get(streamId)?.Image;
                 }
 
-                mediaFileEdit = GetMediaFileEdit(mediaFile, newId, mediaPathType, dateAdded, isLinked, thumb);
+                mediaFileModel = GetMediaFileModel(mediaFile, newId, mediaPathType, dateAdded, isLinked, thumb);
             }
             catch (Exception ex)
             {

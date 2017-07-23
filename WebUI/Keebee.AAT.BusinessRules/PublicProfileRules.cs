@@ -21,7 +21,7 @@ namespace Keebee.AAT.BusinessRules
             _thumbnailsClient = new ThumbnailsClient();
         }
 
-        public string AddMediaFileFromFilename(string filename, MediaPathType mediaPathType, ResponseType responseType, DateTime dateAdded, bool isLinked, out MediaFileEdit newFile)
+        public string AddMediaFileFromFilename(string filename, MediaPathType mediaPathType, ResponseType responseType, DateTime dateAdded, bool isLinked, out MediaFileModel newFile)
         {
             string errMsg;
             newFile = null;
@@ -62,10 +62,10 @@ namespace Keebee.AAT.BusinessRules
             return result;
         }
 
-        public string AddMediaFile(Guid streamId, MediaPathType mediaPathType, ResponseType responseType, DateTime dateAdded, bool isLinked, out MediaFileEdit mediaFileEdit)
+        public string AddMediaFile(Guid streamId, MediaPathType mediaPathType, ResponseType responseType, DateTime dateAdded, bool isLinked, out MediaFileModel mediaFileModel)
         {
             string errMsg;
-            mediaFileEdit = null;
+            mediaFileModel = null;
 
             try
             {
@@ -90,7 +90,7 @@ namespace Keebee.AAT.BusinessRules
                     thumb = _thumbnailsClient.Get(streamId)?.Image;
                 }
 
-                mediaFileEdit = GetMediaFileEdit(mediaFile, newId, mediaPathType, dateAdded, isLinked, thumb);
+                mediaFileModel = GetMediaFileModel(mediaFile, newId, mediaPathType, dateAdded, isLinked, thumb);
             }
             catch (Exception ex)
             {

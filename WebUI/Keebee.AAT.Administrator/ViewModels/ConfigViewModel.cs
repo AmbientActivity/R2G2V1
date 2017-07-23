@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Web.Mvc;
+using Keebee.AAT.BusinessRules.Models;
 
 namespace Keebee.AAT.Administrator.ViewModels
 {
@@ -47,5 +49,8 @@ namespace Keebee.AAT.Administrator.ViewModels
         public SelectList PhidgetStyleTypes { get; set; }
         public int ResponseTypeId { get; set; }
         public SelectList ResponseTypes { get; set; }
+        public int PhidgetStyleTypeIdOnOff { get; set; }
+        public int PhidgetStyleTypeIdTouch { get; set; }
+        public int MaxPhidgetTypeIdSensor { get; set; }
     }
 }

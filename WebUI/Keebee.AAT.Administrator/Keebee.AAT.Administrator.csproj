@@ -138,6 +138,7 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\MaintenanceController.cs" />
     <Compile Include="Controllers\PhidgetConfigController.cs" />
+    <Compile Include="Controllers\PhidgetConfigDetailsController.cs" />
     <Compile Include="Controllers\PublicProfileController.cs" />
     <Compile Include="Controllers\ResidentProfileController.cs" />
     <Compile Include="Controllers\ResidentsController.cs" />
@@ -178,6 +179,7 @@
     <Content Include="Content\favicons\ms-icon-150x150.png" />
     <Content Include="Content\favicons\ms-icon-310x310.png" />
     <Content Include="Content\favicons\ms-icon-70x70.png" />
+    <Content Include="Scripts\PhidgetConfig\_ConfigDetailEdit.js" />
     <Content Include="Scripts\SharedLibraryAdd\_Index.js" />
     <Content Include="Scripts\SharedLibrary\_LinkedProfiles.js" />
     <Content Include="Scripts\Utilities\PartialView.js" />
@@ -663,7 +665,7 @@
     <Content Include="Views\EventLogs\Index.cshtml" />
     <Content Include="Views\Maintenance\Index.cshtml" />
     <Content Include="Views\PhidgetConfig\Index.cshtml" />
-    <Content Include="Views\PhidgetConfig\_ConfigDetailEdit.cshtml" />
+    <Content Include="Views\PhidgetConfigDetails\_ConfigDetailEdit.cshtml" />
     <Content Include="Views\PhidgetConfig\_ConfigEdit.cshtml" />
     <Content Include="Views\PublicProfile\Index.cshtml" />
     <Content Include="Views\ResidentProfile\Index.cshtml" />

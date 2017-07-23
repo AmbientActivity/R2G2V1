@@ -51,10 +51,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="FileManagement\FileManager.cs" />
-    <Compile Include="Models\MediaFileEdit.cs" />
+    <Compile Include="Models\MediaFileModel.cs" />
     <Compile Include="Models\VideoPlayerModel.cs" />
     <Compile Include="PhidgetConfigRules.cs" />
-    <Compile Include="Models\ConfigEditModel.cs" />
+    <Compile Include="Models\ConfigModel.cs" />
     <Compile Include="Models\ImageViewerModel.cs" />
     <Compile Include="Models\UserModel.cs" />
     <Compile Include="ImageViewerRules.cs" />

@@ -89,7 +89,7 @@ namespace Keebee.AAT.Administrator.Controllers
         public JsonResult AddSharedMediaFiles(Guid[] streamIds, int mediaPathTypeId, int responseTypeId)
         {
             string errMsg = null;
-            var newFiles = new Collection<MediaFileEdit>();
+            var newFiles = new Collection<MediaFileModel>();
             const bool isLinked = true;
 
             try
@@ -103,7 +103,7 @@ namespace Keebee.AAT.Administrator.Controllers
 
                     foreach (var streamId in streamIds)
                     {
-                        MediaFileEdit newFile;
+                        MediaFileModel newFile;
                         errMsg = rules.AddMediaFile(streamId, mediaPathType, responseType, dateAdded, isLinked, out newFile);
 
                         if (!string.IsNullOrEmpty(errMsg))

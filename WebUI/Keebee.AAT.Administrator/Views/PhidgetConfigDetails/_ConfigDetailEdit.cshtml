@@ -1,5 +1,12 @@
 ﻿@model Keebee.AAT.Administrator.ViewModels.ConfigDetailEditViewModel
 
+<script type="text/javascript">
+    phidgetconfig.detailedit.init({
+        phidgetStyleTypeIdOnOff: @Model.PhidgetStyleTypeIdOnOff,
+        phidgetStyleTypeIdTouch: @Model.PhidgetStyleTypeIdTouch,
+        maxPhidgetTypeIdSensor: @Model.MaxPhidgetTypeIdSensor });
+</script>
+
 <div class="container container-config-detail-edit">
     <div class="row">
         <div class="col-sm-12">

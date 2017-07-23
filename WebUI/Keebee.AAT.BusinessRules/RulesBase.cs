@@ -80,7 +80,7 @@ namespace Keebee.AAT.BusinessRules
             return fileManager.GetMediaFile(path, filename);
         }
 
-        public MediaFileEdit GetMediaFileEdit(
+        public MediaFileModel GetMediaFileModel(
             MediaFile mediaFile,
             int id, 
             MediaPathType mediaPathType,
@@ -88,7 +88,7 @@ namespace Keebee.AAT.BusinessRules
             bool isLinked,
             byte[] thumb)
         {
-            return new MediaFileEdit
+            return new MediaFileModel
             {
                 Id = id,
                 StreamId = mediaFile.StreamId,

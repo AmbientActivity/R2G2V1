@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Keebee.AAT.BusinessRules.Models
 {
-    public class ConfigEditModel
+    public class ConfigModel
     {
         public int Id { get; set; }
         public string Description { get; set; }

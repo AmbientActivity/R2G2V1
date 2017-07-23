@@ -96,7 +96,7 @@ namespace Keebee.AAT.Administrator.Controllers
         public JsonResult AddFiles(string[] filenames, int residentId, int mediaPathTypeId, int responseTypeId)
         {
             string errMsg = null;
-            var newFiles = new Collection<MediaFileEdit>();
+            var newFiles = new Collection<MediaFileModel>();
             const bool isLinked = false;
 
             try
@@ -108,7 +108,7 @@ namespace Keebee.AAT.Administrator.Controllers
 
                 foreach (var filename in filenames.OrderByDescending(x => x))
                 {
-                    MediaFileEdit newFile;
+                    MediaFileModel newFile;
                     errMsg = rules.AddMediaFileFromFilename(filename, residentId, mediaPathType, responseType, dateAdded, isLinked, out newFile);
 
                     if (!string.IsNullOrEmpty(errMsg))
@@ -170,7 +170,7 @@ namespace Keebee.AAT.Administrator.Controllers
         public JsonResult AddSharedMediaFiles(Guid[] streamIds, int residentId, string mediaPath, int mediaPathTypeId, int responseTypeId)
         {
             string errMsg = null;
-            var newFiles = new Collection<MediaFileEdit>();
+            var newFiles = new Collection<MediaFileModel>();
             const bool isLinked = true;
 
             try
@@ -184,7 +184,7 @@ namespace Keebee.AAT.Administrator.Controllers
 
                     foreach (var streamId in streamIds)
                     {
-                        MediaFileEdit newFile;
+                        MediaFileModel newFile;
                         errMsg = rules.AddMediaFile(streamId, residentId, mediaPathType, responseType, dateAdded, isLinked, out newFile);
 
                         if (!string.IsNullOrEmpty(errMsg))

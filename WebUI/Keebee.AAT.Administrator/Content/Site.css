@@ -10,13 +10,13 @@
 }
 
 footer {
-  color: #838383;
+    color: #838383;
 }
 /* Set width on the form input elements since they're 100% wide by default */
 input,
 select,
 textarea {
-  max-width: 400px;
+    max-width: 400px;
 }
 hr {
     margin: 5px;

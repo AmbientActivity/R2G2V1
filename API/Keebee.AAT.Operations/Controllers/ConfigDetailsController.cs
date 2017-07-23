@@ -100,20 +100,23 @@ namespace Keebee.AAT.Operations.Controllers
             exObj.Description = configDetail.Description;
             exObj.Location = configDetail.Location;
             exObj.ResponseType = new
+            {
+                configDetail.ResponseType.Id,
+                configDetail.ResponseType.Description,
+                configDetail.ResponseType.IsSystem,
+                configDetail.ResponseType.IsRandom,
+                configDetail.ResponseType.IsRotational,
+                ResponseTypeCategory = new
                 {
-                    configDetail.ResponseType.Id,
-                    configDetail.ResponseType.Description,
-                    ResponseTypeCategory = new
-                    {
-                        configDetail.ResponseType.ResponseTypeCategory.Id,
-                        configDetail.ResponseType.ResponseTypeCategory.Description
-                    },
-                    InteractiveActivityType = (configDetail.ResponseType.InteractiveActivityTypeId != null)
-                    ? new
-                    {
-                        configDetail.ResponseType.InteractiveActivityType.Id,
-                        configDetail.ResponseType.InteractiveActivityType.Description
-                    } : null
+                    configDetail.ResponseType.ResponseTypeCategory.Id,
+                    configDetail.ResponseType.ResponseTypeCategory.Description
+                },
+                InteractiveActivityType = (configDetail.ResponseType.InteractiveActivityTypeId != null)
+                ? new
+                {
+                    configDetail.ResponseType.InteractiveActivityType.Id,
+                    configDetail.ResponseType.InteractiveActivityType.Description
+                } : null
             };
 
             return new DynamicJsonObject(exObj);

@@ -35,6 +35,7 @@ namespace Keebee.AAT.Administrator
                 "~/Scripts/EventLogs/Export.js",
                 "~/Scripts/VideoCaptures/Index.js",
                 "~/Scripts/PhidgetConfig/Index.js",
+                "~/Scripts/PhidgetConfig/_ConfigDetailEdit.js",
                 "~/Scripts/SharedLibrary/Index.js",
                 "~/Scripts/SharedLibrary/_LinkedProfiles.js",
                 "~/Scripts/SharedLibraryAdd/_Index.js",

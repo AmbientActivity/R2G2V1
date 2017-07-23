@@ -213,12 +213,12 @@ namespace Keebee.AAT.PhidgetService
 
                 switch (configDetail.PhidgetStyleTypeId)
                 {
-                    case PhidgetStyleTypeIdId.Touch:
+                    case PhidgetStyleTypeId.Touch:
                         ProcessTouchSensor(configDetail, sensorId, sensorValue);
                         break;
-                    case PhidgetStyleTypeIdId.MultiTurn:
-                    case PhidgetStyleTypeIdId.StopTurn:
-                    case PhidgetStyleTypeIdId.Slider:
+                    case PhidgetStyleTypeId.MultiTurn:
+                    case PhidgetStyleTypeId.StopTurn:
+                    case PhidgetStyleTypeId.Slider:
                         ProcessIncrementalSensor(configDetail, sensorId, sensorValue);
                         break;
                 }

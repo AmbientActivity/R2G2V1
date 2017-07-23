@@ -2,7 +2,7 @@
 
 namespace Keebee.AAT.BusinessRules.Models
 {
-    public class MediaFileEditBase
+    public class MediaFileModelBase
     {
         public Guid StreamId { get; set; }
         public string Filename { get; set; }
@@ -13,14 +13,14 @@ namespace Keebee.AAT.BusinessRules.Models
         public string Thumbnail { get; set; }
     }
 
-    public class MediaFileEdit : MediaFileEditBase
+    public class MediaFileModel : MediaFileModelBase
     {
         public int Id { get; set; }
         public bool IsLinked { get; set; }
         public DateTime DateAdded { get; set; }
     }
 
-    public class SharedMediaFileEdit : MediaFileEditBase
+    public class SharedMediaFileModel : MediaFileModelBase
     {
         public int NumLinkedProfiles { get; set; }
     }

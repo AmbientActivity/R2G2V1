@@ -4,15 +4,13 @@ using Keebee.AAT.BusinessRules;
 using Keebee.AAT.SystemEventLogging;
 using Keebee.AAT.ApiClient.Clients;
 using Keebee.AAT.ApiClient.Models;
-using Keebee.AAT.ThumbnailGeneration;
+using Keebee.AAT.BusinessRules.Models;
 using System.Linq;
 using System.Web.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Drawing;
 using System.Web;
-using Keebee.AAT.BusinessRules.Models;
 
 namespace Keebee.AAT.Administrator.Controllers
 {
@@ -110,7 +108,7 @@ namespace Keebee.AAT.Administrator.Controllers
         public JsonResult AddFiles(string[] filenames, int mediaPathTypeId)
         {
             string errMsg = null;
-            var newFiles = new Collection<SharedMediaFileEdit>();
+            var newFiles = new Collection<SharedMediaFileModel>();
 
             try
             {
@@ -120,7 +118,7 @@ namespace Keebee.AAT.Administrator.Controllers
 
                 foreach (var filename in filenames)
                 {
-                    SharedMediaFileEdit newFile;
+                    SharedMediaFileModel newFile;
                     errMsg = rules.AddFile(filename, mediaPathType, out newFile);
 
                     if (!string.IsNullOrEmpty(errMsg)) throw new Exception(errMsg);
@@ -265,7 +263,7 @@ namespace Keebee.AAT.Administrator.Controllers
             var thumbnails = _thumbnailsClient.Get().ToArray();
             var pathTypes = mediaPathTypes ?? _mediaPathTypesClient.Get().Where(mp => mp.IsSharable).ToArray();
 
-            return sharedMedia.SelectMany(p =>
+            var media = sharedMedia.SelectMany(p =>
             {
                 var mediaPathType = SharedLibraryRules.GetMediaPathTypeFromRawPath(p.Path, pathTypes);
 
@@ -285,6 +283,8 @@ namespace Keebee.AAT.Administrator.Controllers
                     };
                 }).OrderBy(x => x.Filename);
             });
+
+            return media;
         }
 
         private string DeleteSharedLibraryFile(MediaFilePath mediaFile, int mediaPathTypeId)

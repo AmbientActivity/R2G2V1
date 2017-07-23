@@ -73,7 +73,7 @@ namespace Keebee.AAT.BusinessRules
                 case PhidgetTypeId.Sensor5:
                 case PhidgetTypeId.Sensor6:
                 case PhidgetTypeId.Sensor7:
-                    if (phidgetStyleTypeId == PhidgetStyleTypeIdId.OnOff)
+                    if (phidgetStyleTypeId == PhidgetStyleTypeId.OnOff)
                         msgs.Add("Sensors cannot be of type On/Off");
                     break;
                 case PhidgetTypeId.Input0:
@@ -84,7 +84,7 @@ namespace Keebee.AAT.BusinessRules
                 case PhidgetTypeId.Input5:
                 case PhidgetTypeId.Input6:
                 case PhidgetTypeId.Input7:
-                    if (phidgetStyleTypeId != PhidgetStyleTypeIdId.OnOff)
+                    if (phidgetStyleTypeId != PhidgetStyleTypeId.OnOff)
                         msgs.Add("Inputs must be of type On/Off");
                     break;
             }
@@ -127,7 +127,7 @@ namespace Keebee.AAT.BusinessRules
         }
 
         // view model
-        public ConfigEditModel GetConfigEditViewModel(int id, int configId)
+        public ConfigModel GetConfigEditViewModel(int id, int configId)
         {
             var availableResponseTypes = _responseTypesClient.Get();
             var allPhidgetTypes = _phidgetTypesClient.Get().ToArray();
@@ -160,7 +160,7 @@ namespace Keebee.AAT.BusinessRules
                 availablePhidgetTypes = allPhidgetTypes.Where(pt => !usedPhidgetIds.Contains(pt.Id)).ToArray();
             }
 
-            return new ConfigEditModel
+            return new ConfigModel
             {
                 Id = configDetail?.Id ?? 0,
                 ConfigDetail = configDetail,

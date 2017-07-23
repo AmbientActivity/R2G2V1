@@ -399,7 +399,7 @@
                         }
 
                         utilities.partialview.show({
-                            url: "PhidgetConfig/GetConfigDetailEditView/" + id,
+                            url: "PhidgetConfigDetails/GetConfigDetailEditView/" + id,
                             type: add ? BootstrapDialog.TYPE_SUCCESS : BootstrapDialog.TYPE_PRIMARY,
                             title: title,
                             params: { id: id, configId: self.selectedConfigId() },
@@ -410,7 +410,7 @@
                                 var configdetail = self.getConfigDetailFromDialog();
                                 configdetail.ConfigId = self.selectedConfigId();
                                 utilities.job.execute({
-                                        url: site.url + "PhidgetConfig/ValidateDetail",
+                                        url: site.url + "PhidgetConfigDetails/Validate",
                                         type: "POST",
                                         params: { configdetail: configdetail }
                                     })
@@ -418,7 +418,7 @@
                                         if (validateResult.ValidationMessages === null) {
                                             dialog.close();
                                             utilities.job.execute({
-                                                    url: "PhidgetConfig/SaveDetail",
+                                                    url: "PhidgetConfigDetails/Save",
                                                     type: "POST",
                                                     params: { configdetail: configdetail }
                                                 })
@@ -475,7 +475,7 @@
                         .then(function(confirm) {
                             if (confirm) {
                                 utilities.job.execute({
-                                    url: site.url + "PhidgetConfig/DeleteDetail",
+                                    url: site.url + "PhidgetConfigDetails/Delete",
                                     type: "POST",
                                     params: {
                                         id: id,

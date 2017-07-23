@@ -129,7 +129,7 @@ namespace Keebee.AAT.Shared
         public const int BalloonPoppingGame= 3;
     }
 
-    public static class PhidgetStyleTypeIdId
+    public static class PhidgetStyleTypeId
     {
         public const int Touch = 1;
         public const int MultiTurn = 2;

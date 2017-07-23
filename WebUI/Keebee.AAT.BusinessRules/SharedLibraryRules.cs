@@ -24,10 +24,10 @@ namespace Keebee.AAT.BusinessRules
             _mediaSourcePath = new MediaSourcePath();
         }
 
-        public string AddFile(string filename, MediaPathType mediaPathType, out SharedMediaFileEdit mediaFileEdit)
+        public string AddFile(string filename, MediaPathType mediaPathType, out SharedMediaFileModel mediaFileModel)
         {
             string errMsg = null;
-            mediaFileEdit = null;
+            mediaFileModel = null;
 
             try
             {
@@ -40,7 +40,7 @@ namespace Keebee.AAT.BusinessRules
                 if (mediaPathType.Category != MediaPathTypeCategoryDescription.Audio)
                     thumb = thumbnailGenerator.Generate(mediaFile.StreamId, out errMsg);
 
-                mediaFileEdit = GetMediaFileEdit(mediaFile, mediaPathType, thumb);
+                mediaFileModel = GetMediaFileModel(mediaFile, mediaPathType, thumb);
             }
             catch (Exception ex)
             {
@@ -138,12 +138,12 @@ namespace Keebee.AAT.BusinessRules
             }
         }
 
-        private static SharedMediaFileEdit GetMediaFileEdit(
+        private static SharedMediaFileModel GetMediaFileModel(
                 MediaFile mediaFile,
                 MediaPathType mediaPathType,
                 byte[] thumb)
         {
-            return new SharedMediaFileEdit
+            return new SharedMediaFileModel
             {
                 StreamId = mediaFile.StreamId,
                 Filename = mediaFile.Filename.Replace($".{mediaFile.FileType}", string.Empty),

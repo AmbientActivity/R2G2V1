@@ -146,12 +146,14 @@ namespace Keebee.AAT.Administrator.Controllers
         public JsonResult Delete(int id)
         {
             string errMsg;
-            var configs = new Config[0];
+            var deletedId = 0;
 
             try
             {
                 errMsg = _configsClient.Delete(id);
-                configs = _configsClient.Get().ToArray();
+                if (!string.IsNullOrEmpty(errMsg)) throw new Exception(errMsg);
+
+                deletedId = id;
             }
             catch (Exception ex)
             {
@@ -162,8 +164,7 @@ namespace Keebee.AAT.Administrator.Controllers
             {
                 Success = string.IsNullOrEmpty(errMsg),
                 ErrorMessage = errMsg,
-                ConfigList = GetConfigList(configs),
-                ConfigDetailList = GetConfigDetailList(configs)
+                DeletedId = deletedId
             }, JsonRequestBehavior.AllowGet);
         }
 

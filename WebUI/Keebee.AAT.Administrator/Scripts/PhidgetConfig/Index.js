@@ -358,8 +358,7 @@
                                     waitMessage: "Deleting..."
                                 })
                                 .then(function(deleteResult) {
-                                    createConfigArray({ list: deleteResult.ConfigList, insert: false });
-                                    createConfigDetailArray({ list: deleteResult.ConfigDetailList, insert: false });
+                                    self.remove(deleteResult.DeletedId);
                                     self.enableDetail();
                                     var activeId = deleteResult.ConfigList
                                         .filter(function(value) { return value.IsActive === true })[0].Id;
@@ -367,7 +366,6 @@
                                     enableButtons(true);
                                 })
                                 .catch(function() {
-                                    dialog.close();
                                     enableButtons(true);
                                 });
                             } else {
@@ -657,6 +655,27 @@
                             cd.responsetype(value.ResponseType);
                             cd.issystem(value.IsSystem);
                             cd.sortorder = value.SortOrder;
+                        });
+                    }
+
+                    self.remove = function (id) {
+                        self.removeDetails(id);
+
+                        var idx = self.configs().findIndex(function (value) {
+                            return value.id === id;
+                        });
+                        self.configs.splice(idx, 1);
+
+                        self.selectedConfigId(activeConfig.Id);
+                    }
+
+                    self.removeDetails = function (configId) {
+                        var details = self.configDetails().filter(function(value) {
+                            return value.configid === configId;
+                        });
+
+                        $(details).each(function(index, value) {
+                            self.removeDetail(value.id);
                         });
                     }
 

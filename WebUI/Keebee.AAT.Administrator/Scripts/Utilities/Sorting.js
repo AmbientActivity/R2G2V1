@@ -11,12 +11,13 @@
     utilities.sorting = {
         sortArray: function (options) {
             var config = {
-                fileArray: [],
+                array: [],
                 columns: [],
                 sortKey: "",
                 primarySortKey: "",
-                descending: true
-            };
+                descending: true,
+                observable: false
+        };
 
             $.extend(config, options);
              
@@ -43,13 +44,38 @@
                 }
             }
 
+            var sortPrimaryObservable = function (a, b, descending) {
+                var valuea;
+                var valueb;
+
+                if (isNaN(a[config.primarySortKey]())) {
+                    valuea = a[config.primarySortKey]().toString().toLowerCase();
+                    valueb = b[config.primarySortKey]().toString().toLowerCase();
+                } else {
+                    valuea = a[config.primarySortKey]();
+                    valueb = b[config.primarySortKey]();
+                }
+
+                if (!descending) {
+                    return valuea === valueb
+                        ? 0
+                        : (valuea < valueb ? -1 : 1);
+                } else {
+                    return valuea === valueb
+                        ? 0
+                        : (valuea > valueb ? -1 : 1);
+                }
+            }
+
             $(config.columns).each(function (index, value) {
                 if (value.sortKey === config.sortKey) {
-                    config.fileArray.sort(function (a, b) {
+                    config.array.sort(function (a, b) {
                         if (!value.boolean) {
-                            return sortTextOrNumber(a, b);
+                            if (!config.observable) return sortTextOrNumber(a, b);
+                            else return sortTextOrNumberObservable(a, b);
                         } else {
-                            return sortBoolean(a, b);
+                            if (!config.observable) return sortBoolean(a, b);
+                            else return sortBooleanObservable(a, b);
                         } 
                     });
                 }
@@ -125,7 +151,77 @@
                 }
             }
 
-            return config.fileArray;
+            function sortBooleanObservable(a, b) {
+                var boola = a[config.sortKey]();
+                var boolb = b[config.sortKey]();
+
+                if (config.descending) {
+                    if (boola === boolb) {
+                        return sortPrimaryObservable(a, b, false);
+                    } else {
+                        if (boola === true) {
+                            return -1;
+                        } else if (boolb === true) {
+                            return 1;
+                        } else {
+                            return sortPrimaryObservable(a, b, false);
+                        }
+                    }
+                } else {
+                    if (boola === boolb) {
+                        return sortPrimaryObservable(a, b, false);
+                    } else {
+                        if (boola === false) {
+                            return -1;
+                        } else if (boolb === false) {
+                            return 1;
+                        } else {
+                            return sortPrimaryObservable(a, b, false);
+                        }
+                    }
+                }
+            }
+
+            function sortTextOrNumberObservable(a, b) {
+                var valuea = null;
+                var valueb = null;
+
+                if (isNaN(a[config.sortKey]())) {
+                    if (a[config.sortKey]() !== null)
+                        valuea = a[config.sortKey]().toString().toLowerCase();
+
+                    if (b[config.sortKey]() !== null)
+                        valueb = b[config.sortKey]().toString().toLowerCase();
+                } else {
+                    valuea = a[config.sortKey]();
+                    valueb = b[config.sortKey]();
+                }
+
+                if (config.descending) {
+                    if (valuea === null) return -1;
+                    if (valueb === null) return 1;
+                    if (valuea > valueb) {
+                        return -1;
+                    }
+                    else if (valuea < valueb) {
+                        return 1;
+                    } else {
+                        return sortPrimaryObservable(a, b, false);
+                    }
+                } else {
+                    if (valuea === null) return 1;
+                    if (valueb === null) return -1;
+                    if (valuea < valueb) {
+                        return -1;
+                    } else if (valuea > valueb) {
+                        return 1;
+                    } else {
+                        return sortPrimaryObservable(a, b, false);
+                    }
+                }
+            }
+
+            return config.array;
         }
     }
 })(jQuery);

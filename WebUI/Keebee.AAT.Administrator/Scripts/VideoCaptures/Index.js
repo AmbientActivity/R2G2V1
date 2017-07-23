@@ -8,10 +8,11 @@
 ; (function ($) {
     videocaptures.index = {
         init: function () {
+            var isBinding = true;
+
             var sortDescending = false;
             var currentSortKey = "filename";
             var primarySortKey = "filename";
-            var isBinding = true;
 
             var lists = {
                 VideoCaptureList: []
@@ -137,7 +138,7 @@
                         }
                         self.videoCaptures(utilities.sorting.sortArray(
                             {
-                                fileArray: self.videoCaptures(),
+                                array: self.videoCaptures(),
                                 columns: self.columns(),
                                 sortKey: sortKey,
                                 primarySortKey: primarySortKey,

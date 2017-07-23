@@ -1,5 +1,4 @@
-﻿using System;
-using Keebee.AAT.BusinessRules.Models;
+﻿using Keebee.AAT.BusinessRules.Models;
 using Keebee.AAT.Shared;
 using Keebee.AAT.ApiClient.Clients;
 using Keebee.AAT.ApiClient.Models;
@@ -7,6 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Web.Script.Serialization;
+using System;
 
 namespace Keebee.AAT.BusinessRules
 {

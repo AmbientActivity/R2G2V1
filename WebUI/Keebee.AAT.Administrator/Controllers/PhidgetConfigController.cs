@@ -6,8 +6,10 @@ using Keebee.AAT.ApiClient.Clients;
 using Keebee.AAT.ApiClient.Models;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Web.Mvc;
+using Microsoft.Ajax.Utilities;
 
 namespace Keebee.AAT.Administrator.Controllers
 {
@@ -106,33 +108,42 @@ namespace Keebee.AAT.Administrator.Controllers
         public JsonResult Save(ConfigEditViewModel config, int selectedConfigId)
         {
             string errMsg;
-            var configs = new Config[0];
-            var configid = -1;
+            ConfigViewModel vm = null;
+            ConfigDetailViewModel[] detailVm = null;
 
             try
             {
-                configid = config.Id;
+                var configid = config.Id;
 
-                errMsg = configid > 0 
-                    ? UpdateConfig(config) 
-                    : AddConfig(config, selectedConfigId, out configid);
+                if (configid > 0)
+                {
+                    errMsg = UpdateConfig(config);
+                    var c = _configsClient.Get(configid);
+                    vm = GetConfigViewModel(c);
+                }
+                else
+                {
+                    errMsg = AddConfig(config, selectedConfigId, out configid);
+                    if (!string.IsNullOrEmpty(errMsg)) throw new Exception();
 
-                configs = _configsClient.Get().ToArray();
+                    var cfg = _configsClient.GetWithDetails(configid);
+                    vm = GetConfigViewModel(cfg);
+                    detailVm = cfg.ConfigDetails.Select(GetConfigDetailViewModel).ToArray();
+                }
             }
             catch (Exception ex)
             {
                 errMsg = ex.Message;
             }
 
-            var success = string.IsNullOrEmpty(errMsg);
-
             return Json(new
             {
-                SelectedId = configid,
-                ConfigList = GetConfigList(configs),
-                ConfigDetailList = GetConfigDetailList(configs),
-                Success = success,
-                ErrorMessage = errMsg
+                Success = string.IsNullOrEmpty(errMsg),
+                ErrorMessage = errMsg,
+                ConfigList = vm != null
+                    ? new Collection<ConfigViewModel> { vm }
+                    : new Collection<ConfigViewModel> { new ConfigViewModel() },
+                ConfigDetailList = detailVm
             }, JsonRequestBehavior.AllowGet);
         }
 
@@ -141,22 +152,24 @@ namespace Keebee.AAT.Administrator.Controllers
         public JsonResult Delete(int id)
         {
             string errMsg;
+            var configs = new Config[0];
 
             try
             {
                 errMsg = _configsClient.Delete(id);
+                configs = _configsClient.Get().ToArray();
             }
             catch (Exception ex)
             {
                 errMsg = ex.Message;
             }
 
-            var success = string.IsNullOrEmpty(errMsg);
             return Json(new
             {
-                ConfigList = GetConfigList(_configsClient.Get().ToArray()),
-                ErrorMessage = !success ? errMsg : null,
-                Success = success,
+                Success = string.IsNullOrEmpty(errMsg),
+                ErrorMessage = errMsg,
+                ConfigList = GetConfigList(configs),
+                ConfigDetailList = GetConfigDetailList(configs)
             }, JsonRequestBehavior.AllowGet);
         }
 
@@ -191,31 +204,35 @@ namespace Keebee.AAT.Administrator.Controllers
         public JsonResult SaveDetail(ConfigDetailEditViewModel configDetail)
         {
             string errMsg;
-            var configDetailid = 0;
-            var configs = new Config[0];
+            ConfigDetailViewModel vm = null;
 
             try
             {
-                configDetailid = configDetail.Id;
+                var configDetailid = configDetail.Id;
 
                 errMsg = configDetailid > 0 
                     ? UpdateConfigDetail(configDetail) 
                     : AddConfigDetail(configDetail, out configDetailid);
 
-                configs = _configsClient.Get().ToArray();
+                if (configDetailid > 0)
+                {
+                    var detail = _configsClient.GetDetail(configDetailid);
+                    vm = GetConfigDetailViewModel(detail);
+                }
             }
             catch (Exception ex)
             {
                 errMsg = ex.Message;
             }
 
-            var success = string.IsNullOrEmpty(errMsg);
             return Json(new
             {
-                ConfigDetailList = GetConfigDetailList(configs),
-                SelectedId = configDetailid,
-                Success = success,
-                ErrorMessage = errMsg
+                Success = string.IsNullOrEmpty(errMsg),
+                ErrorMessage = errMsg,
+                ConfigDetailList = vm != null 
+                    ? new Collection <ConfigDetailViewModel> { vm } 
+                    : new Collection<ConfigDetailViewModel> { new ConfigDetailViewModel() }
+
             }, JsonRequestBehavior.AllowGet);
         }
 
@@ -224,7 +241,7 @@ namespace Keebee.AAT.Administrator.Controllers
         public JsonResult DeleteDetail(int id, int configId, bool isActive)
         {
             string errMsg;
-            var configs = new Config[0];
+            var deletedId = 0;
 
             try
             {
@@ -233,7 +250,7 @@ namespace Keebee.AAT.Administrator.Controllers
                 if (isActive)
                     SendNewConfiguration(configId);
 
-                configs = _configsClient.Get().ToArray();
+                deletedId = id;
             }
             catch (Exception ex)
             {
@@ -243,7 +260,7 @@ namespace Keebee.AAT.Administrator.Controllers
             var success = string.IsNullOrEmpty(errMsg);
             return Json(new
             {
-                ConfigDetailList = GetConfigDetailList(configs),
+                DeletedId = deletedId,
                 ErrorMessage = !success ? errMsg : null,
                 Success = success,
             }, JsonRequestBehavior.AllowGet);
@@ -254,7 +271,7 @@ namespace Keebee.AAT.Administrator.Controllers
         public JsonResult Activate(int configId)
         {
             string errMsg;
-            Config[] configs = null;
+            var configs = new Config[0];
 
             try
             {
@@ -276,9 +293,7 @@ namespace Keebee.AAT.Administrator.Controllers
             {
                 Success = string.IsNullOrEmpty(errMsg),
                 ErrorMessage = errMsg,
-                SelectedId = configId,
-                ConfigList = GetConfigList(configs),
-                ConfigDetailList = GetConfigDetailList(configs)
+                ConfigList = GetConfigList(configs)
             }, JsonRequestBehavior.AllowGet);
         }
 
@@ -288,24 +303,7 @@ namespace Keebee.AAT.Administrator.Controllers
             var customConfigs = configs.Where(x => x.Id != ConfigId.Default).OrderBy(x => x.Description).ToArray();
             var allConfigs = defaultConfig.Union(customConfigs);
 
-            var list = allConfigs
-                .Select(config => 
-                {
-                    {
-                        var vm = new ConfigViewModel
-                                {
-                                    Id = config.Id,
-                                    Description = config.Description,
-                                    IsActive = config.IsActive,
-                                    IsActiveEventLog = config.IsActiveEventLog,
-                                    CanDelete = !config.IsEventLogs
-                                                && !config.IsActive
-                                                && ConfigId.Default != config.Id
-                                };
-
-                        return vm;
-                    }
-                });
+            var list = allConfigs.Select(GetConfigViewModel);
 
             return list;
         }
@@ -314,25 +312,8 @@ namespace Keebee.AAT.Administrator.Controllers
         {
             var list = configs
                 .SelectMany(config => config.ConfigDetails
-                    .Select(cd =>
-                            {
-                                var vm = new ConfigDetailViewModel
-                                         {
-                                             Id = cd.Id,
-                                             ConfigId = config.Id,
-                                             SortOrder = cd.PhidgetType.Id,
-                                             PhidgetType = cd.PhidgetType.Description,
-                                             PhidgetStyleType = cd.PhidgetStyleType.Description,
-                                             Description = cd.Description,
-                                             Location = cd.Location,
-                                             ResponseType = cd.ResponseType.Description,
-                                             InteractiveActivityTypeId = cd.ResponseType.InteractiveActivityType?.Id ?? 0,
-                                             SwfFile = cd.ResponseType.InteractiveActivityType?.SwfFile ?? string.Empty,
-                                             IsSystem = cd.ResponseType.IsSystem,
-                                             CanEdit = !cd.IsEventLogs
-                                };
-                                return vm;
-                            })).ToArray();
+                    .Select(GetConfigDetailViewModel)).ToArray();
+
             return list;
         }
 
@@ -504,6 +485,37 @@ namespace Keebee.AAT.Administrator.Controllers
         {
             var rules = new PhidgetConfigRules();
             _messageQueueConfigSms.Send(rules.GetMessageBody(configId));
+        }
+
+        private static ConfigDetailViewModel GetConfigDetailViewModel(ConfigDetail detail)
+        {
+            return new ConfigDetailViewModel
+            {
+                Id = detail.Id,
+                ConfigId = detail.ConfigId,
+                SortOrder = detail.PhidgetType.Id,
+                PhidgetType = detail.PhidgetType.Description,
+                PhidgetStyleType = detail.PhidgetStyleType.Description,
+                Description = detail.Description,
+                Location = detail.Location,
+                ResponseType = detail.ResponseType.Description,
+                IsSystem = detail.ResponseType.IsSystem,
+                CanEdit = !detail.IsEventLogs
+            };
+        }
+
+        private static ConfigViewModel GetConfigViewModel(Config config)
+        {
+            return new ConfigViewModel
+            {
+                Id = config.Id,
+                Description = config.Description,
+                IsActive = config.IsActive,
+                IsActiveEventLog = config.IsActiveEventLog,
+                CanDelete = !config.IsEventLogs
+                                && !config.IsActive
+                                && ConfigId.Default != config.Id
+            };
         }
     }
 }

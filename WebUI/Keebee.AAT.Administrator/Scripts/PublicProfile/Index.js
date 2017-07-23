@@ -8,6 +8,7 @@
 ; (function ($) {
     publicprofile.index = {
         init: function (options) {
+            var isBinding = true;
 
             var config = {
                 selectedMediaPathTypeId: 0
@@ -29,7 +30,6 @@
             var sortDescending = false;
             var currentSortKey = "filename";
             var primarySortKey = "filename";
-            var isBinding = true;
 
             var lists = {
                 FileList: [],
@@ -347,7 +347,7 @@
                         }
                         self.files(utilities.sorting.sortArray(
                             {
-                                fileArray: self.files(),
+                                array: self.files(),
                                 columns: self.columns(),
                                 sortKey: sortKey,
                                 primarySortKey: primarySortKey,
@@ -554,7 +554,7 @@
                                     }
                                 })
                                 .then(function (deleteResult) {
-                                    self.deleteIds(deleteResult.DeletedIds);
+                                    self.removeFiles(deleteResult.DeletedIds);
                                     self.selectedIds([]);
                                     self.checkSelectAll(false);
                                     enableDetail();
@@ -742,7 +742,7 @@
                         enableDetail();
                     }
 
-                    self.deleteIds = function (ids) {
+                    self.removeFiles = function (ids) {
                         $(ids).each(function (index, value) {
                             var idx = self.files().findIndex(function (row) {
                                 return row.id === value;

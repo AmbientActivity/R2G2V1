@@ -7,6 +7,8 @@
 ; (function ($) {
     residentprofile.index = {
         init: function (options) {
+            var isBinding = true;
+
             var config = {
                 residentid: 0,
                 selectedMediaPathTypeId: 0
@@ -17,7 +19,6 @@
             // buttons
             var cmdDelete = $("#delete");
             var cmdAdd = $("#add");
-            var cmdAddShared = $("#add-shared");
 
             // audio player
             var audioPlayer = $("#audio-player");
@@ -29,8 +30,7 @@
             var sortDescending = false;
             var currentSortKey = "filename";
             var primarySortKey = "filename";
-            var isBinding = true;
-
+            
             var lists = {
                 FileList: [],
                 MediaPathTypeList: []
@@ -345,7 +345,7 @@
                         }
                         self.files(utilities.sorting.sortArray(
                             {
-                                fileArray: self.files(),
+                                array: self.files(),
                                 columns: self.columns(),
                                 sortKey: sortKey,
                                 primarySortKey: primarySortKey,
@@ -547,7 +547,7 @@
                                     }
                                 })
                                 .then(function (deleteResult) {
-                                    self.deleteSelectedIds(deleteResult.DeletedIds);
+                                    self.removeFiles(deleteResult.DeletedIds);
                                     self.selectedIds([]);
                                     self.checkSelectAll(false);
                                     enableDetail();
@@ -804,7 +804,7 @@
                         };
                     };
 
-                    self.deleteSelectedIds = function () {
+                    self.removeFiles = function () {
                         $(self.selectedIds()).each(function (index, value) {
                             var idx = self.files().findIndex(function (row) {
                                 return row.id === value;

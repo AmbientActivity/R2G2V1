@@ -8,6 +8,7 @@
 ; (function ($) {
     systemprofile.index = {
         init: function (options) {
+            var isBinding = true;
 
             var config = {
                 selectedMediaPathTypeId: 0
@@ -24,8 +25,6 @@
             var sortDescending = false;
             var currentSortKey = "filename";
             var primarySortKey = "filename";
-            var dateAddedSortKey = "dateadded";
-            var isBinding = true;
 
             var lists = {
                 FileList: [],
@@ -215,24 +214,14 @@
                     self.sort = function (header) {
                         if (isBinding) return;
 
-                        var afterAdd = typeof header.afterAdd !== "undefined" ? header.afterAdd : false;
-                        var afterDelete = typeof header.afterDelete !== "undefined" ? header.afterDelete : false;
-                        var sortKey;
+                        var sortKey = header.sortKey;
 
-                        if (!afterAdd && !afterDelete) {
-                            sortKey = header.sortKey;
-
-                            if (sortKey !== currentSortKey) {
-                                sortDescending = false;
-                            } else {
-                                sortDescending = !sortDescending;
-                            }
-                        } else if (afterAdd) {
-                            sortKey = dateAddedSortKey;
-                            sortDescending = true;
-                        } else if (afterDelete) {
-                            sortKey = currentSortKey;
+                        if (sortKey !== currentSortKey) {
+                            sortDescending = false;
+                        } else {
+                            sortDescending = !sortDescending;
                         }
+
                         currentSortKey = sortKey;
 
                         var isboolean = false;
@@ -240,13 +229,13 @@
                             isboolean = header.boolean;
                         }
                         self.files(utilities.sorting.sortArray({
-                                fileArray: self.files(),
-                                columns: self.columns(),
-                                sortKey: sortKey,
-                                primarySortKey: primarySortKey,
-                                descending: sortDescending,
-                                boolean: isboolean
-                            }));
+                            array: self.files(),
+                            columns: self.columns(),
+                            sortKey: sortKey,
+                            primarySortKey: primarySortKey,
+                            descending: sortDescending,
+                            boolean: isboolean
+                        }));
                     };
 
                     self.selectedMediaPathTypeId.subscribe(function (id) {
@@ -387,8 +376,7 @@
                                     }
                                 })
                                 .then(function (deleteResult) {
-                                    self.deleteIds(deleteResult.DeletedIds);
-                                    self.sort({ afterDelete: true });
+                                    self.removeFiles(deleteResult.DeletedIds);
                                     self.selectedIds([]);
                                     self.checkSelectAll(false);
                                     self.enableDetail();
@@ -515,7 +503,7 @@
                         }
                     };
 
-                    self.deleteIds = function (ids) {
+                    self.removeFiles = function (ids) {
                         $(ids).each(function (index, value) {
                             var idx = self.files().findIndex(function (row) {
                                 return row.id === value;

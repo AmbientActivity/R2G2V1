@@ -11,6 +11,9 @@
         init: function () {
             var isBinding = true;
 
+            var primarySortKey = "sortorder";
+            var primarySortKeyConfig = "description";
+
             // buttons            
             var cmdAdd = $("#add");
             var cmdEdit = $("#edit");
@@ -87,12 +90,12 @@
                     self.id = id;
                     self.configid = configid;
                     self.sortorder = sortorder;
-                    self.phidgettype = phidgettype;
-                    self.phidgetstyletype = phidgetstyletype;
-                    self.description = description;
-                    self.location = location;
-                    self.responsetype = responsetype;
-                    self.issystem = issystem;
+                    self.phidgettype = ko.observable(phidgettype);
+                    self.phidgetstyletype = ko.observable(phidgetstyletype);
+                    self.description = ko.observable(description);
+                    self.location = ko.observable(location);
+                    self.responsetype = ko.observable(responsetype);
+                    self.issystem = ko.observable(issystem);
                     self.canedit = canedit;
                 }
 
@@ -100,15 +103,13 @@
                     var self = this;
 
                     self.id = id;
-                    self.description = description;
-                    self.isactive = isactive;
-                    self.isactiveeventlog = isactiveeventlog;
-                    self.candelete = candelete;
+                    self.description = ko.observable(description);
+                    self.isactive = ko.observable(isactive);
+                    self.isactiveeventlog = ko.observable(isactiveeventlog);
+                    self.candelete = ko.observable(candelete);
                 }
 
                 function ConfigViewModel() {
-                    var tblConfigDetail = $("#tblConfigDetail");
-
                     var self = this;
 
                     self.configs = ko.observableArray([]);
@@ -121,12 +122,12 @@
                         ? self.activeEventLogDesc = ko.observable("On")
                         : self.activeEventLogDesc = ko.observable("Off");
 
-                    self.selectedConfigDetail = ko.observable([]);
+                    self.selectedConfigDetail = ko.observable({});
                     self.isLoadingConfigs = ko.observable(false);
                     self.totalConfigDetails = ko.observable(0);
 
-                    createConfigDetailArray(lists.ConfigDetailList);
-                    createConfigArray(lists.ConfigList);
+                    createConfigDetailArray({ list: lists.ConfigDetailList, insert: false });
+                    createConfigArray({ list: lists.ConfigList, insert: false });
 
                     function enableButtons(enable) {
                         cmdAdd.prop("hidden", enable);
@@ -142,56 +143,88 @@
                         }
                     }
 
-                    function createConfigDetailArray(list) {
-                        self.configDetails.removeAll();
-                        $(list)
-                            .each(function (index, value) {
-                                pushConfigDetail(value);
-                            });
+                    function createConfigDetailArray(params) {
+                        var cfg = {
+                            list: [],
+                            insert: false
+                        };
+
+                        $.extend(cfg, params);
+
+                        if (!cfg.insert)
+                            self.configDetails.removeAll();
+
+                        $(cfg.list).each(function (index, value) {
+                            self.configDetails.push(new ConfigDetail(value.Id,
+                                value.ConfigId,
+                                value.SortOrder,
+                                value.PhidgetType,
+                                value.PhidgetStyleType,
+                                value.Description,
+                                value.Location,
+                                value.ResponseType,
+                                value.IsSystem,
+                                value.CanEdit
+                            ));
+                        });
                     };
 
-                    function createConfigArray(list) {
+                    function createConfigArray(params) {
+                        var cfg = {
+                            list: [],
+                            insert: false
+                        };
+
+                        $.extend(cfg, params);
+
                         self.isLoadingConfigs(true);
-                        self.configs.removeAll();
-                        $(list)
-                            .each(function (index, value) {
-                                pushConfig(value);
+
+                        if (!cfg.insert)
+                            self.configs.removeAll();
+
+                        $(cfg.list).each(function (index, value) {
+                            self.configs.push(new Config(
+                                value.Id,
+                                value.Description,
+                                value.IsActive,
+                                value.IsActiveEventLog,
+                                value.CanDelete));
                             });
                         self.isLoadingConfigs(false);
                     };
 
                     self.columns = ko.computed(function () {
                         var arr = [];
-                        arr.push({ title: "Phidget", sortKey: "phidgettype", cssClass: "" });
-                        arr.push({ title: "Style", sortKey: "phidgetstyletype", cssClass: "" });
-                        arr.push({ title: "Description", sortKey: "description", cssClass: "" });
-                        arr.push({ title: "Location", sortKey: "location", cssClass: "" });
-                        arr.push({ title: "Response", sortKey: "responsetype", cssClass: "" });
-                        arr.push({ title: "System", sortKey: "issystem", cssClass: "col-issytem" });
+                        arr.push({ title: "Phidget", sortKey: "phidgettype", cssClass: "", visible: true });
+                        arr.push({ title: "Style", sortKey: "phidgetstyletype", cssClass: "", visible: true });
+                        arr.push({ title: "Description", sortKey: "description", cssClass: "", visible: true });
+                        arr.push({ title: "Location", sortKey: "location", cssClass: "", visible: true });
+                        arr.push({ title: "Response", sortKey: "responsetype", cssClass: "", visible: true });
+                        arr.push({ title: "System", sortKey: "issystem", cssClass: "col-issytem", visible: true });
+                        arr.push({ title: "SortOrder", sortKey: "sortorder", cssClass: "", visible: false });
                         return arr;
                     });
 
-                    function pushConfig(value) {
-                        self.configs.push(new Config(value.Id, value.Description, value.IsActive, value.IsActiveEventLog, value.CanDelete));
-                    };
-
-                    function pushConfigDetail(value) {
-                        self.configDetails.push(new ConfigDetail(value.Id,
-                            value.ConfigId,
-                            value.SortOrder,
-                            value.PhidgetType,
-                            value.PhidgetStyleType,
-                            value.Description,
-                            value.Location,
-                            value.ResponseType,
-                            value.IsSystem,
-                            value.CanEdit));
-                    };
-
                     self.sort = function () {
-                        self.filteredConfigDetails().sort(function (a, b) {
-                            return a.sortorder > b.sortorder ? 1 : 0;
-                        });
+                        self.configDetails(utilities.sorting.sortArray(
+                        {
+                            array: self.configDetails(),
+                            columns: self.columns(),
+                            sortKey: primarySortKey,
+                            primarySortKey: primarySortKey,
+                            descending: false
+                        }));
+                    };
+
+                    self.sortConfigs = function () {
+                        self.configs(utilities.sorting.sortArray(
+                        {
+                            array: self.configs(),
+                            columns: self.columns(),
+                            sortKey: primarySortKeyConfig,
+                            primarySortKey: primarySortKeyConfig,
+                            descending: false
+                        }));
                     };
 
                     self.filteredConfigDetails = ko.computed(function () {
@@ -205,11 +238,6 @@
                         self.totalConfigDetails(filteredConfigDetails.length);
                         return filteredConfigDetails;
                     });
-
-                    self.highlightRow = function (row) {
-                        var r = tblConfigDetail.find("#row_" + row.id);
-                        $(r).addClass("highlight").siblings().removeClass("highlight");
-                    };
 
                     self.editConfig = function (add) {
                         if (isBinding) return;
@@ -257,19 +285,28 @@
                                                         selectedConfigId: self.selectedConfigId()
                                                     }
                                                 })
-                                                .then(function(saveResult) {
-                                                    $.extend(lists, saveResult);
-                                                    createConfigArray(lists.ConfigList);
-                                                    createConfigDetailArray(lists.ConfigDetailList);
-                                                    self.selectedConfigId(saveResult.SelectedId);
-                                                    activeConfig = saveResult.ConfigList
-                                                        .filter(function(value) { return value.IsActive; })[0];
-                                                    self.activeConfigId(activeConfig.Id);
-                                                    self.activeConfigDesc(activeConfig.Description);
-                                                    if (activeConfig.IsActiveEventLog === true)
-                                                        self.activeEventLogDesc("On");
-                                                    else
-                                                        self.activeEventLogDesc("Off");
+                                                .then(function(saveResult) {                                                    
+                                                    if (saveResult.ConfigList.length > 0) {
+                                                        var c = saveResult.ConfigList[0];
+
+                                                        if (add) {
+                                                            createConfigArray({ list: saveResult.ConfigList, insert: true });
+                                                            createConfigDetailArray({ list: saveResult.ConfigDetailList, insert: true });
+                                                            self.sortConfigs();
+                                                            self.sort();
+
+                                                            if (c.Id === self.activeConfigId()) {
+                                                                if (c.IsActiveEventLog === true)
+                                                                    self.activeEventLogDesc("On");
+                                                                else
+                                                                    self.activeEventLogDesc("Off");
+                                                            }
+                                                        } else {
+                                                            self.update(saveResult.ConfigList);
+                                                        }
+
+                                                        self.selectedConfigId(saveResult.ConfigList[0].Id);
+                                                    }
                                                     self.enableDetail();
                                                     enableButtons(true);
                                                 })
@@ -320,13 +357,12 @@
                                     params: { id: id },
                                     waitMessage: "Deleting..."
                                 })
-                                .then(function(result) {
-                                    lists.ConfigList = result.ConfigList;
-                                    createConfigArray(lists.ConfigList);
+                                .then(function(deleteResult) {
+                                    createConfigArray({ list: deleteResult.ConfigList, insert: false });
+                                    createConfigDetailArray({ list: deleteResult.ConfigDetailList, insert: false });
                                     self.enableDetail();
-                                    var activeId = lists.ConfigList
-                                        .filter(function(value) { return value.IsActive === true })[0]
-                                        .Id;
+                                    var activeId = deleteResult.ConfigList
+                                        .filter(function(value) { return value.IsActive === true })[0].Id;
                                     self.selectedConfigId(activeId);
                                     enableButtons(true);
                                 })
@@ -349,16 +385,14 @@
                         $("#edit_" + id).tooltip("hide");
                         cmdAddDetail.tooltip("hide");
                         enableButtons(false);  
-                        
-                        if (!add) { self.highlightRow(row); }
-                       
+
                         var title = "<span class='glyphicon glyphicon-pencil' style='color: #fff'></span>";
                         title = add
                             ? title + " Add Configuration Item"
                             : title + " Edit Configuration Item";
 
                         if (add) {
-                            self.selectedConfigDetail([]);
+                            self.selectedConfigDetail({});
                         } else {
                             var configDetail = self.getConfigDetail(id);
                             self.selectedConfigDetail(configDetail);
@@ -388,13 +422,19 @@
                                                     type: "POST",
                                                     params: { configdetail: configdetail }
                                                 })
-                                                .then(function(saveResult) {
-                                                    lists.ConfigDetailList = saveResult.ConfigDetailList;
-                                                    createConfigDetailArray(lists.ConfigDetailList);
-                                                    self
-                                                        .selectedConfigDetail(self.getConfigDetail(saveResult
-                                                            .SelectedId));
-                                                    self.highlightRow(self.selectedConfigDetail());
+                                                .then(function (saveResult) {
+                                                    if (add) {
+                                                        createConfigDetailArray({ list: saveResult.ConfigDetailList, insert: true });
+                                                    } else {
+                                                        self.updateDetail(saveResult.ConfigDetailList);
+                                                    }
+
+                                                    if (saveResult.ConfigDetailList.length > 0) {
+                                                        self.marqueeRows(saveResult.ConfigDetailList);
+                                                        self.selectedConfigDetail({});
+                                                        self.unHighlightRows();
+                                                    }
+
                                                     self.enableDetail();
                                                     self.sort();
                                                     enableButtons(true);
@@ -421,8 +461,7 @@
 
                         enableButtons(false);
 
-                        if (id > 0) self.highlightRow(row);
-                        else return;
+                        if (id === 0) return;
 
                         var title = "<span class='glyphicon glyphicon-trash' style='color: #fff'></span>";                        
                         var cd = self.getConfigDetail(id);
@@ -430,7 +469,7 @@
                         utilities.confirm.show({
                             type: BootstrapDialog.TYPE_DANGER,
                             title: title + " Delete Configuration Detail",
-                            message: "Delete <b>" + cd.phidgettype + "</b> detail item for actvity <i><b>" + cd.description + "</b></i>?",
+                            message: "Delete <b>" + cd.phidgettype() + "</b> detail item for actvity <i><b>" + cd.description() + "</b></i>?",
                             buttonOK: "Yes, Delete",
                             buttonOKClass: "btn-danger"
                         })
@@ -446,9 +485,8 @@
                                     },
                                     waitMessage: "Deleting..."
                                 })
-                                .then(function(result) {
-                                    lists.ConfigDetailList = result.ConfigDetailList;
-                                    createConfigDetailArray(lists.ConfigDetailList);
+                                .then(function(deleteResult) {
+                                    self.removeDetail(deleteResult.DeletedId);
                                     self.enableDetail();
                                     enableButtons(true);
                                 })
@@ -483,21 +521,22 @@
                                     params: { configId: configId },
                                     waitMessage: "Activating..."
                                 })
-                                .then(function(result) {
-                                    $.extend(lists, result);
-                                    createConfigArray(lists.ConfigList);
-                                    createConfigDetailArray(lists.ConfigDetailList);
-                                    activeConfig = result.ConfigList
-                                        .filter(function(value) { return value.IsActive; })[0];
-                                    self.activeConfigId(activeConfig.Id);
-                                    self.selectedConfigId(activeConfig.Id);
-                                    self.activeConfigDesc(activeConfig.Description);
-                                    if (activeConfig.IsActiveEventLog === true)
-                                        self.activeEventLogDesc("On");
-                                    else
-                                        self.activeEventLogDesc("Off");
+                                .then(function(activateResult) {
+                                    if (activateResult.ConfigList.length > 0) {
+                                        createConfigArray({ list: activateResult.ConfigList, insert: false });
+                                        activeConfig = activateResult.ConfigList.filter(function(value) {
+                                            return value.IsActive;
+                                        })[0];
+                                        self.activeConfigId(activeConfig.Id);
+                                        self.selectedConfigId(activeConfig.Id);
+                                        self.activeConfigDesc(activeConfig.Description);
+                                        if (activeConfig.IsActiveEventLog === true)
+                                            self.activeEventLogDesc("On");
+                                        else
+                                            self.activeEventLogDesc("Off");
+                                    }
+                                    
                                     self.enableDetail();
-                                    dialog.close();
                                     enableButtons(true);
                                 })
                                 .catch(function() {
@@ -518,6 +557,19 @@
                             IsActiveEventLog: isactiveeventlog,
                             IsActive: self.selectedConfigId() === self.activeConfigId()
                         };
+                    };
+
+                    self.getConfig = function(configid) {
+                        var config = null;
+
+                        ko.utils.arrayForEach(self.configs(),
+                            function(item) {
+                                if (item.id === configid) {
+                                    config = item;
+                                }
+                            });
+
+                        return config;
                     };
 
                     self.getConfigDetail = function (configDetailid) {
@@ -550,28 +602,21 @@
                         };
                     };
 
+                    self.marqueeRows = function (configDetailList) {
+                        $(configDetailList).each(function (index, value) {
+                            var id = value.Id;
+                            $("#row_" + id).addClass("row-added");
+                            setTimeout(function () {
+                                $("#row_" + id).removeClass("row-added");
+                            }, 1500);
+                        });
+                    };
+
                     self.enableDetail = function () {
                         if (self.isLoadingConfigs()) return;
 
                         var configId = self.selectedConfigId();
 
-                        // COMMENTED - allow configuration to be activated at any time
-
-                        // count of details
-                        //var detailCount = self.configDetails().filter(function (value) {
-                        //    return value.configid === configId;
-                        //}).length;
-
-                        // activate  button
-                        //if (self.activeConfigId() === configId || detailCount === 0) {
-                        //    $("#activate").prop("disabled", true);
-                        //} else {
-                        //    $("#activate").prop("disabled", false);
-                        //}
-
-                        // COMMENTED - allow configuration to be activated at any time
-
-                        // delete button
                         if (self.canDeleteConfig(configId)) {
                             cmdDelete.removeAttr("disabled");
                         } else {
@@ -581,15 +626,47 @@
 
                     self.canDeleteConfig = function (id) {
                         return self.configs()
-                            .filter(function (value) { return value.id === id; })
-                            [0].candelete;
+                            .filter(function(value) { return value.id === id; })
+                            [0].candelete();
                     };
 
                     self.selectedConfigDesc = function () {
                         return self.configs()
                             .filter(function (value) { return value.id === self.selectedConfigId(); })
-                            [0].description;
+                            [0].description();
                     };
+
+                    self.update = function (configList) {
+                        $(configList).each(function (index, value) {
+                            var c = self.getConfig(value.Id);
+
+                            c.description(value.Description);
+                            c.isActive(value.IsActive);
+                            c.isactiveeventlog(value.IsActiveEventLog);
+                            c.candelete(value.CanDelete);
+                        });
+                    }
+
+                    self.updateDetail = function (configDetailList) {
+                        $(configDetailList).each(function(index, value) {
+                            var cd = self.getConfigDetail(value.Id);
+
+                            cd.phidgettype(value.PhidgetType);
+                            cd.phidgetstyletype(value.PhidgetStyleType);
+                            cd.description(value.Description);
+                            cd.location(value.Location);
+                            cd.responsetype(value.ResponseType);
+                            cd.issystem(value.IsSystem);
+                            cd.sortorder = value.SortOrder;
+                        });
+                    }
+
+                    self.removeDetail = function (id) {
+                        var idx = self.configDetails().findIndex(function (value) {
+                            return value.id === id;
+                        });
+                        self.configDetails.splice(idx, 1);
+                    }
                 }
             })
             .catch(function (error) {

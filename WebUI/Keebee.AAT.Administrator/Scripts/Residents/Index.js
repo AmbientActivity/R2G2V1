@@ -8,16 +8,15 @@
 ; (function ($) {
     residents.index = {
         init: function (options) {
+            var isBinding = true;   // <-- for initial page load only - used to stop the sort from being executed
+            var isRendering = true; // <-- for initial page load only - used to set focus to 'First Name' search input
 
             // buttons
             var cmdAdd = $("#add");
 
+            var sortDescending = false;
             var currentSortKey = "firstname";
             var primarySortKey = "firstname";
-            var dateCreatedSortKey = "datecreated";
-            var sortDescending = false;
-            var isBinding = true;   // <-- for initial page load only - used to stop the sort from being executed
-            var isRendering = true; // <-- for initial page load only - used to set focus to 'First Name' search input
 
             var config = {
                 selectedid: 0,
@@ -236,39 +235,30 @@
                     self.sort = function (header) {
                         if (isBinding) return;
 
-                        var afterSave = typeof header.afterSave !== "undefined" ? header.afterSave : false;
-                        var afterDelete = typeof header.afterDelete !== "undefined" ? header.afterDelete : false;
-                        var sortKey = currentSortKey;
+                        var sortKey = header.sortKey;
 
-                        if (!afterSave && !afterDelete) {
-                            sortKey = header.sortKey;
-
-                            if (sortKey !== currentSortKey) {
-                                sortDescending = false;
-                            } else {
-                                sortDescending = !sortDescending;
-                            }
-                        } else if (afterSave) {
-                            sortKey = dateCreatedSortKey;
-                            sortDescending = true;
-                        } else if (afterDelete) {
-                            sortKey = currentSortKey;
+                        if (sortKey !== currentSortKey) {
+                            sortDescending = false;
+                        } else {
+                            sortDescending = !sortDescending;
                         }
+
                         currentSortKey = sortKey;
 
                         var isboolean = false;
                         if (typeof header.boolean !== "undefined") {
                             isboolean = header.boolean;
                         }
-                        var residents = self.residents();
+
                         self.residents(utilities.sorting.sortArray(
                             {
-                                fileArray: self.residents(),
+                                array: self.residents(),
                                 columns: self.columns(),
                                 sortKey: sortKey,
                                 primarySortKey: primarySortKey,
                                 descending: sortDescending,
-                                boolean: isboolean
+                                boolean: isboolean,
+                                observable: true
                             }));
                     };
 
@@ -428,12 +418,8 @@
                                     title: "Delete Resident",
                                     waitMessage: "Deleting..."
                                 })
-                                .then(function () {
-                                    var idx = self.residents().findIndex(function (value) {
-                                        return value.id === id;
-                                    });
-                                    self.residents.splice(idx, 1);
-
+                                .then(function (deleteResult) {
+                                    self.removeResident(deleteResult.DeletedId);
                                     cmdAdd.prop("disabled", false);
                                 })
                                 .catch(function() {
@@ -494,6 +480,13 @@
                             Id: self.selectedResident().id, FirstName: firstname, LastName: lastname, Gender: gender, GameDifficultyLevel: gamedifficultylevel, AllowVideoCapturing: allowVideoCapturing, ProfilePicture: profilePicture
                         };
                     };
+
+                    self.removeResident = function (id) {
+                        var idx = self.residents().findIndex(function (value) {
+                            return value.id === id;
+                        });
+                        self.residents.splice(idx, 1);
+                    }
                 };
             })
             .catch(function (error) {

@@ -147,8 +147,8 @@ namespace Keebee.AAT.Administrator.Controllers
         public JsonResult Delete(int id)
         {
             string errorMsg;
-            bool success;
-            
+            var deletedId = 0;
+
             try
             {
                 var activeResident = _activeResidentClient.Get();
@@ -159,35 +159,33 @@ namespace Keebee.AAT.Administrator.Controllers
                 else
                 {
                     var rules = new ResidentRules { EventLogger = _systemEventLogger };
-                    errorMsg = rules.DeleteResident(id);
 
-                    if (errorMsg == null)
-                    {
-                        rules.DeleteFolders(id);
-                    }
+                    errorMsg = rules.DeleteResident(id);
+                    if (!string.IsNullOrEmpty(errorMsg)) throw new Exception(errorMsg);
+
+                    errorMsg = rules.DeleteFolders(id);
+                    if (!string.IsNullOrEmpty(errorMsg)) throw new Exception(errorMsg);
+
+                    deletedId = id;
                 }
 
-                success = (errorMsg == null);
-                if (success)
+                if (ServiceUtilities.IsInstalled(ServiceUtilities.ServiceType.BluetoothBeaconWatcher))
                 {
-                    if (ServiceUtilities.IsInstalled(ServiceUtilities.ServiceType.BluetoothBeaconWatcher))
-                    {
-                        // send the bluetooth beacon watcher the deleted resident
-                        _messageQueueBluetoothBeaconWatcherReload.Send(CreateMessageBodyFromResident(
-                            new ResidentViewModel{ Id = id, FirstName = string.Empty }, isDeleted: true));
-                    }
+                    // send the bluetooth beacon watcher the deleted resident
+                    _messageQueueBluetoothBeaconWatcherReload.Send(CreateMessageBodyFromResident(
+                        new ResidentViewModel{ Id = id, FirstName = string.Empty }, isDeleted: true));
                 }
             }
             catch (Exception ex)
             {
-                success = false;
                 errorMsg = ex.Message;
             }
 
             return Json(new
             {
-                Success = success,
-                ErrorMessage = errorMsg
+                Success = string.IsNullOrEmpty(errorMsg),
+                ErrorMessage = errorMsg,
+                DeletedId = deletedId
             }, JsonRequestBehavior.AllowGet);
         }
 

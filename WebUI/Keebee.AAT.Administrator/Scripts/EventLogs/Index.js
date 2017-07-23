@@ -8,11 +8,12 @@
 ; (function ($) {
     eventlogs.index = {
         init: function () {
+            var isBinding = true;
+
             var sortDescending = true;
             var currentSortKey = "filename";
             var primarySortKey = "filename";
-            var isBinding = true;
-
+            
             var lists = {
                 EventLogList: []
             };

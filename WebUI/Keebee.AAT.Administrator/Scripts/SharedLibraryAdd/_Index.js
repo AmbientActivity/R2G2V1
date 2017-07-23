@@ -9,6 +9,7 @@
 (function($) {
     sharedlibraryadd.index = {
         init: function (options) {
+            var isBinding = true;
 
             var config = {
                 profileId: 0,
@@ -31,7 +32,6 @@
             var sortDescending = false;
             var currentSortKey = "filename";
             var primarySortKey = "filename";
-            var isBinding = true;
 
             var lists = {
                 FileList: []
@@ -189,7 +189,7 @@
                         }
                         self.files(utilities.sorting.sortArray(
                         {
-                            fileArray: self.files(),
+                            array: self.files(),
                             columns: self.sharedcolumns(),
                             sortKey: sortKey,
                             primarySortKey: primarySortKey,

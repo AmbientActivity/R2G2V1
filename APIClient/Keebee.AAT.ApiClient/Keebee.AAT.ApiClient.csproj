@@ -69,7 +69,6 @@
     <Compile Include="Clients\ThumbnailsClient.cs" />
     <Compile Include="Clients\UserRolesClient.cs" />
     <Compile Include="Clients\UsersClient.cs" />
-    <Compile Include="JsonSerializer.cs" />
     <Compile Include="Models\ActiveResident.cs" />
     <Compile Include="Models\InteractiveActivityType.cs" />
     <Compile Include="Models\MediaFile.cs" />

@@ -80,6 +80,7 @@ namespace Keebee.AAT.Administrator.Controllers
             catch (Exception ex)
             {
                 errMsg = ex.Message;
+                _systemEventLogger.WriteEntry($"PublicProfile.GetData: {errMsg}", EventLogEntryType.Error);
             }
 
             return Json(new

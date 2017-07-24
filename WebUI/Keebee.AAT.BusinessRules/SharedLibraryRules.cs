@@ -75,12 +75,14 @@ namespace Keebee.AAT.BusinessRules
             return string.Empty;
         }
 
-        public static MediaPathType GetMediaPathTypeFromRawPath(string path, IEnumerable<MediaPathType> mediaPathTypes)
+        public static MediaPathType GetMediaPathTypeFromRawPath(string path, MediaPathType[] mediaPathTypes)
         {
             var folderName = path.Split(Path.DirectorySeparatorChar)
                 .GetValue((path.Split(Path.DirectorySeparatorChar).Length - 2)).ToString();
 
-            var mediaPathType = mediaPathTypes.Single(x => x.Path.Contains(folderName));
+            MediaPathType mediaPathType = null;
+            if (mediaPathTypes.Any(x => x.Path.Contains(folderName)))
+                mediaPathType = mediaPathTypes.Single(x => x.Path.Contains(folderName));
 
             return mediaPathType;
         }
@@ -123,19 +125,6 @@ namespace Keebee.AAT.BusinessRules
             return binaryData != null
                 ? $"data:image/jpg;base64,{Convert.ToBase64String(binaryData)}"
                 : null;
-        }
-
-        public static bool IsMediaTypeThumbnail(int mediaPathTypeId)
-        {
-            switch (mediaPathTypeId)
-            {
-                case MediaPathTypeId.Music:
-                case MediaPathTypeId.RadioShows:
-                case MediaPathTypeId.MatchingGameSounds:
-                    return false;
-                default:
-                    return true;
-            }
         }
 
         private static SharedMediaFileModel GetMediaFileModel(

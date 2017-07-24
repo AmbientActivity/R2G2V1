@@ -10,6 +10,7 @@ using System.Web.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Web;
 
 namespace Keebee.AAT.Administrator.Controllers
@@ -19,7 +20,6 @@ namespace Keebee.AAT.Administrator.Controllers
         // api client
         private readonly IMediaFilesClient _mediaFilesClient;
         private readonly IMediaPathTypesClient _mediaPathTypesClient;
-        private readonly IResponseTypesClient _responseTypesClient;
         private readonly IThumbnailsClient _thumbnailsClient;
 
         private readonly SystemEventLogger _systemEventLogger;
@@ -61,6 +61,7 @@ namespace Keebee.AAT.Administrator.Controllers
             catch (Exception ex)
             {
                 errMsg = ex.Message;
+                _systemEventLogger.WriteEntry($"SharedLibrary.GetData: {errMsg}", EventLogEntryType.Error);
             }
 
             return Json(new
@@ -93,6 +94,7 @@ namespace Keebee.AAT.Administrator.Controllers
             catch (Exception ex)
             {
                 errMsg = ex.Message;
+                _systemEventLogger.WriteEntry($"SharedLibrary.UploadFile: {errMsg}", EventLogEntryType.Error);
             }
 
             return Json(new
@@ -129,6 +131,7 @@ namespace Keebee.AAT.Administrator.Controllers
             catch (Exception ex)
             {
                 errMsg = ex.Message;
+                _systemEventLogger.WriteEntry($"SharedLibrary.AddFiles: {errMsg}", EventLogEntryType.Error);
             }
 
             return Json(new
@@ -141,7 +144,7 @@ namespace Keebee.AAT.Administrator.Controllers
 
         [HttpPost]
         [Authorize]
-        public JsonResult DeleteSelected(Guid[] streamIds, int mediaPathTypeId, bool isSharable)
+        public JsonResult DeleteSelected(Guid[] streamIds, string mediaPathTypeCategory, bool isSharable)
         {
             var errMsg = string.Empty;
             var rules = new SharedLibraryRules();
@@ -161,7 +164,7 @@ namespace Keebee.AAT.Administrator.Controllers
                         if (!string.IsNullOrEmpty(errMsg)) throw new Exception(errMsg);                        
                     }
 
-                    errMsg = DeleteSharedLibraryFile(mediaFile, mediaPathTypeId);
+                    errMsg = DeleteSharedLibraryFile(mediaFile, mediaPathTypeCategory);
                     if (!string.IsNullOrEmpty(errMsg)) throw new Exception(errMsg);
 
                     deletedIds.Add(streamId);
@@ -170,6 +173,7 @@ namespace Keebee.AAT.Administrator.Controllers
             catch (Exception ex)
             {
                 errMsg = ex.Message;
+                _systemEventLogger.WriteEntry($"SharedLibrary.DeleteSelected: {errMsg}", EventLogEntryType.Error);
             }
 
             return Json(new
@@ -226,6 +230,7 @@ namespace Keebee.AAT.Administrator.Controllers
             catch (Exception ex)
             {
                 errMsg = ex.Message;
+                _systemEventLogger.WriteEntry($"SharedLibrary.GetDataLinkedProfiles: {errMsg}", EventLogEntryType.Error);
             }
 
             return Json(new
@@ -261,13 +266,13 @@ namespace Keebee.AAT.Administrator.Controllers
         {
             var sharedMedia = _mediaFilesClient.GetWithLinkedData(_mediaSourcePath.SharedLibrary);
             var thumbnails = _thumbnailsClient.Get().ToArray();
-            var pathTypes = mediaPathTypes ?? _mediaPathTypesClient.Get().Where(mp => mp.IsSharable).ToArray();
+            var pathTypes = mediaPathTypes ?? _mediaPathTypesClient
+                .Get().Where(mp => mp.IsSharable);
 
             var media = sharedMedia.SelectMany(p =>
             {
-                var mediaPathType = SharedLibraryRules.GetMediaPathTypeFromRawPath(p.Path, pathTypes);
-
-                return p.Files.Select(f =>
+                var mediaPathType = SharedLibraryRules.GetMediaPathTypeFromRawPath(p.Path, pathTypes.ToArray());
+                return p.Files.Where(x => mediaPathType != null).Select(f =>
                 {
                     var thumb = thumbnails.FirstOrDefault(x => x.StreamId == f.StreamId);
                     return new SharedLibraryFileViewModel
@@ -281,33 +286,35 @@ namespace Keebee.AAT.Administrator.Controllers
                         NumLinkedProfiles = f.NumLinkedProfiles,
                         Thumbnail = SharedLibraryRules.GetThumbnail(thumb?.Image)
                     };
-                }).OrderBy(x => x.Filename);
+                })
+                
+                .OrderBy(x => x.Filename);
             });
 
             return media;
         }
 
-        private string DeleteSharedLibraryFile(MediaFilePath mediaFile, int mediaPathTypeId)
+        private string DeleteSharedLibraryFile(MediaFilePath mediaFile, string mediaPathTypeCategory)
         {
-            string errorMessage = null;
+            string errMsg = null;
 
             try
             {
                 var rules = new SharedLibraryRules { EventLogger = _systemEventLogger };
                 rules.DeleteFile($@"{mediaFile.Path}\{mediaFile.Filename}");
 
-                if (SharedLibraryRules.IsMediaTypeThumbnail(mediaPathTypeId))
+                if (mediaPathTypeCategory != MediaPathTypeCategoryDescription.Audio)
                 {
-                    errorMessage = _thumbnailsClient.Delete(mediaFile.StreamId);
+                    errMsg = _thumbnailsClient.Delete(mediaFile.StreamId);
                 }
                 
             }
             catch (Exception ex)
             {
-                errorMessage = ex.Message;
+                errMsg = ex.Message;
             }
 
-            return errorMessage;
+            return errMsg;
         }
     }
 }

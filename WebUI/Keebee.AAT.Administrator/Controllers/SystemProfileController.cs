@@ -73,6 +73,7 @@ namespace Keebee.AAT.Administrator.Controllers
             catch (Exception ex)
             {
                 errMsg = ex.Message;
+                _systemEventLogger.WriteEntry($"SystemProfile.GetData: {errMsg}", EventLogEntryType.Error);
             }
 
             return Json(new

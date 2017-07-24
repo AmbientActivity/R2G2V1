@@ -250,6 +250,7 @@
                                         path: value.Path,
                                         mediapathtypeid: value.MediaPathTypeId,
                                         numlinked: value.NumLinkedProfiles,
+                                        category: value.MediaPathTypeCategory,
                                         thumbnail: value.Thumbnail,
                                         isselected: false,
                                         isplaying: false,
@@ -268,6 +269,7 @@
                                         path: value.Path,
                                         mediapathtypeid: value.MediaPathTypeId,
                                         numlinked: value.NumLinkedProfiles,
+                                        category: value.MediaPathTypeCategory,
                                         thumbnail: value.Thumbnail,
                                         isselected: false,
                                         isplaying: false,
@@ -516,7 +518,7 @@
                                     waitMessage: "Deleting...",
                                     params: {
                                         streamIds: self.selectedStreamIds(),
-                                        mediaPathTypeId: self.selectedMediaPathType().id,
+                                        mediaPathTypeCategory: self.selectedMediaPathType().category,
                                         isSharable: self.isSharable()
                                     }
                                 })

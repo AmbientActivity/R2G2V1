@@ -127,6 +127,6 @@
     <Copy Condition="Exists('$(DeployedConfig)')" SourceFiles="$(IntermediateOutputPath)$(TargetFileName).config" DestinationFiles="$(DeployedConfig)" />
   </Target>
   <PropertyGroup>
-    <PreBuildEvent>xcopy $(SolutionDir)\3rdParty\Phidgets\Phidget21.NET.dll $(TargetDir) /Y</PreBuildEvent>
+    <PreBuildEvent>xcopy "$(SolutionDir)3rdParty\Phidgets\Phidget21.NET.dll" "$(TargetDir)" /Y</PreBuildEvent>
   </PropertyGroup>
 </Project>

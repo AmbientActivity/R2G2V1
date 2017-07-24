@@ -402,4 +402,7 @@
     <!--Publish copies the untransformed App.config to deployment directory so overwrite it-->
     <Copy Condition="Exists('$(DeployedConfig)')" SourceFiles="$(IntermediateOutputPath)$(TargetFileName).config" DestinationFiles="$(DeployedConfig)" />
   </Target>
+  <PropertyGroup>
+    <PreBuildEvent>xcopy "$(SolutionDir)Flash\Builds\*.swf" "$(TargetDir)" /Y</PreBuildEvent>
+  </PropertyGroup>
 </Project>

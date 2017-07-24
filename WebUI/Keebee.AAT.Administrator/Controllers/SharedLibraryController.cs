@@ -31,7 +31,6 @@ namespace Keebee.AAT.Administrator.Controllers
 
             _mediaFilesClient = new MediaFilesClient();
             _mediaPathTypesClient = new MediaPathTypesClient();
-            _responseTypesClient = new ResponseTypesClient(); 
             _thumbnailsClient = new ThumbnailsClient();
         }
 

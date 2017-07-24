@@ -41,7 +41,8 @@ namespace Keebee.AAT.Administrator.Controllers
 
             if (string.IsNullOrEmpty(errMsg))
             {
-                Session["IsBeaconWatcherServiceInstalled"] = activateBeaconWatcher ? "true" : "false";
+                if (Request.IsAuthenticated)
+                    Session["IsBeaconWatcherServiceInstalled"] = activateBeaconWatcher ? "true" : "false";
             }
 
             return Json(new

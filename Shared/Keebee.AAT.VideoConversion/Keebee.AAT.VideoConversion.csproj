@@ -59,8 +59,7 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PreBuildEvent>xcopy "$(SolutionDir)3rdParty\NReco\NReco.VideoConverter.dll" "$(TargetDir)" /Y
-xcopy "$(SolutionDir)\3rdParty\NReco\NReco.VideoInfo.dll" "$(TargetDir)" /Y</PreBuildEvent>
+    <PreBuildEvent>xcopy "$(SolutionDir)3rdParty\NReco\NReco.*.dll" "$(TargetDir)" /Y</PreBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

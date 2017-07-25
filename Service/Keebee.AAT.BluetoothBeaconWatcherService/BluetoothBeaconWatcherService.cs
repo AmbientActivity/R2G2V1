@@ -19,6 +19,8 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
 {
     public partial class BluetoothBeaconWatcherService : ServiceBase
     {
+        #region declaration
+
         // message queue
         private readonly CustomMessageQueue _messageQueueBeaconWatcher;
         private readonly CustomMessageQueue _messageQueueBeaconMonitor;
@@ -58,6 +60,8 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
 
         // timer
         private readonly Timer _timer;
+
+        #endregion
 
         public BluetoothBeaconWatcherService()
         {
@@ -281,7 +285,7 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
             }
         }
 
-        private void WatcherOnStopped(BluetoothLEAdvertisementWatcher sender, BluetoothLEAdvertisementWatcherStoppedEventArgs args)
+        private static void WatcherOnStopped(BluetoothLEAdvertisementWatcher sender, BluetoothLEAdvertisementWatcherStoppedEventArgs args)
         {
             string errorMsg = null;
             if (args != null)
@@ -439,8 +443,7 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
             }
             else
             {
-                if (!(beaconFrame is UrlEddystoneFrame) && !(beaconFrame is TlmEddystoneFrame))
-                    payload = BitConverter.ToString(((UnknownBeaconFrame)beaconFrame).Payload);
+                payload = BitConverter.ToString(((UnknownBeaconFrame)beaconFrame).Payload);
             }
 
             var payloadBytes = HexStringToByteArray(payload);

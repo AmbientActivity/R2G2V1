@@ -63,10 +63,8 @@
     <Compile Include="Beacon\BeaconFrameHelper.cs" />
     <Compile Include="Beacon\BeaconManager.cs" />
     <Compile Include="Beacon\KeebeeAATBeacon.cs" />
-    <Compile Include="Beacon\TlmEddystoneFrame.cs" />
     <Compile Include="Beacon\UidEddystoneFrame.cs" />
     <Compile Include="Beacon\UnknownBeaconFrame.cs" />
-    <Compile Include="Beacon\UrlEddystoneFrame.cs" />
     <Compile Include="BluetoothBeaconWatcherService.cs">
       <SubType>Component</SubType>
     </Compile>

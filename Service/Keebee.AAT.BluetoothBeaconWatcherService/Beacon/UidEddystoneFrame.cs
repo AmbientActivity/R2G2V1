@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Numerics;
@@ -37,8 +36,6 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService.Beacon
             }
         }
 
-        private byte[] _namespaceId;
-
         /// <summary>
         /// 10-byte namespace, intended to ensure ID uniqueness accross multiple
         /// Eddystone implementers.
@@ -47,18 +44,18 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService.Beacon
         /// </summary>
         public byte[] NamespaceId
         {
-            get { return _namespaceId; }
+            get { return NamespaceId1; }
             set
             {
-                if (_namespaceId == value) return;
+                if (NamespaceId1 == value) return;
                 if (value == null)
                 {
-                    _namespaceId = null;
+                    NamespaceId1 = null;
                     return;
                 }
-                if (_namespaceId != null && _namespaceId.SequenceEqual(value)) return;
-                _namespaceId = new byte[value.Length];
-                Array.Copy(value, _namespaceId, value.Length);
+                if (NamespaceId1 != null && NamespaceId1.SequenceEqual(value)) return;
+                NamespaceId1 = new byte[value.Length];
+                Array.Copy(value, NamespaceId1, value.Length);
                 UpdatePayload();
                 OnPropertyChanged();
                 OnPropertyChanged(nameof(NamespaceIdAsNumber));
@@ -107,17 +104,20 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService.Beacon
                 var tmpArray = (BitConverter.IsLittleEndian) ? InstanceId.Reverse().ToArray() : InstanceId;
                 var tst = new byte[8];
                 Array.Copy(tmpArray, 0, tst, 0, 6);
+
                 return BitConverter.ToUInt64(tst, 0);
             }
         }
+
+        public byte[] NamespaceId1 { get; set; }
 
         public UidEddystoneFrame(sbyte rangingData, byte[] namespaceId, byte[] instanceId)
         {
             _rangingData = rangingData;
             if (namespaceId != null && namespaceId.Length == 10)
             {
-                _namespaceId = new byte[10];
-                Array.Copy(namespaceId, _namespaceId, namespaceId.Length);
+                NamespaceId1 = new byte[10];
+                Array.Copy(namespaceId, NamespaceId1, namespaceId.Length);
             }
             if (instanceId != null && instanceId.Length == 6)
             {
@@ -127,10 +127,7 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService.Beacon
             UpdatePayload();
         }
 
-        public UidEddystoneFrame(byte[] payload) : base(payload)
-        {
-            ParsePayload();
-        }
+        public UidEddystoneFrame(byte[] payload) : base(payload){}
 
         /// <summary>
         /// Parse the current payload into the properties exposed by this class.
@@ -156,7 +153,7 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService.Beacon
             Array.Copy(Payload, BeaconFrameHelper.EddystoneHeaderSize + 1, newNamespaceId, 0, 10);
             if (NamespaceId == null || !newNamespaceId.SequenceEqual(NamespaceId))
             {
-                _namespaceId = newNamespaceId;
+                NamespaceId1 = newNamespaceId;
                 OnPropertyChanged(nameof(NamespaceId));
                 OnPropertyChanged(nameof(NamespaceIdAsNumber));
             }
@@ -184,7 +181,7 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService.Beacon
             if (NamespaceId == null || NamespaceId.Length != 10 ||
                 InstanceId == null || InstanceId.Length != 6)
             {
-                _payload = null;
+                Payload = null;
                 return;
             }
 
@@ -203,7 +200,7 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService.Beacon
                 ms.WriteByte(0x00);
                 ms.WriteByte(0x00);
                 // Save to payload (to direct array to prevent re-parsing and a potential endless loop of updating and parsing)
-                _payload = ms.ToArray();
+                Payload = ms.ToArray();
             }
         }
 

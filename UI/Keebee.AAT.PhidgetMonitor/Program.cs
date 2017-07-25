@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Keebee.AAT.PhidgetMonitor
@@ -12,7 +9,7 @@ namespace Keebee.AAT.PhidgetMonitor
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
-        static readonly Mutex Mutex = new Mutex(true, "{8F6F0AC4-B9A1-45fd-A8CF-72F04E6BDE8D}");
+        static readonly Mutex Mutex = new Mutex(true, "{8F6F0AC4-B9A1-45fd-A8CF-72F04E6BDE8C}");
         
         [STAThread]
         static void Main()

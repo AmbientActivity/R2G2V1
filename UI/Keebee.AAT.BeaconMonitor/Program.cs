@@ -12,7 +12,7 @@ namespace Keebee.AAT.BeaconMonitor
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
-        private static readonly Mutex Mutex = new Mutex(true, "{8F6F0AC4-B9A1-45fd-A8CF-72F04E6BDE8F}");
+        private static readonly Mutex Mutex = new Mutex(true, "{8F6F0AC4-B9A1-45fd-A8CF-72F04E6BDE8D}");
 
         [STAThread]
         private static void Main()

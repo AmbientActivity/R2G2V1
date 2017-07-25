@@ -55,9 +55,6 @@ namespace Keebee.AAT.PhidgetService
         private readonly CustomMessageQueue _messageQueuePhidget;
         private readonly CustomMessageQueue _messageQueuePhidgetContinuousRadio;
 
-        // event logger
-        private readonly SystemEventLogger _systemEventLogger;
-
         // sensor value
         private const int DefaultTouchSensorThreshold = 990;
         private readonly int _sensorThreshold;
@@ -88,7 +85,6 @@ namespace Keebee.AAT.PhidgetService
         {
             InitializeComponent();
 
-            _systemEventLogger = new SystemEventLogger(SystemEventLogType.PhidgetService);
             _configsClient = new ConfigsClient();
             _sensorThreshold = ValidateSensorThreshold(ConfigurationManager.AppSettings["TouchSensorThreshold"]);
             _inputDebounceTime = int.Parse(ConfigurationManager.AppSettings["InputDebounceTime"]);
@@ -103,14 +99,12 @@ namespace Keebee.AAT.PhidgetService
             _messageQueuePhidget = new CustomMessageQueue(new CustomMessageQueueArgs
             {
                 QueueName = MessageQueueType.Phidget
-            })
-            { SystemEventLogger = _systemEventLogger };
+            });
 
             _messageQueuePhidgetContinuousRadio = new CustomMessageQueue(new CustomMessageQueueArgs
             {
                 QueueName = MessageQueueType.PhidgetContinuousRadio
-            })
-            { SystemEventLogger = _systemEventLogger };
+            });
 
 #if DEBUG
             _messageQueuePhidgetMonitor = new CustomMessageQueue(new CustomMessageQueueArgs
@@ -131,16 +125,13 @@ namespace Keebee.AAT.PhidgetService
             {
                 QueueName = MessageQueueType.ConfigPhidget,
                 MessageReceivedCallback = MessageReceiveConfigPhidget
-            })
-
-            { SystemEventLogger = _systemEventLogger };
+            });
 
             var q2 = new CustomMessageQueue(new CustomMessageQueueArgs
             {
                 QueueName = MessageQueueType.DisplayPhidget,
                 MessageReceivedCallback = MessageReceivedDisplayPhidget
-            })
-            { SystemEventLogger = _systemEventLogger };
+            });
 
 #if DEBUG
             var q3 = new CustomMessageQueue(new CustomMessageQueueArgs
@@ -151,7 +142,7 @@ namespace Keebee.AAT.PhidgetService
 #endif
         }
 
-        private int ValidateSensorThreshold(string threshold)
+        private static int ValidateSensorThreshold(string threshold)
         {
 
             int thresholdValue;
@@ -167,7 +158,7 @@ namespace Keebee.AAT.PhidgetService
                 return thresholdValue;
             }
 
-            _systemEventLogger.WriteEntry($"Invalid SensorThreshold value: {threshold}", EventLogEntryType.Error);
+            SystemEventLogger.WriteEntry($"Invalid SensorThreshold value: {threshold}", SystemEventLogType.PhidgetService, EventLogEntryType.Error);
             return DefaultTouchSensorThreshold;
         }
 
@@ -225,7 +216,7 @@ namespace Keebee.AAT.PhidgetService
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"SensorChange: {ex.Message}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"SensorChange: {ex.Message}", SystemEventLogType.PhidgetService, EventLogEntryType.Error);
             }
         }
 
@@ -248,7 +239,7 @@ namespace Keebee.AAT.PhidgetService
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"ProcessTouchSensor: {ex.Message}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"ProcessTouchSensor: {ex.Message}", SystemEventLogType.PhidgetService, EventLogEntryType.Error);
             }
         }
 
@@ -289,7 +280,7 @@ namespace Keebee.AAT.PhidgetService
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"ProcessIncrementalSensor: {ex.Message}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"ProcessIncrementalSensor: {ex.Message}", SystemEventLogType.PhidgetService, EventLogEntryType.Error);
             }
         }
 
@@ -348,27 +339,31 @@ namespace Keebee.AAT.PhidgetService
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"ProcessInputChange: {ex.Message}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"ProcessInputChange: {ex.Message}", SystemEventLogType.PhidgetService, EventLogEntryType.Error);
             }
         }
 
         // set discrete values for when inputs or touch sensors are used to navigate through a playlist
         private void SetDiscreteStepValue()
         {
-            if (_currentDiscreteStepValue == RotationSensorStep.Value1)
-                _currentDiscreteStepValue = RotationSensorStep.Value2;
-
-            else if (_currentDiscreteStepValue == RotationSensorStep.Value2)
-                _currentDiscreteStepValue = RotationSensorStep.Value3;
-
-            else if (_currentDiscreteStepValue == RotationSensorStep.Value3)
-                _currentDiscreteStepValue = RotationSensorStep.Value4;
-
-            else if (_currentDiscreteStepValue == RotationSensorStep.Value4)
-                _currentDiscreteStepValue = RotationSensorStep.Value5;
-
-            else if (_currentDiscreteStepValue == RotationSensorStep.Value5)
-                _currentDiscreteStepValue = RotationSensorStep.Value1;
+            switch (_currentDiscreteStepValue)
+            {
+                case RotationSensorStep.Value1:
+                    _currentDiscreteStepValue = RotationSensorStep.Value2;
+                    break;
+                case RotationSensorStep.Value2:
+                    _currentDiscreteStepValue = RotationSensorStep.Value3;
+                    break;
+                case RotationSensorStep.Value3:
+                    _currentDiscreteStepValue = RotationSensorStep.Value4;
+                    break;
+                case RotationSensorStep.Value4:
+                    _currentDiscreteStepValue = RotationSensorStep.Value5;
+                    break;
+                default:
+                    _currentDiscreteStepValue = RotationSensorStep.Value1;
+                    break;
+            }
         }
 
         private static string CreateMessageBodyFromSensor(int sensorId, int sensorValue)
@@ -387,12 +382,12 @@ namespace Keebee.AAT.PhidgetService
                 _activeConfig = GetConfigFromMessageBody(e.MessageBody);
                 _isDisplayActive = _activeConfig.IsDisplayActive;
 
-                _systemEventLogger.WriteEntry($"The configuration '{_activeConfig.Description}' has been activated");
+                SystemEventLogger.WriteEntry($"The configuration '{_activeConfig.Description}' has been activated", SystemEventLogType.PhidgetService);
                 
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"MessageReceiveConfigPhidget{Environment.NewLine}{ex.Message}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"MessageReceiveConfigPhidget{Environment.NewLine}{ex.Message}", SystemEventLogType.PhidgetService, EventLogEntryType.Error);
             }
         }
 
@@ -409,7 +404,7 @@ namespace Keebee.AAT.PhidgetService
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"MessageReceivedDisplayPhidget{Environment.NewLine}{ex.Message}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"MessageReceivedDisplayPhidget{Environment.NewLine}{ex.Message}", SystemEventLogType.PhidgetService, EventLogEntryType.Error);
             }
         }
 
@@ -450,7 +445,7 @@ namespace Keebee.AAT.PhidgetService
                         PhidgetStyleTypeId = x.PhidgetStyleType.Id,
                     })
             };
-            _systemEventLogger.WriteEntry($"The configuration '{config.Description}' has been activated");
+            SystemEventLogger.WriteEntry($"The configuration '{config.Description}' has been activated", SystemEventLogType.PhidgetService);
         }
 
 #if DEBUG
@@ -464,12 +459,12 @@ namespace Keebee.AAT.PhidgetService
 #endif
         protected override void OnStart(string[] args)
         {
-            _systemEventLogger.WriteEntry("In OnStart");
+            SystemEventLogger.WriteEntry("In OnStart", SystemEventLogType.PhidgetService);
         }
 
         protected override void OnStop()
         {
-            _systemEventLogger.WriteEntry("In OnStop");
+            SystemEventLogger.WriteEntry("In OnStop", SystemEventLogType.PhidgetService);
         }
 
         // phidget command line open functions

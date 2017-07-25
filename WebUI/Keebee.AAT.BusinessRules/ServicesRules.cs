@@ -7,12 +7,6 @@ namespace Keebee.AAT.BusinessRules
 {
     public class ServicesRules
     {
-        private SystemEventLogger _systemEventLogger;
-        public SystemEventLogger EventLogger
-        {
-            set { _systemEventLogger = value; }
-        }
-
         public string Install(ServiceUtilities.ServiceType type, string path, bool install)
         {
             try
@@ -35,7 +29,7 @@ namespace Keebee.AAT.BusinessRules
 
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"ServicesRules.Install: {ex.Message}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"ServicesRules.Install: {ex.Message}", SystemEventLogType.AdminInterface, EventLogEntryType.Error);
                 return ex.Message;
             }
         }

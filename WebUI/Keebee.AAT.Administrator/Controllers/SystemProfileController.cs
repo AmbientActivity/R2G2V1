@@ -22,13 +22,10 @@ namespace Keebee.AAT.Administrator.Controllers
         private readonly IResponseTypesClient _responseTypesClient;
         private readonly IThumbnailsClient _thumbnailsClient;
 
-        private readonly SystemEventLogger _systemEventLogger;
         private readonly MediaSourcePath _mediaSourcePath = new MediaSourcePath();
 
         public SystemProfileController()
         {
-            _systemEventLogger = new SystemEventLogger(SystemEventLogType.AdminInterface);
-
             _publicMediaFilesClient = new PublicMediaFilesClient();
             _mediaPathTypesClient = new MediaPathTypesClient();
             _responseTypesClient = new ResponseTypesClient();
@@ -73,7 +70,7 @@ namespace Keebee.AAT.Administrator.Controllers
             catch (Exception ex)
             {
                 errMsg = ex.Message;
-                _systemEventLogger.WriteEntry($"SystemProfile.GetData: {errMsg}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"SystemProfile.GetData: {errMsg}", SystemEventLogType.AdminInterface, EventLogEntryType.Error);
             }
 
             return Json(new
@@ -117,7 +114,7 @@ namespace Keebee.AAT.Administrator.Controllers
             catch (Exception ex)
             {
                 errMsg = ex.Message;
-                _systemEventLogger.WriteEntry($"SystemProfile.AddSharedMediaFiles: {errMsg}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"SystemProfile.AddSharedMediaFiles: {errMsg}", SystemEventLogType.AdminInterface, EventLogEntryType.Error);
             }
 
             return Json(new
@@ -137,7 +134,7 @@ namespace Keebee.AAT.Administrator.Controllers
 
             try
             {
-                var rules = new PublicProfileRules { EventLogger = _systemEventLogger };
+                var rules = new PublicProfileRules();
 
                 errMsg = rules.CanDeleteMultiple(ids.Length, mediaPathTypeId, responseTypeId);
                 if (!string.IsNullOrEmpty(errMsg)) throw new Exception(errMsg);
@@ -155,7 +152,7 @@ namespace Keebee.AAT.Administrator.Controllers
             catch (Exception ex)
             {
                 errMsg = ex.Message;
-                _systemEventLogger.WriteEntry($"SystemProfile.DeleteSelected: {errMsg}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"SystemProfile.DeleteSelected: {errMsg}", SystemEventLogType.AdminInterface, EventLogEntryType.Error);
             }
 
             return Json(new

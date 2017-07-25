@@ -10,12 +10,6 @@ namespace Keebee.AAT.Display.UserControls
 {
     public partial class AudioVideoPlayer : UserControl
     {
-        private SystemEventLogger _systemEventLogger;
-        public SystemEventLogger SystemEventLogger
-        {
-            set { _systemEventLogger = value; }
-        }
-
         private bool _isActiveEventLog;
 
         // event handler
@@ -68,7 +62,7 @@ namespace Keebee.AAT.Display.UserControls
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"AudioVideoPlayer.Play: {ex.Message}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"AudioVideoPlayer.Play: {ex.Message}", SystemEventLogType.Display, EventLogEntryType.Error);
             }
         }
 
@@ -84,7 +78,7 @@ namespace Keebee.AAT.Display.UserControls
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"AudioVideoPlayer.PlayNext: {ex.Message}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"AudioVideoPlayer.PlayNext: {ex.Message}", SystemEventLogType.Display, EventLogEntryType.Error);
             }
         }
 
@@ -100,7 +94,7 @@ namespace Keebee.AAT.Display.UserControls
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"AudioVideoPlayer.PlayPrevious: {ex.Message}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"AudioVideoPlayer.PlayPrevious: {ex.Message}", SystemEventLogType.Display, EventLogEntryType.Error);
             }
         }
 
@@ -152,7 +146,7 @@ namespace Keebee.AAT.Display.UserControls
                 }
                 catch (Exception ex)
                 {
-                    _systemEventLogger.WriteEntry($"AudioVideoPlayer.PlayMedia: {ex.Message}", EventLogEntryType.Error);
+                    SystemEventLogger.WriteEntry($"AudioVideoPlayer.PlayMedia: {ex.Message}", SystemEventLogType.Display, EventLogEntryType.Error);
                 }
             }
         }

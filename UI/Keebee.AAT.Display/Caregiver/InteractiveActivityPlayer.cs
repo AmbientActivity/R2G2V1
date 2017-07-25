@@ -13,12 +13,6 @@ namespace Keebee.AAT.Display.Caregiver
     {
         #region declarations
 
-        private SystemEventLogger _systemEventLogger;
-        public SystemEventLogger SystemEventLogger
-        {
-            set { _systemEventLogger = value; }
-        }
-
         // matching game shapes
         private string[] _shapes;
         public string[] Shapes
@@ -117,19 +111,15 @@ namespace Keebee.AAT.Display.Caregiver
 
         private void InteractiveActivityPlayerShown(object sender, EventArgs e)
         {
-            _interactiveActivityEventLogger.SystemEventLogger = _systemEventLogger;
-
             switch (_interactiveActivityTypeId)
             {
                 case InteractiveActivityTypeId.MatchingGame:
                     matchingGame1.Show();
-                    matchingGame1.SystemEventLogger = _systemEventLogger;
                     matchingGame1.Play(_shapes, _sounds, _difficultyLevel, false, _isActiveEventLog, false, _swfFile);
                     matchingGame1.Select();
                     break;
                 default:
                     activityPlayer1.Show();
-                    activityPlayer1.SystemEventLogger = _systemEventLogger;
                     activityPlayer1.Play(_interactiveActivityTypeId, _swfFile, false, _isActiveEventLog, false);
                     activityPlayer1.Select();
                     break;
@@ -145,7 +135,7 @@ namespace Keebee.AAT.Display.Caregiver
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"Main.LogInteractiveActivityEvent: {ex.Message}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"Main.LogInteractiveActivityEvent: {ex.Message}", SystemEventLogType.Display, EventLogEntryType.Error);
             }
         }
     }

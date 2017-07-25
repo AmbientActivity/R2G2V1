@@ -29,9 +29,6 @@ namespace Keebee.AAT.VideoCaptureService
         private MediaCapture _capture;
         private bool _isCapturing;
 
-        // event logger
-        private readonly SystemEventLogger _systemEventLogger;
-
         // display state
         private bool _displayIsActive;
 
@@ -39,28 +36,23 @@ namespace Keebee.AAT.VideoCaptureService
         {
             InitializeComponent();
 
-            _systemEventLogger = new SystemEventLogger(SystemEventLogType.VideoCaptureService);
-
             // message queue sender
             _messageQueueVideoCaptureState = new CustomMessageQueue(new CustomMessageQueueArgs
             {
                 QueueName = MessageQueueType.VideoCaptureState
-            })
-            { SystemEventLogger = _systemEventLogger };
+            });
 
             var q1 = new CustomMessageQueue(new CustomMessageQueueArgs
                 {
                     QueueName = MessageQueueType.VideoCapture,
                     MessageReceivedCallback = MessageReceivedVideoCapture
-                })
-                {SystemEventLogger = _systemEventLogger};
+                });
 
             var q2 = new CustomMessageQueue(new CustomMessageQueueArgs
                 {
                     QueueName = MessageQueueType.DisplayVideoCapture,
                     MessageReceivedCallback = MessageReceivedDisplayVideoCapture
-                })
-                {SystemEventLogger = _systemEventLogger};
+                });
 
             InitializeMediaCapture();
 
@@ -75,7 +67,7 @@ namespace Keebee.AAT.VideoCaptureService
         {
             try
             {
-                _systemEventLogger.WriteEntry("Starting device");
+                SystemEventLogger.WriteEntry("Starting device", SystemEventLogType.VideoCaptureService);
                 _capture = new MediaCapture();
 
                 await _capture.InitializeAsync();
@@ -83,20 +75,20 @@ namespace Keebee.AAT.VideoCaptureService
                 if (_capture.MediaCaptureSettings.VideoDeviceId != string.Empty 
                     && _capture.MediaCaptureSettings.AudioDeviceId != string.Empty)
                 {
-                    _systemEventLogger.WriteEntry("Device initialized successfully");
+                    SystemEventLogger.WriteEntry("Device initialized successfully", SystemEventLogType.VideoCaptureService);
 
                     _capture.RecordLimitationExceeded += RecordLimitationExceeded;
                     _capture.Failed += Failed;
                 }
                 else
                 {
-                    _systemEventLogger.WriteEntry("No VideoDevice/AudioDevice Found", EventLogEntryType.Warning);
+                    SystemEventLogger.WriteEntry("No VideoDevice/AudioDevice Found", SystemEventLogType.VideoCaptureService, EventLogEntryType.Warning);
                     _capture = null;
                 }
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"InitializeEncoderDevices: {ex.Message}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"InitializeEncoderDevices: {ex.Message}", SystemEventLogType.VideoCaptureService, EventLogEntryType.Error);
                 _capture = null;
             }
         }
@@ -127,7 +119,7 @@ namespace Keebee.AAT.VideoCaptureService
             catch (Exception ex)
             {
                 _isCapturing = false;
-                _systemEventLogger.WriteEntry($"StartCapture: {ex.Message}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"StartCapture: {ex.Message}", SystemEventLogType.VideoCaptureService, EventLogEntryType.Error);
             }
         }
 
@@ -145,7 +137,7 @@ namespace Keebee.AAT.VideoCaptureService
             catch (Exception ex)
             {
                 _isCapturing = false;
-                _systemEventLogger.WriteEntry($"StopCapture: {ex.Message}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"StopCapture: {ex.Message}", SystemEventLogType.VideoCaptureService, EventLogEntryType.Error);
             }
         }
 
@@ -158,7 +150,7 @@ namespace Keebee.AAT.VideoCaptureService
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"OnTimerElapsed: {ex.Message}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"OnTimerElapsed: {ex.Message}", SystemEventLogType.VideoCaptureService, EventLogEntryType.Error);
             }
         }
 
@@ -186,7 +178,7 @@ namespace Keebee.AAT.VideoCaptureService
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"MessageReceivedDisplayVideoCapture{Environment.NewLine}{ex.Message}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"MessageReceivedDisplayVideoCapture{Environment.NewLine}{ex.Message}", SystemEventLogType.VideoCaptureService, EventLogEntryType.Error);
             }
         }
 
@@ -199,7 +191,7 @@ namespace Keebee.AAT.VideoCaptureService
 
         private async void RecordLimitationExceeded(MediaCapture currentCaptureObject)
         {
-            _systemEventLogger.WriteEntry("RecordLimitationExceeded", EventLogEntryType.Warning);
+            SystemEventLogger.WriteEntry("RecordLimitationExceeded", SystemEventLogType.VideoCaptureService, EventLogEntryType.Warning);
 
             if (_capture == null) return;
             if (_isCapturing)
@@ -210,7 +202,7 @@ namespace Keebee.AAT.VideoCaptureService
 
         private void Failed(object sender, MediaCaptureFailedEventArgs e)
         {
-            _systemEventLogger.WriteEntry("Failed", EventLogEntryType.Error);
+            SystemEventLogger.WriteEntry("Failed", SystemEventLogType.VideoCaptureService, EventLogEntryType.Error);
             if (_isCapturing)
             {
                 StopCapture();
@@ -219,13 +211,13 @@ namespace Keebee.AAT.VideoCaptureService
 
         protected override void OnStart(string[] args)
         {
-            _systemEventLogger.WriteEntry("In OnStart");
+            SystemEventLogger.WriteEntry("In OnStart", SystemEventLogType.VideoCaptureService);
             _messageQueueVideoCaptureState.Send("1");
         }
 
         protected override void OnStop()
         {
-            _systemEventLogger.WriteEntry("In OnStop");
+            SystemEventLogger.WriteEntry("In OnStop", SystemEventLogType.VideoCaptureService);
             _messageQueueVideoCaptureState.Send("0");
             _timer.Stop();
             _timer.Dispose();

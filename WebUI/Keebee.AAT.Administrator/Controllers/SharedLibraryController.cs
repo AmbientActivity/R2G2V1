@@ -22,13 +22,10 @@ namespace Keebee.AAT.Administrator.Controllers
         private readonly IMediaPathTypesClient _mediaPathTypesClient;
         private readonly IThumbnailsClient _thumbnailsClient;
 
-        private readonly SystemEventLogger _systemEventLogger;
         private readonly MediaSourcePath _mediaSourcePath = new MediaSourcePath();
 
         public SharedLibraryController()
         {
-            _systemEventLogger = new SystemEventLogger(SystemEventLogType.AdminInterface);
-
             _mediaFilesClient = new MediaFilesClient();
             _mediaPathTypesClient = new MediaPathTypesClient();
             _thumbnailsClient = new ThumbnailsClient();
@@ -60,7 +57,7 @@ namespace Keebee.AAT.Administrator.Controllers
             catch (Exception ex)
             {
                 errMsg = ex.Message;
-                _systemEventLogger.WriteEntry($"SharedLibrary.GetData: {errMsg}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"SharedLibrary.GetData: {errMsg}", SystemEventLogType.AdminInterface, EventLogEntryType.Error);
             }
 
             return Json(new
@@ -84,7 +81,7 @@ namespace Keebee.AAT.Administrator.Controllers
                 if (file != null)
                 {
                     filename = file.FileName;
-                    var rules = new SharedLibraryRules { EventLogger = _systemEventLogger };
+                    var rules = new SharedLibraryRules();
                     var path = $@"{_mediaSourcePath.MediaRoot}\{_mediaSourcePath.SharedLibrary}\{mediaPath}";
 
                     errMsg = rules.SaveUploadedFile(filename, path, file.InputStream, mediaPathTypeCategory);
@@ -93,7 +90,7 @@ namespace Keebee.AAT.Administrator.Controllers
             catch (Exception ex)
             {
                 errMsg = ex.Message;
-                _systemEventLogger.WriteEntry($"SharedLibrary.UploadFile: {errMsg}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"SharedLibrary.UploadFile: {errMsg}", SystemEventLogType.AdminInterface, EventLogEntryType.Error);
             }
 
             return Json(new
@@ -113,7 +110,7 @@ namespace Keebee.AAT.Administrator.Controllers
 
             try
             {
-                var rules = new SharedLibraryRules { EventLogger = _systemEventLogger };
+                var rules = new SharedLibraryRules();
 
                 var mediaPathType = _mediaPathTypesClient.Get(mediaPathTypeId);
 
@@ -130,7 +127,7 @@ namespace Keebee.AAT.Administrator.Controllers
             catch (Exception ex)
             {
                 errMsg = ex.Message;
-                _systemEventLogger.WriteEntry($"SharedLibrary.AddFiles: {errMsg}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"SharedLibrary.AddFiles: {errMsg}", SystemEventLogType.AdminInterface, EventLogEntryType.Error);
             }
 
             return Json(new
@@ -172,7 +169,7 @@ namespace Keebee.AAT.Administrator.Controllers
             catch (Exception ex)
             {
                 errMsg = ex.Message;
-                _systemEventLogger.WriteEntry($"SharedLibrary.DeleteSelected: {errMsg}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"SharedLibrary.DeleteSelected: {errMsg}", SystemEventLogType.AdminInterface, EventLogEntryType.Error);
             }
 
             return Json(new
@@ -229,7 +226,7 @@ namespace Keebee.AAT.Administrator.Controllers
             catch (Exception ex)
             {
                 errMsg = ex.Message;
-                _systemEventLogger.WriteEntry($"SharedLibrary.GetDataLinkedProfiles: {errMsg}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"SharedLibrary.GetDataLinkedProfiles: {errMsg}", SystemEventLogType.AdminInterface, EventLogEntryType.Error);
             }
 
             return Json(new
@@ -299,7 +296,7 @@ namespace Keebee.AAT.Administrator.Controllers
 
             try
             {
-                var rules = new SharedLibraryRules { EventLogger = _systemEventLogger };
+                var rules = new SharedLibraryRules();
                 rules.DeleteFile($@"{mediaFile.Path}\{mediaFile.Filename}");
 
                 if (mediaPathTypeCategory != MediaPathTypeCategoryDescription.Audio)

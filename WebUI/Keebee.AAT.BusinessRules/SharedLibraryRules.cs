@@ -3,6 +3,7 @@ using Keebee.AAT.Shared;
 using Keebee.AAT.ApiClient.Clients;
 using Keebee.AAT.BusinessRules.Models;
 using Keebee.AAT.ThumbnailGeneration;
+using Keebee.AAT.SystemEventLogging;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -45,7 +46,7 @@ namespace Keebee.AAT.BusinessRules
             catch (Exception ex)
             {
                 errMsg = ex.Message;
-                EventLogger.WriteEntry($"SharedLibraryRules.AddFile: {errMsg}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"SharedLibraryRules.AddFile: {errMsg}", SystemEventLogType.AdminInterface, EventLogEntryType.Error);
             }
 
             return errMsg;

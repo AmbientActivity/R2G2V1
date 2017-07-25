@@ -11,6 +11,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Web.Mvc;
 using System;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
@@ -26,13 +27,10 @@ namespace Keebee.AAT.Administrator.Controllers
         private readonly IResidentsClient _residentsClient;
         private readonly IActiveResidentClient _activeResidentClient;
 
-        private readonly SystemEventLogger _systemEventLogger;
         private readonly CustomMessageQueue _messageQueueBluetoothBeaconWatcherReload;
 
         public ResidentsController()
         {
-            _systemEventLogger = new SystemEventLogger(SystemEventLogType.AdminInterface);
-
             _residentsClient = new ResidentsClient();
             _activeResidentClient = new ActiveResidentClient();
 
@@ -77,6 +75,7 @@ namespace Keebee.AAT.Administrator.Controllers
             catch (Exception ex)
             {
                 errMsg = ex.Message;
+                SystemEventLogger.WriteEntry($"Residents.GetData: {errMsg}", SystemEventLogType.AdminInterface, EventLogEntryType.Error);
             }
 
             return Json(new
@@ -109,6 +108,7 @@ namespace Keebee.AAT.Administrator.Controllers
             catch (Exception ex)
             {
                 errMsg = ex.Message;
+                SystemEventLogger.WriteEntry($"Residents.Validate: {errMsg}", SystemEventLogType.AdminInterface, EventLogEntryType.Error);
             }
 
             return Json(new
@@ -156,6 +156,7 @@ namespace Keebee.AAT.Administrator.Controllers
             catch (Exception ex)
             {
                 errMsg = ex.Message;
+                SystemEventLogger.WriteEntry($"Residents.Save: {errMsg}", SystemEventLogType.AdminInterface, EventLogEntryType.Error);
             }
 
             return Json(new
@@ -170,7 +171,7 @@ namespace Keebee.AAT.Administrator.Controllers
         [Authorize]
         public JsonResult Delete(int id)
         {
-            string errorMsg;
+            string errMsg;
             var deletedId = 0;
 
             try
@@ -178,17 +179,17 @@ namespace Keebee.AAT.Administrator.Controllers
                 var activeResident = _activeResidentClient.Get();
                 if (activeResident.Resident.Id == id)
                 {
-                    errorMsg = "The resident is currently engaging with R2G2 and cannot be deleted at this time.";
+                    errMsg = "The resident is currently engaging with R2G2 and cannot be deleted at this time.";
                 }
                 else
                 {
-                    var rules = new ResidentRules { EventLogger = _systemEventLogger };
+                    var rules = new ResidentRules();
 
-                    errorMsg = rules.DeleteResident(id);
-                    if (!string.IsNullOrEmpty(errorMsg)) throw new Exception(errorMsg);
+                    errMsg = rules.DeleteResident(id);
+                    if (!string.IsNullOrEmpty(errMsg)) throw new Exception(errMsg);
 
-                    errorMsg = rules.DeleteFolders(id);
-                    if (!string.IsNullOrEmpty(errorMsg)) throw new Exception(errorMsg);
+                    errMsg = rules.DeleteFolders(id);
+                    if (!string.IsNullOrEmpty(errMsg)) throw new Exception(errMsg);
 
                     deletedId = id;
                 }
@@ -202,13 +203,14 @@ namespace Keebee.AAT.Administrator.Controllers
             }
             catch (Exception ex)
             {
-                errorMsg = ex.Message;
+                errMsg = ex.Message;
+                SystemEventLogger.WriteEntry($"Residents.Delete: {errMsg}", SystemEventLogType.AdminInterface, EventLogEntryType.Error);
             }
 
             return Json(new
             {
-                Success = string.IsNullOrEmpty(errorMsg),
-                ErrorMessage = errorMsg,
+                Success = string.IsNullOrEmpty(errMsg),
+                ErrorMessage = errMsg,
                 DeletedId = deletedId
             }, JsonRequestBehavior.AllowGet);
         }
@@ -217,21 +219,31 @@ namespace Keebee.AAT.Administrator.Controllers
         [Authorize]
         public string UploadProfilePicture(HttpPostedFileBase file)
         {
-            // convert to image and orient correctly
-            var image = Image.FromStream(file.InputStream);
-            var orientedImg = image.Orient();
+            try
+            {
+                // convert to image and orient correctly
+                var image = Image.FromStream(file.InputStream);
+                var orientedImg = image.Orient();
 
-            // convert back to stream
-            var stream = new MemoryStream();
-            orientedImg.Save(stream, ImageFormat.Jpeg);
+                // convert back to stream
+                var stream = new MemoryStream();
+                orientedImg.Save(stream, ImageFormat.Jpeg);
 
-            // convert to web image and resize
-            var webImg = new WebImage(stream);
+                // convert to web image and resize
+                var webImg = new WebImage(stream);
 
-            var croppedImage = webImg.CustomCrop(1);
-            webImg.Resize(96, 96, true, true).Crop(1, 1);
+                var croppedImage = webImg.CustomCrop(1);
+                webImg.Resize(96, 96, true, true).Crop(1, 1);
 
-            return Convert.ToBase64String(croppedImage.GetBytes());
+                return Convert.ToBase64String(croppedImage.GetBytes());
+
+            }
+            catch (Exception ex)
+            {
+                SystemEventLogger.WriteEntry(ex.Message, SystemEventLogType.AdminInterface, EventLogEntryType.Error);
+            }
+
+            return null;
         }
 
         private static ResidentsViewModel LoadResidentsViewModel(
@@ -329,12 +341,12 @@ namespace Keebee.AAT.Administrator.Controllers
 
         private string AddResident(ResidentViewModel residentDetail, out int residentId)
         {
-            string msg;
+            string errMsg = null;
             residentId = -1;
 
             try
             {
-                msg = _residentsClient.Post(new Resident
+                errMsg = _residentsClient.Post(new Resident
                 {
                     FirstName = residentDetail.FirstName,
                     LastName = !string.IsNullOrEmpty(residentDetail.LastName) ? residentDetail.LastName : null,
@@ -346,15 +358,18 @@ namespace Keebee.AAT.Administrator.Controllers
                     DateUpdated = residentDetail.DateUpdated
                 }, out residentId);
 
-                var rules = new ResidentRules { EventLogger = _systemEventLogger };
-                rules.CreateFolders(residentId);
+                if (!string.IsNullOrEmpty(errMsg)) throw new Exception(errMsg);
+
+                var rules = new ResidentRules();
+                errMsg = rules.CreateFolders(residentId);
+                if (!string.IsNullOrEmpty(errMsg)) throw new Exception(errMsg);
             }
             catch (Exception ex)
             {
-                msg = ex.Message;
+                errMsg = ex.Message;
             }
 
-            return msg;
+            return errMsg;
         }
 
         private static string CreateMessageBodyFromResident(ResidentViewModel resident, bool isDeleted = false)

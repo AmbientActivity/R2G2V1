@@ -9,8 +9,6 @@ namespace Keebee.AAT.KeepIISAliveService
 {
     partial class KeepIISAliveService : ServiceBase
     {
-        // event logger
-        private readonly SystemEventLogger _systemEventLogger;
         private readonly Thread _keepAliveThread;
         private const string KeepAlivewUrl = "http://localhost/Keebee.AAT.Administrator/Home/Ping";
 
@@ -18,13 +16,11 @@ namespace Keebee.AAT.KeepIISAliveService
         {
             InitializeComponent();
 
-            _systemEventLogger = new SystemEventLogger(SystemEventLogType.KeepIISAliveService);
-
             _keepAliveThread = new Thread(KeepIISAlive);
             _keepAliveThread.Start();
         }
 
-        private void KeepIISAlive()
+        private static void KeepIISAlive()
         {
             while (true)
             {
@@ -34,15 +30,15 @@ namespace Keebee.AAT.KeepIISAliveService
                     var response = (HttpWebResponse)req.GetResponse();
 
                     if (response.StatusCode != HttpStatusCode.OK)
-                        _systemEventLogger.WriteEntry(
-                            $"Error accessing the web site.{Environment.NewLine}StatusCode: {response.StatusCode}", EventLogEntryType.Error);
+                        SystemEventLogger.WriteEntry(
+                            $"Error accessing the web site.{Environment.NewLine}StatusCode: {response.StatusCode}", SystemEventLogType.KeepIISAliveService, EventLogEntryType.Error);
 
                 }
                 catch (Exception ex)
                 {
                     var message = ex.InnerException?.Message ?? ex.Message;
-                    _systemEventLogger.WriteEntry(
-                            $"Error accessing the web site.{Environment.NewLine}Message: {message}", EventLogEntryType.Error);
+                    SystemEventLogger.WriteEntry(
+                            $"Error accessing the web site.{Environment.NewLine}Message: {message}", SystemEventLogType.KeepIISAliveService, EventLogEntryType.Error);
                 }
 
                 try
@@ -59,12 +55,12 @@ namespace Keebee.AAT.KeepIISAliveService
 
         protected override void OnStart(string[] args)
         {
-            _systemEventLogger.WriteEntry("In OnStart");
+            SystemEventLogger.WriteEntry("In OnStart", SystemEventLogType.KeepIISAliveService);
         }
 
         protected override void OnStop()
         {
-            _systemEventLogger.WriteEntry("In OnStop");
+            SystemEventLogger.WriteEntry("In OnStop", SystemEventLogType.KeepIISAliveService);
             _keepAliveThread.Abort();
         }
     }

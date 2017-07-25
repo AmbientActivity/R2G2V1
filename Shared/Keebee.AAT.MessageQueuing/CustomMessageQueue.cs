@@ -63,10 +63,10 @@ namespace Keebee.AAT.MessageQueuing
         private const string QueueNamePhidgetMonitorState = "Phidget-Monitor-State";
 #endif
 
-        private SystemEventLogger _systemEventLogger;
-        public SystemEventLogger SystemEventLogger
+        private SystemEventLogType _eventLogType;
+        public SystemEventLogType SystemEventLogType
         {
-            set { _systemEventLogger = value; }
+            set { _eventLogType = value; }
         }
 
         public EventHandler<MessageEventArgs> MessageReceivedCallback;
@@ -101,7 +101,7 @@ namespace Keebee.AAT.MessageQueuing
 
             catch (Exception ex)
             {
-                _systemEventLogger?.WriteEntry($"CustomMessageQueue.Send: {ex.Message}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"CustomMessageQueue.Send: {ex.Message}", _eventLogType, EventLogEntryType.Error);
             }
 
             finally
@@ -118,7 +118,7 @@ namespace Keebee.AAT.MessageQueuing
             }
             catch (Exception ex)
             {
-                _systemEventLogger?.WriteEntry($"CustomMessageQueue.Send: {ex.Message}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"CustomMessageQueue.Send: {ex.Message}", _eventLogType, EventLogEntryType.Error);
             }
         }
 
@@ -209,7 +209,7 @@ namespace Keebee.AAT.MessageQueuing
             }
             catch (Exception ex)
             {
-                _systemEventLogger?.WriteEntry($"CustomMessageQueue.Create: {ex.Message}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"CustomMessageQueue.Create: {ex.Message}", _eventLogType, EventLogEntryType.Error);
                 return null;
             }
 

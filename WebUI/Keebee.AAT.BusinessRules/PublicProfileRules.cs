@@ -2,6 +2,7 @@
 using Keebee.AAT.ApiClient.Clients;
 using Keebee.AAT.ApiClient.Models;
 using Keebee.AAT.BusinessRules.Models;
+using Keebee.AAT.SystemEventLogging;
 using System;
 using System.Diagnostics;
 using System.Linq;
@@ -36,7 +37,7 @@ namespace Keebee.AAT.BusinessRules
             catch (Exception ex)
             {
                 errMsg = ex.Message;
-                EventLogger.WriteEntry($"PublicProfileRules.AddMediaFileFromFilename: {errMsg}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"PublicProfileRules.AddMediaFileFromFilename: {errMsg}", SystemEventLogType.AdminInterface, EventLogEntryType.Error);
             }
 
             return errMsg;
@@ -95,7 +96,7 @@ namespace Keebee.AAT.BusinessRules
             catch (Exception ex)
             {
                 errMsg = ex.Message;
-                EventLogger.WriteEntry($"PublicProfileRules.AddMediaFile: {errMsg}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"PublicProfileRules.AddMediaFile: {errMsg}", SystemEventLogType.AdminInterface, EventLogEntryType.Error);
             }
 
             return errMsg;
@@ -136,7 +137,7 @@ namespace Keebee.AAT.BusinessRules
             catch (Exception ex)
             {
                 errMsg = ex.Message;
-                EventLogger.WriteEntry($"PublicProfileRules.DeleteMediaFile: {errMsg}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"PublicProfileRules.DeleteMediaFile: {errMsg}", SystemEventLogType.AdminInterface, EventLogEntryType.Error);
             }
 
             return errMsg;

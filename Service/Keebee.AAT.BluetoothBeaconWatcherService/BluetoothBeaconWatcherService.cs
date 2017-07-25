@@ -31,9 +31,6 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
         // api client
         private readonly IResidentsClient _residentsClient;
 
-        // event logger
-        private readonly SystemEventLogger _systemEventLogger;
-
         // beacon manager
         private readonly BeaconManager _beaconManager;
 
@@ -65,7 +62,6 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
         public BluetoothBeaconWatcherService()
         {
             InitializeComponent();
-            _systemEventLogger = new SystemEventLogger(SystemEventLogType.BluetoothBeaconWatcherService);
             _residentsClient = new ResidentsClient();
 
             // app settings
@@ -79,8 +75,7 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
             _messageQueueBeaconWatcher = new CustomMessageQueue(new CustomMessageQueueArgs
             {
                 QueueName = MessageQueueType.BluetoothBeaconWatcher
-            })
-            { SystemEventLogger = _systemEventLogger };
+            });
 
             _messageQueueBeaconMonitor = new CustomMessageQueue(new CustomMessageQueueArgs
             {
@@ -97,15 +92,13 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
             {
                 QueueName = MessageQueueType.BluetoothBeaconWatcherReload,
                 MessageReceivedCallback = MessageReceivedBluetoothBeaconWatcherReload
-            })
-            { SystemEventLogger = _systemEventLogger };
+            });
 
             var q2 = new CustomMessageQueue(new CustomMessageQueueArgs
             {
                 QueueName = MessageQueueType.DisplayBluetoothBeaconWatcher,
                 MessageReceivedCallback = MessageReceivedDisplayBluetoothBeaconWatcher
-            })
-            { SystemEventLogger = _systemEventLogger };
+            });
 
             var q3 = new CustomMessageQueue(new CustomMessageQueueArgs
             {
@@ -207,7 +200,7 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"TimerElapsed{Environment.NewLine}{ex.Message}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"TimerElapsed{Environment.NewLine}{ex.Message}", SystemEventLogType.BluetoothBeaconWatcherService, EventLogEntryType.Error);
             }
 
             _timer.Start();
@@ -235,7 +228,7 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
             }
             catch (ArgumentException e)
             {
-                _systemEventLogger.WriteEntry($"ValidateBeacons{Environment.NewLine}{e}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"ValidateBeacons{Environment.NewLine}{e}", SystemEventLogType.BluetoothBeaconWatcherService, EventLogEntryType.Error);
             }
         }
 
@@ -266,7 +259,7 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"GetClosestKeebeeBeacon{Environment.NewLine}{ex.Message}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"GetClosestKeebeeBeacon{Environment.NewLine}{ex.Message}", SystemEventLogType.BluetoothBeaconWatcherService, EventLogEntryType.Error);
                 return null;
             }
         }
@@ -284,7 +277,7 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
             }
             catch (ArgumentException e)
             {
-                _systemEventLogger.WriteEntry($"WatcherOnReceived{Environment.NewLine}{e}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"WatcherOnReceived{Environment.NewLine}{e}", SystemEventLogType.BluetoothBeaconWatcherService, EventLogEntryType.Error);
             }
         }
 
@@ -318,7 +311,7 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
 
             if (errorMsg != null) return;
 
-            _systemEventLogger.WriteEntry($"WatcherOnStopped{Environment.NewLine}Failed to restart Bluetooth Watch", EventLogEntryType.Error);
+            SystemEventLogger.WriteEntry($"WatcherOnStopped{Environment.NewLine}Failed to restart Bluetooth Watch", SystemEventLogType.BluetoothBeaconWatcherService, EventLogEntryType.Error);
         }
 
         private bool LoadResidents()
@@ -341,7 +334,7 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"LoadResidents: {ex.Message}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"LoadResidents: {ex.Message}", SystemEventLogType.BluetoothBeaconWatcherService, EventLogEntryType.Error);
             }
             return false;
         }
@@ -354,7 +347,7 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"GetResident: {ex.Message}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"GetResident: {ex.Message}", SystemEventLogType.BluetoothBeaconWatcherService, EventLogEntryType.Error);
                 return null;
             }
         }
@@ -379,7 +372,7 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"MessageReceivedBluetoothBeaconWatcherReload: {ex.Message}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"MessageReceivedBluetoothBeaconWatcherReload: {ex.Message}", SystemEventLogType.BluetoothBeaconWatcherService, EventLogEntryType.Error);
             }
 
             if (resident != null)
@@ -417,7 +410,7 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"MessageReceivedDisplaydBluetoothBeaconWatcher{Environment.NewLine}{ex.Message}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"MessageReceivedDisplaydBluetoothBeaconWatcher{Environment.NewLine}{ex.Message}", SystemEventLogType.BluetoothBeaconWatcherService, EventLogEntryType.Error);
             }
         }
 
@@ -579,18 +572,18 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"BeaconMonitorMessageReceived: {ex.Message}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"BeaconMonitorMessageReceived: {ex.Message}", SystemEventLogType.BluetoothBeaconWatcherService, EventLogEntryType.Error);
             }
         }
 
         protected override void OnStart(string[] args)
         {
-            _systemEventLogger.WriteEntry("In OnStart");
+            SystemEventLogger.WriteEntry("In OnStart", SystemEventLogType.BluetoothBeaconWatcherService);
         }
 
         protected override void OnStop()
         {
-            _systemEventLogger.WriteEntry("In OnStop");
+            SystemEventLogger.WriteEntry("In OnStop", SystemEventLogType.BluetoothBeaconWatcherService);
             _timer.Stop();
             _timer.Dispose();
         }

@@ -21,13 +21,9 @@ namespace Keebee.AAT.Display
         // ambient playlist
         private string[] _ambientPlaylist;
 
-        // event logger
-        private readonly SystemEventLogger _systemEventLogger;
-
         public Splash()
         {
             InitializeComponent();
-            _systemEventLogger = new SystemEventLogger(SystemEventLogType.Display);
 
             Location = new Point(
                 (Screen.PrimaryScreen.WorkingArea.Width - Width) / 2,
@@ -38,8 +34,7 @@ namespace Keebee.AAT.Display
         {
             var main = new Main()
             {
-                AmbientPlaylist = _ambientPlaylist,
-                EventLogger = _systemEventLogger
+                AmbientPlaylist = _ambientPlaylist
             };
             main.Show();
             Hide();
@@ -72,15 +67,19 @@ namespace Keebee.AAT.Display
 
                 if (_ambientPlaylist == null)
                 {
-                    _systemEventLogger.WriteEntry(
-                        $"Splash.LoadAmbientMediaPlaylist{Environment.NewLine}Failed to read the database.{Environment.NewLine}Number of attempts {_numAttempt}", EventLogEntryType.Warning);
+                    SystemEventLogger.WriteEntry(
+                        $"Splash.LoadAmbientMediaPlaylist{Environment.NewLine}Failed to read the database.{Environment.NewLine}Number of attempts {_numAttempt}"
+                        , SystemEventLogType.Display
+                        , EventLogEntryType.Warning);
 
                     return false;
                 }
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"Splash.LoadAmbientMediaPlaylist: {ex.Message}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"Splash.LoadAmbientMediaPlaylist: {ex.Message}"
+                    , SystemEventLogType.Display
+                    , EventLogEntryType.Error);
                 return false;       // fail - will need to try again
             }
 
@@ -117,12 +116,12 @@ namespace Keebee.AAT.Display
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"Splash.TimerTick: {ex.Message}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"Splash.TimerTick: {ex.Message}", SystemEventLogType.Display, EventLogEntryType.Error);
                 _timer.Start();
             }
         }
 
-        private bool StartSqlExpressService()
+        private static bool StartSqlExpressService()
         {
             try
             {
@@ -133,7 +132,7 @@ namespace Keebee.AAT.Display
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"Splash.TimerTick: {ex.Message}", EventLogEntryType.Warning);
+                SystemEventLogger.WriteEntry($"Splash.TimerTick: {ex.Message}", SystemEventLogType.Display, EventLogEntryType.Warning);
                 return false;
             }
             return true;
@@ -149,7 +148,7 @@ namespace Keebee.AAT.Display
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"Splash.SplashShown: {ex.Message}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"Splash.SplashShown: {ex.Message}", SystemEventLogType.Display, EventLogEntryType.Error);
             }
         }
     }

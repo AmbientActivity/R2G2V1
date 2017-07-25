@@ -27,9 +27,6 @@ namespace Keebee.AAT.StateMachineService
         private readonly CustomMessageQueue _messageQueueConfigPhidget;
         private readonly CustomMessageQueue _messageQueueVideoCapture;
 
-        // event logger
-        private readonly SystemEventLogger _systemEventLogger;
-
         // active config
         private ConfigMessage _activeConfig;
 
@@ -55,7 +52,6 @@ namespace Keebee.AAT.StateMachineService
         {
             InitializeComponent();
 
-            _systemEventLogger = new SystemEventLogger(SystemEventLogType.StateMachineService);
             _activeResidentClient = new ActiveResidentClient();
             _configsClient = new ConfigsClient();
             _responseTypesClient = new ResponseTypesClient();
@@ -66,20 +62,17 @@ namespace Keebee.AAT.StateMachineService
             _messageQueueResponse = new CustomMessageQueue(new CustomMessageQueueArgs
             {
                 QueueName = MessageQueueType.Response
-            })
-            { SystemEventLogger = _systemEventLogger };
+            });
 
             _messageQueueConfigPhidget = new CustomMessageQueue(new CustomMessageQueueArgs
             {
                 QueueName = MessageQueueType.ConfigPhidget
-            })
-            { SystemEventLogger = _systemEventLogger };
+            });
 
             _messageQueueVideoCapture = new CustomMessageQueue(new CustomMessageQueueArgs
             {
                 QueueName = MessageQueueType.VideoCapture
-            })
-            { SystemEventLogger = _systemEventLogger };
+            });
         }
 
         private void InitializeMessageQueueListeners()
@@ -88,36 +81,31 @@ namespace Keebee.AAT.StateMachineService
             {
                 QueueName = MessageQueueType.Phidget,
                 MessageReceivedCallback = MessageReceivedPhidget
-            })
-            { SystemEventLogger = _systemEventLogger };
+            });
 
             var q2 = new CustomMessageQueue(new CustomMessageQueueArgs
             {
                 QueueName = MessageQueueType.ConfigSms,
                 MessageReceivedCallback = MessageReceivedConfigSms
-            })
-            { SystemEventLogger = _systemEventLogger };
+            });
 
             var q3 = new CustomMessageQueue(new CustomMessageQueueArgs
             {
                 QueueName = MessageQueueType.DisplaySms,
                 MessageReceivedCallback = MessageReceivedDisplaySms
-            })
-            { SystemEventLogger = _systemEventLogger };
+            });
 
             var q4 = new CustomMessageQueue(new CustomMessageQueueArgs
             {
                 QueueName = MessageQueueType.BluetoothBeaconWatcher,
                 MessageReceivedCallback = MessageReceivedBluetoothBeaconWatcher
-            })
-            { SystemEventLogger = _systemEventLogger };
+            });
 
             var q5 = new CustomMessageQueue(new CustomMessageQueueArgs
             {
                 QueueName = MessageQueueType.VideoCaptureState,
                 MessageReceivedCallback = MessageReceivedVideoCaptureState
-            })
-            { SystemEventLogger = _systemEventLogger };
+            });
         }
 
         private void ExecuteResponse(int phidgetTypeId, int sensorValue)
@@ -162,7 +150,7 @@ namespace Keebee.AAT.StateMachineService
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"ExecuteResponse: {ex.Message}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"ExecuteResponse: {ex.Message}", SystemEventLogType.StateMachineService, EventLogEntryType.Error);
             }
         }
 
@@ -224,12 +212,12 @@ namespace Keebee.AAT.StateMachineService
                         SwfFile = r.InteractiveActivityType?.SwfFile ?? string.Empty
                     }).ToArray();
 
-                _systemEventLogger.WriteEntry($"The configuration '{config.Description}' has been activated");
+                SystemEventLogger.WriteEntry($"The configuration '{config.Description}' has been activated", SystemEventLogType.StateMachineService);
             }
 
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"LoadConfig{Environment.NewLine}{ex.Message}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"LoadConfig{Environment.NewLine}{ex.Message}", SystemEventLogType.StateMachineService, EventLogEntryType.Error);
             }
         }
 
@@ -254,7 +242,7 @@ namespace Keebee.AAT.StateMachineService
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"MessageReceivedPhidget: {ex.Message}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"MessageReceivedPhidget: {ex.Message}", SystemEventLogType.StateMachineService, EventLogEntryType.Error);
             }
         }
 
@@ -282,7 +270,7 @@ namespace Keebee.AAT.StateMachineService
 
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"MessageReceivedBluetoothBeaconWatcher{Environment.NewLine}{ex.Message}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"MessageReceivedBluetoothBeaconWatcher{Environment.NewLine}{ex.Message}", SystemEventLogType.StateMachineService, EventLogEntryType.Error);
             }
         }
 
@@ -311,7 +299,7 @@ namespace Keebee.AAT.StateMachineService
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"MessageReceivedDisplaySms{Environment.NewLine}{ex.Message}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"MessageReceivedDisplaySms{Environment.NewLine}{ex.Message}", SystemEventLogType.StateMachineService, EventLogEntryType.Error);
             }
         }
 
@@ -323,12 +311,12 @@ namespace Keebee.AAT.StateMachineService
                 _isDisplayActive = _activeConfig.IsDisplayActive;
 
                 if (!_isDisplayActive) return;
-                _systemEventLogger.WriteEntry($"The configuration '{_activeConfig.Description}' has been activated");
+                SystemEventLogger.WriteEntry($"The configuration '{_activeConfig.Description}' has been activated", SystemEventLogType.StateMachineService);
                 _messageQueueConfigPhidget.Send(e.MessageBody);
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"MessageReceiveConfigSms{Environment.NewLine}{ex.Message}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"MessageReceiveConfigSms{Environment.NewLine}{ex.Message}", SystemEventLogType.StateMachineService, EventLogEntryType.Error);
             }
         }
 
@@ -340,7 +328,7 @@ namespace Keebee.AAT.StateMachineService
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"MessageReceivedVideoCaptureState{Environment.NewLine}{ex.Message}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"MessageReceivedVideoCaptureState{Environment.NewLine}{ex.Message}", SystemEventLogType.StateMachineService, EventLogEntryType.Error);
             }
         }
 
@@ -377,12 +365,12 @@ namespace Keebee.AAT.StateMachineService
 
         protected override void OnStart(string[] args)
         {
-            _systemEventLogger.WriteEntry("In OnStart");
+            SystemEventLogger.WriteEntry("In OnStart", SystemEventLogType.StateMachineService);
         }
 
         protected override void OnStop()
         {
-            _systemEventLogger.WriteEntry("In OnStop");
+            SystemEventLogger.WriteEntry("In OnStop", SystemEventLogType.StateMachineService);
         }
 
         private void LogActiveResidentEvent(int residentId, string description)
@@ -393,15 +381,12 @@ namespace Keebee.AAT.StateMachineService
                 if (_activeConfig == null) return;
                 if (!_activeConfig.IsActiveEventLog) return;
 
-                var activeResdientEventLogger = new ActiveResidentEventLogger()
-                {
-                    SystemEventLogger = _systemEventLogger
-                };
+                var activeResdientEventLogger = new ActiveResidentEventLogger();
                 activeResdientEventLogger.Add(residentId, description);
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"LogActiveResidentEvent: {ex.Message}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"LogActiveResidentEvent: {ex.Message}", SystemEventLogType.StateMachineService, EventLogEntryType.Error);
             }
         }
 
@@ -414,7 +399,7 @@ namespace Keebee.AAT.StateMachineService
             }
             catch (Exception ex)
             {
-                _systemEventLogger?.WriteEntry($"SetActiveResident: {ex.Message}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"SetActiveResident: {ex.Message}", SystemEventLogType.StateMachineService, EventLogEntryType.Error);
             }
         }
     }

@@ -11,23 +11,21 @@ namespace Keebee.AAT.BusinessRules
 {
     public class RulesBase
     {
-        public SystemEventLogger EventLogger { get; set; }
-
         public string DeleteFile(string filePath)
         {
-            var fileManager = new FileManager{ EventLogger = EventLogger };
+            var fileManager = new FileManager();
             return fileManager.DeleteFile(filePath);
         }
 
         public string CreateFolders(int profileId)
         {
-            var fileManager = new FileManager { EventLogger = EventLogger };
+            var fileManager = new FileManager();
             return fileManager.CreateFolders(profileId);
         }
 
         public string DeleteFolders(int profileId)
         {
-            var fileManager = new FileManager { EventLogger = EventLogger };
+            var fileManager = new FileManager();
             return fileManager.DeleteFolders(profileId);
         }
 
@@ -70,13 +68,13 @@ namespace Keebee.AAT.BusinessRules
 
         public Guid GetStreamId(string path, string filename)
         {
-            var fileManager = new FileManager { EventLogger = EventLogger };
+            var fileManager = new FileManager();
             return fileManager.GetStreamId(path, filename);
         }
 
         public MediaFile GetMediaFile(string path, string filename)
         {
-            var fileManager = new FileManager { EventLogger = EventLogger };
+            var fileManager = new FileManager();
             return fileManager.GetMediaFile(path, filename);
         }
 

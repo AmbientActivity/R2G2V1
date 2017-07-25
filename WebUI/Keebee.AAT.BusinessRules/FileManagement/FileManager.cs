@@ -13,12 +13,6 @@ namespace Keebee.AAT.BusinessRules
         private readonly MediaPathTypesClient _mediaPathTypesClient;
         private readonly MediaFilesClient _mediaFilesClient;
 
-        private SystemEventLogger _systemEventLogger;
-        public SystemEventLogger EventLogger
-        {
-            set { _systemEventLogger = value; }
-        }
-
         // media path
         private readonly MediaSourcePath _mediaPath = new MediaSourcePath();
 
@@ -42,7 +36,7 @@ namespace Keebee.AAT.BusinessRules
             catch (Exception ex)
             {
                 errMsg = ex.Message;
-                _systemEventLogger.WriteEntry($"FileManagement.DeleteFile :{ex.Message}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"FileManagement.DeleteFile :{ex.Message}", SystemEventLogType.Display, EventLogEntryType.Error);
             }
 
             return errMsg;
@@ -67,7 +61,7 @@ namespace Keebee.AAT.BusinessRules
             catch (Exception ex)
             {
                 errMsg = ex.Message;
-                _systemEventLogger.WriteEntry($"FileManagement.CreateFolders :{ex.Message}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"FileManagement.CreateFolders :{ex.Message}", SystemEventLogType.AdminInterface, EventLogEntryType.Error);
             }
 
             return errMsg;
@@ -91,7 +85,7 @@ namespace Keebee.AAT.BusinessRules
             catch (Exception ex)
             {
                 errMsg = ex.Message;
-                _systemEventLogger.WriteEntry($"FileManagement.DeleteFolders :{ex.Message}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"FileManagement.DeleteFolders :{ex.Message}", SystemEventLogType.Display, EventLogEntryType.Error);
             }
 
             return errMsg;

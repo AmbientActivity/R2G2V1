@@ -85,9 +85,7 @@
     <Compile Include="Caregiver\InteractiveActivityPlayer.Designer.cs">
       <DependentUpon>InteractiveActivityPlayer.cs</DependentUpon>
     </Compile>
-    <Compile Include="Caregiver\CustomControls\ListViewLarge.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Include="Caregiver\CustomControls\ListViewLarge.cs" />
     <Compile Include="Caregiver\CustomControls\ListViewLarge.Designer.cs">
       <DependentUpon>ListViewLarge.cs</DependentUpon>
     </Compile>
@@ -103,6 +101,7 @@
     <Compile Include="Caregiver\MessageBoxCustom.Designer.cs">
       <DependentUpon>MessageBoxCustom.cs</DependentUpon>
     </Compile>
+    <Compile Include="Caregiver\CustomControls\NativeMethods.cs" />
     <Compile Include="Caregiver\Splash.cs">
       <SubType>Form</SubType>
     </Compile>

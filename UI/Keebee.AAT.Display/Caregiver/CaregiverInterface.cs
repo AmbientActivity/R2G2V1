@@ -24,13 +24,6 @@ namespace Keebee.AAT.Display.Caregiver
         // event handler
         public event EventHandler CaregiverCompleteEvent;
 
-        private SystemEventLogger _systemEventLogger;
-
-        public SystemEventLogger EventLogger
-        {
-            set { _systemEventLogger = value; }
-        }
-
         private IEnumerable<ResponseTypePaths> _publicMedia;
 
         public IEnumerable<ResponseTypePaths> PublicMediaFiles
@@ -373,7 +366,7 @@ namespace Keebee.AAT.Display.Caregiver
             }
             catch (Exception ex)
             {
-                _systemEventLogger?.WriteEntry($"Caregiver.LoadResidentDropDown: {ex.Message}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"Caregiver.LoadResidentDropDown: {ex.Message}", SystemEventLogType.Display, EventLogEntryType.Error);
             }
         }
 
@@ -411,7 +404,7 @@ namespace Keebee.AAT.Display.Caregiver
             }
             catch (Exception ex)
             {
-                _systemEventLogger?.WriteEntry($"Caregiver.LoadListViewTVShows: {ex.Message}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"Caregiver.LoadListViewTVShows: {ex.Message}", SystemEventLogType.Display, EventLogEntryType.Error);
             }
         }
 
@@ -449,7 +442,7 @@ namespace Keebee.AAT.Display.Caregiver
             }
             catch (Exception ex)
             {
-                _systemEventLogger?.WriteEntry($"Caregiver.LoadListViewHomeMovies: {ex.Message}",
+                SystemEventLogger.WriteEntry($"Caregiver.LoadListViewHomeMovies: {ex.Message}", SystemEventLogType.Display,
                     EventLogEntryType.Error);
             }
         }
@@ -488,7 +481,7 @@ namespace Keebee.AAT.Display.Caregiver
             }
             catch (Exception ex)
             {
-                _systemEventLogger?.WriteEntry($"Caregiver.LoadListViewImages: {ex.Message}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"Caregiver.LoadListViewImages: {ex.Message}", SystemEventLogType.Display, EventLogEntryType.Error);
             }
         }
 
@@ -520,7 +513,7 @@ namespace Keebee.AAT.Display.Caregiver
             }
             catch (Exception ex)
             {
-                _systemEventLogger?.WriteEntry($"Caregiver.LoadListViewMusic: {ex.Message}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"Caregiver.LoadListViewMusic: {ex.Message}", SystemEventLogType.Display, EventLogEntryType.Error);
             }
         }
 
@@ -552,7 +545,8 @@ namespace Keebee.AAT.Display.Caregiver
             }
             catch (Exception ex)
             {
-                _systemEventLogger?.WriteEntry($"Caregiver.LoadListViewRadioShows: {ex.Message}",
+                SystemEventLogger.WriteEntry($"Caregiver.LoadListViewRadioShows: {ex.Message}",
+                    SystemEventLogType.Display,
                     EventLogEntryType.Error);
             }
         }
@@ -591,7 +585,8 @@ namespace Keebee.AAT.Display.Caregiver
             }
             catch (Exception ex)
             {
-                _systemEventLogger?.WriteEntry($"Caregiver.LoadListViewImagesPersonal: {ex.Message}",
+                SystemEventLogger.WriteEntry($"Caregiver.LoadListViewImagesPersonal: {ex.Message}",
+                    SystemEventLogType.Display,
                     EventLogEntryType.Error);
             }
         }
@@ -633,7 +628,8 @@ namespace Keebee.AAT.Display.Caregiver
             }
             catch (Exception ex)
             {
-                _systemEventLogger?.WriteEntry($"Caregiver.LoadListViewInteractiveActivities: {ex.Message}",
+                SystemEventLogger.WriteEntry($"Caregiver.LoadListViewInteractiveActivities: {ex.Message}",
+                    SystemEventLogType.Display,
                     EventLogEntryType.Error);
             }
         }
@@ -713,7 +709,7 @@ namespace Keebee.AAT.Display.Caregiver
             }
             catch (Exception ex)
             {
-                _systemEventLogger?.WriteEntry($"Caregiver.GetFilePaths: {ex.Message}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"Caregiver.GetFilePaths: {ex.Message}", SystemEventLogType.Display, EventLogEntryType.Error);
             }
 
             return filePaths;
@@ -734,7 +730,7 @@ namespace Keebee.AAT.Display.Caregiver
             }
             catch (Exception ex)
             {
-                _systemEventLogger?.WriteEntry($"Caregiver.GetMediaFiles: {ex.Message}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"Caregiver.GetMediaFiles: {ex.Message}", SystemEventLogType.Display, EventLogEntryType.Error);
             }
 
             return files;
@@ -754,7 +750,6 @@ namespace Keebee.AAT.Display.Caregiver
                 {
                     var imageViewer = new ImageViewer
                     {
-                        EventLogger = _systemEventLogger,
                         Images = images
                     };
 
@@ -768,7 +763,7 @@ namespace Keebee.AAT.Display.Caregiver
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"Caregiver.DisplayImages: {ex.Message}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"Caregiver.DisplayImages: {ex.Message}", SystemEventLogType.Display, EventLogEntryType.Error);
             }
         }
 
@@ -786,7 +781,7 @@ namespace Keebee.AAT.Display.Caregiver
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"Caregiver.PlayMusic: {ex.Message}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"Caregiver.PlayMusic: {ex.Message}", SystemEventLogType.Display, EventLogEntryType.Error);
             }
         }
 
@@ -804,7 +799,7 @@ namespace Keebee.AAT.Display.Caregiver
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"Caregiver.PlayRadioShow: {ex.Message}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"Caregiver.PlayRadioShow: {ex.Message}", SystemEventLogType.Display, EventLogEntryType.Error);
             }
         }
 
@@ -818,7 +813,6 @@ namespace Keebee.AAT.Display.Caregiver
                 {
                     var videoPlayer = new VideoPlayer
                     {
-                        EventLogger = _systemEventLogger,
                         Video = videos[0] // just play one at a time
                     };
 
@@ -833,7 +827,7 @@ namespace Keebee.AAT.Display.Caregiver
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"Caregiver.PlayTVShows: {ex.Message}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"Caregiver.PlayTVShows: {ex.Message}", SystemEventLogType.Display, EventLogEntryType.Error);
             }
         }
 
@@ -847,7 +841,6 @@ namespace Keebee.AAT.Display.Caregiver
                 {
                     var videoPlayer = new VideoPlayer
                     {
-                        EventLogger = _systemEventLogger,
                         Video = videos[0] // just play one at a time
                     };
 
@@ -862,7 +855,7 @@ namespace Keebee.AAT.Display.Caregiver
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"Caregiver.PlayHomeMovies: {ex.Message}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"Caregiver.PlayHomeMovies: {ex.Message}", SystemEventLogType.Display, EventLogEntryType.Error);
             }
         }
 
@@ -887,7 +880,7 @@ namespace Keebee.AAT.Display.Caregiver
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"Caregiver.StopMusic: {ex.Message}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"Caregiver.StopMusic: {ex.Message}", SystemEventLogType.Display, EventLogEntryType.Error);
             }
         }
 
@@ -906,7 +899,7 @@ namespace Keebee.AAT.Display.Caregiver
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"Caregiver.StopRadioShows: {ex.Message}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"Caregiver.StopRadioShows: {ex.Message}", SystemEventLogType.Display, EventLogEntryType.Error);
             }
         }
 
@@ -929,7 +922,6 @@ namespace Keebee.AAT.Display.Caregiver
                         {
                             InteractiveActivityId = interactiveActivityId,
                             ResidentId = _currentResident.Id,
-                            SystemEventLogger = _systemEventLogger,
                             Shapes = totalShapes,
                             Sounds = totalSounds,
                             DifficultyLevel = difficultyLevel,
@@ -944,7 +936,6 @@ namespace Keebee.AAT.Display.Caregiver
                         {
                             InteractiveActivityId = interactiveActivityId,
                             ResidentId = _currentResident.Id,
-                            SystemEventLogger = _systemEventLogger,
                             IsActiveEventLog = _config.IsActiveEventLog,
                             SwfFile = swfFile
                         };
@@ -958,8 +949,9 @@ namespace Keebee.AAT.Display.Caregiver
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"Caregiver.PlayInteractiveActivity: {ex.Message}",
-                    EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"Caregiver.PlayInteractiveActivity: {ex.Message}"
+                    , SystemEventLogType.Display
+                    , EventLogEntryType.Error);
             }
         }
 
@@ -993,7 +985,7 @@ namespace Keebee.AAT.Display.Caregiver
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"Caregiver.TVShowsListViewClick: {ex.Message}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"Caregiver.TVShowsListViewClick: {ex.Message}", SystemEventLogType.Display, EventLogEntryType.Error);
             }
         }
 
@@ -1007,8 +999,9 @@ namespace Keebee.AAT.Display.Caregiver
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"Caregiver.HomeMoviesListViewClick: {ex.Message}",
-                    EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"Caregiver.HomeMoviesListViewClick: {ex.Message}"
+                    , SystemEventLogType.Display
+                    , EventLogEntryType.Error);
             }
         }
 
@@ -1056,7 +1049,7 @@ namespace Keebee.AAT.Display.Caregiver
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"Caregiver.MusicListViewClick: {ex.Message}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"Caregiver.MusicListViewClick: {ex.Message}", SystemEventLogType.Display, EventLogEntryType.Error);
             }
         }
 
@@ -1106,7 +1099,7 @@ namespace Keebee.AAT.Display.Caregiver
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"Caregiver.MusicListViewClick: {ex.Message}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"Caregiver.MusicListViewClick: {ex.Message}", SystemEventLogType.Display, EventLogEntryType.Error);
             }
         }
 
@@ -1120,8 +1113,9 @@ namespace Keebee.AAT.Display.Caregiver
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"Caregiver.ImagesGeneralListViewClick: {ex.Message}",
-                    EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"Caregiver.ImagesGeneralListViewClick: {ex.Message}"
+                    , SystemEventLogType.Display
+                    , EventLogEntryType.Error);
             }
         }
 
@@ -1135,8 +1129,9 @@ namespace Keebee.AAT.Display.Caregiver
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"Caregiver.ImagesPersonalListViewClick: {ex.Message}",
-                    EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"Caregiver.ImagesPersonalListViewClick: {ex.Message}"
+                    , SystemEventLogType.Display
+                    , EventLogEntryType.Error);
             }
         }
 
@@ -1157,8 +1152,9 @@ namespace Keebee.AAT.Display.Caregiver
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"Caregiver.InteractivitiesActivitiesListViewClick: {ex.Message}",
-                    EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"Caregiver.InteractivitiesActivitiesListViewClick: {ex.Message}"
+                    , SystemEventLogType.Display
+                    , EventLogEntryType.Error);
             }
         }
 
@@ -1226,7 +1222,7 @@ namespace Keebee.AAT.Display.Caregiver
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"Caregiver.PlayStateChangeMusic: {ex.Message}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"Caregiver.PlayStateChangeMusic: {ex.Message}", SystemEventLogType.Display, EventLogEntryType.Error);
             }
         }
 
@@ -1293,7 +1289,7 @@ namespace Keebee.AAT.Display.Caregiver
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"Caregiver.PlayStateChangeMusic: {ex.Message}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"Caregiver.PlayStateChangeMusic: {ex.Message}", SystemEventLogType.Display, EventLogEntryType.Error);
             }
         }
 
@@ -1322,7 +1318,7 @@ namespace Keebee.AAT.Display.Caregiver
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"Caregiver.ResidentSelectedIndexChanged: {ex.Message}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"Caregiver.ResidentSelectedIndexChanged: {ex.Message}", SystemEventLogType.Display, EventLogEntryType.Error);
             }
         }
 

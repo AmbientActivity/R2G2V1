@@ -25,13 +25,10 @@ namespace Keebee.AAT.Administrator.Controllers
         private readonly IResponseTypesClient _responseTypesClient;
         private readonly IThumbnailsClient _thumbnailsClient;
 
-        private readonly SystemEventLogger _systemEventLogger;
         private readonly MediaSourcePath _mediaSourcePath = new MediaSourcePath();
 
         public ResidentProfileController()
         {
-            _systemEventLogger = new SystemEventLogger(SystemEventLogType.AdminInterface);
-
             _residentsClient = new ResidentsClient();
             _residentMediaFilesClient = new ResidentMediaFilesClient();
             _activeResidentClient = new ActiveResidentClient();
@@ -102,7 +99,7 @@ namespace Keebee.AAT.Administrator.Controllers
             try
             {
                 var dateAdded = DateTime.Now;
-                var rules = new ResidentRules { EventLogger = _systemEventLogger };
+                var rules = new ResidentRules();
                 var responseType = _responseTypesClient.Get(responseTypeId);
                 var mediaPathType = _mediaPathTypesClient.Get(mediaPathTypeId);
 
@@ -120,6 +117,7 @@ namespace Keebee.AAT.Administrator.Controllers
             catch (Exception ex)
             {
                 errMsg = ex.Message;
+                SystemEventLogger.WriteEntry($"ResidentProfile.AddFiles: {errMsg}", SystemEventLogType.AdminInterface, EventLogEntryType.Error);
             }
 
             return Json(new
@@ -142,7 +140,7 @@ namespace Keebee.AAT.Administrator.Controllers
                 if (file != null)
                 {
                     filename = file.FileName;
-                    var rules = new ResidentRules { EventLogger = _systemEventLogger };
+                    var rules = new ResidentRules();
 
                     errMsg = rules.SaveUploadedFile(
                         filename,
@@ -154,7 +152,7 @@ namespace Keebee.AAT.Administrator.Controllers
             catch (Exception ex)
             {
                 errMsg = ex.Message;
-                _systemEventLogger.WriteEntry($"ResidentProfile.UploadFile: {errMsg}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"ResidentProfile.UploadFile: {errMsg}", SystemEventLogType.AdminInterface, EventLogEntryType.Error);
             }
 
             return Json(new
@@ -197,7 +195,7 @@ namespace Keebee.AAT.Administrator.Controllers
             catch (Exception ex)
             {
                 errMsg = ex.Message;
-                _systemEventLogger.WriteEntry($"ResidentProfile.AddSharedMediaFiles: {errMsg}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"ResidentProfile.AddSharedMediaFiles: {errMsg}", SystemEventLogType.AdminInterface, EventLogEntryType.Error);
             }
 
             return Json(new
@@ -240,7 +238,7 @@ namespace Keebee.AAT.Administrator.Controllers
                 }
                 else
                 {
-                    var rules = new ResidentRules { EventLogger = _systemEventLogger };
+                    var rules = new ResidentRules();
                     var responseType = _responseTypesClient.Get(responseTypeId);
 
                     foreach (var id in ids)
@@ -255,7 +253,7 @@ namespace Keebee.AAT.Administrator.Controllers
             catch (Exception ex)
             {
                 errMsg = ex.Message;
-                _systemEventLogger.WriteEntry($"ResidentProfile.DeleteSelected: {errMsg}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"ResidentProfile.DeleteSelected: {errMsg}", SystemEventLogType.AdminInterface, EventLogEntryType.Error);
             }
 
             return Json(new

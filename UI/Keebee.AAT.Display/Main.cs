@@ -35,12 +35,6 @@ namespace Keebee.AAT.Display
             NoDifference = 2
         }
 
-        private SystemEventLogger _systemEventLogger;
-        public SystemEventLogger EventLogger
-        {
-            set { _systemEventLogger = value; }
-        }
-
         private string[] _ambientPlaylist;
         public string[] AmbientPlaylist
         {
@@ -301,22 +295,6 @@ namespace Keebee.AAT.Display
             lblActiveResident.Hide();
         }
 
-        private void SetPostLoadProperties()
-        {
-            // the _systemEventLogger is not available in the constructor - this gets called later in MainShown()
-            _messageQueueDisplaySms.SystemEventLogger = _systemEventLogger;
-            _messageQueueDisplayPhidget.SystemEventLogger = _systemEventLogger;
-            _messageQueueResponse.SystemEventLogger = _systemEventLogger;
-
-            _interactiveActivityEventLogger.SystemEventLogger = _systemEventLogger;
-            _activityEventLogger.EventLogger = _systemEventLogger;
-
-            ambientPlayer1.SystemEventLogger = _systemEventLogger;
-            audioVideoPlayer1.SystemEventLogger = _systemEventLogger;
-            slideViewerFlash1.SystemEventLogger = _systemEventLogger;
-            matchingGame1.SystemEventLogger = _systemEventLogger;
-        }
-
         #endregion
 
         #region core logic
@@ -373,7 +351,7 @@ namespace Keebee.AAT.Display
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"Main.ExecuteResponse: {ex.Message}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"Main.ExecuteResponse: {ex.Message}", SystemEventLogType.Display, EventLogEntryType.Error);
             }
         }
 
@@ -447,7 +425,7 @@ namespace Keebee.AAT.Display
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"Main.StopCurrentResponse: {ex.Message}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"Main.StopCurrentResponse: {ex.Message}", SystemEventLogType.Display, EventLogEntryType.Error);
             }
         }
 
@@ -739,7 +717,6 @@ namespace Keebee.AAT.Display
 
                 _caregiverInterface = new CaregiverInterface
                 {
-                    EventLogger = _systemEventLogger,
                     Config = config,
                     PublicMediaFiles = mediaResponseTypes
                 };
@@ -814,7 +791,7 @@ namespace Keebee.AAT.Display
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"Main.MessageReceivedResponse: {ex.Message}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"Main.MessageReceivedResponse: {ex.Message}", SystemEventLogType.Display, EventLogEntryType.Error);
             }
         }
 
@@ -844,7 +821,7 @@ namespace Keebee.AAT.Display
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"Main.AmbientScreenTouched: {ex.Message}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"Main.AmbientScreenTouched: {ex.Message}", SystemEventLogType.Display, EventLogEntryType.Error);
             }
         }
 
@@ -858,7 +835,7 @@ namespace Keebee.AAT.Display
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"Main.SlideShowComplete: {ex.Message}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"Main.SlideShowComplete: {ex.Message}", SystemEventLogType.Display, EventLogEntryType.Error);
             }
         }
 
@@ -872,7 +849,7 @@ namespace Keebee.AAT.Display
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"Main.AudioVideoPlayerComplete: {ex.Message}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"Main.AudioVideoPlayerComplete: {ex.Message}", SystemEventLogType.Display, EventLogEntryType.Error);
             }
         }
 
@@ -886,7 +863,7 @@ namespace Keebee.AAT.Display
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"Main.AudioVideoPlayerComplete: {ex.Message}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"Main.AudioVideoPlayerComplete: {ex.Message}", SystemEventLogType.Display, EventLogEntryType.Error);
             }
         }
 
@@ -904,7 +881,7 @@ namespace Keebee.AAT.Display
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"Main.LogInteractiveActivityEvent: {ex.Message}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"Main.LogInteractiveActivityEvent: {ex.Message}", SystemEventLogType.Display, EventLogEntryType.Error);
             }
         }
 
@@ -919,7 +896,7 @@ namespace Keebee.AAT.Display
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"Main.MatchingGameTimeoutExpiredEvent: {ex.Message}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"Main.MatchingGameTimeoutExpiredEvent: {ex.Message}", SystemEventLogType.Display, EventLogEntryType.Error);
             }
         }
 
@@ -931,7 +908,7 @@ namespace Keebee.AAT.Display
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"Main.StartVideoCaptureEvent: {ex.Message}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"Main.StartVideoCaptureEvent: {ex.Message}", SystemEventLogType.Display, EventLogEntryType.Error);
             }
         }
 
@@ -946,7 +923,7 @@ namespace Keebee.AAT.Display
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"Main.ActivityPlayerTimeoutExpired: {ex.Message}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"Main.ActivityPlayerTimeoutExpired: {ex.Message}", SystemEventLogType.Display, EventLogEntryType.Error);
             }
         }
 
@@ -959,7 +936,7 @@ namespace Keebee.AAT.Display
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"Main.LogVideoActivityEvent: {ex.Message}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"Main.LogVideoActivityEvent: {ex.Message}", SystemEventLogType.Display, EventLogEntryType.Error);
             }
         }
 
@@ -971,7 +948,7 @@ namespace Keebee.AAT.Display
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"Main.CaregiverComplete: {ex.Message}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"Main.CaregiverComplete: {ex.Message}", SystemEventLogType.Display, EventLogEntryType.Error);
             }
         }
 
@@ -979,9 +956,6 @@ namespace Keebee.AAT.Display
         {
             try
             {
-                // set any properties that can't be set in the constructor (because they are not initialized until now)
-                SetPostLoadProperties();
-
                 // inform the services that the display is now active
                 _messageQueueDisplaySms.Send(CreateDisplayMessageBody(true));
                 _messageQueueDisplayPhidget.Send(CreateDisplayMessageBody(true));
@@ -1005,7 +979,7 @@ namespace Keebee.AAT.Display
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"Main.MainShown: {ex.Message}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"Main.MainShown: {ex.Message}", SystemEventLogType.Display, EventLogEntryType.Error);
             }
         }
 

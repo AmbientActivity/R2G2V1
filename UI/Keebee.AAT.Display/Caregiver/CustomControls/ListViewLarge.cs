@@ -5,6 +5,23 @@ using System.Windows.Forms;
 
 namespace Keebee.AAT.Display.Caregiver.CustomControls
 {
+    internal static class NativeMethods
+    {
+        [DllImport("user32.dll")]
+        internal static extern int GetWindowLong(IntPtr hwnd, int index);
+
+        [DllImport("user32.dll")]
+        internal static extern int SetWindowLong(IntPtr hwnd, int index, int newStyle);
+
+        [DllImport("user32.dll")]
+        internal static extern bool SetWindowPos(IntPtr hwnd, IntPtr hwndInsertAfter,
+                        int x, int y, int width, int height, uint flags);
+
+        [DllImport("user32.dll")]
+        internal static extern IntPtr SendMessage(IntPtr hwnd, uint msg,
+                        IntPtr wParam, IntPtr lParam);
+    }
+
     public partial class ListViewLarge : UserControl
     {
         const int LB_GETHORIZONTALEXTENT = 0x0193;
@@ -18,19 +35,6 @@ namespace Keebee.AAT.Display.Caregiver.CustomControls
         const int SWP_NOZORDER = 0x0004;
 
         const int GWL_STYLE = (-16);
-
-        [DllImport("user32.dll")]
-        private static extern int SendMessage(IntPtr hwnd, int msg, int wParam, int lParam);
-
-        [DllImport("user32.dll")]
-        private static extern uint GetWindowLong(IntPtr hwnd, int index);
-
-        [DllImport("user32.dll")]
-        private static extern void SetWindowLong(IntPtr hwnd, int index, uint value);
-
-        [DllImport("user32.dll")]
-        private static extern bool SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int X,
-              int Y, int cx, int cy, uint uFlags);
 
         // event handler
         public event ColumnWidthChangingEventHandler ColumnWidthChanging;
@@ -59,7 +63,7 @@ namespace Keebee.AAT.Display.Caregiver.CustomControls
             listView1.ColumnWidthChanging += RaiseColumnWidthChanging;
             SetStyle(ControlStyles.DoubleBuffer, true);
             AddStyle(listView1.Handle, (uint)WS_HSCROLL);
-            SendMessage(listView1.Handle, LB_SETHORIZONTALEXTENT, 1000, 0);
+            NativeMethods.SendMessage(listView1.Handle, LB_SETHORIZONTALEXTENT, (IntPtr)1000, (IntPtr)0);
         }
 
         private void RaiseColumnWidthChanging(object sender, ColumnWidthChangingEventArgs e)
@@ -93,13 +97,13 @@ namespace Keebee.AAT.Display.Caregiver.CustomControls
         private static void AddStyle(IntPtr handle, uint addStyle)
         {
             // Get current window style
-            uint windowStyle = GetWindowLong(handle, GWL_STYLE);
+            int windowStyle = NativeMethods.GetWindowLong(handle, GWL_STYLE);
 
             // Modify style
-            SetWindowLong(handle, GWL_STYLE, windowStyle | addStyle);
+            NativeMethods.SetWindowLong(handle, GWL_STYLE, windowStyle | (int)addStyle);
 
             // Let the window know of the changes
-            SetWindowPos(handle, IntPtr.Zero, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOZORDER | SWP_NOSIZE | SWP_FRAMECHANGED);
+            NativeMethods.SetWindowPos(handle, IntPtr.Zero, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOZORDER | SWP_NOSIZE | SWP_FRAMECHANGED);
         }
 
         //List view header formatters

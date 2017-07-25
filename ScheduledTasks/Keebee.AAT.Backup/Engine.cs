@@ -119,12 +119,14 @@ namespace Keebee.AAT.Backup
 #endif
                 }
             }
+#if DEBUG
             catch (Exception e)
             {
-#if DEBUG
                 Console.WriteLine(e.Message);
-#endif
             }
+#elif !DEBUG
+            catch {}
+#endif
         }
 
         private static string InitializeLogFile(string pathLog)

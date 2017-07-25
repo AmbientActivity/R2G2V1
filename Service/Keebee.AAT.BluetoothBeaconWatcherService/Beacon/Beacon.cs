@@ -19,8 +19,6 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService.Beacon
     /// </summary>
     public class Beacon : INotifyPropertyChanged
     {
-        private readonly Guid _eddystoneGuid = new Guid("0000FEAA-0000-1000-8000-00805F9B34FB");
-
         public enum BeaconTypeEnum
         {
             /// <summary>
@@ -193,7 +191,7 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService.Beacon
                     // don't overwrite it with another service Uuid.
                     if (BeaconType == BeaconTypeEnum.Unknown)
                     {
-                        BeaconType = serviceUuid.Equals(_eddystoneGuid)
+                        BeaconType = serviceUuid.Equals(new Guid("0000FEAA-0000-1000-8000-00805F9B34FB"))
                             ? BeaconTypeEnum.Eddystone
                             : BeaconTypeEnum.Unknown;
                     }

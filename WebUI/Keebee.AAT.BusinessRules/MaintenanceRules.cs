@@ -16,12 +16,6 @@ namespace Keebee.AAT.BusinessRules
             set { _messageQueueResponse = value; }
         }
 
-        private SystemEventLogger _systemEventLogger;
-        public SystemEventLogger EventLogger
-        {
-            set { _systemEventLogger = value; }
-        }
-
         public string RestartServices()
         {
             try
@@ -62,7 +56,7 @@ namespace Keebee.AAT.BusinessRules
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"RestartService: {ex.Message}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"RestartService: {ex.Message}", SystemEventLogType.AdminInterface, EventLogEntryType.Error);
                 return ex.Message;
             }
 
@@ -98,7 +92,7 @@ namespace Keebee.AAT.BusinessRules
             catch (Exception ex)
             {
                 errormessage = ex.Message;
-                _systemEventLogger.WriteEntry($"KillDisplay: {errormessage}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"KillDisplay: {errormessage}", SystemEventLogType.AdminInterface, EventLogEntryType.Error);
             }
 
             return errormessage;
@@ -110,25 +104,16 @@ namespace Keebee.AAT.BusinessRules
 
             try
             {
-                var eventLog = new SystemEventLogger(SystemEventLogType.KeepIISAliveService);
-                eventLog.Clear();
-
-                eventLog = new SystemEventLogger(SystemEventLogType.StateMachineService);
-                eventLog.Clear();
-
-                eventLog = new SystemEventLogger(SystemEventLogType.PhidgetService);
-                eventLog.Clear();
-
-                eventLog = new SystemEventLogger(SystemEventLogType.BluetoothBeaconWatcherService);
-                eventLog.Clear();
-
-                eventLog = new SystemEventLogger(SystemEventLogType.VideoCaptureService);
-                eventLog.Clear();
+                SystemEventLogger.Clear(SystemEventLogType.KeepIISAliveService);
+                SystemEventLogger.Clear(SystemEventLogType.StateMachineService);
+                SystemEventLogger.Clear(SystemEventLogType.PhidgetService);
+                SystemEventLogger.Clear(SystemEventLogType.BluetoothBeaconWatcherService);
+                SystemEventLogger.Clear(SystemEventLogType.VideoCaptureService);
             }
             catch (Exception ex)
             {
                 errormessage = ex.Message;
-                _systemEventLogger.WriteEntry($"ClearEventLogs: {errormessage}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"ClearEventLogs: {errormessage}", SystemEventLogType.AdminInterface, EventLogEntryType.Error);
             }
 
             return errormessage;
@@ -174,7 +159,7 @@ namespace Keebee.AAT.BusinessRules
 
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"ReinstallServices: {ex.Message}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"ReinstallServices: {ex.Message}", SystemEventLogType.AdminInterface, EventLogEntryType.Error);
                 return ex.Message;
             }
         }
@@ -201,7 +186,7 @@ namespace Keebee.AAT.BusinessRules
 
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"UninstallServices: {ex.Message}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"UninstallServices: {ex.Message}", SystemEventLogType.AdminInterface, EventLogEntryType.Error);
                 return ex.Message;
             }
         }

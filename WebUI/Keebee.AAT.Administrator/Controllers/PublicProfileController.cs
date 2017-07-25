@@ -23,13 +23,10 @@ namespace Keebee.AAT.Administrator.Controllers
         private readonly IResponseTypesClient _responseTypesClient;
         private readonly IThumbnailsClient _thumbnailsClient;
 
-        private readonly SystemEventLogger _systemEventLogger;
         private readonly MediaSourcePath _mediaSourcePath = new MediaSourcePath();
 
         public PublicProfileController()
         {
-            _systemEventLogger = new SystemEventLogger(SystemEventLogType.AdminInterface);
-
             _publicMediaFilesClient = new PublicMediaFilesClient();
             _mediaPathTypesClient = new MediaPathTypesClient();
             _responseTypesClient = new ResponseTypesClient();
@@ -80,7 +77,7 @@ namespace Keebee.AAT.Administrator.Controllers
             catch (Exception ex)
             {
                 errMsg = ex.Message;
-                _systemEventLogger.WriteEntry($"PublicProfile.GetData: {errMsg}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"PublicProfile.GetData: {errMsg}", SystemEventLogType.AdminInterface, EventLogEntryType.Error);
             }
 
             return Json(new
@@ -104,7 +101,7 @@ namespace Keebee.AAT.Administrator.Controllers
                 if (file != null)
                 {
                     filename = file.FileName;
-                    var rules = new PublicProfileRules { EventLogger = _systemEventLogger };
+                    var rules = new PublicProfileRules();
                     var path = $@"{_mediaSourcePath.ProfileRoot}\{PublicProfileSource.Id}\{mediaPath}";
 
                     errMsg = rules.SaveUploadedFile(filename, path, file.InputStream, mediaPathTypeCategory);
@@ -113,7 +110,7 @@ namespace Keebee.AAT.Administrator.Controllers
             catch (Exception ex)
             {
                 errMsg = ex.Message;
-                _systemEventLogger.WriteEntry($"PublicProfile.UploadFile: {errMsg}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"PublicProfile.UploadFile: {errMsg}", SystemEventLogType.AdminInterface, EventLogEntryType.Error);
             }
 
             return Json(new
@@ -135,7 +132,7 @@ namespace Keebee.AAT.Administrator.Controllers
             try
             {
                 var dateAdded = DateTime.Now;
-                var rules = new PublicProfileRules { EventLogger = _systemEventLogger };
+                var rules = new PublicProfileRules();
                 var responseType = _responseTypesClient.Get(responseTypeId);
                 var mediaPathType = _mediaPathTypesClient.Get(mediaPathTypeId);
 
@@ -153,7 +150,7 @@ namespace Keebee.AAT.Administrator.Controllers
             catch (Exception ex)
             {
                 errMsg = ex.Message;
-                _systemEventLogger.WriteEntry($"PublicProfile.AddFiles: {errMsg}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"PublicProfile.AddFiles: {errMsg}", SystemEventLogType.AdminInterface, EventLogEntryType.Error);
             }
 
             return Json(new
@@ -196,7 +193,7 @@ namespace Keebee.AAT.Administrator.Controllers
             catch (Exception ex)
             {
                 errMsg = ex.Message;
-                _systemEventLogger.WriteEntry($"PublicProfile.AddSharedMediaFiles: {errMsg}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"PublicProfile.AddSharedMediaFiles: {errMsg}", SystemEventLogType.AdminInterface, EventLogEntryType.Error);
             }
 
             return Json(new
@@ -216,7 +213,7 @@ namespace Keebee.AAT.Administrator.Controllers
 
             try
             {
-                var rules = new PublicProfileRules { EventLogger = _systemEventLogger };
+                var rules = new PublicProfileRules();
 
                 errMsg = rules.CanDeleteMultiple(ids.Length, mediaPathTypeId, responseTypeId);
                 if (!string.IsNullOrEmpty(errMsg)) throw new Exception(errMsg);
@@ -233,7 +230,7 @@ namespace Keebee.AAT.Administrator.Controllers
             catch (Exception ex)
             {
                 errMsg = ex.Message;
-                _systemEventLogger.WriteEntry($"PublicProfile.DeleteSelected: {errMsg}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"PublicProfile.DeleteSelected: {errMsg}", SystemEventLogType.AdminInterface, EventLogEntryType.Error);
             }
 
             return Json(new

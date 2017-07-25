@@ -9,13 +9,6 @@ namespace Keebee.AAT.Administrator.Controllers
 {
     public class ServicesController : Controller
     {
-        private readonly SystemEventLogger _systemEventLogger;
-
-        public ServicesController()
-        {
-           _systemEventLogger = new SystemEventLogger(SystemEventLogType.AdminInterface);
-        }
-
         // GET: Services
         [Authorize]
         [HttpGet]
@@ -32,7 +25,7 @@ namespace Keebee.AAT.Administrator.Controllers
         [HttpGet]
         public JsonResult SaveSettings(bool activateBeaconWatcher, bool activateVideoCapture)
         {
-            var rules = new ServicesRules { EventLogger = _systemEventLogger };
+            var rules = new ServicesRules();
             var beaconWatcherPath = ConfigurationManager.AppSettings["BluetoothBeaconWatcherServiceLocation"];
             var videoCapturePath = ConfigurationManager.AppSettings["VideoCaptureServiceLocation"];
 

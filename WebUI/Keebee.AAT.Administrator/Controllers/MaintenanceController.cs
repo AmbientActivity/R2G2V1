@@ -14,8 +14,6 @@ namespace Keebee.AAT.Administrator.Controllers
 {
     public class MaintenanceController : Controller
     {
-        private readonly SystemEventLogger _systemEventLogger;
-
         // message queue sender
         private readonly CustomMessageQueue _messageQueueConfigSms;
         private readonly CustomMessageQueue _messageQueueDisplaySms;
@@ -26,8 +24,6 @@ namespace Keebee.AAT.Administrator.Controllers
 
         public MaintenanceController()
         {
-            _systemEventLogger = new SystemEventLogger(SystemEventLogType.AdminInterface);
-
             // config-sms message queue sender
             _messageQueueConfigSms = new CustomMessageQueue(new CustomMessageQueueArgs
             {
@@ -101,7 +97,7 @@ namespace Keebee.AAT.Administrator.Controllers
                     _messageQueueDisplayBluetoothBeaconWatcher.Send(CreateDisplayMessageBody(false));
 
                 // restart the services
-                var rules = new MaintenanceRules { EventLogger = _systemEventLogger };
+                var rules = new MaintenanceRules();
                 errMsg = rules.RestartServices();
 
                 if (!string.IsNullOrEmpty(errMsg))
@@ -147,8 +143,7 @@ namespace Keebee.AAT.Administrator.Controllers
             {
                 var rules = new MaintenanceRules
                 {
-                    MessageQueueResponse = _messageQueueResponse,
-                    EventLogger = _systemEventLogger
+                    MessageQueueResponse = _messageQueueResponse
                 };
 
                 errMsg = rules.KillDisplay();
@@ -173,7 +168,7 @@ namespace Keebee.AAT.Administrator.Controllers
 
             try
             {
-                var rules = new MaintenanceRules {EventLogger = _systemEventLogger};
+                var rules = new MaintenanceRules();
                 errMsg = rules.ClearServiceLogs();
             }
             catch (Exception ex)
@@ -209,7 +204,7 @@ namespace Keebee.AAT.Administrator.Controllers
                 _messageQueueDisplayVideoCapture.Send(CreateDisplayMessageBody(false));
 
                 // uninstall / reinstall the services
-                var rules = new MaintenanceRules { EventLogger = _systemEventLogger };
+                var rules = new MaintenanceRules();
                 errMsg = rules.ReinstallServices(smsPath, phidgetPath, bluetoothBeaconWatcherPath, videoCapturePath,
                     keepIISAlivePath);
 
@@ -264,7 +259,7 @@ namespace Keebee.AAT.Administrator.Controllers
                 _messageQueueDisplayVideoCapture.Send(CreateDisplayMessageBody(false));
 
                 // uninstall the services
-                var rules = new MaintenanceRules { EventLogger = _systemEventLogger };
+                var rules = new MaintenanceRules();
                 errMsg = rules.UninstallServices(smsPath, phidgetPath, bluetoothBeaconWatcherPath, videoCapturePath, keepIISAlivePath);
             }
             catch (Exception ex)

@@ -12,13 +12,6 @@ namespace Keebee.AAT.Administrator.Controllers
 {
     public class VideoCapturesController : Controller
     {
-        private readonly SystemEventLogger _systemEventLogger;
-
-        public VideoCapturesController()
-        {
-            _systemEventLogger = new SystemEventLogger(SystemEventLogType.AdminInterface);
-        }
-
         // GET: VideoCaptures
         public ActionResult Index()
         {
@@ -36,7 +29,7 @@ namespace Keebee.AAT.Administrator.Controllers
         [Authorize]
         public ActionResult DoExport(string date)
         {
-            var rules = new VideoCaptureRules { EventLogger = _systemEventLogger };
+            var rules = new VideoCaptureRules();
             var filename = $"VideoCaptures_{date.Replace("/", "_")}.zip";
             var file = rules.GetZipFile(date);
 

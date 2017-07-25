@@ -7,12 +7,6 @@ namespace Keebee.AAT.Display.Caregiver
 {
     public partial class ImageViewer : Form
     {
-        private SystemEventLogger _systemEventLogger;
-        public SystemEventLogger EventLogger
-        {
-            set { _systemEventLogger = value; }
-        }
-
         private string[] _images;
         public string[] Images
         {
@@ -117,7 +111,6 @@ namespace Keebee.AAT.Display.Caregiver
 
         private void ImageViewerShown(object sender, EventArgs e)
         {
-            slideViewerFlash1.SystemEventLogger = _systemEventLogger;
             btnPlay.BackgroundImage = imageList1.Images[1];
             _isPlaying = true;
             slideViewerFlash1.Play(_images, autoStart: AutoStart);

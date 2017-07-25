@@ -13,13 +13,6 @@ namespace Keebee.AAT.Display.UserControls
 {
     public partial class AmbientPlayer : UserControl
     {
-        // event logger
-        private SystemEventLogger _systemEventLogger;
-        public SystemEventLogger SystemEventLogger
-        {
-            set { _systemEventLogger = value; }
-        }
-
         // event handler
         public event EventHandler ScreenTouchedEvent;
 
@@ -71,7 +64,7 @@ namespace Keebee.AAT.Display.UserControls
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"AmbientPlayer.Play: {ex.Message}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"AmbientPlayer.Play: {ex.Message}", SystemEventLogType.Display, EventLogEntryType.Error);
             }
         }
 
@@ -134,7 +127,7 @@ namespace Keebee.AAT.Display.UserControls
                 }
                 catch (Exception ex)
                 {
-                    _systemEventLogger.WriteEntry($"AmbientPlayer.PlayAmbient: {ex.Message}", EventLogEntryType.Error);
+                    SystemEventLogger.WriteEntry($"AmbientPlayer.PlayAmbient: {ex.Message}", SystemEventLogType.Display, EventLogEntryType.Error);
                 }
             }
         }
@@ -229,19 +222,14 @@ namespace Keebee.AAT.Display.UserControls
                         break;
 
                     case (int) WMPPlayState.wmppsReady:
-                        try
-                        {
-                            axWindowsMediaPlayer.Ctlcontrols.play();
-                        }
-                        catch
-                        {
-                        }
+                        try { axWindowsMediaPlayer.Ctlcontrols.play(); }
+                        catch {}
                         break;
                 }
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"AmbientPlayer.PlayStateChange: {ex.Message}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"AmbientPlayer.PlayStateChange: {ex.Message}", SystemEventLogType.Display, EventLogEntryType.Error);
             }
         }
     }

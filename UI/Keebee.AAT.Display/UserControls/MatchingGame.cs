@@ -17,12 +17,6 @@ namespace Keebee.AAT.Display.UserControls
     {
         private string _swfFile;
 
-        private SystemEventLogger _systemEventLogger;
-        public SystemEventLogger SystemEventLogger
-        {
-            set { _systemEventLogger = value; }
-        }
-
         // event handler
         public event EventHandler MatchingGameTimeoutExpiredEvent;
         public event EventHandler LogInteractiveActivityEventEvent;
@@ -105,7 +99,7 @@ namespace Keebee.AAT.Display.UserControls
 
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"Display.MatchingGame.PlayGame{Environment.NewLine}{ex.Message}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"Display.MatchingGame.PlayGame{Environment.NewLine}{ex.Message}", SystemEventLogType.Display, EventLogEntryType.Error);
             }
         }
 
@@ -121,12 +115,12 @@ namespace Keebee.AAT.Display.UserControls
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"Display.MatchingGame.Stop{Environment.NewLine}{ex.Message}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"Display.MatchingGame.Stop{Environment.NewLine}{ex.Message}", SystemEventLogType.Display, EventLogEntryType.Error);
             }
             
         }
 
-        private string GetXmlString(IEnumerable<string> files)
+        private static string GetXmlString(IEnumerable<string> files)
         {
             var xmlBuilder = new StringBuilder();
 
@@ -142,7 +136,7 @@ namespace Keebee.AAT.Display.UserControls
 
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"Display.MatchingGame.GetXmlString{Environment.NewLine}{ex.Message}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"Display.MatchingGame.GetXmlString{Environment.NewLine}{ex.Message}", SystemEventLogType.Display, EventLogEntryType.Error);
             }
 
             return xmlBuilder.ToString();
@@ -215,7 +209,7 @@ namespace Keebee.AAT.Display.UserControls
 
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"Display.MatchingGame.FlashCall{Environment.NewLine}{ex.Message}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"Display.MatchingGame.FlashCall{Environment.NewLine}{ex.Message}", SystemEventLogType.Display, EventLogEntryType.Error);
             }
         }
 

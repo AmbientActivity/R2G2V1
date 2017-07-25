@@ -10,12 +10,6 @@ namespace Keebee.AAT.Display.UserControls
 {
     public partial class ActivityPlayer : UserControl
     {
-        private SystemEventLogger _systemEventLogger;
-        public SystemEventLogger SystemEventLogger
-        {
-            set { _systemEventLogger = value; }
-        }
-
         // event handler
         public event EventHandler ActivityPlayerTimeoutExpiredEvent;
         public event EventHandler LogInteractiveActivityEventEvent;
@@ -84,7 +78,7 @@ namespace Keebee.AAT.Display.UserControls
 
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"Display.ActivityPlayer.PlayActivity{Environment.NewLine}{ex.Message}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"Display.ActivityPlayer.PlayActivity{Environment.NewLine}{ex.Message}", SystemEventLogType.Display, EventLogEntryType.Error);
             }
         }
 
@@ -100,7 +94,7 @@ namespace Keebee.AAT.Display.UserControls
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"Display.ActivityPlayer.Stop{Environment.NewLine}{ex.Message}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"Display.ActivityPlayer.Stop{Environment.NewLine}{ex.Message}", SystemEventLogType.Display, EventLogEntryType.Error);
             }
 
         }
@@ -144,7 +138,7 @@ namespace Keebee.AAT.Display.UserControls
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"Display.ActivityPlayer.FlashCall{Environment.NewLine}{ex.Message}",
+                SystemEventLogger.WriteEntry($"Display.ActivityPlayer.FlashCall{Environment.NewLine}{ex.Message}", SystemEventLogType.Display,
                     EventLogEntryType.Error);
             }
         }

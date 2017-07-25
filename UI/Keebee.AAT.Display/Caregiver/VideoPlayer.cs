@@ -10,12 +10,6 @@ namespace Keebee.AAT.Display.Caregiver
 {
     public partial class VideoPlayer : Form
     {
-        private SystemEventLogger _systemEventLogger;
-        public SystemEventLogger EventLogger
-        {
-            set { _systemEventLogger = value; }
-        }
-
         private string _video;
         public string Video
         {
@@ -64,7 +58,7 @@ namespace Keebee.AAT.Display.Caregiver
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"VideoPlayer.Play: {ex.Message}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"VideoPlayer.Play: {ex.Message}", SystemEventLogType.Display, EventLogEntryType.Error);
             }
         }
 

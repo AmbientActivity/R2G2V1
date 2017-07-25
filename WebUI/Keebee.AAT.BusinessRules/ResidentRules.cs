@@ -2,6 +2,7 @@
 using Keebee.AAT.ApiClient.Clients;
 using Keebee.AAT.ApiClient.Models;
 using Keebee.AAT.BusinessRules.Models;
+using Keebee.AAT.SystemEventLogging;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -152,7 +153,7 @@ namespace Keebee.AAT.BusinessRules
             catch (Exception ex)
             {
                 errMsg = ex.Message;
-                EventLogger.WriteEntry($"ResidentRules.AddMediaFileFromFilename: {errMsg}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"ResidentRules.AddMediaFileFromFilename: {errMsg}", SystemEventLogType.AdminInterface, EventLogEntryType.Error);
             }
 
             return errMsg;
@@ -192,7 +193,7 @@ namespace Keebee.AAT.BusinessRules
             catch (Exception ex)
             {
                 errMsg = ex.Message;
-                EventLogger.WriteEntry($"ResidentRules.AddMediaFile: {errMsg}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"ResidentRules.AddMediaFile: {errMsg}", SystemEventLogType.AdminInterface, EventLogEntryType.Error);
             }
 
             return errMsg;
@@ -233,7 +234,7 @@ namespace Keebee.AAT.BusinessRules
             catch (Exception ex)
             {
                 errMsg = ex.Message;
-                EventLogger.WriteEntry($"ResidentRules.DeleteMediaFile: {errMsg}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"ResidentRules.DeleteMediaFile: {errMsg}", SystemEventLogType.AdminInterface, EventLogEntryType.Error);
             }
 
             return errMsg;

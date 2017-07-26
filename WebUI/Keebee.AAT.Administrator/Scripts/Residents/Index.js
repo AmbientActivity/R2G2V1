@@ -282,7 +282,12 @@
                         return filteredResidents;
                     });
 
+                    // to prevent dialog from opening twice
+                    var isEditLoading = false; 
                     self.edit = function (row) {
+                        if (isEditLoading) return;
+                        isEditLoading = true;
+
                         cmdAdd.prop("disabled", true);
 
                         var id = (typeof row.id !== "undefined")
@@ -357,6 +362,7 @@
                                 });
                             }
                         });
+                        isEditLoading = false;
                     };
 
                     self.editProfile = function (row) {

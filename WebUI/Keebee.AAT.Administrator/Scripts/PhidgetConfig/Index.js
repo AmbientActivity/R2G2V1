@@ -130,9 +130,9 @@
                     createConfigArray({ list: lists.ConfigList, insert: false });
 
                     function enableButtons(enable) {
-                        cmdAdd.prop("hidden", enable);
-                        cmdEdit.prop("hidden", enable);
-                        cmdDelete.prop("hidden", enable);
+                        cmdAdd.prop("hidden", !enable);
+                        cmdEdit.prop("hidden", !enable);
+                        cmdDelete.prop("hidden", !enable);
 
                         if (enable) {
                             cmdAddDetail.removeAttr("disabled");
@@ -374,8 +374,13 @@
                         });
                     };
 
+                    // to prevent dialog from opening twice
+                    var isEditLoading = false;
                     self.editDetail = function (row) {
                         if (isBinding) return;
+
+                        if (isEditLoading) return;
+                        isEditLoading = true;
 
                         var id = (typeof row.id !== "undefined") ? row.id : 0;
                         var add = (id === 0);
@@ -403,7 +408,10 @@
                             params: { id: id, configId: self.selectedConfigId() },
                             focus: "ddlPhidgetTypes",
                             buttonOKClass: add ? "btn-success" : "btn-primary",
-                            cancelled: function () { enableButtons(true); },
+                            cancelled: function() {
+                                enableButtons(true);
+                                isEditLoading = false;
+                            },
                             callback: function(dialog) {
                                 var configdetail = self.getConfigDetailFromDialog();
                                 configdetail.ConfigId = self.selectedConfigId();
@@ -412,7 +420,8 @@
                                         type: "POST",
                                         params: { configdetail: configdetail }
                                     })
-                                    .then(function(validateResult) {
+                                    .then(function (validateResult) {
+                                        isEditLoading = false;
                                         if (validateResult.ValidationMessages === null) {
                                             dialog.close();
                                             utilities.job.execute({
@@ -435,7 +444,7 @@
                                                     self.enableDetail();
                                                     self.sort();
                                                     enableButtons(true);
-                                                });
+                                                });   
                                         } else {
                                             utilities.validation.show({
                                                 container: "validation-container",
@@ -446,6 +455,7 @@
                                     })
                                     .catch(function() {
                                         enableButtons(true);
+                                        isEditLoading = false;
                                     });
                                 }
                         });

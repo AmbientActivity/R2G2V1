@@ -781,9 +781,9 @@ namespace Keebee.AAT.Backup
                         {
                             sw.WriteLine($"SET @allowedExts = '''' + REPLACE('{pathType.AllowedExts}', ', ', ''', ''') + ''''");
                             sw.WriteLine(
-                                "INSERT INTO PublicMediaFiles (IsLinked, ResponseTypeId, MediaPathTypeId, StreamId)");
+                                "INSERT INTO PublicMediaFiles (IsLinked, ResponseTypeId, MediaPathTypeId, StreamId, DateAdded)");
                             sw.WriteLine(
-                                $"SELECT 0, {responseType.Id}, {pathType.Id}, StreamId FROM MediaFiles WHERE [Path] = @pathProfiles + " +
+                                $"SELECT 0, {responseType.Id}, {pathType.Id}, StreamId, GETDATE() FROM MediaFiles WHERE [Path] = @pathProfiles + " +
                                 $@"'{PublicProfileSource.Id}\{pathType.Path}\' AND (@allowedExts) LIKE '%' + [FileType] + '%'");
                             sw.WriteLine();
                         }

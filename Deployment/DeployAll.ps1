@@ -189,13 +189,17 @@ Try
     # -------------------- WEB --------------------
     # data access
     Write-Host "Deploying Web Components...” -NoNewline
+    
     $path = $pathDeployments + $pathDataAccess + $pathVersion
     If(test-path $path)
     {
         Remove-Item $path -recurse -Force
     }
-    New-Item -ItemType Directory -Force -Path $path | Out-Null
-    Copy-Item C:\Users\$env:USERNAME\Source\Repos\R2G2V1\Data\Keebee.AAT.DataAccess\* $path -recurse -Force
+    New-Item -ItemType Directory -Force -Path $path\bin | Out-Null
+
+    $source = "C:\Users\$env:USERNAME\Source\Repos\R2G2V1\Data\Keebee.AAT.DataAccess"
+    Copy-Item $source\bin\* $path\bin -Recurse -Exclude "*.pdb", "*.xml" -Force
+    Copy-Item $source\* $path -Recurse -Exclude "*.cs", "*.csproj", "*.user", "packages.config", "Web.*.config", "App_Start", "Controllers","Models", "Properties", "obj" -Force
 
     # api
     $path = $pathDeployments + $pathAPI + $pathVersion
@@ -203,8 +207,11 @@ Try
     {
         Remove-Item $path -recurse -Force
     }
-    New-Item -ItemType Directory -Force -Path $path | Out-Null
-    Copy-Item C:\Users\$env:USERNAME\Source\Repos\R2G2V1\API\Keebee.AAT.Operations\* $path -recurse -Force
+    New-Item -ItemType Directory -Force -Path $path\bin | Out-Null
+
+    $source = "C:\Users\$env:USERNAME\Source\Repos\R2G2V1\API\Keebee.AAT.Operations"
+    Copy-Item $source\bin\* $path\bin -Recurse -Exclude "*.pdb", "*.xml", "*.exe" -Force
+    Copy-Item $source\* $path -Recurse -Exclude "*.cs", "*.csproj", "*.user", "apiapp.json", "packages.config", "Web.*.config", "App_Start", "Controllers","Helpers", "Metadata", "Properties", "obj" -Force
 
     # administrator
     $path = $pathDeployments + $pathAdministator + $pathVersion
@@ -212,8 +219,12 @@ Try
     {
         Remove-Item $path -recurse -Force
     }
-    New-Item -ItemType Directory -Force -Path $path | Out-Null
-    Copy-Item C:\Users\$env:USERNAME\Source\Repos\R2G2V1\WebUI\Keebee.AAT.Administrator\* $path -recurse -Force
+    New-Item -ItemType Directory -Force -Path $path\bin | Out-Null
+
+    $source = "C:\Users\$env:USERNAME\Source\Repos\R2G2V1\WebUI\Keebee.AAT.Administrator"
+    Copy-Item $source\bin\* $path\bin -Recurse -Exclude "*.pdb", "*.xml", "*ffmpeg.exe" -Force
+    Copy-Item $source\* $path -Recurse -Exclude "*.cs", "*.csproj", "*.user", "packages.config", "Project_Readme.html", "Web.*.config", "App_Start", "Controllers", "Extensions", "Properties", "ViewModels", "obj", "bin" -Force
+
     Write-Host "done.”
 
 

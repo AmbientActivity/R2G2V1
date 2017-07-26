@@ -66,7 +66,8 @@ Try
 {
     Write-Host -foregroundcolor green "`nDeploying R2G2...`n”
 
-    # stop all services
+    # -------------------- UNINSTALL SERVICES --------------------
+
     Write-Host -ForegroundColor yellow "--- Uninstall Services ---`n”
 
     Write-Host "Uninstalling Phidget Service..." -NoNewline
@@ -104,7 +105,8 @@ Try
     }
     Write-Host "done."
 
-    # build the solution
+    # -------------------- BUILD SOLUTION --------------------
+
     Write-Host -ForegroundColor yellow "`n--- Build Solution ---`n”
 
     # register Build-VisualStudioSolution powershell module
@@ -118,6 +120,7 @@ Try
     }
 
     Get-Module Build-VisualStudioSolution
+
     # build debug
     $buildResult = Build-VisualStudioSolution -SourceCodePath $pathSourceCode -SolutionFile $filenameVSSolution -BuildLogFile "R2G2BuildDebug.log" -Configuration "Debug" -CleanFirst;
 
@@ -136,7 +139,8 @@ Try
 
     # delpoy components
     Write-Host -ForegroundColor yellow "`n--- Deploy Components ---`n”
-    # -------------------- ROOT --------------------
+
+    # ------------- DEPLOYMENTS ROOT --------------
 
     # create the root directory
     If(!(test-path $pathDeployments))
@@ -145,6 +149,7 @@ Try
     }
 
     # -------------------- UI --------------------
+
     # display
     Write-Host "Deploying UI Components...” -NoNewline
     $path = $pathDeployments + $pathDisplayRelease + $pathVersion + "Release\"
@@ -153,8 +158,7 @@ Try
         Remove-Item $path -recurse -Force
     }
     New-Item -ItemType Directory -Force -Path $path | Out-Null
-    Copy-Item C:\Users\$env:USERNAME\Source\Repos\R2G2V1\UI\Keebee.AAT.Display\bin\Release\* $path -recurse -Force
-    Copy-Item C:\Users\$env:USERNAME\Source\Repos\R2G2V1\Flash\Builds\* $path -recurse -Force
+    Copy-Item "$pathSourceCode\UI\Keebee.AAT.Display\bin\Release\*" $path -Exclude "*.pdb", "*.xml", "*.vshost.*", "*.cs", "*.resx" -Force
 
     $path = $pathDeployments + $pathDisplayDebug + $pathVersion + "Debug\"
     If(test-path $path)
@@ -162,8 +166,7 @@ Try
         Remove-Item $path -recurse -Force
     }
     New-Item -ItemType Directory -Force -Path $path | Out-Null
-    Copy-Item C:\Users\$env:USERNAME\Source\Repos\R2G2V1\UI\Keebee.AAT.Display\bin\Debug\* $path -recurse -Force
-    Copy-Item C:\Users\$env:USERNAME\Source\Repos\R2G2V1\Flash\Builds\* $path -recurse -Force
+    Copy-Item "$pathSourceCode\UI\Keebee.AAT.Display\bin\Debug\*" $path -Exclude "*.pdb", "*.xml", "*.vshost.*", "*.cs", "*.resx" -Force
 
     # simulator
     $path = $pathDeployments + $pathSimulator + $pathVersion
@@ -172,7 +175,7 @@ Try
         Remove-Item $path -recurse -Force
     }
     New-Item -ItemType Directory -Force -Path $path | Out-Null
-    Copy-Item C:\Users\$env:USERNAME\Source\Repos\R2G2V1\UI\Keebee.AAT.Simulator\bin\Release\* $path -recurse -Force
+    Copy-Item "$pathSourceCode\UI\Keebee.AAT.Simulator\bin\Release\*" $path -Exclude "*.pdb", "*.xml", "*.vshost.*", "*.cs", "*.resx" -Force
 
     # beacon monitor
     $path = $pathDeployments + $pathBeaconMonitor + $pathVersion
@@ -181,12 +184,13 @@ Try
         Remove-Item $path -recurse -Force
     }
     New-Item -ItemType Directory -Force -Path $path | Out-Null
-    Copy-Item C:\Users\$env:USERNAME\Source\Repos\R2G2V1\UI\Keebee.AAT.BeaconMonitor\bin\Release\* $path -recurse -Force
+    Copy-Item "$pathSourceCode\UI\Keebee.AAT.BeaconMonitor\bin\Release\*" $path -Exclude "*.pdb", "*.xml", "*.vshost.*", "*.cs", "*.resx" -Force
 
     Write-Host "done.”
 
 
     # -------------------- WEB --------------------
+
     # data access
     Write-Host "Deploying Web Components...” -NoNewline
     
@@ -197,7 +201,7 @@ Try
     }
     New-Item -ItemType Directory -Force -Path $path\bin | Out-Null
 
-    $source = "C:\Users\$env:USERNAME\Source\Repos\R2G2V1\Data\Keebee.AAT.DataAccess"
+    $source = "$pathSourceCode\Data\Keebee.AAT.DataAccess"
     Copy-Item $source\bin\* $path\bin -Recurse -Exclude "*.pdb", "*.xml" -Force
     Copy-Item $source\* $path -Recurse -Exclude "*.cs", "*.csproj", "*.user", "packages.config", "Web.*.config", "App_Start", "Controllers","Models", "Properties", "obj", "bin" -Force
 
@@ -209,7 +213,7 @@ Try
     }
     New-Item -ItemType Directory -Force -Path $path\bin | Out-Null
 
-    $source = "C:\Users\$env:USERNAME\Source\Repos\R2G2V1\API\Keebee.AAT.Operations"
+    $source = "$pathSourceCode\API\Keebee.AAT.Operations"
     Copy-Item $source\bin\* $path\bin -Recurse -Exclude "*.pdb", "*.xml", "*.exe" -Force
     Copy-Item $source\* $path -Recurse -Exclude "*.cs", "*.csproj", "*.user", "apiapp.json", "packages.config", "Web.*.config", "App_Start", "Controllers", "Helpers", "Metadata", "Properties", "obj", "bin" -Force
 
@@ -221,14 +225,21 @@ Try
     }
     New-Item -ItemType Directory -Force -Path $path\bin | Out-Null
 
-    $source = "C:\Users\$env:USERNAME\Source\Repos\R2G2V1\WebUI\Keebee.AAT.Administrator"
+    $source = "$pathSourceCode\WebUI\Keebee.AAT.Administrator"
     Copy-Item $source\bin\* $path\bin -Recurse -Exclude "*.pdb", "*.xml", "*ffmpeg.exe" -Force
     Copy-Item $source\* $path -Recurse -Exclude "*.cs", "*.csproj", "*.user", "packages.config", "Project_Readme.html", "Web.*.config", "App_Start", "Controllers", "Extensions", "Properties", "ViewModels", "obj", "bin" -Force
 
+    # set permissions of web apps to EVERYONE
+    $sharePath = "$pathDeployments\Web"
+    $Acl = Get-ACL $sharePath
+    $AccessRule = New-Object System.Security.AccessControl.FileSystemAccessRule("EVERYONE","full","ContainerInherit,Objectinherit","none","Allow")
+    $Acl.AddAccessRule($AccessRule)
+    Set-Acl $SharePath $Acl
+
     Write-Host "done.”
 
-
     # -------------------- MEDIA --------------------
+
     # export folder
     Write-Host "Deploying Export folders...” -NoNewline
     $path = $pathDeployments + $pathExportEventLog
@@ -299,7 +310,7 @@ Try
         Remove-Item $path -recurse -Force
     }
     New-Item -ItemType Directory -Force -Path $path | Out-Null
-    Copy-Item C:\Users\$env:USERNAME\Source\Repos\R2G2V1\ScheduledTasks\Keebee.AAT.EventLogExporter\bin\Release\* $path -recurse -Force
+    Copy-Item "$pathSourceCode\ScheduledTasks\Keebee.AAT.EventLogExporter\bin\Release\*" $path -Exclude "*.pdb", "*.xml" -Force
 
     # video capture file cleanup
     $path = $pathDeployments + $pathScheduledTasks + $pathVideoCaptureFileCleanup + $pathVersion
@@ -308,7 +319,7 @@ Try
         Remove-Item $path -recurse -Force
     }
     New-Item -ItemType Directory -Force -Path $path | Out-Null
-    Copy-Item C:\Users\$env:USERNAME\Source\Repos\R2G2V1\ScheduledTasks\Keebee.AAT.VideoCaptureFileCleanup\bin\Release\* $path -recurse -Force
+    Copy-Item "$pathSourceCode\ScheduledTasks\Keebee.AAT.VideoCaptureFileCleanup\bin\Release\*" $path -Exclude "*.pdb", "*.xml", "*.vshost.*" -Force
 
     # backup
     $path = $pathDeployments + $pathScheduledTasks + $pathBackup + $pathVersion
@@ -317,7 +328,7 @@ Try
         Remove-Item $path -recurse -Force
     }
     New-Item -ItemType Directory -Force -Path $path | Out-Null
-    Copy-Item C:\Users\$env:USERNAME\Source\Repos\R2G2V1\ScheduledTasks\Keebee.AAT.Backup\bin\Release\* $path -recurse -Force
+    Copy-Item "$pathSourceCode\ScheduledTasks\Keebee.AAT.Backup\bin\Release\*" $path -Exclude "*.pdb", "*.xml", "*.vshost.*" -Force
 
     Write-Host "done.”
 
@@ -333,7 +344,7 @@ Try
         Remove-Item  $pathInstallRoot -recurse -Force
     }
     New-Item -ItemType Directory -Force -Path $pathInstallRoot | Out-Null
-    Copy-Item C:\Users\$env:USERNAME\Source\Repos\R2G2V1\InstallScripts\* $pathInstallRoot -recurse -Force
+    Copy-Item "$pathSourceCode\InstallScripts\*" $pathInstallRoot -Recurse -Force
 
     Write-Host "done.”
 
@@ -348,7 +359,7 @@ Try
         Remove-Item $path -recurse -Force
     }
     New-Item -ItemType Directory -Force -Path $path | Out-Null
-    Copy-Item C:\Users\$env:USERNAME\Source\Repos\R2G2V1\Service\Keebee.AAT.StateMachineService\bin\Release\* $path -recurse -Force 
+    Copy-Item "$pathSourceCode\Service\Keebee.AAT.StateMachineService\bin\Release\*" $path -Exclude "*.pdb", "*.xml", "*.vshost.*" -Force 
 
     # phidget service
     $path = $pathDeployments + $pathPhidget + $pathVersion
@@ -357,7 +368,7 @@ Try
         Remove-Item $path -recurse -Force
     }
     New-Item -ItemType Directory -Force -Path $path | Out-Null
-    Copy-Item C:\Users\$env:USERNAME\Source\Repos\R2G2V1\Service\Keebee.AAT.PhidgetService\bin\Release\* $path -recurse -Force
+    Copy-Item "$pathSourceCode\Service\Keebee.AAT.PhidgetService\bin\Release\*" $path -Exclude "*.pdb", "*.xml", "*.vshost.*" -Force
 
     # bluetooth beacon watcher service
     $path = $pathDeployments + $pathBluetoothBeacon + $pathVersion
@@ -366,7 +377,7 @@ Try
         Remove-Item $path -recurse -Force
     }
     New-Item -ItemType Directory -Force -Path $path | Out-Null
-    Copy-Item C:\Users\$env:USERNAME\Source\Repos\R2G2V1\Service\Keebee.AAT.BluetoothBeaconWatcherService\bin\Release\* $path -recurse -Force
+    Copy-Item "$pathSourceCode\Service\Keebee.AAT.BluetoothBeaconWatcherService\bin\Release\*" $path -Exclude "*.pdb", "*.xml", "*.vshost.*" -Force
 
     # video capture service
     $path = $pathDeployments + $pathVideoCapture + $pathVersion
@@ -375,7 +386,7 @@ Try
         Remove-Item $path -recurse -Force
     }
     New-Item -ItemType Directory -Force -Path $path | Out-Null
-    Copy-Item C:\Users\$env:USERNAME\Source\Repos\R2G2V1\Service\Keebee.AAT.VideoCaptureService\bin\Release\* $path -recurse -Force
+    Copy-Item "$pathSourceCode\Service\Keebee.AAT.VideoCaptureService\bin\Release\*" $path -Exclude "*.pdb", "*.xml", "*.vshost.*" -Force
 
     # keep iis alive service
     $path = $pathDeployments + $pathKeepIISAlive + $pathVersion
@@ -384,7 +395,7 @@ Try
         Remove-Item $path -recurse -Force
     }
     New-Item -ItemType Directory -Force -Path $path | Out-Null
-    Copy-Item C:\Users\$env:USERNAME\Source\Repos\R2G2V1\Service\Keebee.AAT.KeepIISAliveService\bin\Release\* $path -recurse -Force
+    Copy-Item "$pathSourceCode\Service\Keebee.AAT.KeepIISAliveService\bin\Release\*" $path -Exclude "*.pdb", "*.xml", "*.vshost.*" -Force
     Write-Host "done.”
 
     # -------------------- Thumbnail Generation --------------------
@@ -399,11 +410,11 @@ Try
         Remove-Item $path -recurse -Force
     }
     New-Item -ItemType Directory -Force -Path $path | Out-Null
-    Copy-Item C:\Users\$env:USERNAME\Source\Repos\R2G2V1\Install\Keebee.AAT.GenerateThumbnails\bin\Release\* $path -recurse -Force
+    Copy-Item "$pathSourceCode\Install\Keebee.AAT.GenerateThumbnails\bin\Release\*" $path -Exclude "*.pdb", "*.xml", "*.vshost.*" -Force
 
     Write-Host "done.”
 
-        # -------------------- Video Conversion --------------------
+    # -------------------- Video Conversion --------------------
 
     # videos
     Write-Host "Deploying Video Converter...” -NoNewline
@@ -415,7 +426,7 @@ Try
         Remove-Item $path -recurse -Force
     }
     New-Item -ItemType Directory -Force -Path $path | Out-Null
-    Copy-Item C:\Users\$env:USERNAME\Source\Repos\R2G2V1\Install\Keebee.AAT.ConvertVideos\bin\Debug\* $path -recurse -Force
+    Copy-Item "$pathSourceCode\Install\Keebee.AAT.ConvertVideos\bin\Debug\*" $path -Exclude "*.pdb", "*.xml", "*.vshost.*", "ffmpeg.exe", "ffprobe.exe" -Force
 
     Write-Host "done.”
 
@@ -429,16 +440,9 @@ Try
         Remove-Item $path -recurse -Force
     }
     New-Item -ItemType Directory -Force -Path $path | Out-Null
-    Copy-Item C:\Users\$env:USERNAME\Source\Repos\R2G2V1\Documentation\Setup\PostWindowsInstallationSetup.docx $path -recurse -Force
+    Copy-Item "$pathSourceCode\Documentation\Setup\PostWindowsInstallationSetup.docx" $path -Force
 
     Write-Host "done.”
-
-
-    # cleanup garbage
-    get-childitem $pathDeployments -include *.pdb -recurse | foreach ($_) {remove-item $_.fullname}
-    get-childitem $pathDeployments -include *.vshost.* -recurse | foreach ($_) {remove-item $_.fullname}
-    get-childitem $pathDeployments -include *TemporaryGeneratedFile_* -recurse | foreach ($_) {remove-item $_.fullname}
-    get-childitem $pathDeployments -include *.gitignore -recurse | foreach ($_) {remove-item $_.fullname}
 
     Write-Host -foregroundcolor green "`nDeployment complete.`n”
 }

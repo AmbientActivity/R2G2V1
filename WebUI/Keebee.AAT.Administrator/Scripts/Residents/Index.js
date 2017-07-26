@@ -283,7 +283,7 @@
                     });
 
                     // to prevent dialog from opening twice
-                    var isEditLoading = false; 
+                    var isEditLoading = false;
                     self.edit = function (row) {
                         if (isEditLoading) return;
                         isEditLoading = true;
@@ -319,7 +319,10 @@
                             title: title,
                             buttonOK: "Save",
                             buttonOKClass: add ? "btn-success" : "btn-edit",
-                            cancelled: function () { cmdAdd.prop("disabled", false); },
+                            cancelled: function() {
+                                cmdAdd.prop("disabled", false);
+                                isEditLoading = false;
+                            },
                             callback: function(dialog) {
                                 var resident = self.getResidentDetailFromDialog();
 
@@ -349,6 +352,7 @@
                                                     self.highlightRow(self.selectedResident());
                                                 }
                                                 cmdAdd.prop("disabled", false);
+                                                isEditLoading = false;
                                             });
                                     } else {
                                         utilities.validation.show({
@@ -359,10 +363,10 @@
                                 })
                                 .catch(function() {
                                     cmdAdd.prop("disabled", false);
+                                    isEditLoading = false;
                                 });
                             }
                         });
-                        isEditLoading = false;
                     };
 
                     self.editProfile = function (row) {

@@ -307,7 +307,12 @@
                         });
                     });
 
+                    // to prevent dialog from opening twice
+                    var isEditLoading = false;
                     self.addFromSharedLibray = function () {
+                        if (isEditLoading) return;
+                        isEditLoading = true;
+
                         self.clearStreams();
                         var mediaPathTypeDesc = self.selectedMediaPathType().shortdescription;
 
@@ -334,13 +339,16 @@
                                 self.checkSelectAll(false);
                                 self.marqueeRows(addResult.FileList);
                                 self.enableDetail();
+                                isEditLoading = false;
                             })
                             .catch(function() {
                                 self.enableDetail();
+                                isEditLoading = false;
                             });
                         })
                         .catch(function () {
                             self.enableDetail();
+                            isEditLoading = false;
                         });
                     };
 

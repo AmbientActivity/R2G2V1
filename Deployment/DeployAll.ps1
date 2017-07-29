@@ -277,7 +277,7 @@ Try
     }
     $path = $pathDeployments + $pathProfiles + $pathPublicProfile
     New-Item -ItemType Directory -Force -Path $path | Out-Null
-    Copy-Item $pathSourcePublicProfile $path -recurse -Force
+    Copy-Item $pathSourcePublicProfile $path -Recurse -Exclude ".gitignore" -Force
     Write-Host "done.”
 
     # resident profile
@@ -289,7 +289,7 @@ Try
     }
     $path = $pathDeployments + $pathProfiles + $pathSampleResidentProfile
     New-Item -ItemType Directory -Force -Path $path | Out-Null
-    Copy-Item $pathSourceSampleResidentProfile $path -recurse -Force
+    Copy-Item $pathSourceSampleResidentProfile $path -Recurse -Exclude ".gitignore" -Force
     Write-Host "done.”
 
     # -------------------- SCHEDULED TASKS --------------------

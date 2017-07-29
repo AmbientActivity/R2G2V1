@@ -115,7 +115,7 @@ Try
     {
         Write-Host "Registering Module Build-VisualStudioSolution...” -NoNewline
         New-Item -ItemType Directory -Force -Path $path | Out-Null
-        Copy-Item C:\Users\$env:USERNAME\Source\Repos\R2G2V1\Deployment\Modules\Build-VisualStudioSolution\* $path -recurse -Force
+        Copy-Item C:\Users\$env:USERNAME\Source\Repos\R2G2V1\Deployment\Modules\Build-VisualStudioSolution\* $path -Recurse -Force
         Write-Host "done.`n”
     }
 
@@ -245,7 +245,7 @@ Try
     $path = $pathDeployments + $pathExportEventLog
     If(test-path $path)
     {
-        Remove-Item $path -recurse -Force
+        Remove-Item $path -Recurse -Force
     }
     New-Item -ItemType Directory -Force -Path $path | Out-Null
     Write-Host "done.”
@@ -258,7 +258,7 @@ Try
         Remove-Item $path -recurse -Force
     } 
     New-Item -ItemType Directory -Force -Path $path | Out-Null
-    Copy-Item $pathSourceSharedLibrary $path -recurse -Force
+    Copy-Item $pathSourceSharedLibrary $path -Recurse -Force
     Write-Host "done.”
 
     # clear out existing profiles
@@ -277,7 +277,8 @@ Try
     }
     $path = $pathDeployments + $pathProfiles + $pathPublicProfile
     New-Item -ItemType Directory -Force -Path $path | Out-Null
-    Copy-Item $pathSourcePublicProfile $path -Recurse -Exclude ".gitignore" -Force
+    Copy-Item $pathSourcePublicProfile $path -Recurse -Force
+    Get-Childitem $pathDeployments + $pathProfiles + $pathPublicProfile -Include *.gitignore -Recurse | foreach ($_) {remove-item $_.fullname}
     Write-Host "done.”
 
     # resident profile
@@ -289,7 +290,8 @@ Try
     }
     $path = $pathDeployments + $pathProfiles + $pathSampleResidentProfile
     New-Item -ItemType Directory -Force -Path $path | Out-Null
-    Copy-Item $pathSourceSampleResidentProfile $path -Recurse -Exclude ".gitignore" -Force
+    Copy-Item $pathSourceSampleResidentProfile $path -Recurse -Force
+    Get-Childitem $pathDeployments + $pathProfiles + $pathSampleResidentProfile -Include *.gitignore -Recurse | foreach ($_) {remove-item $_.fullname}
     Write-Host "done.”
 
     # -------------------- SCHEDULED TASKS --------------------

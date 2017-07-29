@@ -167,6 +167,16 @@ VALUES (15, 'videos\cute', 'Videos (Cute)', 'Cute Videos',
 
 SET IDENTITY_INSERT [dbo].[MediaPathTypes] OFF
 
+-- ambient invitations
+SET IDENTITY_INSERT [dbo].[AmbientInvitations] ON 
+INSERT [dbo].[AmbientInvitations] ([Id], [Message], [ResponseTypeId]) VALUES (1, 'Touch The Screen', 2) -- matching game
+INSERT [dbo].[AmbientInvitations] ([Id], [Message], [ResponseTypeId]) VALUES (2, 'Pet The Cat', null)
+INSERT [dbo].[AmbientInvitations] ([Id], [Message], [ResponseTypeId]) VALUES (3, 'Turn The Wheel', null)
+INSERT [dbo].[AmbientInvitations] ([Id], [Message], [ResponseTypeId]) VALUES (4, 'Touch The Screen', 1) -- slide show
+INSERT [dbo].[AmbientInvitations] ([Id], [Message], [ResponseTypeId]) VALUES (5, 'Pet The Cat', null)
+INSERT [dbo].[AmbientInvitations] ([Id], [Message], [ResponseTypeId]) VALUES (6, 'Turn The Wheel', null)
+SET IDENTITY_INSERT [dbo].[AmbientInvitations] OFF
+
 --- CONFIGURATION 1
 SET IDENTITY_INSERT [dbo].[Configs] ON 
 INSERT [dbo].[Configs] ([Id], [Description], [IsActive], [IsActiveEventLog]) VALUES (1, N'Default Configuration', 1, 1)

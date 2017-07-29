@@ -124,7 +124,6 @@
     <Compile Include="Extensions\ListExtensions.cs" />
     <Compile Include="Extensions\ProgressBarExtensions.cs" />
     <Compile Include="Helpers\ActivityEventLogger.cs" />
-    <Compile Include="Helpers\AmbientInvitationMessages.cs" />
     <Compile Include="Helpers\AudioControl.cs" />
     <Compile Include="Helpers\InteractiveActivityEventLogger.cs" />
     <Compile Include="Helpers\MatchingGameSetup.cs" />

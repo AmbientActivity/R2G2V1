@@ -339,54 +339,58 @@ namespace Keebee.AAT.Display
                     || _pendingResponse.Id == ResponseTypeId.VolumeControl;
         }
 
-        private void StopCurrentResponse(int responseTypeCategoryId = -1)
+        private void StopCurrentResponse(int previousResponseTypeCategoryId = -1)
         {
             try
             {
-                switch (_currentResponse.Id)
+                switch (_currentResponse.ResponseTypeCategoryId)
                 {
-                    case ResponseTypeId.SlideShow:
+                    case ResponseTypeCategoryId.Image:
                         slideViewerFlash1.Hide();
                         slideViewerFlash1.SendToBack();
                         slideViewerFlash1.Stop();
                         audioVideoPlayer1.Stop();
                         break;
-                    case ResponseTypeId.MatchingGame:
-                        matchingGame1.Hide();
-                        matchingGame1.SendToBack();
-                        matchingGame1.Stop(_isMatchingGameTimeoutExpired);
+                    case ResponseTypeCategoryId.Game:
+                        switch (_currentResponse.Id)
+                        {
+                            case ResponseTypeId.MatchingGame:
+                                matchingGame1.Hide();
+                                matchingGame1.SendToBack();
+                                matchingGame1.Stop(_isMatchingGameTimeoutExpired);
+                                break;
+                            default: // generic interactive activities
+                                activityPlayer1.Hide();
+                                activityPlayer1.SendToBack();
+                                activityPlayer1.Stop(_isActivityTimeoutExpired);
+                                break;
+                        }
                         break;
-                    case ResponseTypeId.Radio:
-                    case ResponseTypeId.Television:
-                    case ResponseTypeId.Cats:
-                    case ResponseTypeId.Nature:
-                    case ResponseTypeId.Sports:
-                    case ResponseTypeId.Machinery:
-                    case ResponseTypeId.Animals:
-                    case ResponseTypeId.Cute:
+                    case ResponseTypeCategoryId.Audio:
+                    case ResponseTypeCategoryId.Video:
                         radioControl1.Hide();
                         radioControl1.SendToBack();
-                        if (responseTypeCategoryId != ResponseTypeCategoryId.Video)
+                        if (previousResponseTypeCategoryId != ResponseTypeCategoryId.Video)
                         {
                             audioVideoPlayer1.SendToBack();
                             audioVideoPlayer1.Hide();
                         }
                         audioVideoPlayer1.Stop();
                         break;
-                    case ResponseTypeId.Ambient:
-                        ambientPlayer1.Hide();
-                        ambientPlayer1.SendToBack();
-                        ambientPlayer1.Pause();
-                        break;
-                    case ResponseTypeId.OffScreen:
-                        offScreen1.Hide();
-                        offScreen1.SendToBack();
-                        offScreen1.Stop();
-                        break;
-                    default: // generic interactive activities
-                        activityPlayer1.Hide();
-                        activityPlayer1.SendToBack();
-                        activityPlayer1.Stop(_isActivityTimeoutExpired);
+                    case ResponseTypeCategoryId.System:
+                        switch (_currentResponse.Id)
+                        {
+                            case ResponseTypeId.Ambient:
+                                ambientPlayer1.Hide();
+                                ambientPlayer1.SendToBack();
+                                ambientPlayer1.Pause();
+                                break;
+                            case ResponseTypeId.OffScreen:
+                                offScreen1.Hide();
+                                offScreen1.SendToBack();
+                                offScreen1.Stop();
+                                break;
+                        }
                         break;
                 }
             }

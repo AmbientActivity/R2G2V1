@@ -12,6 +12,7 @@ using System.Web.Script.Serialization;
 using System.Diagnostics;
 using System.Drawing;
 using System;
+using System.Collections.Generic;
 using System.Configuration;
 using System.Windows.Forms;
 using System.Linq;
@@ -21,12 +22,6 @@ namespace Keebee.AAT.Display
     public partial class Main : Form
     {
         #region declaration
-
-        internal class RotationalResponse
-        {
-            public int Id { get; set; }
-            public int SensorValue { get; set; }
-        }
 
         internal enum ResponseValueChangeType
         {
@@ -63,11 +58,8 @@ namespace Keebee.AAT.Display
         private readonly CustomMessageQueue _messageQueueDisplayBluetoothBeaconWatcher;
         private readonly CustomMessageQueue _messageQueueVideoCapture;
 
-        // message queue listener
-        private readonly CustomMessageQueue _messageQueueResponse;
-
         // current sensor values (for 'rotational' response types)
-        private readonly RotationalResponse[] _rotationalResponses;
+        private readonly Dictionary<int, int> _rotationalResponses;
 
         // current activity/response types
         private ResponseTypeMessage _pendingResponse;
@@ -152,7 +144,7 @@ namespace Keebee.AAT.Display
             });
 
             // response message queue listener
-            _messageQueueResponse = new CustomMessageQueue(new CustomMessageQueueArgs
+            var q = new CustomMessageQueue(new CustomMessageQueueArgs
             {
                 QueueName = MessageQueueType.Response,
                 MessageReceivedCallback = MessageReceivedResponse
@@ -184,8 +176,8 @@ namespace Keebee.AAT.Display
             // initialize rotational response sensor values
             var responseTypesClient = new ResponseTypesClient();
             _rotationalResponses = responseTypesClient.GeRotationalTypes()
-                .Select(r => new RotationalResponse { Id = r.Id, SensorValue = 0 })
-                .ToArray();
+                .Select(r => new {  r.Id,  SensorValue = 0 })
+                .ToDictionary(r => r.Id, r => r.SensorValue);
 
             InitializeStartupPosition();
         }
@@ -444,11 +436,8 @@ namespace Keebee.AAT.Display
 
         private void SaveCurrentRotationalSensorValue(int responseTypeId, int sensorValue)
         {
-            if (_rotationalResponses.Any(r => r.Id == responseTypeId))
-            {
-                _rotationalResponses.Single(r => r.Id == responseTypeId)
-                    .SensorValue = sensorValue;
-            }
+            if (_rotationalResponses.Any(r => r.Key == responseTypeId))
+                _rotationalResponses[responseTypeId] = sensorValue;
         }
 
         #endregion
@@ -518,7 +507,7 @@ namespace Keebee.AAT.Display
         {
             // save the current sensor values for the 'rotational' responses
             var currentSensorValue = _rotationalResponses
-                .Single(r => r.Id == responseTypeId).SensorValue;
+                .Single(r => r.Key == responseTypeId).Value;
 
             // edge case 1 - going from Value5 to Value1 should be an INCREASE
             if ((currentSensorValue == (int)RotationSensorStep.Value5) && (sensorValue == (int)RotationSensorStep.Value1))

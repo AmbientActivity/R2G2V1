@@ -259,6 +259,7 @@ Try
     } 
     New-Item -ItemType Directory -Force -Path $path | Out-Null
     Copy-Item $pathSourceSharedLibrary $path -Recurse -Force
+    Get-Childitem $path -Include *.gitignore, Thumbs.db -Recurse | foreach ($_) {remove-item $_.fullname}
     Write-Host "done.”
 
     # clear out existing profiles
@@ -278,7 +279,7 @@ Try
     $path = $pathDeployments + $pathProfiles + $pathPublicProfile
     New-Item -ItemType Directory -Force -Path $path | Out-Null
     Copy-Item $pathSourcePublicProfile $path -Recurse -Force
-    Get-Childitem $path -Include *.gitignore -Recurse | foreach ($_) {remove-item $_.fullname}
+    Get-Childitem $path -Include *.gitignore, Thumbs.db -Recurse | foreach ($_) {remove-item $_.fullname}
     Write-Host "done.”
 
     # resident profile
@@ -291,7 +292,7 @@ Try
     $path = $pathDeployments + $pathProfiles + $pathSampleResidentProfile
     New-Item -ItemType Directory -Force -Path $path | Out-Null
     Copy-Item $pathSourceSampleResidentProfile $path -Recurse -Force
-    Get-Childitem $path -Include *.gitignore -Recurse | foreach ($_) {remove-item $_.fullname}
+    Get-Childitem $path -Include *.gitignore, Thumbs.db -Recurse | foreach ($_) {remove-item $_.fullname}
     Write-Host "done.”
 
     # -------------------- SCHEDULED TASKS --------------------

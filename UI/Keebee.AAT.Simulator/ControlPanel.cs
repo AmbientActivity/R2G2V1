@@ -2,13 +2,12 @@
 using Keebee.AAT.Shared;
 using Keebee.AAT.ApiClient.Clients;
 using Keebee.AAT.ApiClient.Models;
+using Newtonsoft.Json;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System;
-using System.Diagnostics;
 using System.Windows.Forms;
-using System.Web.Script.Serialization;
 
 namespace Keebee.AAT.Simulator
 {
@@ -481,8 +480,7 @@ namespace Keebee.AAT.Simulator
                 AllowVideoCapturing = resident.AllowVideoCapturing
             };
 
-            var serializer = new JavaScriptSerializer();
-            var messageBody = serializer.Serialize(residentMessage);
+            var messageBody = JsonConvert.SerializeObject(residentMessage);
 
             return messageBody;
         }
@@ -513,8 +511,7 @@ namespace Keebee.AAT.Simulator
                 IsActiveEventLog = false
             };
 
-            var serializer = new JavaScriptSerializer();
-            return serializer.Serialize(responseMessage);
+            return JsonConvert.SerializeObject(responseMessage);
         }
 
 #endregion

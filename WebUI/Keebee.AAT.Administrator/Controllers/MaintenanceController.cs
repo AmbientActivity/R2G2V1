@@ -1,12 +1,11 @@
 ﻿using Keebee.AAT.BusinessRules;
-using Keebee.AAT.SystemEventLogging;
 using Keebee.AAT.MessageQueuing;
 using Keebee.AAT.Shared;
 using Keebee.AAT.ApiClient.Clients;
+using Newtonsoft.Json;
 using System.Diagnostics;
 using System.Linq;
 using System.Web.Mvc;
-using System.Web.Script.Serialization;
 using System.Configuration;
 using System;
 
@@ -287,8 +286,7 @@ namespace Keebee.AAT.Administrator.Controllers
                 IsActive = isActive
             };
 
-            var serializer = new JavaScriptSerializer();
-            var displayMessageBody = serializer.Serialize(displayMessage);
+            var displayMessageBody = JsonConvert.SerializeObject(displayMessage);
             return displayMessageBody;
         }
     }

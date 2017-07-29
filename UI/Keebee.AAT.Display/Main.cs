@@ -8,7 +8,7 @@ using Keebee.AAT.Display.Volume;
 using Keebee.AAT.Display.Extensions;
 using Keebee.AAT.Display.Models;
 using Keebee.AAT.ApiClient.Clients;
-using System.Web.Script.Serialization;
+using Newtonsoft.Json;
 using System.Diagnostics;
 using System.Drawing;
 using System;
@@ -721,8 +721,7 @@ namespace Keebee.AAT.Display
                 IsActive = isActive
             };
 
-            var serializer = new JavaScriptSerializer();
-            var displayMessageBody = serializer.Serialize(displayMessage);
+            var displayMessageBody = JsonConvert.SerializeObject(displayMessage);
             return displayMessageBody;
         }
 
@@ -734,8 +733,7 @@ namespace Keebee.AAT.Display
         {
             try
             {
-                var serializer = new JavaScriptSerializer();
-                var response = serializer.Deserialize<ResponseMessage>(e.MessageBody);
+                var response = JsonConvert.DeserializeObject<ResponseMessage>(e.MessageBody);
 
                 _pendingResponse = response.ConfigDetail.ResponseType;
                 _isNewResponse =

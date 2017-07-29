@@ -1,11 +1,11 @@
 ﻿using Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models;
 using Keebee.AAT.Operations.Service.KeebeeAAT;
+using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Linq;
 using System;
 using System.IO;
 using System.Net;
-using System.Web.Script.Serialization;
 
 namespace Keebee.AAT.Operations.Service.Services
 {
@@ -130,22 +130,9 @@ namespace Keebee.AAT.Operations.Service.Services
                     var data = new StreamReader(stream);
                     var result = data.ReadToEnd();
 
-                    var serializer = new JavaScriptSerializer();
-                    detailsInUse = serializer.Deserialize<ActivityEventLogs>(result).value;
+                    detailsInUse = JsonConvert.DeserializeObject<ActivityEventLogs>(result).value;
                 }
             }
-
-            //var container = new Container(new Uri(ODataHost.Url));
-
-            //var detailsInUse = container.ActivityEventLogs
-            //    .Expand("ConfigDetail")
-            //    .AsEnumerable()
-            //    .GroupBy(x => new { x.ConfigDetail.ConfigId, x.ConfigDetailId }, (key, group) => new
-            //            ConfigDetail
-            //    {
-            //        Id = (int)key.ConfigDetailId,
-            //        ConfigId = key.ConfigId
-            //    }).AsEnumerable();
 
             return detailsInUse;
         }

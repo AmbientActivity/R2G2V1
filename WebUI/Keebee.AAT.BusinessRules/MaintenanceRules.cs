@@ -1,10 +1,10 @@
 ﻿using Keebee.AAT.SystemEventLogging;
 using Keebee.AAT.Shared;
 using Keebee.AAT.MessageQueuing;
+using Newtonsoft.Json;
 using System;
 using System.Diagnostics;
 using System.ServiceProcess;
-using System.Web.Script.Serialization;
 
 namespace Keebee.AAT.BusinessRules
 {
@@ -85,8 +85,7 @@ namespace Keebee.AAT.BusinessRules
                     RandomResponseTypes = null
                 };
 
-                var serializer = new JavaScriptSerializer();
-                var responseMessageBody = serializer.Serialize(responseMessage);
+                var responseMessageBody = JsonConvert.SerializeObject(responseMessage);
                 _messageQueueResponse.Send(responseMessageBody);
             }
             catch (Exception ex)

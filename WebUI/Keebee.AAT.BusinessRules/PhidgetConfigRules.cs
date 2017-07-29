@@ -2,10 +2,10 @@
 using Keebee.AAT.Shared;
 using Keebee.AAT.ApiClient.Clients;
 using Keebee.AAT.ApiClient.Models;
+using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Web.Script.Serialization;
 using System;
 
 namespace Keebee.AAT.BusinessRules
@@ -203,11 +203,7 @@ namespace Keebee.AAT.BusinessRules
                         })
             };
 
-
-            var serializer = new JavaScriptSerializer();
-            var messageBody = serializer.Serialize(configMessage);
-
-            return messageBody;
+            return JsonConvert.SerializeObject(configMessage);
         }
 
         private static bool IsProcessRunning(string processName)

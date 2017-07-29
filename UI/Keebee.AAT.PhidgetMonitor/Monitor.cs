@@ -1,7 +1,7 @@
 ﻿using Keebee.AAT.MessageQueuing;
+using Newtonsoft.Json;
 using System;
 using System.Windows.Forms;
-using System.Web.Script.Serialization;
 
 namespace Keebee.AAT.PhidgetMonitor
 {
@@ -36,8 +36,7 @@ namespace Keebee.AAT.PhidgetMonitor
         private void MessageReceived(object sender, MessageEventArgs e)
         {
             var message = (e.MessageBody);
-            var serializer = new JavaScriptSerializer();
-            var phidgetMessage = serializer.Deserialize<PhidgetMessage>(message);
+            var phidgetMessage = JsonConvert.DeserializeObject<PhidgetMessage>(message);
 
             UpdateSensorValueLabel(phidgetMessage.SensorId, Convert.ToString(phidgetMessage.SensorValue));
         }

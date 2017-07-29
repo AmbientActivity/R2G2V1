@@ -6,6 +6,7 @@ using Keebee.AAT.MessageQueuing;
 using Keebee.AAT.ApiClient.Clients;
 using Keebee.AAT.ApiClient.Models;
 using Keebee.AAT.Administrator.Extensions;
+using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -17,7 +18,6 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Web;
 using System.Web.Helpers;
-using System.Web.Script.Serialization;
 
 namespace Keebee.AAT.Administrator.Controllers
 {
@@ -381,8 +381,7 @@ namespace Keebee.AAT.Administrator.Controllers
                 IsDeleted = isDeleted
             };
 
-            var serializer = new JavaScriptSerializer();
-            var messageBody = serializer.Serialize(residentMessage);
+            var messageBody = JsonConvert.SerializeObject(residentMessage);
 
             return messageBody;
         }

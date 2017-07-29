@@ -1,12 +1,12 @@
 ﻿using Keebee.AAT.MessageQueuing;
 using Keebee.AAT.Shared;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.ServiceProcess;
-using System.Web.Script.Serialization;
 using System.Windows.Forms;
 
 namespace Keebee.AAT.BeaconMonitor
@@ -130,8 +130,7 @@ namespace Keebee.AAT.BeaconMonitor
         private void MessageReceivedBeacon(object sender, MessageEventArgs e)
         {
             var message = (e.MessageBody);
-            var serializer = new JavaScriptSerializer();
-            var beaconMessages = serializer.Deserialize<IEnumerable<BeaconMonitorMessage>>(message).ToArray();
+            var beaconMessages = JsonConvert.DeserializeObject<IEnumerable<BeaconMonitorMessage>>(message).ToArray();
 
             foreach (var beaconMessage in beaconMessages)
             {
@@ -159,8 +158,7 @@ namespace Keebee.AAT.BeaconMonitor
         private void MessageReceivedBeaconResident(object sender, MessageEventArgs e)
         {
             var message = (e.MessageBody);
-            var serializer = new JavaScriptSerializer();
-            var residentMessage = serializer.Deserialize<BeaconMonitorResidentMessage>(message);
+            var residentMessage = JsonConvert.DeserializeObject<BeaconMonitorResidentMessage>(message);
 
             UpdateLabelActiveResident(residentMessage.ResidentName, residentMessage.Rssi);
         }
@@ -238,8 +236,7 @@ namespace Keebee.AAT.BeaconMonitor
                 IsActive = isActive
             };
 
-            var serializer = new JavaScriptSerializer();
-            var displayMessageBody = serializer.Serialize(displayMessage);
+            var displayMessageBody = JsonConvert.SerializeObject(displayMessage);
             return displayMessageBody;
         }
 

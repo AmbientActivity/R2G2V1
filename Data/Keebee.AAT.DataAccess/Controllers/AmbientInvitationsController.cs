@@ -8,26 +8,26 @@ using System.Web.OData;
 
 namespace Keebee.AAT.DataAccess.Controllers
 {
-    public class ActiveResidentsController : ODataController
+    public class AmbientInvitationsController : ODataController
     {
         private KeebeeAATContext db = new KeebeeAATContext();
 
-        // GET: odata/ActiveResidents
+        // GET: odata/AmbientInvitations
         [EnableQuery]
-        public IQueryable<ActiveResident> Get()
+        public IQueryable<AmbientInvitation> Get()
         {
-            return db.ActiveResidents;
+            return db.AmbientInvitations;
         }
 
-        // GET: odata/ActiveResidents(1)
+        // GET: odata/AmbientInvitations(1)
         [EnableQuery]
-        public SingleResult<ActiveResident> Get([FromODataUri] int key)
+        public SingleResult<AmbientInvitation> Get([FromODataUri] int key)
         {
-            return SingleResult.Create(db.ActiveResidents.Where(activetResident => activetResident.Id == key));
+            return SingleResult.Create(db.AmbientInvitations.Where(ambientInvitation => ambientInvitation.Id == key));
         }
 
-        // PUT: odata/ActiveResidents(1)
-        public async Task<IHttpActionResult> Put([FromODataUri] int key, Delta<ActiveResident> patch)
+        // PUT: odata/AmbientInvitations(1)
+        public async Task<IHttpActionResult> Put([FromODataUri] int key, Delta<AmbientInvitation> patch)
         {
             Validate(patch.GetInstance());
 
@@ -36,13 +36,13 @@ namespace Keebee.AAT.DataAccess.Controllers
                 return BadRequest(ModelState);
             }
 
-            ActiveResident activetResident = await db.ActiveResidents.FindAsync(key);
-            if (activetResident == null)
+            AmbientInvitation ambientInvitation = await db.AmbientInvitations.FindAsync(key);
+            if (ambientInvitation == null)
             {
                 return NotFound();
             }
 
-            patch.Put(activetResident);
+            patch.Put(ambientInvitation);
 
             try
             {
@@ -50,7 +50,7 @@ namespace Keebee.AAT.DataAccess.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!ActivetResidentExists(key))
+                if (!AmbientInvitationExists(key))
                 {
                     return NotFound();
                 }
@@ -60,26 +60,26 @@ namespace Keebee.AAT.DataAccess.Controllers
                 }
             }
 
-            return Updated(activetResident);
+            return Updated(ambientInvitation);
         }
 
-        // POST: odata/ActiveResidents
-        public async Task<IHttpActionResult> Post(ActiveResident activetResident)
+        // POST: odata/AmbientInvitations
+        public async Task<IHttpActionResult> Post(AmbientInvitation ambientInvitation)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            db.ActiveResidents.Add(activetResident);
+            db.AmbientInvitations.Add(ambientInvitation);
             await db.SaveChangesAsync();
 
-            return Created(activetResident);
+            return Created(ambientInvitation);
         }
 
-        // PATCH: odata/ActiveResidents(1)
+        // PATCH: odata/AmbientInvitations(1)
         [AcceptVerbs("PATCH", "MERGE")]
-        public async Task<IHttpActionResult> Patch([FromODataUri] int key, Delta<ActiveResident> patch)
+        public async Task<IHttpActionResult> Patch([FromODataUri] int key, Delta<AmbientInvitation> patch)
         {
             Validate(patch.GetInstance());
 
@@ -88,13 +88,13 @@ namespace Keebee.AAT.DataAccess.Controllers
                 return BadRequest(ModelState);
             }
 
-            ActiveResident activetResident = await db.ActiveResidents.FindAsync(key);
-            if (activetResident == null)
+            AmbientInvitation ambientInvitation = await db.AmbientInvitations.FindAsync(key);
+            if (ambientInvitation == null)
             {
                 return NotFound();
             }
 
-            patch.Patch(activetResident);
+            patch.Patch(ambientInvitation);
 
             try
             {
@@ -102,7 +102,7 @@ namespace Keebee.AAT.DataAccess.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!ActivetResidentExists(key))
+                if (!AmbientInvitationExists(key))
                 {
                     return NotFound();
                 }
@@ -112,19 +112,19 @@ namespace Keebee.AAT.DataAccess.Controllers
                 }
             }
 
-            return Updated(activetResident);
+            return Updated(ambientInvitation);
         }
 
-        // DELETE: odata/ActiveResidents(1)
+        // DELETE: odata/AmbientInvitations(1)
         public async Task<IHttpActionResult> Delete([FromODataUri] int key)
         {
-            ActiveResident activetResident = await db.ActiveResidents.FindAsync(key);
-            if (activetResident == null)
+            AmbientInvitation ambientInvitation = await db.AmbientInvitations.FindAsync(key);
+            if (ambientInvitation == null)
             {
                 return NotFound();
             }
 
-            db.ActiveResidents.Remove(activetResident);
+            db.AmbientInvitations.Remove(ambientInvitation);
             await db.SaveChangesAsync();
 
             return StatusCode(HttpStatusCode.NoContent);
@@ -139,9 +139,9 @@ namespace Keebee.AAT.DataAccess.Controllers
             base.Dispose(disposing);
         }
 
-        private bool ActivetResidentExists(int key)
+        private bool AmbientInvitationExists(int key)
         {
-            return db.ActiveResidents.Count(e => e.Id == key) > 0;
+            return db.AmbientInvitations.Count(e => e.Id == key) > 0;
         }
     }
 }

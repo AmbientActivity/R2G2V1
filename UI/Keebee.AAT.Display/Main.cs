@@ -44,7 +44,7 @@ namespace Keebee.AAT.Display
         private delegate void ResumeAmbientDelegate();
         private delegate void PlayMediaDelegate(int responseTypeId, int responseValue);
         private delegate void PlaySlideShowDelegate();
-        private delegate void PlayMatchingGameDelegate();
+        private delegate void PlayMatchingGameDelegate(string swfFile);
         private delegate void ShowCaregiverDelegate();
         private delegate void KillDisplayDelegate();
         private delegate void ShowOffScreenDelegate();
@@ -203,45 +203,12 @@ namespace Keebee.AAT.Display
 
         private void InitializeAmbientPlayer()
         {
-            // ambient invitation messages
             var durationInvitation = Convert.ToInt32(ConfigurationManager.AppSettings["AmbientInvitationDuration"].Trim());
             var durationVideo = Convert.ToInt32(ConfigurationManager.AppSettings["AmbientVideoDuration"].Trim());
+            var ambientInvitationsClient = new AmbientInvitationsClient();
 
-            var invitationMessage1 = ConfigurationManager.AppSettings["InvitationMessage1"].Trim();
-            var invitationMessage2 = ConfigurationManager.AppSettings["InvitationMessage2"].Trim();
-            var invitationMessage3 = ConfigurationManager.AppSettings["InvitationMessage3"].Trim();
-            var invitationMessage4 = ConfigurationManager.AppSettings["InvitationMessage4"].Trim();
-            var invitationMessage5 = ConfigurationManager.AppSettings["InvitationMessage5"].Trim();
-            var invitationMessage6 = ConfigurationManager.AppSettings["InvitationMessage6"].Trim();
-            var invitationMessage7 = ConfigurationManager.AppSettings["InvitationMessage7"].Trim();
-            var invitationMessage8 = ConfigurationManager.AppSettings["InvitationMessage8"].Trim();
-            var invitationMessage9 = ConfigurationManager.AppSettings["InvitationMessage9"].Trim();
-            var invitationMessage10 = ConfigurationManager.AppSettings["InvitationMessage10"].Trim();
-
-            // ambient invitation response types
-            var invitationResponse1 = Convert.ToInt32(ConfigurationManager.AppSettings["InvitationResponse1"].Trim());
-            var invitationResponse2 = Convert.ToInt32(ConfigurationManager.AppSettings["InvitationResponse2"].Trim());
-            var invitationResponse3 = Convert.ToInt32(ConfigurationManager.AppSettings["InvitationResponse3"].Trim());
-            var invitationResponse4 = Convert.ToInt32(ConfigurationManager.AppSettings["InvitationResponse4"].Trim());
-            var invitationResponse5 = Convert.ToInt32(ConfigurationManager.AppSettings["InvitationResponse5"].Trim());
-            var invitationResponse6 = Convert.ToInt32(ConfigurationManager.AppSettings["InvitationResponse6"].Trim());
-            var invitationResponse7 = Convert.ToInt32(ConfigurationManager.AppSettings["InvitationResponse7"].Trim());
-            var invitationResponse8 = Convert.ToInt32(ConfigurationManager.AppSettings["InvitationResponse8"].Trim());
-            var invitationResponse9 = Convert.ToInt32(ConfigurationManager.AppSettings["InvitationResponse9"].Trim());
-            var invitationResponse10 = Convert.ToInt32(ConfigurationManager.AppSettings["InvitationResponse10"].Trim());
-
-            ambientPlayer1.InvitationMessages = AmbientInvitationMessages.Load(
-                new[]
-                {
-                    invitationMessage1, invitationMessage2, invitationMessage3, invitationMessage4, invitationMessage5,
-                    invitationMessage6, invitationMessage7, invitationMessage8, invitationMessage9, invitationMessage10
-                },
-                new[]
-                {
-                    invitationResponse1, invitationResponse2, invitationResponse3, invitationResponse4, invitationResponse5,
-                    invitationResponse6, invitationResponse7, invitationResponse8, invitationResponse9, invitationResponse10
-                });
-
+            var invitations = ambientInvitationsClient.Get().ToArray();
+            ambientPlayer1.InvitationMessages = invitations;
             ambientPlayer1.InitializeTimers(durationInvitation, durationVideo);
         }
 
@@ -297,48 +264,56 @@ namespace Keebee.AAT.Display
 
             try
             {
-                switch (_pendingResponse.Id)
+                switch (_pendingResponse.ResponseTypeCategoryId)
                 {
-                    case ResponseTypeId.SlideShow:
+                    case ResponseTypeCategoryId.Image:
                         PlaySlideShow();
                         break;
-                    case ResponseTypeId.MatchingGame:
-                        PlayMatchingGame();
+                    case ResponseTypeCategoryId.Game:
+                        switch (_pendingResponse.Id)
+                        {
+                            case ResponseTypeId.MatchingGame:
+                                PlayMatchingGame(_pendingResponse.SwfFile);
+                                break;
+                            default:  // any generic flash activities
+                                if (_pendingResponse.InteractiveActivityTypeId > 0)
+                                    PlayActivity(_pendingResponse.Id,
+                                        _pendingResponse.InteractiveActivityTypeId,
+                                        _pendingResponse.SwfFile);
+                                break;
+                        }
                         break;
-                    case ResponseTypeId.KillDisplay:
-                        KillDisplay();
+
+                    case ResponseTypeCategoryId.System:
+                        switch (_pendingResponse.Id)
+                        {
+                            case ResponseTypeId.KillDisplay:
+                                KillDisplay();
+                                break;
+                            case ResponseTypeId.Caregiver:
+                                ShowCaregiver();
+                                break;
+                            case ResponseTypeId.Ambient:
+                                ResumeAmbient();
+                                break;
+                            case ResponseTypeId.VolumeControl:
+                                ShowVolumeControl();
+                                break;
+                            case ResponseTypeId.OffScreen:
+                                ShowOffScreen();
+                                break;
+                        }
                         break;
-                    case ResponseTypeId.Radio:
-                    case ResponseTypeId.Television:
-                    case ResponseTypeId.Cats:
-                    case ResponseTypeId.Nature:
-                    case ResponseTypeId.Sports:
-                    case ResponseTypeId.Machinery:
-                    case ResponseTypeId.Animals:
-                    case ResponseTypeId.Cute:
+
+                    case ResponseTypeCategoryId.Audio:
+                    case ResponseTypeCategoryId.Video:
                         PlayAudioVideo(_pendingResponse.Id, sensorValue);
-                        break;
-                    case ResponseTypeId.Caregiver:
-                        ShowCaregiver();
-                        break;
-                    case ResponseTypeId.Ambient:
-                        ResumeAmbient();
-                        break;
-                    case ResponseTypeId.VolumeControl:
-                        ShowVolumeControl();
-                        break;
-                    case ResponseTypeId.OffScreen:
-                        ShowOffScreen();
-                        break;
-                    default:  // any generic swf activities that don't require media
-                        if (_pendingResponse.InteractiveActivityTypeId > 0)
-                            PlayActivity(_pendingResponse.Id,
-                                _pendingResponse.InteractiveActivityTypeId,
-                                _pendingResponse.SwfFile);
                         break;
                 }
 
-                SaveCurrentRotationalSensorValue(_pendingResponse.Id, sensorValue);
+                // save the current rotational sensor value
+                if (_pendingResponse.IsRotational)
+                    _rotationalResponses[_pendingResponse.Id] = sensorValue;
 
             }
             catch (Exception ex)
@@ -434,12 +409,6 @@ namespace Keebee.AAT.Display
             _residentDisplayTimer.Start();
         }
 
-        private void SaveCurrentRotationalSensorValue(int responseTypeId, int sensorValue)
-        {
-            if (_rotationalResponses.Any(r => r.Key == responseTypeId))
-                _rotationalResponses[responseTypeId] = sensorValue;
-        }
-
         #endregion
 
         #region callback
@@ -486,6 +455,8 @@ namespace Keebee.AAT.Display
                 }
                 else
                 {
+                    if (!_pendingResponse.IsRotational) return;
+
                     var changeType = GetSensorValueChangeType(responseTypeId, responseValue);
 
                     switch (changeType)
@@ -498,6 +469,8 @@ namespace Keebee.AAT.Display
                             break;
                         case ResponseValueChangeType.NoDifference:
                             break;
+                        default:
+                            break;
                     }
                 }
             }
@@ -506,23 +479,22 @@ namespace Keebee.AAT.Display
         private ResponseValueChangeType GetSensorValueChangeType(int responseTypeId, int sensorValue)
         {
             // save the current sensor values for the 'rotational' responses
-            var currentSensorValue = _rotationalResponses
-                .Single(r => r.Key == responseTypeId).Value;
+            var currentValue = _rotationalResponses[responseTypeId];
 
             // edge case 1 - going from Value5 to Value1 should be an INCREASE
-            if ((currentSensorValue == (int)RotationSensorStep.Value5) && (sensorValue == (int)RotationSensorStep.Value1))
+            if ((currentValue == (int)RotationSensorStep.Value5) && (sensorValue == (int)RotationSensorStep.Value1))
                 return ResponseValueChangeType.Increase;
 
             // edge case 2 - going from Value1 to Value5 should be a DECREASE
-            if ((currentSensorValue == (int)RotationSensorStep.Value1) && (sensorValue == (int)RotationSensorStep.Value5))
+            if ((currentValue == (int)RotationSensorStep.Value1) && (sensorValue == (int)RotationSensorStep.Value5))
                 return ResponseValueChangeType.Decrease;
 
             // no change
-            if (sensorValue == currentSensorValue)
+            if (sensorValue == currentValue)
                 return ResponseValueChangeType.NoDifference;
 
             // all other scenarios
-            return (sensorValue > currentSensorValue)
+            return (sensorValue > currentValue)
                     ? ResponseValueChangeType.Increase
                     : ResponseValueChangeType.Decrease;
         }
@@ -561,11 +533,11 @@ namespace Keebee.AAT.Display
             }
         }
 
-        private void PlayMatchingGame()
+        private void PlayMatchingGame(string swfFile)
         {
             if (InvokeRequired)
             {
-                Invoke(new PlayMatchingGameDelegate(PlayMatchingGame));
+                Invoke(new PlayMatchingGameDelegate(PlayMatchingGame), swfFile);
             }
             else
             {
@@ -600,7 +572,7 @@ namespace Keebee.AAT.Display
                     true, 
                     _currentIsActiveEventLog, 
                     _activeResident.AllowVideoCapturing,
-                    _activeConfigDetail.ResponseType.SwfFile);
+                    swfFile);
 
                 _currentResponse = _pendingResponse;
             }
@@ -789,24 +761,11 @@ namespace Keebee.AAT.Display
             try
             {
                 var args = (AmbientPlayer.ScreenTouchedEventEventArgs)e;
-                var responseTypeId = args.ResponseTypeId;
 
-                StopCurrentResponse();
-                switch (responseTypeId)
-                {
-                    case ResponseTypeId.SlideShow:
-                        PlaySlideShow();
-                        break;
-                    case ResponseTypeId.MatchingGame:
-                        PlayMatchingGame();
-                        break;
-                    case ResponseTypeId.Cats:
-                    case ResponseTypeId.Radio:
-                    case ResponseTypeId.Television:
-                        _isNewResponse = true;
-                        PlayAudioVideo(responseTypeId, 0);
-                        break;
-                }
+                _pendingResponse = args.ResponseType;
+                _isNewResponse = true;
+
+                ExecuteResponse(0, args.ResponseType.IsSystem);
             }
             catch (Exception ex)
             {

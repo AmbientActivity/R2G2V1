@@ -1,8 +1,8 @@
 ﻿using Keebee.AAT.MessageQueuing;
 using Keebee.AAT.Shared;
 using Keebee.AAT.SystemEventLogging;
-using Keebee.AAT.ServiceModels;
 using Keebee.AAT.ApiClient.Clients;
+using Newtonsoft.Json;
 using Phidgets;
 using Phidgets.Events;
 using System.Configuration;
@@ -10,7 +10,6 @@ using System;
 using System.Diagnostics;
 using System.Linq;
 using System.ServiceProcess;
-using System.Web.Script.Serialization;
 
 namespace Keebee.AAT.PhidgetService
 {
@@ -368,18 +367,14 @@ namespace Keebee.AAT.PhidgetService
 
         private static string CreateMessageBodyFromSensor(int sensorId, int sensorValue)
         {
-            var phidgetMessage = new PhidgetMessage { SensorId = sensorId, SensorValue = sensorValue };
-
-            var serializer = new JavaScriptSerializer();
-            var messageBody = serializer.Serialize(phidgetMessage);
-            return messageBody;
+            return JsonConvert.SerializeObject(new Tuple<int, int>(sensorId, sensorValue));
         }
 
         private void MessageReceiveConfigPhidget(object source, MessageEventArgs e)
         {
             try
             {
-                _activeConfig = GetConfigFromMessageBody(e.MessageBody);
+                _activeConfig = JsonConvert.DeserializeObject<ConfigMessage>(e.MessageBody);
                 _isDisplayActive = _activeConfig.IsDisplayActive;
 
                 SystemEventLogger.WriteEntry($"The configuration '{_activeConfig.Description}' has been activated", SystemEventLogType.PhidgetService);
@@ -395,7 +390,7 @@ namespace Keebee.AAT.PhidgetService
         {
             try
             {
-                var displayMessage = GetDisplayStateFromMessageBody(e.MessageBody);
+                var displayMessage = JsonConvert.DeserializeObject<DisplayMessage>(e.MessageBody);
                 _isDisplayActive = displayMessage.IsActive;
 
                 if (!_isDisplayActive) return;
@@ -406,20 +401,6 @@ namespace Keebee.AAT.PhidgetService
             {
                 SystemEventLogger.WriteEntry($"MessageReceivedDisplayPhidget{Environment.NewLine}{ex.Message}", SystemEventLogType.PhidgetService, EventLogEntryType.Error);
             }
-        }
-
-        private static ConfigMessage GetConfigFromMessageBody(string messageBody)
-        {
-            var serializer = new JavaScriptSerializer();
-            var config = serializer.Deserialize<ConfigMessage>(messageBody);
-            return config;
-        }
-
-        private static DisplayMessage GetDisplayStateFromMessageBody(string messageBody)
-        {
-            var serializer = new JavaScriptSerializer();
-            var display = serializer.Deserialize<DisplayMessage>(messageBody);
-            return display;
         }
 
         private void LoadConfig()

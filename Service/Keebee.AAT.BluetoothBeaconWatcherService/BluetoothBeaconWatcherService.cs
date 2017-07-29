@@ -3,6 +3,7 @@ using Keebee.AAT.SystemEventLogging;
 using Keebee.AAT.MessageQueuing;
 using Keebee.AAT.Shared;
 using Keebee.AAT.BluetoothBeaconWatcherService.Beacon;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -11,7 +12,6 @@ using System.IO;
 using System.Linq;
 using System.ServiceProcess;
 using System.Timers;
-using System.Web.Script.Serialization;
 using Windows.Devices.Bluetooth;
 using Windows.Devices.Bluetooth.Advertisement;
 
@@ -167,7 +167,7 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
                         return;
                     }
 
-                    _messageQueueBeaconWatcher.Send(GetSerializedResident(_publicResident));
+                    _messageQueueBeaconWatcher.Send(JsonConvert.SerializeObject(_publicResident));
                     _activeResidentId = PublicProfileSource.Id;
 
                     if (_beaconMonitorIsActive)
@@ -194,7 +194,7 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
 
                     var resident = GetResident(residentId) ?? _publicResident;
 
-                    _messageQueueBeaconWatcher.Send(GetSerializedResident(resident));
+                    _messageQueueBeaconWatcher.Send(JsonConvert.SerializeObject(resident));
                     _activeResidentId = residentId;
                 }
             }
@@ -356,14 +356,6 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
             }
         }
 
-        private static string GetSerializedResident(ResidentBluetoothMessage resident)
-        {
-            var serializer = new JavaScriptSerializer();
-            var messageBody = serializer.Serialize(resident);
-
-            return messageBody;
-        }
-
         private void MessageReceivedBluetoothBeaconWatcherReload(object source, MessageEventArgs e)
         {
             if (_residents == null) return;
@@ -371,8 +363,7 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
             ResidentBluetoothMessage resident = null;
             try
             {
-                var serializer = new JavaScriptSerializer();
-                resident = serializer.Deserialize<ResidentBluetoothMessage>(e.MessageBody);
+                resident = JsonConvert.DeserializeObject<ResidentBluetoothMessage>(e.MessageBody);
             }
             catch (Exception ex)
             {
@@ -406,11 +397,11 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
 
                 if (_displayIsActive) return;
 
-                _messageQueueBeaconWatcher.Send(GetSerializedResident(_publicResident));
+                _messageQueueBeaconWatcher.Send(JsonConvert.SerializeObject(_publicResident));
                 _activeResidentId = PublicProfileSource.Id;
 
                 if (!_beaconMonitorIsActive) return;
-                _messageQueueBeaconMonitorResident.Send(GetSerializedResident(_publicResident));
+                _messageQueueBeaconMonitorResident.Send(JsonConvert.SerializeObject(_publicResident));
             }
             catch (Exception ex)
             {
@@ -420,8 +411,7 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
 
         private static DisplayMessage GetDisplayStateFromMessageBody(string messageBody)
         {
-            var serializer = new JavaScriptSerializer();
-            var display = serializer.Deserialize<DisplayMessage>(messageBody);
+            var display = JsonConvert.DeserializeObject<DisplayMessage>(messageBody);
             return display;
         }
 
@@ -527,8 +517,7 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
                     };
                 }).ToArray();
 
-            var serializer = new JavaScriptSerializer();
-            return serializer.Serialize(message);
+            return JsonConvert.SerializeObject(message);
         }
 
         private static string GetSerializedBeaconWatcherMonitorResidentMessage(int residentId, string residentName, int? rssi)
@@ -541,8 +530,7 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
                 Rssi = localRssi
             };
 
-            var serializer = new JavaScriptSerializer();
-            return serializer.Serialize(message);
+            return JsonConvert.SerializeObject(message);
         }
 
         private void BeaconMonitorMessageReceived(object sender, MessageEventArgs e)

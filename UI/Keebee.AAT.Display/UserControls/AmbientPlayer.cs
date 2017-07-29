@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using Keebee.AAT.ApiClient.Models;
 using WMPLib;
 
 namespace Keebee.AAT.Display.UserControls
@@ -18,12 +19,12 @@ namespace Keebee.AAT.Display.UserControls
 
         // delegate
         private delegate void PlayAmbientDelegate();
-        private delegate void RaiseScreenTouchedEventDelegate(int responseTypeId);
+        private delegate void RaiseScreenTouchedEventDelegate(ResponseTypeMessage responseType);
 
         // invitation messages
         private int _currentInvitationMessageIndex = -1;
-        private IList<AmbientInvitationMessage> _invitationMessages;
-        public IList<AmbientInvitationMessage> InvitationMessages
+        private IList<AmbientInvitation> _invitationMessages;
+        public IList<AmbientInvitation> InvitationMessages
         {
             set { _invitationMessages = value; }
         }
@@ -32,7 +33,7 @@ namespace Keebee.AAT.Display.UserControls
 
         public class ScreenTouchedEventEventArgs : EventArgs
         {
-            public int ResponseTypeId { get; set; }
+            public ResponseTypeMessage ResponseType { get; set; }
         }
 
         // timers
@@ -177,19 +178,19 @@ namespace Keebee.AAT.Display.UserControls
             }
         }
 
-        private void RaiseScreenTouchedEvent(int responseTypeId)
+        private void RaiseScreenTouchedEvent(ResponseTypeMessage responseType)
         {
             if (IsDisposed) return;
 
             if (InvokeRequired)
             {
-                Invoke(new RaiseScreenTouchedEventDelegate(RaiseScreenTouchedEvent), responseTypeId);
+                Invoke(new RaiseScreenTouchedEventDelegate(RaiseScreenTouchedEvent), responseType);
             }
             else
             {
                 var args = new ScreenTouchedEventEventArgs
                 {
-                    ResponseTypeId = responseTypeId
+                    ResponseType = responseType
                 };
                 ScreenTouchedEvent?.Invoke(new object(), args);
             }
@@ -197,10 +198,17 @@ namespace Keebee.AAT.Display.UserControls
 
         private void InvitationClick(object sender, EventArgs e)
         {
-            var responseTypeId = _invitationMessages[_currentInvitationMessageIndex].ResponseTypeId;
+            var responseType = _invitationMessages[_currentInvitationMessageIndex].ResponseType;
+            if (responseType.Id == 0) return;
 
-            if (responseTypeId > 0)
-                RaiseScreenTouchedEvent(responseTypeId);
+            var responseTypeMessage = new ResponseTypeMessage
+            {
+                Id = responseType.Id,
+                ResponseTypeCategoryId = responseType.ResponseTypeCategory.Id,
+                SwfFile = responseType.InteractiveActivityType.SwfFile
+            };
+            
+            RaiseScreenTouchedEvent(responseTypeMessage);
         }
 
         private void PlayStateChange(object sender, AxWMPLib._WMPOCXEvents_PlayStateChangeEvent e)

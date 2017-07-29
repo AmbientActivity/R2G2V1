@@ -148,6 +148,7 @@
     <Compile Include="Controllers\ActiveResidentEventLogsController.cs" />
     <Compile Include="Controllers\ActiveResidentsController.cs" />
     <Compile Include="Controllers\ActivityEventLogsController.cs" />
+    <Compile Include="Controllers\AmbientInvitationsController.cs" />
     <Compile Include="Controllers\ConfigDetailsController.cs" />
     <Compile Include="Controllers\ConfigsController.cs" />
     <Compile Include="Controllers\InteractiveActivityEventLogsController.cs" />
@@ -171,6 +172,7 @@
     <Compile Include="Models\ActiveResident.cs" />
     <Compile Include="Models\ActiveResidentEventLog.cs" />
     <Compile Include="Models\ActivityEventLogs.cs" />
+    <Compile Include="Models\AmbientInvitation.cs" />
     <Compile Include="Models\Config.cs" />
     <Compile Include="Models\ConfigDetail.cs" />
     <Compile Include="Models\InteractiveActivityEventLog.cs" />

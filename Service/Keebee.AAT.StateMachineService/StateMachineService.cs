@@ -1,11 +1,10 @@
-﻿using Keebee.AAT.ServiceModels;
-using Keebee.AAT.MessageQueuing;
+﻿using Keebee.AAT.MessageQueuing;
 using Keebee.AAT.Shared;
 using Keebee.AAT.SystemEventLogging;
 using Keebee.AAT.ApiClient.Clients;
 using Keebee.AAT.ApiClient.Models;
+using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 using System.Web.Script.Serialization;
 using System.ServiceProcess;
 using System.Diagnostics;
@@ -137,7 +136,7 @@ namespace Keebee.AAT.StateMachineService
                     if (!configDetail.ResponseType.IsSystem)
                     {
                         if (_activeResident.AllowVideoCapturing)
-                            // send a signal to the video capture service to start recording
+                            // send instruction to the video capture service to start capturing
                             _messageQueueVideoCapture.Send("1");
                     }
                 }
@@ -230,13 +229,12 @@ namespace Keebee.AAT.StateMachineService
                 // do nothing unless the display is active
                 if (!_isDisplayActive) return;
 
-                var phidget = GetPhidgetFromMessageBody(e.MessageBody);
+                var phidget = JsonConvert.DeserializeObject<Tuple<int, int>>(e.MessageBody);
                 if (phidget == null) return;
 
-                var sensorValue = phidget.SensorValue;
-
                 // sensorId's are base 0 - convert to base 1 for PhidgetTypeId
-                var phidgetTypeId = phidget.SensorId + 1;
+                var phidgetTypeId = phidget.Item1 + 1;
+                var sensorValue = phidget.Item2;
 
                 ExecuteResponse(phidgetTypeId, sensorValue);
             }
@@ -250,7 +248,7 @@ namespace Keebee.AAT.StateMachineService
         {
             try
             {
-                var resident = GetResidentFromMessageBody(e.MessageBody);
+                var resident = JsonConvert.DeserializeObject<ResidentMessage>(e.MessageBody);
 
                 if (resident.Id > 0)
                 {
@@ -278,7 +276,7 @@ namespace Keebee.AAT.StateMachineService
         {
             try
             {
-                var displayMessage = GetDisplayStateFromMessageBody(e.MessageBody);
+                var displayMessage = JsonConvert.DeserializeObject<DisplayMessage>(e.MessageBody);
                 _isDisplayActive = displayMessage.IsActive;
 
                 if (!_isDisplayActive)
@@ -307,7 +305,7 @@ namespace Keebee.AAT.StateMachineService
         {
             try
             {
-                _activeConfig = GetConfigFromMessageBody(e.MessageBody);
+                _activeConfig = JsonConvert.DeserializeObject<ConfigMessage>(e.MessageBody);
                 _isDisplayActive = _activeConfig.IsDisplayActive;
 
                 if (!_isDisplayActive) return;
@@ -330,35 +328,6 @@ namespace Keebee.AAT.StateMachineService
             {
                 SystemEventLogger.WriteEntry($"MessageReceivedVideoCaptureState{Environment.NewLine}{ex.Message}", SystemEventLogType.StateMachineService, EventLogEntryType.Error);
             }
-        }
-
-        private static PhidgetMessage GetPhidgetFromMessageBody(string messageBody)
-        {
-            var serializer = new JavaScriptSerializer();
-            var phidget = serializer.Deserialize<PhidgetMessage>(messageBody);
-            return phidget;
-        }
-
-        private static ConfigMessage GetConfigFromMessageBody(string messageBody)
-        {
-            var serializer = new JavaScriptSerializer();
-            var config = serializer.Deserialize<ConfigMessage>(messageBody);
-            return config;
-        }
-
-        private static ResidentMessage GetResidentFromMessageBody(string messageBody)
-        {
-            var serializer = new JavaScriptSerializer();
-            var resident = serializer.Deserialize<ResidentMessage>(messageBody);
-
-            return resident;
-        }
-
-        private static DisplayMessage GetDisplayStateFromMessageBody(string messageBody)
-        {
-            var serializer = new JavaScriptSerializer();
-            var display = serializer.Deserialize<DisplayMessage>(messageBody);
-            return display;
         }
 
         #endregion

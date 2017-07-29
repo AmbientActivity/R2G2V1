@@ -69,6 +69,7 @@
     </Compile>
     <Compile Include="ODataHost.cs" />
     <Compile Include="Services\ActiveResidentService.cs" />
+    <Compile Include="Services\AmbientInvitationService.cs" />
     <Compile Include="Services\InteractiveActivityTypeService.cs" />
     <Compile Include="Services\MediaPathTypeService.cs" />
     <Compile Include="Services\PublicMediaFileService.cs" />

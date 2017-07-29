@@ -175,6 +175,7 @@
     <Compile Include="App_Start\UnityConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\ActiveResidentsController.cs" />
+    <Compile Include="Controllers\AmbientInvitationsController.cs" />
     <Compile Include="Controllers\AudioController.cs" />
     <Compile Include="Controllers\InteractiveActivityTypesController.cs" />
     <Compile Include="Controllers\MediaPathTypesController.cs" />

@@ -52,6 +52,7 @@
   <ItemGroup>
     <Compile Include="Clients\ActiveResidentClient.cs" />
     <Compile Include="Clients\ActivityEventLogsClient.cs" />
+    <Compile Include="Clients\AmbientInvitationsClient.cs" />
     <Compile Include="Clients\BaseClient.cs" />
     <Compile Include="Clients\ConfigsClient.cs" />
     <Compile Include="Clients\InteractiveActivityEventLogsClient.cs" />
@@ -70,6 +71,7 @@
     <Compile Include="Clients\UserRolesClient.cs" />
     <Compile Include="Clients\UsersClient.cs" />
     <Compile Include="Models\ActiveResident.cs" />
+    <Compile Include="Models\AmbientInvitation.cs" />
     <Compile Include="Models\InteractiveActivityType.cs" />
     <Compile Include="Models\MediaFile.cs" />
     <Compile Include="Models\MediaPathType.cs" />

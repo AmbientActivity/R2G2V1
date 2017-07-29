@@ -1,16 +1,16 @@
 ﻿using Keebee.AAT.SystemEventLogging;
 using Keebee.AAT.MessageQueuing;
 using Keebee.AAT.Shared;
-using Windows.Media.Capture;
-using Windows.Media.MediaProperties;
-using Windows.Storage;
+using Newtonsoft.Json;
 using System;
 using System.Configuration;
-using System.Web.Script.Serialization;
 using System.ServiceProcess;
 using System.Diagnostics;
 using System.IO;
 using System.Timers;
+using Windows.Media.Capture;
+using Windows.Media.MediaProperties;
+using Windows.Storage;
 using Timer = System.Timers.Timer;
 
 namespace Keebee.AAT.VideoCaptureService
@@ -184,8 +184,7 @@ namespace Keebee.AAT.VideoCaptureService
 
         private static DisplayMessage GetDisplayStateFromMessageBody(string messageBody)
         {
-            var serializer = new JavaScriptSerializer();
-            var display = serializer.Deserialize<DisplayMessage>(messageBody);
+            var display = JsonConvert.DeserializeObject<DisplayMessage>(messageBody);
             return display;
         }
 

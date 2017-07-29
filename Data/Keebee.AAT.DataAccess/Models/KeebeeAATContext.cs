@@ -53,6 +53,8 @@ namespace Keebee.AAT.DataAccess.Models
 
         public DbSet<ActiveResident> ActiveResidents { get; set; }
 
+        public DbSet<AmbientInvitation> AmbientInvitations { get; set; }
+
         public DbSet<User> Users { get; set; }
 
         public DbSet<Role> Roles { get; set; }

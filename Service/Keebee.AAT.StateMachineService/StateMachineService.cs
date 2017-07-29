@@ -5,7 +5,6 @@ using Keebee.AAT.ApiClient.Clients;
 using Keebee.AAT.ApiClient.Models;
 using Newtonsoft.Json;
 using System;
-using System.Web.Script.Serialization;
 using System.ServiceProcess;
 using System.Diagnostics;
 using System.Linq;
@@ -141,10 +140,7 @@ namespace Keebee.AAT.StateMachineService
                     }
                 }
 
-                var serializer = new JavaScriptSerializer();
-                var responseMessageBody = serializer.Serialize(responseMessage);
-                _messageQueueResponse.Send(responseMessageBody);
-
+                _messageQueueResponse.Send(JsonConvert.SerializeObject(responseMessage));
                 _currentResponseTypeId = configDetail.ResponseType.Id;
             }
             catch (Exception ex)

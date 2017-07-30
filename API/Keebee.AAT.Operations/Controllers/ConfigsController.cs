@@ -72,6 +72,11 @@ namespace Keebee.AAT.Operations.Controllers
                                 {
                                     cd.ResponseType.Id,
                                     cd.ResponseType.Description,
+                                    ResponseTypeCategory = new
+                                    {
+                                        cd.ResponseType.ResponseTypeCategory.Id,
+                                        cd.ResponseType.ResponseTypeCategory.Description
+                                    },
                                     InteractiveActivityType = (cd.ResponseType.InteractiveActivityTypeId != null)
                                         ? new
                                         {

@@ -28,7 +28,7 @@ namespace Keebee.AAT.Operations.Service.Services
             var container = new Container(new Uri(ODataHost.Url));
 
             var configs = container.Configs
-                .Expand("ConfigDetails($expand=PhidgetType,PhidgetStyleType,ResponseType($expand=InteractiveActivityType))")
+                .Expand("ConfigDetails($expand=PhidgetType,PhidgetStyleType,ResponseType($expand=InteractiveActivityType,ResponseTypeCategory))")
                 .AsEnumerable();
 
             return configs;

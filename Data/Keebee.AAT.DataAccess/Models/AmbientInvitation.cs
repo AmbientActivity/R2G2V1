@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace Keebee.AAT.DataAccess.Models
 {
@@ -12,8 +9,6 @@ namespace Keebee.AAT.DataAccess.Models
 
         public string Message { get; set; }
 
-        [ForeignKey("ResponseType")]
-        public int? ResponseTypeId { get; set; }
-        public virtual ResponseType ResponseType { get; set; }
+        public bool IsExecuteRandom { get; set; }
     }
 }

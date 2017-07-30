@@ -170,7 +170,11 @@ namespace Keebee.AAT.Display
             activityPlayer1.StartVideoCaptureEvent += StartVideoCaptureEvent;
 
             // initialize ambient and current responses
-            _ambientResponse = new ResponseTypeMessage { Id = ResponseTypeId.Ambient, IsSystem = true };
+            _ambientResponse = new ResponseTypeMessage
+            {
+                Id = ResponseTypeId.Ambient,
+                ResponseTypeCategoryId = ResponseTypeCategoryId.System
+            };
             _currentResponse = _ambientResponse;
 
             // initialize rotational response sensor values
@@ -205,10 +209,23 @@ namespace Keebee.AAT.Display
         {
             var durationInvitation = Convert.ToInt32(ConfigurationManager.AppSettings["AmbientInvitationDuration"].Trim());
             var durationVideo = Convert.ToInt32(ConfigurationManager.AppSettings["AmbientVideoDuration"].Trim());
-            var ambientInvitationsClient = new AmbientInvitationsClient();
 
+            var ambientInvitationsClient = new AmbientInvitationsClient();
             var invitations = ambientInvitationsClient.Get().ToArray();
             ambientPlayer1.InvitationMessages = invitations;
+
+            var responseTypesClient = new ResponseTypesClient();
+            var randomResponseTypes = responseTypesClient.GetRandomTypes()
+                .Select(x => new ResponseTypeMessage
+                    {
+                       Id = x.Id,
+                       ResponseTypeCategoryId = x.ResponseTypeCategory.Id,
+                       InteractiveActivityTypeId = x.InteractiveActivityType?.Id ?? 0,
+                       SwfFile = x.InteractiveActivityType?.SwfFile
+                    }).ToArray();
+
+            ambientPlayer1.RandomResponseTypes = randomResponseTypes;
+
             ambientPlayer1.InitializeTimers(durationInvitation, durationVideo);
         }
 
@@ -258,9 +275,9 @@ namespace Keebee.AAT.Display
 
         #region core logic
 
-        private void ExecuteResponse(int sensorValue, bool isSystem)
+        private void ExecuteResponse(int sensorValue = 0)
         {
-            if (!ShouldExecute(isSystem)) return;
+            if (!ShouldExecutePending()) return;
 
             try
             {
@@ -269,10 +286,10 @@ namespace Keebee.AAT.Display
                     case ResponseTypeCategoryId.Image:
                         PlaySlideShow();
                         break;
-                    case ResponseTypeCategoryId.Game:
-                        switch (_pendingResponse.Id)
+                    case ResponseTypeCategoryId.InteractiveActivity:
+                        switch (_pendingResponse.InteractiveActivityTypeId)
                         {
-                            case ResponseTypeId.MatchingGame:
+                            case InteractiveActivityTypeId.MatchingGame:
                                 PlayMatchingGame(_pendingResponse.SwfFile);
                                 break;
                             default:  // any generic flash activities
@@ -287,20 +304,20 @@ namespace Keebee.AAT.Display
                     case ResponseTypeCategoryId.System:
                         switch (_pendingResponse.Id)
                         {
-                            case ResponseTypeId.KillDisplay:
-                                KillDisplay();
+                            case ResponseTypeId.Ambient:
+                                ResumeAmbient();
                                 break;
                             case ResponseTypeId.Caregiver:
                                 ShowCaregiver();
-                                break;
-                            case ResponseTypeId.Ambient:
-                                ResumeAmbient();
                                 break;
                             case ResponseTypeId.VolumeControl:
                                 ShowVolumeControl();
                                 break;
                             case ResponseTypeId.OffScreen:
                                 ShowOffScreen();
+                                break;
+                            case ResponseTypeId.KillDisplay:
+                                KillDisplay();
                                 break;
                         }
                         break;
@@ -322,13 +339,14 @@ namespace Keebee.AAT.Display
             }
         }
 
-        private bool ShouldExecute(bool isSystem)
+        private bool ShouldExecutePending()
         {
             // dont'execute if current response is uninterrupted
             if (_currentResponse.IsUninterrupted) return false;
 
             // execute if a system response
-            if (isSystem) return true;
+            if (_pendingResponse.ResponseTypeCategoryId == ResponseTypeCategoryId.System)
+                return true;
 
             // only execute if:
             // new response
@@ -351,7 +369,7 @@ namespace Keebee.AAT.Display
                         slideViewerFlash1.Stop();
                         audioVideoPlayer1.Stop();
                         break;
-                    case ResponseTypeCategoryId.Game:
+                    case ResponseTypeCategoryId.InteractiveActivity:
                         switch (_currentResponse.Id)
                         {
                             case ResponseTypeId.MatchingGame:
@@ -750,7 +768,7 @@ namespace Keebee.AAT.Display
                 _currentIsActiveEventLog = response.IsActiveEventLog;
                 _currentPhidgetTypeId = response.ConfigDetail.PhidgetTypeId;
 
-                ExecuteResponse(response.SensorValue, response.ConfigDetail.ResponseType.IsSystem);
+                ExecuteResponse(response.SensorValue);
             }
             catch (Exception ex)
             {
@@ -767,7 +785,7 @@ namespace Keebee.AAT.Display
                 _pendingResponse = args.ResponseType;
                 _isNewResponse = true;
 
-                ExecuteResponse(0, args.ResponseType.IsSystem);
+                ExecuteResponse();
             }
             catch (Exception ex)
             {

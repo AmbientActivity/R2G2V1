@@ -19,8 +19,6 @@ namespace Keebee.AAT.DataAccess.Models
         public virtual InteractiveActivityType InteractiveActivityType { get; set; }
         public int? InteractiveActivityTypeId { get; set; }
 
-        public bool IsSystem { get; set; }
-
         public bool IsRandom { get; set; }
         public bool IsRotational { get; set; }
         public bool IsUninterrupted { get; set; }

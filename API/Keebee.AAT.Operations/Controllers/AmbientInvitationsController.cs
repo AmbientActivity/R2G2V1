@@ -38,22 +38,7 @@ namespace Keebee.AAT.Operations.Controllers
                 {
                     x.Id,
                     x.Message, 
-                    ResponseType = new
-                    {
-                        Id = x.ResponseType?.Id ?? 0,
-                        x.ResponseType?.Description,
-                        ResponseTypeCategory = new
-                        {
-                            Id = x.ResponseType?.ResponseTypeCategory.Id ?? 0,
-                            x.ResponseType?.ResponseTypeCategory.Description
-                        },
-                        InteractiveActivityType = new
-                        {
-                            Id = x.ResponseType?.InteractiveActivityType?.Id ?? 0,
-                            x.ResponseType?.InteractiveActivityType?.Description,
-                            x.ResponseType?.InteractiveActivityType?.SwfFile
-                        }
-                    }
+                    x.IsExecuteRandom
                 }).ToArray();
 
             return new DynamicJsonArray(jArray);
@@ -75,26 +60,9 @@ namespace Keebee.AAT.Operations.Controllers
 
             dynamic exObj = new ExpandoObject();
             exObj.Id = ambientInvitation.Id;
-            exObj.Resident = new
-            {
-                ambientInvitation.Id,
-                ambientInvitation.Message,
-                ResponseType = new
-                {
-                    Id = ambientInvitation.ResponseType?.Id ?? 0,
-                    ResponseTypeCategoryType = new
-                    {
-                        Id = ambientInvitation.ResponseType?.ResponseTypeCategory.Id ?? 0,
-                        ambientInvitation.ResponseType?.ResponseTypeCategory.Description
-                    },
-                    InteractiveActivityType = new
-                    {
-                        Id = ambientInvitation.ResponseType?.InteractiveActivityType?.Id ?? 0,
-                        ambientInvitation.ResponseType?.InteractiveActivityType?.Description,
-                        ambientInvitation.ResponseType?.InteractiveActivityType?.SwfFile
-                    }
-                }
-            };
+            exObj.Message = ambientInvitation.Message;
+            exObj.IsExecuteRandom = ambientInvitation.IsExecuteRandom;
+
             return new DynamicJsonObject(exObj);
         }
 

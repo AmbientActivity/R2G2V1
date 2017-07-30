@@ -191,7 +191,7 @@ namespace Keebee.AAT.BusinessRules
                             ResponseType = new ResponseTypeMessage
                             {
                                 Id = x.ResponseType.Id,
-                                IsSystem = x.ResponseType.IsSystem,
+                                IsSystem = x.ResponseType.ResponseTypeCategory.Id == ResponseTypeCategoryId.System,
                                 IsRotational = x.ResponseType.IsRotational,
                                 IsUninterrupted = x.ResponseType.IsUninterrupted,
                                 InteractiveActivityTypeId = x.ResponseType.InteractiveActivityType?.Id ?? 0,

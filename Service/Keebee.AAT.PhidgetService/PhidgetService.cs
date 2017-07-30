@@ -420,7 +420,7 @@ namespace Keebee.AAT.PhidgetService
                         ResponseType = new ResponseTypeMessage
                         {
                             Id = x.ResponseType.Id,
-                            IsSystem = x.ResponseType.IsSystem
+                            IsSystem = x.ResponseType.ResponseTypeCategory.Id == ResponseTypeCategoryId.System
                         },
                         PhidgetTypeId = x.PhidgetType.Id,
                         PhidgetStyleTypeId = x.PhidgetStyleType.Id,

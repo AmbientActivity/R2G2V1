@@ -11,8 +11,8 @@ namespace Keebee.AAT.ApiClient.Clients
     {
         IEnumerable<AmbientInvitation> Get();
         AmbientInvitation Get(int id);
-        string Post(AmbientInvitationEdit invitation, out int newId);
-        string Patch(int id, AmbientInvitationEdit invitation);
+        string Post(AmbientInvitation invitation, out int newId);
+        string Patch(int id, AmbientInvitation invitation);
         string Delete(int id);
     }
 
@@ -36,7 +36,7 @@ namespace Keebee.AAT.ApiClient.Clients
             return ambientInvitation;
         }
 
-        public string Post(AmbientInvitationEdit invitation, out int newId)
+        public string Post(AmbientInvitation invitation, out int newId)
         {
             var request = new RestRequest("ambientinvitations", Method.POST);
             var json = request.JsonSerializer.Serialize(invitation);
@@ -54,7 +54,7 @@ namespace Keebee.AAT.ApiClient.Clients
             return result;
         }
 
-        public string Patch(int id, AmbientInvitationEdit invitation)
+        public string Patch(int id, AmbientInvitation invitation)
         {
             var request = new RestRequest($"ambientinvitations/{id}", Method.PATCH);
             var json = request.JsonSerializer.Serialize(invitation);

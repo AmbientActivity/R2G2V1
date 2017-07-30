@@ -332,7 +332,7 @@ namespace Keebee.AAT.Administrator.Controllers
                 Description = detail.Description,
                 Location = detail.Location ?? string.Empty,
                 ResponseType = detail.ResponseType.Description,
-                IsSystem = detail.ResponseType.IsSystem,
+                IsSystem = detail.ResponseType.ResponseTypeCategory.Id == ResponseTypeCategoryId.System,
                 CanEdit = !detail.IsEventLogs
             };
         }

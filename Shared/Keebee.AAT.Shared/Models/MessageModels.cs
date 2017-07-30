@@ -55,7 +55,6 @@ namespace Keebee.AAT.Shared
         public int SensorValue { get; set; }
         public ResidentMessage Resident { get; set; }
         public ConfigDetailMessage ConfigDetail { get; set; }
-        public ResponseTypeMessage[] RandomResponseTypes { get; set; }
     }
 
     public class DisplayMessage

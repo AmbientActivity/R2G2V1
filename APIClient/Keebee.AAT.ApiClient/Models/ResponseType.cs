@@ -4,7 +4,6 @@
     {
         public int Id { get; set; }
         public string Description { get; set; }
-        public bool IsSystem { get; set; }
         public bool IsRandom { get; set; }
         public bool IsRotational { get; set; }
         public bool IsUninterrupted { get; set; }

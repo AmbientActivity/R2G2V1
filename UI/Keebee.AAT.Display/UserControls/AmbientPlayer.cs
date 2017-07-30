@@ -29,6 +29,14 @@ namespace Keebee.AAT.Display.UserControls
             set { _invitationMessages = value; }
         }
 
+        private ResponseTypeMessage[] _randomResponseTypes;
+        public ResponseTypeMessage[] RandomResponseTypes
+        {
+            set { _randomResponseTypes = value; }
+        }
+
+        private int _currentRandomResponseTypeId;
+
         private bool _isInvitaionShown;
 
         public class ScreenTouchedEventEventArgs : EventArgs
@@ -160,7 +168,7 @@ namespace Keebee.AAT.Display.UserControls
 
                 var  message = _invitationMessages[_currentInvitationMessageIndex].Message;
 
-                axWindowsMediaPlayer.settings.mute = true;
+                axWindowsMediaPlayer.Ctlcontrols.pause();
                 axWindowsMediaPlayer.Hide();
 
                 lblInvitation.Text = message;
@@ -172,7 +180,7 @@ namespace Keebee.AAT.Display.UserControls
             {
                 lblInvitation.Hide();
                 axWindowsMediaPlayer.Show();
-                axWindowsMediaPlayer.settings.mute = false;
+                axWindowsMediaPlayer.Ctlcontrols.play();
 
                 _isInvitaionShown = false;
             }
@@ -198,16 +206,23 @@ namespace Keebee.AAT.Display.UserControls
 
         private void InvitationClick(object sender, EventArgs e)
         {
-            var responseType = _invitationMessages[_currentInvitationMessageIndex].ResponseType;
-            if (responseType.Id == 0) return;
+            if (!_randomResponseTypes.Any()) return;
+            if (!_invitationMessages[_currentInvitationMessageIndex].IsExecuteRandom) return;
 
+            var responseType = _randomResponseTypes[_currentRandomResponseTypeId];
             var responseTypeMessage = new ResponseTypeMessage
             {
                 Id = responseType.Id,
-                ResponseTypeCategoryId = responseType.ResponseTypeCategory.Id,
-                SwfFile = responseType.InteractiveActivityType.SwfFile
+                ResponseTypeCategoryId = responseType.ResponseTypeCategoryId,
+                InteractiveActivityTypeId = responseType.InteractiveActivityTypeId,
+                SwfFile = responseType.SwfFile
             };
-            
+
+            if (_currentInvitationMessageIndex < _randomResponseTypes.Length - 1)
+                _currentRandomResponseTypeId++;
+            else
+                _currentInvitationMessageIndex = 0;
+
             RaiseScreenTouchedEvent(responseTypeMessage);
         }
 

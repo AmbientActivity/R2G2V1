@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-// Generation date: 2017-07-29 3:01:00 PM
+// Generation date: 2017-07-29 10:42:58 PM
 namespace Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models
 {
     /// <summary>
@@ -4579,28 +4579,6 @@ namespace Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models
         public AmbientInvitationSingle(global::Microsoft.OData.Client.DataServiceQuerySingle<AmbientInvitation> query)
             : base(query) {}
 
-        /// <summary>
-        /// There are no comments for ResponseType in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        [global::Microsoft.OData.Client.OriginalNameAttribute("ResponseType")]
-        public global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ResponseTypeSingle ResponseType
-        {
-            get
-            {
-                if (!this.IsComposable)
-                {
-                    throw new global::System.NotSupportedException("The previous function is not composable.");
-                }
-                if ((this._ResponseType == null))
-                {
-                    this._ResponseType = new global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ResponseTypeSingle(this.Context, GetPath("ResponseType"));
-                }
-                return this._ResponseType;
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ResponseTypeSingle _ResponseType;
     }
     /// <summary>
     /// There are no comments for AmbientInvitation in the schema.
@@ -4616,11 +4594,13 @@ namespace Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models
         /// Create a new AmbientInvitation object.
         /// </summary>
         /// <param name="ID">Initial value of Id.</param>
+        /// <param name="isExecuteRandom">Initial value of IsExecuteRandom.</param>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        public static AmbientInvitation CreateAmbientInvitation(int ID)
+        public static AmbientInvitation CreateAmbientInvitation(int ID, bool isExecuteRandom)
         {
             AmbientInvitation ambientInvitation = new AmbientInvitation();
             ambientInvitation.Id = ID;
+            ambientInvitation.IsExecuteRandom = isExecuteRandom;
             return ambientInvitation;
         }
         /// <summary>
@@ -4670,51 +4650,28 @@ namespace Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models
         partial void OnMessageChanging(string value);
         partial void OnMessageChanged();
         /// <summary>
-        /// There are no comments for Property ResponseTypeId in the schema.
+        /// There are no comments for Property IsExecuteRandom in the schema.
         /// </summary>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        [global::Microsoft.OData.Client.OriginalNameAttribute("ResponseTypeId")]
-        public global::System.Nullable<int> ResponseTypeId
+        [global::Microsoft.OData.Client.OriginalNameAttribute("IsExecuteRandom")]
+        public bool IsExecuteRandom
         {
             get
             {
-                return this._ResponseTypeId;
+                return this._IsExecuteRandom;
             }
             set
             {
-                this.OnResponseTypeIdChanging(value);
-                this._ResponseTypeId = value;
-                this.OnResponseTypeIdChanged();
-                this.OnPropertyChanged("ResponseTypeId");
+                this.OnIsExecuteRandomChanging(value);
+                this._IsExecuteRandom = value;
+                this.OnIsExecuteRandomChanged();
+                this.OnPropertyChanged("IsExecuteRandom");
             }
         }
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private global::System.Nullable<int> _ResponseTypeId;
-        partial void OnResponseTypeIdChanging(global::System.Nullable<int> value);
-        partial void OnResponseTypeIdChanged();
-        /// <summary>
-        /// There are no comments for Property ResponseType in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        [global::Microsoft.OData.Client.OriginalNameAttribute("ResponseType")]
-        public global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ResponseType ResponseType
-        {
-            get
-            {
-                return this._ResponseType;
-            }
-            set
-            {
-                this.OnResponseTypeChanging(value);
-                this._ResponseType = value;
-                this.OnResponseTypeChanged();
-                this.OnPropertyChanged("ResponseType");
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ResponseType _ResponseType;
-        partial void OnResponseTypeChanging(global::Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models.ResponseType value);
-        partial void OnResponseTypeChanged();
+        private bool _IsExecuteRandom;
+        partial void OnIsExecuteRandomChanging(bool value);
+        partial void OnIsExecuteRandomChanged();
         /// <summary>
         /// This event is raised when the value of the property is changed
         /// </summary>
@@ -6677,10 +6634,7 @@ namespace Keebee.AAT.Operations.Service.KeebeeAAT
         </Key>
         <Property Name=""Id"" Type=""Edm.Int32"" Nullable=""false"" />
         <Property Name=""Message"" Type=""Edm.String"" />
-        <Property Name=""ResponseTypeId"" Type=""Edm.Int32"" />
-        <NavigationProperty Name=""ResponseType"" Type=""Keebee.AAT.DataAccess.Models.ResponseType"">
-          <ReferentialConstraint Property=""ResponseTypeId"" ReferencedProperty=""Id"" />
-        </NavigationProperty>
+        <Property Name=""IsExecuteRandom"" Type=""Edm.Boolean"" Nullable=""false"" />
       </EntityType>
       <EntityType Name=""User"">
         <Key>
@@ -6766,9 +6720,7 @@ namespace Keebee.AAT.Operations.Service.KeebeeAAT
         <EntitySet Name=""ActiveResidents"" EntityType=""Keebee.AAT.DataAccess.Models.ActiveResident"">
           <NavigationPropertyBinding Path=""Resident"" Target=""Residents"" />
         </EntitySet>
-        <EntitySet Name=""AmbientInvitations"" EntityType=""Keebee.AAT.DataAccess.Models.AmbientInvitation"">
-          <NavigationPropertyBinding Path=""ResponseType"" Target=""ResponseTypes"" />
-        </EntitySet>
+        <EntitySet Name=""AmbientInvitations"" EntityType=""Keebee.AAT.DataAccess.Models.AmbientInvitation"" />
         <EntitySet Name=""Users"" EntityType=""Keebee.AAT.DataAccess.Models.User"" />
         <EntitySet Name=""Roles"" EntityType=""Keebee.AAT.DataAccess.Models.Role"" />
         <EntitySet Name=""UserRoles"" EntityType=""Keebee.AAT.DataAccess.Models.UserRole"">

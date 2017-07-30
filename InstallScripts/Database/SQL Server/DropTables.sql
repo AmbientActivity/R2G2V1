@@ -3,6 +3,7 @@ USE [KeebeeAAT]
 IF OBJECT_ID('__MigrationHistory', 'U') IS NOT NULL DROP TABLE __MigrationHistory
 IF OBJECT_ID('ActivityEventLogs', 'U') IS NOT NULL DROP TABLE ActivityEventLogs
 IF OBJECT_ID('ActiveResidents', 'U') IS NOT NULL DROP TABLE ActiveResidents
+IF OBJECT_ID('AmbientInvitations', 'U') IS NOT NULL DROP TABLE AmbientInvitations
 IF OBJECT_ID('InteractiveActivityEventLogs', 'U') IS NOT NULL DROP TABLE InteractiveActivityEventLogs
 IF OBJECT_ID('ActiveResidentEventLogs', 'U') IS NOT NULL DROP TABLE ActiveResidentEventLogs
 IF OBJECT_ID('ConfigDetails', 'U') IS NOT NULL DROP TABLE ConfigDetails

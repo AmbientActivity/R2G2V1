@@ -22,7 +22,6 @@ namespace Keebee.AAT.Operations.Service.Services
             var container = new Container(new Uri(ODataHost.Url));
 
             var ambientInvitations = container.AmbientInvitations
-                .Expand("ResponseType($expand=ResponseTypeCategory,InteractiveActivityType)")
                 .AsEnumerable();
 
             return ambientInvitations;
@@ -32,8 +31,7 @@ namespace Keebee.AAT.Operations.Service.Services
         {
             var container = new Container(new Uri(ODataHost.Url));
 
-            var ambientInvitation = container.AmbientInvitations.ByKey(id)
-                .Expand("ResponseType($expand=ResponseTypeCategory,InteractiveActivityType)");
+            var ambientInvitation = container.AmbientInvitations.ByKey(id);
 
             AmbientInvitation result;
             try { result = ambientInvitation.GetValue(); }
@@ -58,8 +56,6 @@ namespace Keebee.AAT.Operations.Service.Services
 
             var el = container.AmbientInvitations.Where(e => e.Id == id).SingleOrDefault();
             if (el == null) return;
-
-            el.ResponseTypeId = ambientInvitation.ResponseTypeId;
 
             container.UpdateObject(el);
             container.SaveChanges();

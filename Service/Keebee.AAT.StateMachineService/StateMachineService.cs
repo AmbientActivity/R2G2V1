@@ -181,7 +181,7 @@ namespace Keebee.AAT.StateMachineService
                             {
                                 Id = x.ResponseType.Id,
                                 ResponseTypeCategoryId = x.ResponseType.ResponseTypeCategory.Id,
-                                IsSystem = x.ResponseType.IsSystem,
+                                IsSystem = x.ResponseType.ResponseTypeCategory.Id == ResponseTypeCategoryId.System,
                                 IsRandom = x.ResponseType.IsRandom,
                                 IsRotational = x.ResponseType.IsRotational,
                                 IsUninterrupted = x.ResponseType.IsUninterrupted,
@@ -200,7 +200,6 @@ namespace Keebee.AAT.StateMachineService
                     {
                         Id = r.Id,
                         ResponseTypeCategoryId = r.ResponseTypeCategory.Id,
-                        IsSystem = r.IsSystem,
                         IsRotational = r.IsRotational,
                         IsUninterrupted = r.IsUninterrupted,
                         InteractiveActivityTypeId = r.InteractiveActivityType?.Id ?? 0,

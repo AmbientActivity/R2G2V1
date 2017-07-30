@@ -89,7 +89,6 @@ namespace Keebee.AAT.Operations.Controllers
                     responseType.InteractiveActivityType.Description,
                     responseType.InteractiveActivityType.SwfFile
                 } : null;
-            exObj.IsSystem = responseType.IsSystem;
             exObj.IsRandom = responseType.IsRandom;
             exObj.IsRotational = responseType.IsRotational;
             exObj.IsUninterrupted = responseType.IsUninterrupted;
@@ -128,7 +127,6 @@ namespace Keebee.AAT.Operations.Controllers
                         x.InteractiveActivityType.Description,
                         x.InteractiveActivityType.SwfFile
                     } : null,
-                    x.IsSystem,
                     x.IsRandom,
                     x.IsRotational,
                     x.IsUninterrupted

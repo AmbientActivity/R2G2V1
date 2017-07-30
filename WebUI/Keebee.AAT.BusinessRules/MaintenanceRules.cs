@@ -81,8 +81,7 @@ namespace Keebee.AAT.BusinessRules
                         },
                     },
                     Resident = new ResidentMessage(),
-                    IsActiveEventLog = false,
-                    RandomResponseTypes = null
+                    IsActiveEventLog = false
                 };
 
                 var responseMessageBody = JsonConvert.SerializeObject(responseMessage);

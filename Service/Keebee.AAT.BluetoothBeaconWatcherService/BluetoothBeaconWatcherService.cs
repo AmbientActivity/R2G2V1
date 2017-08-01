@@ -50,7 +50,7 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
         private int _activeResidentId;
 
         // residents
-        private ResidentBluetoothMessage[] _residents;
+        private IList<ResidentBluetoothMessage> _residents;
 
         private readonly ResidentBluetoothMessage _publicResident = new ResidentBluetoothMessage
         {
@@ -370,21 +370,19 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
                 SystemEventLogger.WriteEntry($"MessageReceivedBluetoothBeaconWatcherReload: {ex.Message}", SystemEventLogType.BluetoothBeaconWatcherService, EventLogEntryType.Error);
             }
 
-            if (resident != null)
+            if (resident == null) return;
+            if (resident.Id <= 0) return;
+
+            if (resident.IsDeleted)
             {
-                if (resident.IsDeleted)
-                {
-                    var newList = _residents.Where(x => x.Id != resident.Id).ToArray();
-                    _residents = newList;
-                }
+                _residents = _residents.Where(x => x.Id != resident.Id).ToList();
+            }
+            else
+            {
+                if (_residents.Any(x => x.Id == resident.Id))
+                   _residents.Single(x => x.Id == resident.Id).Name = resident.Name;
                 else
-                {
-                    if (_residents.Any(x => x.Id == resident.Id))
-                    {
-                        var r = _residents.Single(x => x.Id == resident.Id);
-                        r.Name = resident.Name;
-                    }
-                }
+                    _residents.Add(new ResidentBluetoothMessage {Id = resident.Id, Name = resident.Name});
             }
         }
 

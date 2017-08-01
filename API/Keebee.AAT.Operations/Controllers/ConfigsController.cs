@@ -202,7 +202,6 @@ namespace Keebee.AAT.Operations.Controllers
                 {
                     cd.ResponseType.Id,
                     cd.ResponseType.Description,
-                    cd.ResponseType.IsSystem,
                     cd.ResponseType.IsRandom,
                     cd.ResponseType.IsRotational,
                     cd.ResponseType.IsUninterrupted,
@@ -264,7 +263,6 @@ namespace Keebee.AAT.Operations.Controllers
                 {
                     cd.ResponseType.Id,
                     cd.ResponseType.Description,
-                    cd.ResponseType.IsSystem,
                     cd.ResponseType.IsRandom,
                     cd.ResponseType.IsRotational,
                     cd.ResponseType.IsUninterrupted,

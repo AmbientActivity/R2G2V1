@@ -103,7 +103,6 @@ namespace Keebee.AAT.Operations.Controllers
             {
                 configDetail.ResponseType.Id,
                 configDetail.ResponseType.Description,
-                configDetail.ResponseType.IsSystem,
                 configDetail.ResponseType.IsRandom,
                 configDetail.ResponseType.IsRotational,
                 ResponseTypeCategory = new

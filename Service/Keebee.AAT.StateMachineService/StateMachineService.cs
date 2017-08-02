@@ -218,6 +218,8 @@ namespace Keebee.AAT.StateMachineService
         {
             try
             {
+                if (_randomResponseTypes != null) return true;
+
                 // reload random response types
                 _randomResponseTypes = _responseTypesClient.GetRandomTypes()
                     .Select(r => new ResponseTypeMessage

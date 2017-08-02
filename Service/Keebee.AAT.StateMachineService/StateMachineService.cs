@@ -18,7 +18,6 @@ namespace Keebee.AAT.StateMachineService
         // api client
         private readonly IActiveResidentClient _activeResidentClient;
         private readonly IConfigsClient _configsClient;
-        private readonly IResponseTypesClient _responseTypesClient;
 
         // message queue sender
         private readonly CustomMessageQueue _messageQueueResponse;
@@ -52,7 +51,6 @@ namespace Keebee.AAT.StateMachineService
 
             _activeResidentClient = new ActiveResidentClient();
             _configsClient = new ConfigsClient();
-            _responseTypesClient = new ResponseTypesClient();
 
             InitializeMessageQueueListeners();
 
@@ -117,10 +115,10 @@ namespace Keebee.AAT.StateMachineService
                 var configDetail = _activeConfig.ConfigDetails
                     .Single(cd => cd.PhidgetTypeId == phidgetTypeId);
 
+                var responseType = configDetail.ResponseType;
                 // for the OffScreen, need to alternate between the OffScreen and a 'random' response
-                if (configDetail.ResponseType.Id == ResponseTypeId.OffScreen  
-                    && _currentResponseTypeId == ResponseTypeId.OffScreen)
-                    configDetail.ResponseType = GetOffScreenResponse();
+                if (responseType.Id == ResponseTypeId.OffScreen  && _currentResponseTypeId == ResponseTypeId.OffScreen)
+                    responseType = GetOffScreenResponse();
 
                 var responseMessage = new ResponseMessage
                 {
@@ -129,6 +127,8 @@ namespace Keebee.AAT.StateMachineService
                     Resident = _activeResident,
                     IsActiveEventLog = _activeConfig.IsActiveEventLog
                 };
+
+                responseMessage.ConfigDetail.ResponseType = responseType;
 
                 if (_isInstalledVideoCapture)
                 {
@@ -141,11 +141,12 @@ namespace Keebee.AAT.StateMachineService
                 }
 
                 _messageQueueResponse.Send(JsonConvert.SerializeObject(responseMessage));
-                _currentResponseTypeId = configDetail.ResponseType.Id;
+                _currentResponseTypeId = responseType.Id;
             }
             catch (Exception ex)
             {
                 SystemEventLogger.WriteEntry($"ExecuteResponse: {ex.Message}", SystemEventLogType.StateMachineService, EventLogEntryType.Error);
+                _currentResponseTypeId = 0;
             }
         }
 
@@ -220,8 +221,8 @@ namespace Keebee.AAT.StateMachineService
             {
                 if (_randomResponseTypes != null) return true;
 
-                // reload random response types
-                _randomResponseTypes = _responseTypesClient.GetRandomTypes()
+                var responseTypesClient = new ResponseTypesClient();
+                _randomResponseTypes = responseTypesClient.GetRandomTypes()
                     .Select(r => new ResponseTypeMessage
                     {
                         Id = r.Id,
@@ -236,10 +237,9 @@ namespace Keebee.AAT.StateMachineService
             catch (Exception ex)
             {
                 SystemEventLogger.WriteEntry($"LoadRandomResponseTypes{Environment.NewLine}{ex.Message}", SystemEventLogType.StateMachineService, EventLogEntryType.Error);
-                return false;
             }
 
-            return true;
+            return (_randomResponseTypes != null);
         }
 
         #region message received event handlers
@@ -316,6 +316,7 @@ namespace Keebee.AAT.StateMachineService
                 };
 
                 LoadConfig();
+                LoadRandomResponseTypes();
             }
             catch (Exception ex)
             {

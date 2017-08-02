@@ -16,7 +16,6 @@ namespace Keebee.AAT.Shared
     {
         public int Id { get; set; }
         public int ConfigId { get; set; }
-        public int ResponseTypeCategoryId { get; set; }
         public int PhidgetTypeId { get; set; }
         public int PhidgetStyleTypeId { get; set; }
         public ResponseTypeMessage ResponseType { get; set; }

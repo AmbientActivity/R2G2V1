@@ -152,12 +152,25 @@ namespace Keebee.AAT.StateMachineService
         private int _currentSequentialResponseTypeIndex = -1;
         private ResponseTypeMessage GetOffScreenResponse()
         {
-            if (_currentSequentialResponseTypeIndex < _randomResponseTypes.Length - 1)
-                _currentSequentialResponseTypeIndex++;
-            else
-                _currentSequentialResponseTypeIndex = 0;
+            ResponseTypeMessage responseType = null;
+            try
+            {
+                if (LoadRandomResponseTypes())
+                {
+                    if (_currentSequentialResponseTypeIndex < _randomResponseTypes.Length - 1)
+                        _currentSequentialResponseTypeIndex++;
+                    else
+                        _currentSequentialResponseTypeIndex = 0;
 
-            return _randomResponseTypes[_currentSequentialResponseTypeIndex];
+                    responseType = _randomResponseTypes[_currentSequentialResponseTypeIndex];
+                }
+            }
+            catch (Exception ex)
+            {
+                SystemEventLogger.WriteEntry($"GetOffScreenResponse: {ex.Message}", SystemEventLogType.StateMachineService, EventLogEntryType.Error);
+            }
+
+            return responseType;
         }
 
         private void LoadConfig()
@@ -181,30 +194,16 @@ namespace Keebee.AAT.StateMachineService
                             {
                                 Id = x.ResponseType.Id,
                                 ResponseTypeCategoryId = x.ResponseType.ResponseTypeCategory.Id,
-                                IsSystem = x.ResponseType.ResponseTypeCategory.Id == ResponseTypeCategoryId.System,
                                 IsRandom = x.ResponseType.IsRandom,
                                 IsRotational = x.ResponseType.IsRotational,
                                 IsUninterrupted = x.ResponseType.IsUninterrupted,
                                 InteractiveActivityTypeId = x.ResponseType.InteractiveActivityType?.Id ?? 0,
                                 SwfFile = x.ResponseType.InteractiveActivityType?.SwfFile ?? string.Empty
-                            },    
-                            ResponseTypeCategoryId = x.ResponseType.ResponseTypeCategory.Id,
+                            },
                             PhidgetTypeId = x.PhidgetType.Id,
                             PhidgetStyleTypeId = x.PhidgetStyleType.Id
                         })
                 };
-
-                // reload random response types
-                _randomResponseTypes = _responseTypesClient.GetRandomTypes()
-                    .Select( r => new ResponseTypeMessage
-                    {
-                        Id = r.Id,
-                        ResponseTypeCategoryId = r.ResponseTypeCategory.Id,
-                        IsRotational = r.IsRotational,
-                        IsUninterrupted = r.IsUninterrupted,
-                        InteractiveActivityTypeId = r.InteractiveActivityType?.Id ?? 0,
-                        SwfFile = r.InteractiveActivityType?.SwfFile ?? string.Empty
-                    }).ToArray();
 
                 SystemEventLogger.WriteEntry($"The configuration '{config.Description}' has been activated", SystemEventLogType.StateMachineService);
             }
@@ -213,6 +212,32 @@ namespace Keebee.AAT.StateMachineService
             {
                 SystemEventLogger.WriteEntry($"LoadConfig{Environment.NewLine}{ex.Message}", SystemEventLogType.StateMachineService, EventLogEntryType.Error);
             }
+        }
+
+        private bool LoadRandomResponseTypes()
+        {
+            try
+            {
+                // reload random response types
+                _randomResponseTypes = _responseTypesClient.GetRandomTypes()
+                    .Select(r => new ResponseTypeMessage
+                    {
+                        Id = r.Id,
+                        ResponseTypeCategoryId = r.ResponseTypeCategory.Id,
+                        IsRotational = r.IsRotational,
+                        IsUninterrupted = r.IsUninterrupted,
+                        InteractiveActivityTypeId = r.InteractiveActivityType?.Id ?? 0,
+                        SwfFile = r.InteractiveActivityType?.SwfFile ?? string.Empty
+                    }).ToArray();
+              
+            }
+            catch (Exception ex)
+            {
+                SystemEventLogger.WriteEntry($"LoadRandomResponseTypes{Environment.NewLine}{ex.Message}", SystemEventLogType.StateMachineService, EventLogEntryType.Error);
+                return false;
+            }
+
+            return true;
         }
 
         #region message received event handlers

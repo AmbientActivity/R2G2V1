@@ -77,7 +77,7 @@ namespace Keebee.AAT.BusinessRules
                         ResponseType = new ResponseTypeMessage
                         {
                             Id = ResponseTypeId.KillDisplay,
-                            IsSystem = true
+                            ResponseTypeCategoryId = ResponseTypeCategoryId.System
                         },
                     },
                     Resident = new ResidentMessage(),

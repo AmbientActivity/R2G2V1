@@ -191,13 +191,12 @@ namespace Keebee.AAT.BusinessRules
                             ResponseType = new ResponseTypeMessage
                             {
                                 Id = x.ResponseType.Id,
-                                IsSystem = x.ResponseType.ResponseTypeCategory.Id == ResponseTypeCategoryId.System,
+                                ResponseTypeCategoryId = x.ResponseType.ResponseTypeCategory.Id,
                                 IsRotational = x.ResponseType.IsRotational,
                                 IsUninterrupted = x.ResponseType.IsUninterrupted,
                                 InteractiveActivityTypeId = x.ResponseType.InteractiveActivityType?.Id ?? 0,
                                 SwfFile = x.ResponseType.InteractiveActivityType?.SwfFile ?? string.Empty
-                            },
-                            
+                            }, 
                             PhidgetTypeId = x.PhidgetType.Id,
                             PhidgetStyleTypeId = x.PhidgetStyleType.Id,
                         })

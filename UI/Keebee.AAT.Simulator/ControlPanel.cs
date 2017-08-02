@@ -95,7 +95,6 @@ namespace Keebee.AAT.Simulator
                 {
                     Id = r.Id,
                     ResponseTypeCategoryId = r.ResponseTypeCategory.Id,
-                    IsSystem = r.ResponseTypeCategory.Id == ResponseTypeCategoryId.System,
                     IsRandom = r.IsRandom,
                     IsRotational = r.IsRotational,
                     IsUninterrupted = r.IsUninterrupted,

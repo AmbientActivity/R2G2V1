@@ -407,6 +407,7 @@ namespace Keebee.AAT.Display
                                 offScreen1.Hide();
                                 offScreen1.SendToBack();
                                 offScreen1.Stop();
+                                audioVideoPlayer1.Stop();
                                 break;
                         }
                         break;

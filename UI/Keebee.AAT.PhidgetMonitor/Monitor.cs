@@ -9,15 +9,12 @@ namespace Keebee.AAT.PhidgetMonitor
     {
         private delegate void UpdateLabelDelegate(int sensorId, string text);
 
-#if DEBUG
         private readonly CustomMessageQueue _messageQueuePhidgetMonitorState;
-#endif
 
         public Monitor()
         {
             InitializeComponent();
 
-#if DEBUG
             _messageQueuePhidgetMonitorState = new CustomMessageQueue(new CustomMessageQueueArgs
             {
                 QueueName = MessageQueueType.PhidgetMonitorState
@@ -29,16 +26,18 @@ namespace Keebee.AAT.PhidgetMonitor
                 QueueName = MessageQueueType.PhidgetMonitor,
                 MessageReceivedCallback = MessageReceived
             });
-#endif
         }
 
-#if DEBUG
         private void MessageReceived(object sender, MessageEventArgs e)
         {
-            var message = (e.MessageBody);
-            var phidgetMessage = JsonConvert.DeserializeObject<PhidgetMessage>(message);
+            var phidget = JsonConvert.DeserializeObject<Tuple<int, int>>(e.MessageBody);
+            if (phidget == null) return;
 
-            UpdateSensorValueLabel(phidgetMessage.SensorId, Convert.ToString(phidgetMessage.SensorValue));
+            // sensorId's are base 0 - convert to base 1 for PhidgetTypeId
+            var sensorId = phidget.Item1;
+            var sensorValue = phidget.Item2;
+
+            UpdateSensorValueLabel(sensorId, Convert.ToString(sensorValue));
         }
 
         private void UpdateSensorValueLabel(int sensorId, string text)
@@ -79,20 +78,15 @@ namespace Keebee.AAT.PhidgetMonitor
                 }
             }
         }
-#endif
 
         private void MonitorShown(object sender, EventArgs e)
         {
-#if DEBUG
             _messageQueuePhidgetMonitorState.Send("1");
-#endif
         }
 
         private void MonitorFormClosing(object sender, FormClosingEventArgs e)
         {
-#if DEBUG
             _messageQueuePhidgetMonitorState.Send("0");
-#endif
         }
     }
 }

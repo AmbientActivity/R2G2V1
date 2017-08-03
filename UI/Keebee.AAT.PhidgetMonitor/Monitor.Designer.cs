@@ -292,11 +292,11 @@
             // 
             this.lblInput7Value.AutoSize = true;
             this.lblInput7Value.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblInput7Value.Location = new System.Drawing.Point(497, 41);
+            this.lblInput7Value.Location = new System.Drawing.Point(492, 41);
             this.lblInput7Value.Name = "lblInput7Value";
-            this.lblInput7Value.Size = new System.Drawing.Size(15, 16);
+            this.lblInput7Value.Size = new System.Drawing.Size(24, 16);
             this.lblInput7Value.TabIndex = 16;
-            this.lblInput7Value.Text = "0";
+            this.lblInput7Value.Text = "Off";
             // 
             // lblInput0
             // 
@@ -322,21 +322,21 @@
             // 
             this.lblInput0Value.AutoSize = true;
             this.lblInput0Value.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblInput0Value.Location = new System.Drawing.Point(28, 41);
+            this.lblInput0Value.Location = new System.Drawing.Point(23, 41);
             this.lblInput0Value.Name = "lblInput0Value";
-            this.lblInput0Value.Size = new System.Drawing.Size(15, 16);
+            this.lblInput0Value.Size = new System.Drawing.Size(24, 16);
             this.lblInput0Value.TabIndex = 2;
-            this.lblInput0Value.Text = "0";
+            this.lblInput0Value.Text = "Off";
             // 
             // lblInput6Value
             // 
             this.lblInput6Value.AutoSize = true;
             this.lblInput6Value.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblInput6Value.Location = new System.Drawing.Point(430, 41);
+            this.lblInput6Value.Location = new System.Drawing.Point(425, 41);
             this.lblInput6Value.Name = "lblInput6Value";
-            this.lblInput6Value.Size = new System.Drawing.Size(15, 16);
+            this.lblInput6Value.Size = new System.Drawing.Size(24, 16);
             this.lblInput6Value.TabIndex = 14;
-            this.lblInput6Value.Text = "0";
+            this.lblInput6Value.Text = "Off";
             // 
             // lblInput1
             // 
@@ -352,21 +352,21 @@
             // 
             this.lblInput1Value.AutoSize = true;
             this.lblInput1Value.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblInput1Value.Location = new System.Drawing.Point(95, 41);
+            this.lblInput1Value.Location = new System.Drawing.Point(90, 41);
             this.lblInput1Value.Name = "lblInput1Value";
-            this.lblInput1Value.Size = new System.Drawing.Size(15, 16);
+            this.lblInput1Value.Size = new System.Drawing.Size(24, 16);
             this.lblInput1Value.TabIndex = 4;
-            this.lblInput1Value.Text = "0";
+            this.lblInput1Value.Text = "Off";
             // 
             // lblInput5Value
             // 
             this.lblInput5Value.AutoSize = true;
             this.lblInput5Value.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblInput5Value.Location = new System.Drawing.Point(363, 41);
+            this.lblInput5Value.Location = new System.Drawing.Point(358, 41);
             this.lblInput5Value.Name = "lblInput5Value";
-            this.lblInput5Value.Size = new System.Drawing.Size(15, 16);
+            this.lblInput5Value.Size = new System.Drawing.Size(24, 16);
             this.lblInput5Value.TabIndex = 12;
-            this.lblInput5Value.Text = "0";
+            this.lblInput5Value.Text = "Off";
             // 
             // lblInput2
             // 
@@ -392,21 +392,21 @@
             // 
             this.lblInput2Value.AutoSize = true;
             this.lblInput2Value.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblInput2Value.Location = new System.Drawing.Point(162, 41);
+            this.lblInput2Value.Location = new System.Drawing.Point(157, 41);
             this.lblInput2Value.Name = "lblInput2Value";
-            this.lblInput2Value.Size = new System.Drawing.Size(15, 16);
+            this.lblInput2Value.Size = new System.Drawing.Size(24, 16);
             this.lblInput2Value.TabIndex = 6;
-            this.lblInput2Value.Text = "0";
+            this.lblInput2Value.Text = "Off";
             // 
             // lblInput4Value
             // 
             this.lblInput4Value.AutoSize = true;
             this.lblInput4Value.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblInput4Value.Location = new System.Drawing.Point(296, 41);
+            this.lblInput4Value.Location = new System.Drawing.Point(291, 41);
             this.lblInput4Value.Name = "lblInput4Value";
-            this.lblInput4Value.Size = new System.Drawing.Size(15, 16);
+            this.lblInput4Value.Size = new System.Drawing.Size(24, 16);
             this.lblInput4Value.TabIndex = 10;
-            this.lblInput4Value.Text = "0";
+            this.lblInput4Value.Text = "Off";
             // 
             // lblInput3
             // 
@@ -432,11 +432,11 @@
             // 
             this.lblInput3Value.AutoSize = true;
             this.lblInput3Value.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblInput3Value.Location = new System.Drawing.Point(229, 41);
+            this.lblInput3Value.Location = new System.Drawing.Point(224, 41);
             this.lblInput3Value.Name = "lblInput3Value";
-            this.lblInput3Value.Size = new System.Drawing.Size(15, 16);
+            this.lblInput3Value.Size = new System.Drawing.Size(24, 16);
             this.lblInput3Value.TabIndex = 8;
-            this.lblInput3Value.Text = "0";
+            this.lblInput3Value.Text = "Off";
             // 
             // Monitor
             // 

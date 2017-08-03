@@ -86,7 +86,7 @@ namespace Keebee.AAT.PhidgetMonitor
         {
             if (InvokeRequired)
             {
-                UpdateLabelDelegate d = UpdateSensorValueLabel;
+                UpdateLabelDelegate d = UpdateInputValueLabel;
                 Invoke(d, new object[] { inputId, text });
             }
             else

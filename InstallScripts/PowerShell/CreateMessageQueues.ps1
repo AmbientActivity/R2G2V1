@@ -20,6 +20,8 @@ Try
     # Phidget Message Queue
     write-host "Creating Phidget message queue..." -NoNewline
     CreateMessageQueue "Phidget"
+    CreateMessageQueue "Phidget-Monitor"
+    CreateMessageQueue "Phidget-Monitor-State"
     write-host "done."
 
     # Video Capture Message Queue

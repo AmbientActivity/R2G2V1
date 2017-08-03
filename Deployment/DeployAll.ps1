@@ -26,6 +26,7 @@ $pathAdministator = "Web\Administrator\"
 $pathDisplayRelease = "UI\Display\"
 $pathDisplayDebug = "UI\Display\"
 $pathSimulator = "UI\Simulator\"
+$pathPhidgetMonitor = "UI\PhidgetMonitor\"
 $pathBeaconMonitor = "UI\BeaconMonitor\"
 $pathFlashBuilds = "Flash\Builds\"
 
@@ -176,6 +177,17 @@ Try
     }
     New-Item -ItemType Directory -Force -Path $path | Out-Null
     Copy-Item "$pathSourceCode\UI\Keebee.AAT.Simulator\bin\Release\*" $path -Exclude "*.pdb", "*.xml", "*.vshost.*", "*.cs", "*.resx" -Force
+
+    # phidget monitor
+    $path = $pathDeployments + $pathPhidgetMonitor + $pathVersion
+    If(test-path $path)
+    {
+        Remove-Item $path -recurse -Force
+    }
+    New-Item -ItemType Directory -Force -Path $path | Out-Null
+    Copy-Item "$pathSourceCode\UI\Keebee.AAT.PhidgetMonitor\bin\Release\*" $path -Exclude "*.pdb", "*.xml", "*.vshost.*", "*.cs", "*.resx" -Force
+
+    Write-Host "done.”
 
     # beacon monitor
     $path = $pathDeployments + $pathBeaconMonitor + $pathVersion

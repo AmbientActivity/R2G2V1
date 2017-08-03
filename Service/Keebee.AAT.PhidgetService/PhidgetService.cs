@@ -45,10 +45,8 @@ namespace Keebee.AAT.PhidgetService
         // api client
         private readonly IConfigsClient _configsClient;
 
-#if DEBUG
         private readonly CustomMessageQueue _messageQueuePhidgetMonitor;
         private bool _phidgetMonitorIsActive;
-#endif
 
         // message queue sender
         private readonly CustomMessageQueue _messageQueuePhidget;
@@ -105,12 +103,11 @@ namespace Keebee.AAT.PhidgetService
                 QueueName = MessageQueueType.PhidgetContinuousRadio
             });
 
-#if DEBUG
             _messageQueuePhidgetMonitor = new CustomMessageQueue(new CustomMessageQueueArgs
             {
                 QueueName = MessageQueueType.PhidgetMonitor
             });
-#endif
+
             // message queue listeners
             InitializeMessageQueueListeners();
 
@@ -132,13 +129,11 @@ namespace Keebee.AAT.PhidgetService
                 MessageReceivedCallback = MessageReceivedDisplayPhidget
             });
 
-#if DEBUG
             var q3 = new CustomMessageQueue(new CustomMessageQueueArgs
             {
                 QueueName = MessageQueueType.PhidgetMonitorState,
                 MessageReceivedCallback = PhidgetMonitorMessageReceived
             });
-#endif
         }
 
         private static int ValidateSensorThreshold(string threshold)
@@ -178,13 +173,12 @@ namespace Keebee.AAT.PhidgetService
 
             try
             {
-#if DEBUG
                 if (_phidgetMonitorIsActive)
                 {
                     var message = CreateMessageBodyFromSensor(e.Index, e.Value);
                     _messageQueuePhidgetMonitor.Send(message);
                 }
-#endif
+
                 if (!_isDisplayActive) return;
 
                 int sensorId;
@@ -424,7 +418,6 @@ namespace Keebee.AAT.PhidgetService
             SystemEventLogger.WriteEntry($"The configuration '{config.Description}' has been activated", SystemEventLogType.PhidgetService);
         }
 
-#if DEBUG
         private void PhidgetMonitorMessageReceived(object sender, MessageEventArgs e)
         {
             var message = (e.MessageBody);
@@ -432,7 +425,7 @@ namespace Keebee.AAT.PhidgetService
             var activeState = Convert.ToInt16(message);
             _phidgetMonitorIsActive = activeState > 0;
         }
-#endif
+
         protected override void OnStart(string[] args)
         {
             SystemEventLogger.WriteEntry("In OnStart", SystemEventLogType.PhidgetService);

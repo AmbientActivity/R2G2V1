@@ -115,11 +115,6 @@ namespace Keebee.AAT.StateMachineService
                 var configDetail = _activeConfig.ConfigDetails
                     .Single(cd => cd.PhidgetTypeId == phidgetTypeId);
 
-                var responseType = configDetail.ResponseType;
-                // for the OffScreen, need to alternate between the OffScreen and a 'random' response
-                if (responseType.Id == ResponseTypeId.OffScreen  && _currentResponseTypeId == ResponseTypeId.OffScreen)
-                    responseType = GetOffScreenResponse();
-
                 var responseMessage = new ResponseMessage
                 {
                     SensorValue = sensorValue,
@@ -128,11 +123,19 @@ namespace Keebee.AAT.StateMachineService
                     IsActiveEventLog = _activeConfig.IsActiveEventLog
                 };
 
-                responseMessage.ConfigDetail.ResponseType = responseType;
+                // for the OffScreen, need to alternate between the OffScreen and a 'random' response
+                if (configDetail.ResponseType.Id == ResponseTypeId.OffScreen &&
+                    _currentResponseTypeId == ResponseTypeId.OffScreen)
+                {
+                    responseMessage.ConfigDetail.ResponseType = GetOffScreenResponse();
+                    _currentResponseTypeId = responseMessage.ConfigDetail.ResponseType.Id;
+                }
+                else
+                    _currentResponseTypeId = configDetail.ResponseType.Id;
 
                 if (_isInstalledVideoCapture)
                 {
-                    if (!configDetail.ResponseType.IsSystem)
+                    if (configDetail.ResponseType.ResponseTypeCategoryId != ResponseTypeCategoryId.System)
                     {
                         if (_activeResident.AllowVideoCapturing)
                             // send instruction to the video capture service to start capturing
@@ -141,7 +144,7 @@ namespace Keebee.AAT.StateMachineService
                 }
 
                 _messageQueueResponse.Send(JsonConvert.SerializeObject(responseMessage));
-                _currentResponseTypeId = responseType.Id;
+                
             }
             catch (Exception ex)
             {
@@ -180,31 +183,7 @@ namespace Keebee.AAT.StateMachineService
             try
             {
                 var config = _configsClient.GetActiveDetails();
-                _activeConfig = new ConfigMessage
-                {
-                    Id = config.Id,
-                    Description = config.Description,
-                    IsActiveEventLog = config.IsActiveEventLog,
-                    ConfigDetails = config.ConfigDetails
-                        .Select(x => new
-                        ConfigDetailMessage
-                        {
-                            Id = x.Id,
-                            ConfigId = x.ConfigId,
-                            ResponseType = new ResponseTypeMessage
-                            {
-                                Id = x.ResponseType.Id,
-                                ResponseTypeCategoryId = x.ResponseType.ResponseTypeCategory.Id,
-                                IsRandom = x.ResponseType.IsRandom,
-                                IsRotational = x.ResponseType.IsRotational,
-                                IsUninterrupted = x.ResponseType.IsUninterrupted,
-                                InteractiveActivityTypeId = x.ResponseType.InteractiveActivityType?.Id ?? 0,
-                                SwfFile = x.ResponseType.InteractiveActivityType?.SwfFile ?? string.Empty
-                            },
-                            PhidgetTypeId = x.PhidgetType.Id,
-                            PhidgetStyleTypeId = x.PhidgetStyleType.Id
-                        })
-                };
+                _activeConfig = GetConfig(config);
 
                 SystemEventLogger.WriteEntry($"The configuration '{config.Description}' has been activated", SystemEventLogType.StateMachineService);
             }
@@ -328,7 +307,9 @@ namespace Keebee.AAT.StateMachineService
         {
             try
             {
-                _activeConfig = JsonConvert.DeserializeObject<ConfigMessage>(e.MessageBody);
+                var config = JsonConvert.DeserializeObject<ConfigMessage>(e.MessageBody);
+
+                _activeConfig = GetUpdatedConfig(config);
                 _isDisplayActive = _activeConfig.IsDisplayActive;
 
                 if (!_isDisplayActive) return;
@@ -339,6 +320,65 @@ namespace Keebee.AAT.StateMachineService
             {
                 SystemEventLogger.WriteEntry($"MessageReceiveConfigSms{Environment.NewLine}{ex.Message}", SystemEventLogType.StateMachineService, EventLogEntryType.Error);
             }
+        }
+
+        private static ConfigMessage GetConfig(Config config)
+        {
+            return new ConfigMessage
+            {
+                Id = config.Id,
+                Description = config.Description,
+                IsActiveEventLog = config.IsActiveEventLog,
+                ConfigDetails = config.ConfigDetails
+                    .Select(x => new
+                    ConfigDetailMessage
+                    {
+                        Id = x.Id,
+                        ConfigId = x.ConfigId,
+                        PhidgetTypeId = x.PhidgetType.Id,
+                        PhidgetStyleTypeId = x.PhidgetStyleType.Id,
+                        ResponseType = new ResponseTypeMessage
+                        {
+                            Id = x.ResponseType.Id,
+                            ResponseTypeCategoryId = x.ResponseType.ResponseTypeCategory.Id,
+                            IsRandom = x.ResponseType.IsRandom,
+                            IsRotational = x.ResponseType.IsRotational,
+                            IsUninterrupted = x.ResponseType.IsUninterrupted,
+                            InteractiveActivityTypeId = x.ResponseType.InteractiveActivityType?.Id ?? 0,
+                            SwfFile = x.ResponseType.InteractiveActivityType?.SwfFile ?? string.Empty
+                        }
+                    })
+            };
+        }
+
+        private static ConfigMessage GetUpdatedConfig(ConfigMessage config)
+        {
+            return new ConfigMessage
+            {
+                Id = config.Id,
+                Description = config.Description,
+                IsActiveEventLog = config.IsActiveEventLog,
+                IsDisplayActive = config.IsDisplayActive,
+                ConfigDetails = config.ConfigDetails
+                    .Select(x => new
+                    ConfigDetailMessage
+                    {
+                        Id = x.Id,
+                        ConfigId = x.ConfigId,
+                        PhidgetTypeId = x.PhidgetTypeId,
+                        PhidgetStyleTypeId = x.PhidgetStyleTypeId,
+                        ResponseType = new ResponseTypeMessage
+                        {
+                            Id = x.ResponseType.Id,
+                            ResponseTypeCategoryId = x.ResponseType.ResponseTypeCategoryId,
+                            IsRandom = x.ResponseType.IsRandom,
+                            IsRotational = x.ResponseType.IsRotational,
+                            IsUninterrupted = x.ResponseType.IsUninterrupted,
+                            InteractiveActivityTypeId = x.ResponseType.InteractiveActivityTypeId,
+                            SwfFile = x.ResponseType.SwfFile
+                        }
+                    })
+            };
         }
 
         private void MessageReceivedVideoCaptureState(object source, MessageEventArgs e)

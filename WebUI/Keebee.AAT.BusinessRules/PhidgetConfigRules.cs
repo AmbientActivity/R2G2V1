@@ -182,24 +182,23 @@ namespace Keebee.AAT.BusinessRules
                 Description = config.Description,
                 IsActiveEventLog = config.IsActiveEventLog,
                 IsDisplayActive = IsProcessRunning($"{AppSettings.Namespace}.{AppSettings.DisplayAppName}"),
-                ConfigDetails = config.ConfigDetails
-                    .Select(x => new
-                        ConfigDetailMessage
+                ConfigDetails = config.ConfigDetails.Select(x => new
+                    ConfigDetailMessage
+                    {
+                        Id = x.Id,
+                        ConfigId = config.Id,
+                        PhidgetTypeId = x.PhidgetType.Id,
+                        PhidgetStyleTypeId = x.PhidgetStyleType.Id,
+                        ResponseType = new ResponseTypeMessage
                         {
-                            Id = x.Id,
-                            ConfigId = config.Id,
-                            ResponseType = new ResponseTypeMessage
-                            {
-                                Id = x.ResponseType.Id,
-                                ResponseTypeCategoryId = x.ResponseType.ResponseTypeCategory.Id,
-                                IsRotational = x.ResponseType.IsRotational,
-                                IsUninterrupted = x.ResponseType.IsUninterrupted,
-                                InteractiveActivityTypeId = x.ResponseType.InteractiveActivityType?.Id ?? 0,
-                                SwfFile = x.ResponseType.InteractiveActivityType?.SwfFile ?? string.Empty
-                            }, 
-                            PhidgetTypeId = x.PhidgetType.Id,
-                            PhidgetStyleTypeId = x.PhidgetStyleType.Id,
-                        })
+                            Id = x.ResponseType.Id,
+                            ResponseTypeCategoryId = x.ResponseType.ResponseTypeCategory.Id,
+                            IsRotational = x.ResponseType.IsRotational,
+                            IsUninterrupted = x.ResponseType.IsUninterrupted,
+                            InteractiveActivityTypeId = x.ResponseType.InteractiveActivityType?.Id ?? 0,
+                            SwfFile = x.ResponseType.InteractiveActivityType?.SwfFile ?? string.Empty
+                        }
+                    })
             };
 
             return JsonConvert.SerializeObject(configMessage);

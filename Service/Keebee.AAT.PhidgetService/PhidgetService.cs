@@ -330,6 +330,7 @@ namespace Keebee.AAT.PhidgetService
                 var configDetail = _activeConfig.ConfigDetails.Single(cd => cd.PhidgetTypeId == phidgetTypeId);
 
                 SetDiscreteStepValue();
+
                 _messageQueuePhidget.Send(CreateMessageBodyFromSensor(inputId + 8, (int)_currentDiscreteStepValue));
 
                 if (configDetail.ResponseType.Id == ResponseTypeId.Radio)
@@ -408,22 +409,16 @@ namespace Keebee.AAT.PhidgetService
             var config = _configsClient.GetActiveDetails();
             _activeConfig = new ConfigMessage
             {
-                Id = config.Id,
-                Description = config.Description,
-                IsActiveEventLog = config.IsActiveEventLog,
                 ConfigDetails = config.ConfigDetails
                     .Select(x => new
                     ConfigDetailMessage
                     {
-                        Id = x.Id,
-                        ConfigId = x.ConfigId,
-                        ResponseType = new ResponseTypeMessage
-                        {
-                            Id = x.ResponseType.Id,
-                            IsSystem = x.ResponseType.ResponseTypeCategory.Id == ResponseTypeCategoryId.System
-                        },
                         PhidgetTypeId = x.PhidgetType.Id,
                         PhidgetStyleTypeId = x.PhidgetStyleType.Id,
+                        ResponseType = new ResponseTypeMessage
+                        {
+                            Id = x.ResponseType.Id
+                        }
                     })
             };
             SystemEventLogger.WriteEntry($"The configuration '{config.Description}' has been activated", SystemEventLogType.PhidgetService);

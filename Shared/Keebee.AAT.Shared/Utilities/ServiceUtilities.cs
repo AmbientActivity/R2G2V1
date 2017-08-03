@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Linq;
+using System.ServiceProcess;
 
 namespace Keebee.AAT.Shared
 {
@@ -17,8 +18,10 @@ namespace Keebee.AAT.Shared
 
         public static bool IsInstalled(ServiceType type)
         {
-            var processes = Process.GetProcessesByName(GetServiceName(type));
-            return (processes.Any());
+            var svc = ServiceController.GetServices()
+                .FirstOrDefault(s => s.ServiceName == GetServiceName(type));
+
+            return (svc != null);
         }
 
         public static string Install(ServiceType type, string path, bool install)
@@ -30,7 +33,7 @@ namespace Keebee.AAT.Shared
                 {
                     StartInfo = new ProcessStartInfo
                     {
-                        FileName = $@"{path}\{GetServiceName(type)}.exe",
+                        FileName = $@"{path}\{AppSettings.Namespace}.{GetServiceName(type)}.exe",
                         Arguments = args
                     }
                 };
@@ -51,15 +54,15 @@ namespace Keebee.AAT.Shared
             switch (type)
             {
                 case ServiceType.StateMachine:
-                    return $"{AppSettings.Namespace}.{ServiceName.StateMachine}";
+                    return ServiceName.StateMachine;
                 case ServiceType.Phidget:
-                    return $"{AppSettings.Namespace}.{ServiceName.Phidget}";
+                    return ServiceName.Phidget;
                 case ServiceType.KeepIISAlive:
-                    return $"{AppSettings.Namespace}.{ServiceName.KeepIISAlive}";
+                    return ServiceName.KeepIISAlive;
                 case ServiceType.BluetoothBeaconWatcher:
-                    return $"{AppSettings.Namespace}.{ServiceName.BluetoothBeaconWatcher}";
+                    return ServiceName.BluetoothBeaconWatcher;
                 case ServiceType.VideoCapture:
-                    return $"{AppSettings.Namespace}.{ServiceName.VideoCapture}";
+                    return ServiceName.VideoCapture;
                 default:
                     return string.Empty;
             }

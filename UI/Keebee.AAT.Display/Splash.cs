@@ -50,7 +50,7 @@ namespace Keebee.AAT.Display
 
             try
             {
-                if (!StartSqlExpressService())
+                if (!StartAllServices())
                     return false;
 
                 var mediaFileQuery = new MediaFileQuery();
@@ -121,20 +121,55 @@ namespace Keebee.AAT.Display
             }
         }
 
-        private static bool StartSqlExpressService()
+        private static bool StartAllServices()
         {
             try
             {
-                var controller = new ServiceController(SqlExpressServiceName);
+                var sqlExpressController = new ServiceController(SqlExpressServiceName);
+                if (sqlExpressController.Status == ServiceControllerStatus.Stopped)
+                    sqlExpressController.Start();
 
-                if (controller.Status == ServiceControllerStatus.Stopped)
-                    controller.Start();
+                if (ServiceUtilities.IsInstalled(ServiceUtilities.ServiceType.StateMachine))
+                {
+                    var smsController = new ServiceController(ServiceName.StateMachine);
+                    if (smsController.Status == ServiceControllerStatus.Stopped)
+                        smsController.Start();
+                }
+
+                if (ServiceUtilities.IsInstalled(ServiceUtilities.ServiceType.Phidget))
+                {
+                    var phidgetController = new ServiceController(ServiceName.Phidget);
+                    if (phidgetController.Status == ServiceControllerStatus.Stopped)
+                        phidgetController.Start();
+                }
+
+                if (ServiceUtilities.IsInstalled(ServiceUtilities.ServiceType.KeepIISAlive))
+                {
+                    var keepIISAliveController = new ServiceController(ServiceName.KeepIISAlive);
+                    if (keepIISAliveController.Status == ServiceControllerStatus.Stopped)
+                        keepIISAliveController.Start();
+                }
+
+                if (ServiceUtilities.IsInstalled(ServiceUtilities.ServiceType.BluetoothBeaconWatcher))
+                {
+                    var beaconWatcherController = new ServiceController(ServiceName.BluetoothBeaconWatcher);
+                    if (beaconWatcherController.Status == ServiceControllerStatus.Stopped)
+                        beaconWatcherController.Start();
+                }
+
+                if (ServiceUtilities.IsInstalled(ServiceUtilities.ServiceType.VideoCapture))
+                {
+                    var videoCaptureController = new ServiceController(ServiceName.VideoCapture);
+                    if (videoCaptureController.Status == ServiceControllerStatus.Stopped)
+                        videoCaptureController.Start();
+                }
             }
             catch (Exception ex)
             {
-                SystemEventLogger.WriteEntry($"Splash.TimerTick: {ex.Message}", SystemEventLogType.Display, EventLogEntryType.Warning);
+                SystemEventLogger.WriteEntry($"Splash.StartAllServices: {ex.Message}", SystemEventLogType.Display, EventLogEntryType.Warning);
                 return false;
             }
+
             return true;
         }
 

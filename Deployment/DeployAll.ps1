@@ -187,8 +187,6 @@ Try
     New-Item -ItemType Directory -Force -Path $path | Out-Null
     Copy-Item "$pathSourceCode\UI\Keebee.AAT.PhidgetMonitor\bin\Release\*" $path -Exclude "*.pdb", "*.xml", "*.vshost.*", "*.cs", "*.resx" -Force
 
-    Write-Host "done.”
-
     # beacon monitor
     $path = $pathDeployments + $pathBeaconMonitor + $pathVersion
     If(test-path $path)

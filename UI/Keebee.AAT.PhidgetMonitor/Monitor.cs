@@ -37,7 +37,10 @@ namespace Keebee.AAT.PhidgetMonitor
             var sensorId = phidget.Item1;
             var sensorValue = phidget.Item2;
 
-            UpdateSensorValueLabel(sensorId, Convert.ToString(sensorValue));
+            if (sensorId < 8)
+                UpdateSensorValueLabel(sensorId, Convert.ToString(sensorValue));
+            else
+                UpdateInputValueLabel(sensorId, sensorValue == 1 ? "On" : "Off");
         }
 
         private void UpdateSensorValueLabel(int sensorId, string text)
@@ -74,6 +77,45 @@ namespace Keebee.AAT.PhidgetMonitor
                         break;
                     case 7:
                         lblSensor7Value.Text = text;
+                        break;
+                }
+            }
+        }
+
+        private void UpdateInputValueLabel(int inputId, string text)
+        {
+            if (InvokeRequired)
+            {
+                UpdateLabelDelegate d = UpdateSensorValueLabel;
+                Invoke(d, new object[] { inputId, text });
+            }
+            else
+            {
+                switch (inputId)
+                {
+                    case 8:
+                        lblInput0Value.Text = text;
+                        break;
+                    case 9:
+                        lblInput1Value.Text = text;
+                        break;
+                    case 10:
+                        lblInput2Value.Text = text;
+                        break;
+                    case 11:
+                        lblInput3Value.Text = text;
+                        break;
+                    case 12:
+                        lblInput4Value.Text = text;
+                        break;
+                    case 13:
+                        lblInput5Value.Text = text;
+                        break;
+                    case 14:
+                        lblInput6Value.Text = text;
+                        break;
+                    case 15:
+                        lblInput7Value.Text = text;
                         break;
                 }
             }

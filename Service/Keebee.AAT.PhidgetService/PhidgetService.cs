@@ -288,6 +288,12 @@ namespace Keebee.AAT.PhidgetService
                 return;
             }
 
+            if (_phidgetMonitorIsActive)
+            {
+                var message = CreateMessageBodyFromSensor(e.Index + 8, e.Value ? 1 : 0);
+                _messageQueuePhidgetMonitor.Send(message);
+            }
+
             // debounce the switch - don't allow consecutive events < xx milliseconds apart
             if (DateTime.Now - _latestInputHit  < TimeSpan.FromMilliseconds(_inputDebounceTime))
             {

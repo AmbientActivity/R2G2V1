@@ -25,7 +25,7 @@
                 .then(function(confirm) {
                     if (confirm) {
                         utilities.job.execute({
-                            url: site.url + "Maintenance/RestartServices",
+                            url: "Maintenance/RestartServices",
                             waitMessage: "Restarting services..."
                         });
                     }
@@ -58,7 +58,7 @@
                 .then(function(confirm) {
                     if (confirm) {
                         utilities.job.execute({
-                            url: site.url + "Maintenance/ClearServiceLogs",
+                            url: "Maintenance/ClearServiceLogs",
                             waitMessage: "Clearing..."
                         });
                     }
@@ -75,7 +75,7 @@
                 .then(function(confirm) {
                     if (confirm) {
                         utilities.job.execute({
-                            url: site.url + "Maintenance/ReinstallServices",
+                            url: "Maintenance/ReinstallServices",
                             action: "ReinstallServices",
                             title: "Service Utilities",
                             waitMessage: "Installing services...",
@@ -94,7 +94,7 @@
                 .then(function(confirm) {
                     if (confirm) {
                         utilities.job.execute({
-                            url: site.url + "Maintenance/UninstallServices",
+                            url: "Maintenance/UninstallServices",
                             title: "Service Utilities",
                             waitMessage: "Uninstalling services...",
                             successVerbage: "All services uninstalled successfully"

@@ -32,7 +32,7 @@
             cmdDelete.attr("disabled", "disabled");
 
             utilities.job.execute({
-                url: site.url + "PhidgetConfig/GetData/"
+                url: "PhidgetConfig/GetData/"
             })
             .then(function (data) {
                 $.extend(lists, data);
@@ -253,7 +253,7 @@
                             : title.replace("{glyphicon}", "pencil").replace("{action}", "Edit");
 
                         utilities.partialview.show({
-                            url: site.url + "PhidgetConfig/GetConfigEditView/" + id,
+                            url: "PhidgetConfig/GetConfigEditView/" + id,
                             type: add ? BootstrapDialog.TYPE_SUCCESS : BootstrapDialog.TYPE_PRIMARY,
                             title: title,
                             params: { selectedConfigid: self.selectedConfigId() },
@@ -268,7 +268,7 @@
                                 config.Id = id;
 
                                 utilities.job.execute({
-                                        url: site.url + "PhidgetConfig/Validate",
+                                        url: "PhidgetConfig/Validate",
                                         type: "POST",
                                         params: { config: config, selectedConfigId: self.selectedConfigId() }
                                     })
@@ -276,7 +276,7 @@
                                         if (validateResult.ValidationMessages === null) {
                                             dialog.close();
                                             utilities.job.execute({
-                                                    url: site.url + "PhidgetConfig/Save",
+                                                    url: "PhidgetConfig/Save",
                                                     type: "POST",
                                                     waitMessage: "Saving...",
                                                     params:
@@ -352,7 +352,7 @@
                         .then(function (confirm) {
                             if (confirm) {
                                 utilities.job.execute({
-                                    url: site.url + "PhidgetConfig/Delete",
+                                    url: "PhidgetConfig/Delete",
                                     type: "POST",
                                     params: { id: id },
                                     waitMessage: "Deleting..."
@@ -416,7 +416,7 @@
                                 var configdetail = self.getConfigDetailFromDialog();
                                 configdetail.ConfigId = self.selectedConfigId();
                                 utilities.job.execute({
-                                    url: site.url + "PhidgetConfigDetails/Validate",
+                                    url: "PhidgetConfigDetails/Validate",
                                     type: "POST",
                                     params: { configdetail: configdetail }
                                 })
@@ -486,7 +486,7 @@
                         .then(function(confirm) {
                             if (confirm) {
                                 utilities.job.execute({
-                                    url: site.url + "PhidgetConfigDetails/Delete",
+                                    url: "PhidgetConfigDetails/Delete",
                                     type: "POST",
                                     params: {
                                         id: id,
@@ -527,7 +527,7 @@
                                 var configId = self.selectedConfigId();
 
                                 utilities.job.execute({
-                                    url: site.url + "PhidgetConfig/Activate/",
+                                    url: "PhidgetConfig/Activate/",
                                     params: { configId: configId },
                                     waitMessage: "Activating..."
                                 })

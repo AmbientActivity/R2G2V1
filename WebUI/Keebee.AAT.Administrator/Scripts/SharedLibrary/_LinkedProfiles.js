@@ -23,7 +23,7 @@
             };
 
             utilities.job.execute({
-                url: site.url + "SharedLibrary/GetDataLinkedProfiles",
+                url: "SharedLibrary/GetDataLinkedProfiles",
                 params: {
                     streamId: config.streamId
                 }

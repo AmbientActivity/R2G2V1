@@ -38,7 +38,7 @@
             };
 
             utilities.job.execute({
-                url: site.url + "Residents/GetData/"
+                url: "Residents/GetData/"
             })
             .then(function (data) {
                 $.extend(lists, data);
@@ -312,7 +312,7 @@
                         }
 
                         utilities.partialview.show({
-                            url: site.url + "Residents/GetResidentEditView",
+                            url: "Residents/GetResidentEditView",
                             params: { id: id },
                             type: add ? BootstrapDialog.TYPE_SUCCESS : BootstrapDialog.TYPE_PRIMARY,
                             focus: "txtFirstName",
@@ -327,7 +327,7 @@
                                 var resident = self.getResidentDetailFromDialog();
 
                                 utilities.job.execute({
-                                    url: site.url + "Residents/Validate",
+                                    url: "Residents/Validate",
                                     action: "Validate",
                                     type: "POST",
                                     params: { resident: resident }
@@ -336,7 +336,7 @@
                                     if (validateResult.ValidationMessages === null) {
                                         dialog.close();
                                         utilities.job.execute({
-                                                url: site.url + "Residents/Save",
+                                                url: "Residents/Save",
                                                 type: "POST",
                                                 title: "Save Resident",
                                                 params: { resident: resident }
@@ -378,7 +378,7 @@
                         if (sortDescending) sortdescending = "1";
 
                         if (id > 0) {
-                            window.location = site.url + "ResidentProfile?id=" + id
+                            window.location = "ResidentProfile?id=" + id
                                 + "&idsearch=" + self.idSearch()
                                 + "&firstname=" + self.firstNameSearch()
                                 + "&lastname=" + self.lastNameSearch()
@@ -425,7 +425,7 @@
                         .then(function(confirm) {
                             if (confirm) {
                                 utilities.job.execute({
-                                    url: site.url + "Residents/Delete",
+                                    url: "Residents/Delete",
                                     type: "POST",
                                     params: { id: id },
                                     title: "Delete Resident",

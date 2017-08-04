@@ -34,7 +34,7 @@
             });
 
             cmdLogOff.click(function () {
-                $.get(site.url + "Account/LogOff")
+                $.get("Account/LogOff")
                     .done(function () {
                         location.reload();
                 });
@@ -42,7 +42,7 @@
 
             lnkChangePassword.click(function () {
                 utilities.partialview.show({
-                    url: site.url + "Account/GetChangePasswordView",
+                    url: "Account/GetChangePasswordView",
                     type: BootstrapDialog.TYPE_PRIMARY,
                     title: "<span class='glyphicon glyphicon-pencil' style='color: #fff'></span> Change Password",
                     focus: "txtOldPassword",
@@ -51,7 +51,7 @@
                         var jsonData = getChangePasswordDetailFromDialog();
 
                         utilities.job.execute({
-                            url: site.url + "Account/ValidatePasswordChange",
+                            url: "Account/ValidatePasswordChange",
                             type: "POST",
                             params: jsonData
                         })
@@ -60,7 +60,7 @@
                                 dialog.close();
 
                                 utilities.job.execute({
-                                    url: site.url + "Account/ChangePassword",
+                                    url: "Account/ChangePassword",
                                     type: "POST",
                                     params: jsonData
                                 })
@@ -100,7 +100,7 @@
                 .then(function (confirm) {
                     if (confirm) {
                         utilities.job.execute({
-                            url: site.url + "Account/ResetCaregiver"
+                            url: "Account/ResetCaregiver"
                         })
                         .then(function() {
                             utilities.alert.show({

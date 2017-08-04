@@ -37,7 +37,7 @@
             };
 
             utilities.job.execute({
-                url: site.url + "PublicProfile/GetData?" + "mediaPathTypeId=" + config.selectedMediaPathTypeId
+                url: "PublicProfile/GetData?" + "mediaPathTypeId=" + config.selectedMediaPathTypeId
             })
             .then(function(data) {
                 $.extend(lists, data);
@@ -440,7 +440,7 @@
                         $("#fileupload").prop("accept", mediaPathType.allowedtypes);
 
                         utilities.upload.init({
-                            url: site.url + "PublicProfile/UploadFile?mediaPathTypeId=" + mediaPathType.id +
+                            url: "PublicProfile/UploadFile?mediaPathTypeId=" + mediaPathType.id +
                                 "&mediaPath=" + mediaPathType.path +
                                 "&mediaPathTypeCategory=" + mediaPathType.category,
                             allowedExts: mediaPathType.allowedexts.split(","),
@@ -450,7 +450,7 @@
                             callback: function (successful, rejected) {
                                 if (successful.length > 0) {
                                     utilities.job.execute({
-                                        url: site.url + "PublicProfile/AddFiles",
+                                        url: "PublicProfile/AddFiles",
                                         type: "POST",
                                         waitMessage: "Saving...",
                                         params: {
@@ -502,7 +502,7 @@
                         })
                         .then(function (streamIds) {
                             utilities.job.execute({
-                                url: site.url + "PublicProfile/AddSharedMediaFiles",
+                                url: "PublicProfile/AddSharedMediaFiles",
                                 type: "POST",
                                 waitMessage: "Adding...",
                                 params: {
@@ -552,7 +552,7 @@
                         }).then(function (confirm) {
                             if (confirm) {
                                 utilities.job.execute({
-                                    url: site.url + "PublicProfile/DeleteSelected",
+                                    url: "PublicProfile/DeleteSelected",
                                     type: "POST",
                                     waitMessage: "Deleting...",
                                     params: {

@@ -54,7 +54,7 @@
             });
 
             inputFileUpload.change(function () {
-                $(this).simpleUpload(site.url + "Residents/UploadProfilePicture",
+                $(this).simpleUpload("Residents/UploadProfilePicture",
                 {
                     allowedExts: allowedExts,
                     allowedTypes: allowedTypes,

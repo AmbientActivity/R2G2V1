@@ -37,7 +37,7 @@
             };
             
             utilities.job.execute({
-                url: site.url + "ResidentProfile/GetData/" + config.residentid + "?mediaPathTypeId=" + config.selectedMediaPathTypeId
+                url: "ResidentProfile/GetData/" + config.residentid + "?mediaPathTypeId=" + config.selectedMediaPathTypeId
             })
             .then(function (data) {
                 $.extend(lists, data);
@@ -429,7 +429,7 @@
                         $("#fileupload").prop("accept", mediaPathType.allowedtypes);
 
                         utilities.upload.init({
-                            url: site.url + "ResidentProfile/UploadFile?residentId=" + config.residentid +
+                            url: "ResidentProfile/UploadFile?residentId=" + config.residentid +
                                 "&mediaPathTypeId=" + mediaPathType.id +
                                 "&mediaPath=" + mediaPathType.path +
                                 "&mediaPathTypeCategory=" + mediaPathType.category,
@@ -440,7 +440,7 @@
                             callback: function (successful, rejected) {
                                 if (successful.length > 0) {
                                     utilities.job.execute({
-                                        url: site.url + "ResidentProfile/AddFiles",
+                                        url: "ResidentProfile/AddFiles",
                                         type: "POST",
                                         waitMessage: "Saving...",
                                         params: {
@@ -494,7 +494,7 @@
                         })
                         .then(function(streamIds) {
                             utilities.job.execute({
-                                url: site.url + "ResidentProfile/AddSharedMediaFiles",
+                                url: "ResidentProfile/AddSharedMediaFiles",
                                 type: "POST",
                                 waitMessage: "Adding...",
                                 params: {
@@ -545,7 +545,7 @@
                         }).then(function (confirm) {
                             if (confirm) {
                                 utilities.job.execute({
-                                    url: site.url + "ResidentProfile/DeleteSelected",
+                                    url: "ResidentProfile/DeleteSelected",
                                     type: "POST",
                                     waitMessage: "Deleting...",
                                     params: {
@@ -745,7 +745,7 @@
                         var id = config.residentid;
 
                         utilities.partialview.show({
-                            url: site.url + "Residents/GetResidentEditView/" + id,
+                            url: "Residents/GetResidentEditView/" + id,
                             type: BootstrapDialog.TYPE_PRIMARY,
                             focus: "txtFirstName",
                             title: "<span class='glyphicon glyphicon-pencil' style='color: #fff'></span> Edit Resident",
@@ -756,7 +756,7 @@
                                 var resident = self.getResidentDetailFromDialog();
 
                                 utilities.job.execute({
-                                    url: site.url + "Residents/Validate",
+                                    url: "Residents/Validate",
                                     action: "Validate",
                                     type: "POST",
                                     params: { resident: resident }
@@ -765,7 +765,7 @@
                                     if (validateResult.ValidationMessages === null) {
                                         dialog.close();
                                         utilities.job.execute({
-                                            url: site.url + "Residents/Save",
+                                            url: "Residents/Save",
                                             type: "POST",
                                             title: "Save Resident",
                                             params: { resident: resident }

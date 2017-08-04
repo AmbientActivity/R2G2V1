@@ -32,7 +32,7 @@
             };
 
             utilities.job.execute({
-                url: site.url + "SystemProfile/GetData"
+                url: "SystemProfile/GetData"
             })
             .then(function (data) {
                 $.extend(lists, data);
@@ -324,7 +324,7 @@
                         })
                         .then(function (streamIds) {
                             utilities.job.execute({
-                                url: site.url + "SystemProfile/AddSharedMediaFiles",
+                                url: "SystemProfile/AddSharedMediaFiles",
                                 type: "POST",
                                 waitMessage: "Adding...",
                                 params: {
@@ -374,7 +374,7 @@
                         }).then(function (confirm) {
                             if (confirm) {
                                 utilities.job.execute({
-                                    url: site.url + "SystemProfile/DeleteSelected",
+                                    url: "SystemProfile/DeleteSelected",
                                     type: "POST",
                                     waitMessage: "Deleting...",
                                     params: {

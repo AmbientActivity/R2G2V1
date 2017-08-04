@@ -19,7 +19,7 @@
             };
 
             utilities.job.execute({
-                url: site.url + "VideoCaptures/GetData/"
+                url: "VideoCaptures/GetData/"
             })
             .then(function (data) {
                 $.extend(lists, data);

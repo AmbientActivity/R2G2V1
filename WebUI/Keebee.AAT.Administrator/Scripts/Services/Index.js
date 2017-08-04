@@ -70,7 +70,7 @@
                 .then(function(confirm) {
                     if (confirm) {
                         utilities.job.execute({
-                            url: site.url + "Services/SaveSettings",
+                            url: "Services/SaveSettings",
                             type: "GET",
                             title: "Service Activation/Deactivation",
                             waitMessage: "Saving settings...",

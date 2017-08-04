@@ -38,7 +38,7 @@
             };
 
             utilities.job.execute({
-                url: site.url + "SharedLibraryAdd/LoadData",
+                url: "SharedLibraryAdd/LoadData",
                 params: {
                     profileId:  config.profileId,
                     mediaPathTypeId: config.mediaPathTypeId

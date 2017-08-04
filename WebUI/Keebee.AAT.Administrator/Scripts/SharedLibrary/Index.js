@@ -36,7 +36,7 @@
             };
 
             utilities.job.execute({
-                url: site.url + "SharedLibrary/GetData?mediaPathTypeId=" + config.selectedMediaPathTypeId
+                url: "SharedLibrary/GetData?mediaPathTypeId=" + config.selectedMediaPathTypeId
             })
             .then(function (data) {
                 $.extend(lists, data);
@@ -447,7 +447,7 @@
                         $("#fileupload").prop("accept", mediaPathType.allowedtypes);
 
                         utilities.upload.init({
-                            url: site.url + "SharedLibrary/UploadFile?mediaPathTypeId=" + mediaPathType.id + 
+                            url: "SharedLibrary/UploadFile?mediaPathTypeId=" + mediaPathType.id + 
                                 "&mediaPath=" + mediaPathType.path +
                                 "&mediaPathTypeCategory=" + mediaPathType.category,
                             allowedExts: mediaPathType.allowedexts.split(","),
@@ -457,7 +457,7 @@
                             callback: function (successful, rejected) {
                                 if (successful.length > 0) {
                                     utilities.job.execute({
-                                        url: site.url + "SharedLibrary/AddFiles",
+                                        url: "SharedLibrary/AddFiles",
                                         type: "POST",
                                         waitMessage: "Saving...",
                                         params: {
@@ -513,7 +513,7 @@
                         }).then(function (confirm) {
                             if (confirm) {
                                 utilities.job.execute({
-                                    url: site.url + "SharedLibrary/DeleteSelected",
+                                    url: "SharedLibrary/DeleteSelected",
                                     type: "POST",
                                     waitMessage: "Deleting...",
                                     params: {
@@ -646,7 +646,7 @@
                             })[0].numlinked;
 
                         utilities.partialview.show({
-                            url: site.url + "SharedLibrary/GetLinkedProfilesView/",
+                            url: "SharedLibrary/GetLinkedProfilesView/",
                             title: "<span class='glyphicon glyphicon-link' style='color: #fff'></span> Linked Profiles (" + numLinked + ")",
                             type: BootstrapDialog.TYPE_PRIMARY,
                             params: { streamId: row.streamid },

@@ -19,7 +19,7 @@
             };
 
             utilities.job.execute({
-                url: site.url + "EventLogs/GetData/"
+                url: "EventLogs/GetData/"
             })
             .then(function (data) {
                 $.extend(lists, data);

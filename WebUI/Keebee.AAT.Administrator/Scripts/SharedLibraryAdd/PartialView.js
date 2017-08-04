@@ -18,19 +18,21 @@
 
             return new Promise(function(resolve, reject) {
                 $.extend(config, options);
-
-                $.get(site.url + "SharedLibraryAdd/GetView", {
-                    profileId: config.profileId,
-                    mediaPathTypeId: config.mediaPathTypeId,
-                    mediaPathTypeDesc: config.mediaPathTypeDesc,
-                    mediaPathTypeCategory: config.mediaPathTypeCategory
+                utilities.job.execute({
+                    url: "SharedLibraryAdd/GetView",
+                    params: {
+                        profileId: config.profileId,
+                        mediaPathTypeId: config.mediaPathTypeId,
+                        mediaPathTypeDesc: config.mediaPathTypeDesc,
+                        mediaPathTypeCategory: config.mediaPathTypeCategory
+                    }
                 })
-                .done(function (message) {
+                .then(function (result) {
                     var addSharedDialog = new BootstrapDialog({
                         type: BootstrapDialog.TYPE_PRIMARY,
                         title: "<i class='fa fa-share-alt fa-md' style='color: #fff'></i> " +
                             "Add <b>" + config.mediaPathTypeDesc + "</b> from Shared Library",
-                        message: $("<div></div>").append(message),
+                        message: $("<div></div>").append(result.Html),
                         onshown: function () {
                             $("#txtSharedSearchFilename").focus();
                         },

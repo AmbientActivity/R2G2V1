@@ -94,6 +94,7 @@ namespace Keebee.AAT.Administrator.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public JsonResult GetChangePasswordView()
         {
             string errMsg = null;
@@ -117,6 +118,7 @@ namespace Keebee.AAT.Administrator.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public JsonResult GetResetCaregiverView()
         {
             string errMsg = null;
@@ -225,12 +227,6 @@ namespace Keebee.AAT.Administrator.Controllers
                 ErrorMessage = errMsg,
                 ValidationMessage = validateMsg
             }, JsonRequestBehavior.AllowGet);
-        }
-
-        [HttpGet]
-        public string GetCurrentSessionUser()
-        {
-            return (System.Web.HttpContext.Current.User.Identity.Name);
         }
 
         private void CreateLoginAuthenticationTicket(string username, int userId)

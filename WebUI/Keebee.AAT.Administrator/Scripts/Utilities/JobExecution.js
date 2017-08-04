@@ -79,11 +79,13 @@
                                 reject(data);
                             }
                         },
-                        error: function (error) {
+                        error: function (request) {
                             if (typeof inProgressDialog !== "undefined")
                                 inProgressDialog.close();
 
-                            if (error.statusText === "OK") {
+                            // if an error with status = 200 (i.e. 'OK')
+                            // means the session has expired
+                            if (request.status === 200) {
                                 utilities.alert.show({
                                     title: "Session Timeout",
                                     type: BootstrapDialog.TYPE_INFO,
@@ -96,7 +98,7 @@
                                 utilities.alert.show({
                                     title: "Error",
                                     type: BootstrapDialog.TYPE_DANGER,
-                                    message: "The following unexpected error occured:\n" + error.statusText
+                                    message: "The following unexpected error occured:\n" + request.statusText
                                 });
                             }
                         }

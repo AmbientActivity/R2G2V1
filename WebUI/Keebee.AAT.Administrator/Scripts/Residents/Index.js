@@ -378,7 +378,7 @@
                         if (sortDescending) sortdescending = "1";
 
                         if (id > 0) {
-                            window.location = "ResidentProfile?id=" + id
+                            window.location = site.url + "ResidentProfile?id=" + id
                                 + "&idsearch=" + self.idSearch()
                                 + "&firstname=" + self.firstNameSearch()
                                 + "&lastname=" + self.lastNameSearch()

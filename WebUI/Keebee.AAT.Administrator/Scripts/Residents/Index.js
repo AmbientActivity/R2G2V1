@@ -312,7 +312,7 @@
                         }
 
                         utilities.partialview.show({
-                            url: "Residents/GetResidentEditView",
+                            url: site.url + "Residents/GetResidentEditView",
                             params: { id: id },
                             type: add ? BootstrapDialog.TYPE_SUCCESS : BootstrapDialog.TYPE_PRIMARY,
                             focus: "txtFirstName",
@@ -425,7 +425,7 @@
                         .then(function(confirm) {
                             if (confirm) {
                                 utilities.job.execute({
-                                    url: "Residents/Delete",
+                                    url: site.url + "Residents/Delete",
                                     type: "POST",
                                     params: { id: id },
                                     title: "Delete Resident",

@@ -387,7 +387,7 @@
 
                         $("#edit_" + id).tooltip("hide");
                         cmdAddDetail.tooltip("hide");
-                        enableButtons(false);  
+                        enableButtons(false);
 
                         var title = "<span class='glyphicon glyphicon-pencil' style='color: #fff'></span>";
                         title = add
@@ -416,48 +416,51 @@
                                 var configdetail = self.getConfigDetailFromDialog();
                                 configdetail.ConfigId = self.selectedConfigId();
                                 utilities.job.execute({
-                                        url: site.url + "PhidgetConfigDetails/Validate",
-                                        type: "POST",
-                                        params: { configdetail: configdetail }
-                                    })
-                                    .then(function (validateResult) {
-                                        isEditLoading = false;
-                                        if (validateResult.ValidationMessages === null) {
-                                            dialog.close();
-                                            utilities.job.execute({
-                                                    url: "PhidgetConfigDetails/Save",
-                                                    type: "POST",
-                                                    params: { configdetail: configdetail }
-                                                })
-                                                .then(function (saveResult) {
-                                                    if (add) {
-                                                        createConfigDetailArray({ list: saveResult.ConfigDetailList, insert: true });
-                                                    } else {
-                                                        self.updateDetail(saveResult.ConfigDetailList);
-                                                    }
+                                    url: site.url + "PhidgetConfigDetails/Validate",
+                                    type: "POST",
+                                    params: { configdetail: configdetail }
+                                })
+                                .then(function(validateResult) {
+                                    isEditLoading = false;
+                                    if (validateResult.ValidationMessages === null) {
+                                        dialog.close();
+                                        utilities.job.execute({
+                                                url: "PhidgetConfigDetails/Save",
+                                                type: "POST",
+                                                params: { configdetail: configdetail }
+                                            })
+                                            .then(function(saveResult) {
+                                                if (add) {
+                                                    createConfigDetailArray({
+                                                        list: saveResult.ConfigDetailList,
+                                                        insert: true
+                                                    });
+                                                } else {
+                                                    self.updateDetail(saveResult.ConfigDetailList);
+                                                }
 
-                                                    if (saveResult.ConfigDetailList.length > 0) {
-                                                        self.marqueeRows(saveResult.ConfigDetailList);
-                                                        self.selectedConfigDetail({});
-                                                    }
+                                                if (saveResult.ConfigDetailList.length > 0) {
+                                                    self.marqueeRows(saveResult.ConfigDetailList);
+                                                    self.selectedConfigDetail({});
+                                                }
 
-                                                    self.enableDetail();
-                                                    self.sort();
-                                                    enableButtons(true);
-                                                });   
-                                        } else {
-                                            utilities.validation.show({
-                                                container: "validation-container",
-                                                messages: validateResult.ValidationMessages,
-                                                beginWithLineBreak: true
+                                                self.enableDetail();
+                                                self.sort();
+                                                enableButtons(true);
                                             });
-                                        }
-                                    })
-                                    .catch(function() {
-                                        enableButtons(true);
-                                        isEditLoading = false;
-                                    });
-                                }
+                                    } else {
+                                        utilities.validation.show({
+                                            container: "validation-container",
+                                            messages: validateResult.ValidationMessages,
+                                            beginWithLineBreak: true
+                                        });
+                                    }
+                                })
+                                .catch(function() {
+                                    enableButtons(true);
+                                    isEditLoading = false;
+                                });
+                            }
                         });
                     };
 

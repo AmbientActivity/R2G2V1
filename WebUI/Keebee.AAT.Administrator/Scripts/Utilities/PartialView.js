@@ -26,17 +26,28 @@
             $.extend(config, options);
 
             $.get(config.url, config.params)
-            .done(function(message) {
-                BootstrapDialog.show({
-                    type: config.type,
-                    title: config.title,
-                    message: $("<div></div>").append(message),
-                    onshown: function() {
-                        $("#" + config.focus).focus();
-                    },
-                    closable: false,
-                    buttons: getButtons()
-                });
+            .done(function (message) {
+                if (message.indexOf("<head>") < 0) {
+                    BootstrapDialog.show({
+                        type: config.type,
+                        title: config.title,
+                        message: $("<div></div>").append(message),
+                        onshown: function() {
+                            $("#" + config.focus).focus();
+                        },
+                        closable: false,
+                        buttons: getButtons()
+                    });
+                } else {
+                    utilities.alert.show({
+                        title: "Session Timeout",
+                        type: BootstrapDialog.TYPE_INFO,
+                        message: "Your session has expired.  Please login again to continue."
+                    })
+                    .then(function() {
+                        location.reload();
+                    });
+                }
             })
             .error(function(error) {
                 utilities.alert.show({

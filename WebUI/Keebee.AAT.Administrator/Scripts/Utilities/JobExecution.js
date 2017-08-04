@@ -84,11 +84,13 @@
                                 inProgressDialog.close();
 
                             utilities.alert.show({
-                                title: "Error",
-                                type: BootstrapDialog.TYPE_DANGER,
-                                message: "The following error occured:\n" + request.statusText
+                                title: "Session Timeout",
+                                type: BootstrapDialog.TYPE_INFO,
+                                message: "Your session has expired.  Please login again to continue."
+                            })
+                            .then(function() {
+                                location.reload();
                             });
-                            reject();
                         }
                     });
                 });

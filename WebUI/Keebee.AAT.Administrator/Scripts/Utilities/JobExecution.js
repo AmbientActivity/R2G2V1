@@ -89,7 +89,8 @@
                                 utilities.alert.show({
                                     title: "Session Timeout",
                                     type: BootstrapDialog.TYPE_INFO,
-                                    message: "Your session has expired.  Please login again to continue."
+                                    message: "The action cannot be completed because your session has expired.\n" +
+                                        "Please log back in and try again."
                                 })
                                 .then(function() {
                                     location.reload();

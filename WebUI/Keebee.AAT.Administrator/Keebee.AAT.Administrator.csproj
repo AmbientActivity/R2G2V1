@@ -645,6 +645,7 @@
     <Content Include="Scripts\Utilities\InProgress.js" />
     <Content Include="Scripts\Utilities\JobExecution.js" />
     <Content Include="Scripts\SharedLibraryAdd\PartialView.js" />
+    <Content Include="Scripts\Utilities\SessionExpiry.js" />
     <Content Include="Scripts\Utilities\Sorting.js" />
     <Content Include="Scripts\Utilities\Upload.js" />
     <Content Include="Scripts\Utilities\VideoViewer.js" />

@@ -1,5 +1,5 @@
 ﻿/*!
- * 1.0 Keebee AAT Copyright © 2015
+ * 1.0 Keebee AAT Copyright © 2017
  * Utilities/Validation.js
  * Author: John Charlton
  * Date: 2017-06
@@ -100,14 +100,17 @@
                         * success:	{"success":true,"format":"..."}
                         * error:	{"success":false,"error":{"code":1,"message":"..."}}
                         */
-                 
-                        if (data.Success) {
-                            if (data.Filename !== null)
-                                successful.push(data.Filename);
-
-                            this.block.fadeOut(400, function () { });
+                        if (typeof data.Success === "undefined") {
+                            utilities.sessionexpired.show();
                         } else {
-                            var message = data.ErrorMessage; // optionally display this
+                            if (data.Success) {
+                                if (data.Filename !== null)
+                                    successful.push(data.Filename);
+
+                                this.block.fadeOut(400, function () { });
+                            } else {
+                                var message = data.ErrorMessage; // optionally display this
+                            }
                         }
                     },
                     cancel: function () {

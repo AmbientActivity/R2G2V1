@@ -1,5 +1,5 @@
 ﻿/*!
- * 1.0 Keebee AAT Copyright © 2015
+ * 1.0 Keebee AAT Copyright © 2017
  * Utilities/JobExecution.js
  * Author: John Charlton
  * Date: 2017-06
@@ -86,15 +86,7 @@
                             // if an error with status = 200 (i.e. 'OK')
                             // means the session has expired
                             if (request.status === 200) {
-                                utilities.alert.show({
-                                    title: "Session Timeout",
-                                    type: BootstrapDialog.TYPE_INFO,
-                                    message: "The action cannot be completed because your session has expired.\n" +
-                                        "Please log back in and try again."
-                                })
-                                .then(function() {
-                                    location.reload();
-                                });
+                                utilities.sessionexpired.show();
                             } else {
                                 utilities.alert.show({
                                     title: "Error",

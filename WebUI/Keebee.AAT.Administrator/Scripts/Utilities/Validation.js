@@ -1,5 +1,5 @@
 ﻿/*!
- * 1.0 Keebee AAT Copyright © 2015
+ * 1.0 Keebee AAT Copyright © 2017
  * Utilities/Validation.js
  * Author: John Charlton
  * Date: 2017-06

@@ -3,6 +3,7 @@ using Keebee.AAT.ApiClient.Clients;
 using Keebee.AAT.ApiClient.Models;
 using Keebee.AAT.BusinessRules.Models;
 using Keebee.AAT.SystemEventLogging;
+using Keebee.AAT.ThumbnailGeneration;
 using System;
 using System.Diagnostics;
 using System.Linq;
@@ -85,10 +86,12 @@ namespace Keebee.AAT.BusinessRules
 
                 var mediaFile = _mediaFilesClient.Get(streamId);
 
+                // generate thumbnail if not 'sudio' media type
                 byte[] thumb = null;
-                if (responseType.ResponseTypeCategory.Id != ResponseTypeCategoryId.Audio)
+                if (mediaPathType.Category != MediaPathTypeCategoryDescription.Audio)
                 {
-                    thumb = _thumbnailsClient.Get(streamId)?.Image;
+                    var thumbnailGenerator = new ThumbnailGenerator();
+                    thumb = thumbnailGenerator.Generate(mediaFile.StreamId, out errMsg);
                 }
 
                 mediaFileModel = GetMediaFileModel(mediaFile, newId, mediaPathType, dateAdded, isLinked, thumb);

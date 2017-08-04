@@ -37,9 +37,11 @@ namespace Keebee.AAT.BusinessRules
 
                 // generate thumbnail if not 'sudio' media type
                 byte[] thumb = null;
-                var thumbnailGenerator = new ThumbnailGenerator();
                 if (mediaPathType.Category != MediaPathTypeCategoryDescription.Audio)
+                {
+                    var thumbnailGenerator = new ThumbnailGenerator();
                     thumb = thumbnailGenerator.Generate(mediaFile.StreamId, out errMsg);
+                }
 
                 mediaFileModel = GetMediaFileModel(mediaFile, mediaPathType, thumb);
             }

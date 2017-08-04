@@ -5,7 +5,7 @@
  * Date: 2017-08
  */
 
-; (function () {
+; (function ($) {
 
     utilities.sessionexpired = {
         show: function () {
@@ -20,4 +20,4 @@
             });
         }
     }
-});
+})(jQuery);

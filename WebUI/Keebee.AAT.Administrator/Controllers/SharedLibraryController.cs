@@ -5,6 +5,7 @@ using Keebee.AAT.SystemEventLogging;
 using Keebee.AAT.ApiClient.Clients;
 using Keebee.AAT.ApiClient.Models;
 using Keebee.AAT.BusinessRules.Models;
+using Keebee.AAT.Administrator.Extensions;
 using System.Linq;
 using System.Web.Mvc;
 using System;
@@ -182,25 +183,61 @@ namespace Keebee.AAT.Administrator.Controllers
 
         [HttpGet]
         [Authorize]
-        public PartialViewResult GetImageViewerView(Guid streamId, string fileType)
+        public JsonResult GetImageViewerView(Guid streamId, string fileType)
         {
-            var rules = new ImageViewerRules();
-            var m = rules.GetImageViewerModel(streamId, fileType);
+            string errMsg;
+            string html = null;
 
-            return PartialView("_ImageViewer", new ImageViewerViewModel
+            try
             {
-                FileType = m.FileType,
-                Width = m.Width,
-                Height = m.Height,
-                Base64String = m.Base64String
-            });
+                var rules = new ImageViewerRules();
+                var model = rules.GetImageViewerModel(streamId, fileType, out errMsg);
+                if (!string.IsNullOrEmpty(errMsg)) throw new Exception(errMsg);
+
+                html = this.RenderPartialViewToString("_ImageViewer", new ImageViewerViewModel
+                {
+                    FileType = model.FileType,
+                    Width = model.Width,
+                    Height = model.Height,
+                    Base64String = model.Base64String
+                });
+            }
+            catch (Exception ex)
+            {
+                errMsg = ex.Message;
+            }
+
+            return Json(new
+            {
+                Success = string.IsNullOrEmpty(errMsg),
+                ErrorMessage = errMsg,
+                Html = html
+            }, JsonRequestBehavior.AllowGet);
         }
 
         [HttpGet]
         [Authorize]
-        public PartialViewResult GetLinkedProfilesView(Guid streamId)
+        public JsonResult GetLinkedProfilesView(Guid streamId)
         {
-            return PartialView("_LinkedProfiles", new LinkedProfilesViewModel{ StreamId = streamId });
+            string errMsg = null;
+            string html = null;
+
+            try
+            {
+                html = this.RenderPartialViewToString("_LinkedProfiles", 
+                    new LinkedProfilesViewModel { StreamId = streamId });
+            }
+            catch (Exception ex)
+            {
+                errMsg = ex.Message;
+            }
+
+            return Json(new
+            {
+                Success = string.IsNullOrEmpty(errMsg),
+                ErrorMessage = errMsg,
+                Html = html,
+            }, JsonRequestBehavior.AllowGet);
         }
 
         [HttpGet]

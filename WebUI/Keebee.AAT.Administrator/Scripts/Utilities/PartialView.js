@@ -26,19 +26,8 @@
             $.extend(config, options);
 
             $.get(config.url, config.params)
-            .done(function (message) {
-                if (message.indexOf("<head>") < 0) {
-                    BootstrapDialog.show({
-                        type: config.type,
-                        title: config.title,
-                        message: $("<div></div>").append(message),
-                        onshown: function() {
-                            $("#" + config.focus).focus();
-                        },
-                        closable: false,
-                        buttons: getButtons()
-                    });
-                } else {
+            .done(function (result) {
+                if (typeof result.Success === "undefined") {
                     utilities.alert.show({
                         title: "Session Timeout",
                         type: BootstrapDialog.TYPE_INFO,
@@ -47,13 +36,32 @@
                     .then(function() {
                         location.reload();
                     });
+                } else {
+                    if (result.Success) {
+                        BootstrapDialog.show({
+                            type: config.type,
+                            title: config.title,
+                            message: $("<div></div>").append(result.Html),
+                            onshown: function () {
+                                $("#" + config.focus).focus();
+                            },
+                            closable: false,
+                            buttons: getButtons()
+                        });
+                    } else {
+                        utilities.alert.show({
+                            title: "Error",
+                            type: BootstrapDialog.TYPE_DANGER,
+                            message: "The following error occured:\n" + result.ErrorMessage
+                        });
+                    }
                 }
             })
             .error(function(error) {
                 utilities.alert.show({
                     title: "Partial View Load Error",
                     type: BootstrapDialog.TYPE_DANGER,
-                    message: "The following error occured:\n" + error.statusText
+                    message: "The following unexpected error occured:\n" + error.statusText
                 });
             });
 

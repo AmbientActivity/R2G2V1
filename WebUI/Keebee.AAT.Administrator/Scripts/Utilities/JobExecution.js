@@ -59,37 +59,45 @@
                             if (typeof inProgressDialog !== "undefined")
                                 inProgressDialog.close();
 
-                            if (data.Success) {
-                                if (config.successVerbage !== null) {
-                                    utilities.alert.show({
-                                        title: "Success",
-                                        type: BootstrapDialog.TYPE_SUCCESS,
-                                        message: config.successVerbage,
-                                        buttonOKClass: "btn-success"
-                                    });
-                                }
-                                resolve(data);
-
-                            } else {
+                            if (typeof data.Success === "undefined") {
                                 utilities.alert.show({
-                                    title: "Error",
-                                    type: BootstrapDialog.TYPE_DANGER,
-                                    message: "The following error occured:\n" + data.ErrorMessage
+                                    title: "Session Timeout",
+                                    type: BootstrapDialog.TYPE_INFO,
+                                    message: "Your session has expired.  Please login again to continue."
+                                })
+                                .then(function() {
+                                    location.reload();
                                 });
-                                reject(data);
+                            } else {
+                                if (data.Success) {
+                                    if (config.successVerbage !== null) {
+                                        utilities.alert.show({
+                                            title: "Success",
+                                            type: BootstrapDialog.TYPE_SUCCESS,
+                                            message: config.successVerbage,
+                                            buttonOKClass: "btn-success"
+                                        });
+                                    }
+                                    resolve(data);
+
+                                } else {
+                                    utilities.alert.show({
+                                        title: "Error",
+                                        type: BootstrapDialog.TYPE_DANGER,
+                                        message: "The following error occured:\n" + data.ErrorMessage
+                                    });
+                                    reject(data);
+                                }
                             }
                         },
-                        error: function (request) {
+                        error: function (error) {
                             if (typeof inProgressDialog !== "undefined")
                                 inProgressDialog.close();
 
                             utilities.alert.show({
-                                title: "Session Timeout",
-                                type: BootstrapDialog.TYPE_INFO,
-                                message: "Your session has expired.  Please login again to continue."
-                            })
-                            .then(function() {
-                                location.reload();
+                                title: "Error",
+                                type: BootstrapDialog.TYPE_DANGER,
+                                message: "The following unexpected error occured:\n" + error.statusText
                             });
                         }
                     });

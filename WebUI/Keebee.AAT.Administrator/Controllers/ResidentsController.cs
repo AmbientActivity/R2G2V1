@@ -88,9 +88,29 @@ namespace Keebee.AAT.Administrator.Controllers
 
         [HttpGet]
         [Authorize]
-        public PartialViewResult GetResidentEditView(int id)
+        public JsonResult GetResidentEditView(int id)
         {
-            return PartialView("_ResidentEdit", LoadResidentEditViewModel(id));
+            string errMsg;
+            string html = null;
+
+            try
+            {
+                var vm = LoadResidentEditViewModel(id, out errMsg);
+                if (!string.IsNullOrEmpty(errMsg)) throw new Exception(errMsg);
+
+                html = this.RenderPartialViewToString("_ResidentEdit", vm);
+            }
+            catch (Exception ex)
+            {
+                errMsg = ex.Message;
+            }
+
+            return Json(new
+            {
+                Success = string.IsNullOrEmpty(errMsg),
+                ErrorMessage = errMsg,
+                Html = html,
+            }, JsonRequestBehavior.AllowGet);
         }
 
         [HttpPost]
@@ -268,33 +288,46 @@ namespace Keebee.AAT.Administrator.Controllers
             return vm;
         }
 
-        private ResidentEditViewModel LoadResidentEditViewModel(int id)
+        private ResidentEditViewModel LoadResidentEditViewModel(int id, out string errMsg)
         {
+            errMsg = null;
             Resident resident = null;
+            ResidentEditViewModel vm = null;
 
-            if (id > 0)
+            try
             {
-                resident = _residentsClient.Get(id);
+
+                if (id > 0)
+                {
+                    resident = _residentsClient.Get(id);
+                }
+
+                vm = new ResidentEditViewModel
+                {
+                    Id = resident?.Id ?? 0,
+                    FirstName = (resident != null) ? resident.FirstName : string.Empty,
+                    LastName = (resident != null) ? resident.LastName : string.Empty,
+                    Gender = resident?.Gender ?? string.Empty,
+                    GameDifficultyLevels = new SelectList(new Collection<SelectListItem>
+                        {
+                            new SelectListItem {Value = "1", Text = "1"},
+                            new SelectListItem {Value = "2", Text = "2"},
+                            new SelectListItem {Value = "3", Text = "3"},
+                            new SelectListItem {Value = "4", Text = "4"},
+                            new SelectListItem {Value = "5", Text = "5"}
+                        },
+                        "Value", "Text", resident?.GameDifficultyLevel),
+                    AllowVideoCapturing = resident?.AllowVideoCapturing ?? false,
+                    ProfilePicture = ResidentRules.GetProfilePicture(resident?.ProfilePicture),
+                    ProfilePicturePlaceholder = ResidentRules.GetProfilePicturePlaceholder(),
+                    IsVideoCaptureServiceInstalled =
+                        ServiceUtilities.IsInstalled(ServiceUtilities.ServiceType.VideoCapture)
+                };
             }
-
-            var vm = new ResidentEditViewModel
+            catch (Exception ex)
             {
-                Id = resident?.Id ?? 0,
-                FirstName = (resident != null) ? resident.FirstName : string.Empty,
-                LastName = (resident != null) ? resident.LastName : string.Empty,
-                Gender = resident?.Gender ?? string.Empty,
-                GameDifficultyLevels = new SelectList(new Collection<SelectListItem> {
-                    new SelectListItem { Value = "1", Text = "1" },
-                    new SelectListItem { Value = "2", Text = "2" },
-                    new SelectListItem { Value = "3", Text = "3" },
-                    new SelectListItem { Value = "4", Text = "4" },
-                    new SelectListItem { Value = "5", Text = "5" }},
-                    "Value", "Text", resident?.GameDifficultyLevel),
-                AllowVideoCapturing = resident?.AllowVideoCapturing ?? false,
-                ProfilePicture = ResidentRules.GetProfilePicture(resident?.ProfilePicture),
-                ProfilePicturePlaceholder = ResidentRules.GetProfilePicturePlaceholder(),
-                IsVideoCaptureServiceInstalled = ServiceUtilities.IsInstalled(ServiceUtilities.ServiceType.VideoCapture)
-            };
+                errMsg = ex.Message;
+            }
 
             return vm;
         }

@@ -28,31 +28,43 @@ namespace Keebee.AAT.BusinessRules
             _mediaFileStreamsClient = new MediaFileStreamsClient();
         }
 
-        public ImageViewerModel GetImageViewerModel(Guid streamId, string fileType)
-        {   
-            var file = _mediaFileStreamsClient.Get(streamId);
+        public ImageViewerModel GetImageViewerModel(Guid streamId, string fileType, out string errMsg)
+        {
+            errMsg = null;
+            var newSize = new ImageSize {Height = 0, Width = 0};
+            var base64String = string.Empty;
+            var prefix = string.Empty;
 
-            // get image from stream
-            Image image;
-            using (var ms = new MemoryStream(file.Stream))
+            try
             {
-                image = Image.FromStream(ms);
+                var file = _mediaFileStreamsClient.Get(streamId);
+
+                // get image from stream
+                Image image;
+                using (var ms = new MemoryStream(file.Stream))
+                {
+                    image = Image.FromStream(ms);
+                }
+
+                // figure out the best size for the image viewer dimensions
+                newSize = GetImageSize(image.Width, image.Height);
+
+                // resize the image
+                var resizedImage = (Image) new Bitmap(image,
+                    new Size {Height = newSize.Height, Width = newSize.Width});
+
+                // convert back to stream
+                var stream = new MemoryStream();
+                resizedImage.Save(stream, GetImageFormat(file.FileType));
+
+                // convert to base64 string and generate the prefix
+                base64String = Convert.ToBase64String(stream.ToArray());
+                prefix = $"data:image/{file.FileType.ToLower()};base64";
             }
-
-            // figure out the best size for the image viewer dimensions
-            var newSize = GetImageSize(image.Width, image.Height);
-
-            // resize the image
-            var resizedImage = (Image) new Bitmap(image, 
-                new Size {Height = newSize.Height, Width = newSize.Width});
-
-            // convert back to stream
-            var stream = new MemoryStream();
-            resizedImage.Save(stream, GetImageFormat(file.FileType));
-
-            // convert to base64 string and generate the prefix
-            var base64String = Convert.ToBase64String(stream.ToArray());
-            var prefix = $"data:image/{file.FileType.ToLower()};base64";
+            catch (Exception ex)
+            {
+                errMsg = ex.Message;
+            }
 
             return new ImageViewerModel
             {

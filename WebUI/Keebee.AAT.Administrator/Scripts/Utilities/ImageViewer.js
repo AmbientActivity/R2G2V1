@@ -16,7 +16,7 @@
                 fileType: null
             };
 
-            return new Promise(function (resolve) {
+            return new Promise(function () {
                 if ((typeof options !== "undefined") && (options !== null)) {
                     if (options.streamId === null) reject("StreamId cannot be null");
                     if (options.filename === null) reject("Filename cannot be null");
@@ -36,40 +36,55 @@
                 $.get(site.url +
                         config.controller + "/GetImageViewerView?streamId=" + config.streamId +
                         "&fileType=" + config.fileType)
-                    .done(function(message) {
+                    .done(function (result) {
+                        if (typeof result.Success === "undefined") {
+                            utilities.alert.show({
+                                title: "Session Timeout",
+                                type: BootstrapDialog.TYPE_INFO,
+                                message: "Your session has expired.  Please login again to continue."
+                            })
+                            .then(function() {
+                                location.reload();
+                            });
+                        } else {
+                            if (result.Success) {
+                                bootstrapDialog.realize();
+                                var header = bootstrapDialog.getModalHeader();
+                                header.css({ backgroundColor: "#000", padding: "10px", border: "none" });
+                                header.find(".close").css({ color: "#f0f0f0", opacity: "1" });
 
-                        bootstrapDialog.realize();
-                        var header = bootstrapDialog.getModalHeader();
-                        header.css({ backgroundColor: "#000", padding: "10px", border: "none" });
-                        header.find(".close").css({ color: "#f0f0f0", opacity: "1" });
+                                var body = bootstrapDialog.getModalBody();
+                                body.css({ "padding": "0" });
+                                body.append("<div></div>").append(result.Html);
 
-                        var body = bootstrapDialog.getModalBody();
-                        body.css({ "padding": "0" });
-                        body.append("<div></div>").append(message);
+                                var footer = bootstrapDialog.getModalFooter();
+                                footer.css({
+                                    padding: "5px",
+                                    backgroundColor: "#000",
+                                    color: "#f0f0f0",
+                                    border: "none",
+                                    display: "block",
+                                    "text-align": "center"
+                                });
+                                footer.find(".bootstrap-dialog-footer")
+                                    .css({ display: "inline" })
+                                    .append("<span>Click image to close</span>");
 
-                        var footer = bootstrapDialog.getModalFooter();
-                        footer.css({ padding: "5px", backgroundColor: "#000", color: "#f0f0f0", border: "none", display: "block", "text-align": "center" });
-                        footer.find(".bootstrap-dialog-footer")
-                            .css({ display: "inline" })
-                            .append("<span>Click image to close</span>");
-
-                        bootstrapDialog.open();
+                                bootstrapDialog.open();
+                            } else {
+                                utilities.alert.show({
+                                    title: "Error",
+                                    type: BootstrapDialog.TYPE_DANGER,
+                                    message: "The following error occured:\n" + result.ErrorMessage
+                                });
+                            }
+                        }
                     })
-                    .error(function(message) {
-                        BootstrapDialog.show({
-                            type: BootstrapDialog.TYPE_DANGER,
+                    .error(function(error) {
+                        utilities.alert.show({
                             title: "Error",
-                            message: $("<div></div>").append(message),
-                            closable: false,
-                            buttons: [
-                                {
-                                    label: "Close",
-                                    action: function(dialog) {
-                                        dialog.close();
-                                        resolve();
-                                    }
-                                }
-                            ]
+                            type: BootstrapDialog.TYPE_DANGER,
+                            message: "The following unexpected error occured:\n" + error.statusText
                         });
                     });
             });

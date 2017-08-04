@@ -4,6 +4,7 @@ using Keebee.AAT.ApiClient.Models;
 using Keebee.AAT.BusinessRules;
 using Keebee.AAT.MessageQueuing;
 using Keebee.AAT.Shared;
+using Keebee.AAT.Administrator.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -114,20 +115,39 @@ namespace Keebee.AAT.Administrator.Controllers
                 errMsg = ex.Message;
             }
 
-            var success = string.IsNullOrEmpty(errMsg);
             return Json(new
             {
+                ErrorMessage = errMsg,
+                Success = string.IsNullOrEmpty(errMsg),
                 DeletedId = deletedId,
-                ErrorMessage = !success ? errMsg : null,
-                Success = success,
             }, JsonRequestBehavior.AllowGet);
         }
 
         [HttpGet]
         [Authorize]
-        public PartialViewResult GetConfigDetailEditView(int id, int configId)
+        public JsonResult GetConfigDetailEditView(int id, int configId)
         {
-            return PartialView("_ConfigDetailEdit", LoadConfigDetailEditViewModel(id, configId));
+            string errMsg;
+            string html = null;
+
+            try
+            {
+                var vm = LoadConfigDetailEditViewModel(id, configId, out errMsg);
+                if (!string.IsNullOrEmpty(errMsg)) throw new Exception(errMsg);
+
+                html = this.RenderPartialViewToString("_ConfigDetailEdit", vm);
+            }
+            catch (Exception ex)
+            {
+                errMsg = ex.Message;
+            }
+
+            return Json(new
+            {
+                Success = string.IsNullOrEmpty(errMsg),
+                ErrorMessage = errMsg,
+                Html = html,
+            }, JsonRequestBehavior.AllowGet);
         }
 
         private string UpdateConfigDetail(ConfigDetailEditViewModel configDetail)
@@ -187,32 +207,45 @@ namespace Keebee.AAT.Administrator.Controllers
             return errMsg;
         }
 
-        private static ConfigDetailEditViewModel LoadConfigDetailEditViewModel(int id, int configId)
+        private static ConfigDetailEditViewModel LoadConfigDetailEditViewModel(int id, int configId, out string errMsg)
         {
-            var configurationRules = new PhidgetConfigRules();
-            var configEdit = configurationRules.GetConfigEditViewModel(id, configId);
-            var configDetail = configEdit.ConfigDetail;
+            errMsg = null;
+            ConfigDetailEditViewModel vm = null;
 
-            var vm = new ConfigDetailEditViewModel
+            try
             {
-                Id = configDetail?.Id ?? 0,
-                Description = (configDetail != null) ? configDetail.Description : string.Empty,
-                Location = (configDetail != null) ? configDetail.Location : string.Empty,
-                PhidgetTypes = new SelectList(configEdit.PhidgetTypes, "Id", "Description", configDetail?.PhidgetType.Id),
-                PhidgetStyleTypes = new SelectList(configEdit.PhidgetStyleTypes, "Id", "Description", configDetail?.PhidgetStyleType.Id),
-                ResponseTypes = new SelectList(configEdit
-                    .ResponseTypes
-                    .Select(x => new
-                    {
-                        x.Id,
-                        Description = $"{x.ResponseTypeCategory.Description} ({x.Description})"
-                    })
-                    .OrderBy(x => x.Description),
-                    "Id", "Description", configDetail?.ResponseType.Id),
-                PhidgetStyleTypeIdOnOff = PhidgetStyleTypeId.OnOff,
-                PhidgetStyleTypeIdTouch = PhidgetStyleTypeId.Touch,
-                MaxPhidgetTypeIdSensor = PhidgetTypeId.Sensor7
-            };
+                var configurationRules = new PhidgetConfigRules();
+                var configEdit = configurationRules.GetConfigEditViewModel(id, configId);
+                var configDetail = configEdit.ConfigDetail;
+
+                vm = new ConfigDetailEditViewModel
+                {
+                    Id = configDetail?.Id ?? 0,
+                    Description = (configDetail != null) ? configDetail.Description : string.Empty,
+                    Location = (configDetail != null) ? configDetail.Location : string.Empty,
+                    PhidgetTypes =
+                        new SelectList(configEdit.PhidgetTypes, "Id", "Description", configDetail?.PhidgetType.Id),
+                    PhidgetStyleTypes =
+                        new SelectList(configEdit.PhidgetStyleTypes, "Id", "Description",
+                            configDetail?.PhidgetStyleType.Id),
+                    ResponseTypes = new SelectList(configEdit
+                            .ResponseTypes
+                            .Select(x => new
+                            {
+                                x.Id,
+                                Description = $"{x.ResponseTypeCategory.Description} ({x.Description})"
+                            })
+                            .OrderBy(x => x.Description),
+                        "Id", "Description", configDetail?.ResponseType.Id),
+                    PhidgetStyleTypeIdOnOff = PhidgetStyleTypeId.OnOff,
+                    PhidgetStyleTypeIdTouch = PhidgetStyleTypeId.Touch,
+                    MaxPhidgetTypeIdSensor = PhidgetTypeId.Sensor7
+                };
+            }
+            catch (Exception ex)
+            {
+                errMsg = ex.Message;
+            }
 
             return vm;
         }

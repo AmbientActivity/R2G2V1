@@ -4,6 +4,7 @@ using Keebee.AAT.BusinessRules;
 using Keebee.AAT.Shared;
 using Keebee.AAT.ApiClient.Clients;
 using Keebee.AAT.ApiClient.Models;
+using Keebee.AAT.Administrator.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -64,9 +65,29 @@ namespace Keebee.AAT.Administrator.Controllers
 
         [HttpGet]
         [Authorize]
-        public PartialViewResult GetConfigEditView(int id, int selectedConfigId)
+        public JsonResult GetConfigEditView(int id, int selectedConfigId)
         {
-            return PartialView("_ConfigEdit", LoadConfigEditViewModel(id, selectedConfigId));
+            string errMsg;
+            string html = null;
+
+            try
+            {
+                var vm = LoadConfigEditViewModel(id, selectedConfigId, out errMsg);
+                if (!string.IsNullOrEmpty(errMsg)) throw new Exception(errMsg);
+
+                html = this.RenderPartialViewToString("_ConfigEdit", vm);
+            }
+            catch (Exception ex)
+            {
+                errMsg = ex.Message;
+            }
+
+            return Json(new
+            {
+                Success = string.IsNullOrEmpty(errMsg),
+                ErrorMessage = errMsg,
+                Html = html,
+            }, JsonRequestBehavior.AllowGet);
         }
 
         [HttpPost]
@@ -220,27 +241,36 @@ namespace Keebee.AAT.Administrator.Controllers
             return list;
         }
 
-        private ConfigEditViewModel LoadConfigEditViewModel(int id, int selectedConfigId)
+        private ConfigEditViewModel LoadConfigEditViewModel(int id, int selectedConfigId, out string errMsg)
         {
+            errMsg = null;
             Config config = null;
             Config selectedConfig = null;
+            ConfigEditViewModel vm = null;
 
-            if (id > 0)
+            try
             {
-                config = _configsClient.Get(id);
-            }
-            else
-            {
-                selectedConfig = _configsClient.Get(selectedConfigId);
-            }
+                if (id > 0)
+                {
+                    config = _configsClient.Get(id);
+                }
+                else
+                {
+                    selectedConfig = _configsClient.Get(selectedConfigId);
+                }
 
-            var vm = new ConfigEditViewModel
+                vm = new ConfigEditViewModel
+                {
+                    Id = config?.Id ?? 0,
+                    SourceConfigName = selectedConfig?.Description,
+                    Description = (config != null) ? config.Description : string.Empty,
+                    IsActiveEventLog = config?.IsActiveEventLog ?? false
+                };
+            }
+            catch (Exception ex)
             {
-                Id = config?.Id ?? 0,
-                SourceConfigName = selectedConfig?.Description,
-                Description = (config != null) ? config.Description : string.Empty,
-                IsActiveEventLog = config?.IsActiveEventLog ?? false
-            };
+                errMsg = ex.Message;
+            }
 
             return vm;
         }

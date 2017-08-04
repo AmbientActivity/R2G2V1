@@ -1,6 +1,7 @@
 ﻿using Keebee.AAT.Administrator.ViewModels;
 using Keebee.AAT.ApiClient.Clients;
 using Keebee.AAT.BusinessRules;
+using Keebee.AAT.Administrator.Extensions;
 using System;
 using System.Linq;
 using System.Web.Mvc;
@@ -18,15 +19,32 @@ namespace Keebee.AAT.Administrator.Controllers
 
         [HttpGet]
         [Authorize]
-        public PartialViewResult GetView(int profileId, int mediaPathTypeId, string mediaPathTypeDesc, string mediaPathTypeCategory)
+        public JsonResult GetView(int profileId, int mediaPathTypeId, string mediaPathTypeDesc, string mediaPathTypeCategory)
         {
-            return PartialView("_Index", new SharedLibraryAddViewModel
+            string errMsg = null;
+            string html = null;
+
+            try
             {
-                ProfileId = profileId,
-                MediaPathTypeId = mediaPathTypeId,
-                MediaPathTypeDesc = mediaPathTypeDesc,
-                MediaPathTypeCategory = mediaPathTypeCategory
-            });
+                html = this.RenderPartialViewToString("_Index", new SharedLibraryAddViewModel
+                {
+                    ProfileId = profileId,
+                    MediaPathTypeId = mediaPathTypeId,
+                    MediaPathTypeDesc = mediaPathTypeDesc,
+                    MediaPathTypeCategory = mediaPathTypeCategory
+                });
+            }
+            catch (Exception ex)
+            {
+                errMsg = ex.Message;
+            }
+
+            return Json(new
+            {
+                Success = string.IsNullOrEmpty(errMsg),
+                ErrorMessage = errMsg,
+                Html = html,
+            }, JsonRequestBehavior.AllowGet);
         }
 
         [HttpGet]

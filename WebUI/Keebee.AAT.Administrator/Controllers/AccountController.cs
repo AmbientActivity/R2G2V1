@@ -1,6 +1,7 @@
 ﻿using Keebee.AAT.Administrator.ViewModels;
 using Keebee.AAT.BusinessRules;
 using Keebee.AAT.ApiClient.Models;
+using Keebee.AAT.Administrator.Extensions;
 using System;
 using System.Configuration;
 using System.Web;
@@ -93,15 +94,49 @@ namespace Keebee.AAT.Administrator.Controllers
         }
 
         [HttpGet]
-        public PartialViewResult GetChangePasswordView()
+        public JsonResult GetChangePasswordView()
         {
-            return PartialView("_ChangePassword", new ChangePasswordViewModel());
+            string errMsg = null;
+            string html = null;
+
+            try
+            {
+                html = this.RenderPartialViewToString("_ChangePassword", new ChangePasswordViewModel());
+            }
+            catch (Exception ex)
+            {
+                errMsg = ex.Message;
+            }
+
+            return Json(new
+            {
+                Success = string.IsNullOrEmpty(errMsg),
+                ErrorMessage = errMsg,
+                Html = html,
+            }, JsonRequestBehavior.AllowGet);
         }
 
         [HttpGet]
-        public PartialViewResult GetResetCaregiverView()
+        public JsonResult GetResetCaregiverView()
         {
-            return PartialView("_ResetCaregiver");
+            string errMsg = null;
+            string html = null;
+
+            try
+            {
+                html = this.RenderPartialViewToString("_ResetCaregiver", null);
+            }
+            catch (Exception ex)
+            {
+                errMsg = ex.Message;
+            }
+
+            return Json(new
+            {
+                Success = string.IsNullOrEmpty(errMsg),
+                ErrorMessage = errMsg,
+                Html = html,
+            }, JsonRequestBehavior.AllowGet);
         }
 
         [HttpGet]

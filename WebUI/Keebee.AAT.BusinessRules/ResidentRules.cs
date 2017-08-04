@@ -183,12 +183,18 @@ namespace Keebee.AAT.BusinessRules
 
                 var mediaFile = _mediaFilesClient.Get(streamId);
 
-                // generate thumbnail if not 'sudio' media type
+                // get the thumbnail if not an 'audio' media path type
                 byte[] thumb = null;
                 if (mediaPathType.Category != MediaPathTypeCategoryDescription.Audio)
                 {
-                    var thumbnailGenerator = new ThumbnailGenerator();
-                    thumb = thumbnailGenerator.Generate(mediaFile.StreamId, out errMsg);
+                    // if linking from the shared library the thumbnail will already exist
+                    thumb = _thumbnailsClient.Get(streamId)?.Image;
+                    if (thumb == null)
+                    {
+                        // generate a thumbnail for newly uploaded media
+                        var thumbnailGenerator = new ThumbnailGenerator();
+                        thumb = thumbnailGenerator.Generate(mediaFile.StreamId, out errMsg);
+                    }
                 }
 
                 mediaFileModel = GetMediaFileModel(mediaFile, newId, mediaPathType, dateAdded, isLinked, thumb);

@@ -25,43 +25,27 @@
 
             $.extend(config, options);
 
-            $.get(config.url, config.params)
-            .done(function (result) {
-                if (typeof result.Success === "undefined") {
-                    utilities.alert.show({
-                        title: "Session Timeout",
-                        type: BootstrapDialog.TYPE_INFO,
-                        message: "Your session has expired.  Please login again to continue."
-                    })
-                    .then(function() {
-                        location.reload();
-                    });
-                } else {
-                    if (result.Success) {
-                        BootstrapDialog.show({
-                            type: config.type,
-                            title: config.title,
-                            message: $("<div></div>").append(result.Html),
-                            onshown: function () {
-                                $("#" + config.focus).focus();
-                            },
-                            closable: false,
-                            buttons: getButtons()
-                        });
-                    } else {
-                        utilities.alert.show({
-                            title: "Error",
-                            type: BootstrapDialog.TYPE_DANGER,
-                            message: "The following error occured:\n" + result.ErrorMessage
-                        });
-                    }
-                }
+            utilities.job.execute({
+                url: config.url,
+                params: config.params
             })
-            .error(function(error) {
+            .then(function (result) {
+                BootstrapDialog.show({
+                    type: config.type,
+                    title: config.title,
+                    message: $("<div></div>").append(result.Html),
+                    onshown: function () {
+                        $("#" + config.focus).focus();
+                    },
+                    closable: false,
+                    buttons: getButtons()
+                });
+            })
+            .catch(function(error) {
                 utilities.alert.show({
                     title: "Partial View Load Error",
                     type: BootstrapDialog.TYPE_DANGER,
-                    message: "The following unexpected error occured:\n" + error.statusText
+                    message: "The following unexpected error occured:\n" + error
                 });
             });
 

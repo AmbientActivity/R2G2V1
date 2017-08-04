@@ -59,7 +59,31 @@
                             if (typeof inProgressDialog !== "undefined")
                                 inProgressDialog.close();
 
-                            if (typeof data.Success === "undefined") {
+                            if (data.Success) {
+                                if (config.successVerbage !== null) {
+                                    utilities.alert.show({
+                                        title: "Success",
+                                        type: BootstrapDialog.TYPE_SUCCESS,
+                                        message: config.successVerbage,
+                                        buttonOKClass: "btn-success"
+                                    });
+                                }
+                                resolve(data);
+
+                            } else {
+                                utilities.alert.show({
+                                    title: "Error",
+                                    type: BootstrapDialog.TYPE_DANGER,
+                                    message: "The following error occured:\n" + data.ErrorMessage
+                                });
+                                reject(data);
+                            }
+                        },
+                        error: function (error) {
+                            if (typeof inProgressDialog !== "undefined")
+                                inProgressDialog.close();
+
+                            if (error.statusText === "OK") {
                                 utilities.alert.show({
                                     title: "Session Timeout",
                                     type: BootstrapDialog.TYPE_INFO,
@@ -69,36 +93,12 @@
                                     location.reload();
                                 });
                             } else {
-                                if (data.Success) {
-                                    if (config.successVerbage !== null) {
-                                        utilities.alert.show({
-                                            title: "Success",
-                                            type: BootstrapDialog.TYPE_SUCCESS,
-                                            message: config.successVerbage,
-                                            buttonOKClass: "btn-success"
-                                        });
-                                    }
-                                    resolve(data);
-
-                                } else {
-                                    utilities.alert.show({
-                                        title: "Error",
-                                        type: BootstrapDialog.TYPE_DANGER,
-                                        message: "The following error occured:\n" + data.ErrorMessage
-                                    });
-                                    reject(data);
-                                }
+                                utilities.alert.show({
+                                    title: "Error",
+                                    type: BootstrapDialog.TYPE_DANGER,
+                                    message: "The following unexpected error occured:\n" + error.statusText
+                                });
                             }
-                        },
-                        error: function (error) {
-                            if (typeof inProgressDialog !== "undefined")
-                                inProgressDialog.close();
-
-                            utilities.alert.show({
-                                title: "Error",
-                                type: BootstrapDialog.TYPE_DANGER,
-                                message: "The following unexpected error occured:\n" + error.statusText
-                            });
                         }
                     });
                 });

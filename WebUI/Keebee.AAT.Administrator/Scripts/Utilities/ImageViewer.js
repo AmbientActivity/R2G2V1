@@ -33,60 +33,43 @@
                     closable: true
                 });
 
-                $.get(site.url +
-                        config.controller + "/GetImageViewerView?streamId=" + config.streamId +
-                        "&fileType=" + config.fileType)
-                    .done(function (result) {
-                        if (typeof result.Success === "undefined") {
-                            utilities.alert.show({
-                                title: "Session Timeout",
-                                type: BootstrapDialog.TYPE_INFO,
-                                message: "Your session has expired.  Please login again to continue."
-                            })
-                            .then(function() {
-                                location.reload();
-                            });
-                        } else {
-                            if (result.Success) {
-                                bootstrapDialog.realize();
-                                var header = bootstrapDialog.getModalHeader();
-                                header.css({ backgroundColor: "#000", padding: "10px", border: "none" });
-                                header.find(".close").css({ color: "#f0f0f0", opacity: "1" });
+                utilities.job.execute({
+                    url: config.controller + "/GetImageViewerView?streamId=" + config.streamId +
+                        "&fileType=" + config.fileType
+                })
+                .then(function (result) {
+                    bootstrapDialog.realize();
+                    var header = bootstrapDialog.getModalHeader();
+                    header.css({ backgroundColor: "#000", padding: "10px", border: "none" });
+                    header.find(".close").css({ color: "#f0f0f0", opacity: "1" });
 
-                                var body = bootstrapDialog.getModalBody();
-                                body.css({ "padding": "0" });
-                                body.append("<div></div>").append(result.Html);
+                    var body = bootstrapDialog.getModalBody();
+                    body.css({ "padding": "0" });
+                    body.append("<div></div>").append(result.Html);
 
-                                var footer = bootstrapDialog.getModalFooter();
-                                footer.css({
-                                    padding: "5px",
-                                    backgroundColor: "#000",
-                                    color: "#f0f0f0",
-                                    border: "none",
-                                    display: "block",
-                                    "text-align": "center"
-                                });
-                                footer.find(".bootstrap-dialog-footer")
-                                    .css({ display: "inline" })
-                                    .append("<span>Click image to close</span>");
-
-                                bootstrapDialog.open();
-                            } else {
-                                utilities.alert.show({
-                                    title: "Error",
-                                    type: BootstrapDialog.TYPE_DANGER,
-                                    message: "The following error occured:\n" + result.ErrorMessage
-                                });
-                            }
-                        }
-                    })
-                    .error(function(error) {
-                        utilities.alert.show({
-                            title: "Error",
-                            type: BootstrapDialog.TYPE_DANGER,
-                            message: "The following unexpected error occured:\n" + error.statusText
-                        });
+                    var footer = bootstrapDialog.getModalFooter();
+                    footer.css({
+                        padding: "5px",
+                        backgroundColor: "#000",
+                        color: "#f0f0f0",
+                        border: "none",
+                        display: "block",
+                        "text-align": "center"
                     });
+                    footer.find(".bootstrap-dialog-footer")
+                        .css({ display: "inline" })
+                        .append("<span>Click image to close</span>");
+
+                    bootstrapDialog.open();
+
+                })
+                .catch(function(error) {
+                    utilities.alert.show({
+                        title: "Error",
+                        type: BootstrapDialog.TYPE_DANGER,
+                        message: "The following unexpected error occured:\n" + error
+                    });
+                });
             });
         }
     }

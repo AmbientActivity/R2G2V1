@@ -38,7 +38,7 @@
             };
 
             utilities.job.execute({
-                url: "Residents/GetData/"
+                url: site.url + "Residents/GetData/"
             })
             .then(function (data) {
                 $.extend(lists, data);

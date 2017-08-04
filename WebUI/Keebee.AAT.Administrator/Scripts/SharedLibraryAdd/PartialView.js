@@ -63,13 +63,6 @@
                     addSharedDialog.realize();
                     addSharedDialog.getModalContent().css("width", "700px");
                     addSharedDialog.open();
-                })
-                .error(function (error) {
-                    utilities.alert.show({
-                        title: "Partial View Load Error",
-                        type: BootstrapDialog.TYPE_DANGER,
-                        message: "The following error occured:\n" + error.statusText
-                    });
                 });
             });
         }

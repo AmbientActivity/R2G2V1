@@ -275,6 +275,62 @@ namespace Keebee.AAT.Display
 
         #region core logic
 
+        private void MessageReceivedResponse(object source, MessageEventArgs e)
+        {
+            try
+            {
+                var responsMessage = JsonConvert.DeserializeObject<ResponseMessage>(e.MessageBody);
+
+                var resident = responsMessage.Resident;
+                var configDetail = responsMessage.ConfigDetail;
+                var responseType = configDetail.ResponseType;
+                var phidgetTypeId = configDetail.PhidgetTypeId;
+                var isActiveEventLog = responsMessage.IsActiveEventLog;
+
+                _isNewResponse =
+                    (responseType.Id != _currentResponse.Id) ||
+                    (phidgetTypeId != _currentPhidgetTypeId) ||
+                    (resident.Id != _activeResident?.Id);
+
+                // get the active resident
+                _activeResident = new ResidentMessage
+                {
+                    Id = resident.Id,
+                    Name = resident.Name,
+                    GameDifficultyLevel = resident.GameDifficultyLevel,
+                    AllowVideoCapturing = resident.AllowVideoCapturing
+                };
+
+                // get the pending response type
+                _pendingResponse = new ResponseTypeMessage
+                {
+                    Id = responseType.Id,
+                    ResponseTypeCategoryId = responseType.ResponseTypeCategoryId,
+                    IsRandom = responseType.IsRandom,
+                    IsRotational = responseType.IsRotational,
+                    IsUninterrupted = responseType.IsUninterrupted,
+                    InteractiveActivityTypeId = responseType.InteractiveActivityTypeId,
+                    SwfFile = responseType.SwfFile
+                };
+
+                // store config id's (for event logging)
+                _activeConfigDetail = new ConfigDetailMessage
+                {
+                    Id = configDetail.Id,
+                    ConfigId = configDetail.ConfigId
+                };
+
+                _currentIsActiveEventLog = isActiveEventLog;
+                _currentPhidgetTypeId = phidgetTypeId;
+
+                ExecuteResponse(responsMessage.SensorValue);
+            }
+            catch (Exception ex)
+            {
+                SystemEventLogger.WriteEntry($"Main.MessageReceivedResponse: {ex.Message}", SystemEventLogType.Display, EventLogEntryType.Error);
+            }
+        }
+
         private void ExecuteResponse(int sensorValue = 0)
         {
             if (!ShouldExecutePending()) return;
@@ -751,31 +807,6 @@ namespace Keebee.AAT.Display
         #endregion
 
         #region event handlers
-
-        private void MessageReceivedResponse(object source, MessageEventArgs e)
-        {
-            try
-            {
-                var response = JsonConvert.DeserializeObject<ResponseMessage>(e.MessageBody);
-
-                _pendingResponse = response.ConfigDetail.ResponseType;
-                _isNewResponse =
-                     (_pendingResponse.Id != _currentResponse.Id) ||
-                     (response.ConfigDetail.PhidgetTypeId != _currentPhidgetTypeId) ||
-                     (response.Resident.Id != _activeResident?.Id);
-
-                _activeResident = response.Resident;
-                _activeConfigDetail = response.ConfigDetail;
-                _currentIsActiveEventLog = response.IsActiveEventLog;
-                _currentPhidgetTypeId = response.ConfigDetail.PhidgetTypeId;
-
-                ExecuteResponse(response.SensorValue);
-            }
-            catch (Exception ex)
-            {
-                SystemEventLogger.WriteEntry($"Main.MessageReceivedResponse: {ex.Message}", SystemEventLogType.Display, EventLogEntryType.Error);
-            }
-        }
 
         private void AmbientScreenTouched(object sender, EventArgs e)
         {

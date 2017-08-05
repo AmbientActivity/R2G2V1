@@ -375,8 +375,24 @@ namespace Keebee.AAT.PhidgetService
         {
             try
             {
-                _activeConfig = JsonConvert.DeserializeObject<ConfigMessage>(e.MessageBody);
-                _isDisplayActive = _activeConfig.IsDisplayActive;
+                var config = JsonConvert.DeserializeObject<ConfigMessage>(e.MessageBody);
+
+                _activeConfig = new ConfigMessage
+                {
+                    ConfigDetails = config.ConfigDetails
+                        .Select(x => new
+                            ConfigDetailMessage
+                            {
+                                PhidgetTypeId = x.PhidgetTypeId,
+                                PhidgetStyleTypeId = x.PhidgetStyleTypeId,
+                                ResponseType = new ResponseTypeMessage
+                                {
+                                    Id = x.ResponseType.Id
+                                }
+                            })
+                };
+
+                _isDisplayActive = config.IsDisplayActive;
 
                 SystemEventLogger.WriteEntry($"The configuration '{_activeConfig.Description}' has been activated", SystemEventLogType.PhidgetService);
                 

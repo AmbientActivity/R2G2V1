@@ -39,7 +39,6 @@ namespace Keebee.AAT.PhidgetService
 
     internal partial class PhidgetService : ServiceBase
     {
-
         #region declaration
 
         // api client
@@ -115,6 +114,8 @@ namespace Keebee.AAT.PhidgetService
             openCmdLine(_interfaceKit);
         }
 
+        #region initialization
+
         private void InitializeMessageQueueListeners()
         {
             var q1 = new CustomMessageQueue(new CustomMessageQueueArgs
@@ -161,6 +162,10 @@ namespace Keebee.AAT.PhidgetService
             _totalSensors = _interfaceKit.sensors.Count;
             _totalInputs = _interfaceKit.inputs.Count;
         }
+
+        #endregion
+
+        #region sensor/input change events
 
         private void SensorChange(object sender, SensorChangeEventArgs e)
         {
@@ -371,6 +376,10 @@ namespace Keebee.AAT.PhidgetService
             return JsonConvert.SerializeObject(new Tuple<int, int>(sensorId, sensorValue));
         }
 
+        #endregion
+
+        #region message send/receive
+
         private void MessageReceiveConfigPhidget(object source, MessageEventArgs e)
         {
             try
@@ -448,6 +457,10 @@ namespace Keebee.AAT.PhidgetService
             _phidgetMonitorIsActive = activeState > 0;
         }
 
+        #endregion
+
+        #region event handlers
+
         protected override void OnStart(string[] args)
         {
             SystemEventLogger.WriteEntry("In OnStart", SystemEventLogType.PhidgetService);
@@ -458,8 +471,9 @@ namespace Keebee.AAT.PhidgetService
             SystemEventLogger.WriteEntry("In OnStop", SystemEventLogType.PhidgetService);
         }
 
-        // phidget command line open functions
-        #region Command line open functions
+        #endregion
+
+        #region command line open functions
 
         private void openCmdLine(Phidget p, String pass = null)
         {

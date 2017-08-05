@@ -27,8 +27,11 @@
             var allowedExts = ["jpg", "jpeg", "png", "gif"];
             var allowedTypes = ["image/jpg", "image/jpeg", "image/png", "image/gif"];
 
+            // filter the file type "accepts"
+            inputFileUpload.prop("accept", allowedTypes);
+
             // initialize the remove button
-            cmdRemovePicture.prop("disabled", imgProfilePicture.attr("alt") === "notexists");
+            cmdRemovePicture.prop("disabled", imgProfilePicture.attr("alt") === "notexists"); 
 
             $(function () {
                 // Bootstrappable btn-group with checkables inside

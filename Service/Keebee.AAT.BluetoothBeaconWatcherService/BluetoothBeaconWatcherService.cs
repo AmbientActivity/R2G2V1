@@ -135,6 +135,8 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
             _timer.Start();
         }
 
+        #region initialization
+
         private void StopWatcher()
         {
             if (_watcher.Status == BluetoothLEAdvertisementWatcherStatus.Started)
@@ -146,6 +148,10 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
             if (_watcher.Status == BluetoothLEAdvertisementWatcherStatus.Stopped)
                 _watcher.Start();
         }
+
+        #endregion
+
+        #region core logic
 
         private void TimerElapsed(object sender, ElapsedEventArgs e)
         {
@@ -221,13 +227,12 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
                 foreach (var beacon in beacons)
                 {
                     // if the beacon has stopped advertising for more than 5 seconds then remove it
-                    if (DateTimeOffset.Now - beacon.Timestamp >= fiveSeconds)
-                    {
-                        _beaconManager.BluetoothBeacons.Remove(beacon);
+                    if (DateTimeOffset.Now - beacon.Timestamp < fiveSeconds) continue;
+                    _beaconManager.BluetoothBeacons.Remove(beacon);
 
-                        if (!_beaconMonitorIsActive) continue;
-                        _messageQueueBeaconMonitor.Send(GetSerializedBeaconWatcherMonitorMessage(_beaconManager.BluetoothBeacons));
-                    }
+                    // if the beacon monitor is active then send it list of beacons
+                    if (!_beaconMonitorIsActive) continue;
+                    _messageQueueBeaconMonitor.Send(GetSerializedBeaconWatcherMonitorMessage(_beaconManager.BluetoothBeacons));
                 }
             }
             catch (ArgumentException e)
@@ -268,56 +273,6 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
             }
         }
 
-        private void WatcherOnReceived(BluetoothLEAdvertisementWatcher watcher, BluetoothLEAdvertisementReceivedEventArgs eventArgs)
-        {
-            try
-            {
-                if (!_displayIsActive) return;
-
-                _beaconManager.ReceivedAdvertisement(eventArgs);
-
-                if (!_beaconMonitorIsActive) return;
-                _messageQueueBeaconMonitor.Send(GetSerializedBeaconWatcherMonitorMessage(_beaconManager.BluetoothBeacons));
-            }
-            catch (ArgumentException e)
-            {
-                SystemEventLogger.WriteEntry($"WatcherOnReceived{Environment.NewLine}{e}", SystemEventLogType.BluetoothBeaconWatcherService, EventLogEntryType.Error);
-            }
-        }
-
-        private static void WatcherOnStopped(BluetoothLEAdvertisementWatcher sender, BluetoothLEAdvertisementWatcherStoppedEventArgs args)
-        {
-            string errorMsg = null;
-            if (args != null)
-            {
-                switch (args.Error)
-                {
-                    case BluetoothError.Success:
-                        errorMsg = "WatchingSuccessfullyStopped";
-                        break;
-                    case BluetoothError.RadioNotAvailable:
-                        errorMsg = "ErrorNoRadioAvailable";
-                        break;
-                    case BluetoothError.ResourceInUse:
-                        errorMsg = "ErrorResourceInUse";
-                        break;
-                    case BluetoothError.DeviceNotConnected:
-                        errorMsg = "ErrorDeviceNotConnected";
-                        break;
-                    case BluetoothError.DisabledByPolicy:
-                        errorMsg = "ErrorDisabledByPolicy";
-                        break;
-                    case BluetoothError.NotSupported:
-                        errorMsg = "ErrorNotSupported";
-                        break;
-                }
-            }
-
-            if (errorMsg != null) return;
-
-            SystemEventLogger.WriteEntry($"WatcherOnStopped{Environment.NewLine}Failed to restart Bluetooth Watch", SystemEventLogType.BluetoothBeaconWatcherService, EventLogEntryType.Error);
-        }
-
         private bool LoadResidents()
         {
             try
@@ -356,62 +311,7 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
             }
         }
 
-        private void MessageReceivedBluetoothBeaconWatcherReload(object source, MessageEventArgs e)
-        {
-            if (_residents == null) return;
-
-            ResidentBluetoothMessage resident = null;
-            try
-            {
-                resident = JsonConvert.DeserializeObject<ResidentBluetoothMessage>(e.MessageBody);
-            }
-            catch (Exception ex)
-            {
-                SystemEventLogger.WriteEntry($"MessageReceivedBluetoothBeaconWatcherReload: {ex.Message}", SystemEventLogType.BluetoothBeaconWatcherService, EventLogEntryType.Error);
-            }
-
-            if (resident == null) return;
-            if (resident.Id <= 0) return;
-
-            if (resident.IsDeleted)
-            {
-                _residents = _residents.Where(x => x.Id != resident.Id).ToList();
-            }
-            else
-            {
-                if (_residents.Any(x => x.Id == resident.Id))
-                   _residents.Single(x => x.Id == resident.Id).Name = resident.Name;
-                else
-                    _residents.Add(new ResidentBluetoothMessage {Id = resident.Id, Name = resident.Name});
-            }
-        }
-
-        private void MessageReceivedDisplayBluetoothBeaconWatcher(object source, MessageEventArgs e)
-        {
-            try
-            {
-                var displayMessage = GetDisplayStateFromMessageBody(e.MessageBody);
-                _displayIsActive = displayMessage.IsActive;
-
-                if (_displayIsActive) return;
-
-                _messageQueueBeaconWatcher.Send(JsonConvert.SerializeObject(_publicResident));
-                _activeResidentId = PublicProfileSource.Id;
-
-                if (!_beaconMonitorIsActive) return;
-                _messageQueueBeaconMonitorResident.Send(JsonConvert.SerializeObject(_publicResident));
-            }
-            catch (Exception ex)
-            {
-                SystemEventLogger.WriteEntry($"MessageReceivedDisplaydBluetoothBeaconWatcher{Environment.NewLine}{ex.Message}", SystemEventLogType.BluetoothBeaconWatcherService, EventLogEntryType.Error);
-            }
-        }
-
-        private static DisplayMessage GetDisplayStateFromMessageBody(string messageBody)
-        {
-            var display = JsonConvert.DeserializeObject<DisplayMessage>(messageBody);
-            return display;
-        }
+        #endregion
 
         #region Tools
 
@@ -495,6 +395,65 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
         }
         #endregion
 
+        #region message send/receive
+
+        private void MessageReceivedBluetoothBeaconWatcherReload(object source, MessageEventArgs e)
+        {
+            if (_residents == null) return;
+
+            ResidentBluetoothMessage resident = null;
+            try
+            {
+                resident = JsonConvert.DeserializeObject<ResidentBluetoothMessage>(e.MessageBody);
+            }
+            catch (Exception ex)
+            {
+                SystemEventLogger.WriteEntry($"MessageReceivedBluetoothBeaconWatcherReload: {ex.Message}", SystemEventLogType.BluetoothBeaconWatcherService, EventLogEntryType.Error);
+            }
+
+            if (resident == null) return;
+            if (resident.Id <= 0) return;
+
+            if (resident.IsDeleted)
+            {
+                _residents = _residents.Where(x => x.Id != resident.Id).ToList();
+            }
+            else
+            {
+                if (_residents.Any(x => x.Id == resident.Id))
+                    _residents.Single(x => x.Id == resident.Id).Name = resident.Name;
+                else
+                    _residents.Add(new ResidentBluetoothMessage { Id = resident.Id, Name = resident.Name });
+            }
+        }
+
+        private void MessageReceivedDisplayBluetoothBeaconWatcher(object source, MessageEventArgs e)
+        {
+            try
+            {
+                var displayMessage = GetDisplayStateFromMessageBody(e.MessageBody);
+                _displayIsActive = displayMessage.IsActive;
+
+                if (_displayIsActive) return;
+
+                _messageQueueBeaconWatcher.Send(JsonConvert.SerializeObject(_publicResident));
+                _activeResidentId = PublicProfileSource.Id;
+
+                if (!_beaconMonitorIsActive) return;
+                _messageQueueBeaconMonitorResident.Send(JsonConvert.SerializeObject(_publicResident));
+            }
+            catch (Exception ex)
+            {
+                SystemEventLogger.WriteEntry($"MessageReceivedDisplaydBluetoothBeaconWatcher{Environment.NewLine}{ex.Message}", SystemEventLogType.BluetoothBeaconWatcherService, EventLogEntryType.Error);
+            }
+        }
+
+        private static DisplayMessage GetDisplayStateFromMessageBody(string messageBody)
+        {
+            var display = JsonConvert.DeserializeObject<DisplayMessage>(messageBody);
+            return display;
+        }
+
         private static string GetSerializedBeaconWatcherMonitorMessage(IEnumerable<Beacon.Beacon> beacons)
         {
             var message = beacons
@@ -565,6 +524,60 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
             }
         }
 
+        #endregion
+
+        #region event handlers
+
+        private void WatcherOnReceived(BluetoothLEAdvertisementWatcher watcher, BluetoothLEAdvertisementReceivedEventArgs eventArgs)
+        {
+            try
+            {
+                if (!_displayIsActive) return;
+
+                _beaconManager.ReceivedAdvertisement(eventArgs);
+
+                if (!_beaconMonitorIsActive) return;
+                _messageQueueBeaconMonitor.Send(GetSerializedBeaconWatcherMonitorMessage(_beaconManager.BluetoothBeacons));
+            }
+            catch (ArgumentException e)
+            {
+                SystemEventLogger.WriteEntry($"WatcherOnReceived{Environment.NewLine}{e}", SystemEventLogType.BluetoothBeaconWatcherService, EventLogEntryType.Error);
+            }
+        }
+
+        private static void WatcherOnStopped(BluetoothLEAdvertisementWatcher sender, BluetoothLEAdvertisementWatcherStoppedEventArgs args)
+        {
+            string errorMsg = null;
+            if (args != null)
+            {
+                switch (args.Error)
+                {
+                    case BluetoothError.Success:
+                        errorMsg = "WatchingSuccessfullyStopped";
+                        break;
+                    case BluetoothError.RadioNotAvailable:
+                        errorMsg = "ErrorNoRadioAvailable";
+                        break;
+                    case BluetoothError.ResourceInUse:
+                        errorMsg = "ErrorResourceInUse";
+                        break;
+                    case BluetoothError.DeviceNotConnected:
+                        errorMsg = "ErrorDeviceNotConnected";
+                        break;
+                    case BluetoothError.DisabledByPolicy:
+                        errorMsg = "ErrorDisabledByPolicy";
+                        break;
+                    case BluetoothError.NotSupported:
+                        errorMsg = "ErrorNotSupported";
+                        break;
+                }
+            }
+
+            if (errorMsg != null) return;
+
+            SystemEventLogger.WriteEntry($"WatcherOnStopped{Environment.NewLine}Failed to restart Bluetooth Watch", SystemEventLogType.BluetoothBeaconWatcherService, EventLogEntryType.Error);
+        }
+
         protected override void OnStart(string[] args)
         {
             SystemEventLogger.WriteEntry("In OnStart", SystemEventLogType.BluetoothBeaconWatcherService);
@@ -576,5 +589,7 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
             _timer.Stop();
             _timer.Dispose();
         }
+
+        #endregion
     }
 }

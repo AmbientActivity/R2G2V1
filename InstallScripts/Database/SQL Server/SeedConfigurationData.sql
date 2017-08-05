@@ -27,11 +27,11 @@ SET IDENTITY_INSERT [dbo].[UserRoles] OFF
 
 -- phidget style types
 SET IDENTITY_INSERT [dbo].[PhidgetStyleTypes] ON 
-INSERT [dbo].[PhidgetStyleTypes] ([Id], [Description]) VALUES (1, 'Touch')
-INSERT [dbo].[PhidgetStyleTypes] ([Id], [Description]) VALUES (2, 'Multi-turn')
-INSERT [dbo].[PhidgetStyleTypes] ([Id], [Description]) VALUES (3, 'Stop-turn')
-INSERT [dbo].[PhidgetStyleTypes] ([Id], [Description]) VALUES (4, 'Slider')
-INSERT [dbo].[PhidgetStyleTypes] ([Id], [Description]) VALUES (5, 'On/Off')
+INSERT [dbo].[PhidgetStyleTypes] ([Id], [Description], [IsIncremental]) VALUES (1, 'Touch', 0)
+INSERT [dbo].[PhidgetStyleTypes] ([Id], [Description], [IsIncremental]) VALUES (2, 'Multi-turn', 1)
+INSERT [dbo].[PhidgetStyleTypes] ([Id], [Description], [IsIncremental]) VALUES (3, 'Stop-turn', 1)
+INSERT [dbo].[PhidgetStyleTypes] ([Id], [Description], [IsIncremental]) VALUES (4, 'Slider', 1)
+INSERT [dbo].[PhidgetStyleTypes] ([Id], [Description], [IsIncremental]) VALUES (5, 'On/Off', 0)
 SET IDENTITY_INSERT [dbo].[PhidgetStyleTypes] OFF
 
 -- phidget types

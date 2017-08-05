@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-// Generation date: 2017-07-18 6:04:48 PM
+// Generation date: 2017-08-05 3:00:09 PM
 namespace Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models
 {
     /// <summary>
@@ -665,12 +665,14 @@ namespace Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models
         /// </summary>
         /// <param name="ID">Initial value of Id.</param>
         /// <param name="description">Initial value of Description.</param>
+        /// <param name="isIncremental">Initial value of IsIncremental.</param>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        public static PhidgetStyleType CreatePhidgetStyleType(int ID, string description)
+        public static PhidgetStyleType CreatePhidgetStyleType(int ID, string description, bool isIncremental)
         {
             PhidgetStyleType phidgetStyleType = new PhidgetStyleType();
             phidgetStyleType.Id = ID;
             phidgetStyleType.Description = description;
+            phidgetStyleType.IsIncremental = isIncremental;
             return phidgetStyleType;
         }
         /// <summary>
@@ -719,6 +721,29 @@ namespace Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models
         private string _Description;
         partial void OnDescriptionChanging(string value);
         partial void OnDescriptionChanged();
+        /// <summary>
+        /// There are no comments for Property IsIncremental in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        [global::Microsoft.OData.Client.OriginalNameAttribute("IsIncremental")]
+        public bool IsIncremental
+        {
+            get
+            {
+                return this._IsIncremental;
+            }
+            set
+            {
+                this.OnIsIncrementalChanging(value);
+                this._IsIncremental = value;
+                this.OnIsIncrementalChanged();
+                this.OnPropertyChanged("IsIncremental");
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private bool _IsIncremental;
+        partial void OnIsIncrementalChanging(bool value);
+        partial void OnIsIncrementalChanged();
         /// <summary>
         /// This event is raised when the value of the property is changed
         /// </summary>
@@ -933,16 +958,18 @@ namespace Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models
         /// </summary>
         /// <param name="ID">Initial value of Id.</param>
         /// <param name="description">Initial value of Description.</param>
-        /// <param name="isSystem">Initial value of IsSystem.</param>
         /// <param name="isRandom">Initial value of IsRandom.</param>
+        /// <param name="isRotational">Initial value of IsRotational.</param>
+        /// <param name="isUninterrupted">Initial value of IsUninterrupted.</param>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        public static ResponseType CreateResponseType(int ID, string description, bool isSystem, bool isRandom)
+        public static ResponseType CreateResponseType(int ID, string description, bool isRandom, bool isRotational, bool isUninterrupted)
         {
             ResponseType responseType = new ResponseType();
             responseType.Id = ID;
             responseType.Description = description;
-            responseType.IsSystem = isSystem;
             responseType.IsRandom = isRandom;
+            responseType.IsRotational = isRotational;
+            responseType.IsUninterrupted = isUninterrupted;
             return responseType;
         }
         /// <summary>
@@ -1038,29 +1065,6 @@ namespace Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models
         partial void OnInteractiveActivityTypeIdChanging(global::System.Nullable<int> value);
         partial void OnInteractiveActivityTypeIdChanged();
         /// <summary>
-        /// There are no comments for Property IsSystem in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        [global::Microsoft.OData.Client.OriginalNameAttribute("IsSystem")]
-        public bool IsSystem
-        {
-            get
-            {
-                return this._IsSystem;
-            }
-            set
-            {
-                this.OnIsSystemChanging(value);
-                this._IsSystem = value;
-                this.OnIsSystemChanged();
-                this.OnPropertyChanged("IsSystem");
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private bool _IsSystem;
-        partial void OnIsSystemChanging(bool value);
-        partial void OnIsSystemChanged();
-        /// <summary>
         /// There are no comments for Property IsRandom in the schema.
         /// </summary>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
@@ -1083,6 +1087,52 @@ namespace Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models
         private bool _IsRandom;
         partial void OnIsRandomChanging(bool value);
         partial void OnIsRandomChanged();
+        /// <summary>
+        /// There are no comments for Property IsRotational in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        [global::Microsoft.OData.Client.OriginalNameAttribute("IsRotational")]
+        public bool IsRotational
+        {
+            get
+            {
+                return this._IsRotational;
+            }
+            set
+            {
+                this.OnIsRotationalChanging(value);
+                this._IsRotational = value;
+                this.OnIsRotationalChanged();
+                this.OnPropertyChanged("IsRotational");
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private bool _IsRotational;
+        partial void OnIsRotationalChanging(bool value);
+        partial void OnIsRotationalChanged();
+        /// <summary>
+        /// There are no comments for Property IsUninterrupted in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        [global::Microsoft.OData.Client.OriginalNameAttribute("IsUninterrupted")]
+        public bool IsUninterrupted
+        {
+            get
+            {
+                return this._IsUninterrupted;
+            }
+            set
+            {
+                this.OnIsUninterruptedChanging(value);
+                this._IsUninterrupted = value;
+                this.OnIsUninterruptedChanged();
+                this.OnPropertyChanged("IsUninterrupted");
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private bool _IsUninterrupted;
+        partial void OnIsUninterruptedChanging(bool value);
+        partial void OnIsUninterruptedChanged();
         /// <summary>
         /// There are no comments for Property ResponseTypeCategory in the schema.
         /// </summary>
@@ -4501,6 +4551,141 @@ namespace Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models
         }
     }
     /// <summary>
+    /// There are no comments for AmbientInvitationSingle in the schema.
+    /// </summary>
+    [global::Microsoft.OData.Client.OriginalNameAttribute("AmbientInvitationSingle")]
+    public partial class AmbientInvitationSingle : global::Microsoft.OData.Client.DataServiceQuerySingle<AmbientInvitation>
+    {
+        /// <summary>
+        /// Initialize a new AmbientInvitationSingle object.
+        /// </summary>
+        public AmbientInvitationSingle(global::Microsoft.OData.Client.DataServiceContext context, string path)
+            : base(context, path) {}
+
+        /// <summary>
+        /// Initialize a new AmbientInvitationSingle object.
+        /// </summary>
+        public AmbientInvitationSingle(global::Microsoft.OData.Client.DataServiceContext context, string path, bool isComposable)
+            : base(context, path, isComposable) {}
+
+        /// <summary>
+        /// Initialize a new AmbientInvitationSingle object.
+        /// </summary>
+        public AmbientInvitationSingle(global::Microsoft.OData.Client.DataServiceQuerySingle<AmbientInvitation> query)
+            : base(query) {}
+
+    }
+    /// <summary>
+    /// There are no comments for AmbientInvitation in the schema.
+    /// </summary>
+    /// <KeyProperties>
+    /// Id
+    /// </KeyProperties>
+    [global::Microsoft.OData.Client.Key("Id")]
+    [global::Microsoft.OData.Client.OriginalNameAttribute("AmbientInvitation")]
+    public partial class AmbientInvitation : global::Microsoft.OData.Client.BaseEntityType, global::System.ComponentModel.INotifyPropertyChanged
+    {
+        /// <summary>
+        /// Create a new AmbientInvitation object.
+        /// </summary>
+        /// <param name="ID">Initial value of Id.</param>
+        /// <param name="isExecuteRandom">Initial value of IsExecuteRandom.</param>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        public static AmbientInvitation CreateAmbientInvitation(int ID, bool isExecuteRandom)
+        {
+            AmbientInvitation ambientInvitation = new AmbientInvitation();
+            ambientInvitation.Id = ID;
+            ambientInvitation.IsExecuteRandom = isExecuteRandom;
+            return ambientInvitation;
+        }
+        /// <summary>
+        /// There are no comments for Property Id in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        [global::Microsoft.OData.Client.OriginalNameAttribute("Id")]
+        public int Id
+        {
+            get
+            {
+                return this._Id;
+            }
+            set
+            {
+                this.OnIdChanging(value);
+                this._Id = value;
+                this.OnIdChanged();
+                this.OnPropertyChanged("Id");
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private int _Id;
+        partial void OnIdChanging(int value);
+        partial void OnIdChanged();
+        /// <summary>
+        /// There are no comments for Property Message in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        [global::Microsoft.OData.Client.OriginalNameAttribute("Message")]
+        public string Message
+        {
+            get
+            {
+                return this._Message;
+            }
+            set
+            {
+                this.OnMessageChanging(value);
+                this._Message = value;
+                this.OnMessageChanged();
+                this.OnPropertyChanged("Message");
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private string _Message;
+        partial void OnMessageChanging(string value);
+        partial void OnMessageChanged();
+        /// <summary>
+        /// There are no comments for Property IsExecuteRandom in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        [global::Microsoft.OData.Client.OriginalNameAttribute("IsExecuteRandom")]
+        public bool IsExecuteRandom
+        {
+            get
+            {
+                return this._IsExecuteRandom;
+            }
+            set
+            {
+                this.OnIsExecuteRandomChanging(value);
+                this._IsExecuteRandom = value;
+                this.OnIsExecuteRandomChanged();
+                this.OnPropertyChanged("IsExecuteRandom");
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private bool _IsExecuteRandom;
+        partial void OnIsExecuteRandomChanging(bool value);
+        partial void OnIsExecuteRandomChanged();
+        /// <summary>
+        /// This event is raised when the value of the property is changed
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        public event global::System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        /// <summary>
+        /// The value of the property is changed
+        /// </summary>
+        /// <param name="property">property name</param>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        protected virtual void OnPropertyChanged(string property)
+        {
+            if ((this.PropertyChanged != null))
+            {
+                this.PropertyChanged(this, new global::System.ComponentModel.PropertyChangedEventArgs(property));
+            }
+        }
+    }
+    /// <summary>
     /// There are no comments for UserSingle in the schema.
     /// </summary>
     [global::Microsoft.OData.Client.OriginalNameAttribute("UserSingle")]
@@ -5415,6 +5600,29 @@ namespace Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models
             return new global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.ActiveResidentSingle(source.Context, source.GetKeyPath(global::Microsoft.OData.Client.Serializer.GetKeyString(source.Context, keys)));
         }
         /// <summary>
+        /// Get an entity of type global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.AmbientInvitation as global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.AmbientInvitationSingle specified by key from an entity set
+        /// </summary>
+        /// <param name="source">source entity set</param>
+        /// <param name="keys">dictionary with the names and values of keys</param>
+        public static global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.AmbientInvitationSingle ByKey(this global::Microsoft.OData.Client.DataServiceQuery<global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.AmbientInvitation> source, global::System.Collections.Generic.Dictionary<string, object> keys)
+        {
+            return new global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.AmbientInvitationSingle(source.Context, source.GetKeyPath(global::Microsoft.OData.Client.Serializer.GetKeyString(source.Context, keys)));
+        }
+        /// <summary>
+        /// Get an entity of type global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.AmbientInvitation as global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.AmbientInvitationSingle specified by key from an entity set
+        /// </summary>
+        /// <param name="source">source entity set</param>
+        /// <param name="id">The value of id</param>
+        public static global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.AmbientInvitationSingle ByKey(this global::Microsoft.OData.Client.DataServiceQuery<global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.AmbientInvitation> source,
+            int id)
+        {
+            global::System.Collections.Generic.Dictionary<string, object> keys = new global::System.Collections.Generic.Dictionary<string, object>
+            {
+                { "Id", id }
+            };
+            return new global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.AmbientInvitationSingle(source.Context, source.GetKeyPath(global::Microsoft.OData.Client.Serializer.GetKeyString(source.Context, keys)));
+        }
+        /// <summary>
         /// Get an entity of type global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.User as global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.UserSingle specified by key from an entity set
         /// </summary>
         /// <param name="source">source entity set</param>
@@ -5897,6 +6105,24 @@ namespace Keebee.AAT.DataAccess.Tests.KeebeeAAT
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
         private global::Microsoft.OData.Client.DataServiceQuery<global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.ActiveResident> _ActiveResidents;
         /// <summary>
+        /// There are no comments for AmbientInvitations in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        [global::Microsoft.OData.Client.OriginalNameAttribute("AmbientInvitations")]
+        public global::Microsoft.OData.Client.DataServiceQuery<global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.AmbientInvitation> AmbientInvitations
+        {
+            get
+            {
+                if ((this._AmbientInvitations == null))
+                {
+                    this._AmbientInvitations = base.CreateQuery<global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.AmbientInvitation>("AmbientInvitations");
+                }
+                return this._AmbientInvitations;
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private global::Microsoft.OData.Client.DataServiceQuery<global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.AmbientInvitation> _AmbientInvitations;
+        /// <summary>
         /// There are no comments for Users in the schema.
         /// </summary>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
@@ -6103,6 +6329,14 @@ namespace Keebee.AAT.DataAccess.Tests.KeebeeAAT
             base.AddObject("ActiveResidents", activeResident);
         }
         /// <summary>
+        /// There are no comments for AmbientInvitations in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        public void AddToAmbientInvitations(global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.AmbientInvitation ambientInvitation)
+        {
+            base.AddObject("AmbientInvitations", ambientInvitation);
+        }
+        /// <summary>
         /// There are no comments for Users in the schema.
         /// </summary>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
@@ -6175,6 +6409,7 @@ namespace Keebee.AAT.DataAccess.Tests.KeebeeAAT
         </Key>
         <Property Name=""Id"" Type=""Edm.Int32"" Nullable=""false"" />
         <Property Name=""Description"" Type=""Edm.String"" Nullable=""false"" />
+        <Property Name=""IsIncremental"" Type=""Edm.Boolean"" Nullable=""false"" />
       </EntityType>
       <EntityType Name=""PhidgetType"">
         <Key>
@@ -6191,8 +6426,9 @@ namespace Keebee.AAT.DataAccess.Tests.KeebeeAAT
         <Property Name=""ResponseTypeCategoryId"" Type=""Edm.Int32"" />
         <Property Name=""Description"" Type=""Edm.String"" Nullable=""false"" />
         <Property Name=""InteractiveActivityTypeId"" Type=""Edm.Int32"" />
-        <Property Name=""IsSystem"" Type=""Edm.Boolean"" Nullable=""false"" />
         <Property Name=""IsRandom"" Type=""Edm.Boolean"" Nullable=""false"" />
+        <Property Name=""IsRotational"" Type=""Edm.Boolean"" Nullable=""false"" />
+        <Property Name=""IsUninterrupted"" Type=""Edm.Boolean"" Nullable=""false"" />
         <NavigationProperty Name=""ResponseTypeCategory"" Type=""Keebee.AAT.DataAccess.Models.ResponseTypeCategory"">
           <ReferentialConstraint Property=""ResponseTypeCategoryId"" ReferencedProperty=""Id"" />
         </NavigationProperty>
@@ -6387,6 +6623,14 @@ namespace Keebee.AAT.DataAccess.Tests.KeebeeAAT
           <ReferentialConstraint Property=""ResidentId"" ReferencedProperty=""Id"" />
         </NavigationProperty>
       </EntityType>
+      <EntityType Name=""AmbientInvitation"">
+        <Key>
+          <PropertyRef Name=""Id"" />
+        </Key>
+        <Property Name=""Id"" Type=""Edm.Int32"" Nullable=""false"" />
+        <Property Name=""Message"" Type=""Edm.String"" />
+        <Property Name=""IsExecuteRandom"" Type=""Edm.Boolean"" Nullable=""false"" />
+      </EntityType>
       <EntityType Name=""User"">
         <Key>
           <PropertyRef Name=""Id"" />
@@ -6471,6 +6715,7 @@ namespace Keebee.AAT.DataAccess.Tests.KeebeeAAT
         <EntitySet Name=""ActiveResidents"" EntityType=""Keebee.AAT.DataAccess.Models.ActiveResident"">
           <NavigationPropertyBinding Path=""Resident"" Target=""Residents"" />
         </EntitySet>
+        <EntitySet Name=""AmbientInvitations"" EntityType=""Keebee.AAT.DataAccess.Models.AmbientInvitation"" />
         <EntitySet Name=""Users"" EntityType=""Keebee.AAT.DataAccess.Models.User"" />
         <EntitySet Name=""Roles"" EntityType=""Keebee.AAT.DataAccess.Models.Role"" />
         <EntitySet Name=""UserRoles"" EntityType=""Keebee.AAT.DataAccess.Models.UserRole"">

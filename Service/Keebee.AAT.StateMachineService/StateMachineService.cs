@@ -71,6 +71,8 @@ namespace Keebee.AAT.StateMachineService
             });
         }
 
+        #region initialization
+
         private void InitializeMessageQueueListeners()
         {
             var q1 = new CustomMessageQueue(new CustomMessageQueueArgs
@@ -194,6 +196,39 @@ namespace Keebee.AAT.StateMachineService
             }
         }
 
+        private static ConfigMessage GetConfig(Config config)
+        {
+            return new ConfigMessage
+            {
+                Id = config.Id,
+                Description = config.Description,
+                IsActiveEventLog = config.IsActiveEventLog,
+                ConfigDetails = config.ConfigDetails
+                    .Select(x => new
+                    ConfigDetailMessage
+                    {
+                        Id = x.Id,
+                        ConfigId = x.ConfigId,
+                        PhidgetTypeId = x.PhidgetType.Id,
+                        PhidgetStyleType = new PhidgetStyleTypeMessage
+                        {
+                            Id = x.PhidgetStyleType.Id,
+                            IsIncremental = x.PhidgetStyleType.IsIncremental
+                        },
+                        ResponseType = new ResponseTypeMessage
+                        {
+                            Id = x.ResponseType.Id,
+                            ResponseTypeCategoryId = x.ResponseType.ResponseTypeCategory.Id,
+                            IsRandom = x.ResponseType.IsRandom,
+                            IsRotational = x.ResponseType.IsRotational,
+                            IsUninterrupted = x.ResponseType.IsUninterrupted,
+                            InteractiveActivityTypeId = x.ResponseType.InteractiveActivityType?.Id ?? 0,
+                            SwfFile = x.ResponseType.InteractiveActivityType?.SwfFile ?? string.Empty
+                        }
+                    })
+            };
+        }
+
         private bool LoadRandomResponseTypes()
         {
             try
@@ -220,6 +255,8 @@ namespace Keebee.AAT.StateMachineService
 
             return (_randomResponseTypes != null);
         }
+
+        #endregion
 
         #region message received event handlers
 
@@ -322,35 +359,6 @@ namespace Keebee.AAT.StateMachineService
             }
         }
 
-        private static ConfigMessage GetConfig(Config config)
-        {
-            return new ConfigMessage
-            {
-                Id = config.Id,
-                Description = config.Description,
-                IsActiveEventLog = config.IsActiveEventLog,
-                ConfigDetails = config.ConfigDetails
-                    .Select(x => new
-                    ConfigDetailMessage
-                    {
-                        Id = x.Id,
-                        ConfigId = x.ConfigId,
-                        PhidgetTypeId = x.PhidgetType.Id,
-                        PhidgetStyleTypeId = x.PhidgetStyleType.Id,
-                        ResponseType = new ResponseTypeMessage
-                        {
-                            Id = x.ResponseType.Id,
-                            ResponseTypeCategoryId = x.ResponseType.ResponseTypeCategory.Id,
-                            IsRandom = x.ResponseType.IsRandom,
-                            IsRotational = x.ResponseType.IsRotational,
-                            IsUninterrupted = x.ResponseType.IsUninterrupted,
-                            InteractiveActivityTypeId = x.ResponseType.InteractiveActivityType?.Id ?? 0,
-                            SwfFile = x.ResponseType.InteractiveActivityType?.SwfFile ?? string.Empty
-                        }
-                    })
-            };
-        }
-
         private static ConfigMessage GetUpdatedConfig(ConfigMessage config)
         {
             return new ConfigMessage
@@ -366,7 +374,11 @@ namespace Keebee.AAT.StateMachineService
                         Id = x.Id,
                         ConfigId = x.ConfigId,
                         PhidgetTypeId = x.PhidgetTypeId,
-                        PhidgetStyleTypeId = x.PhidgetStyleTypeId,
+                        PhidgetStyleType = new PhidgetStyleTypeMessage
+                        {
+                            Id = x.PhidgetStyleType.Id,
+                            IsIncremental = x.PhidgetStyleType.IsIncremental
+                        },
                         ResponseType = new ResponseTypeMessage
                         {
                             Id = x.ResponseType.Id,
@@ -395,6 +407,8 @@ namespace Keebee.AAT.StateMachineService
 
         #endregion
 
+        #region event handlers
+
         protected override void OnStart(string[] args)
         {
             SystemEventLogger.WriteEntry("In OnStart", SystemEventLogType.StateMachineService);
@@ -404,6 +418,10 @@ namespace Keebee.AAT.StateMachineService
         {
             SystemEventLogger.WriteEntry("In OnStop", SystemEventLogType.StateMachineService);
         }
+
+        #endregion
+
+        #region active resident
 
         private void LogActiveResidentEvent(int residentId, string description)
         {
@@ -434,5 +452,7 @@ namespace Keebee.AAT.StateMachineService
                 SystemEventLogger.WriteEntry($"SetActiveResident: {ex.Message}", SystemEventLogType.StateMachineService, EventLogEntryType.Error);
             }
         }
+
+        #endregion
     }
 }

@@ -91,7 +91,6 @@ namespace Keebee.AAT.Operations.Service.Services
                 el.ResponseTypeCategoryId = responseType.ResponseTypeCategoryId;
 
             el.InteractiveActivityTypeId = responseType.InteractiveActivityTypeId;
-            el.IsSystem = responseType.IsSystem;
             el.IsRandom = responseType.IsRandom;
             el.IsRotational = responseType.IsRotational;
 

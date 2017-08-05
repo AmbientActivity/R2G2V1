@@ -50,7 +50,6 @@ namespace Keebee.AAT.Operations.Controllers
                         x.InteractiveActivityType.Description,
                         x.InteractiveActivityType.SwfFile
                     } : null,
-                    x.IsSystem,
                     x.IsRandom,
                     x.IsRotational,
                     x.IsUninterrupted

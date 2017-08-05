@@ -163,60 +163,33 @@ namespace Keebee.AAT.PhidgetService
             _totalInputs = _interfaceKit.inputs.Count;
         }
 
+        private void LoadConfig()
+        {
+            var config = _configsClient.GetActiveDetails();
+            _activeConfig = new ConfigMessage
+            {
+                ConfigDetails = config.ConfigDetails
+                    .Select(x => new
+                    ConfigDetailMessage
+                    {
+                        PhidgetTypeId = x.PhidgetType.Id,
+                        PhidgetStyleType = new PhidgetStyleTypeMessage
+                        {
+                            Id = x.PhidgetStyleType.Id,
+                            IsIncremental = x.PhidgetStyleType.IsIncremental
+                        },
+                        ResponseType = new ResponseTypeMessage
+                        {
+                            Id = x.ResponseType.Id
+                        }
+                    })
+            };
+            SystemEventLogger.WriteEntry($"The configuration '{config.Description}' has been activated", SystemEventLogType.PhidgetService);
+        }
+
         #endregion
 
         #region sensor/input change events
-
-        private void SensorChange(object sender, SensorChangeEventArgs e)
-        {
-            // if the interface kit is still attaching, exit  
-            if (_currentSensor != _totalSensors)
-            {
-                _currentSensor++;
-                return;
-            }
-
-            try
-            {
-                if (_phidgetMonitorIsActive)
-                {
-                    var message = CreateMessageBodyFromSensor(e.Index, e.Value);
-                    _messageQueuePhidgetMonitor.Send(message);
-                }
-
-                if (!_isDisplayActive) return;
-
-                int sensorId;
-                int sensorValue = e.Value;
-
-                var isValid = int.TryParse(Convert.ToString(e.Index), out sensorId);
-                if (!isValid) return;
-
-                // PhidgetTypeId = SensorId + 1 (SensorId is base 0)
-                var phidgetTypeId = sensorId + 1;
-
-                if (_activeConfig.ConfigDetails.All(cd => cd.PhidgetTypeId != phidgetTypeId))
-                    return;
-
-                var configDetail = _activeConfig.ConfigDetails.Single(cd => cd.PhidgetTypeId == phidgetTypeId);
-
-                switch (configDetail.PhidgetStyleTypeId)
-                {
-                    case PhidgetStyleTypeId.Touch:
-                        ProcessTouchSensor(configDetail, sensorId, sensorValue);
-                        break;
-                    case PhidgetStyleTypeId.MultiTurn:
-                    case PhidgetStyleTypeId.StopTurn:
-                    case PhidgetStyleTypeId.Slider:
-                        ProcessIncrementalSensor(configDetail, sensorId, sensorValue);
-                        break;
-                }
-            }
-            catch (Exception ex)
-            {
-                SystemEventLogger.WriteEntry($"SensorChange: {ex.Message}", SystemEventLogType.PhidgetService, EventLogEntryType.Error);
-            }
-        }
 
         private void ProcessTouchSensor(ConfigDetailMessage configDetail, int sensorId, int sensorValue)
         {
@@ -282,33 +255,6 @@ namespace Keebee.AAT.PhidgetService
             }
         }
 
-        // for debouncing
-        private DateTime _latestInputHit = DateTime.MinValue;
-        private void InputChange(object sender, InputChangeEventArgs e)
-        {
-            // if the interface kit is still attaching, exit  
-            if (_currentInput != _totalInputs)
-            {
-                _currentInput++;
-                return;
-            }
-
-            if (_phidgetMonitorIsActive)
-            {
-                var message = CreateMessageBodyFromSensor(e.Index + 8, e.Value ? 1 : 0);
-                _messageQueuePhidgetMonitor.Send(message);
-            }
-
-            // debounce the switch - don't allow consecutive events < xx milliseconds apart
-            if (DateTime.Now - _latestInputHit  < TimeSpan.FromMilliseconds(_inputDebounceTime))
-            {
-                _latestInputHit = DateTime.Now;
-                return;  // too fast
-            }
-            _latestInputHit = DateTime.Now;
-            ProcessInputChange(e);
-        }
-
         private void ProcessInputChange(InputChangeEventArgs e)
         {
             try
@@ -371,11 +317,6 @@ namespace Keebee.AAT.PhidgetService
             }
         }
 
-        private static string CreateMessageBodyFromSensor(int sensorId, int sensorValue)
-        {
-            return JsonConvert.SerializeObject(new Tuple<int, int>(sensorId, sensorValue));
-        }
-
         #endregion
 
         #region message send/receive
@@ -388,17 +329,19 @@ namespace Keebee.AAT.PhidgetService
 
                 _activeConfig = new ConfigMessage
                 {
-                    ConfigDetails = config.ConfigDetails
-                        .Select(x => new
-                            ConfigDetailMessage
-                            {
-                                PhidgetTypeId = x.PhidgetTypeId,
-                                PhidgetStyleTypeId = x.PhidgetStyleTypeId,
-                                ResponseType = new ResponseTypeMessage
-                                {
-                                    Id = x.ResponseType.Id
-                                }
-                            })
+                    ConfigDetails = config.ConfigDetails.Select(x => new ConfigDetailMessage
+                    {
+                        PhidgetTypeId = x.PhidgetTypeId,
+                        PhidgetStyleType = new PhidgetStyleTypeMessage
+                        {
+                            Id = x.PhidgetStyleType.Id,
+                            IsIncremental = x.PhidgetStyleType.IsIncremental
+                        },
+                        ResponseType = new ResponseTypeMessage
+                        {
+                            Id = x.ResponseType.Id
+                        }
+                    })
                 };
 
                 _isDisplayActive = config.IsDisplayActive;
@@ -429,26 +372,6 @@ namespace Keebee.AAT.PhidgetService
             }
         }
 
-        private void LoadConfig()
-        {
-            var config = _configsClient.GetActiveDetails();
-            _activeConfig = new ConfigMessage
-            {
-                ConfigDetails = config.ConfigDetails
-                    .Select(x => new
-                    ConfigDetailMessage
-                    {
-                        PhidgetTypeId = x.PhidgetType.Id,
-                        PhidgetStyleTypeId = x.PhidgetStyleType.Id,
-                        ResponseType = new ResponseTypeMessage
-                        {
-                            Id = x.ResponseType.Id
-                        }
-                    })
-            };
-            SystemEventLogger.WriteEntry($"The configuration '{config.Description}' has been activated", SystemEventLogType.PhidgetService);
-        }
-
         private void PhidgetMonitorMessageReceived(object sender, MessageEventArgs e)
         {
             var message = (e.MessageBody);
@@ -457,9 +380,85 @@ namespace Keebee.AAT.PhidgetService
             _phidgetMonitorIsActive = activeState > 0;
         }
 
+        private static string CreateMessageBodyFromSensor(int sensorId, int sensorValue)
+        {
+            return JsonConvert.SerializeObject(new Tuple<int, int>(sensorId, sensorValue));
+        }
+
         #endregion
 
         #region event handlers
+
+        private void SensorChange(object sender, SensorChangeEventArgs e)
+        {
+            // if the interface kit is still attaching, exit  
+            if (_currentSensor != _totalSensors)
+            {
+                _currentSensor++;
+                return;
+            }
+
+            try
+            {
+                if (_phidgetMonitorIsActive)
+                {
+                    var message = CreateMessageBodyFromSensor(e.Index, e.Value);
+                    _messageQueuePhidgetMonitor.Send(message);
+                }
+
+                if (!_isDisplayActive) return;
+
+                int sensorId;
+                int sensorValue = e.Value;
+
+                var isValid = int.TryParse(Convert.ToString(e.Index), out sensorId);
+                if (!isValid) return;
+
+                // PhidgetTypeId = SensorId + 1 (SensorId is base 0)
+                var phidgetTypeId = sensorId + 1;
+
+                if (_activeConfig.ConfigDetails.All(cd => cd.PhidgetTypeId != phidgetTypeId))
+                    return;
+
+                var configDetail = _activeConfig.ConfigDetails.Single(cd => cd.PhidgetTypeId == phidgetTypeId);
+
+                if (configDetail.PhidgetStyleType.IsIncremental)
+                    ProcessIncrementalSensor(configDetail, sensorId, sensorValue);
+                else
+                    ProcessTouchSensor(configDetail, sensorId, sensorValue);
+            }
+            catch (Exception ex)
+            {
+                SystemEventLogger.WriteEntry($"SensorChange: {ex.Message}", SystemEventLogType.PhidgetService, EventLogEntryType.Error);
+            }
+        }
+
+        // for debouncing
+        private DateTime _latestInputHit = DateTime.MinValue;
+        private void InputChange(object sender, InputChangeEventArgs e)
+        {
+            // if the interface kit is still attaching, exit  
+            if (_currentInput != _totalInputs)
+            {
+                _currentInput++;
+                return;
+            }
+
+            if (_phidgetMonitorIsActive)
+            {
+                var message = CreateMessageBodyFromSensor(e.Index + 8, e.Value ? 1 : 0);
+                _messageQueuePhidgetMonitor.Send(message);
+            }
+
+            // debounce the switch - don't allow consecutive events < xx milliseconds apart
+            if (DateTime.Now - _latestInputHit < TimeSpan.FromMilliseconds(_inputDebounceTime))
+            {
+                _latestInputHit = DateTime.Now;
+                return;  // too fast
+            }
+            _latestInputHit = DateTime.Now;
+            ProcessInputChange(e);
+        }
 
         protected override void OnStart(string[] args)
         {

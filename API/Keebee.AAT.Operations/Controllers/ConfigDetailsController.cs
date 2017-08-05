@@ -46,6 +46,7 @@ namespace Keebee.AAT.Operations.Controllers
                     {
                         cd.PhidgetStyleType.Id,
                         cd.PhidgetStyleType.Description,
+                        cd.PhidgetStyleType.IsIncremental
                     },
                     cd.Description,
                     cd.Location,
@@ -95,7 +96,8 @@ namespace Keebee.AAT.Operations.Controllers
             exObj.PhidgetStyleType = new
             {
                 configDetail.PhidgetStyleType.Id,
-                configDetail.PhidgetStyleType.Description
+                configDetail.PhidgetStyleType.Description,
+                configDetail.PhidgetStyleType.IsIncremental
             };
             exObj.Description = configDetail.Description;
             exObj.Location = configDetail.Location;

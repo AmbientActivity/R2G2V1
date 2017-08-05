@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-// Generation date: 2017-07-29 10:42:58 PM
+// Generation date: 2017-08-05 3:00:01 PM
 namespace Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models
 {
     /// <summary>
@@ -665,12 +665,14 @@ namespace Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models
         /// </summary>
         /// <param name="ID">Initial value of Id.</param>
         /// <param name="description">Initial value of Description.</param>
+        /// <param name="isIncremental">Initial value of IsIncremental.</param>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        public static PhidgetStyleType CreatePhidgetStyleType(int ID, string description)
+        public static PhidgetStyleType CreatePhidgetStyleType(int ID, string description, bool isIncremental)
         {
             PhidgetStyleType phidgetStyleType = new PhidgetStyleType();
             phidgetStyleType.Id = ID;
             phidgetStyleType.Description = description;
+            phidgetStyleType.IsIncremental = isIncremental;
             return phidgetStyleType;
         }
         /// <summary>
@@ -719,6 +721,29 @@ namespace Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models
         private string _Description;
         partial void OnDescriptionChanging(string value);
         partial void OnDescriptionChanged();
+        /// <summary>
+        /// There are no comments for Property IsIncremental in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        [global::Microsoft.OData.Client.OriginalNameAttribute("IsIncremental")]
+        public bool IsIncremental
+        {
+            get
+            {
+                return this._IsIncremental;
+            }
+            set
+            {
+                this.OnIsIncrementalChanging(value);
+                this._IsIncremental = value;
+                this.OnIsIncrementalChanged();
+                this.OnPropertyChanged("IsIncremental");
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private bool _IsIncremental;
+        partial void OnIsIncrementalChanging(bool value);
+        partial void OnIsIncrementalChanged();
         /// <summary>
         /// This event is raised when the value of the property is changed
         /// </summary>
@@ -933,22 +958,15 @@ namespace Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models
         /// </summary>
         /// <param name="ID">Initial value of Id.</param>
         /// <param name="description">Initial value of Description.</param>
-        /// <param name="isSystem">Initial value of IsSystem.</param>
         /// <param name="isRandom">Initial value of IsRandom.</param>
         /// <param name="isRotational">Initial value of IsRotational.</param>
         /// <param name="isUninterrupted">Initial value of IsUninterrupted.</param>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        public static ResponseType CreateResponseType(int ID, 
-                    string description, 
-                    bool isSystem, 
-                    bool isRandom, 
-                    bool isRotational, 
-                    bool isUninterrupted)
+        public static ResponseType CreateResponseType(int ID, string description, bool isRandom, bool isRotational, bool isUninterrupted)
         {
             ResponseType responseType = new ResponseType();
             responseType.Id = ID;
             responseType.Description = description;
-            responseType.IsSystem = isSystem;
             responseType.IsRandom = isRandom;
             responseType.IsRotational = isRotational;
             responseType.IsUninterrupted = isUninterrupted;
@@ -1046,29 +1064,6 @@ namespace Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models
         private global::System.Nullable<int> _InteractiveActivityTypeId;
         partial void OnInteractiveActivityTypeIdChanging(global::System.Nullable<int> value);
         partial void OnInteractiveActivityTypeIdChanged();
-        /// <summary>
-        /// There are no comments for Property IsSystem in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        [global::Microsoft.OData.Client.OriginalNameAttribute("IsSystem")]
-        public bool IsSystem
-        {
-            get
-            {
-                return this._IsSystem;
-            }
-            set
-            {
-                this.OnIsSystemChanging(value);
-                this._IsSystem = value;
-                this.OnIsSystemChanged();
-                this.OnPropertyChanged("IsSystem");
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private bool _IsSystem;
-        partial void OnIsSystemChanging(bool value);
-        partial void OnIsSystemChanged();
         /// <summary>
         /// There are no comments for Property IsRandom in the schema.
         /// </summary>
@@ -6414,6 +6409,7 @@ namespace Keebee.AAT.Operations.Service.KeebeeAAT
         </Key>
         <Property Name=""Id"" Type=""Edm.Int32"" Nullable=""false"" />
         <Property Name=""Description"" Type=""Edm.String"" Nullable=""false"" />
+        <Property Name=""IsIncremental"" Type=""Edm.Boolean"" Nullable=""false"" />
       </EntityType>
       <EntityType Name=""PhidgetType"">
         <Key>
@@ -6430,7 +6426,6 @@ namespace Keebee.AAT.Operations.Service.KeebeeAAT
         <Property Name=""ResponseTypeCategoryId"" Type=""Edm.Int32"" />
         <Property Name=""Description"" Type=""Edm.String"" Nullable=""false"" />
         <Property Name=""InteractiveActivityTypeId"" Type=""Edm.Int32"" />
-        <Property Name=""IsSystem"" Type=""Edm.Boolean"" Nullable=""false"" />
         <Property Name=""IsRandom"" Type=""Edm.Boolean"" Nullable=""false"" />
         <Property Name=""IsRotational"" Type=""Edm.Boolean"" Nullable=""false"" />
         <Property Name=""IsUninterrupted"" Type=""Edm.Boolean"" Nullable=""false"" />

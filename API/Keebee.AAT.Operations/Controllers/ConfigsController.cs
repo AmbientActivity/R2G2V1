@@ -67,6 +67,7 @@ namespace Keebee.AAT.Operations.Controllers
                                 {
                                     cd.PhidgetStyleType.Id,
                                     cd.PhidgetStyleType.Description,
+                                    cd.PhidgetStyleType.IsIncremental
                                 },
                                 ResponseType = new
                                 {
@@ -84,8 +85,7 @@ namespace Keebee.AAT.Operations.Controllers
                                             cd.ResponseType.InteractiveActivityType.Description,
                                             cd.ResponseType.InteractiveActivityType.SwfFile
                                         }
-                                        : null,
-                                    cd.ResponseType.IsSystem
+                                        : null
                                 }
                         }).OrderBy(o => o.PhidgetType.Id)
                 }).ToArray();
@@ -194,7 +194,8 @@ namespace Keebee.AAT.Operations.Controllers
                 PhidgetStyleType = new
                 {
                     cd.PhidgetStyleType.Id,
-                    cd.PhidgetStyleType.Description
+                    cd.PhidgetStyleType.Description,
+                    cd.PhidgetStyleType.IsIncremental
                 },
                 cd.Description,
                 cd.Location,
@@ -250,12 +251,13 @@ namespace Keebee.AAT.Operations.Controllers
                 PhidgetType = new
                 {
                     cd.PhidgetType.Id,
-                    cd.PhidgetType.Description,
+                    cd.PhidgetType.Description
                 },
                 PhidgetStyleType = new
                 {
                     cd.PhidgetStyleType.Id,
-                    cd.PhidgetStyleType.Description
+                    cd.PhidgetStyleType.Description,
+                    cd.PhidgetStyleType.IsIncremental
                 },
                 cd.Description,
                 cd.Location,

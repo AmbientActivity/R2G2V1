@@ -188,7 +188,11 @@ namespace Keebee.AAT.BusinessRules
                         Id = x.Id,
                         ConfigId = config.Id,
                         PhidgetTypeId = x.PhidgetType.Id,
-                        PhidgetStyleTypeId = x.PhidgetStyleType.Id,
+                        PhidgetStyleType = new PhidgetStyleTypeMessage
+                        {
+                            Id = x.PhidgetStyleType.Id,
+                            IsIncremental = x.PhidgetStyleType.IsIncremental
+                        },
                         ResponseType = new ResponseTypeMessage
                         {
                             Id = x.ResponseType.Id,

@@ -47,7 +47,7 @@
                             label: "Add",
                             id: "btnAdd",
                             hotkey: 13, // enter
-                            cssClass: "btn-edit",
+                            cssClass: "btn-add",
                             action: function (dialog) {
                                 var streamIds = [];
                                 $("input:checkbox:checked", $("#tblSharedFile")).each(function (idx, value) {

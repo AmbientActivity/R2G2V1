@@ -29,7 +29,7 @@
                 })
                 .then(function (result) {
                     var addSharedDialog = new BootstrapDialog({
-                        type: BootstrapDialog.TYPE_PRIMARY,
+                        type: BootstrapDialog.TYPE_SUCCESS,
                         title: "<i class='fa fa-share-alt fa-md' style='color: #fff'></i> " +
                             "Add <b>" + config.mediaPathTypeDesc + "</b> from Shared Library",
                         message: $("<div></div>").append(result.Html),

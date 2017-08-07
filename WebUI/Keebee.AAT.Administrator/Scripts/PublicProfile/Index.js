@@ -442,9 +442,9 @@
 
                         utilities.upload.init({
                             url: "PublicProfile/UploadFile" +
-                                "?mediaPathTypeId=" + mediaPathType.id +
-                                "&mediaPath=" + mediaPathType.path +
-                                "&mediaPathTypeCategory=" + mediaPathType.category,
+                                    "?mediaPathTypeId=" + mediaPathType.id +
+                                    "&mediaPath=" + mediaPathType.path +
+                                    "&mediaPathTypeCategory=" + mediaPathType.category,
                             allowedExts: mediaPathType.allowedexts.split(","),
                             allowedTypes: mediaPathType.allowedtypes.split(","),
                             maxFileBytes: mediaPathType.maxfilebytes,

@@ -431,10 +431,10 @@
 
                         utilities.upload.init({
                             url: "ResidentProfile/UploadFile" +
-                                "?residentId=" + config.residentid +
-                                "&mediaPathTypeId=" + mediaPathType.id +
-                                "&mediaPath=" + mediaPathType.path +
-                                "&mediaPathTypeCategory=" + mediaPathType.category,
+                                    "?residentId=" + config.residentid +
+                                    "&mediaPathTypeId=" + mediaPathType.id +
+                                    "&mediaPath=" + mediaPathType.path +
+                                    "&mediaPathTypeCategory=" + mediaPathType.category,
                             allowedExts: mediaPathType.allowedexts.split(","),
                             allowedTypes: mediaPathType.allowedtypes.split(","),
                             maxFileBytes: mediaPathType.maxfilebytes,

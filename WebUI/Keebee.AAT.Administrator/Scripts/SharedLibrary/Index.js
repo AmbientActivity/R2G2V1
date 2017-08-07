@@ -444,12 +444,14 @@
 
                     self.initUploader = ko.computed(function () {
                         var mediaPathType = self.selectedMediaPathType();
+
                         $("#fileupload").prop("accept", mediaPathType.allowedtypes);
 
                         utilities.upload.init({
-                            url: "SharedLibrary/UploadFile?mediaPathTypeId=" + mediaPathType.id + 
-                                "&mediaPath=" + mediaPathType.path +
-                                "&mediaPathTypeCategory=" + mediaPathType.category,
+                            url: "SharedLibrary/UploadFile" +
+                                    "?mediaPathTypeId=" + mediaPathType.id +
+                                    "&mediaPath=" + mediaPathType.path +
+                                    "&mediaPathTypeCategory=" + mediaPathType.category,
                             allowedExts: mediaPathType.allowedexts.split(","),
                             allowedTypes: mediaPathType.allowedtypes.split(","),
                             maxFileBytes: mediaPathType.maxfilebytes,

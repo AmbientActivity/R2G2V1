@@ -32,7 +32,12 @@ namespace Keebee.AAT.BusinessRules
                     service.WaitForStatus(ServiceControllerStatus.Stopped);
                 }
 
-                // bluetooth beacon watcher
+                // restart phidget
+                service = new ServiceController(ServiceName.Phidget);
+                service.Start();
+                service.WaitForStatus(ServiceControllerStatus.Running);
+
+                // restart bluetooth beacon watcher
                 if (isInstalledBeaconWatcher)
                 {
                     service = new ServiceController(ServiceName.BluetoothBeaconWatcher);
@@ -40,12 +45,7 @@ namespace Keebee.AAT.BusinessRules
                     service.WaitForStatus(ServiceControllerStatus.Running);
                 }
 
-                // phidget
-                service = new ServiceController(ServiceName.Phidget);
-                service.Start();
-                service.WaitForStatus(ServiceControllerStatus.Running);
-
-                // video
+                // reatart video capture
                 if (isInstalledVideoCapture)
                 {
                     service = new ServiceController(ServiceName.VideoCapture);

@@ -45,7 +45,7 @@ namespace Keebee.AAT.BusinessRules
                     service.WaitForStatus(ServiceControllerStatus.Running);
                 }
 
-                // reatart video capture
+                // restart video capture
                 if (isInstalledVideoCapture)
                 {
                     service = new ServiceController(ServiceName.VideoCapture);

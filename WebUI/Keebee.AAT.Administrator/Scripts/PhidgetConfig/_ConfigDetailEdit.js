@@ -10,56 +10,66 @@
     phidgetconfig.detailedit = {
         init: function (options) {
             var config = {
+                selectedPhidgetStyleTypeId: 0,
                 phidgetStyleTypeIdOnOff: 0,
+                phidgetStyleTypeIdOnOnly: 0,
                 phidgetStyleTypeIdTouch: 0,
                 maxPhidgetTypeIdSensor: 0
             };
 
             $.extend(config, options);
 
-            initPhidgetDropdowns();
+            loadPhidgetStyleDropdown();
+            setPhidgetStyleIndex(config.selectedPhidgetStyleTypeId);
 
-            $("#ddlPhidgetTypes").change(function(e) {
-                initPhidgetDropdowns();
+            $("#ddlPhidgetTypes").change(function (e) {
+                var isInput = (parseInt($("#ddlPhidgetTypes").val()) >= config.maxPhidgetTypeIdSensor);
+
+                loadPhidgetStyleDropdown(isInput);
+
+                if (isInput)
+                    setPhidgetStyleIndex(config.phidgetStyleTypeIdOnOff);
+                else
+                    setPhidgetStyleIndex(config.phidgetStyleTypeIdTouch);
             });
 
-            function initPhidgetDropdowns() {
-                var phidgetTypeId = parseInt($("#ddlPhidgetTypes").val());
-
-                if (phidgetTypeId >= config.maxPhidgetTypeIdSensor) {
-
-                    $($("#ddlPhidgetStyleTypes")
-                            .find("option[value != '" + config.phidgetStyleTypeIdOnOff + "']"))
-                        .each(function (index, opt) {
-                            $(opt).hide();
-                        });
-
-                    $("#ddlPhidgetStyleTypes")
-                        .find("option[value = '" + config.phidgetStyleTypeIdOnOff + "']")
-                        .each(function (index, opt) {
-                            $(opt).prop("selected", true);
-                        });
-
-                    $("#ddlPhidgetStyleTypes").val(config.phidgetStyleTypeIdOnOff);
-                } else {
-                    // for "Sensor" phidgets, "On/Off" style is not allowed
-                    $("#ddlPhidgetStyleTypes")
-                        .find("option[value = '" + config.phidgetStyleTypeIdOnOff + "']")
-                        .each(function (index, opt) {
-                            $(opt).hide();
-                            $(opt).prop("selected", false);
-                        });
-
-                    $("#ddlPhidgetStyleTypes")
-                        .find("option[value != '" + config.phidgetStyleTypeIdOnOff + "']")
-                        .each(function (index, opt) {
-                            $(opt).show();
-                            if (index === 0)
-                                $(opt).prop("selected", true);
-                        });
-
-                    $("#ddlPhidgetStyleTypes").val(config.phidgetStyleTypeIdTouch);
+            function loadPhidgetStyleDropdown(isInput) {
+                if (typeof isInput === "undefined") {
+                    isInput = (parseInt($("#ddlPhidgetTypes").val()) >= config.maxPhidgetTypeIdSensor);
                 }
+
+                if (isInput) {
+                    // hide all options except On/Off and OnOnly
+                    $("#ddlPhidgetStyleTypes option")
+                        .each(function (index, opt) {
+                            if (parseInt(this.value) !== config.phidgetStyleTypeIdOnOff &&
+                                parseInt(this.value) !== config.phidgetStyleTypeIdOnOnly) {
+                                $(opt).hide();
+                            } else {
+                                $(opt).show();
+                            }
+                        });
+                } else {
+                    // hide On/Off and OnOnly
+                    $("#ddlPhidgetStyleTypes option")
+                        .each(function (index, opt) {
+                            if (parseInt(this.value) === config.phidgetStyleTypeIdOnOff ||
+                                parseInt(this.value) === config.phidgetStyleTypeIdOnOnly) {
+                                $(opt).hide();
+                            } else {
+                                $(opt).show();
+                            }
+                        });
+                }
+            }
+
+            function setPhidgetStyleIndex(selectedId) {
+                $("#ddlPhidgetStyleTypes")
+                    .find("option[value=" + selectedId + "]")
+                    .each(function(index, opt) {
+                        $(opt).prop("selected", true);
+                    });
+                $("#ddlPhidgetStyleTypes").val(selectedId);
             }
         }
     }

@@ -73,7 +73,7 @@ namespace Keebee.AAT.BusinessRules
                 case PhidgetTypeId.Sensor5:
                 case PhidgetTypeId.Sensor6:
                 case PhidgetTypeId.Sensor7:
-                    if (phidgetStyleTypeId == PhidgetStyleTypeId.OnOff)
+                    if (phidgetStyleTypeId == PhidgetStyleTypeId.OnOff || phidgetStyleTypeId == PhidgetStyleTypeId.OnOnly)
                         msgs.Add("Sensors cannot be of type On/Off");
                     break;
                 case PhidgetTypeId.Input0:
@@ -84,7 +84,7 @@ namespace Keebee.AAT.BusinessRules
                 case PhidgetTypeId.Input5:
                 case PhidgetTypeId.Input6:
                 case PhidgetTypeId.Input7:
-                    if (phidgetStyleTypeId != PhidgetStyleTypeId.OnOff)
+                    if (phidgetStyleTypeId != PhidgetStyleTypeId.OnOff && phidgetStyleTypeId != PhidgetStyleTypeId.OnOnly)
                         msgs.Add("Inputs must be of type On/Off");
                     break;
             }

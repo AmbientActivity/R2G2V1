@@ -280,6 +280,10 @@ namespace Keebee.AAT.PhidgetService
 
                 var configDetail = _activeConfig.ConfigDetails.Single(cd => cd.PhidgetTypeId == phidgetTypeId);
 
+                // if an input with type "On Only" only send if the value is "On"
+                if (configDetail.PhidgetStyleType.Id == PhidgetStyleTypeId.OnOnly && !e.Value)
+                    return;
+
                 SetDiscreteStepValue();
 
                 _messageQueuePhidget.Send(CreateMessageBodyFromSensor(inputId + 8, (int)_currentDiscreteStepValue));

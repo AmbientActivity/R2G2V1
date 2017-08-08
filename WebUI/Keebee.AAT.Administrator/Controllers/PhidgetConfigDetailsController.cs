@@ -237,7 +237,9 @@ namespace Keebee.AAT.Administrator.Controllers
                             })
                             .OrderBy(x => x.Description),
                         "Id", "Description", configDetail?.ResponseType.Id),
+                    SelectedPhidgetStyleTypeId = configDetail?.PhidgetStyleType.Id ?? 0,
                     PhidgetStyleTypeIdOnOff = PhidgetStyleTypeId.OnOff,
+                    PhidgetStyleTypeIdOnOnly = PhidgetStyleTypeId.OnOnly,
                     PhidgetStyleTypeIdTouch = PhidgetStyleTypeId.Touch,
                     MaxPhidgetTypeIdSensor = PhidgetTypeId.Sensor7
                 };

@@ -30,7 +30,6 @@ namespace Keebee.AAT.BusinessRules
                 {
                     service.Stop();
                     service.WaitForStatus(ServiceControllerStatus.Stopped);
-                    while (ServiceUtilities.IsInstalled(ServiceUtilities.ServiceType.VideoCapture)) { }
                 }
 
                 // bluetooth beacon watcher

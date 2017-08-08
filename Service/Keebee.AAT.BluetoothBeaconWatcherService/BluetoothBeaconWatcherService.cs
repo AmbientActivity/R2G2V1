@@ -50,9 +50,9 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
         private int _activeResidentId;
 
         // residents
-        private IList<ResidentBluetoothMessage> _residents;
+        private IList<ResidentMessage> _residents;
 
-        private readonly ResidentBluetoothMessage _publicResident = new ResidentBluetoothMessage
+        private readonly ResidentMessage _publicResident = new ResidentMessage
         {
             Id = PublicProfileSource.Id,
             Name = PublicProfileSource.Name
@@ -281,11 +281,13 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
                 var residents = _residentsClient.Get().ToArray();
                 if (!residents.Any()) return false;
 
-                _residents = residents.Select(r => new ResidentBluetoothMessage
+                _residents = residents.Select(r => new ResidentMessage
                 {
                     Id = r.Id,
-                    Name = $"{r.FirstName} {r.LastName}".Trim()
-                }).ToArray();
+                    Name = $"{r.FirstName} {r.LastName}".Trim(),
+                    GameDifficultyLevel = r.GameDifficultyLevel,
+                    AllowVideoCapturing = r.AllowVideoCapturing
+                }).ToList();
 
                 _activeResidentId = PublicProfileSource.Id;
                 return _residents.Any();
@@ -298,7 +300,7 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
             return false;
         }
 
-        private ResidentBluetoothMessage GetResident(int id)
+        private ResidentMessage GetResident(int id)
         {
             try
             {
@@ -401,10 +403,10 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
         {
             if (_residents == null) return;
 
-            ResidentBluetoothMessage resident = null;
+            ResidentMessage resident = null;
             try
             {
-                resident = JsonConvert.DeserializeObject<ResidentBluetoothMessage>(e.MessageBody);
+                resident = JsonConvert.DeserializeObject<ResidentMessage>(e.MessageBody);
             }
             catch (Exception ex)
             {
@@ -414,16 +416,38 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
             if (resident == null) return;
             if (resident.Id <= 0) return;
 
+            // delete
             if (resident.IsDeleted)
             {
-                _residents = _residents.Where(x => x.Id != resident.Id).ToList();
+                _residents = _residents
+                    .Where(x => x.Id != resident.Id)
+                    .Select(r => new ResidentMessage
+                    {
+                        Id = r.Id,
+                        Name = r.Name,
+                        GameDifficultyLevel = r.GameDifficultyLevel,
+                        AllowVideoCapturing = r.AllowVideoCapturing
+                    }).ToList();
             }
             else
             {
+                // update
                 if (_residents.Any(x => x.Id == resident.Id))
-                    _residents.Single(x => x.Id == resident.Id).Name = resident.Name;
+                {
+                    var r = _residents.Single(x => x.Id == resident.Id);
+                    r.Name = resident.Name;
+                    r.GameDifficultyLevel = resident.GameDifficultyLevel;
+                    r.AllowVideoCapturing = resident.AllowVideoCapturing;
+                }
+                // add
                 else
-                    _residents.Add(new ResidentBluetoothMessage { Id = resident.Id, Name = resident.Name });
+                    _residents.Add(new ResidentMessage
+                    {
+                        Id = resident.Id,
+                        Name = resident.Name,
+                        GameDifficultyLevel = resident.GameDifficultyLevel,
+                        AllowVideoCapturing = resident.AllowVideoCapturing
+                    });
             }
         }
 

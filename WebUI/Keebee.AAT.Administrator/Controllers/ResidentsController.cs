@@ -407,10 +407,12 @@ namespace Keebee.AAT.Administrator.Controllers
 
         private static string CreateMessageBodyFromResident(ResidentViewModel resident, bool isDeleted = false)
         {
-            var residentMessage = new ResidentBluetoothMessage
+            var residentMessage = new ResidentMessage
             {
                 Id = resident.Id,
                 Name = $"{resident.FirstName} {resident.LastName}".Trim(),
+                GameDifficultyLevel = resident.GameDifficultyLevel,
+                AllowVideoCapturing = resident.AllowVideoCapturing,
                 IsDeleted = isDeleted
             };
 

@@ -9,7 +9,7 @@ echo ---------------------------------------------------
 echo Done.
 
 echo ---------------------------------------------------
-echo Installing Bluetooth Beacon Watcher Service...
+echo Uninstalling Bluetooth Beacon Watcher Service...
 echo ---------------------------------------------------
 installutil /u C:\Users\%USERNAME%\Source\Repos\R2G2V1\Service\Keebee.AAT.BluetoothBeaconWatcherService\bin\Debug\Keebee.AAT.BluetoothBeaconWatcherService.exe
 echo Done.
@@ -20,11 +20,11 @@ installutil /u C:\Users\%USERNAME%\Source\Repos\R2G2V1\Service\Keebee.AAT.Phidge
 echo ---------------------------------------------------
 echo Done.
 
-REM echo ---------------------------------------------------
-REM echo Uninstalling Video Capture Service...
-REM installutil /u C:\Users\%USERNAME%\Source\Repos\R2G2V1\Service\Keebee.AAT.VideoCaptureService\bin\Debug\Keebee.AAT.VideoCaptureService.exe
-REM echo ---------------------------------------------------
-REM echo Done.
+echo ---------------------------------------------------
+echo Uninstalling Video Capture Service...
+installutil /u C:\Users\%USERNAME%\Source\Repos\R2G2V1\Service\Keebee.AAT.VideoCaptureService\bin\Debug\Keebee.AAT.VideoCaptureService.exe
+echo ---------------------------------------------------
+echo Done.
 
 echo ---------------------------------------------------
 echo Uninstalling State Machine Service...

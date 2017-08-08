@@ -38,19 +38,13 @@ namespace Keebee.AAT.Shared
         public bool IsIncremental { get; set; }
     }
 
-    public class ResidentBluetoothMessage
-    {
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public bool IsDeleted { get; set; }
-    }
-
     public class ResidentMessage
     {
         public int Id { get; set; }
         public string Name { get; set; }
         public int GameDifficultyLevel { get; set; }
         public bool AllowVideoCapturing { get; set; }
+        public bool IsDeleted { get; set; }
     }
 
     public class ResponseMessage

@@ -106,79 +106,6 @@ namespace Keebee.AAT.StateMachineService
             });
         }
 
-        private void ExecuteResponse(int phidgetTypeId, int sensorValue)
-        {
-            try
-            {
-                // if the activity is not defined in the config then exit
-                if (_activeConfig.ConfigDetails.All(x => x.PhidgetTypeId != phidgetTypeId))
-                    return;
-
-                var configDetail = _activeConfig.ConfigDetails
-                    .Single(cd => cd.PhidgetTypeId == phidgetTypeId);
-
-                var responseMessage = new ResponseMessage
-                {
-                    SensorValue = sensorValue,
-                    ConfigDetail = configDetail,
-                    Resident = _activeResident,
-                    IsActiveEventLog = _activeConfig.IsActiveEventLog
-                };
-
-                // for the OffScreen, need to alternate between the OffScreen and a 'random' response
-                if (configDetail.ResponseType.Id == ResponseTypeId.OffScreen &&
-                    _currentResponseTypeId == ResponseTypeId.OffScreen)
-                {
-                    responseMessage.ConfigDetail.ResponseType = GetOffScreenResponse();
-                    _currentResponseTypeId = responseMessage.ConfigDetail.ResponseType.Id;
-                }
-                else
-                    _currentResponseTypeId = configDetail.ResponseType.Id;
-
-                if (_isInstalledVideoCapture)
-                {
-                    if (configDetail.ResponseType.ResponseTypeCategoryId != ResponseTypeCategoryId.System)
-                    {
-                        if (_activeResident.AllowVideoCapturing)
-                            // send instruction to the video capture service to start capturing
-                            _messageQueueVideoCapture.Send("1");
-                    }
-                }
-
-                _messageQueueResponse.Send(JsonConvert.SerializeObject(responseMessage));
-                
-            }
-            catch (Exception ex)
-            {
-                SystemEventLogger.WriteEntry($"ExecuteResponse: {ex.Message}", SystemEventLogType.StateMachineService, EventLogEntryType.Error);
-                _currentResponseTypeId = 0;
-            }
-        }
-
-        private int _currentSequentialResponseTypeIndex = -1;
-        private ResponseTypeMessage GetOffScreenResponse()
-        {
-            ResponseTypeMessage responseType = null;
-            try
-            {
-                if (LoadRandomResponseTypes())
-                {
-                    if (_currentSequentialResponseTypeIndex < _randomResponseTypes.Length - 1)
-                        _currentSequentialResponseTypeIndex++;
-                    else
-                        _currentSequentialResponseTypeIndex = 0;
-
-                    responseType = _randomResponseTypes[_currentSequentialResponseTypeIndex];
-                }
-            }
-            catch (Exception ex)
-            {
-                SystemEventLogger.WriteEntry($"GetOffScreenResponse: {ex.Message}", SystemEventLogType.StateMachineService, EventLogEntryType.Error);
-            }
-
-            return responseType;
-        }
-
         private void LoadConfig()
         {
             if (_activeConfig != null) return;
@@ -258,6 +185,83 @@ namespace Keebee.AAT.StateMachineService
 
         #endregion
 
+        #region core logic
+
+        private void ExecuteResponse(int phidgetTypeId, int sensorValue)
+        {
+            try
+            {
+                // if the activity is not defined in the config then exit
+                if (_activeConfig.ConfigDetails.All(x => x.PhidgetTypeId != phidgetTypeId))
+                    return;
+
+                var configDetail = _activeConfig.ConfigDetails
+                    .Single(cd => cd.PhidgetTypeId == phidgetTypeId);
+
+                var responseMessage = new ResponseMessage
+                {
+                    SensorValue = sensorValue,
+                    ConfigDetail = configDetail,
+                    Resident = _activeResident,
+                    IsActiveEventLog = _activeConfig.IsActiveEventLog
+                };
+
+                // for the OffScreen, need to alternate between the OffScreen and a 'random' response
+                if (configDetail.ResponseType.Id == ResponseTypeId.OffScreen &&
+                    _currentResponseTypeId == ResponseTypeId.OffScreen)
+                {
+                    responseMessage.ConfigDetail.ResponseType = GetOffScreenResponse();
+                    _currentResponseTypeId = responseMessage.ConfigDetail.ResponseType.Id;
+                }
+                else
+                    _currentResponseTypeId = configDetail.ResponseType.Id;
+
+                if (_isInstalledVideoCapture)
+                {
+                    if (configDetail.ResponseType.ResponseTypeCategoryId != ResponseTypeCategoryId.System)
+                    {
+                        if (_activeResident.AllowVideoCapturing)
+                            // send instruction to the video capture service to start capturing
+                            _messageQueueVideoCapture.Send("1");
+                    }
+                }
+
+                _messageQueueResponse.Send(JsonConvert.SerializeObject(responseMessage));
+
+            }
+            catch (Exception ex)
+            {
+                SystemEventLogger.WriteEntry($"ExecuteResponse: {ex.Message}", SystemEventLogType.StateMachineService, EventLogEntryType.Error);
+                _currentResponseTypeId = 0;
+            }
+        }
+
+        private int _currentSequentialResponseTypeIndex = -1;
+        private ResponseTypeMessage GetOffScreenResponse()
+        {
+            ResponseTypeMessage responseType = null;
+            try
+            {
+                if (LoadRandomResponseTypes())
+                {
+                    if (_currentSequentialResponseTypeIndex < _randomResponseTypes.Length - 1)
+                        _currentSequentialResponseTypeIndex++;
+                    else
+                        _currentSequentialResponseTypeIndex = 0;
+
+                    responseType = _randomResponseTypes[_currentSequentialResponseTypeIndex];
+                }
+            }
+            catch (Exception ex)
+            {
+                SystemEventLogger.WriteEntry($"GetOffScreenResponse: {ex.Message}", SystemEventLogType.StateMachineService, EventLogEntryType.Error);
+            }
+
+            return responseType;
+        }
+
+        #endregion
+
         #region message received event handlers
 
         private void MessageReceivedPhidget(object source, MessageEventArgs e)
@@ -301,7 +305,13 @@ namespace Keebee.AAT.StateMachineService
                     SetActiveResident(null);
                 }
 
-                _activeResident = resident;
+                _activeResident = new ResidentMessage
+                {
+                    Id = resident.Id,
+                    Name = resident.Name,
+                    GameDifficultyLevel = resident.GameDifficultyLevel,
+                    AllowVideoCapturing = resident.AllowVideoCapturing
+                };
             }
 
             catch (Exception ex)

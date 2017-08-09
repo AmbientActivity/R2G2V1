@@ -238,10 +238,8 @@ namespace Keebee.AAT.Administrator.Controllers
                             .OrderBy(x => x.Description),
                         "Id", "Description", configDetail?.ResponseType.Id),
                     SelectedPhidgetStyleTypeId = configDetail?.PhidgetStyleType.Id ?? 0,
-                    PhidgetStyleTypeIdOnOff = PhidgetStyleTypeId.OnOff,
-                    PhidgetStyleTypeIdOnOnly = PhidgetStyleTypeId.OnOnly,
-                    PhidgetStyleTypeIdTouch = PhidgetStyleTypeId.Touch,
-                    MaxPhidgetTypeIdSensor = PhidgetTypeId.Sensor7
+                    AllowedInputStyleTypes = $"{PhidgetStyleTypeId.OnOff},{PhidgetStyleTypeId.OnOnly}",
+                    AllowedSensorStyleTypes = $"{PhidgetStyleTypeId.Touch},{PhidgetStyleTypeId.MultiTurn},{PhidgetStyleTypeId.StopTurn},{PhidgetStyleTypeId.Slider}"
                 };
             }
             catch (Exception ex)

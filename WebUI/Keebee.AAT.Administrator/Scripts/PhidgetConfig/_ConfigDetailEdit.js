@@ -11,56 +11,61 @@
         init: function (options) {
             var config = {
                 selectedPhidgetStyleTypeId: 0,
-                phidgetStyleTypeIdOnOff: 0,
-                phidgetStyleTypeIdOnOnly: 0,
-                phidgetStyleTypeIdTouch: 0,
-                maxPhidgetTypeIdSensor: 0
+                allowedInputStyleTypes: "",
+                allowedSensorStyleTypes: ""
             };
 
             $.extend(config, options);
+
+            var allowedInputStyleTypes = config.allowedInputStyleTypes.trim().split(",");
+            var allowedSensorStyleTypes = config.allowedSensorStyleTypes.trim().split(",");
 
             loadPhidgetStyleDropdown();
             setPhidgetStyleIndex(config.selectedPhidgetStyleTypeId);
 
             $("#ddlPhidgetTypes").change(function (e) {
-                var isInput = (parseInt($("#ddlPhidgetTypes").val()) >= config.maxPhidgetTypeIdSensor);
+                var isInput = ($("#ddlPhidgetTypes option:selected").text()
+                    .toLowerCase().indexOf("input") >= 0);
 
                 loadPhidgetStyleDropdown(isInput);
-
-                if (isInput)
-                    setPhidgetStyleIndex(config.phidgetStyleTypeIdOnOff);
-                else
-                    setPhidgetStyleIndex(config.phidgetStyleTypeIdTouch);
             });
 
             function loadPhidgetStyleDropdown(isInput) {
                 if (typeof isInput === "undefined") {
-                    isInput = (parseInt($("#ddlPhidgetTypes").val()) >= config.maxPhidgetTypeIdSensor);
+                    isInput = ($("#ddlPhidgetTypes option:selected").text()
+                        .toLowerCase().indexOf("input") >= 0);
                 }
+
+                var selectedId = 0;
 
                 if (isInput) {
                     // hide all options except On/Off and OnOnly
                     $("#ddlPhidgetStyleTypes option")
                         .each(function (index, opt) {
-                            if (parseInt(this.value) !== config.phidgetStyleTypeIdOnOff &&
-                                parseInt(this.value) !== config.phidgetStyleTypeIdOnOnly) {
-                                $(opt).hide();
-                            } else {
+                            if (allowedInputStyleTypes.includes(this.value)) {
                                 $(opt).show();
+                                if (selectedId === 0)
+                                    selectedId = parseInt(this.value);
+                            } else {
+                                $(opt).hide();
+                                $(opt).prop("selected", false);
                             }
                         });
                 } else {
-                    // hide On/Off and OnOnly
+                    // hide options On/Off and OnOnly
                     $("#ddlPhidgetStyleTypes option")
                         .each(function (index, opt) {
-                            if (parseInt(this.value) === config.phidgetStyleTypeIdOnOff ||
-                                parseInt(this.value) === config.phidgetStyleTypeIdOnOnly) {
-                                $(opt).hide();
-                            } else {
+                            if (allowedSensorStyleTypes.includes(this.value)) {
                                 $(opt).show();
+                                if (selectedId === 0)
+                                    selectedId = parseInt(this.value);
+                            } else {
+                                $(opt).hide();
+                                $(opt).prop("selected", false);
                             }
                         });
                 }
+                $("#ddlPhidgetStyleTypes").val(selectedId);
             }
 
             function setPhidgetStyleIndex(selectedId) {

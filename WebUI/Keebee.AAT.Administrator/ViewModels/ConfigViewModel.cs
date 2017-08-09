@@ -51,9 +51,7 @@ namespace Keebee.AAT.Administrator.ViewModels
         public SelectList ResponseTypes { get; set; }
         public bool IsAdd { get; set; }
         public int SelectedPhidgetStyleTypeId { get; set; }
-        public int PhidgetStyleTypeIdOnOff { get; set; }
-        public int PhidgetStyleTypeIdOnOnly { get; set; }
-        public int PhidgetStyleTypeIdTouch { get; set; }
-        public int MaxPhidgetTypeIdSensor { get; set; }
+        public string AllowedInputStyleTypes { get; set; }
+        public string AllowedSensorStyleTypes { get; set; }
     }
 }

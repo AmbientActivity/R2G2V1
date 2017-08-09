@@ -459,8 +459,11 @@ input[type="checkbox"] {
 .col-filename-el {
     width: 50%;
 }
+.col-filename-vc {
+    width: 45%;
+}
 .col-path {
-    width: 20%;
+    width: 30%;
 }
 
 /* resident table */

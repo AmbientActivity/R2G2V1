@@ -1,18 +1,18 @@
-﻿using System;
-using Keebee.AAT.Administrator.ViewModels;
+﻿using Keebee.AAT.Administrator.ViewModels;
 using Keebee.AAT.Shared;
 using Keebee.AAT.BusinessRules;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Web.Mvc;
-using Keebee.AAT.SystemEventLogging;
 
 namespace Keebee.AAT.Administrator.Controllers
 {
     public class VideoCapturesController : Controller
     {
-        // GET: VideoCaptures
+        [HttpGet]
+        [Authorize]
         public ActionResult Index()
         {
             return View();

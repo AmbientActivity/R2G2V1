@@ -71,10 +71,6 @@
 
                 <tbody data-bind="foreach: configDetailsTable, tableRender: configDetailsTable">
                     <tr data-bind="attr: {id: 'row_' +  id}">
-                        <!-- ko if: !canedit -->
-                        <td><span data-bind="css: 'glyphicon glyphicon-flag glyphicon-lg'"></span></td>
-                        <td><span data-bind="css: 'glyphicon glyphicon-flag glyphicon-lg'"></span></td>
-                        <!-- /ko -->
                         <td data-bind="text: phidgettype()"></td>
                         <td data-bind="text: phidgetstyletype()"></td>
                         <td data-bind="text: description()"></td>
@@ -89,6 +85,10 @@
                         <!-- ko if: canedit -->
                         <td><a data-toggle="tooltip" title="Edit detail" href="javascript:void(0)" data-bind="attr: { id: 'edit_' + id }, click: $parent.editDetail, css: 'glyphicon glyphicon-pencil glyphicon-lg'"></a></td>
                         <td><a data-toggle="tooltip" title="Delete detail" href="javascript:void(0)" data-bind="attr: { id: 'delete_' + id}, click: $parent.deleteDetail, css: 'glyphicon glyphicon-trash glyphicon-lg'"></a></td>
+                        <!-- /ko -->
+                        <!-- ko if: !canedit -->
+                        <td><span data-bind="css: 'glyphicon glyphicon-flag glyphicon-lg'"></span></td>
+                        <td><span data-bind="css: 'glyphicon glyphicon-flag glyphicon-lg'"></span></td>
                         <!-- /ko -->
                     </tr>
                 </tbody>

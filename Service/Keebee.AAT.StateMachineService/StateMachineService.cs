@@ -206,11 +206,11 @@ namespace Keebee.AAT.StateMachineService
                     IsActiveEventLog = _activeConfig.IsActiveEventLog
                 };
 
-                // for the OffScreen, need to alternate between the OffScreen and a 'random' response
-                if (configDetail.ResponseType.Id == ResponseTypeId.OffScreen &&
-                    _currentResponseTypeId == ResponseTypeId.OffScreen)
+                // handle 'random' response type
+                if ((configDetail.ResponseType.Id == ResponseTypeId.OffScreen && _currentResponseTypeId == ResponseTypeId.OffScreen)
+                    || configDetail.ResponseType.Id == ResponseTypeId.Random)
                 {
-                    responseMessage.ConfigDetail.ResponseType = GetOffScreenResponse();
+                    responseMessage.ConfigDetail.ResponseType = GetRandomResponse();
                     _currentResponseTypeId = responseMessage.ConfigDetail.ResponseType.Id;
                 }
                 else
@@ -237,7 +237,7 @@ namespace Keebee.AAT.StateMachineService
         }
 
         private int _currentSequentialResponseTypeIndex = -1;
-        private ResponseTypeMessage GetOffScreenResponse()
+        private ResponseTypeMessage GetRandomResponse()
         {
             ResponseTypeMessage responseType = null;
             try
@@ -254,7 +254,7 @@ namespace Keebee.AAT.StateMachineService
             }
             catch (Exception ex)
             {
-                SystemEventLogger.WriteEntry($"GetOffScreenResponse: {ex.Message}", SystemEventLogType.StateMachineService, EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"GetRandomResponse: {ex.Message}", SystemEventLogType.StateMachineService, EventLogEntryType.Error);
             }
 
             return responseType;

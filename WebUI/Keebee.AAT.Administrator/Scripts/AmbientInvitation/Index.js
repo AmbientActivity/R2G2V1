@@ -125,7 +125,7 @@
                     self.columns = ko.computed(function () {
                         var arr = [];
                         arr.push({ title: "Message", sortKey: "message", cssClass: "col-message", visible: true });
-                        arr.push({ title: "Random", sortKey: "executerandom", cssClass: "col-executerandom", visible: true });
+                        arr.push({ title: "Random", sortKey: "executerandom", cssClass: "col-isexecuterandom", visible: true });
                         return arr;
                     });
 

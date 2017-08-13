@@ -29,7 +29,7 @@ namespace Keebee.AAT.ApiClient.Clients
 
         public AmbientInvitation Get(int id)
         {
-            var request = new RestRequest("ambientinvitations/1", Method.GET);
+            var request = new RestRequest($"ambientinvitations/{id}", Method.GET);
             var data = Execute(request);
             var ambientInvitation = JsonConvert.DeserializeObject<AmbientInvitation>(data.Content);
 

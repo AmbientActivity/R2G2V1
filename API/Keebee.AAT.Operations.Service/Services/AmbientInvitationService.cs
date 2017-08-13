@@ -57,6 +57,11 @@ namespace Keebee.AAT.Operations.Service.Services
             var el = container.AmbientInvitations.Where(e => e.Id == id).SingleOrDefault();
             if (el == null) return;
 
+            if (!string.IsNullOrEmpty(ambientInvitation.Message))
+                el.Message = ambientInvitation.Message;
+
+            el.IsExecuteRandom = ambientInvitation.IsExecuteRandom;
+
             container.UpdateObject(el);
             container.SaveChanges();
         }

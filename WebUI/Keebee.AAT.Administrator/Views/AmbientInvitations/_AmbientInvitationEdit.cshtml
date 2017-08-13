@@ -1,0 +1,26 @@
+﻿@model Keebee.AAT.Administrator.ViewModels.AmbientInvitationViewModel
+
+<div class="container container-config-detail-edit">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="label label-default">Message</div>
+            <input type="text" id="txtMessage" class="form-control" value="@Model.Message" maxlength="50" />
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="label label-default">Execute Random</div>
+            @if (Model.IsExecuteRandom)
+            {
+                <div><input type="checkbox" class="form-control checkbox-size-lg" id="chkIsExecuteRandom" checked/>
+                </div>
+            }
+            else
+            {
+                <div><input type="checkbox" class="form-control checkbox-size-lg" id="chkIsExecuteRandom"/>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+<div class="validation-container" id="validation-container"></div>

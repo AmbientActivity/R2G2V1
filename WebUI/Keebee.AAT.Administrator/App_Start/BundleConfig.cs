@@ -54,6 +54,7 @@ namespace Keebee.AAT.Administrator
                 "~/Scripts/Utilities/Validation.js",
                 "~/Scripts/Utilities/Upload.js",
                 "~/Scripts/Utilities/SessionExpiry.js",
+                "~/Scripts/AmbientInvitation/Index.js",
                 "~/Scripts/Maintenance/Index.js"));
 
             bundles.Add(new ScriptBundle("~/bundles/Bootstrap").Include(

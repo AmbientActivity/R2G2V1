@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Web.Mvc;
-using Keebee.AAT.BusinessRules.Models;
 
 namespace Keebee.AAT.Administrator.ViewModels
 {

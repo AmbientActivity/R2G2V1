@@ -253,7 +253,7 @@
                             : title.replace("{glyphicon}", "pencil").replace("{action}", "Edit");
 
                         utilities.partialview.show({
-                            url: "PhidgetConfig/GetConfigEditView/" + id,
+                            url: "PhidgetConfig/GetEditView/" + id,
                             type: add ? BootstrapDialog.TYPE_SUCCESS : BootstrapDialog.TYPE_PRIMARY,
                             title: title,
                             params: { selectedConfigid: self.selectedConfigId() },
@@ -295,14 +295,15 @@
                                                             self.sortConfigs();
                                                             self.sort();
 
-                                                            if (c.Id === self.activeConfigId()) {
-                                                                if (c.IsActiveEventLog === true)
-                                                                    self.activeEventLogDesc("On");
-                                                                else
-                                                                    self.activeEventLogDesc("Off");
-                                                            }
                                                         } else {
                                                             self.update(saveResult.ConfigList);
+                                                        }
+
+                                                        if (c.Id === self.activeConfigId()) {
+                                                            if (c.IsActiveEventLog === true)
+                                                                self.activeEventLogDesc("On");
+                                                            else
+                                                                self.activeEventLogDesc("Off");
                                                         }
 
                                                         self.selectedConfigId(saveResult.ConfigList[0].Id);
@@ -314,10 +315,10 @@
                                                     self.enableDetail();
                                                     enableButtons(true);
                                                 })
-                                                .catch(function() {
-                                                    self.enableDetail();
-                                                    enableButtons(true);
-                                                });
+                                            .catch(function() {
+                                                self.enableDetail();
+                                                enableButtons(true);
+                                            });
                                         } else {
                                             utilities.validation.show({
                                                 container: "validation-container",
@@ -402,7 +403,7 @@
                         }
 
                         utilities.partialview.show({
-                            url: "PhidgetConfigDetails/GetConfigDetailEditView/" + id,
+                            url: "PhidgetConfigDetails/GetEditView/" + id,
                             type: add ? BootstrapDialog.TYPE_SUCCESS : BootstrapDialog.TYPE_PRIMARY,
                             title: title,
                             params: { id: id, configId: self.selectedConfigId() },
@@ -418,7 +419,7 @@
                                 utilities.job.execute({
                                     url: "PhidgetConfigDetails/Validate",
                                     type: "POST",
-                                    params: { configdetail: configdetail }
+                                    params: { configDetail: configdetail }
                                 })
                                 .then(function(validateResult) {
                                     isEditLoading = false;
@@ -427,7 +428,7 @@
                                         utilities.job.execute({
                                                 url: "PhidgetConfigDetails/Save",
                                                 type: "POST",
-                                                params: { configdetail: configdetail }
+                                                params: { configDetail: configdetail }
                                             })
                                             .then(function(saveResult) {
                                                 if (add) {
@@ -651,7 +652,7 @@
                             var c = self.getConfig(value.Id);
 
                             c.description(value.Description);
-                            c.isActive(value.IsActive);
+                            c.isactive(value.IsActive);
                             c.isactiveeventlog(value.IsActiveEventLog);
                             c.candelete(value.CanDelete);
                         });

@@ -66,16 +66,16 @@ namespace Keebee.AAT.Administrator.Controllers
 
             try
             {
-                var configDetailid = configDetail.Id;
+                var configDetailId = configDetail.Id;
 
-                errMsg = configDetailid > 0
-                    ? UpdateConfigDetail(configDetail)
-                    : AddConfigDetail(configDetail, out configDetailid);
+                errMsg = configDetailId > 0
+                    ? Update(configDetail)
+                    : Add(configDetail, out configDetailId);
 
-                if (configDetailid > 0)
+                if (configDetailId > 0)
                 {
-                    var detail = _configsClient.GetDetail(configDetailid);
-                    vm = GetConfigDetailModel(detail);
+                    var detail = _configsClient.GetDetail(configDetailId);
+                    vm = GetViewModel(detail);
                 }
             }
             catch (Exception ex)
@@ -125,14 +125,14 @@ namespace Keebee.AAT.Administrator.Controllers
 
         [HttpGet]
         [Authorize]
-        public JsonResult GetConfigDetailEditView(int id, int configId)
+        public JsonResult GetEditView(int id, int configId)
         {
             string errMsg;
             string html = null;
 
             try
             {
-                var vm = LoadConfigDetailEditViewModel(id, configId, out errMsg);
+                var vm = LoadEditViewModel(id, configId, out errMsg);
                 if (!string.IsNullOrEmpty(errMsg)) throw new Exception(errMsg);
 
                 html = this.RenderPartialViewToString("_ConfigDetailEdit", vm);
@@ -150,7 +150,7 @@ namespace Keebee.AAT.Administrator.Controllers
             }, JsonRequestBehavior.AllowGet);
         }
 
-        private string UpdateConfigDetail(ConfigDetailEditViewModel configDetail)
+        private string Update(ConfigDetailEditViewModel configDetail)
         {
             string errMsg;
             try
@@ -178,7 +178,7 @@ namespace Keebee.AAT.Administrator.Controllers
             return errMsg;
         }
 
-        private string AddConfigDetail(ConfigDetailEditViewModel configDetail, out int newId)
+        private string Add(ConfigDetailEditViewModel configDetail, out int newId)
         {
             newId = -1;
             string errMsg;
@@ -207,7 +207,7 @@ namespace Keebee.AAT.Administrator.Controllers
             return errMsg;
         }
 
-        private static ConfigDetailEditViewModel LoadConfigDetailEditViewModel(int id, int configId, out string errMsg)
+        private static ConfigDetailEditViewModel LoadEditViewModel(int id, int configId, out string errMsg)
         {
             errMsg = null;
             ConfigDetailEditViewModel vm = null;
@@ -256,7 +256,7 @@ namespace Keebee.AAT.Administrator.Controllers
             _messageQueueConfigSms.Send(rules.GetMessageBody(configId));
         }
 
-        private static ConfigDetailViewModel GetConfigDetailModel(ConfigDetail detail)
+        private static ConfigDetailViewModel GetViewModel(ConfigDetail detail)
         {
             return new ConfigDetailViewModel
             {

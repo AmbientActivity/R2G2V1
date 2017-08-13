@@ -65,7 +65,7 @@ namespace Keebee.AAT.Administrator.Controllers
 
         [HttpGet]
         [Authorize]
-        public JsonResult GetConfigEditView(int id, int selectedConfigId)
+        public JsonResult GetEditView(int id, int selectedConfigId)
         {
             string errMsg;
             string html = null;
@@ -127,20 +127,20 @@ namespace Keebee.AAT.Administrator.Controllers
 
             try
             {
-                var configid = config.Id;
+                var configId = config.Id;
 
-                if (configid > 0)
+                if (configId > 0)
                 {
-                    errMsg = UpdateConfig(config);
-                    var c = _configsClient.Get(configid);
+                    errMsg = Update(config);
+                    var c = _configsClient.Get(configId);
                     vm = GetConfigViewModel(c);
                 }
                 else
                 {
-                    errMsg = AddConfig(config, selectedConfigId, out configid);
+                    errMsg = Add(config, selectedConfigId, out configId);
                     if (!string.IsNullOrEmpty(errMsg)) throw new Exception();
 
-                    var cfg = _configsClient.GetWithDetails(configid);
+                    var cfg = _configsClient.GetWithDetails(configId);
                     vm = GetConfigViewModel(cfg);
                     detailVm = cfg.ConfigDetails.Select(GetConfigDetailViewModel)
                         .ToArray();
@@ -275,7 +275,7 @@ namespace Keebee.AAT.Administrator.Controllers
             return vm;
         }
 
-        private string UpdateConfig(ConfigViewModel config)
+        private string Update(ConfigViewModel config)
         {
             string errMsg;
 
@@ -300,7 +300,7 @@ namespace Keebee.AAT.Administrator.Controllers
             return errMsg;
         }
 
-        private string AddConfig(ConfigViewModel config, int selectedConfigId, out int newId)
+        private string Add(ConfigViewModel config, int selectedConfigId, out int newId)
         {
             string errMsg;
             newId = -1;

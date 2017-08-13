@@ -167,6 +167,7 @@ namespace Keebee.AAT.Shared
         public const int Video = 3;
         public const int InteractiveActivity = 4;
         public const int System = 5;
+        public const int Random = 6;
     }
 
     public static class ResponseTypeId
@@ -188,6 +189,7 @@ namespace Keebee.AAT.Shared
         public const int Machinery = 15;
         public const int Animals = 16;
         public const int Cute = 17;
+        public const int Random = 18;
     }
 
     public static class MediaPlayerControl

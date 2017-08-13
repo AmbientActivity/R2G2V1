@@ -21,5 +21,6 @@
     window.services = {};
     window.utilities = {};
     window.file = {};
+    window.ambientinvitation = {};
     window.maintenance = {};
 })();

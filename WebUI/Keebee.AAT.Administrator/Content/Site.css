@@ -226,6 +226,9 @@ video {
 .row-residents-banner {
     margin-top: -12px;
 }
+.row-ambientinvitations-banner {
+    margin-top: -12px;
+}
 .row-login-banner {
     padding: 5px;
     background-color: #101112;
@@ -352,6 +355,18 @@ video {
 }
 .col-issytem {
     width: 70px;
+}
+
+/* ambient invitations */
+.ambientinvitations-container {
+    margin-left: -10px;
+}
+.col-message {
+    width: 80%;
+}
+.col-isexecuterandom {
+    width: 20%;
+    text-align: center;
 }
 
 /* tables/panels */
@@ -588,6 +603,10 @@ input[type="checkbox"] {
     margin-right: 10px;
 }
 .add-resident-button {
+    float: right;
+    padding-right: 10px;
+}
+.add-invitation-button {
     float: right;
     padding-right: 10px;
 }

@@ -134,6 +134,7 @@
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\AmbientInvitationsController.cs" />
     <Compile Include="Controllers\EventLogsController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\MaintenanceController.cs" />
@@ -180,10 +181,12 @@
     <Content Include="Content\favicons\ms-icon-150x150.png" />
     <Content Include="Content\favicons\ms-icon-310x310.png" />
     <Content Include="Content\favicons\ms-icon-70x70.png" />
+    <Content Include="Scripts\AmbientInvitation\Index.js" />
     <Content Include="Scripts\PhidgetConfig\_ConfigDetailEdit.js" />
     <Content Include="Scripts\SharedLibraryAdd\_Index.js" />
     <Content Include="Scripts\SharedLibrary\_LinkedProfiles.js" />
     <Content Include="Scripts\Utilities\PartialView.js" />
+    <Compile Include="ViewModels\AmbientInvitationViewModel.cs" />
     <Compile Include="ViewModels\ConfigViewModel.cs" />
     <Compile Include="ViewModels\EventLogViewModel.cs" />
     <Compile Include="ViewModels\ImageViewerViewModel.cs" />
@@ -684,6 +687,8 @@
     <Content Include="Views\Account\Login.cshtml" />
     <Content Include="Views\SharedLibraryAdd\_Index.cshtml" />
     <Content Include="Views\Account\_ResetCaregiver.cshtml" />
+    <Content Include="Views\AmbientInvitations\Index.cshtml" />
+    <Content Include="Views\AmbientInvitations\_AmbientInvitationEdit.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Scripts\Utilities\Validation.js" />
@@ -729,9 +734,7 @@
   <ItemGroup>
     <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Views\Base\" />
-  </ItemGroup>
+  <ItemGroup />
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>

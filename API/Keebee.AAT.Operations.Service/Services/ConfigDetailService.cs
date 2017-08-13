@@ -97,8 +97,7 @@ namespace Keebee.AAT.Operations.Service.Services
             if (!string.IsNullOrEmpty(configDetail.Description))
                 el.Description = configDetail.Description;
 
-            if (!string.IsNullOrEmpty(configDetail.Location))
-                el.Location = configDetail.Location;
+             el.Location = configDetail.Location;
 
             if (configDetail.PhidgetTypeId > 0)
                 el.PhidgetTypeId = configDetail.PhidgetTypeId;

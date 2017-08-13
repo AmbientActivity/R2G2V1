@@ -140,6 +140,7 @@
                         if (typeof header.boolean !== "undefined") {
                             isboolean = header.boolean;
                         }
+
                         self.eventLogs(utilities.sorting.sortArray(
                             {
                                 fileArray: self.eventLogs(),

@@ -299,13 +299,6 @@
                                                             self.update(saveResult.ConfigList);
                                                         }
 
-                                                        if (c.Id === self.activeConfigId()) {
-                                                            if (c.IsActiveEventLog === true)
-                                                                self.activeEventLogDesc("On");
-                                                            else
-                                                                self.activeEventLogDesc("Off");
-                                                        }
-
                                                         self.selectedConfigId(saveResult.ConfigList[0].Id);
                                                     }
                                                     self.enableDetail();
@@ -655,6 +648,15 @@
                             c.isactive(value.IsActive);
                             c.isactiveeventlog(value.IsActiveEventLog);
                             c.candelete(value.CanDelete);
+
+                            if (c.id === self.activeConfigId()) {
+                                self.IsActiveEventLog(value.IsActiveEventLog);
+                                self.activeConfigDesc(value.Description);
+                                if (value.IsActiveEventLog === true)
+                                    self.activeEventLogDesc("On");
+                                else
+                                    self.activeEventLogDesc("Off");
+                            }
                         });
                     }
 

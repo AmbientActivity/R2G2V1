@@ -75,6 +75,7 @@ Try
     If(test-path $pathPhidgetServiceExe)
     { 
         Invoke-Command -ScriptBlock { C:\WINDOWS\Microsoft.NET\Framework\v4.0.30319\InstallUtil.exe /uninstall $pathPhidgetServiceExe} | Out-Null
+        Stop-Process -ProcessName Keebee.AAT.PhidgetService* -Force
     }
     Write-Host "done."
 
@@ -82,6 +83,7 @@ Try
     If(test-path $pathVideoCaptureServiceExe)
     { 
         Invoke-Command -ScriptBlock { C:\WINDOWS\Microsoft.NET\Framework\v4.0.30319\InstallUtil.exe /uninstall $pathVideoCaptureServiceExe} | Out-Null
+        Stop-Process -ProcessName Keebee.AAT.VideoCaptureService* -Force
     }
     Write-Host "done."
 
@@ -89,6 +91,7 @@ Try
     If(test-path $pathBluetoothBeaconServiceExe)
     { 
         Invoke-Command -ScriptBlock { C:\WINDOWS\Microsoft.NET\Framework\v4.0.30319\InstallUtil.exe /uninstall $pathBluetoothBeaconServiceExe} | Out-Null
+        Stop-Process -ProcessName Keebee.AAT.BluetoothBeaconWatcherService* -Force
     }
     Write-Host "done."
 
@@ -96,6 +99,7 @@ Try
     If(test-path $pathStateMachineServiceExe)
     { 
         Invoke-Command -ScriptBlock { C:\WINDOWS\Microsoft.NET\Framework\v4.0.30319\InstallUtil.exe /uninstall $pathStateMachineServiceExe } | Out-Null
+        Stop-Process -ProcessName Keebee.AAT.StateMachineService* -Force
     }
     Write-Host "done."
 
@@ -103,6 +107,7 @@ Try
     If(test-path $pathKeepIISAliveServiceExe)
     { 
         Invoke-Command -ScriptBlock { C:\WINDOWS\Microsoft.NET\Framework\v4.0.30319\InstallUtil.exe /uninstall $pathKeepIISAliveServiceExe} | Out-Null
+        Stop-Process -ProcessName Keebee.AAT.KeepIISAliveService* -Force
     }
     Write-Host "done."
 

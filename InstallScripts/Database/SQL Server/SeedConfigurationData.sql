@@ -64,7 +64,6 @@ INSERT [dbo].[ResponseTypeCategories] ([Id], [Description]) VALUES (2, 'Audio')
 INSERT [dbo].[ResponseTypeCategories] ([Id], [Description]) VALUES (3, 'Video')
 INSERT [dbo].[ResponseTypeCategories] ([Id], [Description]) VALUES (4, 'Interactive Activity')
 INSERT [dbo].[ResponseTypeCategories] ([Id], [Description]) VALUES (5, 'System')
-INSERT [dbo].[ResponseTypeCategories] ([Id], [Description]) VALUES (6, 'Random')
 SET IDENTITY_INSERT [dbo].[ResponseTypeCategories] OFF
 
 -- game types
@@ -93,7 +92,7 @@ INSERT [dbo].[ResponseTypes] ([Id], [ResponseTypeCategoryId], [Description], [In
 INSERT [dbo].[ResponseTypes] ([Id], [ResponseTypeCategoryId], [Description], [InteractiveActivityTypeId], [IsRandom], [IsRotational], [IsUninterrupted]) VALUES (15, 3, 'Machinery', null, 0, 1, 0)
 INSERT [dbo].[ResponseTypes] ([Id], [ResponseTypeCategoryId], [Description], [InteractiveActivityTypeId], [IsRandom], [IsRotational], [IsUninterrupted]) VALUES (16, 3, 'Animals', null, 0, 1, 0)
 INSERT [dbo].[ResponseTypes] ([Id], [ResponseTypeCategoryId], [Description], [InteractiveActivityTypeId], [IsRandom], [IsRotational], [IsUninterrupted]) VALUES (17, 3, 'Cute', null, 0, 1, 0)
-INSERT [dbo].[ResponseTypes] ([Id], [ResponseTypeCategoryId], [Description], [InteractiveActivityTypeId], [IsRandom], [IsRotational], [IsUninterrupted]) VALUES (18, 6, 'Random', null, 0, 0, 0)
+INSERT [dbo].[ResponseTypes] ([Id], [ResponseTypeCategoryId], [Description], [InteractiveActivityTypeId], [IsRandom], [IsRotational], [IsUninterrupted]) VALUES (18, 5, 'Random', null, 0, 0, 0)
 SET IDENTITY_INSERT [dbo].[ResponseTypes] OFF
 
 -- media path type categories

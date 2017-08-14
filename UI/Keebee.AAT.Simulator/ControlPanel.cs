@@ -26,7 +26,7 @@ namespace Keebee.AAT.Simulator
             public int SensorValue { get; set; }
         }
 
-        // for the random response types when the on/off button is clicked
+        // for the 'random' response types
         private readonly ResponseTypeMessage[]  _randomResponseTypes;
 
         #region declaration
@@ -351,7 +351,7 @@ namespace Keebee.AAT.Simulator
         // system
         private void KillDisplayButtonClick(object sender, EventArgs e)
         {
-            ExecuteResponse(ResponseTypeId.KillDisplay, PhidgetTypeId.Sensor0, MaxValue - 1, true);
+            ExecuteResponse(ResponseTypeId.KillDisplay, PhidgetTypeId.Sensor0);
         }
 
         private void CatsButtonClick(object sender, EventArgs e)
@@ -361,12 +361,12 @@ namespace Keebee.AAT.Simulator
 
         private void CaregiverButtonClick(object sender, EventArgs e)
         {
-            ExecuteResponse(ResponseTypeId.Caregiver, PhidgetTypeId.Sensor0, MaxValue - 1, true);
+            ExecuteResponse(ResponseTypeId.Caregiver, PhidgetTypeId.Sensor0);
         }
 
         private void AmbientButtonClick(object sender, EventArgs e)
         {
-            ExecuteResponse(ResponseTypeId.Ambient, PhidgetTypeId.Sensor0, MaxValue - 1, true);
+            ExecuteResponse(ResponseTypeId.Ambient, PhidgetTypeId.Sensor0);
         }
 
         private void VolumeControlClick(object sender, EventArgs e)
@@ -376,7 +376,12 @@ namespace Keebee.AAT.Simulator
 
         private void OffScreenButtonClick(object sender, EventArgs e)
         {
-            ExecuteResponse(ResponseTypeId.OffScreen, PhidgetTypeId.Sensor4, MaxValue - 1, false);
+            ExecuteResponse(ResponseTypeId.OffScreen, PhidgetTypeId.Sensor0);
+        }
+
+        private void RandomButtonClick(object sender, EventArgs e)
+        {
+            ExecuteResponse(ResponseTypeId.Random, PhidgetTypeId.Sensor0);
         }
 
         // interactive activity
@@ -409,7 +414,7 @@ namespace Keebee.AAT.Simulator
 
         #endregion
 
-        #region event handlers
+        #region resident changed
 
         private void ResidentSelectedIndexChanged(object sender, EventArgs e)
         {
@@ -431,7 +436,7 @@ namespace Keebee.AAT.Simulator
 
         #region helper
 
-        private void ExecuteResponse(int responseTypeId, int phidgetTypeId, int sensorValue = MaxValue - 1, bool isSystem = false)
+        private void ExecuteResponse(int responseTypeId, int phidgetTypeId, int sensorValue = MaxValue - 1)
         {
 #if !DEBUG
             if (!Process.GetProcessesByName($"{AppSettings.Namespace}.{AppSettings.DisplayAppName}").Any())
@@ -439,9 +444,10 @@ namespace Keebee.AAT.Simulator
 #endif
             var responseToExecute = _responseTypes.Single(r => r.Id == responseTypeId);
 
-            // for the OffScreen, need to alternate between the OffScreen and a 'random' response
-            if (responseTypeId == ResponseTypeId.OffScreen && _currentResponseTypeId == ResponseTypeId.OffScreen)
-                responseToExecute = GetOffScreenResponse();
+            // handle 'random' response type
+            if ((responseTypeId == ResponseTypeId.OffScreen && _currentResponseTypeId == ResponseTypeId.OffScreen)
+                || responseTypeId == ResponseTypeId.Random)
+                responseToExecute = GetRandomResponse();
 
             _messageQueueResponse.Send(CreateMessageBodyForResponse(responseToExecute, phidgetTypeId, sensorValue));
             _currentResponseTypeId = responseToExecute.Id;
@@ -460,7 +466,7 @@ namespace Keebee.AAT.Simulator
         }
 
         private int _currentSequentialResponseTypeIndex = -1;
-        private ResponseTypeMessage GetOffScreenResponse()
+        private ResponseTypeMessage GetRandomResponse()
         {
             if (_currentSequentialResponseTypeIndex < _randomResponseTypes.Length - 1)
                 _currentSequentialResponseTypeIndex++;

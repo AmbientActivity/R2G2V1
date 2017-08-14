@@ -63,6 +63,7 @@
             this.btnTelevisionRight = new System.Windows.Forms.Button();
             this.btnTelevisionLeft = new System.Windows.Forms.Button();
             this.bnRadioLeft = new System.Windows.Forms.Button();
+            this.btnRandom = new System.Windows.Forms.Button();
             this.grpMediaSource.SuspendLayout();
             this.grpInterfaceKit.SuspendLayout();
             this.SuspendLayout();
@@ -161,6 +162,7 @@
             // 
             // grpInterfaceKit
             // 
+            this.grpInterfaceKit.Controls.Add(this.btnRandom);
             this.grpInterfaceKit.Controls.Add(this.label8);
             this.grpInterfaceKit.Controls.Add(this.btnCuteRight);
             this.grpInterfaceKit.Controls.Add(this.btnCuteLeft);
@@ -194,7 +196,7 @@
             this.grpInterfaceKit.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.grpInterfaceKit.Location = new System.Drawing.Point(13, 90);
             this.grpInterfaceKit.Name = "grpInterfaceKit";
-            this.grpInterfaceKit.Size = new System.Drawing.Size(421, 252);
+            this.grpInterfaceKit.Size = new System.Drawing.Size(421, 304);
             this.grpInterfaceKit.TabIndex = 10;
             this.grpInterfaceKit.TabStop = false;
             this.grpInterfaceKit.Text = "Repsonse";
@@ -495,11 +497,22 @@
             this.bnRadioLeft.UseVisualStyleBackColor = true;
             this.bnRadioLeft.Click += new System.EventHandler(this.RadioLeftButtonClick);
             // 
+            // btnRandom
+            // 
+            this.btnRandom.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnRandom.Location = new System.Drawing.Point(10, 254);
+            this.btnRandom.Name = "btnRandom";
+            this.btnRandom.Size = new System.Drawing.Size(96, 36);
+            this.btnRandom.TabIndex = 58;
+            this.btnRandom.Text = "Random";
+            this.btnRandom.UseVisualStyleBackColor = true;
+            this.btnRandom.Click += new System.EventHandler(this.RandomButtonClick);
+            // 
             // ControlPanel
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(445, 355);
+            this.ClientSize = new System.Drawing.Size(445, 406);
             this.Controls.Add(this.grpInterfaceKit);
             this.Controls.Add(this.grpMediaSource);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
@@ -550,6 +563,7 @@
         private System.Windows.Forms.Button btnAnimalsLeft;
         private System.Windows.Forms.Button btnMachineryRight;
         private System.Windows.Forms.Button btnMachineryLeft;
+        private System.Windows.Forms.Button btnRandom;
     }
 }
 

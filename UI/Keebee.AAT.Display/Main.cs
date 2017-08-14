@@ -342,7 +342,7 @@ namespace Keebee.AAT.Display
                     case ResponseTypeCategoryId.Image:
                         PlaySlideShow();
                         break;
-                    case ResponseTypeCategoryId.InteractiveActivity:
+                    case ResponseTypeCategoryId.Interactive:
                         switch (_pendingResponse.InteractiveActivityTypeId)
                         {
                             case InteractiveActivityTypeId.MatchingGame:
@@ -425,7 +425,7 @@ namespace Keebee.AAT.Display
                         slideViewerFlash1.Stop();
                         audioVideoPlayer1.Stop();
                         break;
-                    case ResponseTypeCategoryId.InteractiveActivity:
+                    case ResponseTypeCategoryId.Interactive:
                         switch (_currentResponse.Id)
                         {
                             case ResponseTypeId.MatchingGame:

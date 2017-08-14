@@ -61,7 +61,7 @@
                     <tr>
                         <!-- ko foreach: columns -->
                         <!-- ko if: visible -->
-                        <th data-bind="text: title, css: cssClass"></th>
+                        <th data-bind="text: title"></th>
                         <!-- /ko -->
                         <!-- /ko -->
                         <th class="col-glyphicon col-glyphicon-lg"></th>
@@ -76,12 +76,6 @@
                         <td data-bind="text: description()"></td>
                         <td data-bind="text: location()"></td>
                         <td data-bind="text: responsetype()"></td>
-                        <!-- ko if: issystem() -->
-                        <td style="text-align: center;"><span class="glyphicon glyphicon-ok glyphicon-lg"></span></td>
-                        <!-- /ko -->
-                        <!-- ko if: !issystem() -->
-                        <td></td>
-                        <!-- /ko -->
                         <!-- ko if: canedit -->
                         <td><a data-toggle="tooltip" title="Edit detail" href="javascript:void(0)" data-bind="attr: { id: 'edit_' + id }, click: $parent.editDetail, css: 'glyphicon glyphicon-pencil glyphicon-lg'"></a></td>
                         <td><a data-toggle="tooltip" title="Delete detail" href="javascript:void(0)" data-bind="attr: { id: 'delete_' + id}, click: $parent.deleteDetail, css: 'glyphicon glyphicon-trash glyphicon-lg'"></a></td>

@@ -84,7 +84,7 @@
 
                 ko.applyBindings(new ConfigViewModel());
 
-                function ConfigDetail(id, configid, sortorder, phidgettype, phidgetstyletype, description, location, responsetype, issystem, canedit) {
+                function ConfigDetail(id, configid, sortorder, phidgettype, phidgetstyletype, description, location, responsetype, canedit) {
                     var self = this;
 
                     self.id = id;
@@ -95,7 +95,6 @@
                     self.description = ko.observable(description);
                     self.location = ko.observable(location);
                     self.responsetype = ko.observable(responsetype);
-                    self.issystem = ko.observable(issystem);
                     self.canedit = canedit;
                 }
 
@@ -163,7 +162,6 @@
                                 value.Description,
                                 value.Location,
                                 value.ResponseType,
-                                value.IsSystem,
                                 value.CanEdit
                             ));
                         });
@@ -195,13 +193,12 @@
 
                     self.columns = ko.computed(function () {
                         var arr = [];
-                        arr.push({ title: "Phidget", sortKey: "phidgettype", cssClass: "", visible: true });
-                        arr.push({ title: "Style", sortKey: "phidgetstyletype", cssClass: "", visible: true });
-                        arr.push({ title: "Description", sortKey: "description", cssClass: "", visible: true });
-                        arr.push({ title: "Location", sortKey: "location", cssClass: "", visible: true });
-                        arr.push({ title: "Response", sortKey: "responsetype", cssClass: "", visible: true });
-                        arr.push({ title: "System", sortKey: "issystem", cssClass: "col-issytem", visible: true });
-                        arr.push({ title: "SortOrder", sortKey: "sortorder", cssClass: "", visible: false });
+                        arr.push({ title: "Phidget", sortKey: "phidgettype", visible: true });
+                        arr.push({ title: "Style", sortKey: "phidgetstyletype", visible: true });
+                        arr.push({ title: "Description", sortKey: "description", visible: true });
+                        arr.push({ title: "Location", sortKey: "location", visible: true });
+                        arr.push({ title: "Response Type", sortKey: "responsetype", visible: true });
+                        arr.push({ title: "SortOrder", sortKey: "sortorder", visible: false });
                         return arr;
                     });
 
@@ -669,7 +666,6 @@
                             cd.description(value.Description);
                             cd.location(value.Location);
                             cd.responsetype(value.ResponseType);
-                            cd.issystem(value.IsSystem);
                             cd.sortorder = value.SortOrder;
                         });
                     }

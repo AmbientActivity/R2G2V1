@@ -62,7 +62,7 @@ SET IDENTITY_INSERT [dbo].[ResponseTypeCategories] ON
 INSERT [dbo].[ResponseTypeCategories] ([Id], [Description]) VALUES (1, 'Image')
 INSERT [dbo].[ResponseTypeCategories] ([Id], [Description]) VALUES (2, 'Audio')
 INSERT [dbo].[ResponseTypeCategories] ([Id], [Description]) VALUES (3, 'Video')
-INSERT [dbo].[ResponseTypeCategories] ([Id], [Description]) VALUES (4, 'Interactive Activity')
+INSERT [dbo].[ResponseTypeCategories] ([Id], [Description]) VALUES (4, 'Interactive')
 INSERT [dbo].[ResponseTypeCategories] ([Id], [Description]) VALUES (5, 'System')
 SET IDENTITY_INSERT [dbo].[ResponseTypeCategories] OFF
 

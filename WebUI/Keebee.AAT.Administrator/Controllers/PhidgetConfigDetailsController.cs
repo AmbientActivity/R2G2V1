@@ -233,7 +233,7 @@ namespace Keebee.AAT.Administrator.Controllers
                             .Select(x => new
                             {
                                 x.Id,
-                                Description = $"{x.ResponseTypeCategory.Description} ({x.Description})"
+                                Description = $"{x.ResponseTypeCategory.Description} - {x.Description}"
                             })
                             .OrderBy(x => x.Description),
                         "Id", "Description", configDetail?.ResponseType.Id),
@@ -268,7 +268,6 @@ namespace Keebee.AAT.Administrator.Controllers
                 Description = detail.Description,
                 Location = detail.Location ?? string.Empty,
                 ResponseType = detail.ResponseType.Description,
-                IsSystem = detail.ResponseType.ResponseTypeCategory.Id == ResponseTypeCategoryId.System,
                 CanEdit = !detail.IsEventLogs
             };
         }

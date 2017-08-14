@@ -165,7 +165,7 @@ namespace Keebee.AAT.Shared
         public const int Image = 1;
         public const int Audio = 2;
         public const int Video = 3;
-        public const int InteractiveActivity = 4;
+        public const int Interactive = 4;
         public const int System = 5;
     }
 

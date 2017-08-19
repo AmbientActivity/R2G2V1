@@ -991,6 +991,7 @@ namespace Keebee.AAT.Backup
                     var invitations = ambientInvitationsClient.Get();
 
                     sw.WriteLine("--- ambient invitations");
+                    sw.WriteLine("TRUNCATE TABLE [dbo].[AmbientInvitations]");
                     foreach (var i in invitations)
                     {
                         var isExecuteRandom = i.IsExecuteRandom ? 1 : 0;

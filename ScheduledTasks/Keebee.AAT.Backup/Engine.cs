@@ -62,6 +62,7 @@ namespace Keebee.AAT.Backup
 
                     if (driveBackup.IsReady)
                     {
+                        /*
                         // backup deployment folders (except media)
                         logText.Append(BackupFiles(_pathDeployments, _pathBackup,
                             excludeFolders: new[] { Path.Combine(_pathDeployments, "Media") }));
@@ -95,6 +96,7 @@ namespace Keebee.AAT.Backup
                         // create the database scripts
                         logText.Append(CreateScriptRestorePublicProfile($@"{_pathBackup}\{_deploymentsFolder}"));
                         logText.Append(CreateScriptRestoreResidents($@"{_pathBackup}\{_deploymentsFolder}"));
+                        */
                         logText.Append(CreateScriptRestoreConfigurations($@"{_pathBackup}\{_deploymentsFolder}"));
                         logText.Append(CreateInstallPowerShellScript($@"{_pathBackup}\{_deploymentsFolder}"));
                     }
@@ -986,6 +988,20 @@ namespace Keebee.AAT.Backup
                         sw.WriteLine("SET IDENTITY_INSERT [dbo].[ConfigDetails] OFF");
                         sw.WriteLine();
                     }
+
+                    var ambientInvitationsClient = new AmbientInvitationsClient();
+                    var invitations = ambientInvitationsClient.Get();
+
+                    sw.WriteLine("--- ambient invitations");
+                    foreach (var i in invitations)
+                    {
+                        var isExecuteRandom = i.IsExecuteRandom ? 1 : 0;
+
+                        sw.WriteLine(
+                            "INSERT [dbo].[AmbientInvitations] ([Message], [IsExecuteRandom]) " +
+                            $"VALUES ('{i.Message.Replace("'", "''")}', {isExecuteRandom})");
+                    }
+
                     sw.WriteLine();
                 }
             }

@@ -10,7 +10,7 @@ namespace Keebee.AAT.BusinessRules
             var msgs = new List<string>();
 
             if (string.IsNullOrEmpty(message))
-                msgs.Add("Message name is required");
+                msgs.Add("Message is required");
 
             return msgs.Count > 0 ? msgs : null;
         }

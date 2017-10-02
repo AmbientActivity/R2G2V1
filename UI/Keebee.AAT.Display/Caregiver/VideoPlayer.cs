@@ -62,6 +62,8 @@ namespace Keebee.AAT.Display.Caregiver
             }
         }
 
+        #region event handlers
+
         private void PlayStateChange(object sender, AxWMPLib._WMPOCXEvents_PlayStateChangeEvent e)
         {
             switch (e.newState)
@@ -84,5 +86,7 @@ namespace Keebee.AAT.Display.Caregiver
             axWindowsMediaPlayer1.Ctlcontrols.stop();
             Close();
         }
+
+        #endregion
     }
 }

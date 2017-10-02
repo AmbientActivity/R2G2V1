@@ -401,6 +401,6 @@
     </PreBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
-    <PostBuildEvent>xcopy "$(SolutionDir)Flash\Builds\*.swf" "$(TargetDir)" /Y</PostBuildEvent>
+    <PostBuildEvent>xcopy "$(SolutionDir)\Flash\Builds\*.swf" "$(TargetDir)" /Y</PostBuildEvent>
   </PropertyGroup>
 </Project>

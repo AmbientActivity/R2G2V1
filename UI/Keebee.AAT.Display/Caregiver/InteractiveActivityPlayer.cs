@@ -66,6 +66,8 @@ namespace Keebee.AAT.Display.Caregiver
 #endif
         #endregion
 
+        #region initialization
+
         public InteractiveActivityPlayer()
         {
             InitializeComponent();
@@ -104,6 +106,10 @@ namespace Keebee.AAT.Display.Caregiver
 #endif
         }
 
+        #endregion
+
+        #region event handlers
+
         private void CloseButtonClick(object sender, EventArgs e)
         {
             Close();
@@ -114,16 +120,23 @@ namespace Keebee.AAT.Display.Caregiver
             switch (_interactiveActivityTypeId)
             {
                 case InteractiveActivityTypeId.MatchingGame:
+                    matchingGame1.MatchingGameTimeoutExpiredEvent += TimeoutExpiredEvent;
                     matchingGame1.Show();
-                    matchingGame1.Play(_shapes, _sounds, _difficultyLevel, false, _isActiveEventLog, false, _swfFile);
+                    matchingGame1.Play(_shapes, _sounds, _difficultyLevel, true, _isActiveEventLog, false, _swfFile);
                     matchingGame1.Select();
                     break;
                 default:
+                    activityPlayer1.ActivityPlayerTimeoutExpiredEvent += TimeoutExpiredEvent;
                     activityPlayer1.Show();
-                    activityPlayer1.Play(_interactiveActivityTypeId, _swfFile, false, _isActiveEventLog, false);
+                    activityPlayer1.Play(_interactiveActivityTypeId, _swfFile, true, _isActiveEventLog, false);
                     activityPlayer1.Select();
                     break;
             }
+        }
+
+        private void TimeoutExpiredEvent(object sender, EventArgs e)
+        {
+            Close();
         }
 
         private void LogInteractiveActivityEvent(object sender, EventArgs e)
@@ -138,5 +151,7 @@ namespace Keebee.AAT.Display.Caregiver
                 SystemEventLogger.WriteEntry($"Main.LogInteractiveActivityEvent: {ex.Message}", SystemEventLogType.Display, EventLogEntryType.Error);
             }
         }
+
+        #endregion
     }
 }

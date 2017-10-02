@@ -48,6 +48,7 @@ namespace Keebee.AAT.Display.UserControls
             axShockwaveFlash1.EndInit();
             Controls.Add(axShockwaveFlash1);
         }
+
         public void Play(int activityTypeId, string swfFile, bool enableTimeout, bool isActiveEventLog, bool isAllowVideoCapture)
         {
             _enableGameTimeout = enableTimeout;

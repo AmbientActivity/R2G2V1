@@ -14,8 +14,14 @@ namespace Keebee.AAT.Display.Caregiver
         }
 
         private bool _isPlaying;
-        private const bool AutoStart = true;
+        private const bool AutoStart = false;
 
+        private Timer _timer;
+        private int _timeout;
+        public int Timeout
+        {
+            set { _timeout = value; }
+        }
 
 #if DEBUG
         private const int AutoModeLabelFontSize = 8;
@@ -50,6 +56,11 @@ namespace Keebee.AAT.Display.Caregiver
             lblAutoMode.Margin = new Padding(3, AutoModeLabeMarginTop, 0, 0);
             tableLayoutPanel1.ColumnStyles[1].Width = TableLayoutPanelColTwoWidth;
             tableLayoutPanel1.ColumnStyles[4].Width = TableLayoutPanelColFiveidth;
+
+            // remove auto-play feature for now
+            lblAutoMode.Visible = false;
+            btnPlay.Enabled = false;
+            btnPlay.Visible = false;
         }
 
         private void InitializeStartupPosition()
@@ -71,13 +82,21 @@ namespace Keebee.AAT.Display.Caregiver
 
         #region event handlers
 
+        private void ResetTimer()
+        {
+            _timer.Stop();
+            _timer.Start();
+        }
+
         private void PreviousButtonClick(object sender, EventArgs e)
         {
+            ResetTimer();
             slideViewerFlash1.ShowPrevious();
         }
 
         private void NextButtonClick(object sender, EventArgs e)
         {
+            ResetTimer();
             slideViewerFlash1.ShowNext();
         }
 
@@ -91,6 +110,7 @@ namespace Keebee.AAT.Display.Caregiver
 
         private void Play()
         {
+            ResetTimer();
             slideViewerFlash1.ShowNext();
             slideViewerFlash1.StartTimer();
             btnPlay.BackgroundImage = imageList1.Images[1];
@@ -99,6 +119,7 @@ namespace Keebee.AAT.Display.Caregiver
 
         private void Pause()
         {
+            ResetTimer();
             slideViewerFlash1.StopTimer();
             btnPlay.BackgroundImage = imageList1.Images[0];
             _isPlaying = false;
@@ -114,6 +135,9 @@ namespace Keebee.AAT.Display.Caregiver
             btnPlay.BackgroundImage = imageList1.Images[1];
             _isPlaying = true;
             slideViewerFlash1.Play(_images, autoStart: AutoStart);
+            _timer = new Timer {Interval = _timeout};
+            _timer.Tick += TimerTick;
+            _timer.Start();
         }
 
         private void ImageViewerFormClosing(object sender, FormClosingEventArgs e)
@@ -122,6 +146,11 @@ namespace Keebee.AAT.Display.Caregiver
         }
 
         private void SlideShowComplete(object sender, EventArgs e)
+        {
+            Close();
+        }
+
+        private void TimerTick(object sender, EventArgs e)
         {
             Close();
         }

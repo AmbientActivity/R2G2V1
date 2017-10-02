@@ -85,6 +85,7 @@ namespace Keebee.AAT.Display
 
         // caregiver interface
         private CaregiverInterface _caregiverInterface;
+        private readonly int _caregiverTimeout;
 
         // custom event loggers
         private readonly InteractiveActivityEventLogger _interactiveActivityEventLogger;
@@ -182,6 +183,9 @@ namespace Keebee.AAT.Display
             _rotationalResponses = responseTypesClient.GeRotationalTypes()
                 .Select(r => new {  r.Id,  SensorValue = 0 })
                 .ToDictionary(r => r.Id, r => r.SensorValue);
+
+            // caregiver
+            _caregiverTimeout = Convert.ToInt32(ConfigurationManager.AppSettings["CaregiverTimeout"].Trim());
 
             InitializeStartupPosition();
         }
@@ -548,8 +552,6 @@ namespace Keebee.AAT.Display
                             break;
                         case ResponseValueChangeType.NoDifference:
                             break;
-                        default:
-                            break;
                     }
                 }
             }
@@ -758,10 +760,11 @@ namespace Keebee.AAT.Display
                 _caregiverInterface = new CaregiverInterface
                 {
                     Config = config,
-                    PublicMediaFiles = mediaResponseTypes
+                    PublicMediaFiles = mediaResponseTypes,
+                    Timeout = _caregiverTimeout
                 };
 
-                _caregiverInterface.CaregiverCompleteEvent += CaregiverComplete;
+                _caregiverInterface.FormClosed += CaregiverFormClosed;
 
                 frmSplash.Close();
                 _caregiverInterface.Show();
@@ -940,7 +943,7 @@ namespace Keebee.AAT.Display
             }
         }
 
-        private void CaregiverComplete(object sender, EventArgs e)
+        private void CaregiverFormClosed(object sender, EventArgs e)
         {
             try
             {
@@ -948,7 +951,7 @@ namespace Keebee.AAT.Display
             }
             catch (Exception ex)
             {
-                SystemEventLogger.WriteEntry($"Main.CaregiverComplete: {ex.Message}", SystemEventLogType.Display, EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"Main.CaregiverFormClosed: {ex.Message}", SystemEventLogType.Display, EventLogEntryType.Error);
             }
         }
 

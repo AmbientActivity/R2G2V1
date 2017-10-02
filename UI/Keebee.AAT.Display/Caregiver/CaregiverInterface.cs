@@ -19,24 +19,9 @@ namespace Keebee.AAT.Display.Caregiver
 {
     public partial class CaregiverInterface : Form
     {
-        #region public properties
-
-        // event handler
-        public event EventHandler CaregiverCompleteEvent;
-
-        private IEnumerable<ResponseTypePaths> _publicMedia;
-
-        public IEnumerable<ResponseTypePaths> PublicMediaFiles
-        {
-            set { _publicMedia = value; }
-        }
-
+        private int _timeout;
         private Config _config;
-
-        public Config Config
-        {
-            set { _config = value; }
-        }
+        private IEnumerable<ResponseTypePaths> _publicMedia;
 
         private readonly Resident _publicProfile = new Resident
         {
@@ -44,6 +29,23 @@ namespace Keebee.AAT.Display.Caregiver
             FirstName = PublicProfileSource.Description,
             GameDifficultyLevel = 1
         };
+
+        #region public properties
+
+        public IEnumerable<ResponseTypePaths> PublicMediaFiles
+        {
+            set { _publicMedia = value; }
+        }
+
+        public Config Config
+        {
+            set { _config = value; }
+        }
+
+        public int Timeout
+        {
+            set { _timeout = value; }
+        }
 
         #endregion
 
@@ -65,8 +67,8 @@ namespace Keebee.AAT.Display.Caregiver
         private const int TabIndexHomeMovies = 5;
         private const int TabIndexImagesPersonal = 6;     
 
-        // delegate
-        private delegate void RaiseCaregiverCompleteEventDelegate();
+        // timer
+        private Timer _timer;
 
         // image lists
         private ImageList _imageListImagesGeneral;
@@ -77,7 +79,7 @@ namespace Keebee.AAT.Display.Caregiver
         private readonly ImageList _imageListAudio;
 
         private IEnumerable<ResponseTypePaths> _media;
-        private IEnumerable<InteractiveActivityType> _activityTypes;
+        private readonly IEnumerable<InteractiveActivityType> _activityTypes;
 
         // playlist
         private string[] _musicPlaylist;
@@ -750,9 +752,11 @@ namespace Keebee.AAT.Display.Caregiver
                 {
                     var imageViewer = new ImageViewer
                     {
-                        Images = images
+                        Images = images,
+                        Timeout = _timeout
                     };
 
+                    imageViewer.FormClosed += ImageViewerFormClosed;
                     imageViewer.ShowDialog();
                 }
                 else
@@ -817,6 +821,7 @@ namespace Keebee.AAT.Display.Caregiver
                     };
 
                     StopAudio();
+                    videoPlayer.FormClosed += VideoPlayerFormClosed;
                     videoPlayer.ShowDialog();
                 }
                 else
@@ -845,6 +850,7 @@ namespace Keebee.AAT.Display.Caregiver
                     };
 
                     StopAudio();
+                    videoPlayer.FormClosed += VideoPlayerFormClosed;
                     videoPlayer.ShowDialog();
                 }
                 else
@@ -929,6 +935,7 @@ namespace Keebee.AAT.Display.Caregiver
                             SwfFile = swfFile
                         };
                         StopAudio();
+                        matchingGamePlayer.FormClosed += InteractiveActivityFormClosed;
                         matchingGamePlayer.ShowDialog();
                         break;
                     default:
@@ -940,6 +947,7 @@ namespace Keebee.AAT.Display.Caregiver
                             SwfFile = swfFile
                         };
                         StopAudio();
+                        activityPlayer.FormClosed += InteractiveActivityFormClosed;
                         activityPlayer.ShowDialog();
                         break;
                 }
@@ -959,26 +967,12 @@ namespace Keebee.AAT.Display.Caregiver
 
         #region event handlers
 
-        // to alert the caller (the Display App Main form)
-        private void RaiseCaregiverCompleteEvent()
-        {
-            if (IsDisposed) return;
-
-            if (InvokeRequired)
-            {
-                Invoke(new RaiseCaregiverCompleteEventDelegate(RaiseCaregiverCompleteEvent));
-            }
-            else
-            {
-                CaregiverCompleteEvent?.Invoke(new object(), new EventArgs());
-            }
-        }
-
         // list views
         private void TVShowsListViewClick(object sender, EventArgs e)
         {
             try
             {
+                _timer.Stop();
                 var selectedStreamId = new Guid(lvTVShows.SelectedItems[0].SubItems[ListViewColumnStreamId].Text);
 
                 PlayTVShows(selectedStreamId);
@@ -993,6 +987,7 @@ namespace Keebee.AAT.Display.Caregiver
         {
             try
             {
+                _timer.Stop();
                 var selectedStreamId = new Guid(lvHomeMovies.SelectedItems[0].SubItems[ListViewColumnStreamId].Text);
 
                 PlayHomeMovies(selectedStreamId);
@@ -1013,6 +1008,8 @@ namespace Keebee.AAT.Display.Caregiver
 
                 if (File.Exists(_musicPlaylist[selectedIndex]))
                 {
+                    _timer.Stop();
+
                     if (_currentMusicIndex == selectedIndex)
                     {
                         if (musicPlayer.playState == WMPPlayState.wmppsPlaying)
@@ -1061,6 +1058,8 @@ namespace Keebee.AAT.Display.Caregiver
 
                 if (File.Exists(_radioShowPlaylist[selectedIndex]))
                 {
+                    _timer.Stop();
+
                     if (_currentRadioShowIndex == selectedIndex)
                     {
                         if (radioShowPlayer.playState == WMPPlayState.wmppsPlaying)
@@ -1107,6 +1106,7 @@ namespace Keebee.AAT.Display.Caregiver
         {
             try
             {
+                _timer.Stop();
                 var selectedStreamId = new Guid(lvImagesGeneral.SelectedItems[0].SubItems[ListViewColumnStreamId].Text);
 
                 DisplayImages(MediaPathTypeId.ImagesGeneral, selectedStreamId, ResponseTypeId.SlideShow);
@@ -1123,6 +1123,7 @@ namespace Keebee.AAT.Display.Caregiver
         {
             try
             {
+                _timer.Stop();
                 var selectedStreamId = new Guid(lvImagesPersonal.SelectedItems[0].SubItems[ListViewColumnStreamId].Text);
 
                 DisplayImages(MediaPathTypeId.ImagesPersonal, selectedStreamId);
@@ -1139,6 +1140,7 @@ namespace Keebee.AAT.Display.Caregiver
         {
             try
             {
+                _timer.Stop();
                 var interactiveActivityId = Convert.ToInt32(lvActivities.SelectedItems[0]
                     .SubItems[ListViewIActivitiesColumnId].Text);
 
@@ -1180,8 +1182,9 @@ namespace Keebee.AAT.Display.Caregiver
                         if (_currentMusicIndex < _totalSongs - 1)
                         {
                             _currentMusicIndex++;
-                            musicPlayer.URL = _musicPlaylist[_currentMusicIndex];
+                            //musicPlayer.URL = _musicPlaylist[_currentMusicIndex];
                         }
+                        _timer.Start();
                         break;
 
                     case (int) WMPPlayState.wmppsReady:
@@ -1247,8 +1250,9 @@ namespace Keebee.AAT.Display.Caregiver
                         if (_currentRadioShowIndex < _totalRadioShows - 1)
                         {
                             _currentRadioShowIndex++;
-                            radioShowPlayer.URL = _radioShowPlaylist[_currentRadioShowIndex];
+                            //radioShowPlayer.URL = _radioShowPlaylist[_currentRadioShowIndex];
                         }
+                        _timer.Start();
                         break;
 
                     case (int)WMPPlayState.wmppsReady:
@@ -1325,6 +1329,10 @@ namespace Keebee.AAT.Display.Caregiver
         // caregiver
         private void CaregiverInterfaceShown(object sender, EventArgs e)
         {
+            _timer = new Timer { Interval = _timeout };
+            _timer.Tick += TimerTick;
+            _timer.Start();
+
             LoadResidentDropDown();
         }
 
@@ -1336,7 +1344,6 @@ namespace Keebee.AAT.Display.Caregiver
         private void CaregiverInterfaceFormClosing(object sender, FormClosingEventArgs e)
         {
             StopAudio();
-            RaiseCaregiverCompleteEvent();
         }
 
         // disable column resizing for all list views
@@ -1380,6 +1387,26 @@ namespace Keebee.AAT.Display.Caregiver
         {
             e.Cancel = true;
             e.NewWidth = lvImagesPersonal.Columns[e.ColumnIndex].Width;
+        }
+
+        private void VideoPlayerFormClosed(object sender, EventArgs e)
+        {
+            _timer.Start();
+        }
+
+        private void InteractiveActivityFormClosed(object sender, EventArgs e)
+        {
+            Close();
+        }
+
+        private void ImageViewerFormClosed(object sender, EventArgs e)
+        {
+            Close();
+        }
+
+        private void TimerTick(object sender, EventArgs e)
+        {
+            Close();
         }
 
         #endregion

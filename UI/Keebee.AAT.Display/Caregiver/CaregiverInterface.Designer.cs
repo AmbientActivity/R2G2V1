@@ -130,6 +130,7 @@ namespace Keebee.AAT.Display.Caregiver
             this.tbMedia.SelectedIndex = 0;
             this.tbMedia.Size = new System.Drawing.Size(634, 281);
             this.tbMedia.TabIndex = 0;
+            this.tbMedia.SelectedIndexChanged += new System.EventHandler(this.MediaTabSelectedIndexChanged);
             // 
             // tabImagesGeneral
             // 

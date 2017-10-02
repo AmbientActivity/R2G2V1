@@ -1302,7 +1302,7 @@ namespace Keebee.AAT.Display.Caregiver
         {
             try
             {
-                //CancelBackgroundWorkers();
+                ResetTimer();
 
                 var frmSplash = new Splash();
                 frmSplash.Show();
@@ -1409,9 +1409,20 @@ namespace Keebee.AAT.Display.Caregiver
             Close();
         }
 
+        private void MediaTabSelectedIndexChanged(object sender, EventArgs e)
+        {
+            ResetTimer();
+        }
+
         #endregion
 
         #region helpers
+
+        private void ResetTimer()
+        {
+            _timer.Stop();
+            _timer.Start();
+        }
 
         private void ShowPersonalMediaTabs(bool show)
         {

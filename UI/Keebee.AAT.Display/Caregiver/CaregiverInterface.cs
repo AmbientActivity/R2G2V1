@@ -817,11 +817,13 @@ namespace Keebee.AAT.Display.Caregiver
                 {
                     var videoPlayer = new VideoPlayer
                     {
-                        Video = videos[0] // just play one at a time
+                        Video = videos[0], // just play one at a time
+                        Timeout = _timeout
                     };
 
                     StopAudio();
                     videoPlayer.FormClosed += VideoPlayerFormClosed;
+                    videoPlayer.TimeoutExpiredEvent += VideoPlayerTimeoutExpired;
                     videoPlayer.ShowDialog();
                 }
                 else
@@ -846,11 +848,13 @@ namespace Keebee.AAT.Display.Caregiver
                 {
                     var videoPlayer = new VideoPlayer
                     {
-                        Video = videos[0] // just play one at a time
+                        Video = videos[0], // just play one at a time
+                        Timeout = _timeout
                     };
 
                     StopAudio();
                     videoPlayer.FormClosed += VideoPlayerFormClosed;
+                    videoPlayer.TimeoutExpiredEvent += VideoPlayerTimeoutExpired;
                     videoPlayer.ShowDialog();
                 }
                 else
@@ -1017,6 +1021,7 @@ namespace Keebee.AAT.Display.Caregiver
                             musicPlayer.Ctlcontrols.pause();
                             lvMusic.Items[_currentMusicIndex].ImageIndex = ImageIndexPlayActive;
                             lvMusic.Items[_currentMusicIndex].SubItems[ListViewAudioColumnStatus].Text = "Paused";
+                            _timer.Start();
                         }
                         else
                         {
@@ -1068,6 +1073,7 @@ namespace Keebee.AAT.Display.Caregiver
                             lvRadioShows.Items[_currentRadioShowIndex].ImageIndex = ImageIndexPlayActive;
                             lvRadioShows.Items[_currentRadioShowIndex].SubItems[ListViewAudioColumnStatus].Text =
                                 "Paused";
+                            _timer.Start();
                         }
                         else
                         {
@@ -1182,6 +1188,7 @@ namespace Keebee.AAT.Display.Caregiver
                         if (_currentMusicIndex < _totalSongs - 1)
                         {
                             _currentMusicIndex++;
+                            // don't automatically advance to the next song
                             //musicPlayer.URL = _musicPlaylist[_currentMusicIndex];
                         }
                         _timer.Start();
@@ -1250,6 +1257,7 @@ namespace Keebee.AAT.Display.Caregiver
                         if (_currentRadioShowIndex < _totalRadioShows - 1)
                         {
                             _currentRadioShowIndex++;
+                            // don't automatically advance to the next radio show
                             //radioShowPlayer.URL = _radioShowPlaylist[_currentRadioShowIndex];
                         }
                         _timer.Start();
@@ -1392,6 +1400,11 @@ namespace Keebee.AAT.Display.Caregiver
         private void VideoPlayerFormClosed(object sender, EventArgs e)
         {
             _timer.Start();
+        }
+
+        private void VideoPlayerTimeoutExpired(object sender, EventArgs e)
+        {
+            Close();
         }
 
         private void InteractiveActivityFormClosed(object sender, EventArgs e)

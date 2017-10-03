@@ -51,7 +51,7 @@ namespace Keebee.AAT.Display.Caregiver
             this.lvHomeMovies = new Keebee.AAT.Display.Caregiver.CustomControls.ListViewLarge();
             this.tabImagesPersonal = new System.Windows.Forms.TabPage();
             this.lvImagesPersonal = new Keebee.AAT.Display.Caregiver.CustomControls.ListViewLarge();
-            this.cboResident = new Keebee.AAT.Display.Caregiver.CustomControls.ComboBoxLarge();
+            this.cboMediaSource = new Keebee.AAT.Display.Caregiver.CustomControls.ComboBoxLarge();
             this.lblMediaSource = new System.Windows.Forms.Label();
             this.musicPlayer = new AxWMPLib.AxWindowsMediaPlayer();
             this.radioShowPlayer = new AxWMPLib.AxWindowsMediaPlayer();
@@ -92,7 +92,7 @@ namespace Keebee.AAT.Display.Caregiver
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 70F));
             this.tableLayoutPanel1.Controls.Add(this.btnClose, 2, 0);
             this.tableLayoutPanel1.Controls.Add(this.tbMedia, 0, 1);
-            this.tableLayoutPanel1.Controls.Add(this.cboResident, 1, 0);
+            this.tableLayoutPanel1.Controls.Add(this.cboMediaSource, 1, 0);
             this.tableLayoutPanel1.Controls.Add(this.lblMediaSource, 0, 0);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
@@ -336,16 +336,17 @@ namespace Keebee.AAT.Display.Caregiver
             this.lvImagesPersonal.ColumnWidthChanging += new System.Windows.Forms.ColumnWidthChangingEventHandler(this.ImagesPersonalListViewColumnWidthChanging);
             this.lvImagesPersonal.ItemClicked += new System.EventHandler(this.ImagesPersonalListViewClick);
             // 
-            // cboResident
+            // cboMediaSource
             // 
-            this.cboResident.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.cboResident.Location = new System.Drawing.Point(103, 15);
-            this.cboResident.Margin = new System.Windows.Forms.Padding(3, 15, 3, 3);
-            this.cboResident.Name = "cboResident";
-            this.cboResident.SelectedValue = null;
-            this.cboResident.Size = new System.Drawing.Size(457, 53);
-            this.cboResident.TabIndex = 7;
-            this.cboResident.SelectedIndexChanged += new System.EventHandler(this.ResidentSelectedIndexChanged);
+            this.cboMediaSource.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.cboMediaSource.Location = new System.Drawing.Point(103, 15);
+            this.cboMediaSource.Margin = new System.Windows.Forms.Padding(3, 15, 3, 3);
+            this.cboMediaSource.Name = "cboMediaSource";
+            this.cboMediaSource.SelectedValue = null;
+            this.cboMediaSource.Size = new System.Drawing.Size(457, 53);
+            this.cboMediaSource.TabIndex = 7;
+            this.cboMediaSource.SelectedIndexChanged += new System.EventHandler(this.MediaSourceSelectedIndexChanged);
+            this.cboMediaSource.ComboClick += new System.EventHandler(this.MediaSourceClick);
             // 
             // lblMediaSource
             // 
@@ -428,7 +429,7 @@ namespace Keebee.AAT.Display.Caregiver
         private CustomControls.ListViewLarge lvActivities;
         private TabPage tabImagesPersonal;
         private CustomControls.ListViewLarge lvImagesPersonal;
-        private CustomControls.ComboBoxLarge cboResident;
+        private CustomControls.ComboBoxLarge cboMediaSource;
         private Label lblMediaSource;
         private TabPage tabRadioShows;
         private TabPage tabHomeMovies;

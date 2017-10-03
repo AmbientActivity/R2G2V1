@@ -214,7 +214,7 @@ namespace Keebee.AAT.Display.Caregiver
         {
             lblMediaSource.Font = new Font(FontFamily, LabelMediaSourceFontSize);
             lblMediaSource.Margin = new Padding(3, LabelMediaSourceMarginTop, 0, 0);
-            cboResident.Width = ComboBoxResidentWidth;
+            cboMediaSource.Width = ComboBoxResidentWidth;
         }
 
         private void ConfigureTabLayout()
@@ -362,9 +362,9 @@ namespace Keebee.AAT.Display.Caregiver
                     arrayList.Add(new {r.Id, Name = name});
                 }
 
-                cboResident.ValueMember = "Id";
-                cboResident.DisplayMember = "Name";
-                cboResident.DataSource = arrayList;
+                cboMediaSource.ValueMember = "Id";
+                cboMediaSource.DisplayMember = "Name";
+                cboMediaSource.DataSource = arrayList;
             }
             catch (Exception ex)
             {
@@ -1306,17 +1306,15 @@ namespace Keebee.AAT.Display.Caregiver
         }
 
         // configuration/management
-        private void ResidentSelectedIndexChanged(object sender, EventArgs e)
+        private void MediaSourceSelectedIndexChanged(object sender, EventArgs e)
         {
             try
             {
-                ResetTimer();
-
                 var frmSplash = new Splash();
                 frmSplash.Show();
                 Application.DoEvents();
 
-                var residentId = Convert.ToInt32(cboResident.SelectedValue.ToString());
+                var residentId = Convert.ToInt32(cboMediaSource.SelectedValue.ToString());
 
                 LoadResidentMedia(residentId);
                             
@@ -1330,8 +1328,13 @@ namespace Keebee.AAT.Display.Caregiver
             }
             catch (Exception ex)
             {
-                SystemEventLogger.WriteEntry($"Caregiver.ResidentSelectedIndexChanged: {ex.Message}", SystemEventLogType.Display, EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"Caregiver.MediaSourceSelectedIndexChanged: {ex.Message}", SystemEventLogType.Display, EventLogEntryType.Error);
             }
+        }
+
+        private void MediaSourceClick(object sender, EventArgs e)
+        {
+            ResetTimer();
         }
 
         // caregiver
@@ -1457,6 +1460,7 @@ namespace Keebee.AAT.Display.Caregiver
         {
             return tbMedia.TabPages.Cast<TabPage>().Contains(tabPage);
         }
+
 
         #endregion
     }

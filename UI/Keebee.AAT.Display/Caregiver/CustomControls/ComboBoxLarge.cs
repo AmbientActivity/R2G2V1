@@ -8,9 +8,11 @@ namespace Keebee.AAT.Display.Caregiver.CustomControls
     {
         // event handler
         public event EventHandler SelectedIndexChanged;
+        public event EventHandler ComboClick;
 
         // delegate
         public delegate void SelectedIndexChangedDelegate(object sender, EventArgs e);
+        public delegate void ComboClickDelegate(object sender, EventArgs e);
 
         public string ValueMember
         {
@@ -37,6 +39,7 @@ namespace Keebee.AAT.Display.Caregiver.CustomControls
         {
             InitializeComponent();
             comboBox1.SelectedIndexChanged += RaiseCSelectedIndexChanged;
+            comboBox1.Click += RaiseComboClick;
         }
 
         private void RaiseCSelectedIndexChanged(object sender, EventArgs e)
@@ -50,6 +53,20 @@ namespace Keebee.AAT.Display.Caregiver.CustomControls
             else
             {
                 SelectedIndexChanged?.Invoke(sender, e);
+            }
+        }
+
+        private void RaiseComboClick(object sender, EventArgs e)
+        {
+            if (IsDisposed) return;
+
+            if (InvokeRequired)
+            {
+                Invoke(new ComboClickDelegate(RaiseComboClick), new { sender, e });
+            }
+            else
+            {
+                ComboClick?.Invoke(sender, e);
             }
         }
 

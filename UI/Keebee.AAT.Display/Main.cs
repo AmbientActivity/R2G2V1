@@ -402,7 +402,7 @@ namespace Keebee.AAT.Display
         private bool ShouldExecutePending()
         {
             // dont'execute if current response is uninterrupted
-            if (_currentResponse.IsUninterrupted) return false;
+            if (_currentResponse.IsUninterrupted && _pendingResponse.Id != ResponseTypeId.VolumeControl) return false;
 
             // execute if a system response
             if (_pendingResponse.ResponseTypeCategoryId == ResponseTypeCategoryId.System)

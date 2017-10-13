@@ -55,7 +55,9 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService
         private readonly ResidentMessage _publicResident = new ResidentMessage
         {
             Id = PublicProfileSource.Id,
-            Name = PublicProfileSource.Name
+            Name = PublicProfileSource.Name,
+            GameDifficultyLevel = 1,
+            AllowVideoCapturing = false
         };
 
         // timer

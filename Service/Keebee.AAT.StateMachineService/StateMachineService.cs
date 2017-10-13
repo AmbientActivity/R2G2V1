@@ -202,7 +202,14 @@ namespace Keebee.AAT.StateMachineService
                 {
                     SensorValue = sensorValue,
                     ConfigDetail = configDetail,
-                    Resident = _activeResident,
+                    Resident = new ResidentMessage
+                    {
+                        Id = _activeResident.Id,
+                        Name = _activeResident.Name,
+                        GameDifficultyLevel = _activeResident.GameDifficultyLevel,
+                        AllowVideoCapturing = _activeResident.AllowVideoCapturing,
+                        IsDeleted = _activeResident.IsDeleted
+                    },
                     IsActiveEventLog = _activeConfig.IsActiveEventLog
                 };
 

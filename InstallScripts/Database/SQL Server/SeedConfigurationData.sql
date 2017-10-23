@@ -75,7 +75,7 @@ SET IDENTITY_INSERT [dbo].[InteractiveActivityTypes] OFF
 
 -- response types
 SET IDENTITY_INSERT [dbo].[ResponseTypes] ON 
-INSERT [dbo].[ResponseTypes] ([Id], [ResponseTypeCategoryId], [Description], [InteractiveActivityTypeId], [IsRandom], [IsRotational], [IsUninterrupted]) VALUES (1, 1, 'Slide Show', null, 1, 0, 0)
+INSERT [dbo].[ResponseTypes] ([Id], [ResponseTypeCategoryId], [Description], [InteractiveActivityTypeId], [IsRandom], [IsRotational], [IsUninterrupted]) VALUES (1, 1, 'Slide Show', null, 0, 0, 0)
 INSERT [dbo].[ResponseTypes] ([Id], [ResponseTypeCategoryId], [Description], [InteractiveActivityTypeId], [IsRandom], [IsRotational], [IsUninterrupted]) VALUES (2, 4, 'Memory Matching Game', 1, 1, 0, 0)
 INSERT [dbo].[ResponseTypes] ([Id], [ResponseTypeCategoryId], [Description], [InteractiveActivityTypeId], [IsRandom], [IsRotational], [IsUninterrupted]) VALUES (3, 3, 'Cats', null, 0, 0, 0)
 INSERT [dbo].[ResponseTypes] ([Id], [ResponseTypeCategoryId], [Description], [InteractiveActivityTypeId], [IsRandom], [IsRotational], [IsUninterrupted]) VALUES (4, 5, 'Kill Display',  null, 0, 0, 0)

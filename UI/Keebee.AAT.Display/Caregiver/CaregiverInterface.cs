@@ -1402,7 +1402,7 @@ namespace Keebee.AAT.Display.Caregiver
 
         private void VideoPlayerFormClosed(object sender, EventArgs e)
         {
-            _timer.Start();
+            ResetTimer();
         }
 
         private void VideoPlayerTimeoutExpired(object sender, EventArgs e)
@@ -1412,12 +1412,12 @@ namespace Keebee.AAT.Display.Caregiver
 
         private void InteractiveActivityFormClosed(object sender, EventArgs e)
         {
-            Close();
+            ResetTimer();
         }
 
         private void ImageViewerFormClosed(object sender, EventArgs e)
         {
-            Close();
+            ResetTimer();
         }
 
         private void TimerTick(object sender, EventArgs e)

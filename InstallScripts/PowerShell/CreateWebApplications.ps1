@@ -6,7 +6,7 @@
 
     $siteName = 'Default Web Site'
     $userName = 'webuser'
-    $password = 'R2G2u$er'
+    $password = 'ABBYu$er'
     $administratorAppName = 'Keebee.AAT.Administrator'
 
     # create the web applications

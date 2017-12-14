@@ -19,7 +19,7 @@
                 utilities.confirm.show({
                     type: BootstrapDialog.TYPE_PRIMARY,
                     title: "Service Utilities",
-                    message: "Restart all R2G2 Windows Services?",
+                    message: "Restart all ABBY Windows Services?",
                     buttonOKClass: "btn-edit"
                 })
                 .then(function(confirm) {
@@ -53,7 +53,7 @@
                 utilities.confirm.show({
                     type: BootstrapDialog.TYPE_PRIMARY,
                     title: "Clear Service Logs",
-                    message: "Clear all R2G2 Service logs?",
+                    message: "Clear all ABBY Service logs?",
                 })
                 .then(function(confirm) {
                     if (confirm) {
@@ -70,7 +70,7 @@
                 utilities.confirm.show({
                     type: BootstrapDialog.TYPE_PRIMARY,
                     title: "Service Utilities",
-                    message: "Install or uninstall/reinstall all R2G2 Windows Services?"
+                    message: "Install or uninstall/reinstall all ABBY Windows Services?"
                 })
                 .then(function(confirm) {
                     if (confirm) {
@@ -89,7 +89,7 @@
                 utilities.confirm.show({
                     type: BootstrapDialog.TYPE_PRIMARY,
                     title: "Service Utilities",
-                    message: "Uninstall all R2G2 Windows Services?"
+                    message: "Uninstall all ABBY Windows Services?"
                 })
                 .then(function(confirm) {
                     if (confirm) {

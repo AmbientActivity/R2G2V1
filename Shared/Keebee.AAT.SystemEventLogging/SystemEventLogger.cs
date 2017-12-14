@@ -20,15 +20,15 @@ namespace Keebee.AAT.SystemEventLogging
 
     public static class SystemEventLogger
     {
-        private const string EventLogDisplay = "R2G2 Display";
-        private const string EventLogStateMachineService = "R2G2 State Machine Service";
-        private const string EventLogBluetoothBeaconWatcherService = "R2G2 Bluetooth Beacon Watcher Service";
-        private const string EventLogPhidgetService = "R2G2 Phidget Service";
-        private const string EventLogVideoCaptureService = "R2G2 Video Capture Service";
-        private const string EventLogKeepIISAliveService = "R2G2 Keep IIS Alive Service";
-        private const string EventLogEventLog = "R2G2 Event Log";
-        private const string EventLogAutomatedExport = "R2G2 Automated Export";
-        private const string EventLogAdminInterface = "R2G2 Administrator Interface";
+        private const string EventLogDisplay = "ABBY Display";
+        private const string EventLogStateMachineService = "ABBY State Machine Service";
+        private const string EventLogBluetoothBeaconWatcherService = "ABBY Bluetooth Beacon Watcher Service";
+        private const string EventLogPhidgetService = "ABBY Phidget Service";
+        private const string EventLogVideoCaptureService = "ABBY Video Capture Service";
+        private const string EventLogKeepIISAliveService = "ABBY Keep IIS Alive Service";
+        private const string EventLogEventLog = "ABBY Event Log";
+        private const string EventLogAutomatedExport = "ABBY Automated Export";
+        private const string EventLogAdminInterface = "ABBY Administrator Interface";
 
         public static void WriteEntry(string message, SystemEventLogType systemeEntryType, EventLogEntryType type = EventLogEntryType.Information)
         {

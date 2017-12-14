@@ -16,7 +16,7 @@ namespace Keebee.AAT.Backup
         private const string RestorePublicProfileFilename = "RestorePublicProfile";
         private const string RestoreResidentsFilename = "RestoreResidents";
         private const string RestoreConfigurationsFilename = "RestoreConfigurations";
-        private const string InstallR2G2Filename = "INSTALL_R2G2.ps1";
+        private const string InstallABBYFilename = "INSTALL_ABBY.ps1";
 
         private readonly string _pathDeployments;
         private readonly string _pathVideoCaptures;
@@ -354,7 +354,7 @@ namespace Keebee.AAT.Backup
 
                             var destFilePath = Path.Combine(pathDest, fiSource.Name);
 
-                            if (fiSource.Name == InstallR2G2Filename)
+                            if (fiSource.Name == InstallABBYFilename)
                                 continue;
 
                             if (File.Exists(destFilePath))
@@ -1022,7 +1022,7 @@ namespace Keebee.AAT.Backup
 
             try
             {
-                var pathScript = $@"{path}\Install\PowerShell\INSTALL_R2G2.ps1";
+                var pathScript = $@"{path}\Install\PowerShell\INSTALL_ABBY.ps1";
                 const string pathPowerShell = @"C:\Deployments\Install\PowerShell";
                 const string pathPowerShellData = @"C:\Deployments\Install\Database\PowerShell";
 
@@ -1033,7 +1033,7 @@ namespace Keebee.AAT.Backup
                 {
                     sw.WriteLine("Try");
                     sw.WriteLine("{");
-                    sw.WriteLine("    Write-Host -ForegroundColor green " + "\"" + "`nInstalling R2G2...`n" + "\"");
+                    sw.WriteLine("    Write-Host -ForegroundColor green " + "\"" + "`nInstalling ABBY...`n" + "\"");
                     sw.WriteLine();
                     sw.WriteLine("    $installPath = " + "\"" + $@"{pathPowerShell}" + "\"");
                     sw.WriteLine("    $installPathData = " + "\"" + $@"{pathPowerShellData}" + "\"");

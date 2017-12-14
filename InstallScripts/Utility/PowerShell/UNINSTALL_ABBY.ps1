@@ -1,6 +1,6 @@
 ﻿Try
 {
-    Write-Host -ForegroundColor green "`nUninstalling R2G2..."
+    Write-Host -ForegroundColor green "`nUninstalling ABBY..."
 
     $installPathUtility = "C:\Deployments\Install\Utility\PowerShell"
     $installPathData = "C:\Deployments\Install\Database\PowerShell"

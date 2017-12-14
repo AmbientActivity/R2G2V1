@@ -1,6 +1,6 @@
 Try
 {
-    Write-Host -ForegroundColor green "`nInstalling R2G2...`n"
+    Write-Host -ForegroundColor green "`nInstalling ABBY...`n"
 
     $installPath = "C:\Deployments\Install\PowerShell"
     $installPathData = "C:\Deployments\Install\Database\PowerShell"

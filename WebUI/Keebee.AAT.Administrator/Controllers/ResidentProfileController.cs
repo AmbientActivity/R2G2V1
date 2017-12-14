@@ -253,7 +253,7 @@ namespace Keebee.AAT.Administrator.Controllers
                 var activeResident = _activeResidentClient.Get();
                 if (activeResident.Resident.Id == residentId)
                 {
-                    errMsg = "The resident is currently engaging with R2G2. Media cannot be deleted at this time.";
+                    errMsg = "The resident is currently engaging with ABBY. Media cannot be deleted at this time.";
                 }
                 else
                 {

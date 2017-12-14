@@ -19,6 +19,13 @@ namespace Keebee.AAT.Display.Caregiver
 {
     public partial class CaregiverInterface : Form
     {
+        #region declaration
+
+        // players
+        private ImageViewer _imageViewer;
+        private InteractiveActivityPlayer _activityPlayer;
+        private VideoPlayer _videoPlayer;
+
         private int _timeout;
         private Config _config;
         private IEnumerable<ResponseTypePaths> _publicMedia;
@@ -29,6 +36,8 @@ namespace Keebee.AAT.Display.Caregiver
             FirstName = PublicProfileSource.Description,
             GameDifficultyLevel = 1
         };
+
+        #endregion
 
         #region public properties
 
@@ -750,14 +759,14 @@ namespace Keebee.AAT.Display.Caregiver
 
                 if (File.Exists(images[0]))
                 {
-                    var imageViewer = new ImageViewer
+                    _imageViewer = new ImageViewer
                     {
                         Images = images,
                         Timeout = _timeout
                     };
 
-                    imageViewer.FormClosed += ImageViewerFormClosed;
-                    imageViewer.ShowDialog();
+                    _imageViewer.FormClosed += ImageViewerFormClosed;
+                    _imageViewer.ShowDialog();
                 }
                 else
                 {
@@ -815,16 +824,15 @@ namespace Keebee.AAT.Display.Caregiver
 
                 if (File.Exists(videos[0]))
                 {
-                    var videoPlayer = new VideoPlayer
+                    _videoPlayer = new VideoPlayer
                     {
                         Video = videos[0], // just play one at a time
                         Timeout = _timeout
                     };
 
                     StopAudio();
-                    videoPlayer.FormClosed += VideoPlayerFormClosed;
-                    videoPlayer.TimeoutExpiredEvent += VideoPlayerTimeoutExpired;
-                    videoPlayer.ShowDialog();
+                    _videoPlayer.FormClosed += VideoPlayerFormClosed;
+                    _videoPlayer.ShowDialog();
                 }
                 else
                 {
@@ -846,16 +854,15 @@ namespace Keebee.AAT.Display.Caregiver
 
                 if (File.Exists(videos[0]))
                 {
-                    var videoPlayer = new VideoPlayer
+                    _videoPlayer = new VideoPlayer
                     {
                         Video = videos[0], // just play one at a time
                         Timeout = _timeout
                     };
 
                     StopAudio();
-                    videoPlayer.FormClosed += VideoPlayerFormClosed;
-                    videoPlayer.TimeoutExpiredEvent += VideoPlayerTimeoutExpired;
-                    videoPlayer.ShowDialog();
+                    _videoPlayer.FormClosed += VideoPlayerFormClosed;
+                    _videoPlayer.ShowDialog();
                 }
                 else
                 {
@@ -928,7 +935,7 @@ namespace Keebee.AAT.Display.Caregiver
                         var totalShapes = gameSetup.GetTotalShapes(shapes);
                         var totalSounds = gameSetup.GetTotalSounds(sounds);
 
-                        var matchingGamePlayer = new InteractiveActivityPlayer
+                        _activityPlayer = new InteractiveActivityPlayer
                         {
                             InteractiveActivityId = interactiveActivityId,
                             ResidentId = _currentResident.Id,
@@ -939,11 +946,11 @@ namespace Keebee.AAT.Display.Caregiver
                             SwfFile = swfFile
                         };
                         StopAudio();
-                        matchingGamePlayer.FormClosed += InteractiveActivityFormClosed;
-                        matchingGamePlayer.ShowDialog();
+                        _activityPlayer.FormClosed += InteractiveActivityFormClosed;
+                        _activityPlayer.ShowDialog();
                         break;
                     default:
-                        var activityPlayer = new InteractiveActivityPlayer
+                        _activityPlayer = new InteractiveActivityPlayer
                         {
                             InteractiveActivityId = interactiveActivityId,
                             ResidentId = _currentResident.Id,
@@ -951,8 +958,8 @@ namespace Keebee.AAT.Display.Caregiver
                             SwfFile = swfFile
                         };
                         StopAudio();
-                        activityPlayer.FormClosed += InteractiveActivityFormClosed;
-                        activityPlayer.ShowDialog();
+                        _activityPlayer.FormClosed += InteractiveActivityFormClosed;
+                        _activityPlayer.ShowDialog();
                         break;
                 }
 
@@ -1402,22 +1409,50 @@ namespace Keebee.AAT.Display.Caregiver
 
         private void VideoPlayerFormClosed(object sender, EventArgs e)
         {
-            ResetTimer();
-        }
+            var isTimeoutExpired = _videoPlayer.IsTimeoutExpired;
+            _videoPlayer.Dispose();
+            _videoPlayer = null;
 
-        private void VideoPlayerTimeoutExpired(object sender, EventArgs e)
-        {
-            Close();
+            if (isTimeoutExpired)
+            {
+                Close();
+            }
+            else // closed manually
+            {
+                ResetTimer();
+            }
         }
 
         private void InteractiveActivityFormClosed(object sender, EventArgs e)
         {
-            ResetTimer();
+            var isTimeoutExpired = _activityPlayer.IsTimeoutExpired;
+            _activityPlayer.Dispose();
+            _activityPlayer = null;
+
+            if (isTimeoutExpired)
+            {
+                Close();
+            }
+            else // closed manually
+            {
+                ResetTimer();
+            }
         }
 
         private void ImageViewerFormClosed(object sender, EventArgs e)
         {
-            ResetTimer();
+            var isTimeoutExpired = _imageViewer.IsTimeoutExpired;
+            _imageViewer.Dispose();
+            _imageViewer = null;
+
+            if (isTimeoutExpired)
+            {
+                Close();
+            }
+            else // closed manually
+            {
+                ResetTimer();
+            }
         }
 
         private void TimerTick(object sender, EventArgs e)

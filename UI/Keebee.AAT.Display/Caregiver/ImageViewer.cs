@@ -1,5 +1,4 @@
-﻿using Keebee.AAT.SystemEventLogging;
-using System;
+﻿using System;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -7,6 +6,8 @@ namespace Keebee.AAT.Display.Caregiver
 {
     public partial class ImageViewer : Form
     {
+        #region declaration
+
         private string[] _images;
         public string[] Images
         {
@@ -23,6 +24,8 @@ namespace Keebee.AAT.Display.Caregiver
             set { _timeout = value; }
         }
 
+        public bool IsTimeoutExpired { get; private set; }
+
 #if DEBUG
         private const int AutoModeLabelFontSize = 8;
 
@@ -38,6 +41,7 @@ namespace Keebee.AAT.Display.Caregiver
 
         private const int AutoModeLabeMarginTop = 20;
 #endif
+        #endregion
 
         public ImageViewer()
         {
@@ -47,6 +51,8 @@ namespace Keebee.AAT.Display.Caregiver
 
             slideViewerFlash1.SlideShowCompleteEvent += SlideShowComplete;
         }
+
+        #region initialization
 
         private void ConfigureComponents()
         {
@@ -79,6 +85,8 @@ namespace Keebee.AAT.Display.Caregiver
             WindowState = FormWindowState.Maximized;
 #endif
         }
+
+        #endregion
 
         #region event handlers
 
@@ -127,6 +135,7 @@ namespace Keebee.AAT.Display.Caregiver
 
         private void CloseButtonClick(object sender, EventArgs e)
         {
+            IsTimeoutExpired = false;
             Close();
         }
 
@@ -152,6 +161,7 @@ namespace Keebee.AAT.Display.Caregiver
 
         private void TimerTick(object sender, EventArgs e)
         {
+            IsTimeoutExpired = true;
             Close();
         }
 

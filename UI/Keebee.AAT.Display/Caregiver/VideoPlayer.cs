@@ -10,12 +10,6 @@ namespace Keebee.AAT.Display.Caregiver
 {
     public partial class VideoPlayer : Form
     {
-        // event handler
-        public event EventHandler TimeoutExpiredEvent;
-
-        // delegate
-        private delegate void RaiseTimeoutExpiredEventDelegate();
-
         private string _video;
         public string Video
         {
@@ -29,6 +23,8 @@ namespace Keebee.AAT.Display.Caregiver
         }
 
         private Timer _timer;
+
+        public bool IsTimeoutExpired { get; private set; }
 
         public VideoPlayer()
         {
@@ -106,28 +102,18 @@ namespace Keebee.AAT.Display.Caregiver
 
         private void CloseButtonClick(object sender, EventArgs e)
         {
+            IsTimeoutExpired = false;
+            _timer.Dispose();
             axWindowsMediaPlayer1.Ctlcontrols.stop();
             Close();
         }
 
         private void Tick(object sender, EventArgs e)
         {
+            IsTimeoutExpired = true;
+            _timer.Dispose();
             axWindowsMediaPlayer1.Ctlcontrols.stop();
-            RaiseVideoPlayerTimeoutExpired();
-        }
-
-        private void RaiseVideoPlayerTimeoutExpired()
-        {
-            if (IsDisposed) return;
-
-            if (InvokeRequired)
-            {
-                Invoke(new RaiseTimeoutExpiredEventDelegate(RaiseVideoPlayerTimeoutExpired));
-            }
-            else
-            {
-                TimeoutExpiredEvent?.Invoke(new object(), new EventArgs());
-            }
+            Close();
         }
 
         #endregion

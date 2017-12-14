@@ -59,6 +59,8 @@ namespace Keebee.AAT.Display.Caregiver
 
         private readonly InteractiveActivityEventLogger _interactiveActivityEventLogger;
 
+        public bool IsTimeoutExpired { get; private set; }
+
 #if DEBUG
         private const int ActivityNameLabelFontSize = 24;
 #elif !DEBUG
@@ -112,6 +114,7 @@ namespace Keebee.AAT.Display.Caregiver
 
         private void CloseButtonClick(object sender, EventArgs e)
         {
+            IsTimeoutExpired = false;
             Close();
         }
 
@@ -136,6 +139,7 @@ namespace Keebee.AAT.Display.Caregiver
 
         private void TimeoutExpiredEvent(object sender, EventArgs e)
         {
+            IsTimeoutExpired = true;
             Close();
         }
 

@@ -65,7 +65,7 @@ $pathSourceSharedLibrary = "$pathSourceCode\Media\SharedLibrary\*"
 
 Try
 {
-    Write-Host -foregroundcolor green "`nDeploying R2G2...`n”
+    Write-Host -foregroundcolor green "`nDeploying ABBY...`n”
 
     # -------------------- UNINSTALL SERVICES --------------------
 
@@ -128,7 +128,7 @@ Try
     Get-Module Build-VisualStudioSolution
 
     # build debug
-    $buildResult = Build-VisualStudioSolution -SourceCodePath $pathSourceCode -SolutionFile $filenameVSSolution -BuildLogFile "R2G2BuildDebug.log" -Configuration "Debug" -CleanFirst;
+    $buildResult = Build-VisualStudioSolution -SourceCodePath $pathSourceCode -SolutionFile $filenameVSSolution -BuildLogFile "ABBYBuildDebug.log" -Configuration "Debug" -CleanFirst;
 
     If (!$buildResult)
     {
@@ -136,7 +136,7 @@ Try
     }
 
     # build release
-    $buildResult = Build-VisualStudioSolution -SourceCodePath $pathSourceCode -SolutionFile $filenameVSSolution -BuildLogFile "R2G2BuildRelease.log" -Configuration "Release" -CleanFirst;
+    $buildResult = Build-VisualStudioSolution -SourceCodePath $pathSourceCode -SolutionFile $filenameVSSolution -BuildLogFile "ABBYBuildRelease.log" -Configuration "Release" -CleanFirst;
 
     If (!$buildResult)
     {

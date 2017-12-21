@@ -21,7 +21,6 @@
             var allowedSensorStyleTypes = config.allowedSensorStyleTypes.trim().split(",");
 
             loadPhidgetStyleDropdown();
-            setPhidgetStyleIndex(config.selectedPhidgetStyleTypeId);
 
             $("#ddlPhidgetTypes").change(function (e) {
                 var isInput = ($("#ddlPhidgetTypes option:selected").text()
@@ -65,15 +64,6 @@
                             }
                         });
                 }
-                $("#ddlPhidgetStyleTypes").val(selectedId);
-            }
-
-            function setPhidgetStyleIndex(selectedId) {
-                $("#ddlPhidgetStyleTypes")
-                    .find("option[value=" + selectedId + "]")
-                    .each(function(index, opt) {
-                        $(opt).prop("selected", true);
-                    });
                 $("#ddlPhidgetStyleTypes").val(selectedId);
             }
         }

@@ -61,13 +61,17 @@ namespace Keebee.AAT.Administrator.Controllers
                 SystemEventLogger.WriteEntry($"SharedLibrary.GetData: {errMsg}", SystemEventLogType.AdminInterface, EventLogEntryType.Error);
             }
 
-            return Json(new
+            var jsonResult = Json(new
             {
                 Success = string.IsNullOrEmpty(errMsg),
                 ErrorMessage = errMsg,
                 FileList = fileList,
                 MediaPathTypeList = mediaPathTypeList
             }, JsonRequestBehavior.AllowGet);
+
+            jsonResult.MaxJsonLength = int.MaxValue;
+
+            return jsonResult;
         }
 
         [HttpPost]

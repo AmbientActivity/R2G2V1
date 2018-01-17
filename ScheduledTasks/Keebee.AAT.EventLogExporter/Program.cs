@@ -9,8 +9,6 @@ namespace Keebee.AAT.EventLogExporter
     {
         private static void Main()
         {
-            //var sysEventLogger = new SystemEventLogger(SystemEventLogType.AutomatedExport);
-
             try
             {
                 var date = DateTime.Now.AddDays(-1).ToString("d", DateTimeFormatInfo.InvariantInfo);

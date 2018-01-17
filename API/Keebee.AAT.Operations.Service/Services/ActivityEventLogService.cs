@@ -64,8 +64,8 @@ namespace Keebee.AAT.Operations.Service.Services
             var monthTo = (dateTo.Month < 10 ? "0" : "") + dateTo.Month;
             var dayTo = (dateTo.Day < 10 ? "0" : "") + dateTo.Day;
 
-            string from = $"{dateFrom.Year}-{monthFrom}-{dayFrom}";
-            string to = $"{dateTo.Year}-{monthTo}-{dayTo}";
+            string from = $"{dateFrom.Year}-{monthFrom}-{dayFrom}T00:00:00.000-00:00";
+            string to = $"{dateTo.Year}-{monthTo}-{dayTo}T00:00:00.000-00:00";
 
             string filter = $"DateEntry gt {from} and DateEntry lt {to}";
 

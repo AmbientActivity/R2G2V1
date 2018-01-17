@@ -49,11 +49,13 @@ namespace Keebee.AAT.Administrator.Controllers
             string errMsg = null;
             SharedLibraryFileViewModel[] fileList = null;
             MediaPathType[] mediaPathTypeList = null;
+            var isAdmin = false;
 
             try
             {
                 mediaPathTypeList = GetMediaPathTypeList();
                 fileList = GetFiles().ToArray();
+                isAdmin = System.Web.HttpContext.Current.User?.Identity?.Name?.ToLower() == "admin";
             }
             catch (Exception ex)
             {
@@ -66,7 +68,8 @@ namespace Keebee.AAT.Administrator.Controllers
                 Success = string.IsNullOrEmpty(errMsg),
                 ErrorMessage = errMsg,
                 FileList = fileList,
-                MediaPathTypeList = mediaPathTypeList
+                MediaPathTypeList = mediaPathTypeList,
+                IsAdmin = isAdmin
             }, JsonRequestBehavior.AllowGet);
 
             jsonResult.MaxJsonLength = int.MaxValue;

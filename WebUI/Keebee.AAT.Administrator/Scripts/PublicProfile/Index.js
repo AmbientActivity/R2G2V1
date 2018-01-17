@@ -31,6 +31,9 @@
             var currentSortKey = "filename";
             var primarySortKey = "filename";
 
+            // to bypass file upload restrictions
+            var isAdmin = false;
+
             var lists = {
                 FileList: [],
                 MediaPathTypeList: []
@@ -47,6 +50,8 @@
                 $("#table-header").show();
                 $("#table-detail").show();
                 cmdAdd.prop("disabled", false);
+
+                isAdmin = data.IsAdmin;
 
                 ko.bindingHandlers.tableUpdated = {
                     update: function (element, valueAccessor, allBindings) {
@@ -449,6 +454,7 @@
                             allowedTypes: mediaPathType.allowedtypes.split(","),
                             maxFileBytes: mediaPathType.maxfilebytes,
                             maxFileUploads: mediaPathType.maxfileuploads,
+                            isAdmin: isAdmin,
                             callback: function (successful, rejected) {
                                 if (successful.length > 0) {
                                     utilities.job.execute({

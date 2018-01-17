@@ -16,6 +16,7 @@
                 allowedTypes: [],
                 maxFileBytes: 5000000, //5MB in bytes
                 maxFileUploads: 10,
+                isAdmin: false,
                 callback: function () { }
             };
 
@@ -33,7 +34,7 @@
                 $(this).simpleUpload(config.url, {
                     allowedExts: config.allowedExts,
                     allowedTypes: config.allowedTypes,
-                    maxFileSize: config.maxFileBytes,
+                    maxFileSize: !config.isAdmin ? config.maxFileBytes : 0,
                     //limit: config.maxFileUploads,
                     /*
                     * Each of these callbacks are executed for each file
@@ -45,7 +46,9 @@
                     init: function (totalUploads) {
                         totalFiles = totalUploads;
 
-                        isTooManyFiles = (totalFiles > config.maxFileUploads);
+                        if (!config.isAdmin) {
+                            isTooManyFiles = (totalFiles > config.maxFileUploads);
+                        }
 
                         successful = [];
                         rejected = [];

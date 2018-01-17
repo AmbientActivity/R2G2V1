@@ -52,6 +52,7 @@ namespace Keebee.AAT.Administrator.Controllers
             string errMsg = null;
             MediaFileViewModel[] fileList = null;
             MediaPathType[] mediaPathTypeList = null;
+            var isAdmin = false;
 
             try
             {
@@ -74,6 +75,8 @@ namespace Keebee.AAT.Administrator.Controllers
                         MaxFileBytes = x.MaxFileBytes,
                         MaxFileUploads = x.MaxFileUploads
                     }).ToArray();
+
+                isAdmin = System.Web.HttpContext.Current.User?.Identity?.Name?.ToLower() == "admin";
             }
             catch (Exception ex)
             {
@@ -86,7 +89,8 @@ namespace Keebee.AAT.Administrator.Controllers
                 Success = string.IsNullOrEmpty(errMsg),
                 ErrorMessage = errMsg,
                 FileList = fileList,
-                MediaPathTypeList = mediaPathTypeList
+                MediaPathTypeList = mediaPathTypeList,
+                IsAdmin = isAdmin
             }, JsonRequestBehavior.AllowGet);
         }
 

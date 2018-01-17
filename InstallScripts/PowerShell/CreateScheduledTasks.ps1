@@ -41,7 +41,7 @@
     # display (to launch upon user logon)
     Write-Host "Creating Display Launch task..." -NoNewline
     $task_name = "ABBY - Display Launch"
-    $description = "Launches the main Display application on startup"
+    $description = "Launches the main Display application on startup."
     $working_directory = "$displayPath"
     $execute = "$displayPath"
     $user = "$env:COMPUTERNAME\$env:USERNAME"
@@ -58,10 +58,16 @@
     Write-Host "Creating Event Log Export task..." -NoNewline
     $task_name = "ABBY - Event Log Export"
     $description = "Executes the event log export routine which creates an Excel file containing one day's worth of activities."
-    $command = "$scheduledTasksPath\EventLogExporter\1.0.0.0\Keebee.AAT.EventLogExporter.exe"
+    $execute =  "$scheduledTasksPath\EventLogExporter\1.0.0.0\Keebee.AAT.EventLogExporter.exe"
+    $user = "$env:COMPUTERNAME\$env:USERNAME"
     $start_time = "01:00"
 
-    CreateScheduledTask $task_name $description $command $start_time
+    $get_task = Get-ScheduledTask $task_name -ErrorAction SilentlyContinue
+    if (!$get_task) {
+        $action = New-ScheduledTaskAction -Execute $execute
+        $trigger = New-ScheduledTaskTrigger -Daily -AT "01:00"
+        Register-ScheduledTask -Action $action -Trigger $trigger -RunLevel Highest -TaskName $task_name -Description $description | Out-Null
+    }
     Write-Host "done."
 
     # video capture file cleanup

@@ -181,6 +181,8 @@
     <Content Include="Content\favicons\ms-icon-150x150.png" />
     <Content Include="Content\favicons\ms-icon-310x310.png" />
     <Content Include="Content\favicons\ms-icon-70x70.png" />
+    <Content Include="Content\Scripts\bootstrap-hover-dropdown.js" />
+    <Content Include="Content\Scripts\bootstrap-hover-dropdown.min.js" />
     <Content Include="Scripts\AmbientInvitation\Index.js" />
     <Content Include="Scripts\PhidgetConfig\_ConfigDetailEdit.js" />
     <Content Include="Scripts\SharedLibraryAdd\_Index.js" />

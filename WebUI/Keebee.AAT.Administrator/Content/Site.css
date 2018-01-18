@@ -1,6 +1,7 @@
 ﻿body {
     padding-top: 50px;
     padding-bottom: 20px;
+    background-color: #fbfbfb;
 }
 
 /* Set padding to keep content from hitting the edges */
@@ -27,6 +28,115 @@ img {
 }
 a:hover, a:visited, a:link, a:active {
     text-decoration: none;
+}
+
+/* Bootstrap navbar */
+.navbar {
+  background: #333;
+}
+.navbar .navbar-right {
+  margin: 0;
+}
+.navbar .navbar-brand {
+  padding-top: 0;
+}
+.navbar .navbar-brand img {
+  border: solid 1px #ccc;
+}
+.navbar .navbar-nav > li > a {
+  color: #e1e0e0;
+}
+.navbar .navbar-nav .login-link {
+  color: #9bd0ff;
+  font-size: 12px;
+}
+.navbar .nav.navbar-nav > .open > a {
+  background: #111;
+  color: #fff;
+}
+.navbar .nav.navbar-nav > .open > a:hover {
+  background: #111;
+  color: #fff;
+}
+.navbar .nav.navbar-nav > .open > a:focus {
+  background: #333;
+  color: #fff;
+}
+.navbar .nav > li > a:hover {
+  background: #333;
+  color: #fff;
+}
+.navbar .nav > li > a:focus {
+  background: #333;
+  color: #fff;
+}
+
+/* Multilevel dropdown */
+.dropdown-menu {
+  min-width: 140px;
+}
+.dropdown-menu:hover > .dropdown-menu {
+  display: block;
+}
+.dropdown-menu:hover > a:after {
+  border-left-color: #fff;
+}
+.dropdown-menu > a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 10px;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #ccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-menu.dropdown-menu-sm {
+  min-width: 100px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu > .dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover > .dropdown-menu {
+  display: block;
+}
+.dropdown-submenu:hover > a:after {
+  border-left-color: #fff;
+}
+.dropdown-submenu > a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 10px;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #ccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left > .dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+/* Bootstrap form group */
+.form-group {
+  margin-bottom: 10px;
 }
 
 /* for the inner container overlow scroll bar */

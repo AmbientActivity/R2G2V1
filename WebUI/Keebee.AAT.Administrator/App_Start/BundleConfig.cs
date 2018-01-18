@@ -60,6 +60,7 @@ namespace Keebee.AAT.Administrator
             bundles.Add(new ScriptBundle("~/bundles/Bootstrap").Include(
                 "~/Scripts/bootstrap.min.js",
                 "~/Scripts/bootstrap-dialog.js",
+                "~/Content/Scripts/bootstrap-hover-dropdown.js",
                 "~/Scripts/bootstrap-datepicker.js"));
 
             bundles.Add(new StyleBundle("~/bundles/CommonStyles").Include(

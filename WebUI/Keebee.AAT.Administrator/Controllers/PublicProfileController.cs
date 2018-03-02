@@ -84,7 +84,7 @@ namespace Keebee.AAT.Administrator.Controllers
                 SystemEventLogger.WriteEntry($"PublicProfile.GetData: {errMsg}", SystemEventLogType.AdminInterface, EventLogEntryType.Error);
             }
 
-            return Json(new
+            var jsonResult = Json(new
             {
                 Success = string.IsNullOrEmpty(errMsg),
                 ErrorMessage = errMsg,
@@ -92,6 +92,10 @@ namespace Keebee.AAT.Administrator.Controllers
                 MediaPathTypeList = mediaPathTypeList,
                 IsAdmin = isAdmin
             }, JsonRequestBehavior.AllowGet);
+
+            jsonResult.MaxJsonLength = int.MaxValue;
+
+            return jsonResult;
         }
 
         [HttpPost]

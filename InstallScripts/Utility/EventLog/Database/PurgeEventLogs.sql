@@ -1,0 +1,3 @@
+TRUNCATE TABLE InteractiveActivityEventLogs
+TRUNCATE TABLE ActiveResidentEventLogs
+TRUNCATE TABLE ActivityEventLogs

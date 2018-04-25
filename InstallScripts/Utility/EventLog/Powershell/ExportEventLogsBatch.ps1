@@ -2,7 +2,7 @@
 {
     Write-Host -ForegroundColor yellow "`n--- Batch Event Log Export ---`n"
 
-    $path = "C:\Users\John\Source\Repos\R2G2V1\Shared\Keebee.AAT.Exporting\bin\Release\"
+    $path = "C:\Deployments\ScheduledTasks\EventLogExporter\1.0.0.0\"
     $targetDLL = "Keebee.AAT.Exporting.dll"
 
     #Load all .NET binaries in the folder

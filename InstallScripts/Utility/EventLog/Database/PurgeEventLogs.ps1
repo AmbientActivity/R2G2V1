@@ -1,5 +1,7 @@
 ﻿$server = $env:COMPUTERNAME + "\SQLEXPRESS"
 $database = "KeebeeAAT"
+$exportFolder = "\\$server\KeebeeAATFilestream\Media\Exports\EventLog"
+
 $path = "C:\Deployments\Install\Utility\EventLog\Database\"
 
 Try
@@ -16,9 +18,18 @@ Try
     }
     else
     {
-        Write-Host "Purging event logs..."-NoNewline
+        Write-Host "Purging..." -NoNewline
         $queryFile = $path + "PurgeEventLogs.sql"
         Invoke-SqlQuery -File $queryFile -Server $server -Database $database
+
+        $date = Get-Date
+        $filename = "EventLog_" + $date.ToString("yyyy_MM_dd") + ".xls"
+        $newFilename = "EventLog_" + $date.ToString("yyyy_MM_dd") + "_1.xls"
+
+        if (Test-Path "$exportFolder\$filename")
+        {
+            Rename-Item -Path "$exportFolder\$filename" -NewName $newFilename
+        }
         Write-Host "done."
     }
 }

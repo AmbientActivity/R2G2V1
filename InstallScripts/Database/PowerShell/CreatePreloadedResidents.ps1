@@ -84,23 +84,26 @@ Try
 
                         "`r`n--- Activity 5 - ResponseType 'Radio' ---`r`n" +
                         # audio\music\
-                        "SELECT @mediaPathType = [Path], @allowedExts = '''' + REPLACE(AllowedExts, ', ', ''', ''') + '''' FROM MediaPathTypes WHERE Id = 2 `r`n" +
+                        "SELECT @mediaPathType = [Path], @allowedExts = '''' + REPLACE(AllowedExts, ', ', ''', ''') + '''' FROM MediaPathTypes WHERE Id = 1 `r`n" +
                         "INSERT INTO ResidentMediaFiles (IsLinked, ResidentId, ResponseTypeId, MediaPathTypeId, StreamId, DateAdded)`r`n" + 
                         "SELECT 0, $residentId, 5, 1, StreamId, GETDATE() FROM MediaFiles WHERE [Path] = @pathProfiles + " +
                         "'$residentId\audio\music\' AND (@allowedExts) LIKE '%' + [FileType] + '%'`r`n" +
 
                         # audio\radio-shows\
+                        "SELECT @mediaPathType = [Path], @allowedExts = '''' + REPLACE(AllowedExts, ', ', ''', ''') + '''' FROM MediaPathTypes WHERE Id = 2 `r`n" +
                         "INSERT INTO ResidentMediaFiles (IsLinked, ResidentId, ResponseTypeId, MediaPathTypeId, StreamId, DateAdded)`r`n" +
                         "SELECT 0, $residentId, 5, 2, StreamId, GETDATE() FROM MediaFiles WHERE [Path] = @pathProfiles + " +
                         "'$residentId\audio\radio-shows\' AND (@allowedExts) LIKE '%' + [FileType] + '%'`r`n" +
 
-                        "`r`n--- Activity 5 - ResponseType 'Television' ---`n" +
+                        "`r`n--- Activity 6 - ResponseType 'Television' ---`n" +
                         # videos\tv-shows\
+                        "SELECT @mediaPathType = [Path], @allowedExts = '''' + REPLACE(AllowedExts, ', ', ''', ''') + '''' FROM MediaPathTypes WHERE Id = 5 `r`n" +
                         "INSERT INTO ResidentMediaFiles (IsLinked, ResidentId, ResponseTypeId, MediaPathTypeId, StreamId, DateAdded)`r`n" +
                         "SELECT 0, $residentId, 6, 5, StreamId, GETDATE() FROM MediaFiles WHERE [Path] = @pathProfiles + " +
                         "'$residentId\videos\tv-shows\' AND (@allowedExts) LIKE '%' + [FileType] + '%'`r`n" +
 
                         # videos\home-movies\
+                        "SELECT @mediaPathType = [Path], @allowedExts = '''' + REPLACE(AllowedExts, ', ', ''', ''') + '''' FROM MediaPathTypes WHERE Id = 6 `r`n" +
                         "INSERT INTO ResidentMediaFiles (IsLinked, ResidentId, ResponseTypeId, MediaPathTypeId, StreamId, DateAdded)`r`n" +
                         "SELECT 0, $residentId, 6, 6, StreamId, GETDATE() FROM MediaFiles WHERE [Path] = @pathProfiles + " +
                         "'$residentId\videos\home-movies\' AND (@allowedExts) LIKE '%' + [FileType] + '%'`r`n" +

@@ -567,6 +567,7 @@ namespace Keebee.AAT.Display.Caregiver
             try
             {
                 lvImagesPersonal.Items.Clear();
+                _imageListImagesPersonal.Images.Clear();
 
                 var files = GetMediaFiles(MediaPathTypeId.ImagesPersonal);
 

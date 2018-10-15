@@ -35,36 +35,30 @@
                         .toLowerCase().indexOf("input") >= 0);
                 }
 
-                var selectedId = 0;
-
                 if (isInput) {
-                    // hide all options except On/Off and OnOnly
+                    // hide all options except On/Off, OnOnly and NonRotational
                     $("#ddlPhidgetStyleTypes option")
                         .each(function (index, opt) {
                             if (allowedInputStyleTypes.includes(this.value)) {
                                 $(opt).show();
-                                if (selectedId === 0)
-                                    selectedId = parseInt(this.value);
                             } else {
                                 $(opt).hide();
                                 $(opt).prop("selected", false);
                             }
                         });
                 } else {
-                    // hide options On/Off and OnOnly
+                    // hide options On/Off, OnOnly and NonRotational
                     $("#ddlPhidgetStyleTypes option")
                         .each(function (index, opt) {
                             if (allowedSensorStyleTypes.includes(this.value)) {
                                 $(opt).show();
-                                if (selectedId === 0)
-                                    selectedId = parseInt(this.value);
                             } else {
                                 $(opt).hide();
                                 $(opt).prop("selected", false);
                             }
                         });
                 }
-                $("#ddlPhidgetStyleTypes").val(selectedId);
+                $("#ddlPhidgetStyleTypes").val(config.selectedPhidgetStyleTypeId);
             }
         }
     }

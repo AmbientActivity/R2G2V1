@@ -147,7 +147,7 @@ namespace Keebee.AAT.StateMachineService
                             Id = x.ResponseType.Id,
                             ResponseTypeCategoryId = x.ResponseType.ResponseTypeCategory.Id,
                             IsRandom = x.ResponseType.IsRandom,
-                            IsRotational = x.ResponseType.IsRotational,
+                            IsRotational = x.PhidgetStyleType.Id != PhidgetStyleTypeId.NonRotational && x.ResponseType.IsRotational,
                             IsUninterrupted = x.ResponseType.IsUninterrupted,
                             InteractiveActivityTypeId = x.ResponseType.InteractiveActivityType?.Id ?? 0,
                             SwfFile = x.ResponseType.InteractiveActivityType?.SwfFile ?? string.Empty
@@ -214,7 +214,7 @@ namespace Keebee.AAT.StateMachineService
                 };
 
                 // handle 'random' response type
-                if ((configDetail.ResponseType.Id == ResponseTypeId.OffScreen && _currentResponseTypeId == ResponseTypeId.OffScreen)
+                if (configDetail.ResponseType.Id == ResponseTypeId.OffScreen && _currentResponseTypeId == ResponseTypeId.OffScreen
                     || configDetail.ResponseType.Id == ResponseTypeId.Random)
                 {
                     responseMessage.ConfigDetail.ResponseType = GetRandomResponse();
@@ -401,7 +401,7 @@ namespace Keebee.AAT.StateMachineService
                             Id = x.ResponseType.Id,
                             ResponseTypeCategoryId = x.ResponseType.ResponseTypeCategoryId,
                             IsRandom = x.ResponseType.IsRandom,
-                            IsRotational = x.ResponseType.IsRotational,
+                            IsRotational = x.PhidgetStyleType.Id != PhidgetStyleTypeId.NonRotational && x.ResponseType.IsRotational,
                             IsUninterrupted = x.ResponseType.IsUninterrupted,
                             InteractiveActivityTypeId = x.ResponseType.InteractiveActivityTypeId,
                             SwfFile = x.ResponseType.SwfFile

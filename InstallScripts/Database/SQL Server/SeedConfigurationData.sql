@@ -33,6 +33,7 @@ INSERT [dbo].[PhidgetStyleTypes] ([Id], [Description], [IsIncremental]) VALUES (
 INSERT [dbo].[PhidgetStyleTypes] ([Id], [Description], [IsIncremental]) VALUES (4, 'Slider', 1)
 INSERT [dbo].[PhidgetStyleTypes] ([Id], [Description], [IsIncremental]) VALUES (5, 'On/Off', 0)
 INSERT [dbo].[PhidgetStyleTypes] ([Id], [Description], [IsIncremental]) VALUES (6, 'On Only', 0)
+INSERT [dbo].[PhidgetStyleTypes] ([Id], [Description], [IsIncremental]) VALUES (7, 'Non-rotational', 0)
 SET IDENTITY_INSERT [dbo].[PhidgetStyleTypes] OFF
 
 -- phidget types

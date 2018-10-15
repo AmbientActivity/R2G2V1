@@ -137,6 +137,7 @@ namespace Keebee.AAT.Shared
         public const int Slider = 4;
         public const int OnOff = 5;
         public const int OnOnly = 6;
+        public const int NonRotational = 7;
     }
 
     public static class PhidgetTypeId

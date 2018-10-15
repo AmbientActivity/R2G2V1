@@ -238,7 +238,7 @@ namespace Keebee.AAT.Administrator.Controllers
                             .OrderBy(x => x.Description),
                         "Id", "Description", configDetail?.ResponseType.Id),
                     SelectedPhidgetStyleTypeId = configDetail?.PhidgetStyleType.Id ?? 0,
-                    AllowedInputStyleTypes = $"{PhidgetStyleTypeId.OnOff},{PhidgetStyleTypeId.OnOnly}",
+                    AllowedInputStyleTypes = $"{PhidgetStyleTypeId.OnOff},{PhidgetStyleTypeId.OnOnly},{PhidgetStyleTypeId.NonRotational}",
                     AllowedSensorStyleTypes = $"{PhidgetStyleTypeId.Touch},{PhidgetStyleTypeId.MultiTurn},{PhidgetStyleTypeId.StopTurn},{PhidgetStyleTypeId.Slider}"
                 };
             }

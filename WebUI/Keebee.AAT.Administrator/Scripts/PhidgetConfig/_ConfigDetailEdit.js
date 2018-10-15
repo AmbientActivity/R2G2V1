@@ -35,6 +35,8 @@
                         .toLowerCase().indexOf("input") >= 0);
                 }
 
+                var selectedValue;
+
                 if (isInput) {
                     // hide all options except On/Off, OnOnly and NonRotational
                     $("#ddlPhidgetStyleTypes option")
@@ -58,7 +60,13 @@
                             }
                         });
                 }
-                $("#ddlPhidgetStyleTypes").val(config.selectedPhidgetStyleTypeId);
+                if (config.selectedPhidgetStyleTypeId === 0) {
+                    $("#ddlPhidgetStyleTypes").val(isInput 
+                        ? allowedInputStyleTypes[0]
+                        : allowedSensorStyleTypes[0]);
+                } else {
+                    $("#ddlPhidgetStyleTypes").val(config.selectedPhidgetStyleTypeId);
+                }
             }
         }
     }

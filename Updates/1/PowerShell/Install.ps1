@@ -2,11 +2,13 @@
 $rootDrive = "C:"
 $pathDeployments = "$rootDrive\Deployments\"
 $pathVersion = "1.0.0.0\"
-$pathStateMachine = "Services\StateMachineService\"
-$pathAdministator = "Web\Administrator\"
-$pathFiles = "\Install\Utility\Updates\1\Files"
+$pathStateMachine = "$pathDeployments\Services\StateMachineService\"
+$pathAdministator = "$pathDeployments\Web\Administrator\"
+$pathSQLInstallScripts = "$pathDeployments\Install\Database\SQL Server\"
+$pathFiles = "$pathDeployments\Updates\1\Files"
 $pathAdministratorFiles = "$pathFiles\Administrator"
 $pathStateMachineFiles = "$pathFiles\StateMachineService"
+$pathSQLInstallScriptFiles = "$pathFiles\InstallScripts\Database"
 
 # service paths
 $pathPhidgetServiceExe = $pathDeployments + "Services\PhidgetService\" + $pathVersion + "Keebee.AAT.PhidgetService.exe"
@@ -99,22 +101,25 @@ Try
         Write-Host "Copying files..." -NoNewline
 
         # state machine service
-        $path = $pathDeployments + $pathStateMachine + $pathVersion
-        $source = $pathDeployments + $pathStateMachineFiles
-        Copy-Item $source\* $path -Force
-
-        $path = $pathDeployments + $pathAdministator + $pathVersion + "\Scripts\PhidgetConfig"
-        $source = $pathDeployments + $pathAdministratorFiles + "\Scripts\PhidgetConfig"
+        $path = $pathStateMachine + $pathVersion
+        $source = $pathStateMachineFiles
         Copy-Item $source\* $path -Force
 
         # administrator
-        $path = $pathDeployments + $pathAdministator + $pathVersion
-        $source = $pathDeployments + $pathAdministratorFiles
+        $path = $pathAdministator + $pathVersion + "\Scripts\PhidgetConfig"
+        $source = $pathAdministratorFiles + "\Scripts\PhidgetConfig"
+        Copy-Item $source\* $path -Force
+
+        $path = $pathAdministator + $pathVersion
+        $source = $pathAdministratorFiles
         Copy-Item $source\bin\* $path\bin -Force
 
-        $path = $pathDeployments + $pathAdministator + $pathVersion + "\Scripts\PhidgetConfig"
-        $source = $pathDeployments + $pathAdministratorFiles + "\Scripts\PhidgetConfig"
+        $path = $pathAdministator + $pathVersion + "\Scripts\PhidgetConfig"
+        $source = $pathAdministratorFiles + "\Scripts\PhidgetConfig"
         Copy-Item $source\* $path -Force
+
+        # sql server install scripts
+        Copy-Item $pathSQLInstallScriptFiles\* $pathSQLInstallScripts -Force
 
         Write-Host "done."
 

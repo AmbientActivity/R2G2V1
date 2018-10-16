@@ -1,6 +1,6 @@
 @ECHO OFF
 
-PowerShell -NoProfile -ExecutionPolicy Unrestricted -Command "& 'C:\Deployments\Install\Utility\PhidgetStyleType\PowerShell\AddPhidgetStyleType.ps1'
+PowerShell -NoProfile -ExecutionPolicy Unrestricted -Command "& 'C:\Deployments\Updates\1\PowerShell\Install.ps1'
 echo.
 
 PAUSE

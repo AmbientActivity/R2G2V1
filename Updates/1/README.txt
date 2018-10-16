@@ -1,1 +1,0 @@
-Adds a new phidet style type called Non-rotational

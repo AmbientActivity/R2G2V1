@@ -13,7 +13,6 @@
     Write-Host -ForegroundColor yellow "`n--- Services ---`n"
 
     Write-Host "Installing State Machine Service..." -NoNewline
-
     Invoke-Command -ScriptBlock { C:\WINDOWS\Microsoft.NET\Framework\v4.0.30319\InstallUtil.exe /install $pathStateMachineServiceExe } | Out-Null
     Write-Host "done."
 

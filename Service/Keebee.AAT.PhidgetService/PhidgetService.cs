@@ -280,8 +280,9 @@ namespace Keebee.AAT.PhidgetService
 
                 var configDetail = _activeConfig.ConfigDetails.Single(cd => cd.PhidgetTypeId == phidgetTypeId);
 
-                // if an input with type "On Only" only send if the value is "On"
-                if (configDetail.PhidgetStyleType.Id == PhidgetStyleTypeId.OnOnly && !e.Value)
+                // if input type is "On Only" or "Non-rotational", only send message if the value is "On"
+                if ((configDetail.PhidgetStyleType.Id == PhidgetStyleTypeId.OnOnly
+                    || configDetail.PhidgetStyleType.Id == PhidgetStyleTypeId.NonRotational) && !e.Value)
                     return;
 
                 SetDiscreteStepValue();

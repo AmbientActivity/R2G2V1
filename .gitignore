@@ -208,3 +208,4 @@ Thumbs.db
 !home-movies*
 !EventLog*
 !.gitignore
+/.vs/Keebee.AAT/v16/Server/sqlite3

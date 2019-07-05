@@ -19,7 +19,7 @@
             return new Promise(function (resolve) {
 
                 if ((typeof options !== "undefined") && (options !== null)) {
-                    if (options.src === null) reject("Sourse cannot be null");
+                    if (options.src === null) reject("Source cannot be null");
                     if (options.player === null) reject("Player cannot be null");
                     if (options.filename === null) reject("Filename cannot be null");
                     if (options.fileType === null) reject("File Type cannot be null");

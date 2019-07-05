@@ -283,13 +283,13 @@ namespace Keebee.AAT.Display
         {
             try
             {
-                var responsMessage = JsonConvert.DeserializeObject<ResponseMessage>(e.MessageBody);
+                var responseMessage = JsonConvert.DeserializeObject<ResponseMessage>(e.MessageBody);
 
-                var resident = responsMessage.Resident;
-                var configDetail = responsMessage.ConfigDetail;
+                var resident = responseMessage.Resident;
+                var configDetail = responseMessage.ConfigDetail;
                 var responseType = configDetail.ResponseType;
                 var phidgetTypeId = configDetail.PhidgetTypeId;
-                var isActiveEventLog = responsMessage.IsActiveEventLog;
+                var isActiveEventLog = responseMessage.IsActiveEventLog;
 
                 _isNewResponse =
                     (responseType.Id != _currentResponse.Id) ||
@@ -327,7 +327,7 @@ namespace Keebee.AAT.Display
                 _currentIsActiveEventLog = isActiveEventLog;
                 _currentPhidgetTypeId = phidgetTypeId;
 
-                ExecuteResponse(responsMessage.SensorValue);
+                ExecuteResponse(responseMessage.SensorValue);
             }
             catch (Exception ex)
             {
@@ -719,7 +719,7 @@ namespace Keebee.AAT.Display
                 if (volumeControl.IsOpen()) return;
 
                 _opaqueLayer.Show();
-                volumeControl.VolumeControlClosedEvent += VolumentControlClosed;
+                volumeControl.VolumeControlClosedEvent += VolumeControlClosed;
                 volumeControl.Show();
             }
         }
@@ -870,7 +870,7 @@ namespace Keebee.AAT.Display
             }
         }
 
-        private void VolumentControlClosed(object sender, EventArgs e)
+        private void VolumeControlClosed(object sender, EventArgs e)
         {
             _opaqueLayer.Hide();
         }

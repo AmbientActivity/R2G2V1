@@ -18,40 +18,34 @@ namespace Keebee.AAT.SystemEventLogging
         AdminInterface = 10
     }
 
-    public class SystemEventLogger
+    public static class SystemEventLogger
     {
-        private const string EventLogDisplay = "R2G2 Display";
-        private const string EventLogStateMachineService = "R2G2 State Machine Service";
-        private const string EventLogBluetoothBeaconWatcherService = "R2G2 Bluetooth Beacon Watcher Service";
-        private const string EventLogPhidgetService = "R2G2 Phidget Service";
-        private const string EventLogVideoCaptureService = "R2G2 Video Capture Service";
-        private const string EventLogKeepIISAliveService = "R2G2 Keep IIS Alive Service";
-        private const string EventLogEventLog = "R2G2 Event Log";
-        private const string EventLogAutomatedExport = "R2G2 Automated Export";
-        private const string EventLogAdminInterface = "R2G2 Administrator Interface";
+        private const string EventLogDisplay = "ABBY Display";
+        private const string EventLogStateMachineService = "ABBY State Machine Service";
+        private const string EventLogBluetoothBeaconWatcherService = "ABBY Bluetooth Beacon Watcher Service";
+        private const string EventLogPhidgetService = "ABBY Phidget Service";
+        private const string EventLogVideoCaptureService = "ABBY Video Capture Service";
+        private const string EventLogKeepIISAliveService = "ABBY Keep IIS Alive Service";
+        private const string EventLogEventLog = "ABBY Event Log";
+        private const string EventLogAutomatedExport = "ABBY Automated Export";
+        private const string EventLogAdminInterface = "ABBY Administrator Interface";
 
-        private EventLog _eventLog;
-        public EventLog EventLog
+        public static void WriteEntry(string message, SystemEventLogType systemeEntryType, EventLogEntryType type = EventLogEntryType.Information)
         {
-            set { _eventLog = value; }
+            using (var eventLog = new EventLog())
+            {
+                var eventId = Initialize(eventLog, EventLogLiteral(systemeEntryType)) + 1;
+                eventLog.WriteEntry(message, type, eventId);
+            }
         }
 
-        public int EventId { get; private set; }
-
-        public SystemEventLogger(SystemEventLogType systemEventLogType)
+        public static void Clear(SystemEventLogType systemeEntryType)
         {
-            _eventLog = new EventLog();
-            EventId = Initialize(EventLogLiteral(systemEventLogType));
-        }
-
-        public void WriteEntry(string message, EventLogEntryType type = EventLogEntryType.Information)
-        {
-            _eventLog.WriteEntry(message, type, EventId++);
-        }
-
-        public void Clear()
-        {
-            _eventLog.Clear();
+            using (var eventLog = new EventLog())
+            {
+                var eventId = Initialize(eventLog, EventLogLiteral(systemeEntryType)) + 1;
+                eventLog.Clear();
+            }
         }
 
         private static string EventLogLiteral(SystemEventLogType queueName)
@@ -91,7 +85,7 @@ namespace Keebee.AAT.SystemEventLogging
             return literal;
         }
 
-        private int Initialize(string name)
+        private static int Initialize(EventLog eventLog, string name)
         {
             // remove spaces for the source
             var source = string.Join("", name.Split(default(string[]), StringSplitOptions.RemoveEmptyEntries));
@@ -100,16 +94,16 @@ namespace Keebee.AAT.SystemEventLogging
             {
                 EventLog.CreateEventSource(source, name);
             }
-            _eventLog.Source = source;
-            _eventLog.Log = name;
+            eventLog.Source = source;
+            eventLog.Log = name;
 
             UInt16 nextEventId = 1;
             try
             {
-                var entries = _eventLog.Entries.Cast<EventLogEntry>().ToArray();
+                var entries = eventLog.Entries.Cast<EventLogEntry>().ToArray();
                 if (entries.Any())
                 {
-                    long lastEventId = _eventLog.Entries.Cast<EventLogEntry>().Last().InstanceId;
+                    long lastEventId = eventLog.Entries.Cast<EventLogEntry>().Last().InstanceId;
 
                     // increment the eventId if it is less than the max value for UInt16
                     // otherwise reset it to 1
@@ -127,6 +121,5 @@ namespace Keebee.AAT.SystemEventLogging
 
             return nextEventId;
         }
-
     }
 }

@@ -1,144 +1,181 @@
 ﻿/*!
- * 1.0 Keebee AAT Copyright © 2016
+ * 1.0 Keebee AAT Copyright © 2017
  * VideoCaptures/Index.js
  * Author: John Charlton
  * Date: 2016-10
  */
 
 ; (function ($) {
-
-    var highlightRowColour = "#e3e8ff";
-
     videocaptures.index = {
         init: function () {
+            var isBinding = true;
+
             var sortDescending = false;
             var currentSortKey = "filename";
+            var primarySortKey = "filename";
 
             var lists = {
                 VideoCaptureList: []
             };
 
-            $.get({
-                url: site.url + "VideoCaptures/GetData/",
-                dataType: "json",
-                success: function (data) {
-                    $.extend(lists, data);
+            utilities.job.execute({
+                url: "VideoCaptures/GetData/"
+            })
+            .then(function (data) {
+                $.extend(lists, data);
 
-                    ko.applyBindings(new VideoCaptureViewModel());
+                $("#loading-container").hide();
+                $("#table-header").show();
+                $("#table-detail").show();
 
-                    function VideoCapture(filename, path, filesize) {
-                        var self = this;
-
-                        self.filename = filename;
-                        self.path = path;
-                        self.filesize = filesize;
-
-                        self.download = function (row) {
-                            window.location = "VideoCaptures/Download?path=" + row.path + "&filename=" + row.filename;
-                        };
+                ko.bindingHandlers.tableUpdated = {
+                    update: function (element, valueAccessor, allBindings) {
+                        ko.unwrap(valueAccessor());
+                        $("#txtSearchFilename").focus();
+                        isBinding = false;
                     }
+                }
 
-                    function VideoCaptureViewModel() {
-                        var tblVideoCapture = $("#tblVideoCapture");
+                ko.bindingHandlers.tableRender = {
+                    update: function (element, valueAccessor) {
+                        ko.utils.unwrapObservable(valueAccessor());
 
-                        var self = this;
+                        var table = element.parentNode;
+                        var noRowsMessage = $("#no-rows-message");
 
-                        self.videoCaptures = ko.observableArray([]);
-                        self.selectedVideoCapture = ko.observable();
-                        self.filenameSearch = ko.observable("");
-                        self.totalVideoCaptures = ko.observable(0);
+                        var tableDetailElement = $("#table-detail");
+                        var tableHeaderElement = $("#table-header");
 
-                        createVideoCaptureArray(lists.VideoCaptureList);
+                        if (table.rows.length > 0) {
+                            tableHeaderElement.show();
+                            tableDetailElement.show();
+                            noRowsMessage.hide();
 
-                        function createVideoCaptureArray(list) {
-                            self.videoCaptures.removeAll();
-                            $(list).each(function (index, value) {
-                                pushVideoCapture(value);
-                            });
-                        };
+                            // determine if there is table overflow (to cause a scrollbar)
+                            // if so, unhide the scrollbar header column
+                            // and adjust the width of the filename column
+                            var colScrollbar = $("#col-scrollbar");
 
-                        self.columns = ko.computed(function () {
-                            var arr = [];
-                            arr.push({ title: "Name", sortable: true, sortKey: "filename", numeric: false, cssClass: "" });
-                            arr.push({ title: "Path", sortable: true, sortKey: "path", numeric: false, cssClass: "" });
-                            arr.push({ title: "Size", sortable: true, sortKey: "filesize", numeric: true, cssClass: "col-filesize" });
-                            return arr;
-                        });
-
-                        function pushVideoCapture(value) {
-                            self.videoCaptures.push(new VideoCapture(value.Filename, value.Path, value.FileSize));
-                        };
-
-                        self.selectedVideoCapture(self.videoCaptures()[0]);
-
-                        self.sort = function (header) {
-                            var sortKey = header.sortKey;
-
-                            if (sortKey !== currentSortKey) {
-                                sortDescending = false;
+                            if (table.clientHeight > site.getMaxClientHeight) {
+                                colScrollbar.prop("hidden", false);
+                                colScrollbar.attr("style", "width: 1%; border-bottom: 1.5px solid #ddd;");
+                                tableDetailElement.addClass("container-height");
                             } else {
-                                sortDescending = !sortDescending;
+                                colScrollbar.prop("hidden", true);
+                                tableDetailElement.removeClass("container-height");
                             }
 
-                            currentSortKey = sortKey;
+                        } else {
+                            tableHeaderElement.hide();
+                            tableDetailElement.hide();
+                            noRowsMessage.show();
+                        }
+                    }
+                }
 
-                            $(self.columns()).each(function (index, value) {
-                                if (value.sortKey === sortKey) {
-                                    self.videoCaptures.sort(function (a, b) {
-                                        if (value.numeric) {
-                                            if (sortDescending) {
-                                                return a[sortKey] > b[sortKey]
-                                                        ? -1 : a[sortKey] < b[sortKey] || a.filename > b.filename ? 1 : 0;
-                                            } else {
-                                                return a[sortKey] < b[sortKey]
-                                                    ? -1 : a[sortKey] > b[sortKey] || a.filename > b.filename ? 1 : 0;
-                                            }
-                                        } else {
-                                            if (sortDescending) {
-                                                return a[sortKey].toString().toLowerCase() > b[sortKey].toString().toLowerCase()
-                                                    ? -1 : a[sortKey].toString().toLowerCase() < b[sortKey].toString().toLowerCase()
-                                                    || a.filename.toLowerCase() > b.filename.toLowerCase() ? 1 : 0;
-                                            } else {
-                                                return a[sortKey].toString().toLowerCase() < b[sortKey].toString().toLowerCase()
-                                                    ? -1 : a[sortKey].toString().toLowerCase() > b[sortKey].toString().toLowerCase()
-                                                    || a.filename.toLowerCase() > b.filename.toLowerCase() ? 1 : 0;
-                                            }
-                                        }
-                                    });
-                                }
-                            });
-                        };
+                ko.applyBindings(new VideoCaptureViewModel());
 
-                        self.filteredVideoCaptures = ko.computed(function () {
-                            return ko.utils.arrayFilter(self.videoCaptures(), function (g) {
-                                return (
-                                    (self.filenameSearch().length === 0 || g.filename.toLowerCase().indexOf(self.filenameSearch().toLowerCase()) !== -1)
-                                );
-                            });
-                        });
+                function VideoCapture(filename, path, filesize) {
+                    var self = this;
 
-                        self.videoCapturesTable = ko.computed(function () {
-                            var filteredVideoCaptures = self.filteredVideoCaptures();
-                            self.totalVideoCaptures(filteredVideoCaptures.length);
+                    self.filename = filename;
+                    self.path = path;
+                    self.filesize = filesize;
 
-                            return filteredVideoCaptures;
-                        });
-
-                        self.highlightRow = function (row) {
-                            if (row == null) return;
-
-                            var rows = tblVideoCapture.find("tr:gt(0)");
-                            rows.each(function () {
-                                $(this).css("background-color", "#ffffff");
-                            });
-
-                            var r = tblVideoCapture.find("#row_" + row.streamid);
-                            r.css("background-color", highlightRowColour);
-                            $("#tblVideoCapture").attr("tr:hover", highlightRowColour);
-                        };
+                    self.download = function (row) {
+                        window.location = "VideoCaptures/Download?path=" + row.path + "&filename=" + row.filename;
                     };
                 }
-            });      
+
+                function VideoCaptureViewModel() {
+                    var tblVideoCapture = $("#tblVideoCapture");
+
+                    var self = this;
+
+                    self.videoCaptures = ko.observableArray([]);
+                    self.selectedVideoCapture = ko.observable();
+                    self.filenameSearch = ko.observable("");
+                    self.totalVideoCaptures = ko.observable(0);
+
+                    createVideoCaptureArray(lists.VideoCaptureList);
+
+                    function createVideoCaptureArray(list) {
+                        self.videoCaptures.removeAll();
+                        $(list).each(function (index, value) {
+                            pushVideoCapture(value);
+                        });
+                    };
+
+                    self.columns = ko.computed(function () {
+                        var arr = [];
+                        arr.push({ title: "Filename", sortable: true, sortKey: "filename", numeric: false, cssClass: "col-filename-vc" });
+                        arr.push({ title: "Path", sortable: true, sortKey: "path", numeric: false, cssClass: "col-path" });
+                        arr.push({ title: "Size", sortable: true, sortKey: "filesize", numeric: true, cssClass: "col-filesize" });
+                        return arr;
+                    });
+
+                    function pushVideoCapture(value) {
+                        self.videoCaptures.push(new VideoCapture(value.Filename, value.Path, value.FileSize));
+                    };
+
+                    self.selectedVideoCapture(self.videoCaptures()[0]);
+
+                    self.sort = function (header) {
+                        if (isBinding) return;
+                        var sortKey = header.sortKey;
+
+                        if (sortKey !== currentSortKey) {
+                            sortDescending = false;
+                        } else {
+                            sortDescending = !sortDescending;
+                        }
+
+                        currentSortKey = sortKey;
+
+                        var isboolean = false;
+                        if (typeof header.boolean !== "undefined") {
+                            isboolean = header.boolean;
+                        }
+                        self.videoCaptures(utilities.sorting.sortArray(
+                            {
+                                array: self.videoCaptures(),
+                                columns: self.columns(),
+                                sortKey: sortKey,
+                                primarySortKey: primarySortKey,
+                                descending: sortDescending,
+                                boolean: isboolean
+                            }));
+                    };
+
+                    self.filteredVideoCaptures = ko.computed(function () {
+                        return ko.utils.arrayFilter(self.videoCaptures(), function (g) {
+                            return (
+                                (self.filenameSearch().length === 0 || g.filename.toLowerCase().indexOf(self.filenameSearch().toLowerCase()) !== -1)
+                            );
+                        });
+                    });
+
+                    self.videoCapturesTable = ko.computed(function () {
+                        var filteredVideoCaptures = self.filteredVideoCaptures();
+                        self.totalVideoCaptures(filteredVideoCaptures.length);
+
+                        return filteredVideoCaptures;
+                    });
+
+                    self.highlightRow = function (row) {
+                        var r = tblVideoCapture.find("#row_" + row.streamid);
+                        $(r).addClass("highlight").siblings().removeClass("highlight");
+                    };
+                };
+            })
+            .catch(function (error) {
+                $("#loading-container").hide();
+                $("#error-container")
+                    .html("<div><h2>Data load error:</h2></div>")
+                    .append("<div>" + error.message + "</div>")
+                    .append("<div><h3>Please try refreshing the page</h3></div>");
+                $("#error-container").show();
+            });
         }
     }
 })(jQuery);

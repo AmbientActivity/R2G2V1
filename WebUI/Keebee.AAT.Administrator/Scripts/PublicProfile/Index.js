@@ -1,420 +1,698 @@
 ﻿/*!
- * 1.0 Keebee AAT Copyright © 2016
+ * 1.0 Keebee AAT Copyright © 2017
  * PublicProfile/Index.js
  * Author: John Charlton
  * Date: 2016-09
  */
 
-function CuteWebUI_AjaxUploader_OnPostback() {
-    BootstrapDialog.show({
-        type: BootstrapDialog.TYPE_INFO,
-        title: "Saving Media",
-        message: "One moment...",
-        closable: false
-    });
-    document.forms[0].submit();
-}
-
-function CuteWebUI_AjaxUploader_OnError(msg) {
-    BootstrapDialog.show({
-        type: BootstrapDialog.TYPE_DANGER,
-        title: "File Error",
-        message: msg
-    });
-
-    EnableScreen();
-    return false;
-}
-
-function CuteWebUI_AjaxUploader_OnTaskError(obj, msg, reason) {
-    BootstrapDialog.show({
-        type: BootstrapDialog.TYPE_DANGER,
-        title: "Task Error",
-        message: "Error uploading file <b>" + obj.FileName + "</b>.\nMessage: " + msg
-    });
-
-    EnableScreen();
-    return false;
-}
-
-function CuteWebUI_AjaxUploader_OnStop() {
-    EnableScreen();
-}
-
-function CuteWebUI_AjaxUploader_OnSelect() {
-    DisableScreen();
-}
-
-function EnableScreen() {
-    $("#uploader-html-container").attr("hidden", "hidden");
-    $("#lnkGoBack").removeAttr("hidden");
-    $("#lblGoBackDisabled").attr("hidden", "hidden");
-    $("#txtSearchFilename").removeAttr("disabled");
-    $("#uploadbutton").removeAttr("disabled");
-    $("select").removeAttr("disabled");
-    $("#main-menu").removeAttr("hidden");
-    $("#menu-login").removeAttr("hidden");
-}
-
-function DisableScreen() {
-    $("#uploader-html-container").removeAttr("hidden");
-    $("#lnkGoBack").attr("hidden", "hidden");
-    $("#lblGoBackDisabled").removeAttr("hidden");
-    $("#txtSearchFilename").attr("disabled", "disabled");
-    $("#uploadbutton").attr("disabled", "disabled");
-    $("select").attr("disabled", "disabled");
-    $("#main-menu").attr("hidden", "hidden");
-    $("#menu-login").attr("hidden", "hidden");
-}
-
 ; (function ($) {
-    var highlightRowColour = "#e3e8ff";
-
     publicprofile.index = {
-        init: function (values) {
+        init: function (options) {
+            var isBinding = true;
 
             var config = {
                 selectedMediaPathTypeId: 0
             };
 
-            $.extend(config, values);
+            $.extend(config, options);
 
             // buttons
             var cmdDelete = $("#delete");
+            var cmdAdd = $("#add");
+
+            // audio player
+            var audioPlayer = $("#audio-player");
+            var audioPlayerElement = document.getElementById("audio-player");
+
+            // video player
+            var videoPlayer = $("#video-player");
 
             var sortDescending = false;
             var currentSortKey = "filename";
+            var primarySortKey = "filename";
+
+            // to bypass file upload restrictions
+            var isAdmin = false;
 
             var lists = {
                 FileList: [],
                 MediaPathTypeList: []
             };
 
-            $.get({
-                url: site.url + "PublicProfile/GetData?" + "mediaPathTypeId=" + $("#mediaPathTypeId").val(),
-                dataType: "json",
-                success: function (data) {
-                    $.extend(lists, data);
+            utilities.job.execute({
+                url: "PublicProfile/GetData?" + "mediaPathTypeId=" + config.selectedMediaPathTypeId
+            })
+            .then(function(data) {
+                $.extend(lists, data);
 
-                    ko.applyBindings(new FileViewModel());
+                $("#error-container").hide();
+                $("#loading-container").hide();
+                $("#table-header").show();
+                $("#table-detail").show();
+                cmdAdd.prop("disabled", false);
 
-                    function FileViewModel() {
-                        var tblFile = $("#tblFile");
+                isAdmin = data.IsAdmin;
 
-                        var self = this;
+                ko.bindingHandlers.tableUpdated = {
+                    update: function (element, valueAccessor, allBindings) {
+                        ko.unwrap(valueAccessor());
+                        $("#txtSearchFilename").focus();
+                        isBinding = false;
+                    }
+                }
 
-                        self.files = ko.observableArray([]);
-                        self.mediaPathTypes = ko.observableArray([]);
-                        self.selectedMediaPathType = ko.observable(config.selectedMediaPathTypeId);
-                        self.filenameSearch = ko.observable("");
-                        self.totalFilteredFiles = ko.observable(0);
-                        self.selectAllIsSelected = ko.observable(false);
-                        self.selectedIds = ko.observable([]);
-                        self.isPreviewable = ko.observable(false);
+                // non-virtual elements
+                ko.bindingHandlers.tableRender = {
+                    update: function (element, valueAccessor) {
+                        ko.utils.unwrapObservable(valueAccessor());
 
-                        createFileArray(lists.FileList);
-                        createMediaPathTypeArray(lists.MediaPathTypeList);
-                        enableDetail();
+                        var table = element.parentNode;
 
-                        function createFileArray(list) {
-                            self.files.removeAll();
-                            $(list).each(function (index, value) {
-                                self.files.push({
-                                    id: value.Id,
-                                    streamid: value.StreamId,
-                                    filename: value.Filename,
-                                    filetype: value.FileType,
-                                    filesize: value.FileSize,
-                                    islinked: value.IsLinked,
-                                    path: value.Path,
-                                    mediapathtypeid: value.MediaPathTypeId,
-                                    isselected: false
-                                });
-                            });
+                        // get the currently selected media path type id from the dropdown
+                        var mediaPathTypeSelector = $("#ddlMediaPathTypes");
+                        var mediaPathTypeId = mediaPathTypeSelector.val();
+                        var category = getMediaPathTypeCategory(mediaPathTypeId);
+
+                        formatTable(table, mediaPathTypeId, category);
+                    }
+                };
+
+                // virtual elements (audio)
+                ko.virtualElements.allowedBindings.audioRender = true;
+                ko.bindingHandlers.audioRender = {
+                    update: function (element, valueAccessor) {
+                        // handler triggers only when rows are ADDED
+                        // only do this logic if this is an audio column (as opposed to thumbnail)
+                        var mediaPathTypeSelector = $("#ddlMediaPathTypes");
+                        var mediaPathTypeId = mediaPathTypeSelector.val();
+                        var category = getMediaPathTypeCategory(mediaPathTypeId);
+
+                        if (category === "audio") {
+                            // get audio column, find the parent row
+                            var audio = ko.virtualElements.firstChild(element);
+                            var row = audio.parentNode;
+
+                            // if last row do table formatting
+                            var table = row.parentNode;
+                            if (row === table.rows[getNumFilteredRows(mediaPathTypeId) - 1]) {
+                                formatTable(table, mediaPathTypeId, category);
+                            }
+                        }
+                    }
+                }
+
+                // virtual elements (thumbnail)
+                ko.virtualElements.allowedBindings.thumbnailRender = true;
+                ko.bindingHandlers.thumbnailRender = {
+                    update: function (element, valueAccessor) {
+                        // handler triggers only when rows are ADDED
+                        // only do this logic if this is a thumbnail column (as opposed to audio)
+                        var mediaPathTypeSelector = $("#ddlMediaPathTypes");
+                        var mediaPathTypeId = mediaPathTypeSelector.val();
+                        var category = getMediaPathTypeCategory(mediaPathTypeId);
+
+                        if (category !== "audio") {
+
+                            // get thumbnail column, find anchor element, set tooltip
+                            var thumbnail = ko.virtualElements.firstChild(element);
+                            var row = thumbnail.parentNode;
+
+                            while (thumbnail) {
+                                if (thumbnail.className === "col-thumbnail") {
+                                    var child = ko.virtualElements.firstChild(thumbnail);
+                                    var a = ko.virtualElements.nextSibling(child);
+                                    $(a).tooltip({ delay: { show: 100, hide: 100 } });
+                                }
+                                thumbnail = ko.virtualElements.nextSibling(thumbnail);
+                            }
+
+                            // if last row do table formatting
+                            var table = row.parentNode;
+                            if (row === table.rows[getNumFilteredRows(mediaPathTypeId) - 1]) {
+                                formatTable(table, mediaPathTypeId, category);
+                            }
+                        }
+                    }
+                }
+
+                function getMediaPathTypeCategory(mediaPathTypeId) {
+                    return lists.MediaPathTypeList.filter(function (value) {
+                        return value.Id === Number(mediaPathTypeId);
+                    })[0].Category.toLowerCase();
+                }
+
+                function getNumFilteredRows(mediaPathTypeId) {
+                    // get expected number of rows
+                    var searchFilename = $("#txtSearchFilename");
+                    return lists.FileList.filter(function (f) {
+                        return (
+                            searchFilename.val().length === 0 ||
+                                f.Filename.toLowerCase().indexOf(searchFilename.val().toLowerCase()) !== -1)
+                            && f.MediaPathTypeId === Number(mediaPathTypeId);
+                    }).length;
+                }
+
+                function formatTable(table, mediaPathTypeId, category) {
+
+                    var noMediaMessage = $("#no-rows-message");
+
+                    var description = lists.MediaPathTypeList.filter(function(value) {
+                        return value.Id === Number(mediaPathTypeId);
+                    })[0].ShortDescription;
+
+                    var colThumbnail = $("#col-thumbnail");
+                    if (category !== "audio")
+                        colThumbnail.html("<div class='virtualPlaceholderImage'></div>");
+                    else
+                        colThumbnail.html("");
+                            
+                    var tableDetailElement = $("#table-detail");
+                    var tableHeaderElement = $("#table-header");
+
+                    if (table.rows.length > 0) {
+                        tableHeaderElement.show();
+                        tableDetailElement.show();
+                        noMediaMessage.hide();
+
+                        // determine if there is table overflow (causing a scrollbar)
+                        // if so, show the scrollbar header column
+                        var colScrollbar = $("#col-scrollbar");
+
+                        if (table.clientHeight > site.getMaxClientHeight) {
+                            colScrollbar.prop("hidden", false);
+                            colScrollbar.attr("style", "width: 1%; border-bottom: 1.5px solid #ddd;");
+                            tableDetailElement.addClass("container-height");
+                        } else {
+                            colScrollbar.prop("hidden", true);
+                            tableDetailElement.removeClass("container-height");
+                        }
+
+                    } else {
+                        tableHeaderElement.hide();
+                        tableDetailElement.hide();
+                        noMediaMessage.html("<h2>No " + description.toLowerCase() + " found</h2>");
+                        noMediaMessage.show();
+                    }
+                }
+
+                ko.applyBindings(new FileViewModel());
+
+                function FileViewModel() {
+                    var tblFile = $("#tblFile");
+                    var self = this;
+
+                    self.files = ko.observableArray([]);
+                    self.mediaPathTypes = ko.observableArray([]);
+
+                    self.filenameSearch = ko.observable("");
+                    self.totalFilteredFiles = ko.observable(0);
+                    self.selectAllIsSelected = ko.observable(false);
+                    self.selectedIds = ko.observable([]);
+
+                    // for audio previewing
+                    self.isAudio = ko.observable(false);
+                    self.currentStreamId = ko.observable(0);
+                    self.currentRowId = ko.observable(0);
+
+                    createFileArray({ list: lists.FileList, insert: false });
+                    createMediaPathTypeArray(lists.MediaPathTypeList);
+
+                    self.selectedMediaPathTypeId = ko.observable(config.selectedMediaPathTypeId);
+                    self.selectedMediaPathType = ko.observable(self.mediaPathTypes().filter(function (value) {
+                        return value.id === config.selectedMediaPathTypeId;
+                    })[0]);
+
+                    $("#delete").tooltip({ delay: { show: 100, hide: 100 } });
+
+                    // when "Add" anchor is clicked, force click of the "file" element
+                    $("#upload").click(function () {
+                        $("#fileupload").trigger("click");
+                    });
+
+                    enableDetail();
+
+                    function createFileArray(params) {
+                        var cfg = {
+                            list: [],
+                            insert: false
                         };
 
-                        function createMediaPathTypeArray(list) {
-                            self.mediaPathTypes.removeAll();
-                            $(list).each(function (index, value) {
+                        $.extend(cfg, params);
+
+                        if (cfg.insert === false) {
+                            self.files.removeAll();
+                            $(cfg.list)
+                                .each(function (index, value) {
+                                    // do a "push"
+                                    self.files.push({
+                                        id: value.Id,
+                                        streamid: value.StreamId,
+                                        filename: value.Filename,
+                                        filetype: value.FileType,
+                                        filesize: value.FileSize,
+                                        islinked: value.IsLinked,
+                                        dateadded: value.DateAdded,
+                                        path: value.Path,
+                                        thumbnail: value.Thumbnail,
+                                        mediapathtypeid: value.MediaPathTypeId,
+                                        isselected: false,
+                                        isplaying: false,
+                                        ispaused: false
+                                    });
+                                });
+                        } else {
+                            $(cfg.list)
+                                .each(function (index, value) {
+                                    // do an "unshift"
+                                    self.files.unshift({
+                                        id: value.Id,
+                                        streamid: value.StreamId,
+                                        filename: value.Filename,
+                                        filetype: value.FileType,
+                                        filesize: value.FileSize,
+                                        islinked: value.IsLinked,
+                                        dateadded: value.DateAdded,
+                                        path: value.Path,
+                                        thumbnail: value.Thumbnail,
+                                        mediapathtypeid: value.MediaPathTypeId,
+                                        isselected: false,
+                                        isplaying: false,
+                                        ispaused: false
+                                    });
+                                });
+                        }
+                    };
+
+                    function createMediaPathTypeArray(list) {
+                        self.mediaPathTypes.removeAll();
+                        $(list)
+                            .each(function(index, value) {
                                 self.mediaPathTypes.push(
                                 {
                                     id: value.Id,
+                                    responsetypeid: value.ResponseTypeId,
+                                    category: value.Category,
                                     description: value.Description,
                                     shortdescription: value.ShortDescription,
-                                    ispreviewable: value.IsPreviewable
+                                    path: value.Path,
+                                    allowedexts: value.AllowedExts,
+                                    allowedtypes: value.AllowedTypes,
+                                    maxfilebytes: value.MaxFileBytes,
+                                    maxfileuploads: value.MaxFileUploads
                                 });
                             });
 
-                            var ispreviewable = self.mediaPathTypes().filter(function (value) {
-                                return value.id === self.selectedMediaPathType();
-                            })[0].ispreviewable;
-                            self.isPreviewable(ispreviewable);
-                        };
+                        var mediaPathType = self.mediaPathTypes()
+                            .filter(function(value) {
+                                return value.id === config.selectedMediaPathTypeId;
+                            })[0];
 
-                        function enableDetail() {
-                            var selected = self.files()
-                                .filter(function (value) { return value.isselected; });
+                        self.isAudio(mediaPathType.category.includes("Audio"));
+                    };
 
-                            cmdDelete.attr("disabled", "disabled");
-                            if (selected.length > 0) {
-                                if (selected.length < self.filteredFilesBySelection().length) {
-                                    cmdDelete.removeAttr("disabled");
-                                }
+                    function enableDetail() {
+                        var selected = self.files()
+                            .filter(function(value) { return value.isselected; });
+
+                        cmdDelete.prop("disabled", true);
+                        if (selected.length > 0) {
+                            if (selected.length < self.filteredFilesBySelection().length) {
+                                cmdDelete.prop("disabled", false);
                             }
-                        };
+                        }
 
-                        self.columns = ko.computed(function () {
-                            var arr = [];
-                            arr.push({ title: "Name", sortable: true, sortKey: "filename", numeric: false, cssClass: "" });
-                            arr.push({ title: "Type", sortable: true, sortKey: "filetype", numeric: false, cssClass: "col-filetype" });
-                            arr.push({ title: "Size", sortable: true, sortKey: "filesize", numeric: true, cssClass: "col-filesize" });
-                            arr.push({ title: "Linked", sortable: true, sortKey: "islinked", numeric: true, cssClass: "col-islinked" });
-                            return arr;
-                        });
+                        $("#txtSearchFilename").focus();
+                    };
 
-                        self.sort = function (header) {
-                            var afterSave = typeof header.afterSave != "undefined" ? header.afterSave : false;
-                            var sortKey;
+                    self.columns = ko.computed(function () {
+                        var arr = [];
+                        arr.push({ title: "Filename", sortKey: "filename", cssClass: "col-filename" });
+                        arr.push({ title: "Type", sortKey: "filetype", cssClass: "col-filetype" });
+                        arr.push({ title: "Added", sortKey: "dateadded", cssClass: "col-date" });
+                        arr.push({ sortKey: "islinked", cssClass: "col-islinked", boolean: true });
+                        return arr;
+                    });
 
-                            if (!afterSave) {
-                                sortKey = header.sortKey;
+                    self.sort = function (header) {
+                        if (isBinding) return;
 
-                                if (sortKey !== currentSortKey) {
-                                    sortDescending = false;
-                                } else {
-                                    sortDescending = !sortDescending;
-                                }
-                                currentSortKey = sortKey;
-                            } else {
-                                sortKey = currentSortKey;
-                            }
+                        var sortKey = header.sortKey;
 
-                            $(self.columns()).each(function (index, value) {
-                                if (value.sortKey === sortKey) {
-                                    self.files.sort(function (a, b) {
-                                        if (value.numeric) {
-                                            if (sortDescending) {
-                                                return a[sortKey] > b[sortKey]
-                                                        ? -1 : a[sortKey] < b[sortKey] || a.filename > b.filename ? 1 : 0;
-                                            } else {
-                                                return a[sortKey] < b[sortKey]
-                                                    ? -1 : a[sortKey] > b[sortKey] || a.filename > b.filename ? 1 : 0;
-                                            }
-                                        } else {
-                                            if (sortDescending) {
-                                                return a[sortKey].toString().toLowerCase() > b[sortKey].toString().toLowerCase()
-                                                    ? -1 : a[sortKey].toString().toLowerCase() < b[sortKey].toString().toLowerCase()
-                                                    || a.filename.toLowerCase() > b.filename.toLowerCase() ? 1 : 0;
-                                            } else {
-                                                return a[sortKey].toString().toLowerCase() < b[sortKey].toString().toLowerCase()
-                                                    ? -1 : a[sortKey].toString().toLowerCase() > b[sortKey].toString().toLowerCase()
-                                                    || a.filename.toLowerCase() > b.filename.toLowerCase() ? 1 : 0;
-                                            }
-                                        }
-                                    });
-                                }
-                            });
-                        };
+                        if (sortKey !== currentSortKey) {
+                            sortDescending = false;
+                        } else {
+                            sortDescending = !sortDescending;
+                        }
 
-                        self.reloadUploaderHtml = function () {
-                            var mediaPathTypeId = self.selectedMediaPathType();
+                        currentSortKey = sortKey;
 
-                            $.get({
-                                url: site.url + "PublicProfile/GetUploaderHtml?mediaPathTypeId=" + mediaPathTypeId,
-                                dataType: "json",
-                                success: function (result) {
-                                    $("#uploader-html-container").html(result.UploaderHtml);
-                                    $("#uploadbutton").text(result.AddButtonText);
-                                }
-                            });
-                        };
+                        var isboolean = false;
+                        if (typeof header.boolean !== "undefined") {
+                            isboolean = header.boolean;
+                        }
+                        self.files(utilities.sorting.sortArray(
+                            {
+                                array: self.files(),
+                                columns: self.columns(),
+                                sortKey: sortKey,
+                                primarySortKey: primarySortKey,
+                                descending: sortDescending,
+                                boolean: isboolean
+                            }));
+                    };
 
-                        self.selectedMediaPathType.subscribe(function (id) {
-                            if (typeof id === "undefined") return;
-                            $("#mediaPathTypeId").val(id);
-                            self.reloadUploaderHtml();
-                            self.checkSelectAll(false);
-                            self.selectAllRows();
+                    self.selectedMediaPathTypeId.subscribe(function (id) {
+                        if (typeof id === "undefined") return;
 
-                            var ispreviewable = self.mediaPathTypes().filter(function (value) {
-                                return value.id === self.selectedMediaPathType();
-                            })[0].ispreviewable;
+                        self.selectedMediaPathType(self.mediaPathTypes().filter(function(value) {
+                            return value.id === id;
+                        })[0]);
 
-                            self.isPreviewable(ispreviewable);
-                        });
+                        self.displayNoRowsMessage();
+                        self.isAudio(self.selectedMediaPathType().category.includes("Audio"));
+                        self.checkSelectAll(false);
+                        self.selectAllRows();
+                        self.clearStreams();
+                        self.initUploader();
+                        enableDetail();
+                    });
 
-                        self.filteredFiles = ko.computed(function () {
-                            return ko.utils.arrayFilter(self.files(), function (f) {
+                    self.displayNoRowsMessage = function () {
+                        // if no rows in table, display 'no rows found' message
+                        // ko.bindingHandlers do not fire if no rows exist (after changing the media path type)
+                        var noRowsMessage = $("#no-rows-message");
+                        var tableDetailElement = $("#table-detail");
+                        var tableHeaderElement = $("#table-header");
+
+                        if (self.filteredFiles().length === 0) {
+                            tableHeaderElement.hide();
+                            tableDetailElement.hide();
+                            noRowsMessage.html("<h2>No " +
+                                self.selectedMediaPathType().shortdescription.toLowerCase() +
+                                " found</h2>");
+                            noRowsMessage.show();
+                        } else {
+                            tableHeaderElement.show();
+                            tableDetailElement.show();
+                            noRowsMessage.hide();
+                        }
+                    };
+
+                    self.filteredFiles = ko.computed(function() {
+                        return ko.utils.arrayFilter(self.files(),
+                            function(f) {
                                 return (
-                                    self.filenameSearch().length === 0 ||
-                                    f.filename.toLowerCase().indexOf(self.filenameSearch().toLowerCase()) !== -1) &&
-                                    f.mediapathtypeid === self.selectedMediaPathType();
+                                        self.filenameSearch().length === 0 ||
+                                            f.filename
+                                            .toLowerCase()
+                                            .indexOf(self.filenameSearch().toLowerCase()) !==
+                                            -1) &&
+                                    f.mediapathtypeid === self.selectedMediaPathType().id;
                             });
-                        });
+                    });
 
-                        self.filteredFilesBySelection = ko.computed(function () {
-                            return ko.utils.arrayFilter(self.files(), function (f) {
-                                return (f.mediapathtypeid === self.selectedMediaPathType());
+                    self.filteredFilesBySelection = ko.computed(function() {
+                        return ko.utils.arrayFilter(self.files(),
+                            function(f) {
+                                return (f.mediapathtypeid === self.selectedMediaPathType().id);
                             });
-                        });
+                    });
 
-                        self.filesTable = ko.computed(function () {
-                            var filteredFiles = self.filteredFiles();
-                            self.totalFilteredFiles(filteredFiles.length);
+                    self.filesTable = ko.computed(function() {
+                        var filteredFiles = self.filteredFiles();
+                        self.totalFilteredFiles(filteredFiles.length);
 
-                            return filteredFiles;
-                        });
+                        // look for currently playing or paused audio and set flags
+                        var currentlyStreaming = filteredFiles.filter(function(value) {
+                            return value.id === self.currentRowId();
+                        })[0];
 
-                        self.checkAllReset = ko.computed(function () {
-                            $("#chk_all").prop("checked", false);
+                        if (currentlyStreaming !== null && typeof currentlyStreaming !== "undefined") {
+                            if (audioPlayerElement.paused) {
+                                currentlyStreaming.ispaused = true;
+                                currentlyStreaming.isplaying = false;
+                            } else {
+                                currentlyStreaming.isplaying = true;
+                                currentlyStreaming.ispaused = false;
+                            }
+                        }
 
-                            self.selectedIds([]);
-                            $.each(self.filteredFiles(), function (item, value) {
-                                value.isselected = false;
+                        return filteredFiles;
+                    });
 
-                                var chk = tblFile.find("#chk_" + value.id);
-                                chk.prop("checked", false);
-                            });
-                        });
+                    self.initUploader = ko.computed(function () {
+                        var mediaPathType = self.selectedMediaPathType();
 
-                        self.showLinkFromSharedLibarayDialog = function () {
-                            var title = "<span class='glyphicon glyphicon-link' style='color: #fff'></span>";
-                            var mediaPathTypeDesc = self.mediaPathType().shortdescription;
+                        $("#fileupload").prop("accept", mediaPathType.allowedtypes);
 
-                            $.get({
-                                data: { mediaPathTypeId: self.selectedMediaPathType() },
-                                url: site.url + "PublicProfile/GetSharedLibarayLinkView/",
-                                success: function (message) {
-                                    if (message.length === 0) {
-                                        var hasHave = "has";
-                                        if (mediaPathTypeDesc.endsWith("s"))
-                                            hasHave = "have";
-
-                                        BootstrapDialog.show({
-                                            title: title + " Add <b>" + mediaPathTypeDesc + "</b> From Shared Library",
-                                            message: $("<div></div>").append("All available " + mediaPathTypeDesc + " " + hasHave + " already been added to the public profile."),
-
-                                            closable: false,
-                                            buttons: [
-                                                {
-                                                    label: "OK",
-                                                    cssClass: "btn-primary",
-                                                    action: function (dialog) {
-                                                        dialog.close();
-                                                    }
-                                                }
-                                            ]
-                                        });
-                                    } else {
-                                        BootstrapDialog.show({
-                                            title: title + " Add <b>" + mediaPathTypeDesc + "</b> From Shared Library",
-                                            message: $("<div></div>").append(message),
-
-                                            closable: false,
-                                            buttons: [
-                                                {
-                                                    label: "Cancel",
-                                                    action: function (dialog) {
-                                                        dialog.close();
-                                                    }
-                                                }, {
-                                                    label: "OK",
-                                                    cssClass: "btn-primary",
-                                                    action: function (dialog) {
-                                                        self.addSharedFiles();
-                                                        dialog.close();
-                                                    }
-                                                }
-                                            ]
-                                        });
-                                    }
-                                }
-                            });
-                        };
-
-                        self.showDeleteSelectedDialog = function () {
-                            BootstrapDialog.show({
-                                type: BootstrapDialog.TYPE_DANGER,
-                                title: "Delete Files?",
-                                message: "Delete all selected files?",
-                                closable: false,
-                                buttons: [
-                                    {
-                                        label: "Cancel",
-                                        action: function (dialog) {
-                                            dialog.close();
+                        utilities.upload.init({
+                            url: "PublicProfile/UploadFile" +
+                                    "?mediaPathTypeId=" + mediaPathType.id +
+                                    "&mediaPath=" + mediaPathType.path +
+                                    "&mediaPathTypeCategory=" + mediaPathType.category,
+                            allowedExts: mediaPathType.allowedexts.split(","),
+                            allowedTypes: mediaPathType.allowedtypes.split(","),
+                            maxFileBytes: mediaPathType.maxfilebytes,
+                            maxFileUploads: mediaPathType.maxfileuploads,
+                            isAdmin: isAdmin,
+                            callback: function (successful, rejected) {
+                                if (successful.length > 0) {
+                                    utilities.job.execute({
+                                        url: "PublicProfile/AddFiles",
+                                        type: "POST",
+                                        waitMessage: "Saving...",
+                                        params: {
+                                            filenames: successful,
+                                            mediaPathTypeId: mediaPathType.id,
+                                            responseTypeId: mediaPathType.responsetypeid
                                         }
-                                    }, {
-                                        label: "Yes, Delete",
-                                        cssClass: "btn-danger",
-                                        action: function (dialog) {
-                                            self.deleteSelected();
-                                            dialog.close();
-                                        }
-                                    }
-                                ]
-                            });
-                        };
-
-                        self.showPreview = function (row) {
-                            $("body").css("cursor", "wait");
-
-                            $.get({
-                                url: site.url + "PublicProfile/GetImageViewerView?streamId=" + row.streamid + "&fileType=" + row.filetype,
-                                success: function (message) {
-                                    BootstrapDialog.show({
-                                        type: BootstrapDialog.TYPE_INFO,
-                                        title: "Image Viewer - " + row.filename + "." + row.filetype.toLowerCase(),
-                                        message: $("<div></div>").append(message),
-                                        closable: false,
-                                        onshown: function () { $("body").css("cursor", "default"); },
-                                        buttons: [{
-                                            label: "Close",
-                                            action: function (dialog) {
-                                                dialog.close();
-                                            }
-                                        }]
-                                    });
-                                },
-                                error: function (message) {
-                                    BootstrapDialog.show({
-                                        type: BootstrapDialog.TYPE_DANGER,
-                                        title: "Error",
-                                        message: $("<div></div>").append(message),
-                                        closable: false,
-                                        onshown: function () { $("body").css("cursor", "default"); },
-                                        buttons: [{
-                                            label: "Close",
-                                            action: function (dialog) {
-                                                dialog.close();
-                                            }
-                                        }]
+                                    })
+                                    .then(function (addResult) {
+                                        createFileArray({ list: addResult.FileList, insert: true });
+                                        self.selectedIds([]);
+                                        self.checkSelectAll(false);
+                                        self.marqueeRows(addResult.FileList);
+                                        enableDetail();
+                                    })
+                                    .catch(function () {
+                                        enableDetail();
                                     });
                                 }
-                            });
-                        };
+                                if (rejected.length > 0) {
+                                    var rejectedMessage = "";
+                                    $(rejected).each(function (index, value) {
+                                        rejectedMessage = "<p>" + rejectedMessage.concat(value + "</p>");
+                                    });
+                                    utilities.alert.show({
+                                        title: "Some <b>" + mediaPathType.category.toLowerCase() + "</b> files not were not uploaded",
+                                        message: rejectedMessage,
+                                        type: BootstrapDialog.TYPE_WARNING
+                                    });
+                                }
+                            }
+                        });
+                    });
 
-                        self.showFeatureNotDoneYetDialog = function () {
-                            BootstrapDialog.show({
-                                type: BootstrapDialog.TYPE_INFO,
-                                title: "Under Development",
-                                message: "This feature has not been implemented yet.",
-                                closable: false,
-                                buttons: [
-                                    {
-                                        label: "Close",
-                                        action: function (dialog) {
-                                            dialog.close();
-                                        }
+                    // to prevent dialog from opening twice
+                    var isEditLoading = false;
+                    self.addFromSharedLibray = function () {
+                        if (isEditLoading) return;
+                        isEditLoading = true;
+
+                        self.clearStreams();
+                        var mediaPathTypeDesc = self.selectedMediaPathType().shortdescription;
+
+                        sharedlibraryadd.view.show({
+                            profileId: 0,
+                            mediaPathTypeId: self.selectedMediaPathType().id,
+                            mediaPathTypeDesc: mediaPathTypeDesc,
+                            mediaPathTypeCategory: self.selectedMediaPathType().category
+                        })
+                        .then(function (streamIds) {
+                            utilities.job.execute({
+                                url: "PublicProfile/AddSharedMediaFiles",
+                                type: "POST",
+                                waitMessage: "Adding...",
+                                params: {
+                                    streamIds: streamIds,
+                                    mediaPathTypeId: self.selectedMediaPathType().id,
+                                    responseTypeId: self.selectedMediaPathType().responsetypeid
+                                }
+                            })
+                            .then(function (addResult) {
+                                createFileArray({ list: addResult.FileList, insert: true });
+                                self.selectedIds([]);
+                                self.checkSelectAll(false);
+                                self.marqueeRows(addResult.FileList);
+                                enableDetail();
+                                isEditLoading = false;
+                            })
+                            .catch(function() {
+                                enableDetail();
+                                isEditLoading = false;
+                            });
+                        })
+                        .catch(function () {
+                            enableDetail();
+                            isEditLoading = false;
+                        });
+                    };
+
+                    self.marqueeRows = function(fileList) {
+                        $(fileList).each(function (index, value) {
+                            var id = value.Id;
+                            $("#row_" + id).addClass("row-added");
+                            setTimeout(function () {
+                                $("#row_" + id).removeClass("row-added");
+                            }, 1500);
+                        });
+                    };
+
+                    self.deleteSelected = function () {
+                        self.clearStreams();
+
+                        utilities.confirm.show({
+                            title: "Delete Files?",
+                            message: "Delete all selected files?",
+                            type: BootstrapDialog.TYPE_DANGER,
+                            buttonOK: "Yes, Delete",
+                            buttonOKClass: "btn-danger"
+                        }).then(function (confirm) {
+                            if (confirm) {
+                                utilities.job.execute({
+                                    url: "PublicProfile/DeleteSelected",
+                                    type: "POST",
+                                    waitMessage: "Deleting...",
+                                    params: {
+                                        ids: self.selectedIds(),
+                                        mediaPathTypeId: self.selectedMediaPathType().id,
+                                        responseTypeId: self.selectedMediaPathType().responsetypeid
                                     }
-                                ]
+                                })
+                                .then(function (deleteResult) {
+                                    self.removeFiles(deleteResult.DeletedIds);
+                                    self.selectedIds([]);
+                                    self.checkSelectAll(false);
+                                    enableDetail();
+                                })
+                                .catch(function () {
+                                    enableDetail();
+                                });
+                            }
+                        });
+                    };
+
+                    self.showPreview = function(row) {
+                        var pathCategory = self.selectedMediaPathType().category;
+
+                        if (pathCategory.includes("Image"))
+                            self.previewImage(row);
+                        if (pathCategory.includes("Video"))
+                            self.previewVideo(row);
+                        if (pathCategory.includes("Audio"))
+                            self.previewAudio(row);
+                    };
+
+                    self.previewImage = function (row) {
+                        $("#thumb_" + row.id).tooltip("hide");
+                        utilities.image.show({
+                            controller: "PublicProfile",
+                            streamId: row.streamid,
+                            filename: row.filename,
+                            fileType: row.filetype
+                        }).then(function () { enableDetail() });
+                    };
+
+                    self.previewVideo = function (row) {
+                        $("#thumb_" + row.id).tooltip("hide");
+
+                        utilities.video.show({
+                            src: site.getApiUrl + "videos/" + row.streamid,
+                            player: videoPlayer,
+                            filename: row.filename,
+                            fileType: row.filetype.toLowerCase()
+                        }).then(function() {
+                            $("#modal-video").on("hidden.bs.modal", function () {
+                                videoPlayer.attr("src", "");
                             });
-                        };
+                        });
+                    };
 
-                        self.selectAllRows = function () {
-                            self.selectedIds([]);
+                    self.previewAudio = function (row) {
+                        if (self.currentStreamId() === row.streamid) {
+                            // already paused or playing                            
+                            if (audioPlayerElement.paused) {
+                                audioPlayerElement.play();
+                                self.setGlyph(row.id, true, true);
+                            } else {
+                                audioPlayerElement.pause();
+                                self.setGlyph(row.id, false, true);
+                            }
+                        } else {
+                            // end previous
+                            self.audioEnded();
 
-                            $.each(self.filteredFiles(), function (item, value) {
+                            // play new selection
+                            self.setGlyph(row.id, true, true);
+                            audioPlayer.attr("type", "audio/" + row.filetype.toLowerCase());
+                            audioPlayer.attr("src", site.getApiUrl + "audio/" + row.streamid);
+
+                            // set current id's
+                            self.currentStreamId(row.streamid);
+                            self.currentRowId(row.id);
+                        }
+
+                        enableDetail();
+                    };
+
+                    self.audioEnded = function() {
+                        self.setGlyph(self.currentRowId(), false, false);
+                    };
+
+                    self.setGlyph = function(rowid, paused, success) {
+                        var glyphElement = tblFile.find("#audio_" + rowid);
+                        var cssPlay = "glyphicon-play";
+                        var cssPause = "glyphicon-pause";
+
+                        if (success) {
+                            cssPlay = cssPlay.concat(" play-paused");
+                            cssPause = cssPause.concat(" play-paused");
+                        } else {
+                            glyphElement.removeClass("play-paused");
+                        }
+
+                        if (paused) {
+                            glyphElement.removeClass(cssPlay);
+                            glyphElement.addClass(cssPause);
+                        } else {
+                            glyphElement.removeClass(cssPause);
+                            glyphElement.addClass(cssPlay);
+                        }
+                    };
+
+                    self.clearStreams = function() {
+                        videoPlayer.attr("src", "");
+                        audioPlayer.attr("src", "");
+                        self.currentRowId(0);
+                        self.currentStreamId(0);
+
+                        var currentlyPlaying = self.filteredFiles()
+                            .filter(function(value) {
+                                return value.ispaused || value.isplaying;
+                            })[0];
+
+                        if (currentlyPlaying !== null && typeof currentlyPlaying !== "undefined") {
+                            currentlyPlaying.ispaused = false;
+                            currentlyPlaying.isplaying = false;
+                            self.setGlyph(currentlyPlaying.id, false, false);
+                        }
+                    };
+
+                    self.selectAllRows = function() {
+                        self.selectedIds([]);
+
+                        $.each(self.filteredFiles(),
+                            function(item, value) {
                                 if (self.selectAllIsSelected())
                                     self.selectedIds().push(value.id);
                                 else
@@ -425,171 +703,78 @@ function DisableScreen() {
                                 chk.prop("checked", self.selectAllIsSelected());
                             });
 
-                            self.highlightSelectedRows();
-                            enableDetail();
+                        self.highlightSelectedRows();
+                        enableDetail();
 
-                            return true;
-                        };
+                        return true;
+                    };
 
-                        self.selectFile = function (row) {
-                            if (typeof row === "undefined") return false;
-                            if (row === null) return false;
+                    self.selectFile = function(row) {
+                        if (typeof row === "undefined") return false;
+                        if (row === null) return false;
 
-                            if (row.isselected)
-                                self.selectedIds().push(row.id);
-                            else
-                                self.removeSelectedId(row.id);
+                        if (row.isselected)
+                            self.selectedIds().push(row.id);
+                        else
+                            self.clearSelectedId(row.id);
 
-                            self.highlightSelectedRows();
-                            self.checkSelectAll(self.selectedIds().length === self.filteredFiles().length);
-                            enableDetail();
+                        self.highlightSelectedRows();
+                        self.checkSelectAll(self.selectedIds().length === self.filteredFiles().length);
+                        enableDetail();
 
-                            return true;
-                        };
+                        return true;
+                    };
 
-                        self.removeSelectedId = function (id) {
-                            for (var i = self.selectedIds().length - 1; i >= 0; i--) {
-                                if (self.selectedIds()[i] === id) {
-                                    self.selectedIds().splice(i, 1);
-                                }
+                    self.clearSelectedId = function(id) {
+                        for (var i = self.selectedIds().length - 1; i >= 0; i--) {
+                            if (self.selectedIds()[i] === id) {
+                                self.selectedIds().splice(i, 1);
                             }
                         }
+                    }
 
-                        self.highlightSelectedRows = function () {
-                            var rows = tblFile.find("tr:gt(0)");
-                            rows.each(function () {
-                                $(this).css("background-color", "#ffffff");
-                            });
+                    self.highlightSelectedRows = function() {
+                        var rows = tblFile.find("tr");
+                        rows.each(function() {
+                            $(this).removeClass("highlight");
+                        });
 
-                            var selected = self.files()
-                                .filter(function (value) { return value.isselected; });
+                        var selected = self.files()
+                            .filter(function(value) { return value.isselected; });
 
-                            $.each(selected, function (item, value) {
+                        $.each(selected,
+                            function(item, value) {
                                 var r = tblFile.find("#row_" + value.id);
-                                r.css("background-color", highlightRowColour);
-                                tblFile.attr("tr:hover", highlightRowColour);
+                                $(r).addClass("highlight");
                             });
-
-                            return true;
-                        };
-
-                        self.deleteSelected = function () {
-                            $("body").css("cursor", "wait");
-
-                            var ids = self.selectedIds();
-                            var mediaPathTypeId = $("#mediaPathTypeId").val();
-
-                            BootstrapDialog.show({
-                                type: BootstrapDialog.TYPE_INFO,
-                                title: "Delete Files",
-                                message: "One moment...",
-                                closable: false,
-                                onshown: function (dialog) {
-                                    $.post({
-                                        url: site.url + "PublicProfile/DeleteSelected/",
-                                        data:
-                                        {
-                                            ids: ids,
-                                            mediaPathTypeId: mediaPathTypeId
-                                        },
-                                        dataType: "json",
-                                        success: function (result) {
-                                            dialog.close();
-                                            $("body").css("cursor", "default");
-                                            if (result.Success) {
-                                                lists.FileList = result.FileList;
-                                                createFileArray(lists.FileList);
-                                                self.sort({ afterSave: true });
-                                                self.selectedIds([]);
-                                                self.checkSelectAll(false);
-                                                enableDetail();
-                                            } else {
-                                                $("body").css("cursor", "default");
-                                                enableDetail();
-
-                                                BootstrapDialog.show({
-                                                    type: BootstrapDialog.TYPE_DANGER,
-                                                    title: "Delete Error",
-                                                    message: result.ErrorMessage
-                                                });
-                                            }
-                                        },
-                                        error: function (result) {
-                                            dialog.close();
-                                            $("body").css("cursor", "default");
-                                            enableDetail();
-
-                                            BootstrapDialog.show({
-                                                type: BootstrapDialog.TYPE_DANGER,
-                                                title: "Delete Error",
-                                                message: "Unexpected Error\n" + result
-                                            });
-                                        }
-                                    });
-                                }
-                            });
-                        };
-
-                        self.addSharedFiles = function () {
-                            $("body").css("cursor", "wait");
-
-                            var ids = [];
-                            $("input[name='shared_files']:checked").each(function (item, value) {
-                                ids.push(value.id);
-                            });
-
-                            var mediaPathTypeId = $("#mediaPathTypeId").val();
-
-                            $.post({
-                                url: site.url + "PublicProfile/AddSharedMediaFiles/",
-                                data: { streamIds: ids, mediaPathTypeId: mediaPathTypeId },
-                                dataType: "json",
-                                success: function (result) {
-                                    $("body").css("cursor", "default");
-                                    if (result.Success) {
-                                        lists.FileList = result.FileList;
-                                        createFileArray(lists.FileList);
-                                        self.sort({ afterSave: true });
-                                        self.selectedIds([]);
-                                        self.checkSelectAll(false);
-                                        enableDetail();
-                                    } else {
-                                        $("body").css("cursor", "default");
-                                        enableDetail();
-
-                                        BootstrapDialog.show({
-                                            type: BootstrapDialog.TYPE_DANGER,
-                                            title: "Error Adding Shared Files",
-                                            message: result.ErrorMessage
-                                        });
-                                    }
-                                },
-                                error: function (result) {
-                                    $("body").css("cursor", "default");
-                                    enableDetail();
-
-                                    BootstrapDialog.show({
-                                        type: BootstrapDialog.TYPE_DANGER,
-                                        title: "Error Adding Shared Files",
-                                        message: "Unexpected Error\n" + result
-                                    });
-                                }
-                            });
-                        };
-
-                        self.checkSelectAll = function (checked) {
-                            self.selectAllIsSelected(checked);
-                            $("#chk_all").prop("checked", checked);
-                        };
-
-                        self.mediaPathType = function () {
-                            return self.mediaPathTypes()
-                                .filter(function (value) {
-                                    return value.id === self.selectedMediaPathType();
-                                })[0];
-                        }
                     };
-                }
+
+                    self.checkSelectAll = function(checked) {
+                        self.selectAllIsSelected(checked);
+                        $("#chk_all").prop("checked", checked);
+                    };
+
+                    self.resetFocus = function () {
+                        enableDetail();
+                    }
+
+                    self.removeFiles = function (ids) {
+                        $(ids).each(function (index, value) {
+                            var idx = self.files().findIndex(function (row) {
+                                return row.id === value;
+                            });
+                            self.files.splice(idx, 1);
+                        });
+                    }
+                };
+            })
+            .catch(function (error) {
+                $("#loading-container").hide();
+                $("#error-container")
+                    .html("<div><h2>Data load error:</h2></div>")
+                    .append("<div>" + error.message + "</div>")
+                    .append("<div><h3>Please try refreshing the page</h3></div>");
+                $("#error-container").show();
             });
         }
     }

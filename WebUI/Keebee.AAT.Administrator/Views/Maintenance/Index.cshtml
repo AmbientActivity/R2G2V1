@@ -1,9 +1,7 @@
-﻿
-@{
+﻿@{
     ViewBag.Title = "Maintenance Utilities";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-
 
 <script type="text/javascript">
     $(document).ready(function () {
@@ -11,19 +9,18 @@
     });
 </script>
 
-
 <div class="container-fluid">
     <div>
         <h3>Maintenance Utilities</h3>
-        <span>Utilities for managing <i>R2G2</i></span>
+        <span>Utilities for managing <i>ABBY</i></span>
     </div>
     <div class="panel panel-default">
         <div class="panel-heading">
-            <button id="restart" class="btn btn-primary btn-md maintenance-button">Restart Services</button>
-            <button id="clear-service-logs" class="btn btn-primary btn-md maintenance-button">Clear Service Logs</button>
-            <button id="kill-display" class="btn btn-primary btn-md maintenance-button">Kill Display</button>
-            @*<button id="reinstall" class="btn btn-primary btn-md">Reinstall Services</button>
-            <button id="uninstall" class="btn btn-primary btn-md">Uninstall Services</button>*@
+            <button id="restart" class="btn btn-edit btn-md maintenance-button">Restart Services</button>
+            <button id="clear-service-logs" class="btn btn-edit btn-md maintenance-button">Clear Service Logs</button>
+            <button id="kill-display" class="btn btn-edit btn-md maintenance-button">Kill Display</button>
+            @*<button id="reinstall" class="btn btn-edit btn-md">Reinstall Services</button>
+            <button id="uninstall" class="btn btn-edit btn-md">Uninstall Services</button>*@
         </div>
     </div>
 </div>

@@ -1,24 +1,22 @@
-﻿using System.Runtime.InteropServices;
+﻿using System;
+using System.Runtime.InteropServices;
 
 namespace Keebee.AAT.Display.Helpers
 {
+    internal static class UnsafeNativeMethods
+    {
+        [DllImport("user32.dll", CharSet = CharSet.Unicode)]
+        internal static extern IntPtr FindWindow(string className, string windowText);
+        [DllImport("user32.dll")]
+        internal static extern int ShowWindow(IntPtr hwnd, int command);
+    }
+
     public class Taskbar
     {
-        [DllImport("user32.dll")]
-        private static extern int FindWindow(string className, string windowText);
-        [DllImport("user32.dll")]
-        private static extern int ShowWindow(int hwnd, int command);
-
         private const int SW_HIDE = 0;
         private const int SW_SHOW = 1;
 
-        protected static int Handle
-        {
-            get
-            {
-                return FindWindow("Shell_TrayWnd", "");
-            }
-        }
+        protected static IntPtr Handle => UnsafeNativeMethods.FindWindow("Shell_TrayWnd", "");
 
         private Taskbar()
         {
@@ -27,12 +25,12 @@ namespace Keebee.AAT.Display.Helpers
 
         public static void Show()
         {
-            ShowWindow(Handle, SW_SHOW);
+            UnsafeNativeMethods.ShowWindow(Handle, SW_SHOW);
         }
 
         public static void Hide()
         {
-            ShowWindow(Handle, SW_HIDE);
+            UnsafeNativeMethods.ShowWindow(Handle, SW_HIDE);
         }
     }
 }

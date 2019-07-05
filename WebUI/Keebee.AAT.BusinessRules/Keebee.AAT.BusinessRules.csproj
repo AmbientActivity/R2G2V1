@@ -35,13 +35,16 @@
       <HintPath>..\..\packages\DotNetZip.1.10.1\lib\net20\DotNetZip.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration.Install" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.IO.Compression.FileSystem" />
     <Reference Include="System.ServiceProcess" />
-    <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -50,8 +53,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AmbientInvitationRules.cs" />
+    <Compile Include="FileManagement\FileManager.cs" />
+    <Compile Include="Models\MediaFileModel.cs" />
+    <Compile Include="Models\VideoPlayerModel.cs" />
     <Compile Include="PhidgetConfigRules.cs" />
-    <Compile Include="Models\ConfigEditModel.cs" />
+    <Compile Include="Models\ConfigDetailModel.cs" />
     <Compile Include="Models\ImageViewerModel.cs" />
     <Compile Include="Models\UserModel.cs" />
     <Compile Include="ImageViewerRules.cs" />
@@ -60,9 +67,13 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="AccountRules.cs" />
     <Compile Include="MaintenanceRules.cs" />
+    <Compile Include="RulesBase.cs" />
+    <Compile Include="ServicesRules.cs" />
+    <Compile Include="SharedLibraryAddRules.cs" />
     <Compile Include="SharedLibraryRules.cs" />
     <Compile Include="SystemProfileRules.cs" />
     <Compile Include="VideoCaptureRules.cs" />
+    <Compile Include="VideoPlayerRules.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\APIClient\Keebee.AAT.ApiClient\Keebee.AAT.ApiClient.csproj">
@@ -80,6 +91,10 @@
     <ProjectReference Include="..\..\Shared\Keebee.AAT.SystemEventLogging\Keebee.AAT.SystemEventLogging.csproj">
       <Project>{6f0a1aef-997e-4355-bb38-a4acf6710edf}</Project>
       <Name>Keebee.AAT.SystemEventLogging</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Shared\Keebee.AAT.ThumbnailGeneration\Keebee.AAT.ThumbnailGeneration.csproj">
+      <Project>{b1653a19-0702-450c-ad9d-8d6bed9d3ff5}</Project>
+      <Name>Keebee.AAT.ThumbnailGeneration</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

@@ -47,9 +47,12 @@ namespace Keebee.AAT.Operations.Controllers
                     ? new
                     { 
                         x.InteractiveActivityType.Id,
-                        x.InteractiveActivityType.Description 
-                   } : null,
-                    x.IsSystem
+                        x.InteractiveActivityType.Description,
+                        x.InteractiveActivityType.SwfFile
+                    } : null,
+                    x.IsRandom,
+                    x.IsRotational,
+                    x.IsUninterrupted
                 }).ToArray();
 
             return new DynamicJsonArray(jArray);
@@ -82,11 +85,77 @@ namespace Keebee.AAT.Operations.Controllers
                 ? new
                 {
                     responseType.InteractiveActivityType.Id,
-                    responseType.InteractiveActivityType.Description
+                    responseType.InteractiveActivityType.Description,
+                    responseType.InteractiveActivityType.SwfFile
                 } : null;
-            exObj.IsSystem = responseType.IsSystem;
+            exObj.IsRandom = responseType.IsRandom;
+            exObj.IsRotational = responseType.IsRotational;
+            exObj.IsUninterrupted = responseType.IsUninterrupted;
 
             return new DynamicJsonObject(exObj);
+        }
+
+        // GET: api/ResponseTypes/random
+        [HttpGet]
+        [Route("random")]
+        public async Task<DynamicJsonArray> GetRandom()
+        {
+            IEnumerable<ResponseType> responseTypes = new Collection<ResponseType>();
+
+            await Task.Run(() =>
+            {
+                responseTypes = _responseTypeService.GetRandomTypes();
+            });
+
+            if (responseTypes == null) return new DynamicJsonArray(new object[0]);
+
+            var jArray = responseTypes
+                .Select(x => new
+                {
+                    x.Id,
+                    x.Description,
+                    ResponseTypeCategory = new
+                    {
+                        x.ResponseTypeCategory.Id,
+                        x.ResponseTypeCategory.Description
+                    },
+                    InteractiveActivityType = (x.InteractiveActivityTypeId != null)
+                    ? new
+                    {
+                        x.InteractiveActivityType.Id,
+                        x.InteractiveActivityType.Description,
+                        x.InteractiveActivityType.SwfFile
+                    } : null,
+                    x.IsRandom,
+                    x.IsRotational,
+                    x.IsUninterrupted
+                }).ToArray();
+
+            return new DynamicJsonArray(jArray);
+        }
+
+        // GET: api/ResponseTypes/advanceable
+        [HttpGet]
+        [Route("rotational")]
+        public async Task<DynamicJsonArray> GetRotational()
+        {
+            IEnumerable<ResponseType> responseTypes = new Collection<ResponseType>();
+
+            await Task.Run(() =>
+            {
+                responseTypes = _responseTypeService.GetRotationalTypes();
+            });
+
+            if (responseTypes == null) return new DynamicJsonArray(new object[0]);
+
+            var jArray = responseTypes
+                .Select(x => new
+                {
+                    x.Id,
+                    x.Description
+                }).ToArray();
+
+            return new DynamicJsonArray(jArray);
         }
 
         // POST: api/ResponseTypes

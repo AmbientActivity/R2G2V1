@@ -33,10 +33,13 @@ namespace Keebee.AAT.Operations.Service.Services
             var container = new Container(new Uri(ODataHost.Url));
 
             var activeResident = container.ActiveResidents.ByKey(id)
-                .Expand("Resident")
-                .GetValue();
+                .Expand("Resident");
 
-            return activeResident;
+            ActiveResident result;
+            try { result = activeResident.GetValue(); }
+            catch { result = null; }
+
+            return result;
         }
 
         public int Post(ActiveResident activeResident)

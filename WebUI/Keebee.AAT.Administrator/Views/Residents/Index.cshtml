@@ -5,10 +5,17 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h3>Resident Manager</h3>
+<div class="row row-residents-banner">
+    <div class="col-sm-10">
+        <h3 class="title-residents">Resident Manager</h3>
+    </div>
+    <div class="add-resident-button">
+        <h3><input id="add" type="button" class="btn btn-add" value="Add Resident" data-bind="click: edit" disabled /></h3>
+    </div>
+</div>
 
 <script type="text/javascript">
-    $(document).ready(function() {
+    $(document).ready(function () {
         residents.index.init(
         {
             selectedid: '@Model.SelectedId',
@@ -16,65 +23,112 @@
             firstname: '@Model.FirstNameSearch',
             lastname: '@Model.LastNameSearch',
             sortcolumn: '@Model.SortColumnName',
-            sortdescending: '@Model.SortDescending'
+            sortdescending: '@Model.SortDescending',
+            isVideoCaptureServiceInstalled: '@Model.IsVideoCaptureServiceInstalled'
         });
     });
 </script>
 
-<div class="panel panel-default">
-    <div class="panel-heading">
+<div class="panel panel-default panel-no-body">
+    <div class="panel-heading panel-heading-controls">
         <ul class="nav nav-pills">
             <li>
-                <input type="button" class="btn btn-success" value="Add Resident" data-bind="click: showEditDialog"/>
+                <div class="label label-filter">First Name</div>
+                <input id="txtSearchFirstName" type="text" class="form-control" placeholder="Search" data-bind="value: firstNameSearch, valueUpdate: 'keyup'"/>
             </li>
             <li>
-                <input id="txtSearchId" type="text" class="form-control" placeholder="ID" data-bind="value: idSearch, valueUpdate: 'keyup'" />
+                <div class="label label-filter">Last Name</div>
+                <input id="txtSearchLastName" type="text" class="form-control" placeholder="Search" data-bind="value: lastNameSearch, valueUpdate: 'keyup'"/>
             </li>
             <li>
-                <input id="txtSearchFirstName" type="text" class="form-control" placeholder="First Name" data-bind="value: firstNameSearch, valueUpdate: 'keyup'"/>
+                <div class="label label-filter">ID</div>
+                <input id="txtSearchId" type="text" class="form-control form-control-id" placeholder="Search" data-bind="value: idSearch, valueUpdate: 'keyup'"/>
             </li>
-            <li>
-                <input id="txtSearchLastName" type="text" class="form-control" placeholder="Last Name" data-bind="value: lastNameSearch, valueUpdate: 'keyup'"/>
-            </li>
-            <li class="pull-right record-total">
+            <li class="pull-right total-residents">
                 <label>Total:</label> <span data-bind="text: totalResidents()"></span>
             </li>
         </ul>
     </div>
-    <div class="panel-body">
-        <table class="table table-striped table-bordered table-hover" id="tblResident">
-            <thead>
-                <tr>
-                    <th class="col-glyphicon"></th>
-                    <th class="col-glyphicon"></th>
-                    <th class="col-glyphicon"></th>
-                    <!-- ko foreach: columns -->
-                    <th data-bind="click: $parent.sort, attr: { id: 'resident-col-' + sortKey }"><a href="#" data-bind="text: title"></a></th>
-                    <!-- /ko -->
-                </tr>
-            </thead>
-
-            <tbody data-bind="foreach: residentsTable">
-                <tr data-bind="click: $parent.highlightRow, attr: {id: 'row_' +  id}">
-                    <td><a href="#" data-bind="click: $parent.showDeleteDialog, css: 'glyphicon glyphicon-remove'"></a></td>
-                    <td><a data-bind="attr: { href: '#' }, click: $parent.showEditDialog, css: 'glyphicon glyphicon-pencil'"></a></td>
-                    <td><a data-bind="attr: { href: '#' }, click: $parent.editProfile, css: 'glyphicon glyphicon-user'"></a></td>
-                    <td data-bind="text: id"></td>
-                    <td data-bind="text: firstname"></td>
-                    <td data-bind="text: lastname"></td>
-                    <td data-bind="text: gender"></td>
-                    <td data-bind="text: gamedifficultylevel"></td>
-                    <!-- ko if: allowvideocapturing -->
-                    <td style="text-align: center"><span class="glyphicon glyphicon-ok"></span></td>
-                    <!-- /ko -->
-                    <!-- ko if: !allowvideocapturing -->
-                    <td></td>
-                    <!-- /ko -->
-                    <td data-bind="text: moment(datecreated).format('ll')"></td>
-                    <td data-bind="text: moment(dateupdated).format('ll')"></td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
 </div>
 
+<div id="loading-container" class="loading"><img src="~/Content/images/page-loading.gif" alt="Loading..."></div>
+<div id="error-container" hidden></div>
+
+<div class="panel panel-default">
+    <div class="panel-body panel-body-table-header">
+        <!-- use separate table for sticky headers -->
+        <div id="table-header" class="container table-header-container" hidden>
+            <table class="table" id="tblResidentHeader">
+                <thead>
+                <tr>
+                    <th id="col-profile-picture" class="col-profile-picture"></th>
+                    <!-- ko foreach: columns -->
+                    <!-- ko if: visible -->
+                    <!-- ko if: sortKey !== 'gender' && sortKey !== 'allowvideocapturing' -->
+                    <th data-bind="click: $parent.sort, attr: { id: 'resident-col-' + sortKey, boolean: true }, css: cssClass"><a href="javascript:void(0)" data-bind="text: title"></a></th>
+                    <!-- /ko -->
+
+                    <!-- ko if: sortKey === 'gender' -->
+                    <th data-bind="click: $parent.sort({ sortKey: 'gender', boolean: true }), attr: { id: cssClass }, css: cssClass"><a href="javascript:void(0)"><i class="fi-male-female fi-lg"></i></a></th>
+                    <!-- /ko -->
+                    
+                    <!-- ko if: sortKey === 'allowvideocapturing' -->
+                    <th data-bind="click: $parent.sort({ sortKey: 'allowvideocapturing', boolean: true }), attr: { id: cssClass }, css: cssClass"><a href="javascript:void(0)"><span class="glyphicon glyphicon-facetime-video glyphicon-lg"></span></a></th>
+                    <!-- /ko -->
+
+                    <!-- /ko -->
+                    <!-- /ko -->
+                    @*<th class="col-date"><a href="javascript:void(0)" data-bind="click: sort({ sortKey: 'dateupdated' })">Updated</a></th>*@
+                    <th class="col-glyphicon col-glyphicon-media"><span class="media-heading">Media</span></th>
+                    <th id="col-glyphicon_2" class="col-glyphicon"></th>
+                    <th id="col-glyphicon_3" class="col-glyphicon"></th>
+                    <td id="col-scrollbar" hidden></td>
+                </tr>
+                </thead>
+            </table>
+        </div>
+
+        <div id="no-rows-message" class="no-rows-found" hidden><h2>No residents found</h2></div>
+
+        <div id="table-detail" class="table-detail-container container-height" hidden>
+            <table data-bind="tableUpdated: residentsTable" class="table table-striped table-bordered table-hover" id="tblResident">
+                <tbody data-bind="foreach: residentsTable, tableRender: residentsTable">
+                <tr data-bind="click: $parent.highlightRow, attr: { id: 'row_' + id() }">
+                    <td class="col-profile-picture">
+                        <a href="javascript:void(0)" data-toggle="tooltip" title="Edit resident details" data-bind="attr: { id: 'profilepicture_' + id() }, click: $parent.edit">
+                            <!-- ko if: profilepicture() === null -->
+                            <img data-bind="attr: { src: profilepictureplaceholder() }" alt="" width="45" height="45" class="img-circle">
+                            <!-- /ko -->
+                            <!-- ko if: profilepicture() !== null -->
+                            <img data-bind="attr: { src: profilepicture() }" alt="" width="45" height="45" class="img-circle">
+                            <!-- /ko -->
+                        </a>
+                    </td>
+                    <td class="col-firstname" data-bind="text: firstname()"></td>
+                    <td class="col-lastname" data-bind="text: lastname()"></td>
+                    <td class="col-id" data-bind="text: id"></td>
+                    <td class="col-date" data-bind="text: moment(dateupdated()).format('ll')"></td>
+                    <!-- ko if: gender() === 'F' -->
+                    <td class="col-gender"><i class="fi-female fi-elg" aria-hidden="true"></i></td>
+                    <!-- /ko -->
+                    <!-- ko if: gender() === 'M' -->
+                    <td class="col-gender"><i class="fi-male fi-elg" aria-hidden="true"></i></td>
+                    <!-- /ko -->
+                    <!-- ko if: $parent.isVideoCaptureServiceInstalled === '1' -->
+                    <!-- ko if: allowvideocapturing() -->
+                    <td class="col-capturable"><span class="glyphicon glyphicon-ok glyphicon-lg"></span></td>
+                    <!-- /ko -->
+                    <!-- ko if: !allowvideocapturing() -->
+                    <td class="col-capturable"></td>
+                    <!-- /ko -->
+                    <!-- /ko -->
+                    
+                    <td class="glyphicon col-glyphicon-media"><a href="javascript:void(0)" data-toggle="tooltip" title="Manage resident media" data-bind="attr: { id: 'profile_' + id() }, click: $parent.editProfile"><span class="glyphicon glyphicon-cd glyphicon-lg"></span></a></td>
+                    <td class="col-glyphicon"><a href="javascript:void(0)" data-toggle="tooltip" title="Edit resident details" data-bind="attr: { id: 'edit_' + id() }, click: $parent.edit"><span class="glyphicon glyphicon-pencil glyphicon-lg"></span></a></td>               
+                    <td class="col-glyphicon"><a href="javascript:void(0)" data-toggle="tooltip" title="Delete resident" data-bind="attr: { id: 'delete_' + id() }, click: $parent.delete"><span class="glyphicon glyphicon-trash glyphicon-lg"></span></a></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

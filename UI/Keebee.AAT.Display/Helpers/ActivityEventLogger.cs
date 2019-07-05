@@ -10,12 +10,6 @@ namespace Keebee.AAT.Display.Helpers
     {
         private readonly ActivityEventLogsClient _activityEventLogsClient;
 
-        private SystemEventLogger _systemEventLogger;
-        public SystemEventLogger EventLogger
-        {
-            set { _systemEventLogger = value; }
-        }
-
         public ActivityEventLogger()
         {
             _activityEventLogsClient = new ActivityEventLogsClient();
@@ -37,7 +31,7 @@ namespace Keebee.AAT.Display.Helpers
             }
             catch (Exception ex)
             {
-                _systemEventLogger?.WriteEntry($"ActivityEventLogger.Add: {ex.Message}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"ActivityEventLogger.Add: {ex.Message}", SystemEventLogType.Display, EventLogEntryType.Error);
             }
         }
     }

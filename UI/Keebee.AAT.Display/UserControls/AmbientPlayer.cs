@@ -7,39 +7,41 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using Keebee.AAT.ApiClient.Models;
 using WMPLib;
 
 namespace Keebee.AAT.Display.UserControls
 {
     public partial class AmbientPlayer : UserControl
     {
-        // event logger
-        private SystemEventLogger _systemEventLogger;
-        public SystemEventLogger SystemEventLogger
-        {
-            set { _systemEventLogger = value; }
-        }
-
         // event handler
         public event EventHandler ScreenTouchedEvent;
 
         // delegate
         private delegate void PlayAmbientDelegate();
-        private delegate void RaiseScreenTouchedEventDelegate(int responseTypeId);
+        private delegate void RaiseScreenTouchedEventDelegate(ResponseTypeMessage responseType);
 
         // invitation messages
         private int _currentInvitationMessageIndex = -1;
-        private IList<AmbientInvitationMessage> _invitationMessages;
-        public IList<AmbientInvitationMessage> InvitationMessages
+        private IList<AmbientInvitation> _invitationMessages;
+        public IList<AmbientInvitation> InvitationMessages
         {
             set { _invitationMessages = value; }
         }
+
+        private ResponseTypeMessage[] _randomResponseTypes;
+        public ResponseTypeMessage[] RandomResponseTypes
+        {
+            set { _randomResponseTypes = value; }
+        }
+
+        private int _currentRandomResponseTypeId;
 
         private bool _isInvitaionShown;
 
         public class ScreenTouchedEventEventArgs : EventArgs
         {
-            public int ResponseTypeId { get; set; }
+            public ResponseTypeMessage ResponseType { get; set; }
         }
 
         // timers
@@ -71,7 +73,7 @@ namespace Keebee.AAT.Display.UserControls
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"AmbientPlayer.Play: {ex.Message}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"AmbientPlayer.Play: {ex.Message}", SystemEventLogType.Display, EventLogEntryType.Error);
             }
         }
 
@@ -134,7 +136,7 @@ namespace Keebee.AAT.Display.UserControls
                 }
                 catch (Exception ex)
                 {
-                    _systemEventLogger.WriteEntry($"AmbientPlayer.PlayAmbient: {ex.Message}", EventLogEntryType.Error);
+                    SystemEventLogger.WriteEntry($"AmbientPlayer.PlayAmbient: {ex.Message}", SystemEventLogType.Display, EventLogEntryType.Error);
                 }
             }
         }
@@ -166,7 +168,7 @@ namespace Keebee.AAT.Display.UserControls
 
                 var  message = _invitationMessages[_currentInvitationMessageIndex].Message;
 
-                axWindowsMediaPlayer.settings.mute = true;
+                axWindowsMediaPlayer.Ctlcontrols.pause();
                 axWindowsMediaPlayer.Hide();
 
                 lblInvitation.Text = message;
@@ -178,25 +180,25 @@ namespace Keebee.AAT.Display.UserControls
             {
                 lblInvitation.Hide();
                 axWindowsMediaPlayer.Show();
-                axWindowsMediaPlayer.settings.mute = false;
+                axWindowsMediaPlayer.Ctlcontrols.play();
 
                 _isInvitaionShown = false;
             }
         }
 
-        private void RaiseScreenTouchedEvent(int responseTypeId)
+        private void RaiseScreenTouchedEvent(ResponseTypeMessage responseType)
         {
             if (IsDisposed) return;
 
             if (InvokeRequired)
             {
-                Invoke(new RaiseScreenTouchedEventDelegate(RaiseScreenTouchedEvent), responseTypeId);
+                Invoke(new RaiseScreenTouchedEventDelegate(RaiseScreenTouchedEvent), responseType);
             }
             else
             {
                 var args = new ScreenTouchedEventEventArgs
                 {
-                    ResponseTypeId = responseTypeId
+                    ResponseType = responseType
                 };
                 ScreenTouchedEvent?.Invoke(new object(), args);
             }
@@ -204,10 +206,24 @@ namespace Keebee.AAT.Display.UserControls
 
         private void InvitationClick(object sender, EventArgs e)
         {
-            var responseTypeId = _invitationMessages[_currentInvitationMessageIndex].ResponseTypeId;
+            if (!_randomResponseTypes.Any()) return;
+            if (!_invitationMessages[_currentInvitationMessageIndex].IsExecuteRandom) return;
 
-            if (responseTypeId > 0)
-                RaiseScreenTouchedEvent(responseTypeId);
+            var responseType = _randomResponseTypes[_currentRandomResponseTypeId];
+            var responseTypeMessage = new ResponseTypeMessage
+            {
+                Id = responseType.Id,
+                ResponseTypeCategoryId = responseType.ResponseTypeCategoryId,
+                InteractiveActivityTypeId = responseType.InteractiveActivityTypeId,
+                SwfFile = responseType.SwfFile
+            };
+
+            if (_currentInvitationMessageIndex < _randomResponseTypes.Length - 1)
+                _currentRandomResponseTypeId++;
+            else
+                _currentInvitationMessageIndex = 0;
+
+            RaiseScreenTouchedEvent(responseTypeMessage);
         }
 
         private void PlayStateChange(object sender, AxWMPLib._WMPOCXEvents_PlayStateChangeEvent e)
@@ -217,28 +233,26 @@ namespace Keebee.AAT.Display.UserControls
                 switch (e.newState)
                 {
                     case (int) WMPPlayState.wmppsMediaEnded:
-                        if (_currentIndex < _maxIndex)
-                            _currentIndex++;
-                        else
-                            _currentIndex = 0;
+                        if (_playlist.Length > 1)
+                        {
+                            if (_currentIndex < _maxIndex)
+                                _currentIndex++;
+                            else
+                                _currentIndex = 0;
 
-                        axWindowsMediaPlayer.URL = _playlist[_currentIndex];
+                            axWindowsMediaPlayer.URL = _playlist[_currentIndex];
+                        }
                         break;
 
                     case (int) WMPPlayState.wmppsReady:
-                        try
-                        {
-                            axWindowsMediaPlayer.Ctlcontrols.play();
-                        }
-                        catch
-                        {
-                        }
+                        try { axWindowsMediaPlayer.Ctlcontrols.play(); }
+                        catch {}
                         break;
                 }
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"AmbientPlayer.PlayStateChange: {ex.Message}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"AmbientPlayer.PlayStateChange: {ex.Message}", SystemEventLogType.Display, EventLogEntryType.Error);
             }
         }
     }

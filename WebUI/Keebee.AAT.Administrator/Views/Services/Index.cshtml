@@ -1,0 +1,57 @@
+﻿@model Keebee.AAT.Administrator.ViewModels.ServicesViewModel
+
+@{
+    ViewBag.Title = "Service Activate/Deactivate";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h3>Service Activation/Deactivation</h3>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        services.index.init({
+            IsInstalledBeaconWatcherService: @Model.IsInstalledBeaconWatcherService,
+            IsInstalledVideoCaptureService: @Model.IsInstalledVideoCaptureService
+        });
+    });
+</script>
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <ul class="nav nav-pills">
+            <li class="pull-right">
+                <input type="button" id="save" class="btn btn-edit" value="Save Settings" />
+            </li>
+        </ul>
+    </div>
+    <div class="panel-body">
+        <div>
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm-3">
+                        <div class="label label-default">Beacon Watcher Service</div>
+                        @if (Model.IsInstalledBeaconWatcherService == 1)
+                        {
+                            <div><input type="checkbox" class="form-control checkbox-size-lg" id="chkIsInstalledBeaconWatcher" checked /></div>
+                        }
+                        else
+                        {
+                            <div><input type="checkbox" class="form-control checkbox-size-lg" id="chkIsInstalledBeaconWatcher" /></div>
+                        }
+                    </div>
+                    <div class="col-sm-9">
+                        <div class="label label-default">Video Capture Service</div>
+                        @if (Model.IsInstalledVideoCaptureService == 1)
+                        {
+                            <div><input type="checkbox" class="form-control checkbox-size-lg" id="chkIsInstalledVideoCapture" checked /></div>
+                        }
+                        else
+                        {
+                            <div><input type="checkbox" class="form-control checkbox-size-lg" id="chkIsInstalledVideoCapture" /></div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

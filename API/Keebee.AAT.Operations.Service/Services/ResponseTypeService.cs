@@ -10,6 +10,8 @@ namespace Keebee.AAT.Operations.Service.Services
     {
         IEnumerable<ResponseType> Get();
         ResponseType Get(int id);
+        IEnumerable<ResponseType> GetRandomTypes();
+        IEnumerable<ResponseType> GetRotationalTypes();
         int Post(ResponseType responseType);
         void Patch(int id, ResponseType responseType);
         void Delete(int id);
@@ -33,10 +35,36 @@ namespace Keebee.AAT.Operations.Service.Services
             var container = new Container(new Uri(ODataHost.Url));
 
             var responseType = container.ResponseTypes.ByKey(id)
-                .Expand("ResponseTypeCategory,InteractiveActivityType")
-                .GetValue();
+                .Expand("ResponseTypeCategory,InteractiveActivityType");
 
-            return responseType;
+            ResponseType result;
+            try { result = responseType.GetValue(); }
+            catch { result = null; }
+
+            return result;
+        }
+
+        public IEnumerable<ResponseType> GetRandomTypes()
+        {
+            var container = new Container(new Uri(ODataHost.Url));
+
+            var responseTypes = container.ResponseTypes
+                .AddQueryOption("$filter", "IsRandom eq true")
+                .Expand("ResponseTypeCategory,InteractiveActivityType")
+                .AsEnumerable();
+
+            return responseTypes;
+        }
+
+        public IEnumerable<ResponseType> GetRotationalTypes()
+        {
+            var container = new Container(new Uri(ODataHost.Url));
+
+            var responseTypes = container.ResponseTypes
+                .AddQueryOption("$filter", "IsRotational eq true")
+                .AsEnumerable();
+
+            return responseTypes;
         }
 
         public int Post(ResponseType responseType)
@@ -56,11 +84,15 @@ namespace Keebee.AAT.Operations.Service.Services
             var el = container.ResponseTypes.Where(e => e.Id == id).SingleOrDefault();
             if (el == null) return;
 
-            if (el.ResponseTypeCategoryId != null)
+            if (!string.IsNullOrEmpty(responseType.Description))
+                el.Description = responseType.Description;
+
+            if (responseType.ResponseTypeCategoryId > 0)
                 el.ResponseTypeCategoryId = responseType.ResponseTypeCategoryId;
 
-            if (el.Description != null)
-                el.Description = responseType.Description;
+            el.InteractiveActivityTypeId = responseType.InteractiveActivityTypeId;
+            el.IsRandom = responseType.IsRandom;
+            el.IsRotational = responseType.IsRotational;
 
             container.UpdateObject(el);
             container.SaveChanges();

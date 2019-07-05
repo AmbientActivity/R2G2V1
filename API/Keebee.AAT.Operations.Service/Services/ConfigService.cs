@@ -28,7 +28,7 @@ namespace Keebee.AAT.Operations.Service.Services
             var container = new Container(new Uri(ODataHost.Url));
 
             var configs = container.Configs
-                .Expand("ConfigDetails($expand=PhidgetType,PhidgetStyleType,ResponseType($expand=InteractiveActivityType))")
+                .Expand("ConfigDetails($expand=PhidgetType,PhidgetStyleType,ResponseType($expand=InteractiveActivityType,ResponseTypeCategory))")
                 .AsEnumerable();
 
             return configs;
@@ -40,10 +40,13 @@ namespace Keebee.AAT.Operations.Service.Services
 
             var config = container.Configs
                 .ByKey(id)
-                .Expand("ConfigDetails($expand=PhidgetType,PhidgetStyleType,ResponseType)")
-                .GetValue();
+                .Expand("ConfigDetails($expand=PhidgetType,PhidgetStyleType,ResponseType)");
 
-            return config;
+            Config result;
+            try { result = config.GetValue(); }
+            catch { result = null; }
+
+            return result;
         }
 
         public Config GetActive()
@@ -108,7 +111,7 @@ namespace Keebee.AAT.Operations.Service.Services
             var c = container.Configs.Where(e => e.Id == id).SingleOrDefault();
             if (c == null) return;
 
-            if (config.Description != null)
+            if (!string.IsNullOrEmpty(config.Description))
                 c.Description = config.Description;
 
             c.IsActiveEventLog = config.IsActiveEventLog;

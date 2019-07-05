@@ -1,0 +1,69 @@
+﻿@{
+    ViewBag.Title = "Ambient Invitations";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<script type="text/javascript">
+    $(document)
+        .ready(function () {
+            ambientinvitation.index.init();
+        });
+</script>
+
+<div class="row row-ambientinvitations-banner">
+    <div class="col-sm-10">
+        <h3 class="title-residents">Ambient Invitation Manager</h3>
+    </div>
+    <div class="add-invitation-button">
+        <h3><input id="add" type="button" class="btn btn-add" value="Add Invitation" data-bind="click: edit" disabled /></h3>
+    </div>
+</div>
+
+<div class="container ambientinvitations-container">
+
+    <div class="panel panel-default panel-no-body">
+        <div class="panel-heading">
+            <ul class="nav nav-pills">
+                <li class="pull-right record-total">
+                    <label>Total:</label> <span data-bind="text: totalAmbientInvitations()"></span>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div id="loading-container" class="loading"><img src="~/Content/images/page-loading.gif" alt="Loading..."></div>
+    <div id="error-container" hidden></div>
+    <div id="no-rows-message" class="no-rows-found" hidden><h2>No ambient invitations found</h2></div>
+
+    <div class="panel panel-default" id="table-panel" hidden>
+        <div class="panel-body panel-body-table-header">
+            <table data-bind="tableUpdated: ambientInvitations" class="table table-striped table-bordered table-hover" id="tblAmbientInvitations">
+                <thead>
+                    <tr>
+                        <!-- ko foreach: columns -->
+                        <!-- ko if: visible -->
+                        <th data-bind="text: title, css: cssClass"></th>
+                        <!-- /ko -->
+                        <!-- /ko -->
+                        <th class="col-glyphicon col-glyphicon-lg"></th>
+                        <th class="col-glyphicon col-glyphicon-lg"></th>
+                    </tr>
+                </thead>
+
+                <tbody data-bind="foreach: ambientInvitationsTable, tableRender: ambientInvitationsTable">
+                    <tr data-bind="attr: {id: 'row_' +  id}">
+                        <td data-bind="text: message()"></td>
+                        <!-- ko if: isexecuterandom() -->
+                        <td style="text-align: center;"><span class="glyphicon glyphicon-ok glyphicon-lg"></span></td>
+                        <!-- /ko -->
+                        <!-- ko if: !isexecuterandom() -->
+                        <td></td>
+                        <!-- /ko -->
+                        <td><a data-toggle="tooltip" title="Edit invitation" href="javascript:void(0)" data-bind="attr: { id: 'edit_' + id }, click: $parent.edit, css: 'glyphicon glyphicon-pencil glyphicon-lg'"></a></td>
+                        <td><a data-toggle="tooltip" title="Delete invitation" href="javascript:void(0)" data-bind="attr: { id: 'delete_' + id}, click: $parent.delete, css: 'glyphicon glyphicon-trash glyphicon-lg'"></a></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

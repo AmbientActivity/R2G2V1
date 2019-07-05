@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-
 namespace Keebee.AAT.DataAccess.Models
 {
     public class InteractiveActivityType
@@ -8,5 +7,7 @@ namespace Keebee.AAT.DataAccess.Models
         public int Id { get; set; }
         [Required]
         public string Description { get; set; }
+        [Required]
+        public string SwfFile { get; set; }
     }
 }

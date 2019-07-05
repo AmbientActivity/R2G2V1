@@ -1,11 +1,10 @@
-﻿using Keebee.AAT.ServiceModels;
-using Keebee.AAT.MessageQueuing;
+﻿using Keebee.AAT.MessageQueuing;
 using Keebee.AAT.Shared;
 using Keebee.AAT.SystemEventLogging;
 using Keebee.AAT.ApiClient.Clients;
 using Keebee.AAT.ApiClient.Models;
+using Newtonsoft.Json;
 using System;
-using System.Web.Script.Serialization;
 using System.ServiceProcess;
 using System.Diagnostics;
 using System.Linq;
@@ -14,6 +13,8 @@ namespace Keebee.AAT.StateMachineService
 {
     public partial class StateMachineService : ServiceBase
     {
+        #region declaration
+
         // api client
         private readonly IActiveResidentClient _activeResidentClient;
         private readonly IConfigsClient _configsClient;
@@ -23,23 +24,31 @@ namespace Keebee.AAT.StateMachineService
         private readonly CustomMessageQueue _messageQueueConfigPhidget;
         private readonly CustomMessageQueue _messageQueueVideoCapture;
 
-        // event logger
-        private readonly SystemEventLogger _systemEventLogger;
-
         // active config
         private ConfigMessage _activeConfig;
 
         // active profile
         private ResidentMessage _activeResident;
 
+        // random response types (for "on/off" toggle)
+        private ResponseTypeMessage[] _randomResponseTypes;
+
+        // current response type (needed for the "on/off" toggle)
+        private int _currentResponseTypeId = ResponseTypeId.Ambient;
+
+
         // display state
         private bool _isDisplayActive;
+
+        // video capture
+        private bool _isInstalledVideoCapture;
+
+        #endregion
 
         public StateMachineService()
         {
             InitializeComponent();
 
-            _systemEventLogger = new SystemEventLogger(SystemEventLogType.StateMachineService);
             _activeResidentClient = new ActiveResidentClient();
             _configsClient = new ConfigsClient();
 
@@ -49,21 +58,20 @@ namespace Keebee.AAT.StateMachineService
             _messageQueueResponse = new CustomMessageQueue(new CustomMessageQueueArgs
             {
                 QueueName = MessageQueueType.Response
-            })
-            { SystemEventLogger = _systemEventLogger };
+            });
 
             _messageQueueConfigPhidget = new CustomMessageQueue(new CustomMessageQueueArgs
             {
                 QueueName = MessageQueueType.ConfigPhidget
-            })
-            { SystemEventLogger = _systemEventLogger };
+            });
 
             _messageQueueVideoCapture = new CustomMessageQueue(new CustomMessageQueueArgs
             {
                 QueueName = MessageQueueType.VideoCapture
-            })
-            { SystemEventLogger = _systemEventLogger };
+            });
         }
+
+        #region initialization
 
         private void InitializeMessageQueueListeners()
         {
@@ -71,29 +79,113 @@ namespace Keebee.AAT.StateMachineService
             {
                 QueueName = MessageQueueType.Phidget,
                 MessageReceivedCallback = MessageReceivedPhidget
-            })
-            { SystemEventLogger = _systemEventLogger };
+            });
 
             var q2 = new CustomMessageQueue(new CustomMessageQueueArgs
             {
                 QueueName = MessageQueueType.ConfigSms,
                 MessageReceivedCallback = MessageReceivedConfigSms
-            })
-            { SystemEventLogger = _systemEventLogger };
+            });
 
             var q3 = new CustomMessageQueue(new CustomMessageQueueArgs
             {
                 QueueName = MessageQueueType.DisplaySms,
                 MessageReceivedCallback = MessageReceivedDisplaySms
-            })
-            { SystemEventLogger = _systemEventLogger };
+            });
+
             var q4 = new CustomMessageQueue(new CustomMessageQueueArgs
             {
                 QueueName = MessageQueueType.BluetoothBeaconWatcher,
                 MessageReceivedCallback = MessageReceivedBluetoothBeaconWatcher
-            })
-            { SystemEventLogger = _systemEventLogger };
+            });
+
+            var q5 = new CustomMessageQueue(new CustomMessageQueueArgs
+            {
+                QueueName = MessageQueueType.VideoCaptureState,
+                MessageReceivedCallback = MessageReceivedVideoCaptureState
+            });
         }
+
+        private void LoadConfig()
+        {
+            if (_activeConfig != null) return;
+            try
+            {
+                var config = _configsClient.GetActiveDetails();
+                _activeConfig = GetConfig(config);
+
+                SystemEventLogger.WriteEntry($"The configuration '{config.Description}' has been activated", SystemEventLogType.StateMachineService);
+            }
+
+            catch (Exception ex)
+            {
+                SystemEventLogger.WriteEntry($"LoadConfig{Environment.NewLine}{ex.Message}", SystemEventLogType.StateMachineService, EventLogEntryType.Error);
+            }
+        }
+
+        private static ConfigMessage GetConfig(Config config)
+        {
+            return new ConfigMessage
+            {
+                Id = config.Id,
+                Description = config.Description,
+                IsActiveEventLog = config.IsActiveEventLog,
+                ConfigDetails = config.ConfigDetails
+                    .Select(x => new
+                    ConfigDetailMessage
+                    {
+                        Id = x.Id,
+                        ConfigId = x.ConfigId,
+                        PhidgetTypeId = x.PhidgetType.Id,
+                        PhidgetStyleType = new PhidgetStyleTypeMessage
+                        {
+                            Id = x.PhidgetStyleType.Id,
+                            IsIncremental = x.PhidgetStyleType.IsIncremental
+                        },
+                        ResponseType = new ResponseTypeMessage
+                        {
+                            Id = x.ResponseType.Id,
+                            ResponseTypeCategoryId = x.ResponseType.ResponseTypeCategory.Id,
+                            IsRandom = x.ResponseType.IsRandom,
+                            IsRotational = x.PhidgetStyleType.Id != PhidgetStyleTypeId.NonRotational && x.ResponseType.IsRotational,
+                            IsUninterrupted = x.ResponseType.IsUninterrupted,
+                            InteractiveActivityTypeId = x.ResponseType.InteractiveActivityType?.Id ?? 0,
+                            SwfFile = x.ResponseType.InteractiveActivityType?.SwfFile ?? string.Empty
+                        }
+                    })
+            };
+        }
+
+        private bool LoadRandomResponseTypes()
+        {
+            try
+            {
+                if (_randomResponseTypes != null) return true;
+
+                var responseTypesClient = new ResponseTypesClient();
+                _randomResponseTypes = responseTypesClient.GetRandomTypes()
+                    .Select(r => new ResponseTypeMessage
+                    {
+                        Id = r.Id,
+                        ResponseTypeCategoryId = r.ResponseTypeCategory.Id,
+                        IsRotational = r.IsRotational,
+                        IsUninterrupted = r.IsUninterrupted,
+                        InteractiveActivityTypeId = r.InteractiveActivityType?.Id ?? 0,
+                        SwfFile = r.InteractiveActivityType?.SwfFile ?? string.Empty
+                    }).ToArray();
+              
+            }
+            catch (Exception ex)
+            {
+                SystemEventLogger.WriteEntry($"LoadRandomResponseTypes{Environment.NewLine}{ex.Message}", SystemEventLogType.StateMachineService, EventLogEntryType.Error);
+            }
+
+            return (_randomResponseTypes != null);
+        }
+
+        #endregion
+
+        #region core logic
 
         private void ExecuteResponse(int phidgetTypeId, int sensorValue)
         {
@@ -103,37 +195,79 @@ namespace Keebee.AAT.StateMachineService
                 if (_activeConfig.ConfigDetails.All(x => x.PhidgetTypeId != phidgetTypeId))
                     return;
 
-                var configDetail =
-                    _activeConfig.ConfigDetails
+                var configDetail = _activeConfig.ConfigDetails
                     .Single(cd => cd.PhidgetTypeId == phidgetTypeId);
 
                 var responseMessage = new ResponseMessage
                 {
                     SensorValue = sensorValue,
                     ConfigDetail = configDetail,
-                    Resident = _activeResident,
-                    IsActiveEventLog = _activeConfig.IsActiveEventLog,
-                    ResponseTypeIds = _activeConfig.ConfigDetails
-                        .Select(c => c.ResponseTypeId)
-                        .Distinct().ToArray()
+                    Resident = new ResidentMessage
+                    {
+                        Id = _activeResident.Id,
+                        Name = _activeResident.Name,
+                        GameDifficultyLevel = _activeResident.GameDifficultyLevel,
+                        AllowVideoCapturing = _activeResident.AllowVideoCapturing,
+                        IsDeleted = _activeResident.IsDeleted
+                    },
+                    IsActiveEventLog = _activeConfig.IsActiveEventLog
                 };
 
-                if (!configDetail.IsSystemReponseType)
+                // handle 'random' response type
+                if (configDetail.ResponseType.Id == ResponseTypeId.OffScreen && _currentResponseTypeId == ResponseTypeId.OffScreen
+                    || configDetail.ResponseType.Id == ResponseTypeId.Random)
                 {
-                    if (_activeResident.AllowVideoCapturing)
-                        // send a signal to the video capture service to start recording
-                        _messageQueueVideoCapture.Send("1");
+                    responseMessage.ConfigDetail.ResponseType = GetRandomResponse();
+                    _currentResponseTypeId = responseMessage.ConfigDetail.ResponseType.Id;
+                }
+                else
+                    _currentResponseTypeId = configDetail.ResponseType.Id;
+
+                if (_isInstalledVideoCapture)
+                {
+                    if (configDetail.ResponseType.ResponseTypeCategoryId != ResponseTypeCategoryId.System)
+                    {
+                        if (_activeResident.AllowVideoCapturing)
+                            // send instruction to the video capture service to start capturing
+                            _messageQueueVideoCapture.Send("1");
+                    }
                 }
 
-                var serializer = new JavaScriptSerializer();
-                var responseMessageBody = serializer.Serialize(responseMessage);
-                _messageQueueResponse.Send(responseMessageBody);
+                _messageQueueResponse.Send(JsonConvert.SerializeObject(responseMessage));
+
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"ExecuteResponse: {ex.Message}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"ExecuteResponse: {ex.Message}", SystemEventLogType.StateMachineService, EventLogEntryType.Error);
+                _currentResponseTypeId = 0;
             }
         }
+
+        private int _currentSequentialResponseTypeIndex = -1;
+        private ResponseTypeMessage GetRandomResponse()
+        {
+            ResponseTypeMessage responseType = null;
+            try
+            {
+                if (LoadRandomResponseTypes())
+                {
+                    if (_currentSequentialResponseTypeIndex < _randomResponseTypes.Length - 1)
+                        _currentSequentialResponseTypeIndex++;
+                    else
+                        _currentSequentialResponseTypeIndex = 0;
+
+                    responseType = _randomResponseTypes[_currentSequentialResponseTypeIndex];
+                }
+            }
+            catch (Exception ex)
+            {
+                SystemEventLogger.WriteEntry($"GetRandomResponse: {ex.Message}", SystemEventLogType.StateMachineService, EventLogEntryType.Error);
+            }
+
+            return responseType;
+        }
+
+        #endregion
 
         #region message received event handlers
 
@@ -144,19 +278,18 @@ namespace Keebee.AAT.StateMachineService
                 // do nothing unless the display is active
                 if (!_isDisplayActive) return;
 
-                var phidget = GetPhidgetFromMessageBody(e.MessageBody);
+                var phidget = JsonConvert.DeserializeObject<Tuple<int, int>>(e.MessageBody);
                 if (phidget == null) return;
 
-                var sensorValue = phidget.SensorValue;
-
                 // sensorId's are base 0 - convert to base 1 for PhidgetTypeId
-                var phidgetTypeId = phidget.SensorId + 1;
+                var phidgetTypeId = phidget.Item1 + 1;
+                var sensorValue = phidget.Item2;
 
                 ExecuteResponse(phidgetTypeId, sensorValue);
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"MessageReceivedPhidget: {ex.Message}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"MessageReceivedPhidget: {ex.Message}", SystemEventLogType.StateMachineService, EventLogEntryType.Error);
             }
         }
 
@@ -164,7 +297,7 @@ namespace Keebee.AAT.StateMachineService
         {
             try
             {
-                var resident = GetResidentFromMessageBody(e.MessageBody);
+                var resident = JsonConvert.DeserializeObject<ResidentMessage>(e.MessageBody);
 
                 if (resident.Id > 0)
                 {
@@ -179,12 +312,18 @@ namespace Keebee.AAT.StateMachineService
                     SetActiveResident(null);
                 }
 
-                _activeResident = resident;
+                _activeResident = new ResidentMessage
+                {
+                    Id = resident.Id,
+                    Name = resident.Name,
+                    GameDifficultyLevel = resident.GameDifficultyLevel,
+                    AllowVideoCapturing = resident.AllowVideoCapturing
+                };
             }
 
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"MessageReceivedBluetoothBeaconWatcher{Environment.NewLine}{ex.Message}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"MessageReceivedBluetoothBeaconWatcher{Environment.NewLine}{ex.Message}", SystemEventLogType.StateMachineService, EventLogEntryType.Error);
             }
         }
 
@@ -192,7 +331,7 @@ namespace Keebee.AAT.StateMachineService
         {
             try
             {
-                var displayMessage = GetDisplayStateFromMessageBody(e.MessageBody);
+                var displayMessage = JsonConvert.DeserializeObject<DisplayMessage>(e.MessageBody);
                 _isDisplayActive = displayMessage.IsActive;
 
                 if (!_isDisplayActive)
@@ -210,10 +349,11 @@ namespace Keebee.AAT.StateMachineService
                 };
 
                 LoadConfig();
+                LoadRandomResponseTypes();
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"MessageReceivedDisplaySms{Environment.NewLine}{ex.Message}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"MessageReceivedDisplaySms{Environment.NewLine}{ex.Message}", SystemEventLogType.StateMachineService, EventLogEntryType.Error);
             }
         }
 
@@ -221,93 +361,84 @@ namespace Keebee.AAT.StateMachineService
         {
             try
             {
-                _activeConfig = GetConfigFromMessageBody(e.MessageBody);
+                var config = JsonConvert.DeserializeObject<ConfigMessage>(e.MessageBody);
+
+                _activeConfig = GetUpdatedConfig(config);
                 _isDisplayActive = _activeConfig.IsDisplayActive;
 
                 if (!_isDisplayActive) return;
-                _systemEventLogger.WriteEntry($"The configuration '{_activeConfig.Description}' has been activated");
+                SystemEventLogger.WriteEntry($"The configuration '{_activeConfig.Description}' has been activated", SystemEventLogType.StateMachineService);
                 _messageQueueConfigPhidget.Send(e.MessageBody);
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"MessageReceiveConfigSms{Environment.NewLine}{ex.Message}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"MessageReceiveConfigSms{Environment.NewLine}{ex.Message}", SystemEventLogType.StateMachineService, EventLogEntryType.Error);
             }
         }
 
-        private static PhidgetMessage GetPhidgetFromMessageBody(string messageBody)
+        private static ConfigMessage GetUpdatedConfig(ConfigMessage config)
         {
-            var serializer = new JavaScriptSerializer();
-            var phidget = serializer.Deserialize<PhidgetMessage>(messageBody);
-            return phidget;
+            return new ConfigMessage
+            {
+                Id = config.Id,
+                Description = config.Description,
+                IsActiveEventLog = config.IsActiveEventLog,
+                IsDisplayActive = config.IsDisplayActive,
+                ConfigDetails = config.ConfigDetails
+                    .Select(x => new
+                    ConfigDetailMessage
+                    {
+                        Id = x.Id,
+                        ConfigId = x.ConfigId,
+                        PhidgetTypeId = x.PhidgetTypeId,
+                        PhidgetStyleType = new PhidgetStyleTypeMessage
+                        {
+                            Id = x.PhidgetStyleType.Id,
+                            IsIncremental = x.PhidgetStyleType.IsIncremental
+                        },
+                        ResponseType = new ResponseTypeMessage
+                        {
+                            Id = x.ResponseType.Id,
+                            ResponseTypeCategoryId = x.ResponseType.ResponseTypeCategoryId,
+                            IsRandom = x.ResponseType.IsRandom,
+                            IsRotational = x.PhidgetStyleType.Id != PhidgetStyleTypeId.NonRotational && x.ResponseType.IsRotational,
+                            IsUninterrupted = x.ResponseType.IsUninterrupted,
+                            InteractiveActivityTypeId = x.ResponseType.InteractiveActivityTypeId,
+                            SwfFile = x.ResponseType.SwfFile
+                        }
+                    })
+            };
         }
 
-        private static ConfigMessage GetConfigFromMessageBody(string messageBody)
+        private void MessageReceivedVideoCaptureState(object source, MessageEventArgs e)
         {
-            var serializer = new JavaScriptSerializer();
-            var config = serializer.Deserialize<ConfigMessage>(messageBody);
-            return config;
-        }
-
-        private static ResidentMessage GetResidentFromMessageBody(string messageBody)
-        {
-            var serializer = new JavaScriptSerializer();
-            var resident = serializer.Deserialize<ResidentMessage>(messageBody);
-
-            return resident;
-        }
-
-        private static DisplayMessage GetDisplayStateFromMessageBody(string messageBody)
-        {
-            var serializer = new JavaScriptSerializer();
-            var display = serializer.Deserialize<DisplayMessage>(messageBody);
-            return display;
-        }
-
-        private void LoadConfig()
-        {
-            if (_activeConfig != null) return;
             try
             {
-                var config = _configsClient.GetActiveDetails();
-                _activeConfig = new ConfigMessage
-                {
-                    Id = config.Id,
-                    Description = config.Description,
-                    IsActiveEventLog = config.IsActiveEventLog,
-                    ConfigDetails = config.ConfigDetails
-                                        .Select(x => new
-                                        ConfigDetailMessage
-                                        {
-                                            Id = x.Id,
-                                            ConfigId = x.ConfigId,
-                                            ResponseTypeId = x.ResponseType.Id,
-                                            PhidgetTypeId = x.PhidgetType.Id,
-                                            PhidgetStyleTypeId = x.PhidgetStyleType.Id,
-                                            IsSystemReponseType = x.ResponseType.IsSystem
-                                        }
-                                        )
-                };
-
-                _systemEventLogger.WriteEntry($"The configuration '{config.Description}' has been activated");
+                _isInstalledVideoCapture = e.MessageBody == "1";
             }
-
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"LoadConfig{Environment.NewLine}{ex.Message}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"MessageReceivedVideoCaptureState{Environment.NewLine}{ex.Message}", SystemEventLogType.StateMachineService, EventLogEntryType.Error);
             }
         }
 
         #endregion
 
+        #region event handlers
+
         protected override void OnStart(string[] args)
         {
-            _systemEventLogger.WriteEntry("In OnStart");
+            SystemEventLogger.WriteEntry("In OnStart", SystemEventLogType.StateMachineService);
         }
 
         protected override void OnStop()
         {
-            _systemEventLogger.WriteEntry("In OnStop");
+            SystemEventLogger.WriteEntry("In OnStop", SystemEventLogType.StateMachineService);
         }
+
+        #endregion
+
+        #region active resident
 
         private void LogActiveResidentEvent(int residentId, string description)
         {
@@ -317,15 +448,12 @@ namespace Keebee.AAT.StateMachineService
                 if (_activeConfig == null) return;
                 if (!_activeConfig.IsActiveEventLog) return;
 
-                var activeResdientEventLogger = new ActiveResidentEventLogger()
-                {
-                    SystemEventLogger = _systemEventLogger
-                };
+                var activeResdientEventLogger = new ActiveResidentEventLogger();
                 activeResdientEventLogger.Add(residentId, description);
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"LogActiveResidentEvent: {ex.Message}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"LogActiveResidentEvent: {ex.Message}", SystemEventLogType.StateMachineService, EventLogEntryType.Error);
             }
         }
 
@@ -338,8 +466,10 @@ namespace Keebee.AAT.StateMachineService
             }
             catch (Exception ex)
             {
-                _systemEventLogger?.WriteEntry($"SetActiveResident: {ex.Message}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"SetActiveResident: {ex.Message}", SystemEventLogType.StateMachineService, EventLogEntryType.Error);
             }
         }
+
+        #endregion
     }
 }

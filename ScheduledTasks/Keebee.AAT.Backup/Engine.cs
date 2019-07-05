@@ -16,7 +16,7 @@ namespace Keebee.AAT.Backup
         private const string RestorePublicProfileFilename = "RestorePublicProfile";
         private const string RestoreResidentsFilename = "RestoreResidents";
         private const string RestoreConfigurationsFilename = "RestoreConfigurations";
-        private const string InstallR2G2Filename = "INSTALL_R2G2.ps1";
+        private const string InstallABBYFilename = "INSTALL_ABBY.ps1";
 
         private readonly string _pathDeployments;
         private readonly string _pathVideoCaptures;
@@ -62,7 +62,6 @@ namespace Keebee.AAT.Backup
 
                     if (driveBackup.IsReady)
                     {
-
                         // backup deployment folders (except media)
                         logText.Append(BackupFiles(_pathDeployments, _pathBackup,
                             excludeFolders: new[] { Path.Combine(_pathDeployments, "Media") }));
@@ -120,12 +119,14 @@ namespace Keebee.AAT.Backup
 #endif
                 }
             }
+#if DEBUG
             catch (Exception e)
             {
-#if DEBUG
                 Console.WriteLine(e.Message);
-#endif
             }
+#elif !DEBUG
+            catch {}
+#endif
         }
 
         private static string InitializeLogFile(string pathLog)
@@ -135,7 +136,7 @@ namespace Keebee.AAT.Backup
                 directory.Create();
 
             var dateString = DateTime.Now.ToString("yyyy-MM-dd");
-            var filePath = $@"{pathLog}\BackupLog_{dateString.Replace("-", "_")}.log";
+            var filePath = Path.Combine(pathLog, $"BackupLog_{dateString.Replace("-", "_")}.log");
             if (File.Exists(filePath))
                 File.Delete(filePath);
 
@@ -353,7 +354,7 @@ namespace Keebee.AAT.Backup
 
                             var destFilePath = Path.Combine(pathDest, fiSource.Name);
 
-                            if (fiSource.Name == InstallR2G2Filename)
+                            if (fiSource.Name == InstallABBYFilename)
                                 continue;
 
                             if (File.Exists(destFilePath))
@@ -741,7 +742,13 @@ namespace Keebee.AAT.Backup
             try
             {
                 var mediaPathTypesClient = new MediaPathTypesClient();
-                var mediaPathTypes = mediaPathTypesClient.Get().ToArray();
+                var mediaPathTypes = mediaPathTypesClient.Get()
+                    .Where(pt => pt.IsSharable)
+                    .OrderBy(pt => pt.ResponseTypeId)
+                    .ToArray();
+
+                var responseTypesClient = new ResponseTypesClient();
+                var responseTypes = responseTypesClient.Get().ToArray();
 
                 var publicMediaFilesClient = new PublicMediaFilesClient();
                 var linkedMedia = publicMediaFilesClient.GetLinked().ToArray();
@@ -755,165 +762,44 @@ namespace Keebee.AAT.Backup
 
                 using (var sw = new StreamWriter(pathScript))
                 {
-                    sw.WriteLine("DECLARE @pathProfiles varchar(max)");
+                    sw.WriteLine("DECLARE @pathProfiles varchar(100)");
                     sw.WriteLine("SET @pathProfiles = FileTableRootPath() + " + @"'\Media\Profiles\'");
-                    sw.WriteLine("DECLARE @pathSharedLibrary varchar(max)");
+                    sw.WriteLine("DECLARE @pathSharedLibrary varchar(100)");
                     sw.WriteLine("SET @pathSharedLibrary = FileTableRootPath() + " + $@"'\Media\{mediaSourcePath.SharedLibrary}\'");
+                    sw.WriteLine("DECLARE @allowedExts varchar(100)");
                     sw.WriteLine();
 
-                    // insert public profile media
-                    sw.WriteLine();
-                    sw.WriteLine("--- Activity 1 - ResponseType 'SlideShow' ---");
-
-                    // Images General
-                    var mediaPathType = mediaPathTypes.Single(x => x.Id == MediaPathTypeId.ImagesGeneral);
-                    sw.WriteLine(
-                        "INSERT INTO PublicMediaFiles (IsLinked, ResponseTypeId, MediaPathTypeId, StreamId)");
-                    sw.WriteLine(
-                        $"SELECT 0, {ResponseTypeId.SlideShow}, {mediaPathType.Id}, StreamId FROM MediaFiles WHERE [Path] = @pathProfiles + " +
-                        $@"'{PublicProfileSource.Id}\{mediaPathType.Path}\' AND [FileType] IN ('jpg', 'jpeg', 'png', 'bmp', 'gif')");
-
-                    // Images General Linked
-                    var filenames = GetPublicProfileLinkedFilenames(ResponseTypeId.SlideShow, mediaPathType.Id, linkedMedia);
-                    if (filenames.Length > 0)
+                    foreach (var pathType in mediaPathTypes)
                     {
-                        sw.WriteLine();
-                        sw.WriteLine(
-                            "INSERT INTO PublicMediaFiles (IsLinked, ResponseTypeId, MediaPathTypeId, StreamId)");
-                        sw.WriteLine(
-                            $@"SELECT 1, {ResponseTypeId.SlideShow}, {mediaPathType.Id}, StreamId FROM MediaFiles WHERE [Path] = @pathSharedLibrary + '{mediaPathType.Path}\'");
-                        sw.WriteLine($"AND [Filename] IN ({filenames})");
+                        var responseType = responseTypes.Single(rt => rt.Id == pathType.ResponseTypeId);
+
+                        // insert public profile media
+                        sw.WriteLine($"--- MediaPathType '{pathType.Description}' - ResponseType '{responseType.Description}' ---");
+
+                        // Owned
+                        if (!pathType.IsSystem)
+                        {
+                            sw.WriteLine($"SET @allowedExts = '''' + REPLACE('{pathType.AllowedExts}', ', ', ''', ''') + ''''");
+                            sw.WriteLine(
+                                "INSERT INTO PublicMediaFiles (IsLinked, ResponseTypeId, MediaPathTypeId, StreamId, DateAdded)");
+                            sw.WriteLine(
+                                $"SELECT 0, {responseType.Id}, {pathType.Id}, StreamId, GETDATE() FROM MediaFiles WHERE [Path] = @pathProfiles + " +
+                                $@"'{PublicProfileSource.Id}\{pathType.Path}\' AND (@allowedExts) LIKE '%' + [FileType] + '%'");
+                            sw.WriteLine();
+                        }
+
+                        // From Shared Library
+                        var filenames = GetPublicProfileLinkedFilenames(responseType.Id, pathType.Id, linkedMedia);
+                        if (filenames.Length > 0)
+                        {
+                            sw.WriteLine(
+                                "INSERT INTO PublicMediaFiles (IsLinked, ResponseTypeId, MediaPathTypeId, StreamId, DateAdded)");
+                            sw.WriteLine(
+                                $@"SELECT 1, {responseType.Id}, {pathType.Id}, StreamId, GETDATE() FROM MediaFiles WHERE [Path] = @pathSharedLibrary + '{pathType.Path}\'");
+                            sw.WriteLine($"AND [Filename] IN ({filenames})");
+                            sw.WriteLine();
+                        }
                     }
-
-                    sw.WriteLine();
-                    // Matching Game Shapes
-                    mediaPathType = mediaPathTypes.Single(x => x.Id == MediaPathTypeId.MatchingGameShapes);
-                    sw.WriteLine("--- Activity 2 - ResponseType 'MatchingGame' ---");
-                    sw.WriteLine(
-                        "INSERT INTO PublicMediaFiles (IsLinked, ResponseTypeId, MediaPathTypeId, StreamId)");
-                    sw.WriteLine(
-                        $"SELECT 0, {ResponseTypeId.MatchingGame}, {mediaPathType.Id}, StreamId FROM MediaFiles WHERE [Path] = @pathProfiles + " +
-                        $@"'{PublicProfileSource.Id}\{mediaPathType.Path}\' AND [FileType] = 'png'");
-
-                    // Matching Game Shapes Linked
-                    filenames = GetPublicProfileLinkedFilenames(ResponseTypeId.MatchingGame, mediaPathType.Id, linkedMedia);
-                    if (filenames.Length > 0)
-                    {
-                        sw.WriteLine();
-                        sw.WriteLine(
-                            "INSERT INTO PublicMediaFiles (IsLinked, ResponseTypeId, MediaPathTypeId, StreamId)");
-                        sw.WriteLine(
-                            $@"SELECT 1, {ResponseTypeId.MatchingGame}, {mediaPathType.Id}, StreamId FROM MediaFiles WHERE [Path] = @pathSharedLibrary + '{mediaPathType.Path}\'");
-                        sw.WriteLine($"AND [Filename] IN ({filenames})");
-                    }
-
-                    sw.WriteLine();
-                    // Matching Game Sounds
-                    mediaPathType = mediaPathTypes.Single(x => x.Id == MediaPathTypeId.MatchingGameSounds);
-                    sw.WriteLine(
-                        "INSERT INTO PublicMediaFiles (IsLinked, ResponseTypeId, MediaPathTypeId, StreamId)");
-                    sw.WriteLine(
-                        $"SELECT 0, {ResponseTypeId.MatchingGame}, {mediaPathType.Id}, StreamId FROM MediaFiles WHERE [Path] = @pathProfiles + " +
-                        $@"'{PublicProfileSource.Id}\{mediaPathType.Path}\' AND [FileType] = 'mp3'");
-
-                    // Matching Game Sounds Linked
-                    filenames = GetPublicProfileLinkedFilenames(ResponseTypeId.MatchingGame, mediaPathType.Id, linkedMedia);
-                    if (filenames.Length > 0)
-                    {
-                        sw.WriteLine();
-                        sw.WriteLine(
-                            "INSERT INTO PublicMediaFiles (IsLinked, ResponseTypeId, MediaPathTypeId, StreamId)");
-                        sw.WriteLine(
-                            $@"SELECT 1, {ResponseTypeId.MatchingGame}, {mediaPathType.Id}, StreamId FROM MediaFiles WHERE [Path] = @pathSharedLibrary + '{mediaPathType.Path}\'");
-                        sw.WriteLine($"AND [Filename] IN ({filenames})");
-                    }
-
-                    sw.WriteLine();
-                    // Cats Videos Linked
-                    mediaPathType = mediaPathTypes.Single(x => x.Id == MediaPathTypeId.Cats);
-                    sw.WriteLine("--- Activity 3 - ResponseType 'Cats' ---");
-                    sw.WriteLine(
-                        "INSERT INTO PublicMediaFiles (IsLinked, ResponseTypeId, MediaPathTypeId, StreamId)");
-                    sw.WriteLine(
-                        $"SELECT 1, {ResponseTypeId.Cats}, {mediaPathType.Id}, StreamId FROM MediaFiles WHERE [Path] = @pathSharedLibrary + " +
-                        $@"'{mediaPathType.Path}\' AND [FileType] = 'mp4'");
-
-                    sw.WriteLine();
-                    // Music
-                    mediaPathType = mediaPathTypes.Single(x => x.Id == MediaPathTypeId.Music);
-                    sw.WriteLine("--- Activity 5 - ResponseType 'Radio' ---");
-                    sw.WriteLine(
-                        "INSERT INTO PublicMediaFiles (IsLinked, ResponseTypeId, MediaPathTypeId, StreamId)");
-                    sw.WriteLine(
-                        $"SELECT 0, {ResponseTypeId.Radio}, {mediaPathType.Id}, StreamId FROM MediaFiles WHERE [Path] = @pathProfiles + " +
-                        $@"'{PublicProfileSource.Id}\{mediaPathType.Path}\' AND [FileType] = 'mp3'");
-
-                    // Music Linked
-                    filenames = GetPublicProfileLinkedFilenames(ResponseTypeId.Radio, mediaPathType.Id, linkedMedia);
-                    if (filenames.Length > 0)
-                    {
-                        sw.WriteLine();
-                        sw.WriteLine(
-                            "INSERT INTO PublicMediaFiles (IsLinked, ResponseTypeId, MediaPathTypeId, StreamId)");
-                        sw.WriteLine(
-                            $@"SELECT 1, {ResponseTypeId.Radio}, {mediaPathType.Id}, StreamId FROM MediaFiles WHERE [Path] = @pathSharedLibrary + '{mediaPathType.Path}\'");
-                        sw.WriteLine($"AND [Filename] IN ({filenames})");
-                    }
-
-                    sw.WriteLine();
-                    // Radio Shows
-                    mediaPathType = mediaPathTypes.Single(x => x.Id == MediaPathTypeId.RadioShows);
-                    sw.WriteLine(
-                        "INSERT INTO PublicMediaFiles (IsLinked, ResponseTypeId, MediaPathTypeId, StreamId)");
-                    sw.WriteLine(
-                        $"SELECT 0, {ResponseTypeId.Radio}, {mediaPathType.Id}, StreamId FROM MediaFiles WHERE [Path] = @pathProfiles + " +
-                        $@"'{PublicProfileSource.Id}\{mediaPathType.Path}\' AND [FileType] = 'mp3'");
-
-                    // Radio Shows Linked
-                    filenames = GetPublicProfileLinkedFilenames(ResponseTypeId.Radio, mediaPathType.Id, linkedMedia);
-                    if (filenames.Length > 0)
-                    {
-                        sw.WriteLine();
-                        sw.WriteLine(
-                            "INSERT INTO PublicMediaFiles (IsLinked, ResponseTypeId, MediaPathTypeId, StreamId)");
-                        sw.WriteLine(
-                            $@"SELECT 1, {ResponseTypeId.Radio}, {mediaPathType.Id}, StreamId FROM MediaFiles WHERE [Path] = @pathSharedLibrary + '{mediaPathType.Path}\'");
-                        sw.WriteLine($"AND [Filename] IN ({filenames})");
-                    }
-
-                    sw.WriteLine();
-                    // TV Shows
-                    mediaPathType = mediaPathTypes.Single(x => x.Id == MediaPathTypeId.TVShows);
-                    sw.WriteLine("--- Activity 6 - ResponseType 'Television' ---");
-                    sw.WriteLine(
-                        "INSERT INTO PublicMediaFiles (IsLinked, ResponseTypeId, MediaPathTypeId, StreamId)");
-                    sw.WriteLine(
-                        $"SELECT 0, {ResponseTypeId.Television}, {mediaPathType.Id}, StreamId FROM MediaFiles WHERE [Path] = @pathProfiles + " +
-                        $@"'{PublicProfileSource.Id}\{mediaPathType.Path}\' AND [FileType] = 'mp4'");
-
-                    // TV Shows Linked
-                    filenames = GetPublicProfileLinkedFilenames(ResponseTypeId.Television, mediaPathType.Id, linkedMedia);
-                    if (filenames.Length > 0)
-                    {
-                        sw.WriteLine();
-                        sw.WriteLine(
-                            "INSERT INTO PublicMediaFiles (IsLinked, ResponseTypeId, MediaPathTypeId, StreamId)");
-                        sw.WriteLine(
-                            $@"SELECT 1, {ResponseTypeId.Television}, {mediaPathType.Id}, StreamId FROM MediaFiles WHERE [Path] = @pathSharedLibrary + '{mediaPathType.Path}\'");
-                        sw.WriteLine($"AND [Filename] IN ({filenames})");
-                    }
-
-                    sw.WriteLine();
-                    // Ambient Videos Linked
-                    mediaPathType = mediaPathTypes.Single(x => x.Id == MediaPathTypeId.Ambient);
-                    sw.WriteLine("--- Activity 7 - ResponseType 'Ambient' ---");
-                    sw.WriteLine(
-                        "INSERT INTO PublicMediaFiles (IsLinked, ResponseTypeId, MediaPathTypeId, StreamId)");
-                    sw.WriteLine(
-                        $"SELECT 1, {ResponseTypeId.Ambient}, {mediaPathType.Id}, StreamId FROM MediaFiles WHERE [Path] = @pathSharedLibrary + " +
-                        $@"'{mediaPathType.Path}\' AND [FileType] = 'mp4'");
-
-                    sw.WriteLine();
                 }
             }
             catch (Exception e)
@@ -938,10 +824,13 @@ namespace Keebee.AAT.Backup
                 var residentsClient = new ResidentsClient();
                 var mediaPathTypesClient = new MediaPathTypesClient();
                 var residentMediaFilesClient = new ResidentMediaFilesClient();
+                var responseTypesClient = new ResponseTypesClient();
 
                 var residents = residentsClient.Get().ToArray();            
-                var mediaPathTypes = mediaPathTypesClient.Get().ToArray();          
+                var mediaPathTypes = mediaPathTypesClient.Get(isSystem: false)
+                    .OrderBy(pt => pt.ResponseTypeId).ToArray();          
                 var linkedMedia = residentMediaFilesClient.GetLinked()?.ToArray();
+                var responseTypes = responseTypesClient.Get().ToArray();
 
                 _residentsExist = residents.Any();
 
@@ -961,10 +850,11 @@ namespace Keebee.AAT.Backup
 
                 using (var sw = new StreamWriter(pathScript))
                 {
-                    sw.WriteLine("DECLARE @pathProfiles varchar(max)");
+                    sw.WriteLine("DECLARE @pathProfiles varchar(100)");
                     sw.WriteLine("SET @pathProfiles = FileTableRootPath() + " + @"'\Media\Profiles\'");
-                    sw.WriteLine("DECLARE @pathSharedLibrary varchar(max)");
+                    sw.WriteLine("DECLARE @pathSharedLibrary varchar(100)");
                     sw.WriteLine("SET @pathSharedLibrary = FileTableRootPath() + " + $@"'\Media\{mediaSourcePath.SharedLibrary}\'");
+                    sw.WriteLine("DECLARE @allowedExts varchar(100)");
                     sw.WriteLine();
 
                     // insert residents
@@ -978,8 +868,8 @@ namespace Keebee.AAT.Backup
                             : "null";
 
                         sw.WriteLine(
-                            "INSERT [dbo].[Residents] ([Id], [FirstName], [LastName], [Gender], [GameDifficultyLevel], [AllowVideoCapturing], [DateCreated], [DateUpdated]) " +
-                            $"VALUES({r.Id}, '{r.FirstName.Replace("'", "''")}', {lastName}, '{r.Gender}', {r.GameDifficultyLevel}, {allowVideoCapturing}, GETDATE(), GETDATE())");
+                            "INSERT [dbo].[Residents] ([Id], [FirstName], [LastName], [Gender], [GameDifficultyLevel], [AllowVideoCapturing], [DateCreated], [DateUpdated], [ProfilePicture]) " +
+                            $"VALUES({r.Id}, '{r.FirstName.Replace("'", "''")}', {lastName}, '{r.Gender}', {r.GameDifficultyLevel}, {allowVideoCapturing}, GETDATE(), GETDATE(), CONVERT(VARBINARY(max), '0x{BitConverter.ToString(r.ProfilePicture).Replace("-", string.Empty)}', 1))");
                     }
                     sw.WriteLine("SET IDENTITY_INSERT [dbo].[Residents] OFF");
 
@@ -988,155 +878,34 @@ namespace Keebee.AAT.Backup
                     {
                         sw.WriteLine();
                         sw.WriteLine($"--- ResidentId {r.Id} ---");
-                        sw.WriteLine("--- Activity 1 - ResponseType 'SlideShow' ---");
+                        sw.WriteLine();
 
-                        // Images General
-                        var mediaPathType = mediaPathTypes.Single(x => x.Id == MediaPathTypeId.ImagesGeneral);
-                        sw.WriteLine(
-                            "INSERT INTO ResidentMediaFiles (IsLinked, ResidentId, ResponseTypeId, MediaPathTypeId, StreamId)");
-                        sw.WriteLine(
-                            $"SELECT 0, {r.Id}, {ResponseTypeId.SlideShow}, {mediaPathType.Id}, StreamId FROM MediaFiles WHERE [Path] = @pathProfiles + " +
-                            $@"'{r.Id}\{mediaPathType.Path}\' AND [FileType] IN ('jpg', 'jpeg', 'png', 'bmp', 'gif')");
-
-                        // Images General Linked
-                        var filenames = GetResidentLinkedFilenames(r.Id, ResponseTypeId.SlideShow, mediaPathType.Id, linkedMedia);
-                        if (filenames.Length > 0)
+                        foreach (var pathType in mediaPathTypes)
                         {
+                            var responseType = responseTypes.Single(rt => rt.Id == pathType.ResponseTypeId);
+                            sw.WriteLine($"--- MediaPathType '{pathType.Description}' - ResponseType '{responseType.Description}' ---");
+
+                            // Owned
+                            sw.WriteLine($"SET @allowedExts = '''' + REPLACE('{pathType.AllowedExts}', ', ', ''', ''') + ''''");
+                            sw.WriteLine(
+                                "INSERT INTO ResidentMediaFiles (IsLinked, ResidentId, ResponseTypeId, MediaPathTypeId, StreamId, DateAdded)");
+                            sw.WriteLine(
+                                $"SELECT 0, {r.Id}, {responseType.Id}, {pathType.Id}, StreamId, GETDATE() FROM MediaFiles WHERE [Path] = @pathProfiles + " +
+                                $@"'{r.Id}\{pathType.Path}\' AND (@allowedExts) LIKE '%' + [FileType] + '%'");
+
+                            // From Shared Library
+                            var filenames = GetResidentLinkedFilenames(r.Id, responseType.Id, pathType.Id, linkedMedia);
+                            if (filenames.Length > 0)
+                            {
+                                sw.WriteLine();
+                                sw.WriteLine(
+                                    "INSERT INTO ResidentMediaFiles (IsLinked, ResidentId, ResponseTypeId, MediaPathTypeId, StreamId, DateAdded)");
+                                sw.WriteLine(
+                                    $@"SELECT 1, {r.Id}, {responseType.Id}, {pathType.Id}, StreamId, GETDATE() FROM MediaFiles WHERE [Path] = @pathSharedLibrary + '{pathType.Path}\'");
+                                sw.WriteLine($"AND [Filename] IN ({filenames})");
+                            }
                             sw.WriteLine();
-                            sw.WriteLine(
-                                "INSERT INTO ResidentMediaFiles (IsLinked, ResidentId, ResponseTypeId, MediaPathTypeId, StreamId)");
-                            sw.WriteLine(
-                                $@"SELECT 1, {r.Id}, {ResponseTypeId.SlideShow}, {mediaPathType.Id}, StreamId FROM MediaFiles WHERE [Path] = @pathSharedLibrary + '{mediaPathType.Path}\'");
-                            sw.WriteLine($"AND [Filename] IN ({filenames})");
                         }
-
-                        sw.WriteLine();
-                        // Images Personal
-                        mediaPathType = mediaPathTypes.Single(x => x.Id == MediaPathTypeId.ImagesPersonal);
-                        sw.WriteLine(
-                            "INSERT INTO ResidentMediaFiles (IsLinked, ResidentId, ResponseTypeId, MediaPathTypeId, StreamId)");
-                        sw.WriteLine(
-                            $"SELECT 0, {r.Id}, {ResponseTypeId.SlideShow}, {MediaPathTypeId.ImagesPersonal}, StreamId FROM MediaFiles WHERE [Path] = @pathProfiles + " +
-                            $@"'{r.Id}\{mediaPathType.Path}\' AND [FileType] IN ('jpg', 'jpeg', 'png', 'bmp', 'gif')");
-
-                        sw.WriteLine();
-                        // Matching Game Shapes
-                        mediaPathType = mediaPathTypes.Single(x => x.Id == MediaPathTypeId.MatchingGameShapes);
-                        sw.WriteLine("--- Activity 2 - ResponseType 'MatchingGame' ---");
-                        sw.WriteLine(
-                            "INSERT INTO ResidentMediaFiles (IsLinked, ResidentId, ResponseTypeId, MediaPathTypeId, StreamId)");
-                        sw.WriteLine(
-                            $"SELECT 0, {r.Id}, {ResponseTypeId.MatchingGame}, {mediaPathType.Id}, StreamId FROM MediaFiles WHERE [Path] = @pathProfiles + " +
-                            $@"'{r.Id}\{mediaPathType.Path}\' AND [FileType] = 'png'");
-
-                        // Matching Game Shapes Linked
-                        filenames = GetResidentLinkedFilenames(r.Id, ResponseTypeId.MatchingGame, mediaPathType.Id, linkedMedia);
-                        if (filenames.Length > 0)
-                        {
-                            sw.WriteLine();
-                            sw.WriteLine(
-                                "INSERT INTO ResidentMediaFiles (IsLinked, ResidentId, ResponseTypeId, MediaPathTypeId, StreamId)");
-                            sw.WriteLine(
-                                $@"SELECT 1, {r.Id}, {ResponseTypeId.MatchingGame}, {mediaPathType.Id}, StreamId FROM MediaFiles WHERE [Path] = @pathSharedLibrary + '{mediaPathType.Path}\'");
-                            sw.WriteLine($"AND [Filename] IN ({filenames})");
-                        }
-
-                        sw.WriteLine();
-                        // Matching Game Sounds
-                        mediaPathType = mediaPathTypes.Single(x => x.Id == MediaPathTypeId.MatchingGameSounds);
-                        sw.WriteLine(
-                            "INSERT INTO ResidentMediaFiles (IsLinked, ResidentId, ResponseTypeId, MediaPathTypeId, StreamId)");
-                        sw.WriteLine(
-                            $"SELECT 0, {r.Id}, {ResponseTypeId.MatchingGame}, {mediaPathType.Id}, StreamId FROM MediaFiles WHERE [Path] = @pathProfiles + " +
-                            $@"'{r.Id}\{mediaPathType.Path}\' AND [FileType] = 'mp3'");
-
-                        // Matching Game Sounds Linked
-                        filenames = GetResidentLinkedFilenames(r.Id, ResponseTypeId.MatchingGame, mediaPathType.Id, linkedMedia);
-                        if (filenames.Length > 0)
-                        {
-                            sw.WriteLine();
-                            sw.WriteLine(
-                                "INSERT INTO ResidentMediaFiles (IsLinked, ResidentId, ResponseTypeId, MediaPathTypeId, StreamId)");
-                            sw.WriteLine(
-                                $@"SELECT 1, {r.Id}, {ResponseTypeId.MatchingGame}, {mediaPathType.Id}, StreamId FROM MediaFiles WHERE [Path] = @pathSharedLibrary + '{mediaPathType.Path}\'");
-                            sw.WriteLine($"AND [Filename] IN ({filenames})");
-                        }
-
-                        sw.WriteLine();
-                        // Music
-                        mediaPathType = mediaPathTypes.Single(x => x.Id == MediaPathTypeId.Music);
-                        sw.WriteLine("--- Activity 5 - ResponseType 'Radio' ---");
-                        sw.WriteLine(
-                            "INSERT INTO ResidentMediaFiles (IsLinked, ResidentId, ResponseTypeId, MediaPathTypeId, StreamId)");
-                        sw.WriteLine(
-                            $"SELECT 0, {r.Id}, {ResponseTypeId.Radio}, {mediaPathType.Id}, StreamId FROM MediaFiles WHERE [Path] = @pathProfiles + " +
-                            $@"'{r.Id}\{mediaPathType.Path}\' AND [FileType] = 'mp3'");
-
-                        // Music Linked
-                        filenames = GetResidentLinkedFilenames(r.Id, ResponseTypeId.Radio, mediaPathType.Id, linkedMedia);
-                        if (filenames.Length > 0)
-                        {
-                            sw.WriteLine();
-                            sw.WriteLine(
-                                "INSERT INTO ResidentMediaFiles (IsLinked, ResidentId, ResponseTypeId, MediaPathTypeId, StreamId)");
-                            sw.WriteLine(
-                                $@"SELECT 1, {r.Id}, {ResponseTypeId.Radio}, {mediaPathType.Id}, StreamId FROM MediaFiles WHERE [Path] = @pathSharedLibrary + '{mediaPathType.Path}\'");
-                            sw.WriteLine($"AND [Filename] IN ({filenames})");
-                        }
-
-                        sw.WriteLine();
-                        // Radio Shows
-                        mediaPathType = mediaPathTypes.Single(x => x.Id == MediaPathTypeId.RadioShows);
-                        sw.WriteLine(
-                            "INSERT INTO ResidentMediaFiles (IsLinked, ResidentId, ResponseTypeId, MediaPathTypeId, StreamId)");
-                        sw.WriteLine(
-                            $"SELECT 0, {r.Id}, {ResponseTypeId.Radio}, {mediaPathType.Id}, StreamId FROM MediaFiles WHERE [Path] = @pathProfiles + " +
-                            $@"'{r.Id}\{mediaPathType.Path}\' AND [FileType] = 'mp3'");
-
-                        // Radio Shows Linked
-                        filenames = GetResidentLinkedFilenames(r.Id, ResponseTypeId.Radio, mediaPathType.Id, linkedMedia);
-                        if (filenames.Length > 0)
-                        {
-                            sw.WriteLine();
-                            sw.WriteLine(
-                                "INSERT INTO ResidentMediaFiles (IsLinked, ResidentId, ResponseTypeId, MediaPathTypeId, StreamId)");
-                            sw.WriteLine(
-                                $@"SELECT 1, {r.Id}, {ResponseTypeId.Radio}, {mediaPathType.Id}, StreamId FROM MediaFiles WHERE [Path] = @pathSharedLibrary + '{mediaPathType.Path}\'");
-                            sw.WriteLine($"AND [Filename] IN ({filenames})");
-                        }
-
-                        sw.WriteLine();
-                        // TV Shows
-                        mediaPathType = mediaPathTypes.Single(x => x.Id == MediaPathTypeId.TVShows);
-                        sw.WriteLine("--- Activity 5 - ResponseType 'Television' ---");
-                        sw.WriteLine(
-                            "INSERT INTO ResidentMediaFiles (IsLinked, ResidentId, ResponseTypeId, MediaPathTypeId, StreamId)");
-                        sw.WriteLine(
-                            $"SELECT 0, {r.Id}, {ResponseTypeId.Television}, {mediaPathType.Id}, StreamId FROM MediaFiles WHERE [Path] = @pathProfiles + " +
-                            $@"'{r.Id}\{mediaPathType.Path}\' AND [FileType] = 'mp4'");
-
-                        // TV Shows Linked
-                        filenames = GetResidentLinkedFilenames(r.Id, ResponseTypeId.Television, mediaPathType.Id, linkedMedia);
-                        if (filenames.Length > 0)
-                        {
-                            sw.WriteLine();
-                            sw.WriteLine(
-                                "INSERT INTO ResidentMediaFiles (IsLinked, ResidentId, ResponseTypeId, MediaPathTypeId, StreamId)");
-                            sw.WriteLine(
-                                $@"SELECT 1, {r.Id}, {ResponseTypeId.Television}, {mediaPathType.Id}, StreamId FROM MediaFiles WHERE [Path] = @pathSharedLibrary + '{mediaPathType.Path}\'");
-                            sw.WriteLine($"AND [Filename] IN ({filenames})");
-                        }
-
-                        sw.WriteLine();
-                        // Home Movies
-                        mediaPathType = mediaPathTypes.Single(x => x.Id == MediaPathTypeId.HomeMovies);
-                        sw.WriteLine(
-                            "INSERT INTO ResidentMediaFiles (IsLinked, ResidentId, ResponseTypeId, MediaPathTypeId, StreamId)");
-                        sw.WriteLine(
-                            $"SELECT 0, {r.Id}, {ResponseTypeId.Television}, {mediaPathType.Id}, StreamId FROM MediaFiles WHERE [Path] = @pathProfiles + " +
-                            $@"'{r.Id}\{mediaPathType.Path}\' AND [FileType] = 'mp4'");
-
-                        sw.WriteLine();
                     }
                 }
             }
@@ -1217,6 +986,21 @@ namespace Keebee.AAT.Backup
                         sw.WriteLine("SET IDENTITY_INSERT [dbo].[ConfigDetails] OFF");
                         sw.WriteLine();
                     }
+
+                    var ambientInvitationsClient = new AmbientInvitationsClient();
+                    var invitations = ambientInvitationsClient.Get();
+
+                    sw.WriteLine("--- ambient invitations");
+                    sw.WriteLine("TRUNCATE TABLE [dbo].[AmbientInvitations]");
+                    foreach (var i in invitations)
+                    {
+                        var isExecuteRandom = i.IsExecuteRandom ? 1 : 0;
+
+                        sw.WriteLine(
+                            "INSERT [dbo].[AmbientInvitations] ([Message], [IsExecuteRandom]) " +
+                            $"VALUES ('{i.Message.Replace("'", "''")}', {isExecuteRandom})");
+                    }
+
                     sw.WriteLine();
                 }
             }
@@ -1238,7 +1022,7 @@ namespace Keebee.AAT.Backup
 
             try
             {
-                var pathScript = $@"{path}\Install\PowerShell\INSTALL_R2G2.ps1";
+                var pathScript = $@"{path}\Install\PowerShell\INSTALL_ABBY.ps1";
                 const string pathPowerShell = @"C:\Deployments\Install\PowerShell";
                 const string pathPowerShellData = @"C:\Deployments\Install\Database\PowerShell";
 
@@ -1249,7 +1033,7 @@ namespace Keebee.AAT.Backup
                 {
                     sw.WriteLine("Try");
                     sw.WriteLine("{");
-                    sw.WriteLine("    Write-Host -ForegroundColor green " + "\"" + "`nInstalling R2G2...`n" + "\"");
+                    sw.WriteLine("    Write-Host -ForegroundColor green " + "\"" + "`nInstalling ABBY...`n" + "\"");
                     sw.WriteLine();
                     sw.WriteLine("    $installPath = " + "\"" + $@"{pathPowerShell}" + "\"");
                     sw.WriteLine("    $installPathData = " + "\"" + $@"{pathPowerShellData}" + "\"");
@@ -1266,6 +1050,7 @@ namespace Keebee.AAT.Backup
                     if (_residentsExist)
                         sw.WriteLine(@"    invoke-expression -Command $installPathData\RestoreResidents.ps1");
                     sw.WriteLine(@"    invoke-expression -Command $installPathData\RestoreConfigurations.ps1");
+                    sw.WriteLine(@"    invoke-expression -Command $installPath\CreateThumbnails.ps1");
                     sw.WriteLine(@"    invoke-expression -Command $installPath\InstallServices.ps1");
                     sw.WriteLine();
                     sw.WriteLine("    Write-Host -ForegroundColor green " + "\"" + "`nInstallation complete.`n" + "\"");

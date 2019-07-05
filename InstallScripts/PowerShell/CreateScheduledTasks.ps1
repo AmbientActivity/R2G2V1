@@ -40,8 +40,8 @@
 
     # display (to launch upon user logon)
     Write-Host "Creating Display Launch task..." -NoNewline
-    $task_name = "R2G2 - Display Launch"
-    $description = "Launches the main Display application on startup"
+    $task_name = "ABBY - Display Launch"
+    $description = "Launches the main Display application on startup."
     $working_directory = "$displayPath"
     $execute = "$displayPath"
     $user = "$env:COMPUTERNAME\$env:USERNAME"
@@ -56,17 +56,23 @@
 
     # event log export
     Write-Host "Creating Event Log Export task..." -NoNewline
-    $task_name = "R2G2 - Event Log Export"
+    $task_name = "ABBY - Event Log Export"
     $description = "Executes the event log export routine which creates an Excel file containing one day's worth of activities."
-    $command = "$scheduledTasksPath\EventLogExporter\1.0.0.0\Keebee.AAT.EventLogExporter.exe"
+    $execute =  "$scheduledTasksPath\EventLogExporter\1.0.0.0\Keebee.AAT.EventLogExporter.exe"
+    $user = "$env:COMPUTERNAME\$env:USERNAME"
     $start_time = "01:00"
 
-    CreateScheduledTask $task_name $description $command $start_time
+    $get_task = Get-ScheduledTask $task_name -ErrorAction SilentlyContinue
+    if (!$get_task) {
+        $action = New-ScheduledTaskAction -Execute $execute
+        $trigger = New-ScheduledTaskTrigger -Daily -AT "01:00"
+        Register-ScheduledTask -Action $action -Trigger $trigger -RunLevel Highest -TaskName $task_name -Description $description | Out-Null
+    }
     Write-Host "done."
 
     # video capture file cleanup
     Write-Host "Creating Video Capture File Cleanup task..." -NoNewline
-    $task_name = "R2G2 - Video Capture File Cleanup"
+    $task_name = "ABBY - Video Capture File Cleanup"
     $description = "Deletes all 0KB video capture files."
     $command = "$scheduledTasksPath\VideoCaptureFileCleanup\1.0.0.0\Keebee.AAT.VideoCaptureFileCleanup.exe"
     $start_time = "02:00"
@@ -76,7 +82,7 @@
 
     # backup
     Write-Host "Creating Backup task..." -NoNewline
-    $task_name = "R2G2 - Backup"
+    $task_name = "ABBY - Backup"
     $description = "Performs a full backup of the deployment folders and resident media " +
                      "and creates additional database scripts for restoring the data back to its original state."
     $command = "$scheduledTasksPath\Backup\1.0.0.0\Keebee.AAT.Backup.exe" 
@@ -87,7 +93,7 @@
 
     # system restart
     Write-Host "Creating System Restart task..." -NoNewline
-    $task_name = "R2G2 - System Restart"
+    $task_name = "ABBY - System Restart"
     $description = "Performs a system restart."
     $command = "shutdown"
     $start_time = "04:00"

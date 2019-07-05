@@ -39,7 +39,11 @@ namespace Keebee.AAT.DataAccess.Models
 
         public DbSet<MediaFileStream> MediaFileStreams { get; set; }
 
+        public DbSet<Thumbnail> Thumbnails { get; set; }
+
         public DbSet<MediaPathType> MediaPathTypes { get; set; }
+
+        public DbSet<MediaPathTypeCategory> MediaPathTypeCategories { get; set; }
 
         public DbSet<ResidentMediaFile> ResidentMediaFiles { get; set; }
 
@@ -48,6 +52,8 @@ namespace Keebee.AAT.DataAccess.Models
         public DbSet<Resident> Residents { get; set; }
 
         public DbSet<ActiveResident> ActiveResidents { get; set; }
+
+        public DbSet<AmbientInvitation> AmbientInvitations { get; set; }
 
         public DbSet<User> Users { get; set; }
 

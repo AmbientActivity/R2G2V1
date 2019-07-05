@@ -16,11 +16,11 @@
     }
 
     $newUser = $ADSIComp.Create('User', $webuser) 
-    $password = 'R2G2u$er'
+    $password = 'ABBYu$er'
     $newUser.SetPassword(($password))
     $newUser.SetInfo()
 
-    $newUser.Description  ='R2G2 webuser account'
+    $newUser.Description  ='ABBY webuser account'
     $newUser.SetInfo()
 
     Invoke-Command -ScriptBlock { C:\Windows\system32\net localgroup Administrators webuser /add } | Out-Null

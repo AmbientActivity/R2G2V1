@@ -190,11 +190,22 @@ _Pvt_Extensions/
 ModelManifest.xml
 
 # Flash
-*.swf
 .BridgeCache
 .BridgeCacheT
 .DS_Store
-/Script/Service/InstallVideoCaptureService.bat
-/Script/Service/UninstallVideoCaptureService.bat
-/Script/Service/Install Services TEST.bat
-/Script/Service/Uninstall Services TEST.bat
+
+#Thumbs.db
+Thumbs.db
+
+# folders to include
+!shapes*
+!sounds*
+!music*
+!radio-shows*
+!general*
+!personal*
+!tv-shows*
+!home-movies*
+!EventLog*
+!.gitignore
+/.vs/Keebee.AAT/v16/Server/sqlite3

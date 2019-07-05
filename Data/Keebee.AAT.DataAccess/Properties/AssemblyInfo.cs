@@ -8,9 +8,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("Keebee.AAT.DataAccess")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Microsoft Corporation")]
+[assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("Keebee.AAT.DataAccess")]
-[assembly: AssemblyCopyright("Copyright © Microsoft Corporation 2016")]
+[assembly: AssemblyCopyright("Copyright ©  2017")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("6df3430a-c582-4731-b204-0ea71d820c2d")]
+[assembly: Guid("33bc51a2-2564-4f61-9454-d6f51dfc0fdf")]
 
 // Version information for an assembly consists of the following four values:
 //

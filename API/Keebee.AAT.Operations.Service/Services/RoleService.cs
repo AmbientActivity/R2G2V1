@@ -30,9 +30,13 @@ namespace Keebee.AAT.Operations.Service.Services
         {
             var container = new Container(new Uri(ODataHost.Url));
 
-            var role = container.Roles.ByKey(id).GetValue();
+            var role = container.Roles.ByKey(id);
 
-            return role;
+            Role result;
+            try { result = role.GetValue(); }
+            catch { result = null; }
+
+            return result;
         }
 
         public int Post(Role role)

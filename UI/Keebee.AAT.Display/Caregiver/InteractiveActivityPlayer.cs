@@ -13,12 +13,6 @@ namespace Keebee.AAT.Display.Caregiver
     {
         #region declarations
 
-        private SystemEventLogger _systemEventLogger;
-        public SystemEventLogger SystemEventLogger
-        {
-            set { _systemEventLogger = value; }
-        }
-
         // matching game shapes
         private string[] _shapes;
         public string[] Shapes
@@ -31,12 +25,6 @@ namespace Keebee.AAT.Display.Caregiver
         public string[] Sounds
         {
             set { _sounds = value; }
-        }
-
-        private string _activityName;
-        public string ActivityName
-        {
-            set { _activityName = value; }
         }
 
         private int _difficultyLevel;
@@ -63,7 +51,15 @@ namespace Keebee.AAT.Display.Caregiver
             set { _interactiveActivityTypeId = value; }
         }
 
+        private string _swfFile;
+        public string SwfFile
+        {
+            set { _swfFile = value; }
+        }
+
         private readonly InteractiveActivityEventLogger _interactiveActivityEventLogger;
+
+        public bool IsTimeoutExpired { get; private set; }
 
 #if DEBUG
         private const int ActivityNameLabelFontSize = 24;
@@ -71,6 +67,8 @@ namespace Keebee.AAT.Display.Caregiver
         private const int ActivityNameLabelFontSize = 30;
 #endif
         #endregion
+
+        #region initialization
 
         public InteractiveActivityPlayer()
         {
@@ -86,13 +84,13 @@ namespace Keebee.AAT.Display.Caregiver
 
         private void ConfigureComponents()
         {
-            btnClose.BringToFront();
+            btnExit.BringToFront();
 
             matchingGame1.Dock = DockStyle.Fill;
             matchingGame1.Hide();
 
-            paintingActivity1.Hide();
-            paintingActivity1.Dock = DockStyle.Fill;
+            activityPlayer1.Hide();
+            activityPlayer1.Dock = DockStyle.Fill;
         }
 
         private void InitializeStartupPosition()
@@ -110,29 +108,39 @@ namespace Keebee.AAT.Display.Caregiver
 #endif
         }
 
+        #endregion
+
+        #region event handlers
+
         private void CloseButtonClick(object sender, EventArgs e)
         {
+            IsTimeoutExpired = false;
             Close();
         }
 
         private void InteractiveActivityPlayerShown(object sender, EventArgs e)
         {
-            _interactiveActivityEventLogger.SystemEventLogger = _systemEventLogger;
-
             switch (_interactiveActivityTypeId)
             {
                 case InteractiveActivityTypeId.MatchingGame:
+                    matchingGame1.MatchingGameTimeoutExpiredEvent += TimeoutExpiredEvent;
                     matchingGame1.Show();
-                    matchingGame1.SystemEventLogger = _systemEventLogger;
-                    matchingGame1.Play(_shapes, _sounds, _difficultyLevel, false, _isActiveEventLog, false);
+                    matchingGame1.Play(_shapes, _sounds, _difficultyLevel, true, _isActiveEventLog, false, _swfFile);
+                    matchingGame1.Select();
                     break;
-
-                case InteractiveActivityTypeId.PaintingActivity:
-                    paintingActivity1.Show();
-                    paintingActivity1.SystemEventLogger = _systemEventLogger;
-                    paintingActivity1.Play(false, _isActiveEventLog, false);
+                default:
+                    activityPlayer1.ActivityPlayerTimeoutExpiredEvent += TimeoutExpiredEvent;
+                    activityPlayer1.Show();
+                    activityPlayer1.Play(_interactiveActivityTypeId, _swfFile, true, _isActiveEventLog, false);
+                    activityPlayer1.Select();
                     break;
             }
+        }
+
+        private void TimeoutExpiredEvent(object sender, EventArgs e)
+        {
+            IsTimeoutExpired = true;
+            Close();
         }
 
         private void LogInteractiveActivityEvent(object sender, EventArgs e)
@@ -144,8 +152,10 @@ namespace Keebee.AAT.Display.Caregiver
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"Main.LogInteractiveActivityEvent: {ex.Message}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"Main.LogInteractiveActivityEvent: {ex.Message}", SystemEventLogType.Display, EventLogEntryType.Error);
             }
         }
+
+        #endregion
     }
 }

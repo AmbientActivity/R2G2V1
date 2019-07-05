@@ -1,5 +1,4 @@
-﻿using Keebee.AAT.SystemEventLogging;
-using System;
+﻿using System;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -7,17 +6,25 @@ namespace Keebee.AAT.Display.Caregiver
 {
     public partial class ImageViewer : Form
     {
-        private SystemEventLogger _systemEventLogger;
-        public SystemEventLogger EventLogger
-        {
-            set { _systemEventLogger = value; }
-        }
+        #region declaration
 
         private string[] _images;
         public string[] Images
         {
             set { _images = value; }
         }
+
+        private bool _isPlaying;
+        private const bool AutoStart = false;
+
+        private Timer _timer;
+        private int _timeout;
+        public int Timeout
+        {
+            set { _timeout = value; }
+        }
+
+        public bool IsTimeoutExpired { get; private set; }
 
 #if DEBUG
         private const int AutoModeLabelFontSize = 8;
@@ -34,6 +41,7 @@ namespace Keebee.AAT.Display.Caregiver
 
         private const int AutoModeLabeMarginTop = 20;
 #endif
+        #endregion
 
         public ImageViewer()
         {
@@ -44,6 +52,8 @@ namespace Keebee.AAT.Display.Caregiver
             slideViewerFlash1.SlideShowCompleteEvent += SlideShowComplete;
         }
 
+        #region initialization
+
         private void ConfigureComponents()
         {
             panel1.Dock = DockStyle.Fill;
@@ -52,6 +62,11 @@ namespace Keebee.AAT.Display.Caregiver
             lblAutoMode.Margin = new Padding(3, AutoModeLabeMarginTop, 0, 0);
             tableLayoutPanel1.ColumnStyles[1].Width = TableLayoutPanelColTwoWidth;
             tableLayoutPanel1.ColumnStyles[4].Width = TableLayoutPanelColFiveidth;
+
+            // remove auto-play feature for now
+            lblAutoMode.Visible = false;
+            btnPlay.Enabled = false;
+            btnPlay.Visible = false;
         }
 
         private void InitializeStartupPosition()
@@ -71,42 +86,67 @@ namespace Keebee.AAT.Display.Caregiver
 #endif
         }
 
+        #endregion
+
         #region event handlers
+
+        private void ResetTimer()
+        {
+            _timer.Stop();
+            _timer.Start();
+        }
 
         private void PreviousButtonClick(object sender, EventArgs e)
         {
+            ResetTimer();
             slideViewerFlash1.ShowPrevious();
         }
 
         private void NextButtonClick(object sender, EventArgs e)
         {
+            ResetTimer();
             slideViewerFlash1.ShowNext();
         }
 
         private void PlayButtonClick(object sender, EventArgs e)
         {
-            if (btnPlay.ImageIndex == 0)
-            {
-                slideViewerFlash1.ShowNext();
-                slideViewerFlash1.StartTimer();
-                btnPlay.ImageIndex = 1;
-            }
+            if (!_isPlaying)
+                Play();
             else
-            {
-                slideViewerFlash1.StopTimer();
-                btnPlay.ImageIndex = 0;
-            }
+                Pause();
+        }
+
+        private void Play()
+        {
+            ResetTimer();
+            slideViewerFlash1.ShowNext();
+            slideViewerFlash1.StartTimer();
+            btnPlay.BackgroundImage = imageList1.Images[1];
+            _isPlaying = true;
+        }
+
+        private void Pause()
+        {
+            ResetTimer();
+            slideViewerFlash1.StopTimer();
+            btnPlay.BackgroundImage = imageList1.Images[0];
+            _isPlaying = false;
         }
 
         private void CloseButtonClick(object sender, EventArgs e)
         {
+            IsTimeoutExpired = false;
             Close();
         }
 
         private void ImageViewerShown(object sender, EventArgs e)
         {
-            slideViewerFlash1.SystemEventLogger = _systemEventLogger;
-            slideViewerFlash1.Play(_images, autoStart: false);
+            btnPlay.BackgroundImage = imageList1.Images[1];
+            _isPlaying = true;
+            slideViewerFlash1.Play(_images, autoStart: AutoStart);
+            _timer = new Timer {Interval = _timeout};
+            _timer.Tick += TimerTick;
+            _timer.Start();
         }
 
         private void ImageViewerFormClosing(object sender, FormClosingEventArgs e)
@@ -116,6 +156,12 @@ namespace Keebee.AAT.Display.Caregiver
 
         private void SlideShowComplete(object sender, EventArgs e)
         {
+            Close();
+        }
+
+        private void TimerTick(object sender, EventArgs e)
+        {
+            IsTimeoutExpired = true;
             Close();
         }
 

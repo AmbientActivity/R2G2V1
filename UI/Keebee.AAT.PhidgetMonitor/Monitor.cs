@@ -1,7 +1,7 @@
 ﻿using Keebee.AAT.MessageQueuing;
+using Newtonsoft.Json;
 using System;
 using System.Windows.Forms;
-using System.Web.Script.Serialization;
 
 namespace Keebee.AAT.PhidgetMonitor
 {
@@ -9,15 +9,12 @@ namespace Keebee.AAT.PhidgetMonitor
     {
         private delegate void UpdateLabelDelegate(int sensorId, string text);
 
-#if DEBUG
         private readonly CustomMessageQueue _messageQueuePhidgetMonitorState;
-#endif
 
         public Monitor()
         {
             InitializeComponent();
 
-#if DEBUG
             _messageQueuePhidgetMonitorState = new CustomMessageQueue(new CustomMessageQueueArgs
             {
                 QueueName = MessageQueueType.PhidgetMonitorState
@@ -29,17 +26,21 @@ namespace Keebee.AAT.PhidgetMonitor
                 QueueName = MessageQueueType.PhidgetMonitor,
                 MessageReceivedCallback = MessageReceived
             });
-#endif
         }
 
-#if DEBUG
         private void MessageReceived(object sender, MessageEventArgs e)
         {
-            var message = (e.MessageBody);
-            var serializer = new JavaScriptSerializer();
-            var phidgetMessage = serializer.Deserialize<PhidgetMessage>(message);
+            var phidget = JsonConvert.DeserializeObject<Tuple<int, int>>(e.MessageBody);
+            if (phidget == null) return;
 
-            UpdateSensorValueLabel(phidgetMessage.SensorId, Convert.ToString(phidgetMessage.SensorValue));
+            // sensorId's are base 0 - convert to base 1 for PhidgetTypeId
+            var sensorId = phidget.Item1;
+            var sensorValue = phidget.Item2;
+
+            if (sensorId < 8)
+                UpdateSensorValueLabel(sensorId, Convert.ToString(sensorValue));
+            else
+                UpdateInputValueLabel(sensorId, sensorValue == 1 ? "On" : "Off");
         }
 
         private void UpdateSensorValueLabel(int sensorId, string text)
@@ -80,20 +81,54 @@ namespace Keebee.AAT.PhidgetMonitor
                 }
             }
         }
-#endif
+
+        private void UpdateInputValueLabel(int inputId, string text)
+        {
+            if (InvokeRequired)
+            {
+                UpdateLabelDelegate d = UpdateInputValueLabel;
+                Invoke(d, new object[] { inputId, text });
+            }
+            else
+            {
+                switch (inputId)
+                {
+                    case 8:
+                        lblInput0Value.Text = text;
+                        break;
+                    case 9:
+                        lblInput1Value.Text = text;
+                        break;
+                    case 10:
+                        lblInput2Value.Text = text;
+                        break;
+                    case 11:
+                        lblInput3Value.Text = text;
+                        break;
+                    case 12:
+                        lblInput4Value.Text = text;
+                        break;
+                    case 13:
+                        lblInput5Value.Text = text;
+                        break;
+                    case 14:
+                        lblInput6Value.Text = text;
+                        break;
+                    case 15:
+                        lblInput7Value.Text = text;
+                        break;
+                }
+            }
+        }
 
         private void MonitorShown(object sender, EventArgs e)
         {
-#if DEBUG
             _messageQueuePhidgetMonitorState.Send("1");
-#endif
         }
 
         private void MonitorFormClosing(object sender, FormClosingEventArgs e)
         {
-#if DEBUG
             _messageQueuePhidgetMonitorState.Send("0");
-#endif
         }
     }
 }

@@ -10,12 +10,6 @@ namespace Keebee.AAT.BusinessRules
 {
     public class VideoCaptureRules
     {
-        private SystemEventLogger _systemEventLogger;
-        public SystemEventLogger EventLogger
-        {
-            set { _systemEventLogger = value; }
-        }
-
         public byte[] GetZipFile(string date)
         {
             var file = new byte[0];
@@ -45,7 +39,7 @@ namespace Keebee.AAT.BusinessRules
             }
             catch(Exception ex)
             {
-                _systemEventLogger.WriteEntry($"GetZipFile: {ex.Message}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"GetZipFile: {ex.Message}", SystemEventLogType.AdminInterface, EventLogEntryType.Error);
             }
 
             return file;

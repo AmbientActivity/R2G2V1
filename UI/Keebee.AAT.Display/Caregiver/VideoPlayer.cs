@@ -10,17 +10,21 @@ namespace Keebee.AAT.Display.Caregiver
 {
     public partial class VideoPlayer : Form
     {
-        private SystemEventLogger _systemEventLogger;
-        public SystemEventLogger EventLogger
-        {
-            set { _systemEventLogger = value; }
-        }
-
         private string _video;
         public string Video
         {
             set { _video = value; }
         }
+
+        private int _timeout;
+        public int Timeout
+        {
+            set { _timeout = value; }
+        }
+
+        private Timer _timer;
+
+        public bool IsTimeoutExpired { get; private set; }
 
         public VideoPlayer()
         {
@@ -64,16 +68,24 @@ namespace Keebee.AAT.Display.Caregiver
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"VideoPlayer.Play: {ex.Message}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"VideoPlayer.Play: {ex.Message}", SystemEventLogType.Display, EventLogEntryType.Error);
             }
         }
+
+        #region event handlers
 
         private void PlayStateChange(object sender, AxWMPLib._WMPOCXEvents_PlayStateChangeEvent e)
         {
             switch (e.newState)
             {
+                case (int)WMPPlayState.wmppsPlaying:
+                    _timer.Stop();
+                    break;
                 case (int)WMPPlayState.wmppsMediaEnded:
                     Close();
+                    break;
+                case (int)WMPPlayState.wmppsPaused:
+                    _timer.Start();
                     break;
                 case (int)WMPPlayState.wmppsReady:
                     break;
@@ -82,13 +94,28 @@ namespace Keebee.AAT.Display.Caregiver
 
         private void VideoPlayerShown(object sender, EventArgs e)
         {
+            _timer = new Timer { Interval = _timeout };
+            _timer.Tick += Tick;
+
             Play();
         }
 
         private void CloseButtonClick(object sender, EventArgs e)
         {
+            IsTimeoutExpired = false;
+            _timer.Dispose();
             axWindowsMediaPlayer1.Ctlcontrols.stop();
             Close();
         }
+
+        private void Tick(object sender, EventArgs e)
+        {
+            IsTimeoutExpired = true;
+            _timer.Dispose();
+            axWindowsMediaPlayer1.Ctlcontrols.stop();
+            Close();
+        }
+
+        #endregion
     }
 }

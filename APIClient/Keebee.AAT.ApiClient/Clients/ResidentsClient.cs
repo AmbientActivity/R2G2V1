@@ -1,6 +1,7 @@
 ﻿using System;
 using Keebee.AAT.ApiClient.Models;
 using System.Collections.Generic;
+using System.Net;
 using Newtonsoft.Json;
 using RestSharp;
 
@@ -13,8 +14,8 @@ namespace Keebee.AAT.ApiClient.Clients
         Resident GetWithMedia(int residentId);
         Resident GetByNameGender(string firstName, string lastName, string gender);
         bool Exists(int residentId);
-        void Patch(int residentId, ResidentEdit resident);
-        int Post(ResidentEdit resident);
+        string Patch(int residentId, Resident resident);
+        string Post(Resident resident, out int newId);
     }
 
     public class ResidentsClient : BaseClient, IResidentsClient
@@ -63,29 +64,51 @@ namespace Keebee.AAT.ApiClient.Clients
             return Convert.ToBoolean(data.Content);
         }
 
-        public void Patch(int id, ResidentEdit resident)
+        public string Patch(int id, Resident resident)
         {
             var request = new RestRequest($"residents/{id}", Method.PATCH);
             var json = request.JsonSerializer.Serialize(resident);
             request.AddParameter("application/json", json, ParameterType.RequestBody);
-            Execute(request);
+
+            var response = Execute(request);
+
+            string msg = null;
+
+            if (response.StatusCode != HttpStatusCode.NoContent)
+                msg = response.StatusDescription;
+
+            return msg;
         }
 
-        public int Post(ResidentEdit resident)
+        public string Post(Resident resident, out int newId)
         {
             var request = new RestRequest("residents", Method.POST);
             var json = request.JsonSerializer.Serialize(resident);
             request.AddParameter("application/json", json, ParameterType.RequestBody);
+
             var response = Execute(request);
 
-            var newId = Convert.ToInt32(response.Content);
-            return newId;
+            string result = null;
+            newId = -1;
+
+            if (response.StatusCode == HttpStatusCode.OK)
+                newId = Convert.ToInt32(response.Content);
+            else
+                result = response.StatusDescription;
+
+            return result;
         }
 
         public string Delete(int id)
         {
             var request = new RestRequest($"residents/{id}", Method.DELETE);
-            return Execute(request).Content;
+            var response = Execute(request);
+            string msg = null;
+
+            if (response.StatusCode != HttpStatusCode.NoContent)
+                msg = response.StatusDescription;
+
+            return msg;
         }
     }
 }

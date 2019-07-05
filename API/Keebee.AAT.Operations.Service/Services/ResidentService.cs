@@ -30,27 +30,24 @@ namespace Keebee.AAT.Operations.Service.Services
 
         public Resident Get(int id)
         {
-            Resident resident = null;
-            try
-            {
-                var container = new Container(new Uri(ODataHost.Url));
+            var container = new Container(new Uri(ODataHost.Url));
 
-                resident = container.Residents.ByKey(id)
-                    .GetValue();
-            }
-            catch
-            {
-                // ignored
-            }
-            return resident;
+            var resident = container.Residents.ByKey(id);
+
+            Resident result;
+            try { result = resident.GetValue(); }
+            catch { result = null; }
+
+            return result;
         }
 
         public Resident GetByNameGender(string firstName, string lastName, string gender)
         {
             var container = new Container(new Uri(ODataHost.Url));
+            var lastname = lastName == null ? "null" : $"'{lastName}'";
 
             var residents = container.Residents
-                .AddQueryOption("$filter", $"FirstName eq '{firstName}' and LastName eq '{lastName}' and Gender eq '{gender}'")
+                .AddQueryOption("$filter", $"FirstName eq '{firstName}' and LastName eq {lastname} and Gender eq '{gender}'")
                 .Expand("MediaFiles($expand=MediaFile)")
                 .ToList();
 
@@ -61,20 +58,22 @@ namespace Keebee.AAT.Operations.Service.Services
         {
             var container = new Container(new Uri(ODataHost.Url));
 
-            return container.Residents.ByKey(id)
-                .Expand("MediaFiles($expand=MediaFile,MediaPathType,ResponseType($expand=ResponseTypeCategory))")
-                .GetValue();
+            var resident = container.Residents.ByKey(id)
+                .Expand("MediaFiles($expand=MediaFile,MediaPathType($expand=MediaPathTypeCategory),ResponseType($expand=ResponseTypeCategory))");
+
+            Resident result;
+            try { result = resident.GetValue(); }
+            catch { result = null; }
+
+            return result;
         }
 
         public int Post(Resident resident)
         {
             var container = new Container(new Uri(ODataHost.Url));
 
-            resident.DateCreated = DateTime.Now;
-            resident.DateUpdated = DateTime.Now;
-
-            if (resident.LastName.Length == 0)
-                resident.LastName = null;
+            if (resident.ProfilePicture == null)
+                resident.ProfilePicture = new byte[0];
 
             container.AddToResidents(resident);
             container.SaveChanges();
@@ -89,22 +88,19 @@ namespace Keebee.AAT.Operations.Service.Services
             var r = container.Residents.Where(e => e.Id == id).SingleOrDefault();
             if (r == null) return;
 
-            if (resident.FirstName != null)
+            if (!string.IsNullOrEmpty(resident.FirstName))
                 r.FirstName = resident.FirstName;
 
-            r.LastName = (resident.LastName.Length > 0) 
-                ? resident.LastName
-                : null;
+            r.LastName = resident.LastName;
 
-            if (resident.Gender != null)
+            if (!string.IsNullOrEmpty(resident.Gender))
                 r.Gender = resident.Gender;
 
             if (resident.GameDifficultyLevel > 0)
                 r.GameDifficultyLevel = resident.GameDifficultyLevel;
 
             r.AllowVideoCapturing = resident.AllowVideoCapturing;
-
-            resident.DateUpdated = DateTime.Now;
+            r.ProfilePicture = resident.ProfilePicture ?? new byte[0];
 
             container.UpdateObject(r);
             container.SaveChanges();

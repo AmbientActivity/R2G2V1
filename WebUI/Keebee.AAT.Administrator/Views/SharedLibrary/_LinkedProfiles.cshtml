@@ -1,0 +1,53 @@
+﻿@model Keebee.AAT.Administrator.ViewModels.LinkedProfilesViewModel
+
+<script type="text/javascript">
+    $(document)
+        .ready(function() {
+            sharedlibrary.linkedprofiles.init({
+                streamId: '@Model.StreamId' });
+        });
+</script>
+
+<div id="linked-profiles">
+    <div id="linked-loading-container" class="loading"><img src="~/Content/images/page-loading.gif" alt="Loading..."></div>
+    <div id="linked-error-container" hidden></div>
+
+    <div class="panel panel-default">
+        <div class="panel-body panel-body-table-header">
+            <!-- use separate table for sticky headers -->
+            <div id="linked-table-header" class="container table-header-container" hidden>
+                <table class="table" id="tblLinkedProfileHeader">
+                    <thead>
+                        <tr id="linked-table-row-columns">
+                            <th id="col-profilepicture"></th>
+                            <!-- ko foreach: linkedcolumns -->
+                            <th data-bind="text: title, attr: { id: 'col-linked-' + sortKey, css: cssClass }"></th>
+                            <!-- /ko -->
+                            <td id="col-linked-scrollbar" hidden></td>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+
+            <div id="linked-no-rows-message" class="no-rows-found" hidden><h2>Profile contains no media</h2></div>
+
+            <div id="linked-table-detail" class="table-detail-container container-height" hidden>
+                <table class="table table-striped table-bordered table-hover" id="tblLinkedProfile">
+                    <tbody data-bind="foreach: profilesTable, tableRender: profilesTable">
+                        <tr>
+                            <td class="virtualPlaceholderProfilePicSm">
+                                <!-- ko if: profilepicture === null -->
+                                <img data-bind="attr: { src: profilepictureplaceholder }" alt="" width="35" height="35" class="img-circle">
+                                <!-- /ko -->
+                                <!-- ko if: profilepicture !== null -->
+                                <img data-bind="attr: { src: profilepicture }" alt="" width="35" height="35" class="img-circle">
+                                <!-- /ko -->
+                            </td>
+                            <td class="col-profilename" data-bind="text: name"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

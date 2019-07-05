@@ -1,12 +1,12 @@
 ﻿using Keebee.AAT.MessageQueuing;
 using Keebee.AAT.Shared;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.ServiceProcess;
-using System.Web.Script.Serialization;
 using System.Windows.Forms;
 
 namespace Keebee.AAT.BeaconMonitor
@@ -30,7 +30,6 @@ namespace Keebee.AAT.BeaconMonitor
             InitializeComponent();
             ConfigureListViews();
 
-#if DEBUG
             _messageQueueBeaconMonitorState = new CustomMessageQueue(new CustomMessageQueueArgs
             {
                 QueueName = MessageQueueType.BeaconMonitorState
@@ -53,7 +52,7 @@ namespace Keebee.AAT.BeaconMonitor
                 QueueName = MessageQueueType.BeaconMonitorResident,
                 MessageReceivedCallback = MessageReceivedBeaconResident
             });
-#endif
+
             radOff.Checked = true;
         }
 
@@ -131,8 +130,7 @@ namespace Keebee.AAT.BeaconMonitor
         private void MessageReceivedBeacon(object sender, MessageEventArgs e)
         {
             var message = (e.MessageBody);
-            var serializer = new JavaScriptSerializer();
-            var beaconMessages = serializer.Deserialize<IEnumerable<BeaconMonitorMessage>>(message).ToArray();
+            var beaconMessages = JsonConvert.DeserializeObject<IEnumerable<BeaconMonitorMessage>>(message).ToArray();
 
             foreach (var beaconMessage in beaconMessages)
             {
@@ -160,8 +158,7 @@ namespace Keebee.AAT.BeaconMonitor
         private void MessageReceivedBeaconResident(object sender, MessageEventArgs e)
         {
             var message = (e.MessageBody);
-            var serializer = new JavaScriptSerializer();
-            var residentMessage = serializer.Deserialize<BeaconMonitorResidentMessage>(message);
+            var residentMessage = JsonConvert.DeserializeObject<BeaconMonitorResidentMessage>(message);
 
             UpdateLabelActiveResident(residentMessage.ResidentName, residentMessage.Rssi);
         }
@@ -173,7 +170,6 @@ namespace Keebee.AAT.BeaconMonitor
 
         private void MonitorCheckChanged(object sender, EventArgs e)
         {
-#if DEBUG
             foreach (var result in from control in grpMonitor.Controls.OfType<RadioButton>()
                                    select control into radio
                                    where radio.Checked
@@ -181,7 +177,6 @@ namespace Keebee.AAT.BeaconMonitor
             {
                 _messageQueueBeaconMonitorState.Send(result == "On" ? "1" : "0");
             }
-#endif
         }
 
         private void ClearButtonClick(object sender, EventArgs e)
@@ -208,7 +203,7 @@ namespace Keebee.AAT.BeaconMonitor
                 service.Start();
                 service.WaitForStatus(ServiceControllerStatus.Running);
 
-                if (DisplayIsActive())
+                if (IsDisplayActive())
                 {
                     _messageQueueDisplayBluetoothBeaconWatcher.Send(CreateDisplayMessageBody(true));
                 }
@@ -228,7 +223,7 @@ namespace Keebee.AAT.BeaconMonitor
             }
         }
 
-        private static bool DisplayIsActive()
+        private static bool IsDisplayActive()
         {
             var processes = Process.GetProcessesByName("Keebee.AAT.Display");
             return (processes.Any());
@@ -241,8 +236,7 @@ namespace Keebee.AAT.BeaconMonitor
                 IsActive = isActive
             };
 
-            var serializer = new JavaScriptSerializer();
-            var displayMessageBody = serializer.Serialize(displayMessage);
+            var displayMessageBody = JsonConvert.SerializeObject(displayMessage);
             return displayMessageBody;
         }
 

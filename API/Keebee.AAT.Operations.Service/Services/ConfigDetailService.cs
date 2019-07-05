@@ -35,10 +35,13 @@ namespace Keebee.AAT.Operations.Service.Services
             var container = new Container(new Uri(ODataHost.Url));
 
             var configDetail = container.ConfigDetails.ByKey(id)
-                .Expand("Config,PhidgetType,PhidgetStyleType,ResponseType($expand=ResponseTypeCategory,InteractiveActivityType)")
-                .GetValue();
+                .Expand("Config,PhidgetType,PhidgetStyleType,ResponseType($expand=ResponseTypeCategory,InteractiveActivityType)");
 
-            return configDetail;
+            ConfigDetail result;
+            try { result = configDetail.GetValue(); }
+            catch { result = null; }
+
+            return result;
         }
 
         public ConfigDetail GetWithMedia(int id)
@@ -76,9 +79,6 @@ namespace Keebee.AAT.Operations.Service.Services
         {
             var container = new Container(new Uri(ODataHost.Url));
 
-            if (configDetail.Location?.Length == 0)
-                configDetail.Location = null;
-
             container.AddToConfigDetails(configDetail);
             container.SaveChanges();
 
@@ -94,12 +94,10 @@ namespace Keebee.AAT.Operations.Service.Services
             var el = container.ConfigDetails.Where(e => e.Id == id).SingleOrDefault();
             if (el == null) return;
 
-            if (configDetail.Description != null)
+            if (!string.IsNullOrEmpty(configDetail.Description))
                 el.Description = configDetail.Description;
 
-            el.Location = (configDetail.Location.Length > 0)
-                ? configDetail.Location
-                : null;
+             el.Location = configDetail.Location;
 
             if (configDetail.PhidgetTypeId > 0)
                 el.PhidgetTypeId = configDetail.PhidgetTypeId;

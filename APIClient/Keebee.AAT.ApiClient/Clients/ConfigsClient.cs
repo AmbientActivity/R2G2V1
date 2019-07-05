@@ -1,6 +1,7 @@
 ﻿using System;
 using Keebee.AAT.ApiClient.Models;
 using System.Collections.Generic;
+using System.Net;
 using Newtonsoft.Json;
 using RestSharp;
 
@@ -14,13 +15,13 @@ namespace Keebee.AAT.ApiClient.Clients
         Config GetByDescription(string description);
         Config GetWithDetails(int id);
         Config GetActiveDetails();
-        void Activate(int id);
+        string Activate(int id);
         IEnumerable<ConfigDetail> GetDetails();
         ConfigDetail GetDetail(int detailId);
-        int Post(ConfigEdit config);
-        int PostDetail(ConfigDetailEdit configDetail);
-        void Patch(int id, ConfigEdit config);
-        void PatchDetail(int detailId, ConfigDetailEdit configDetail);
+        string Post(ConfigEdit config, out int newId);
+        string PostDetail(ConfigDetailEdit configDetail, out int newId);
+        string Patch(int id, ConfigEdit config);
+        string PatchDetail(int detailId, ConfigDetailEdit configDetail);
         string Delete(int id);
         string DeleteDetail(int detailId);
     }
@@ -99,48 +100,85 @@ namespace Keebee.AAT.ApiClient.Clients
             return configDetail;
         }
 
-        public void Activate(int id)
+        public string Activate(int id)
         {
             var request = new RestRequest($"configs/{id}/activate", Method.GET);
-            Execute(request);
+            var response = Execute(request);
+
+            string msg = null;
+
+            if (response.StatusCode != HttpStatusCode.NoContent)
+                msg = response.StatusDescription;
+
+            return msg;
         }
 
-        public int Post(ConfigEdit config)
+        public string Post(ConfigEdit config, out int newId)
         {
             var request = new RestRequest("configs", Method.POST);
             var json = request.JsonSerializer.Serialize(config);
             request.AddParameter("application/json", json, ParameterType.RequestBody);
             var response = Execute(request);
 
-            var newId = Convert.ToInt32(response.Content);
-            return newId;
+            string result = null;
+            newId = -1;
+
+            if (response.StatusCode == HttpStatusCode.OK)
+                newId = Convert.ToInt32(response.Content);
+            else
+                result = response.StatusDescription;
+
+            return result;
         }
 
-        public int PostDetail(ConfigDetailEdit configDetail)
+        public string PostDetail(ConfigDetailEdit configDetail, out int newId)
         {
             var request = new RestRequest("configdetails", Method.POST);
             var json = request.JsonSerializer.Serialize(configDetail);
             request.AddParameter("application/json", json, ParameterType.RequestBody);
             var response = Execute(request);
 
-            var newId = Convert.ToInt32(response.Content);
-            return newId;
+            string result = null;
+            newId = -1;
+
+            if (response.StatusCode == HttpStatusCode.OK)
+                newId = Convert.ToInt32(response.Content);
+            else
+                result = response.StatusDescription;
+
+            return result;
         }
 
-        public void Patch(int id, ConfigEdit config)
+        public string Patch(int id, ConfigEdit config)
         {
             var request = new RestRequest($"configs/{id}", Method.PATCH);
             var json = request.JsonSerializer.Serialize(config);
             request.AddParameter("application/json", json, ParameterType.RequestBody);
-            Execute(request);
+
+            var response = Execute(request);
+
+            string msg = null;
+
+            if (response.StatusCode != HttpStatusCode.NoContent)
+                msg = response.StatusDescription;
+
+            return msg;
         }
 
-        public void PatchDetail(int detailId, ConfigDetailEdit configDetail)
+        public string PatchDetail(int detailId, ConfigDetailEdit configDetail)
         {
             var request = new RestRequest($"configdetails/{detailId}", Method.PATCH);
             var json = request.JsonSerializer.Serialize(configDetail);
             request.AddParameter("application/json", json, ParameterType.RequestBody);
-            Execute(request);
+
+            var response = Execute(request);
+
+            string msg = null;
+
+            if (response.StatusCode != HttpStatusCode.NoContent)
+                msg = response.StatusDescription;
+
+            return msg;
         }
 
         public string Delete(int id)

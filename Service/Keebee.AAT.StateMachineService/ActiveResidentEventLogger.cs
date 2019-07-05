@@ -10,12 +10,6 @@ namespace Keebee.AAT.StateMachineService
     {
         private readonly IActiveResidentEventLogsClient _activeReisdentEventLogsClient;
 
-        private SystemEventLogger _systemEventLogger;
-        public SystemEventLogger SystemEventLogger
-        {
-            set { _systemEventLogger = value; }
-        }
-
         public ActiveResidentEventLogger()
         {
             _activeReisdentEventLogsClient = new ActiveResidentEventLogsClient();
@@ -35,7 +29,7 @@ namespace Keebee.AAT.StateMachineService
             }
             catch (Exception ex)
             {
-                _systemEventLogger?.WriteEntry($"ActiveResidentEventLogger.Add: {ex.Message}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"ActiveResidentEventLogger.Add: {ex.Message}", SystemEventLogType.StateMachineService, EventLogEntryType.Error);
             }
         }
     }

@@ -4,7 +4,7 @@
 }
 <script type="text/javascript">
     $(document)
-        .ready(function() {
+        .ready(function () {
             phidgetconfig.index.init();
         });
 </script>
@@ -23,71 +23,70 @@
     </div>
 </div>
 
-<div class="config-container">
-    <div class="row">
-        <div class="col-sm-5">
-            <select class="form-control" data-bind="options: configs, optionsValue: 'id', optionsText: 'description', value: selectedConfig, event: { change: enableDetail }, css: 'select-config'"></select>
+<div class="container config-container">
+    <div class="row row-config-controls">
+        <div class="col-sm-4">
+            <select class="form-control" data-bind="options: configs, optionsValue: 'id', optionsText: 'description', value: selectedConfigId, event: { change: enableDetail }, css: 'select-config'"></select>
         </div>
-        <div class="col-sm-6">
-            <a id="add" href="#" class="btn btn-success btn-md" data-bind="click: showAddDialog, css: 'glyphicon glyphicon-duplicate button-text'"></a>
-            <a id="edit" href="#" class="btn btn-primary btn-md" data-bind="click: showEditDialog, css: 'glyphicon glyphicon-pencil button-text'"></a>
-            <a id="delete" href="#" class="btn btn-danger btn-md" data-bind="click: showDeleteDialog, css: 'glyphicon glyphicon-trash button-text'"></a>
+        <div id="col-button-container"class="col-sm-6" hidden>
+            <a id="add" data-toggle="tooltip" title="Duplicate this configuration" href="javascript:void(0)" class="btn btn-add btn-md" data-bind="click: editConfig(true), css: 'glyphicon glyphicon-duplicate button-text'"></a>
+            <a id="edit" data-toggle="tooltip" title="Edit this configuration" href="javascript:void(0)" class="btn btn-edit btn-md" data-bind="click: editConfig(false), css: 'glyphicon glyphicon-pencil button-text'"></a>
+            <a id="delete" data-toggle="tooltip" title="Delete this configuration" href="javascript:void(0)" class="btn btn-danger btn-md" data-bind="click: deleteConfig, css: 'glyphicon glyphicon-trash button-text'"></a>
         </div>
-        <div class="col-sm-1">
-            <button id="activate" class="btn btn-primary btn-md" data-bind="click: showConfigActivateDialog">Activate</button>
+        <div class="activate-button">
+            <button id="activate" data-toggle="tooltip" title="Activate this configuration" class="btn btn-edit btn-md" data-bind="click: activateConfig" disabled>Activate</button>
         </div>
     </div>
-</div>
-<div class="panel panel-default">
-    <div class="panel-heading">
-        <ul class="nav nav-pills">
-            <li>
-                <button id="add-detail" class="btn btn-success btn-md" data-bind="click: showEditDetailDialog">Add Detail</button>
-            </li>
-            <li class="pull-right record-total">
-                <label>Total:</label> <span data-bind="text: totalConfigDetails()"></span>
-            </li>
-        </ul>
-    </div>
-    <div class="panel-body">
-        <div class="row">
-            <div class="col-sm-12">
-                <table class="table table-striped table-bordered table-hover" id="tblConfigDetail">
-                    <thead>
-                    <tr>
-                        <th class="col-glyphicon"></th>
-                        <th class="col-glyphicon"></th>
-                        <!-- ko foreach: columns -->
-                        <th data-bind="text: title, css: cssClass"></th>
-                        <!-- /ko -->
-                    </tr>
-                    </thead>
 
-                    <tbody data-bind="foreach: configDetailsTable">
-                    <tr data-bind="click: $parent.highlightRow, attr: {id: 'row_' +  id}">
+    <div class="panel panel-default panel-no-body">
+        <div class="panel-heading">
+            <ul class="nav nav-pills">
+                <li>
+                    <button id="add-detail" data-toggle="tooltip" title="Add configuration detail" class="btn btn-add btn-md" data-bind="click: editDetail" disabled>Add Detail</button>
+                </li>
+                <li class="pull-right record-total">
+                    <label>Total:</label> <span data-bind="text: totalConfigDetails()"></span>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div id="loading-container" class="loading"><img src="~/Content/images/page-loading.gif" alt="Loading..."></div>
+    <div id="error-container" hidden></div>
+
+    <div class="panel panel-default">
+        <div class="panel-body panel-body-table-header">
+            <table data-bind="tableUpdated: configDetails"  class="table table-striped table-bordered table-hover" id="tblConfigDetail" hidden>
+                <thead>
+                    <tr>
+                        <!-- ko foreach: columns -->
+                        <!-- ko if: visible -->
+                        <th data-bind="text: title"></th>
+                        <!-- /ko -->
+                        <!-- /ko -->
+                        <th class="col-glyphicon col-glyphicon-lg"></th>
+                        <th class="col-glyphicon col-glyphicon-lg"></th>
+                    </tr>
+                </thead>
+
+                <tbody data-bind="foreach: configDetailsTable, tableRender: configDetailsTable">
+                    <tr data-bind="attr: {id: 'row_' +  id}">
+                        <td data-bind="text: phidgettype()"></td>
+                        <td data-bind="text: phidgetstyletype()"></td>
+                        <td data-bind="text: description()"></td>
+                        <td data-bind="text: location()"></td>
+                        <td data-bind="text: responsetype()"></td>
                         <!-- ko if: canedit -->
-                        <td><a href="#" data-bind="click: $parent.showDeleteDetailDialog, css: 'glyphicon glyphicon-remove'"></a></td>
-                        <td><a data-bind="attr: { href: '#' }, click: $parent.showEditDetailDialog, css: 'glyphicon glyphicon-pencil'"></a></td>
+                        <td><a data-toggle="tooltip" title="Edit detail" href="javascript:void(0)" data-bind="attr: { id: 'edit_' + id }, click: $parent.editDetail, css: 'glyphicon glyphicon-pencil glyphicon-lg'"></a></td>
+                        <td><a data-toggle="tooltip" title="Delete detail" href="javascript:void(0)" data-bind="attr: { id: 'delete_' + id}, click: $parent.deleteDetail, css: 'glyphicon glyphicon-trash glyphicon-lg'"></a></td>
                         <!-- /ko -->
                         <!-- ko if: !canedit -->
-                        <td><span data-bind="css: 'glyphicon glyphicon-flag'"></span></td>
-                        <td><span data-bind="css: 'glyphicon glyphicon-flag'"></span></td>
-                        <!-- /ko -->
-                        <td data-bind="text: phidgettype"></td>
-                        <td data-bind="text: phidgetstyletype"></td>
-                        <td data-bind="text: description"></td>
-                        <td data-bind="text: location"></td>
-                        <td data-bind="text: responsetype"></td>
-                        <!-- ko if: issystem -->
-                        <td style="text-align: center;"><span class="glyphicon glyphicon-ok"></span></td>
-                        <!-- /ko -->
-                        <!-- ko if: !issystem -->
-                        <td></td>
+                        <td><span data-bind="css: 'glyphicon glyphicon-flag glyphicon-lg'"></span></td>
+                        <td><span data-bind="css: 'glyphicon glyphicon-flag glyphicon-lg'"></span></td>
                         <!-- /ko -->
                     </tr>
-                    </tbody>
-                </table>
-            </div>
+                </tbody>
+            </table>
         </div>
     </div>
 </div>

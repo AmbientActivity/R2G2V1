@@ -23,17 +23,17 @@ namespace Keebee.AAT.RfidReaderMonitor
             ConfigureListViews();
 
 #if DEBUG
-            _messageQueueRfidMonitorState = new CustomMessageQueue(new CustomMessageQueueArgs
-            {
-                QueueName = MessageQueueType.RfidMonitorState
-            });
+            //_messageQueueRfidMonitorState = new CustomMessageQueue(new CustomMessageQueueArgs
+            //{
+            //    QueueName = MessageQueueType.RfidMonitorState
+            //});
 
-            // listener
-            var q = new CustomMessageQueue(new CustomMessageQueueArgs
-            {
-                QueueName = MessageQueueType.RfidMonitor,
-                MessageReceivedCallback = MessageReceived
-            });
+            //// listener
+            //var q = new CustomMessageQueue(new CustomMessageQueueArgs
+            //{
+            //    QueueName = MessageQueueType.RfidMonitor,
+            //    MessageReceivedCallback = MessageReceived
+            //});
 #endif
             radOff.Checked = true;
         }
@@ -80,16 +80,16 @@ namespace Keebee.AAT.RfidReaderMonitor
         }
 
 #if DEBUG
-        private void MessageReceived(object sender, MessageEventArgs e)
-        {
-            var message = (e.MessageBody);
-            var serializer = new JavaScriptSerializer();
-            var readerMessage = serializer.Deserialize<RfidMonitorMessage>(message);
+        //private void MessageReceived(object sender, MessageEventArgs e)
+        //{
+        //    var message = (e.MessageBody);
+        //    var serializer = new JavaScriptSerializer();
+        //    var readerMessage = serializer.Deserialize<RfidMonitorMessage>(message);
 
-            AddToListView(readerMessage.IsFinal 
-                ? lvResidents
-                : lvReads, readerMessage.ReadCount, readerMessage.ResidentId);
-        }
+        //    AddToListView(readerMessage.IsFinal 
+        //        ? lvResidents
+        //        : lvReads, readerMessage.ReadCount, readerMessage.ResidentId);
+        //}
 #endif
 
         private void MonitorFormClosing(object sender, FormClosingEventArgs e)

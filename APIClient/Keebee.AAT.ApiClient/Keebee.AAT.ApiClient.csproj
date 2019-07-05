@@ -31,8 +31,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="RestSharp, Version=105.2.3.0, Culture=neutral, processorArchitecture=MSIL">
@@ -52,10 +52,13 @@
   <ItemGroup>
     <Compile Include="Clients\ActiveResidentClient.cs" />
     <Compile Include="Clients\ActivityEventLogsClient.cs" />
+    <Compile Include="Clients\AmbientInvitationsClient.cs" />
     <Compile Include="Clients\BaseClient.cs" />
     <Compile Include="Clients\ConfigsClient.cs" />
     <Compile Include="Clients\InteractiveActivityEventLogsClient.cs" />
+    <Compile Include="Clients\InteractiveActivityTypesClient.cs" />
     <Compile Include="Clients\MediaFilesClient.cs" />
+    <Compile Include="Clients\MediaFileStreamsClient.cs" />
     <Compile Include="Clients\MediaPathTypesClient.cs" />
     <Compile Include="Clients\ActiveResidentEventLogsClient.cs" />
     <Compile Include="Clients\PhidgetStyleTypesClient.cs" />
@@ -64,10 +67,11 @@
     <Compile Include="Clients\ResidentMediaFilesClient.cs" />
     <Compile Include="Clients\ResidentsClient.cs" />
     <Compile Include="Clients\ResponseTypesClient.cs" />
+    <Compile Include="Clients\ThumbnailsClient.cs" />
     <Compile Include="Clients\UserRolesClient.cs" />
     <Compile Include="Clients\UsersClient.cs" />
-    <Compile Include="JsonSerializer.cs" />
     <Compile Include="Models\ActiveResident.cs" />
+    <Compile Include="Models\AmbientInvitation.cs" />
     <Compile Include="Models\InteractiveActivityType.cs" />
     <Compile Include="Models\MediaFile.cs" />
     <Compile Include="Models\MediaPathType.cs" />
@@ -84,6 +88,7 @@
     <Compile Include="Models\ResponseTypeCategory.cs" />
     <Compile Include="Models\ActiveResidentEventLog.cs" />
     <Compile Include="Models\Role.cs" />
+    <Compile Include="Models\Thumbnail.cs" />
     <Compile Include="Models\User.cs" />
     <Compile Include="Models\UserRole.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

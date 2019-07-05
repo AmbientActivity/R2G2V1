@@ -1,16 +1,18 @@
 ﻿using Keebee.AAT.Administrator.ViewModels;
 using Keebee.AAT.Shared;
-using Keebee.AAT.Administrator.FileManagement;
 using Keebee.AAT.BusinessRules;
 using Keebee.AAT.SystemEventLogging;
 using Keebee.AAT.ApiClient.Clients;
 using Keebee.AAT.ApiClient.Models;
-using CuteWebUI;
+using Keebee.AAT.BusinessRules.Models;
+using Keebee.AAT.Administrator.Extensions;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
 using System;
-using System.IO;
+using System.Collections.ObjectModel;
+using System.Diagnostics;
+using System.Web;
 
 namespace Keebee.AAT.Administrator.Controllers
 {
@@ -19,308 +21,279 @@ namespace Keebee.AAT.Administrator.Controllers
         // api client
         private readonly IPublicMediaFilesClient _publicMediaFilesClient;
         private readonly IMediaPathTypesClient _mediaPathTypesClient;
+        private readonly IResponseTypesClient _responseTypesClient;
+        private readonly IThumbnailsClient _thumbnailsClient;
 
-        private readonly SystemEventLogger _systemEventLogger;
-        private readonly MediaSourcePath _mediaPath = new MediaSourcePath();
+        private readonly MediaSourcePath _mediaSourcePath = new MediaSourcePath();
 
         public PublicProfileController()
         {
-            _systemEventLogger = new SystemEventLogger(SystemEventLogType.AdminInterface);
-
             _publicMediaFilesClient = new PublicMediaFilesClient();
             _mediaPathTypesClient = new MediaPathTypesClient();
+            _responseTypesClient = new ResponseTypesClient();
+            _thumbnailsClient = new ThumbnailsClient();
         }
 
         // GET: PublicProfile
         [Authorize]
-        public ActionResult Index(
-            int? mediaPathTypeId,
-            string myuploader)
+        public ActionResult Index()
         {
-            // first time loading
-            if (mediaPathTypeId == null) mediaPathTypeId = MediaPathTypeId.Music;
-
-            var vm = LoadPublicProfileViewModel(mediaPathTypeId);
-
-            using (var uploader = new MvcUploader(System.Web.HttpContext.Current))
+            return View(new PublicProfileViewModel
             {
-                uploader.UploadUrl = Response.ApplyAppPathModifier("~/UploadHandler.ashx");
-                uploader.Name = "myuploader";
-                uploader.AllowedFileExtensions = PublicProfileRules.GetAllowedExtensions(mediaPathTypeId);
-                uploader.MultipleFilesUpload = true;
-                uploader.InsertButtonID = "uploadbutton";
-                vm.UploaderHtml = uploader.Render();
-
-                // GET:
-                if (string.IsNullOrEmpty(myuploader))
-                    return View(vm);
-
-                // POST:
-                var fileManager = new FileManager { EventLogger = _systemEventLogger };
-
-                // for multiple files the value is string : guid/guid/guid 
-                foreach (var strguid in myuploader.Split('/'))
-                {
-                    var fileguid = new Guid(strguid);
-                    var file = uploader.GetUploadedFile(fileguid);
-                    if (file?.FileName == null) continue;
-
-                    if (!PublicProfileRules.IsValidFile(file.FileName, mediaPathTypeId)) continue;
-
-                    var rules = new PublicProfileRules();
-                    var mediaPath = rules.GetMediaPath(mediaPathTypeId);
-                    var filePath = $@"{_mediaPath.ProfileRoot}\{PublicProfileSource.Id}\{mediaPath}\{file.FileName}";
-
-                    // delete it if it already exists
-                    var msg = fileManager.DeleteFile(filePath);
-
-                    if (msg.Length == 0)
-                    {
-                        file.MoveTo(filePath);
-                        AddPublicMediaFile(file.FileName, (int)mediaPathTypeId, mediaPath);
-                    }
-                }
-            }
-
-            return View(vm);
+                Title = PublicProfileSource.Description,
+                SelectedMediaPathTypeId = MediaPathTypeId.Music
+            });
         }
 
         [HttpGet]
         [Authorize]
         public JsonResult GetData(int mediaPathTypeId)
         {
-            var mediaPathTypes = _mediaPathTypesClient.Get()
-                .Where(x => x.IsSharable)
-                .Where(x => !x.IsSystem)
-                .OrderBy(p => p.Description);
-            var fileList = GetMediaFiles();
+            string errMsg = null;
+            MediaFileViewModel[] fileList = null;
+            MediaPathType[] mediaPathTypeList = null;
+            var isAdmin = false;
 
-            var vm = new
+            try
             {
-                FileList = fileList,
-                MediaPathTypeList = mediaPathTypes.Select(x => new
-                {
-                    x.Id,
-                    x.Description,
-                    x.ShortDescription,
-                    x.IsPreviewable
-                })
-            };
+                fileList = GetFiles().ToArray();
 
-            return Json(vm, JsonRequestBehavior.AllowGet);
-        }
+                mediaPathTypeList = _mediaPathTypesClient.Get()
+                    .Where(x => x.IsSharable)
+                    .Where(x => !x.IsSystem)
+                    .OrderBy(p => p.Description)
+                    .Select(x => new MediaPathType
+                    {
+                        Id = x.Id,
+                        ResponseTypeId = x.ResponseTypeId,
+                        Category = x.Category,
+                        Description = x.Description,
+                        ShortDescription = x.ShortDescription,
+                        Path = x.Path,
+                        AllowedExts = x.AllowedExts.Replace(" ", string.Empty),
+                        AllowedTypes = x.AllowedTypes.Replace(" ", string.Empty),
+                        MaxFileBytes = x.MaxFileBytes,
+                        MaxFileUploads = x.MaxFileUploads
+                    }).ToArray();
 
-        [HttpGet]
-        [Authorize]
-        public JsonResult GetUploaderHtml(int mediaPathTypeId)
-        {
-            string html;
-            using (var uploader = new MvcUploader(System.Web.HttpContext.Current))
+                isAdmin = System.Web.HttpContext.Current.User?.Identity?.Name?.ToLower() == "admin";
+            }
+            catch (Exception ex)
             {
-                uploader.UploadUrl = Response.ApplyAppPathModifier("~/UploadHandler.ashx");
-                uploader.Name = "myuploader";
-                uploader.AllowedFileExtensions = PublicProfileRules.GetAllowedExtensions(mediaPathTypeId); ;
-                uploader.MultipleFilesUpload = true;
-                uploader.InsertButtonID = "uploadbutton";
-                html = uploader.Render();
+                errMsg = ex.Message;
+                SystemEventLogger.WriteEntry($"PublicProfile.GetData: {errMsg}", SystemEventLogType.AdminInterface, EventLogEntryType.Error);
             }
 
-            var rules = new PublicProfileRules();
-            var responseTypes = rules.GetValidResponseTypes(mediaPathTypeId)
-                .OrderBy(r => r.Description);
-            ;
+            var jsonResult = Json(new
+            {
+                Success = string.IsNullOrEmpty(errMsg),
+                ErrorMessage = errMsg,
+                FileList = fileList,
+                MediaPathTypeList = mediaPathTypeList,
+                IsAdmin = isAdmin
+            }, JsonRequestBehavior.AllowGet);
+
+            jsonResult.MaxJsonLength = int.MaxValue;
+
+            return jsonResult;
+        }
+
+        [HttpPost]
+        [Authorize]
+        public JsonResult UploadFile(HttpPostedFileBase file, int mediaPathTypeId, string mediaPath, string mediaPathTypeCategory)
+        {
+            string errMsg = null;
+            string filename = null;
+
+            try
+            {
+                if (file != null)
+                {
+                    filename = file.FileName;
+                    var rules = new PublicProfileRules();
+                    var path = $@"{_mediaSourcePath.ProfileRoot}\{PublicProfileSource.Id}\{mediaPath}";
+
+                    errMsg = rules.SaveUploadedFile(filename, path, file.InputStream, mediaPathTypeCategory);
+                }
+            }
+            catch (Exception ex)
+            {
+                errMsg = ex.Message;
+                SystemEventLogger.WriteEntry($"PublicProfile.UploadFile: {errMsg}", SystemEventLogType.AdminInterface, EventLogEntryType.Error);
+            }
+
             return Json(new
             {
-                UploaderHtml = html,
-                ResponseTypeList = responseTypes.Select(x => new
-                {
-                    x.Id,
-                    x.Description
-                }),
-                AddButtonText = $"Upload {rules.GetMediaPathShortDescription(mediaPathTypeId)}",
+                Filename = filename,
+                Success = string.IsNullOrEmpty(errMsg),
+                ErrorMessage = errMsg
             }, JsonRequestBehavior.AllowGet);
         }
 
         [HttpPost]
         [Authorize]
-        public JsonResult DeleteSelected(int[] ids, int mediaPathTypeId)
+        public JsonResult AddFiles(string[] filenames, int mediaPathTypeId, int responseTypeId)
         {
-            bool success;
-            string errormessage;
+            string errMsg = null;
+            var newFiles = new Collection<MediaFileModel>();
+            const bool isLinked = false;
 
             try
             {
+                var dateAdded = DateTime.Now;
                 var rules = new PublicProfileRules();
+                var responseType = _responseTypesClient.Get(responseTypeId);
+                var mediaPathType = _mediaPathTypesClient.Get(mediaPathTypeId);
 
-                errormessage = rules.CanDeleteMultiple(ids.Length, mediaPathTypeId);
-                if (errormessage.Length > 0)
-                    throw new Exception(errormessage);
-
-                foreach (var id in ids)
+                foreach (var filename in filenames.OrderByDescending(x => x))
                 {
-                    var publicMediaFile = _publicMediaFilesClient.Get(id);
-                    if (publicMediaFile == null) continue;
+                    MediaFileModel newFile;
+                    errMsg = rules.AddMediaFileFromFilename(filename, mediaPathType, responseType, dateAdded, isLinked, out newFile);
 
-                    if (publicMediaFile.MediaFile.IsLinked)
-                    {
-                        _publicMediaFilesClient.Delete(id);
-                    }
-                    else
-                    {
-                        var file = rules.GetMediaFile(id);
-                        if (file == null) continue;
+                    if (!string.IsNullOrEmpty(errMsg))
+                        throw new Exception(errMsg);
 
-                        // delete the link
-                        errormessage = _publicMediaFilesClient.Delete(id);
-                        if (errormessage.Length > 0)
-                            throw new Exception(errormessage);
-
-                        var fileManager = new FileManager { EventLogger = _systemEventLogger };
-                        fileManager.DeleteFile($@"{file.Path}\{file.Filename}");
-                    }
+                    newFiles.Add(newFile);
                 }
-
-                success = true;
             }
             catch (Exception ex)
             {
-                success = false;
-                errormessage = ex.Message;
+                errMsg = ex.Message;
+                SystemEventLogger.WriteEntry($"PublicProfile.AddFiles: {errMsg}", SystemEventLogType.AdminInterface, EventLogEntryType.Error);
             }
 
             return Json(new
             {
-                Success = success,
-                ErrorMessage = errormessage,
-                FileList = GetMediaFiles()
+                Success = string.IsNullOrEmpty(errMsg),
+                ErrorMessage = errMsg,
+                FileList = newFiles
             }, JsonRequestBehavior.AllowGet);
         }
 
-        [HttpGet]
+        [HttpPost]
         [Authorize]
-        public PartialViewResult GetImageViewerView(Guid streamId, string fileType)
+        public JsonResult AddSharedMediaFiles(Guid[] streamIds, int mediaPathTypeId, int responseTypeId)
         {
-            var rules = new ImageViewerRules();
-            var m = rules.GetImageViewerModel(streamId, fileType);
-
-            return PartialView("_ImageViewer", new ImageViewerViewModel
-            {
-                FilePath = m.FilePath,
-                FileType = m.FileType,
-                Width = m.Width,
-                Height = m.Height,
-                PaddingLeft = m.PaddingLeft
-            });
-        }
-
-        [HttpGet]
-        [Authorize]
-        public PartialViewResult GetSharedLibarayLinkView(int mediaPathTypeId)
-        {
-            var vm = LoadSharedLibaryAddViewModel(mediaPathTypeId);
-
-            return vm.SharedFiles.Any()
-                ? PartialView("_SharedLibraryLink", vm) 
-                : null;
-        }
-
-        public JsonResult AddSharedMediaFiles(Guid[] streamIds, int mediaPathTypeId)
-        {
-            bool success;
-            var errormessage = string.Empty;
+            string errMsg = null;
+            var newFiles = new Collection<MediaFileModel>();
+            const bool isLinked = true;
 
             try
             {
                 if (streamIds != null)
                 {
+                    var rules = new PublicProfileRules();
+                    var dateAdded = DateTime.Now;
+                    var responseType = _responseTypesClient.Get(responseTypeId);
+                    var mediaPathType = _mediaPathTypesClient.Get(mediaPathTypeId);
+
                     foreach (var streamId in streamIds)
                     {
-                        var pmf = new PublicMediaFileEdit
-                        {
-                            StreamId = streamId,
-                            ResponseTypeId = PublicProfileRules.GetResponseTypeId(mediaPathTypeId),
-                            MediaPathTypeId = mediaPathTypeId,
-                            IsLinked = true
-                        };
+                        MediaFileModel newFile;
+                        errMsg = rules.AddMediaFile(streamId, mediaPathType, responseType, dateAdded, isLinked, out newFile);
 
-                        _publicMediaFilesClient.Post(pmf);
+                        if (!string.IsNullOrEmpty(errMsg))
+                            throw new Exception(errMsg);
+
+                        newFiles.Add(newFile);
                     }
                 }
-                success = true;
             }
             catch (Exception ex)
             {
-                success = false;
-                errormessage = ex.Message;
+                errMsg = ex.Message;
+                SystemEventLogger.WriteEntry($"PublicProfile.AddSharedMediaFiles: {errMsg}", SystemEventLogType.AdminInterface, EventLogEntryType.Error);
             }
 
             return Json(new
             {
-                Success = success,
-                ErrorMessage = errormessage,
-                FileList = GetMediaFiles()
+                Success = string.IsNullOrEmpty(errMsg),
+                ErrorMessage = errMsg,
+                FileList = newFiles
             }, JsonRequestBehavior.AllowGet);
         }
 
-        private void AddPublicMediaFile(string filename, int mediaPathTypeId, string mediaPathType)
+        [HttpPost]
+        [Authorize]
+        public JsonResult DeleteSelected(int[] ids, int mediaPathTypeId, int responseTypeId)
         {
-            var fileManager = new FileManager { EventLogger = _systemEventLogger };
-            var streamId = fileManager.GetStreamId($@"{PublicProfileSource.Id}\{mediaPathType}", filename);
+            string errMsg;
+            var deletedIds = new Collection<int>();
 
-            var mf = new PublicMediaFileEdit
+            try
             {
-                StreamId = streamId,
-                ResponseTypeId = PublicProfileRules.GetResponseTypeId(mediaPathTypeId),
-                MediaPathTypeId = mediaPathTypeId,
-                IsLinked = false
-            };
+                var rules = new PublicProfileRules();
 
-            _publicMediaFilesClient.Post(mf);
-        }
+                errMsg = rules.CanDeleteMultiple(ids.Length, mediaPathTypeId, responseTypeId);
+                if (!string.IsNullOrEmpty(errMsg)) throw new Exception(errMsg);
 
-        private PublicProfileViewModel LoadPublicProfileViewModel(
-                int? mediaPathTypeId)
-        {
-            var rules = new PublicProfileRules();
-            var vm = new PublicProfileViewModel
-            {
-                Title = PublicProfileSource.Description,
-                AddButtonText = $"Upload {rules.GetMediaPathShortDescription(mediaPathTypeId)}",
-                SelectedMediaPathType = mediaPathTypeId ?? MediaPathTypeId.Music
-            };
-
-            return vm;
-        }
-
-        private static SharedLibraryLinkViewModel LoadSharedLibaryAddViewModel(int mediaPathTypeId)
-        {
-            var rules = new PublicProfileRules();
-            var files = rules.GetAvailableSharedMediaFiles(mediaPathTypeId);
-
-            var vm = new SharedLibraryLinkViewModel
-            {
-                SharedFiles = files
-                .Select(f => new SharedLibraryFileViewModel
+                var responseType = _responseTypesClient.Get(responseTypeId);
+                foreach (var id in ids)
                 {
-                    StreamId = f.StreamId,
-                    Filename = f.Filename
-                })
-            };
+                    errMsg = rules.DeleteMediaFile(id, responseType);
+                    if (!string.IsNullOrEmpty(errMsg)) throw new Exception(errMsg);
 
-            return vm;
+                    deletedIds.Add(id);
+                }
+            }
+            catch (Exception ex)
+            {
+                errMsg = ex.Message;
+                SystemEventLogger.WriteEntry($"PublicProfile.DeleteSelected: {errMsg}", SystemEventLogType.AdminInterface, EventLogEntryType.Error);
+            }
+
+            return Json(new
+            {
+                Success = string.IsNullOrEmpty(errMsg),
+                ErrorMessage = errMsg,
+                DeletedIds = deletedIds
+            }, JsonRequestBehavior.AllowGet);
         }
 
-        private IEnumerable<PublicMediaFileViewModel> GetMediaFiles()
+        [HttpGet]
+        [Authorize]
+        public JsonResult GetImageViewerView(Guid streamId, string fileType)
         {
-            var list = new List<PublicMediaFileViewModel>();
-            var mediaResponseTypes = _publicMediaFilesClient.Get(isSystem: false).ToArray();
+            string errMsg;
+            string html = null;
 
-            var mediaPaths = mediaResponseTypes.SelectMany(x => x.Paths)
-                .ToArray();
+            try
+            {
+                var rules = new ImageViewerRules();
+                var model = rules.GetImageViewerModel(streamId, fileType, out errMsg);
+                if (!string.IsNullOrEmpty(errMsg)) throw new Exception(errMsg);
+
+                html = this.RenderPartialViewToString("_ImageViewer", new ImageViewerViewModel
+                {
+                    FileType = model.FileType,
+                    Width = model.Width,
+                    Height = model.Height,
+                    Base64String = model.Base64String
+                });
+            }
+            catch (Exception ex)
+            {
+                errMsg = ex.Message;
+            }
+
+            return Json(new
+            {
+                Success = string.IsNullOrEmpty(errMsg),
+                ErrorMessage = errMsg,
+                Html = html
+            }, JsonRequestBehavior.AllowGet);
+        }
+
+        private IEnumerable<MediaFileViewModel> GetFiles()
+        {
+            var list = new List<MediaFileViewModel>();
+            var mediaResponseTypes = _publicMediaFilesClient.Get(isSystem: false).ToArray();
+            var thumbnails = _thumbnailsClient.Get().ToArray();
+            var mediaPaths = mediaResponseTypes.SelectMany(x => x.Paths).ToArray();
 
             if (!mediaPaths.Any()) return list;
 
-            var pathRoot = $@"{_mediaPath.ProfileRoot}\{PublicProfileSource.Id}";
+            var pathRoot = $@"{_mediaSourcePath.ProfileRoot}\{PublicProfileSource.Id}";
 
             foreach (var media in mediaResponseTypes)
             {
@@ -330,7 +303,9 @@ namespace Keebee.AAT.Administrator.Controllers
 
                     foreach (var file in files)
                     {
-                        var vm = new PublicMediaFileViewModel
+                        var thumb = thumbnails.FirstOrDefault(x => x.StreamId == file.StreamId);
+
+                        var vm = new MediaFileViewModel
                         {
                             Id = file.Id,
                             StreamId = file.StreamId,
@@ -339,7 +314,11 @@ namespace Keebee.AAT.Administrator.Controllers
                             FileSize = file.FileSize,
                             IsLinked = file.IsLinked,
                             Path = $@"{pathRoot}\{path.MediaPathType.Path}",
-                            MediaPathTypeId = path.MediaPathType.Id
+                            MediaPathTypeId = path.MediaPathType.Id,
+                            DateAdded = file.DateAdded,
+                            Thumbnail = thumb?.Image != null 
+                                ? $"data:image/jpg;base64,{ Convert.ToBase64String(thumb.Image)}" 
+                                : string.Empty
                         };
 
                         list.Add(vm);
@@ -347,7 +326,7 @@ namespace Keebee.AAT.Administrator.Controllers
                 }
             }
 
-            return list;
+            return list.OrderBy(x => x.Filename);
         }
     }
 }

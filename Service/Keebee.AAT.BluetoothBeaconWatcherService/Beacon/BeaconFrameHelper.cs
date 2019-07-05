@@ -52,12 +52,6 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService.Beacon
             {
                 case EddystoneFrameType.UidFrameType:
                     return new UidEddystoneFrame(payload);
-                case EddystoneFrameType.UrlFrameType:
-                    return new UrlEddystoneFrame(payload);
-                case EddystoneFrameType.TelemetryFrameType:
-                    return new TlmEddystoneFrame(payload);
-                case null:
-                    return null;
                 default:
                     return new UnknownBeaconFrame(payload);
             }

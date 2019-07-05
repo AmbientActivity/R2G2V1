@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-// Generation date: 2017-02-14 4:04:15 PM
+// Generation date: 2017-08-05 3:00:09 PM
 namespace Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models
 {
     /// <summary>
@@ -665,12 +665,14 @@ namespace Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models
         /// </summary>
         /// <param name="ID">Initial value of Id.</param>
         /// <param name="description">Initial value of Description.</param>
+        /// <param name="isIncremental">Initial value of IsIncremental.</param>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        public static PhidgetStyleType CreatePhidgetStyleType(int ID, string description)
+        public static PhidgetStyleType CreatePhidgetStyleType(int ID, string description, bool isIncremental)
         {
             PhidgetStyleType phidgetStyleType = new PhidgetStyleType();
             phidgetStyleType.Id = ID;
             phidgetStyleType.Description = description;
+            phidgetStyleType.IsIncremental = isIncremental;
             return phidgetStyleType;
         }
         /// <summary>
@@ -719,6 +721,29 @@ namespace Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models
         private string _Description;
         partial void OnDescriptionChanging(string value);
         partial void OnDescriptionChanged();
+        /// <summary>
+        /// There are no comments for Property IsIncremental in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        [global::Microsoft.OData.Client.OriginalNameAttribute("IsIncremental")]
+        public bool IsIncremental
+        {
+            get
+            {
+                return this._IsIncremental;
+            }
+            set
+            {
+                this.OnIsIncrementalChanging(value);
+                this._IsIncremental = value;
+                this.OnIsIncrementalChanged();
+                this.OnPropertyChanged("IsIncremental");
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private bool _IsIncremental;
+        partial void OnIsIncrementalChanging(bool value);
+        partial void OnIsIncrementalChanged();
         /// <summary>
         /// This event is raised when the value of the property is changed
         /// </summary>
@@ -933,14 +958,18 @@ namespace Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models
         /// </summary>
         /// <param name="ID">Initial value of Id.</param>
         /// <param name="description">Initial value of Description.</param>
-        /// <param name="isSystem">Initial value of IsSystem.</param>
+        /// <param name="isRandom">Initial value of IsRandom.</param>
+        /// <param name="isRotational">Initial value of IsRotational.</param>
+        /// <param name="isUninterrupted">Initial value of IsUninterrupted.</param>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        public static ResponseType CreateResponseType(int ID, string description, bool isSystem)
+        public static ResponseType CreateResponseType(int ID, string description, bool isRandom, bool isRotational, bool isUninterrupted)
         {
             ResponseType responseType = new ResponseType();
             responseType.Id = ID;
             responseType.Description = description;
-            responseType.IsSystem = isSystem;
+            responseType.IsRandom = isRandom;
+            responseType.IsRotational = isRotational;
+            responseType.IsUninterrupted = isUninterrupted;
             return responseType;
         }
         /// <summary>
@@ -1036,28 +1065,74 @@ namespace Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models
         partial void OnInteractiveActivityTypeIdChanging(global::System.Nullable<int> value);
         partial void OnInteractiveActivityTypeIdChanged();
         /// <summary>
-        /// There are no comments for Property IsSystem in the schema.
+        /// There are no comments for Property IsRandom in the schema.
         /// </summary>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        [global::Microsoft.OData.Client.OriginalNameAttribute("IsSystem")]
-        public bool IsSystem
+        [global::Microsoft.OData.Client.OriginalNameAttribute("IsRandom")]
+        public bool IsRandom
         {
             get
             {
-                return this._IsSystem;
+                return this._IsRandom;
             }
             set
             {
-                this.OnIsSystemChanging(value);
-                this._IsSystem = value;
-                this.OnIsSystemChanged();
-                this.OnPropertyChanged("IsSystem");
+                this.OnIsRandomChanging(value);
+                this._IsRandom = value;
+                this.OnIsRandomChanged();
+                this.OnPropertyChanged("IsRandom");
             }
         }
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private bool _IsSystem;
-        partial void OnIsSystemChanging(bool value);
-        partial void OnIsSystemChanged();
+        private bool _IsRandom;
+        partial void OnIsRandomChanging(bool value);
+        partial void OnIsRandomChanged();
+        /// <summary>
+        /// There are no comments for Property IsRotational in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        [global::Microsoft.OData.Client.OriginalNameAttribute("IsRotational")]
+        public bool IsRotational
+        {
+            get
+            {
+                return this._IsRotational;
+            }
+            set
+            {
+                this.OnIsRotationalChanging(value);
+                this._IsRotational = value;
+                this.OnIsRotationalChanged();
+                this.OnPropertyChanged("IsRotational");
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private bool _IsRotational;
+        partial void OnIsRotationalChanging(bool value);
+        partial void OnIsRotationalChanged();
+        /// <summary>
+        /// There are no comments for Property IsUninterrupted in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        [global::Microsoft.OData.Client.OriginalNameAttribute("IsUninterrupted")]
+        public bool IsUninterrupted
+        {
+            get
+            {
+                return this._IsUninterrupted;
+            }
+            set
+            {
+                this.OnIsUninterruptedChanging(value);
+                this._IsUninterrupted = value;
+                this.OnIsUninterruptedChanged();
+                this.OnPropertyChanged("IsUninterrupted");
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private bool _IsUninterrupted;
+        partial void OnIsUninterruptedChanging(bool value);
+        partial void OnIsUninterruptedChanged();
         /// <summary>
         /// There are no comments for Property ResponseTypeCategory in the schema.
         /// </summary>
@@ -1274,12 +1349,14 @@ namespace Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models
         /// </summary>
         /// <param name="ID">Initial value of Id.</param>
         /// <param name="description">Initial value of Description.</param>
+        /// <param name="swfFile">Initial value of SwfFile.</param>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        public static InteractiveActivityType CreateInteractiveActivityType(int ID, string description)
+        public static InteractiveActivityType CreateInteractiveActivityType(int ID, string description, string swfFile)
         {
             InteractiveActivityType interactiveActivityType = new InteractiveActivityType();
             interactiveActivityType.Id = ID;
             interactiveActivityType.Description = description;
+            interactiveActivityType.SwfFile = swfFile;
             return interactiveActivityType;
         }
         /// <summary>
@@ -1328,6 +1405,29 @@ namespace Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models
         private string _Description;
         partial void OnDescriptionChanging(string value);
         partial void OnDescriptionChanged();
+        /// <summary>
+        /// There are no comments for Property SwfFile in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        [global::Microsoft.OData.Client.OriginalNameAttribute("SwfFile")]
+        public string SwfFile
+        {
+            get
+            {
+                return this._SwfFile;
+            }
+            set
+            {
+                this.OnSwfFileChanging(value);
+                this._SwfFile = value;
+                this.OnSwfFileChanged();
+                this.OnPropertyChanged("SwfFile");
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private string _SwfFile;
+        partial void OnSwfFileChanging(string value);
+        partial void OnSwfFileChanged();
         /// <summary>
         /// This event is raised when the value of the property is changed
         /// </summary>
@@ -2573,6 +2673,118 @@ namespace Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models
         }
     }
     /// <summary>
+    /// There are no comments for ThumbnailSingle in the schema.
+    /// </summary>
+    [global::Microsoft.OData.Client.OriginalNameAttribute("ThumbnailSingle")]
+    public partial class ThumbnailSingle : global::Microsoft.OData.Client.DataServiceQuerySingle<Thumbnail>
+    {
+        /// <summary>
+        /// Initialize a new ThumbnailSingle object.
+        /// </summary>
+        public ThumbnailSingle(global::Microsoft.OData.Client.DataServiceContext context, string path)
+            : base(context, path) {}
+
+        /// <summary>
+        /// Initialize a new ThumbnailSingle object.
+        /// </summary>
+        public ThumbnailSingle(global::Microsoft.OData.Client.DataServiceContext context, string path, bool isComposable)
+            : base(context, path, isComposable) {}
+
+        /// <summary>
+        /// Initialize a new ThumbnailSingle object.
+        /// </summary>
+        public ThumbnailSingle(global::Microsoft.OData.Client.DataServiceQuerySingle<Thumbnail> query)
+            : base(query) {}
+
+    }
+    /// <summary>
+    /// There are no comments for Thumbnail in the schema.
+    /// </summary>
+    /// <KeyProperties>
+    /// StreamId
+    /// </KeyProperties>
+    [global::Microsoft.OData.Client.Key("StreamId")]
+    [global::Microsoft.OData.Client.OriginalNameAttribute("Thumbnail")]
+    public partial class Thumbnail : global::Microsoft.OData.Client.BaseEntityType, global::System.ComponentModel.INotifyPropertyChanged
+    {
+        /// <summary>
+        /// Create a new Thumbnail object.
+        /// </summary>
+        /// <param name="streamId">Initial value of StreamId.</param>
+        /// <param name="image">Initial value of Image.</param>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        public static Thumbnail CreateThumbnail(global::System.Guid streamId, byte[] image)
+        {
+            Thumbnail thumbnail = new Thumbnail();
+            thumbnail.StreamId = streamId;
+            thumbnail.Image = image;
+            return thumbnail;
+        }
+        /// <summary>
+        /// There are no comments for Property StreamId in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        [global::Microsoft.OData.Client.OriginalNameAttribute("StreamId")]
+        public global::System.Guid StreamId
+        {
+            get
+            {
+                return this._StreamId;
+            }
+            set
+            {
+                this.OnStreamIdChanging(value);
+                this._StreamId = value;
+                this.OnStreamIdChanged();
+                this.OnPropertyChanged("StreamId");
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private global::System.Guid _StreamId;
+        partial void OnStreamIdChanging(global::System.Guid value);
+        partial void OnStreamIdChanged();
+        /// <summary>
+        /// There are no comments for Property Image in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        [global::Microsoft.OData.Client.OriginalNameAttribute("Image")]
+        public byte[] Image
+        {
+            get
+            {
+                return this._Image;
+            }
+            set
+            {
+                this.OnImageChanging(value);
+                this._Image = value;
+                this.OnImageChanged();
+                this.OnPropertyChanged("Image");
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private byte[] _Image;
+        partial void OnImageChanging(byte[] value);
+        partial void OnImageChanged();
+        /// <summary>
+        /// This event is raised when the value of the property is changed
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        public event global::System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        /// <summary>
+        /// The value of the property is changed
+        /// </summary>
+        /// <param name="property">property name</param>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        protected virtual void OnPropertyChanged(string property)
+        {
+            if ((this.PropertyChanged != null))
+            {
+                this.PropertyChanged(this, new global::System.ComponentModel.PropertyChangedEventArgs(property));
+            }
+        }
+    }
+    /// <summary>
     /// There are no comments for MediaPathTypeSingle in the schema.
     /// </summary>
     [global::Microsoft.OData.Client.OriginalNameAttribute("MediaPathTypeSingle")]
@@ -2596,6 +2808,28 @@ namespace Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models
         public MediaPathTypeSingle(global::Microsoft.OData.Client.DataServiceQuerySingle<MediaPathType> query)
             : base(query) {}
 
+        /// <summary>
+        /// There are no comments for MediaPathTypeCategory in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        [global::Microsoft.OData.Client.OriginalNameAttribute("MediaPathTypeCategory")]
+        public global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.MediaPathTypeCategorySingle MediaPathTypeCategory
+        {
+            get
+            {
+                if (!this.IsComposable)
+                {
+                    throw new global::System.NotSupportedException("The previous function is not composable.");
+                }
+                if ((this._MediaPathTypeCategory == null))
+                {
+                    this._MediaPathTypeCategory = new global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.MediaPathTypeCategorySingle(this.Context, GetPath("MediaPathTypeCategory"));
+                }
+                return this._MediaPathTypeCategory;
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.MediaPathTypeCategorySingle _MediaPathTypeCategory;
     }
     /// <summary>
     /// There are no comments for MediaPathType in the schema.
@@ -2611,27 +2845,39 @@ namespace Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models
         /// Create a new MediaPathType object.
         /// </summary>
         /// <param name="ID">Initial value of Id.</param>
+        /// <param name="responseTypeId">Initial value of ResponseTypeId.</param>
         /// <param name="path">Initial value of Path.</param>
         /// <param name="description">Initial value of Description.</param>
         /// <param name="shortDescription">Initial value of ShortDescription.</param>
-        /// <param name="isPreviewable">Initial value of IsPreviewable.</param>
+        /// <param name="allowedExts">Initial value of AllowedExts.</param>
+        /// <param name="allowedTypes">Initial value of AllowedTypes.</param>
+        /// <param name="maxFileBytes">Initial value of MaxFileBytes.</param>
+        /// <param name="maxFileUploads">Initial value of MaxFileUploads.</param>
         /// <param name="isSystem">Initial value of IsSystem.</param>
         /// <param name="isSharable">Initial value of IsSharable.</param>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
         public static MediaPathType CreateMediaPathType(int ID, 
+                    int responseTypeId, 
                     string path, 
                     string description, 
                     string shortDescription, 
-                    bool isPreviewable, 
+                    string allowedExts, 
+                    string allowedTypes, 
+                    long maxFileBytes, 
+                    int maxFileUploads, 
                     bool isSystem, 
                     bool isSharable)
         {
             MediaPathType mediaPathType = new MediaPathType();
             mediaPathType.Id = ID;
+            mediaPathType.ResponseTypeId = responseTypeId;
             mediaPathType.Path = path;
             mediaPathType.Description = description;
             mediaPathType.ShortDescription = shortDescription;
-            mediaPathType.IsPreviewable = isPreviewable;
+            mediaPathType.AllowedExts = allowedExts;
+            mediaPathType.AllowedTypes = allowedTypes;
+            mediaPathType.MaxFileBytes = maxFileBytes;
+            mediaPathType.MaxFileUploads = maxFileUploads;
             mediaPathType.IsSystem = isSystem;
             mediaPathType.IsSharable = isSharable;
             return mediaPathType;
@@ -2659,6 +2905,52 @@ namespace Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models
         private int _Id;
         partial void OnIdChanging(int value);
         partial void OnIdChanged();
+        /// <summary>
+        /// There are no comments for Property MediaPathTypeCategoryId in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        [global::Microsoft.OData.Client.OriginalNameAttribute("MediaPathTypeCategoryId")]
+        public global::System.Nullable<int> MediaPathTypeCategoryId
+        {
+            get
+            {
+                return this._MediaPathTypeCategoryId;
+            }
+            set
+            {
+                this.OnMediaPathTypeCategoryIdChanging(value);
+                this._MediaPathTypeCategoryId = value;
+                this.OnMediaPathTypeCategoryIdChanged();
+                this.OnPropertyChanged("MediaPathTypeCategoryId");
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private global::System.Nullable<int> _MediaPathTypeCategoryId;
+        partial void OnMediaPathTypeCategoryIdChanging(global::System.Nullable<int> value);
+        partial void OnMediaPathTypeCategoryIdChanged();
+        /// <summary>
+        /// There are no comments for Property ResponseTypeId in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        [global::Microsoft.OData.Client.OriginalNameAttribute("ResponseTypeId")]
+        public int ResponseTypeId
+        {
+            get
+            {
+                return this._ResponseTypeId;
+            }
+            set
+            {
+                this.OnResponseTypeIdChanging(value);
+                this._ResponseTypeId = value;
+                this.OnResponseTypeIdChanged();
+                this.OnPropertyChanged("ResponseTypeId");
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private int _ResponseTypeId;
+        partial void OnResponseTypeIdChanging(int value);
+        partial void OnResponseTypeIdChanged();
         /// <summary>
         /// There are no comments for Property Path in the schema.
         /// </summary>
@@ -2729,28 +3021,97 @@ namespace Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models
         partial void OnShortDescriptionChanging(string value);
         partial void OnShortDescriptionChanged();
         /// <summary>
-        /// There are no comments for Property IsPreviewable in the schema.
+        /// There are no comments for Property AllowedExts in the schema.
         /// </summary>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        [global::Microsoft.OData.Client.OriginalNameAttribute("IsPreviewable")]
-        public bool IsPreviewable
+        [global::Microsoft.OData.Client.OriginalNameAttribute("AllowedExts")]
+        public string AllowedExts
         {
             get
             {
-                return this._IsPreviewable;
+                return this._AllowedExts;
             }
             set
             {
-                this.OnIsPreviewableChanging(value);
-                this._IsPreviewable = value;
-                this.OnIsPreviewableChanged();
-                this.OnPropertyChanged("IsPreviewable");
+                this.OnAllowedExtsChanging(value);
+                this._AllowedExts = value;
+                this.OnAllowedExtsChanged();
+                this.OnPropertyChanged("AllowedExts");
             }
         }
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private bool _IsPreviewable;
-        partial void OnIsPreviewableChanging(bool value);
-        partial void OnIsPreviewableChanged();
+        private string _AllowedExts;
+        partial void OnAllowedExtsChanging(string value);
+        partial void OnAllowedExtsChanged();
+        /// <summary>
+        /// There are no comments for Property AllowedTypes in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        [global::Microsoft.OData.Client.OriginalNameAttribute("AllowedTypes")]
+        public string AllowedTypes
+        {
+            get
+            {
+                return this._AllowedTypes;
+            }
+            set
+            {
+                this.OnAllowedTypesChanging(value);
+                this._AllowedTypes = value;
+                this.OnAllowedTypesChanged();
+                this.OnPropertyChanged("AllowedTypes");
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private string _AllowedTypes;
+        partial void OnAllowedTypesChanging(string value);
+        partial void OnAllowedTypesChanged();
+        /// <summary>
+        /// There are no comments for Property MaxFileBytes in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        [global::Microsoft.OData.Client.OriginalNameAttribute("MaxFileBytes")]
+        public long MaxFileBytes
+        {
+            get
+            {
+                return this._MaxFileBytes;
+            }
+            set
+            {
+                this.OnMaxFileBytesChanging(value);
+                this._MaxFileBytes = value;
+                this.OnMaxFileBytesChanged();
+                this.OnPropertyChanged("MaxFileBytes");
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private long _MaxFileBytes;
+        partial void OnMaxFileBytesChanging(long value);
+        partial void OnMaxFileBytesChanged();
+        /// <summary>
+        /// There are no comments for Property MaxFileUploads in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        [global::Microsoft.OData.Client.OriginalNameAttribute("MaxFileUploads")]
+        public int MaxFileUploads
+        {
+            get
+            {
+                return this._MaxFileUploads;
+            }
+            set
+            {
+                this.OnMaxFileUploadsChanging(value);
+                this._MaxFileUploads = value;
+                this.OnMaxFileUploadsChanged();
+                this.OnPropertyChanged("MaxFileUploads");
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private int _MaxFileUploads;
+        partial void OnMaxFileUploadsChanging(int value);
+        partial void OnMaxFileUploadsChanged();
         /// <summary>
         /// There are no comments for Property IsSystem in the schema.
         /// </summary>
@@ -2797,6 +3158,141 @@ namespace Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models
         private bool _IsSharable;
         partial void OnIsSharableChanging(bool value);
         partial void OnIsSharableChanged();
+        /// <summary>
+        /// There are no comments for Property MediaPathTypeCategory in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        [global::Microsoft.OData.Client.OriginalNameAttribute("MediaPathTypeCategory")]
+        public global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.MediaPathTypeCategory MediaPathTypeCategory
+        {
+            get
+            {
+                return this._MediaPathTypeCategory;
+            }
+            set
+            {
+                this.OnMediaPathTypeCategoryChanging(value);
+                this._MediaPathTypeCategory = value;
+                this.OnMediaPathTypeCategoryChanged();
+                this.OnPropertyChanged("MediaPathTypeCategory");
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.MediaPathTypeCategory _MediaPathTypeCategory;
+        partial void OnMediaPathTypeCategoryChanging(global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.MediaPathTypeCategory value);
+        partial void OnMediaPathTypeCategoryChanged();
+        /// <summary>
+        /// This event is raised when the value of the property is changed
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        public event global::System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        /// <summary>
+        /// The value of the property is changed
+        /// </summary>
+        /// <param name="property">property name</param>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        protected virtual void OnPropertyChanged(string property)
+        {
+            if ((this.PropertyChanged != null))
+            {
+                this.PropertyChanged(this, new global::System.ComponentModel.PropertyChangedEventArgs(property));
+            }
+        }
+    }
+    /// <summary>
+    /// There are no comments for MediaPathTypeCategorySingle in the schema.
+    /// </summary>
+    [global::Microsoft.OData.Client.OriginalNameAttribute("MediaPathTypeCategorySingle")]
+    public partial class MediaPathTypeCategorySingle : global::Microsoft.OData.Client.DataServiceQuerySingle<MediaPathTypeCategory>
+    {
+        /// <summary>
+        /// Initialize a new MediaPathTypeCategorySingle object.
+        /// </summary>
+        public MediaPathTypeCategorySingle(global::Microsoft.OData.Client.DataServiceContext context, string path)
+            : base(context, path) {}
+
+        /// <summary>
+        /// Initialize a new MediaPathTypeCategorySingle object.
+        /// </summary>
+        public MediaPathTypeCategorySingle(global::Microsoft.OData.Client.DataServiceContext context, string path, bool isComposable)
+            : base(context, path, isComposable) {}
+
+        /// <summary>
+        /// Initialize a new MediaPathTypeCategorySingle object.
+        /// </summary>
+        public MediaPathTypeCategorySingle(global::Microsoft.OData.Client.DataServiceQuerySingle<MediaPathTypeCategory> query)
+            : base(query) {}
+
+    }
+    /// <summary>
+    /// There are no comments for MediaPathTypeCategory in the schema.
+    /// </summary>
+    /// <KeyProperties>
+    /// Id
+    /// </KeyProperties>
+    [global::Microsoft.OData.Client.Key("Id")]
+    [global::Microsoft.OData.Client.OriginalNameAttribute("MediaPathTypeCategory")]
+    public partial class MediaPathTypeCategory : global::Microsoft.OData.Client.BaseEntityType, global::System.ComponentModel.INotifyPropertyChanged
+    {
+        /// <summary>
+        /// Create a new MediaPathTypeCategory object.
+        /// </summary>
+        /// <param name="ID">Initial value of Id.</param>
+        /// <param name="description">Initial value of Description.</param>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        public static MediaPathTypeCategory CreateMediaPathTypeCategory(int ID, string description)
+        {
+            MediaPathTypeCategory mediaPathTypeCategory = new MediaPathTypeCategory();
+            mediaPathTypeCategory.Id = ID;
+            mediaPathTypeCategory.Description = description;
+            return mediaPathTypeCategory;
+        }
+        /// <summary>
+        /// There are no comments for Property Id in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        [global::Microsoft.OData.Client.OriginalNameAttribute("Id")]
+        public int Id
+        {
+            get
+            {
+                return this._Id;
+            }
+            set
+            {
+                this.OnIdChanging(value);
+                this._Id = value;
+                this.OnIdChanged();
+                this.OnPropertyChanged("Id");
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private int _Id;
+        partial void OnIdChanging(int value);
+        partial void OnIdChanged();
+        /// <summary>
+        /// There are no comments for Property Description in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        [global::Microsoft.OData.Client.OriginalNameAttribute("Description")]
+        public string Description
+        {
+            get
+            {
+                return this._Description;
+            }
+            set
+            {
+                this.OnDescriptionChanging(value);
+                this._Description = value;
+                this.OnDescriptionChanged();
+                this.OnPropertyChanged("Description");
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private string _Description;
+        partial void OnDescriptionChanging(string value);
+        partial void OnDescriptionChanged();
         /// <summary>
         /// This event is raised when the value of the property is changed
         /// </summary>
@@ -2943,12 +3439,14 @@ namespace Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models
         /// </summary>
         /// <param name="ID">Initial value of Id.</param>
         /// <param name="isLinked">Initial value of IsLinked.</param>
+        /// <param name="dateAdded">Initial value of DateAdded.</param>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        public static ResidentMediaFile CreateResidentMediaFile(int ID, bool isLinked)
+        public static ResidentMediaFile CreateResidentMediaFile(int ID, bool isLinked, global::System.DateTimeOffset dateAdded)
         {
             ResidentMediaFile residentMediaFile = new ResidentMediaFile();
             residentMediaFile.Id = ID;
             residentMediaFile.IsLinked = isLinked;
+            residentMediaFile.DateAdded = dateAdded;
             return residentMediaFile;
         }
         /// <summary>
@@ -3089,6 +3587,29 @@ namespace Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models
         private global::System.Nullable<int> _MediaPathTypeId;
         partial void OnMediaPathTypeIdChanging(global::System.Nullable<int> value);
         partial void OnMediaPathTypeIdChanged();
+        /// <summary>
+        /// There are no comments for Property DateAdded in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        [global::Microsoft.OData.Client.OriginalNameAttribute("DateAdded")]
+        public global::System.DateTimeOffset DateAdded
+        {
+            get
+            {
+                return this._DateAdded;
+            }
+            set
+            {
+                this.OnDateAddedChanging(value);
+                this._DateAdded = value;
+                this.OnDateAddedChanged();
+                this.OnPropertyChanged("DateAdded");
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private global::System.DateTimeOffset _DateAdded;
+        partial void OnDateAddedChanging(global::System.DateTimeOffset value);
+        partial void OnDateAddedChanged();
         /// <summary>
         /// There are no comments for Property Resident in the schema.
         /// </summary>
@@ -3305,12 +3826,14 @@ namespace Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models
         /// </summary>
         /// <param name="ID">Initial value of Id.</param>
         /// <param name="isLinked">Initial value of IsLinked.</param>
+        /// <param name="dateAdded">Initial value of DateAdded.</param>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        public static PublicMediaFile CreatePublicMediaFile(int ID, bool isLinked)
+        public static PublicMediaFile CreatePublicMediaFile(int ID, bool isLinked, global::System.DateTimeOffset dateAdded)
         {
             PublicMediaFile publicMediaFile = new PublicMediaFile();
             publicMediaFile.Id = ID;
             publicMediaFile.IsLinked = isLinked;
+            publicMediaFile.DateAdded = dateAdded;
             return publicMediaFile;
         }
         /// <summary>
@@ -3428,6 +3951,29 @@ namespace Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models
         private global::System.Nullable<int> _MediaPathTypeId;
         partial void OnMediaPathTypeIdChanging(global::System.Nullable<int> value);
         partial void OnMediaPathTypeIdChanged();
+        /// <summary>
+        /// There are no comments for Property DateAdded in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        [global::Microsoft.OData.Client.OriginalNameAttribute("DateAdded")]
+        public global::System.DateTimeOffset DateAdded
+        {
+            get
+            {
+                return this._DateAdded;
+            }
+            set
+            {
+                this.OnDateAddedChanging(value);
+                this._DateAdded = value;
+                this.OnDateAddedChanged();
+                this.OnPropertyChanged("DateAdded");
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private global::System.DateTimeOffset _DateAdded;
+        partial void OnDateAddedChanging(global::System.DateTimeOffset value);
+        partial void OnDateAddedChanged();
         /// <summary>
         /// There are no comments for Property MediaFile in the schema.
         /// </summary>
@@ -3786,6 +4332,29 @@ namespace Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models
         partial void OnDateUpdatedChanging(global::System.DateTimeOffset value);
         partial void OnDateUpdatedChanged();
         /// <summary>
+        /// There are no comments for Property ProfilePicture in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        [global::Microsoft.OData.Client.OriginalNameAttribute("ProfilePicture")]
+        public byte[] ProfilePicture
+        {
+            get
+            {
+                return this._ProfilePicture;
+            }
+            set
+            {
+                this.OnProfilePictureChanging(value);
+                this._ProfilePicture = value;
+                this.OnProfilePictureChanged();
+                this.OnPropertyChanged("ProfilePicture");
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private byte[] _ProfilePicture;
+        partial void OnProfilePictureChanging(byte[] value);
+        partial void OnProfilePictureChanged();
+        /// <summary>
         /// There are no comments for Property MediaFiles in the schema.
         /// </summary>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
@@ -3963,6 +4532,141 @@ namespace Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models
         private global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.Resident _Resident;
         partial void OnResidentChanging(global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.Resident value);
         partial void OnResidentChanged();
+        /// <summary>
+        /// This event is raised when the value of the property is changed
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        public event global::System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        /// <summary>
+        /// The value of the property is changed
+        /// </summary>
+        /// <param name="property">property name</param>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        protected virtual void OnPropertyChanged(string property)
+        {
+            if ((this.PropertyChanged != null))
+            {
+                this.PropertyChanged(this, new global::System.ComponentModel.PropertyChangedEventArgs(property));
+            }
+        }
+    }
+    /// <summary>
+    /// There are no comments for AmbientInvitationSingle in the schema.
+    /// </summary>
+    [global::Microsoft.OData.Client.OriginalNameAttribute("AmbientInvitationSingle")]
+    public partial class AmbientInvitationSingle : global::Microsoft.OData.Client.DataServiceQuerySingle<AmbientInvitation>
+    {
+        /// <summary>
+        /// Initialize a new AmbientInvitationSingle object.
+        /// </summary>
+        public AmbientInvitationSingle(global::Microsoft.OData.Client.DataServiceContext context, string path)
+            : base(context, path) {}
+
+        /// <summary>
+        /// Initialize a new AmbientInvitationSingle object.
+        /// </summary>
+        public AmbientInvitationSingle(global::Microsoft.OData.Client.DataServiceContext context, string path, bool isComposable)
+            : base(context, path, isComposable) {}
+
+        /// <summary>
+        /// Initialize a new AmbientInvitationSingle object.
+        /// </summary>
+        public AmbientInvitationSingle(global::Microsoft.OData.Client.DataServiceQuerySingle<AmbientInvitation> query)
+            : base(query) {}
+
+    }
+    /// <summary>
+    /// There are no comments for AmbientInvitation in the schema.
+    /// </summary>
+    /// <KeyProperties>
+    /// Id
+    /// </KeyProperties>
+    [global::Microsoft.OData.Client.Key("Id")]
+    [global::Microsoft.OData.Client.OriginalNameAttribute("AmbientInvitation")]
+    public partial class AmbientInvitation : global::Microsoft.OData.Client.BaseEntityType, global::System.ComponentModel.INotifyPropertyChanged
+    {
+        /// <summary>
+        /// Create a new AmbientInvitation object.
+        /// </summary>
+        /// <param name="ID">Initial value of Id.</param>
+        /// <param name="isExecuteRandom">Initial value of IsExecuteRandom.</param>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        public static AmbientInvitation CreateAmbientInvitation(int ID, bool isExecuteRandom)
+        {
+            AmbientInvitation ambientInvitation = new AmbientInvitation();
+            ambientInvitation.Id = ID;
+            ambientInvitation.IsExecuteRandom = isExecuteRandom;
+            return ambientInvitation;
+        }
+        /// <summary>
+        /// There are no comments for Property Id in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        [global::Microsoft.OData.Client.OriginalNameAttribute("Id")]
+        public int Id
+        {
+            get
+            {
+                return this._Id;
+            }
+            set
+            {
+                this.OnIdChanging(value);
+                this._Id = value;
+                this.OnIdChanged();
+                this.OnPropertyChanged("Id");
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private int _Id;
+        partial void OnIdChanging(int value);
+        partial void OnIdChanged();
+        /// <summary>
+        /// There are no comments for Property Message in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        [global::Microsoft.OData.Client.OriginalNameAttribute("Message")]
+        public string Message
+        {
+            get
+            {
+                return this._Message;
+            }
+            set
+            {
+                this.OnMessageChanging(value);
+                this._Message = value;
+                this.OnMessageChanged();
+                this.OnPropertyChanged("Message");
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private string _Message;
+        partial void OnMessageChanging(string value);
+        partial void OnMessageChanged();
+        /// <summary>
+        /// There are no comments for Property IsExecuteRandom in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        [global::Microsoft.OData.Client.OriginalNameAttribute("IsExecuteRandom")]
+        public bool IsExecuteRandom
+        {
+            get
+            {
+                return this._IsExecuteRandom;
+            }
+            set
+            {
+                this.OnIsExecuteRandomChanging(value);
+                this._IsExecuteRandom = value;
+                this.OnIsExecuteRandomChanged();
+                this.OnPropertyChanged("IsExecuteRandom");
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private bool _IsExecuteRandom;
+        partial void OnIsExecuteRandomChanging(bool value);
+        partial void OnIsExecuteRandomChanged();
         /// <summary>
         /// This event is raised when the value of the property is changed
         /// </summary>
@@ -4735,6 +5439,29 @@ namespace Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models
             return new global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.MediaFileStreamSingle(source.Context, source.GetKeyPath(global::Microsoft.OData.Client.Serializer.GetKeyString(source.Context, keys)));
         }
         /// <summary>
+        /// Get an entity of type global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.Thumbnail as global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.ThumbnailSingle specified by key from an entity set
+        /// </summary>
+        /// <param name="source">source entity set</param>
+        /// <param name="keys">dictionary with the names and values of keys</param>
+        public static global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.ThumbnailSingle ByKey(this global::Microsoft.OData.Client.DataServiceQuery<global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.Thumbnail> source, global::System.Collections.Generic.Dictionary<string, object> keys)
+        {
+            return new global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.ThumbnailSingle(source.Context, source.GetKeyPath(global::Microsoft.OData.Client.Serializer.GetKeyString(source.Context, keys)));
+        }
+        /// <summary>
+        /// Get an entity of type global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.Thumbnail as global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.ThumbnailSingle specified by key from an entity set
+        /// </summary>
+        /// <param name="source">source entity set</param>
+        /// <param name="streamId">The value of streamId</param>
+        public static global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.ThumbnailSingle ByKey(this global::Microsoft.OData.Client.DataServiceQuery<global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.Thumbnail> source,
+            global::System.Guid streamId)
+        {
+            global::System.Collections.Generic.Dictionary<string, object> keys = new global::System.Collections.Generic.Dictionary<string, object>
+            {
+                { "StreamId", streamId }
+            };
+            return new global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.ThumbnailSingle(source.Context, source.GetKeyPath(global::Microsoft.OData.Client.Serializer.GetKeyString(source.Context, keys)));
+        }
+        /// <summary>
         /// Get an entity of type global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.MediaPathType as global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.MediaPathTypeSingle specified by key from an entity set
         /// </summary>
         /// <param name="source">source entity set</param>
@@ -4756,6 +5483,29 @@ namespace Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models
                 { "Id", id }
             };
             return new global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.MediaPathTypeSingle(source.Context, source.GetKeyPath(global::Microsoft.OData.Client.Serializer.GetKeyString(source.Context, keys)));
+        }
+        /// <summary>
+        /// Get an entity of type global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.MediaPathTypeCategory as global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.MediaPathTypeCategorySingle specified by key from an entity set
+        /// </summary>
+        /// <param name="source">source entity set</param>
+        /// <param name="keys">dictionary with the names and values of keys</param>
+        public static global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.MediaPathTypeCategorySingle ByKey(this global::Microsoft.OData.Client.DataServiceQuery<global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.MediaPathTypeCategory> source, global::System.Collections.Generic.Dictionary<string, object> keys)
+        {
+            return new global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.MediaPathTypeCategorySingle(source.Context, source.GetKeyPath(global::Microsoft.OData.Client.Serializer.GetKeyString(source.Context, keys)));
+        }
+        /// <summary>
+        /// Get an entity of type global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.MediaPathTypeCategory as global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.MediaPathTypeCategorySingle specified by key from an entity set
+        /// </summary>
+        /// <param name="source">source entity set</param>
+        /// <param name="id">The value of id</param>
+        public static global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.MediaPathTypeCategorySingle ByKey(this global::Microsoft.OData.Client.DataServiceQuery<global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.MediaPathTypeCategory> source,
+            int id)
+        {
+            global::System.Collections.Generic.Dictionary<string, object> keys = new global::System.Collections.Generic.Dictionary<string, object>
+            {
+                { "Id", id }
+            };
+            return new global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.MediaPathTypeCategorySingle(source.Context, source.GetKeyPath(global::Microsoft.OData.Client.Serializer.GetKeyString(source.Context, keys)));
         }
         /// <summary>
         /// Get an entity of type global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.ResidentMediaFile as global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.ResidentMediaFileSingle specified by key from an entity set
@@ -4848,6 +5598,29 @@ namespace Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models
                 { "Id", id }
             };
             return new global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.ActiveResidentSingle(source.Context, source.GetKeyPath(global::Microsoft.OData.Client.Serializer.GetKeyString(source.Context, keys)));
+        }
+        /// <summary>
+        /// Get an entity of type global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.AmbientInvitation as global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.AmbientInvitationSingle specified by key from an entity set
+        /// </summary>
+        /// <param name="source">source entity set</param>
+        /// <param name="keys">dictionary with the names and values of keys</param>
+        public static global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.AmbientInvitationSingle ByKey(this global::Microsoft.OData.Client.DataServiceQuery<global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.AmbientInvitation> source, global::System.Collections.Generic.Dictionary<string, object> keys)
+        {
+            return new global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.AmbientInvitationSingle(source.Context, source.GetKeyPath(global::Microsoft.OData.Client.Serializer.GetKeyString(source.Context, keys)));
+        }
+        /// <summary>
+        /// Get an entity of type global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.AmbientInvitation as global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.AmbientInvitationSingle specified by key from an entity set
+        /// </summary>
+        /// <param name="source">source entity set</param>
+        /// <param name="id">The value of id</param>
+        public static global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.AmbientInvitationSingle ByKey(this global::Microsoft.OData.Client.DataServiceQuery<global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.AmbientInvitation> source,
+            int id)
+        {
+            global::System.Collections.Generic.Dictionary<string, object> keys = new global::System.Collections.Generic.Dictionary<string, object>
+            {
+                { "Id", id }
+            };
+            return new global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.AmbientInvitationSingle(source.Context, source.GetKeyPath(global::Microsoft.OData.Client.Serializer.GetKeyString(source.Context, keys)));
         }
         /// <summary>
         /// Get an entity of type global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.User as global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.UserSingle specified by key from an entity set
@@ -5206,6 +5979,24 @@ namespace Keebee.AAT.DataAccess.Tests.KeebeeAAT
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
         private global::Microsoft.OData.Client.DataServiceQuery<global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.MediaFileStream> _MediaFileStreams;
         /// <summary>
+        /// There are no comments for Thumbnails in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        [global::Microsoft.OData.Client.OriginalNameAttribute("Thumbnails")]
+        public global::Microsoft.OData.Client.DataServiceQuery<global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.Thumbnail> Thumbnails
+        {
+            get
+            {
+                if ((this._Thumbnails == null))
+                {
+                    this._Thumbnails = base.CreateQuery<global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.Thumbnail>("Thumbnails");
+                }
+                return this._Thumbnails;
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private global::Microsoft.OData.Client.DataServiceQuery<global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.Thumbnail> _Thumbnails;
+        /// <summary>
         /// There are no comments for MediaPathTypes in the schema.
         /// </summary>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
@@ -5223,6 +6014,24 @@ namespace Keebee.AAT.DataAccess.Tests.KeebeeAAT
         }
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
         private global::Microsoft.OData.Client.DataServiceQuery<global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.MediaPathType> _MediaPathTypes;
+        /// <summary>
+        /// There are no comments for MediaPathTypeCategories in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        [global::Microsoft.OData.Client.OriginalNameAttribute("MediaPathTypeCategories")]
+        public global::Microsoft.OData.Client.DataServiceQuery<global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.MediaPathTypeCategory> MediaPathTypeCategories
+        {
+            get
+            {
+                if ((this._MediaPathTypeCategories == null))
+                {
+                    this._MediaPathTypeCategories = base.CreateQuery<global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.MediaPathTypeCategory>("MediaPathTypeCategories");
+                }
+                return this._MediaPathTypeCategories;
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private global::Microsoft.OData.Client.DataServiceQuery<global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.MediaPathTypeCategory> _MediaPathTypeCategories;
         /// <summary>
         /// There are no comments for ResidentMediaFiles in the schema.
         /// </summary>
@@ -5295,6 +6104,24 @@ namespace Keebee.AAT.DataAccess.Tests.KeebeeAAT
         }
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
         private global::Microsoft.OData.Client.DataServiceQuery<global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.ActiveResident> _ActiveResidents;
+        /// <summary>
+        /// There are no comments for AmbientInvitations in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        [global::Microsoft.OData.Client.OriginalNameAttribute("AmbientInvitations")]
+        public global::Microsoft.OData.Client.DataServiceQuery<global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.AmbientInvitation> AmbientInvitations
+        {
+            get
+            {
+                if ((this._AmbientInvitations == null))
+                {
+                    this._AmbientInvitations = base.CreateQuery<global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.AmbientInvitation>("AmbientInvitations");
+                }
+                return this._AmbientInvitations;
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private global::Microsoft.OData.Client.DataServiceQuery<global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.AmbientInvitation> _AmbientInvitations;
         /// <summary>
         /// There are no comments for Users in the schema.
         /// </summary>
@@ -5446,12 +6273,28 @@ namespace Keebee.AAT.DataAccess.Tests.KeebeeAAT
             base.AddObject("MediaFileStreams", mediaFileStream);
         }
         /// <summary>
+        /// There are no comments for Thumbnails in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        public void AddToThumbnails(global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.Thumbnail thumbnail)
+        {
+            base.AddObject("Thumbnails", thumbnail);
+        }
+        /// <summary>
         /// There are no comments for MediaPathTypes in the schema.
         /// </summary>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
         public void AddToMediaPathTypes(global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.MediaPathType mediaPathType)
         {
             base.AddObject("MediaPathTypes", mediaPathType);
+        }
+        /// <summary>
+        /// There are no comments for MediaPathTypeCategories in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        public void AddToMediaPathTypeCategories(global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.MediaPathTypeCategory mediaPathTypeCategory)
+        {
+            base.AddObject("MediaPathTypeCategories", mediaPathTypeCategory);
         }
         /// <summary>
         /// There are no comments for ResidentMediaFiles in the schema.
@@ -5484,6 +6327,14 @@ namespace Keebee.AAT.DataAccess.Tests.KeebeeAAT
         public void AddToActiveResidents(global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.ActiveResident activeResident)
         {
             base.AddObject("ActiveResidents", activeResident);
+        }
+        /// <summary>
+        /// There are no comments for AmbientInvitations in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        public void AddToAmbientInvitations(global::Keebee.AAT.DataAccess.Tests.Keebee.AAT.DataAccess.Models.AmbientInvitation ambientInvitation)
+        {
+            base.AddObject("AmbientInvitations", ambientInvitation);
         }
         /// <summary>
         /// There are no comments for Users in the schema.
@@ -5558,6 +6409,7 @@ namespace Keebee.AAT.DataAccess.Tests.KeebeeAAT
         </Key>
         <Property Name=""Id"" Type=""Edm.Int32"" Nullable=""false"" />
         <Property Name=""Description"" Type=""Edm.String"" Nullable=""false"" />
+        <Property Name=""IsIncremental"" Type=""Edm.Boolean"" Nullable=""false"" />
       </EntityType>
       <EntityType Name=""PhidgetType"">
         <Key>
@@ -5574,7 +6426,9 @@ namespace Keebee.AAT.DataAccess.Tests.KeebeeAAT
         <Property Name=""ResponseTypeCategoryId"" Type=""Edm.Int32"" />
         <Property Name=""Description"" Type=""Edm.String"" Nullable=""false"" />
         <Property Name=""InteractiveActivityTypeId"" Type=""Edm.Int32"" />
-        <Property Name=""IsSystem"" Type=""Edm.Boolean"" Nullable=""false"" />
+        <Property Name=""IsRandom"" Type=""Edm.Boolean"" Nullable=""false"" />
+        <Property Name=""IsRotational"" Type=""Edm.Boolean"" Nullable=""false"" />
+        <Property Name=""IsUninterrupted"" Type=""Edm.Boolean"" Nullable=""false"" />
         <NavigationProperty Name=""ResponseTypeCategory"" Type=""Keebee.AAT.DataAccess.Models.ResponseTypeCategory"">
           <ReferentialConstraint Property=""ResponseTypeCategoryId"" ReferencedProperty=""Id"" />
         </NavigationProperty>
@@ -5595,6 +6449,7 @@ namespace Keebee.AAT.DataAccess.Tests.KeebeeAAT
         </Key>
         <Property Name=""Id"" Type=""Edm.Int32"" Nullable=""false"" />
         <Property Name=""Description"" Type=""Edm.String"" Nullable=""false"" />
+        <Property Name=""SwfFile"" Type=""Edm.String"" Nullable=""false"" />
       </EntityType>
       <EntityType Name=""ActivityEventLog"">
         <Key>
@@ -5665,17 +6520,39 @@ namespace Keebee.AAT.DataAccess.Tests.KeebeeAAT
         <Property Name=""Path"" Type=""Edm.String"" />
         <Property Name=""Stream"" Type=""Edm.Binary"" />
       </EntityType>
+      <EntityType Name=""Thumbnail"">
+        <Key>
+          <PropertyRef Name=""StreamId"" />
+        </Key>
+        <Property Name=""StreamId"" Type=""Edm.Guid"" Nullable=""false"" />
+        <Property Name=""Image"" Type=""Edm.Binary"" Nullable=""false"" />
+      </EntityType>
       <EntityType Name=""MediaPathType"">
         <Key>
           <PropertyRef Name=""Id"" />
         </Key>
         <Property Name=""Id"" Type=""Edm.Int32"" Nullable=""false"" />
+        <Property Name=""MediaPathTypeCategoryId"" Type=""Edm.Int32"" />
+        <Property Name=""ResponseTypeId"" Type=""Edm.Int32"" Nullable=""false"" />
         <Property Name=""Path"" Type=""Edm.String"" Nullable=""false"" />
         <Property Name=""Description"" Type=""Edm.String"" Nullable=""false"" />
         <Property Name=""ShortDescription"" Type=""Edm.String"" Nullable=""false"" />
-        <Property Name=""IsPreviewable"" Type=""Edm.Boolean"" Nullable=""false"" />
+        <Property Name=""AllowedExts"" Type=""Edm.String"" Nullable=""false"" />
+        <Property Name=""AllowedTypes"" Type=""Edm.String"" Nullable=""false"" />
+        <Property Name=""MaxFileBytes"" Type=""Edm.Int64"" Nullable=""false"" />
+        <Property Name=""MaxFileUploads"" Type=""Edm.Int32"" Nullable=""false"" />
         <Property Name=""IsSystem"" Type=""Edm.Boolean"" Nullable=""false"" />
         <Property Name=""IsSharable"" Type=""Edm.Boolean"" Nullable=""false"" />
+        <NavigationProperty Name=""MediaPathTypeCategory"" Type=""Keebee.AAT.DataAccess.Models.MediaPathTypeCategory"">
+          <ReferentialConstraint Property=""MediaPathTypeCategoryId"" ReferencedProperty=""Id"" />
+        </NavigationProperty>
+      </EntityType>
+      <EntityType Name=""MediaPathTypeCategory"">
+        <Key>
+          <PropertyRef Name=""Id"" />
+        </Key>
+        <Property Name=""Id"" Type=""Edm.Int32"" Nullable=""false"" />
+        <Property Name=""Description"" Type=""Edm.String"" Nullable=""false"" />
       </EntityType>
       <EntityType Name=""ResidentMediaFile"">
         <Key>
@@ -5687,6 +6564,7 @@ namespace Keebee.AAT.DataAccess.Tests.KeebeeAAT
         <Property Name=""StreamId"" Type=""Edm.Guid"" />
         <Property Name=""ResponseTypeId"" Type=""Edm.Int32"" />
         <Property Name=""MediaPathTypeId"" Type=""Edm.Int32"" />
+        <Property Name=""DateAdded"" Type=""Edm.DateTimeOffset"" Nullable=""false"" />
         <NavigationProperty Name=""Resident"" Type=""Keebee.AAT.DataAccess.Models.Resident"">
           <ReferentialConstraint Property=""ResidentId"" ReferencedProperty=""Id"" />
         </NavigationProperty>
@@ -5709,6 +6587,7 @@ namespace Keebee.AAT.DataAccess.Tests.KeebeeAAT
         <Property Name=""StreamId"" Type=""Edm.Guid"" />
         <Property Name=""ResponseTypeId"" Type=""Edm.Int32"" />
         <Property Name=""MediaPathTypeId"" Type=""Edm.Int32"" />
+        <Property Name=""DateAdded"" Type=""Edm.DateTimeOffset"" Nullable=""false"" />
         <NavigationProperty Name=""MediaFile"" Type=""Keebee.AAT.DataAccess.Models.MediaFile"">
           <ReferentialConstraint Property=""StreamId"" ReferencedProperty=""StreamId"" />
         </NavigationProperty>
@@ -5731,6 +6610,7 @@ namespace Keebee.AAT.DataAccess.Tests.KeebeeAAT
         <Property Name=""AllowVideoCapturing"" Type=""Edm.Boolean"" Nullable=""false"" />
         <Property Name=""DateCreated"" Type=""Edm.DateTimeOffset"" Nullable=""false"" />
         <Property Name=""DateUpdated"" Type=""Edm.DateTimeOffset"" Nullable=""false"" />
+        <Property Name=""ProfilePicture"" Type=""Edm.Binary"" />
         <NavigationProperty Name=""MediaFiles"" Type=""Collection(Keebee.AAT.DataAccess.Models.ResidentMediaFile)"" />
       </EntityType>
       <EntityType Name=""ActiveResident"">
@@ -5742,6 +6622,14 @@ namespace Keebee.AAT.DataAccess.Tests.KeebeeAAT
         <NavigationProperty Name=""Resident"" Type=""Keebee.AAT.DataAccess.Models.Resident"">
           <ReferentialConstraint Property=""ResidentId"" ReferencedProperty=""Id"" />
         </NavigationProperty>
+      </EntityType>
+      <EntityType Name=""AmbientInvitation"">
+        <Key>
+          <PropertyRef Name=""Id"" />
+        </Key>
+        <Property Name=""Id"" Type=""Edm.Int32"" Nullable=""false"" />
+        <Property Name=""Message"" Type=""Edm.String"" />
+        <Property Name=""IsExecuteRandom"" Type=""Edm.Boolean"" Nullable=""false"" />
       </EntityType>
       <EntityType Name=""User"">
         <Key>
@@ -5805,7 +6693,11 @@ namespace Keebee.AAT.DataAccess.Tests.KeebeeAAT
         </EntitySet>
         <EntitySet Name=""MediaFiles"" EntityType=""Keebee.AAT.DataAccess.Models.MediaFile"" />
         <EntitySet Name=""MediaFileStreams"" EntityType=""Keebee.AAT.DataAccess.Models.MediaFileStream"" />
-        <EntitySet Name=""MediaPathTypes"" EntityType=""Keebee.AAT.DataAccess.Models.MediaPathType"" />
+        <EntitySet Name=""Thumbnails"" EntityType=""Keebee.AAT.DataAccess.Models.Thumbnail"" />
+        <EntitySet Name=""MediaPathTypes"" EntityType=""Keebee.AAT.DataAccess.Models.MediaPathType"">
+          <NavigationPropertyBinding Path=""MediaPathTypeCategory"" Target=""MediaPathTypeCategories"" />
+        </EntitySet>
+        <EntitySet Name=""MediaPathTypeCategories"" EntityType=""Keebee.AAT.DataAccess.Models.MediaPathTypeCategory"" />
         <EntitySet Name=""ResidentMediaFiles"" EntityType=""Keebee.AAT.DataAccess.Models.ResidentMediaFile"">
           <NavigationPropertyBinding Path=""Resident"" Target=""Residents"" />
           <NavigationPropertyBinding Path=""MediaFile"" Target=""MediaFiles"" />
@@ -5823,6 +6715,7 @@ namespace Keebee.AAT.DataAccess.Tests.KeebeeAAT
         <EntitySet Name=""ActiveResidents"" EntityType=""Keebee.AAT.DataAccess.Models.ActiveResident"">
           <NavigationPropertyBinding Path=""Resident"" Target=""Residents"" />
         </EntitySet>
+        <EntitySet Name=""AmbientInvitations"" EntityType=""Keebee.AAT.DataAccess.Models.AmbientInvitation"" />
         <EntitySet Name=""Users"" EntityType=""Keebee.AAT.DataAccess.Models.User"" />
         <EntitySet Name=""Roles"" EntityType=""Keebee.AAT.DataAccess.Models.Role"" />
         <EntitySet Name=""UserRoles"" EntityType=""Keebee.AAT.DataAccess.Models.UserRole"">

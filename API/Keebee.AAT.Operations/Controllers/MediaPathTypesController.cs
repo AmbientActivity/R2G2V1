@@ -37,10 +37,15 @@ namespace Keebee.AAT.Operations.Controllers
                 .Select(x => new
                 {
                     x.Id,
+                    Category = x.MediaPathTypeCategory.Description,
+                    x.ResponseTypeId,
                     x.Path,
                     x.Description,
                     x.ShortDescription,
-                    x.IsPreviewable,
+                    x.AllowedExts,
+                    x.AllowedTypes,
+                    x.MaxFileBytes,
+                    x.MaxFileUploads,
                     x.IsSystem,
                     x.IsSharable
                 }).ToArray();
@@ -65,10 +70,15 @@ namespace Keebee.AAT.Operations.Controllers
             dynamic exObj = new ExpandoObject();
 
             exObj.Id = mediaPathType.Id;
+            exObj.Category = mediaPathType.MediaPathTypeCategory.Description;
+            exObj.ResponseTypeId = mediaPathType.ResponseTypeId;
             exObj.Path = mediaPathType.Path;
             exObj.Description = mediaPathType.Description;
             exObj.ShortDescription = mediaPathType.ShortDescription;
-            exObj.IsSystem = mediaPathType.IsPreviewable;
+            exObj.AllowedExts = mediaPathType.AllowedExts;
+            exObj.AllowedTypes = mediaPathType.AllowedTypes;
+            exObj.MaxFileSize = mediaPathType.MaxFileBytes;
+            exObj.MaxFileUploads = mediaPathType.MaxFileUploads;
             exObj.IsSystem = mediaPathType.IsSystem;
             exObj.IsSharable = mediaPathType.IsSharable;
 
@@ -92,10 +102,15 @@ namespace Keebee.AAT.Operations.Controllers
                 .Select(x => new
                 {
                     x.Id,
+                    Category = x.MediaPathTypeCategory.Description,
+                    x.ResponseTypeId,
                     x.Path,
                     x.Description,
                     x.ShortDescription,
-                    x.IsPreviewable,
+                    x.AllowedExts,
+                    x.AllowedTypes,
+                    x.MaxFileBytes,
+                    x.MaxFileUploads,
                     x.IsSystem,
                     x.IsSharable
                 }).ToArray();

@@ -46,6 +46,7 @@ namespace Keebee.AAT.Operations.Controllers
                     {
                         cd.PhidgetStyleType.Id,
                         cd.PhidgetStyleType.Description,
+                        cd.PhidgetStyleType.IsIncremental
                     },
                     cd.Description,
                     cd.Location,
@@ -95,25 +96,28 @@ namespace Keebee.AAT.Operations.Controllers
             exObj.PhidgetStyleType = new
             {
                 configDetail.PhidgetStyleType.Id,
-                configDetail.PhidgetStyleType.Description
+                configDetail.PhidgetStyleType.Description,
+                configDetail.PhidgetStyleType.IsIncremental
             };
             exObj.Description = configDetail.Description;
             exObj.Location = configDetail.Location;
             exObj.ResponseType = new
+            {
+                configDetail.ResponseType.Id,
+                configDetail.ResponseType.Description,
+                configDetail.ResponseType.IsRandom,
+                configDetail.ResponseType.IsRotational,
+                ResponseTypeCategory = new
                 {
-                    configDetail.ResponseType.Id,
-                    configDetail.ResponseType.Description,
-                    ResponseTypeCategory = new
-                    {
-                        configDetail.ResponseType.ResponseTypeCategory.Id,
-                        configDetail.ResponseType.ResponseTypeCategory.Description
-                    },
-                    InteractiveActivityType = (configDetail.ResponseType.InteractiveActivityTypeId != null)
-                    ? new
-                    {
-                        configDetail.ResponseType.InteractiveActivityType.Id,
-                        configDetail.ResponseType.InteractiveActivityType.Description
-                    } : null
+                    configDetail.ResponseType.ResponseTypeCategory.Id,
+                    configDetail.ResponseType.ResponseTypeCategory.Description
+                },
+                InteractiveActivityType = (configDetail.ResponseType.InteractiveActivityTypeId != null)
+                ? new
+                {
+                    configDetail.ResponseType.InteractiveActivityType.Id,
+                    configDetail.ResponseType.InteractiveActivityType.Description
+                } : null
             };
 
             return new DynamicJsonObject(exObj);

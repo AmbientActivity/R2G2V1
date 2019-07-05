@@ -22,7 +22,7 @@ namespace Keebee.AAT.Operations.Controllers
 
         // GET: api/Roles
         [HttpGet]
-        public async Task<DynamicJsonObject> Get()
+        public async Task<DynamicJsonArray> Get()
         {
             IEnumerable<Role> roles = new Collection<Role>();
 
@@ -31,16 +31,16 @@ namespace Keebee.AAT.Operations.Controllers
                 roles = _roleService.Get();
             });
 
-            if (roles == null) return new DynamicJsonObject(new ExpandoObject());
+            if (roles == null) return new DynamicJsonArray(new object[0]);
 
-            dynamic exObj = new ExpandoObject();
-            exObj.Roles = roles.Select(r => new
-            {
-                r.Id,
-                r.Description
-            }).OrderBy(o => o.Description);
+            var jArray = roles
+                .Select(u => new
+                {
+                    u.Id,
+                    u.Description,
+                }).ToArray();
 
-            return new DynamicJsonObject(exObj);
+            return new DynamicJsonArray(jArray);
         }
 
         // GET: api/Roles/5

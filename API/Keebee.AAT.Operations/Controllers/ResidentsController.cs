@@ -41,6 +41,7 @@ namespace Keebee.AAT.Operations.Controllers
                     x.Gender,
                     x.GameDifficultyLevel,
                     x.AllowVideoCapturing,
+                    x.ProfilePicture,
                     x.DateCreated,
                     x.DateUpdated
                 }).ToArray();
@@ -67,7 +68,8 @@ namespace Keebee.AAT.Operations.Controllers
             exObj.LastName = resident.LastName;
             exObj.Gender = resident.Gender;
             exObj.GameDifficultyLevel = resident.GameDifficultyLevel;
-            exObj.AllowVideoCapturing = resident.AllowVideoCapturing; ;
+            exObj.AllowVideoCapturing = resident.AllowVideoCapturing;
+            exObj.ProfilePicture = resident.ProfilePicture;
             exObj.DateCreated = resident.DateCreated;
             exObj.DateUpdated = resident.DateUpdated;
 
@@ -144,6 +146,7 @@ namespace Keebee.AAT.Operations.Controllers
                             MediaPathType = new
                             {
                                 pt.MediaPathType.Id,
+                                Category = pt.MediaPathType.MediaPathTypeCategory.Description,
                                 pt.MediaPathType.Description
                             },
                             Files = pt.Files.Select(f => new

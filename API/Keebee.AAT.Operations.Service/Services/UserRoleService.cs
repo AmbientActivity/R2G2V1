@@ -34,10 +34,13 @@ namespace Keebee.AAT.Operations.Service.Services
             var container = new Container(new Uri(ODataHost.Url));
 
             var userRole = container.UserRoles.ByKey(id)
-                .Expand("User,Role")
-                .GetValue();
+                .Expand("User,Role");
 
-            return userRole;
+            UserRole result;
+            try { result = userRole.GetValue(); }
+            catch { result = null; }
+
+            return result;
         }
 
         public IEnumerable<UserRole> GetByUser(int userId)
@@ -51,6 +54,7 @@ namespace Keebee.AAT.Operations.Service.Services
 
             return userRoles;
         }
+
         public int Post(UserRole userRole)
         {
             var container = new Container(new Uri(ODataHost.Url));

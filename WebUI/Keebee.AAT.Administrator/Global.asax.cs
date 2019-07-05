@@ -1,13 +1,13 @@
-﻿using System;
+﻿using Keebee.AAT.Shared;
+using System;
 using System.Security.Principal;
-using System.Web;
 using System.Web.Optimization;
 using System.Web.Routing;
 using System.Web.Security;
 
 namespace Keebee.AAT.Administrator
 {
-    public class MvcApplication : HttpApplication
+    public class MvcApplication : System.Web.HttpApplication
     {
         protected void Application_Start()
         {
@@ -15,7 +15,13 @@ namespace Keebee.AAT.Administrator
             BundleConfig.RegisterBundles(BundleTable.Bundles);
         }
 
-        protected void Application_AuthenticateRequest(object sender, EventArgs e)
+        protected void Session_Start(object sender, EventArgs e)
+        {
+            Session["IsBeaconWatcherServiceInstalled"] = ServiceUtilities.IsInstalled(ServiceUtilities.ServiceType.BluetoothBeaconWatcher)
+                ? "true" : "false";
+        }
+
+        protected void Application_OnPostAuthenticateRequest(object sender, EventArgs e)
         {
             // get the authentication cookie
             var cookieName = FormsAuthentication.FormsCookieName;

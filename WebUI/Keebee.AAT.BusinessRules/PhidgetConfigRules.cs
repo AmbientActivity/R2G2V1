@@ -2,10 +2,11 @@
 using Keebee.AAT.Shared;
 using Keebee.AAT.ApiClient.Clients;
 using Keebee.AAT.ApiClient.Models;
+using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Web.Script.Serialization;
+using System;
 
 namespace Keebee.AAT.BusinessRules
 {
@@ -72,8 +73,8 @@ namespace Keebee.AAT.BusinessRules
                 case PhidgetTypeId.Sensor5:
                 case PhidgetTypeId.Sensor6:
                 case PhidgetTypeId.Sensor7:
-                    if (phidgetStyleTypeId == PhidgetStyleTypeIdId.OnOff)
-                        msgs.Add("Sensors cannot be of type On/Off");
+                    if (phidgetStyleTypeId == PhidgetStyleTypeId.OnOff || phidgetStyleTypeId == PhidgetStyleTypeId.OnOnly || phidgetStyleTypeId == PhidgetStyleTypeId.NonRotational)
+                        msgs.Add("Sensors cannot be of type On/Off, On Only or Non-rotational");
                     break;
                 case PhidgetTypeId.Input0:
                 case PhidgetTypeId.Input1:
@@ -83,8 +84,8 @@ namespace Keebee.AAT.BusinessRules
                 case PhidgetTypeId.Input5:
                 case PhidgetTypeId.Input6:
                 case PhidgetTypeId.Input7:
-                    if (phidgetStyleTypeId != PhidgetStyleTypeIdId.OnOff)
-                        msgs.Add("Inputs must be of type On/Off");
+                    if (phidgetStyleTypeId != PhidgetStyleTypeId.OnOff && phidgetStyleTypeId != PhidgetStyleTypeId.OnOnly && phidgetStyleTypeId != PhidgetStyleTypeId.NonRotational)
+                        msgs.Add("Inputs must be of type On/Off, On Only or Non-rotational");
                     break;
             }
 
@@ -92,25 +93,41 @@ namespace Keebee.AAT.BusinessRules
         }
 
         // duplicate
-        public void DuplicateConfigDetails(int selectedConfigId, int newConfigId)
+        public string DuplicateConfigDetails(int selectedConfigId, int newConfigId)
         {
-            var selectedConfig = _configsClient.GetWithDetails(selectedConfigId);
+            string errMsg = null;
 
-            foreach (var detail in selectedConfig.ConfigDetails)
+            try
             {
-                _configsClient.PostDetail(new ConfigDetailEdit
+                var selectedConfig = _configsClient.GetWithDetails(selectedConfigId);
+
+                foreach (var detail in selectedConfig.ConfigDetails)
                 {
-                    ConfigId = newConfigId,
-                    Description = detail.Description,
-                    Location = detail.Location,
-                    PhidgetTypeId = detail.PhidgetType.Id,
-                    PhidgetStyleTypeId = detail.PhidgetStyleType.Id,
-                    ResponseTypeId = detail.ResponseType.Id
-                });
+                    int newId;
+                    errMsg = _configsClient.PostDetail(new ConfigDetailEdit
+                    {
+                        ConfigId = newConfigId,
+                        Description = detail.Description,
+                        Location = detail.Location,
+                        PhidgetTypeId = detail.PhidgetType.Id,
+                        PhidgetStyleTypeId = detail.PhidgetStyleType.Id,
+                        ResponseTypeId = detail.ResponseType.Id
+                    }, out newId);
+
+                    if (!string.IsNullOrEmpty(errMsg))
+                        throw new Exception(errMsg);
+                }
             }
+            catch (Exception ex)
+            {
+                errMsg = ex.Message;
+            }
+
+            return errMsg;
         }
+
         // view model
-        public ConfigEditModel GetConfigEditViewModel(int id, int configId)
+        public ConfigDetailModel GetConfigEditViewModel(int id, int configId)
         {
             var availableResponseTypes = _responseTypesClient.Get();
             var allPhidgetTypes = _phidgetTypesClient.Get().ToArray();
@@ -143,7 +160,7 @@ namespace Keebee.AAT.BusinessRules
                 availablePhidgetTypes = allPhidgetTypes.Where(pt => !usedPhidgetIds.Contains(pt.Id)).ToArray();
             }
 
-            return new ConfigEditModel
+            return new ConfigDetailModel
             {
                 Id = configDetail?.Id ?? 0,
                 ConfigDetail = configDetail,
@@ -164,30 +181,36 @@ namespace Keebee.AAT.BusinessRules
                 Id = config.Id,
                 Description = config.Description,
                 IsActiveEventLog = config.IsActiveEventLog,
-                IsDisplayActive = IsProcessRunning(ApplicationName.DisplayApp),
-                ConfigDetails = config.ConfigDetails
-                    .Select(x => new
-                        ConfigDetailMessage
+                IsDisplayActive = IsProcessRunning($"{AppSettings.Namespace}.{AppSettings.DisplayAppName}"),
+                ConfigDetails = config.ConfigDetails.Select(x => new
+                    ConfigDetailMessage
+                    {
+                        Id = x.Id,
+                        ConfigId = config.Id,
+                        PhidgetTypeId = x.PhidgetType.Id,
+                        PhidgetStyleType = new PhidgetStyleTypeMessage
                         {
-                            Id = x.Id,
-                            ConfigId = config.Id,
-                            ResponseTypeId = x.ResponseType.Id,
-                            PhidgetTypeId = x.PhidgetType.Id,
-                            PhidgetStyleTypeId = x.PhidgetStyleType.Id
-                        })
+                            Id = x.PhidgetStyleType.Id,
+                            IsIncremental = x.PhidgetStyleType.IsIncremental
+                        },
+                        ResponseType = new ResponseTypeMessage
+                        {
+                            Id = x.ResponseType.Id,
+                            ResponseTypeCategoryId = x.ResponseType.ResponseTypeCategory.Id,
+                            IsRotational = x.ResponseType.IsRotational,
+                            IsUninterrupted = x.ResponseType.IsUninterrupted,
+                            InteractiveActivityTypeId = x.ResponseType.InteractiveActivityType?.Id ?? 0,
+                            SwfFile = x.ResponseType.InteractiveActivityType?.SwfFile ?? string.Empty
+                        }
+                    })
             };
 
-
-            var serializer = new JavaScriptSerializer();
-            var messageBody = serializer.Serialize(configMessage);
-
-            return messageBody;
+            return JsonConvert.SerializeObject(configMessage);
         }
 
         private static bool IsProcessRunning(string processName)
         {
             return Process.GetProcessesByName(processName).Any();
         }
-
     }
 }

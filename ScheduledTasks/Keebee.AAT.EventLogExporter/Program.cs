@@ -9,8 +9,6 @@ namespace Keebee.AAT.EventLogExporter
     {
         private static void Main()
         {
-            var sysEventLogger = new SystemEventLogger(SystemEventLogType.AutomatedExport);
-
             try
             {
                 var date = DateTime.Now.AddDays(-1).ToString("d", DateTimeFormatInfo.InvariantInfo);
@@ -18,11 +16,11 @@ namespace Keebee.AAT.EventLogExporter
                 var exporter = new Exporting.EventLogExporter();
                 exporter.ExportAndSave(date);
 
-                sysEventLogger.WriteEntry($"Event Log successfully exported for date: {date}");
+                SystemEventLogger.WriteEntry($"Event Log successfully exported for date: {date}", SystemEventLogType.AutomatedExport);
             }
             catch (Exception ex)
             {
-                sysEventLogger.WriteEntry($"EventLogExporter.Main: {ex.Message}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"EventLogExporter.Main: {ex.Message}", SystemEventLogType.AutomatedExport, EventLogEntryType.Error);
             }
         }
     }

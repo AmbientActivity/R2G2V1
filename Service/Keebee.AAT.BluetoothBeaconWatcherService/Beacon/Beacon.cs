@@ -19,8 +19,6 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService.Beacon
     /// </summary>
     public class Beacon : INotifyPropertyChanged
     {
-        private readonly Guid _eddystoneGuid = new Guid("0000FEAA-0000-1000-8000-00805F9B34FB");
-
         public enum BeaconTypeEnum
         {
             /// <summary>
@@ -53,52 +51,14 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService.Beacon
         /// </summary>
         public ObservableCollection<BeaconFrameBase> BeaconFrames { get; set; } = new ObservableCollection<BeaconFrameBase>();
 
-        //private short _rssi;
-        /// <summary>
-        /// Raw signal strength in dBM.
-        /// If a new advertisement is received for the same beacon (with the same
-        /// Bluetooth MAC address), always the latest signal strength is recorded.
-        /// </summary>
-        //public short Rssi
-        //{
-        //    get { return _rssi; }
-        //    set
-        //    {
-        //        if (_rssi == value) return;
-        //        _rssi = value;
-        //        OnPropertyChanged();
-        //    }
-        //}
+        public Collection<short> Rssi { get; set; }
 
-        private Collection<short> _rssi;
-        public Collection<short> Rssi
-        {
-            get { return _rssi; }
-            set
-            {
-                if (_rssi == value) return;
-                _rssi = value;
-                OnPropertyChanged();
-            }
-        }
-
-        private ulong _bluetoothAddress;
         /// <summary>
         /// The Bluetooth MAC address.
         /// Used to cluster the different received Bluetooth advertisements and to
         /// collect multiple advertisements for unique beacons.
         /// </summary>
-        public ulong BluetoothAddress
-        {
-            get { return _bluetoothAddress; }
-            set
-            {
-                if (_bluetoothAddress == value) return;
-                _bluetoothAddress = value;
-                OnPropertyChanged();
-                OnPropertyChanged(nameof(BluetoothAddressAsString));
-            }
-        }
+        public ulong BluetoothAddress { get; set; }
 
         /// <summary>
         /// Retrieves the Bluetooth MAC address formatted as a hex string.
@@ -111,20 +71,10 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService.Beacon
             }
         }
 
-        private DateTimeOffset _timestamp;
         /// <summary>
         /// Timestamp when the last advertisement was received for this beacon.
         /// </summary>
-        public DateTimeOffset Timestamp
-        {
-            get { return _timestamp; }
-            set
-            {
-                if (_timestamp == value) return;
-                _timestamp = value;
-                OnPropertyChanged();
-            }
-        }
+        public DateTimeOffset Timestamp { get; set; }
 
         /// <summary>
         /// Construct a new Bluetooth beacon based on the received advertisement.
@@ -193,7 +143,7 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService.Beacon
                     // don't overwrite it with another service Uuid.
                     if (BeaconType == BeaconTypeEnum.Unknown)
                     {
-                        BeaconType = serviceUuid.Equals(_eddystoneGuid)
+                        BeaconType = serviceUuid.Equals(new Guid("0000FEAA-0000-1000-8000-00805F9B34FB"))
                             ? BeaconTypeEnum.Eddystone
                             : BeaconTypeEnum.Unknown;
                     }

@@ -43,7 +43,7 @@
             this.axShockwaveFlash1.Margin = new System.Windows.Forms.Padding(0);
             this.axShockwaveFlash1.Name = "axShockwaveFlash1";
             this.axShockwaveFlash1.OcxState = ((System.Windows.Forms.AxHost.State)(resources.GetObject("axShockwaveFlash1.OcxState")));
-            this.axShockwaveFlash1.Size = new System.Drawing.Size(434, 296);
+            this.axShockwaveFlash1.Size = new System.Drawing.Size(680, 360);
             this.axShockwaveFlash1.TabIndex = 0;
             this.axShockwaveFlash1.FlashCall += new AxShockwaveFlashObjects._IShockwaveFlashEvents_FlashCallEventHandler(this.FlashCall);
             // 
@@ -51,14 +51,14 @@
             // 
             this.timer1.Tick += new System.EventHandler(this.TimerTick);
             // 
-            // SlideViewerFlash
+            // SlideViewer
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.Yellow;
             this.Controls.Add(this.axShockwaveFlash1);
-            this.Name = "SlideViewerFlash";
-            this.Size = new System.Drawing.Size(434, 296);
+            this.Name = "SlideViewer";
+            this.Size = new System.Drawing.Size(680, 360);
             ((System.ComponentModel.ISupportInitialize)(this.axShockwaveFlash1)).EndInit();
             this.ResumeLayout(false);
 

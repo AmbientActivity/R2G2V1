@@ -1,7 +1,24 @@
-﻿@using System.Web.Optimization
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html>
 <head>
+    <link rel="apple-touch-icon" sizes="57x57" href="~/Content/favicons/apple-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="~/Content/favicons/apple-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="~/Content/favicons/apple-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="~/Content/favicons/apple-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="~/Content/favicons/apple-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="~/Content/favicons/apple-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="~/Content/favicons/apple-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="~/Content/favicons/apple-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="~/Content/favicons/apple-icon-180x180.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="~/Content/favicons/android-icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="~/Content/favicons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="~/Content/favicons/favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="~/Content/favicons/favicon-16x16.png">
+    <link rel="manifest" href="~/Content/favicons/manifest.json">
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="msapplication-TileImage" content="~/Content/favicons/ms-icon-144x144.png">
+    <meta name="theme-color" content="#ffffff">
+
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@ViewBag.Title</title>
@@ -13,14 +30,12 @@
     @Scripts.Render("~/bundles/ThirdPartyScripts")
     @Scripts.Render("~/bundles/CustomScripts")
 
-    <meta name="description" content="The description of my page" />
+    <meta name="description" content="ABBY Administrator" />
 </head>
 <body>
-    <div class="navbar navbar-fixed-top">
+    <script src="~/Content/Scripts/bootstrap-hover-dropdown.min.js"></script>
+    <div class="navbar navbar-nav navbar-fixed-top" role="navigation">
         <div class="container">
-            @*<div class="navbar-brand">
-                 <a href="~/Home"><img src="~/Content/Images/logo_small.png" alt="" /></a>
-            </div>*@
             <div class="navbar-header">
                 <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
                     <span class="icon-bar"></span>
@@ -29,6 +44,11 @@
                 </button>
             </div>
             <div class="navbar-collapse collapse">
+                <ul class="nav navbar-nav navbar-right login-link">
+                    <li>
+                        @Html.Partial("_LogOnPartial")
+                    </li>
+                </ul>
                 <ul id="main-menu" class="nav navbar-nav">
                     <li>@Html.ActionLink("Home", "Index", "Home")</li>
                     @if (Request.IsAuthenticated)
@@ -36,47 +56,57 @@
                         if (User.IsInRole("Caregiver"))
                         {
                             <li class="dropdown">
-                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Manage<b class="caret"></b></a>
+                                <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown">Manage <b class="caret"></b></a>
                                 <ul class="dropdown-menu">
-                                    <li>@Html.ActionLink("Residents", "Index", "Residents")</li>
                                     <li>@Html.ActionLink("Public Profile", "Index", "PublicProfile")</li>
-                                </ul>
-                            </li>
-                            <li class="dropdown">
-                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Data Capture<b class="caret"></b></a>
-                                <ul class="dropdown-menu">
-                                    <li>@Html.ActionLink("Event Logs", "Index", "EventLogs")</li>
-                                    <li>@Html.ActionLink("Export Event Log", "Export", "EventLogs")</li>
-                                    <li><hr></li>
-                                    <li>@Html.ActionLink("Video Captures", "Index", "VideoCaptures")</li>
-                                    <li>@Html.ActionLink("Export Video Captures", "Export", "VideoCaptures")</li>
+                                    @if (Session["IsBeaconWatcherServiceInstalled"].ToString() == "true")
+                                    {
+                                        <li>@Html.ActionLink("Residents", "Index", "Residents")</li>
+                                    }
                                 </ul>
                             </li>
                         }
                         if (User.IsInRole("Administrator"))
                         {
                             <li class="dropdown">
-                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">System<b class="caret"></b></a>
+                                <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown">Data Capture <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    <li>@Html.ActionLink("Event Logs", "Index", "EventLogs")</li>
+                                    <li>@Html.ActionLink("Export Event Log", "Export", "EventLogs")</li>
+                                    <li class="divider"></li>
+                                    <li>@Html.ActionLink("Video Captures", "Index", "VideoCaptures")</li>
+                                    <li>@Html.ActionLink("Export Video Captures", "Export", "VideoCaptures")</li>
+                                </ul>
+                            </li>
+                            <li class="dropdown">
+                                <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown">System <b class="caret"></b></a>
                                 <ul class="dropdown-menu">
                                     <li>@Html.ActionLink("Shared Library", "Index", "SharedLibrary")</li>
-                                    <li>@Html.ActionLink("System Profile", "Index", "SystemProfile")</li>
-                                    <li>@Html.ActionLink("Phidget Configuration", "Index", "PhidgetConfig")</li>
-                                    <li>@Html.ActionLink("Maintenance", "Index", "Maintenance")</li>
+                                    <li class="divider"></li>
+                                    <li class="dropdown-submenu">
+                                        <a href="" class="dropdown-toggle">Configuration</a>
+                                        <ul class="dropdown-menu">
+                                            <li>@Html.ActionLink("System Profile", "Index", "SystemProfile")</li>
+                                            <li>@Html.ActionLink("Phidgets", "Index", "PhidgetConfig")</li>
+                                            <li>@Html.ActionLink("Ambient Invitations", "Index", "AmbientInvitations")</li>
+                                            <li class="divider"></li>
+                                            <li>@Html.ActionLink("Services", "Index", "Services")</li>
+                                            <li>@Html.ActionLink("Maintenance", "Index", "Maintenance")</li>
+                                        </ul>
+                                    </li>
                                 </ul>
                             </li>
                         }
                     }
                 </ul>
-                <div class="greeting" id="greeting">@Html.Partial("_LogOnPartial")</div>
             </div>
         </div>
     </div>
-
     <div class="container body-content">
         @RenderBody()
         <hr />
         <footer>
-            <p>&copy; @DateTime.Now.Year - Keebee Play</p>
+            <p>&copy; @DateTime.Now.Year - Ambient Activity Technologies (AAT)</p>
         </footer>
     </div>
     @RenderSection("scripts", required: false)

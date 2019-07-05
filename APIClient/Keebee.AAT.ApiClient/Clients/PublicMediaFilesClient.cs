@@ -1,6 +1,7 @@
 ﻿using Keebee.AAT.ApiClient.Models;
 using System;
 using System.Collections.Generic;
+using System.Net;
 using Newtonsoft.Json;
 using RestSharp;
 
@@ -18,7 +19,8 @@ namespace Keebee.AAT.ApiClient.Clients
         IEnumerable<ResponseTypePaths> GetLinkedForStreamId(Guid streamId);
         int[] GetIdsForStreamId(Guid streamId);
         IEnumerable<ResponseTypePaths> GetLinked();
-        int Post(PublicMediaFileEdit publicMediaFile);
+        string Patch(int id, PublicMediaFileEdit publicMediaFile);
+        string Post(PublicMediaFileEdit publicMediaFile, out int newId);
         string Delete(int id);
     }
 
@@ -114,15 +116,38 @@ namespace Keebee.AAT.ApiClient.Clients
             return ids;
         }
 
-        public int Post(PublicMediaFileEdit publicMediaFile)
+        public string Patch(int id, PublicMediaFileEdit mediaFile)
+        {
+            var request = new RestRequest($"publicmediafiles/{id}", Method.PATCH);
+            var json = request.JsonSerializer.Serialize(mediaFile);
+            request.AddParameter("application/json", json, ParameterType.RequestBody);
+
+            var response = Execute(request);
+
+            string msg = null;
+            if (response.StatusCode != HttpStatusCode.NoContent)
+                msg = response.StatusDescription;
+
+            return msg;
+        }
+
+        public string Post(PublicMediaFileEdit publicMediaFile, out int newId)
         {
             var request = new RestRequest("publicmediafiles", Method.POST);
             var json = request.JsonSerializer.Serialize(publicMediaFile);
             request.AddParameter("application/json", json, ParameterType.RequestBody);
+
             var response = Execute(request);
 
-            var newId = Convert.ToInt32(response.Content);
-            return newId;
+            string result = null;
+            newId = -1;
+
+            if (response.StatusCode == HttpStatusCode.OK)
+                newId = Convert.ToInt32(response.Content);
+            else
+                result = response.StatusDescription;
+
+            return result;
         }
 
         public string Delete(int id)

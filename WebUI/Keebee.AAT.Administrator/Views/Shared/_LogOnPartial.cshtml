@@ -1,22 +1,34 @@
 ﻿@if (Request.IsAuthenticated)
 {
-    <ul>
-        <li class="dropdown">
-            <a href="#" id="menu-login" class="dropdown-toggle" data-toggle="dropdown">Welcome <span>@User.Identity.Name</span><b class="caret"></b></a>
-            <ul class="dropdown-menu">
-                <li><a href="#" id="change-password">Change Password</a></li>
-                <li>@Html.ActionLink("Log Off", "LogOff", "Account")</li>
-            </ul>
-        </li>
-    </ul>
-}
-else
-{
-    <a id="login" href="javascript:;">Login</a>
+    <text>
+        <ul class="nav navbar-nav navbar-right">
+            <li class="dropdown">
+                <a href="javascript:void(0)" id="menu-login" class="dropdown-toggle login-link" data-toggle="dropdown" data-hover="dropdown">
+                    Welcome @User.Identity.Name<b class="caret"></b>
+                </a>
+                <ul class="dropdown-menu">
+                    <li><a href="javascript:void(0)" id="change-password">Change Password</a></li>
+                    @if (User.IsInRole("Administrator"))
+                    {
+                        <li>
+                            <a href="javascript:void(0)" id="reset-caregiver">Reset Caregiver</a>
+                            <hr />
+                        </li>
+                    
+                    }
+                    <li>@Html.ActionLink("Log Off", "LogOff", "Account")</li>
+                </ul>
+            </li>
+        </ul>
+    </text>
+    }
+    else
+    {
+    <li>@Html.ActionLink("Login", "Login", "Account")</li>
 }
 
 <script type="text/javascript">
         $(document).ready(function () {
-            account.utilities.init();
+            account.services.init();
         });
 </script>

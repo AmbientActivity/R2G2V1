@@ -67,19 +67,25 @@ namespace Keebee.AAT.Operations.Controllers
                                 {
                                     cd.PhidgetStyleType.Id,
                                     cd.PhidgetStyleType.Description,
+                                    cd.PhidgetStyleType.IsIncremental
                                 },
                                 ResponseType = new
                                 {
                                     cd.ResponseType.Id,
                                     cd.ResponseType.Description,
+                                    ResponseTypeCategory = new
+                                    {
+                                        cd.ResponseType.ResponseTypeCategory.Id,
+                                        cd.ResponseType.ResponseTypeCategory.Description
+                                    },
                                     InteractiveActivityType = (cd.ResponseType.InteractiveActivityTypeId != null)
                                         ? new
                                         {
                                             cd.ResponseType.InteractiveActivityType.Id,
-                                            cd.ResponseType.InteractiveActivityType.Description
+                                            cd.ResponseType.InteractiveActivityType.Description,
+                                            cd.ResponseType.InteractiveActivityType.SwfFile
                                         }
-                                        : null,
-                                    cd.ResponseType.IsSystem
+                                        : null
                                 }
                         }).OrderBy(o => o.PhidgetType.Id)
                 }).ToArray();
@@ -188,7 +194,8 @@ namespace Keebee.AAT.Operations.Controllers
                 PhidgetStyleType = new
                 {
                     cd.PhidgetStyleType.Id,
-                    cd.PhidgetStyleType.Description
+                    cd.PhidgetStyleType.Description,
+                    cd.PhidgetStyleType.IsIncremental
                 },
                 cd.Description,
                 cd.Location,
@@ -196,7 +203,9 @@ namespace Keebee.AAT.Operations.Controllers
                 {
                     cd.ResponseType.Id,
                     cd.ResponseType.Description,
-                    cd.ResponseType.IsSystem,
+                    cd.ResponseType.IsRandom,
+                    cd.ResponseType.IsRotational,
+                    cd.ResponseType.IsUninterrupted,
                     ResponseTypeCategory = new
                     {
                         cd.ResponseType.ResponseTypeCategory.Id,
@@ -206,7 +215,8 @@ namespace Keebee.AAT.Operations.Controllers
                     ? new
                     {
                         cd.ResponseType.InteractiveActivityType.Id,
-                        cd.ResponseType.InteractiveActivityType.Description
+                        cd.ResponseType.InteractiveActivityType.Description,
+                        cd.ResponseType.InteractiveActivityType.SwfFile
                     } : null
                 }
             }).OrderBy(o => o.PhidgetType.Id);
@@ -241,12 +251,13 @@ namespace Keebee.AAT.Operations.Controllers
                 PhidgetType = new
                 {
                     cd.PhidgetType.Id,
-                    cd.PhidgetType.Description,
+                    cd.PhidgetType.Description
                 },
                 PhidgetStyleType = new
                 {
                     cd.PhidgetStyleType.Id,
-                    cd.PhidgetStyleType.Description
+                    cd.PhidgetStyleType.Description,
+                    cd.PhidgetStyleType.IsIncremental
                 },
                 cd.Description,
                 cd.Location,
@@ -254,7 +265,9 @@ namespace Keebee.AAT.Operations.Controllers
                 {
                     cd.ResponseType.Id,
                     cd.ResponseType.Description,
-                    cd.ResponseType.IsSystem,
+                    cd.ResponseType.IsRandom,
+                    cd.ResponseType.IsRotational,
+                    cd.ResponseType.IsUninterrupted,
                     ResponseTypeCategory = new
                     {
                         cd.ResponseType.ResponseTypeCategory.Id,
@@ -264,7 +277,8 @@ namespace Keebee.AAT.Operations.Controllers
                     ? new
                     {
                         cd.ResponseType.InteractiveActivityType.Id,
-                        cd.ResponseType.InteractiveActivityType.Description
+                        cd.ResponseType.InteractiveActivityType.Description,
+                        cd.ResponseType.InteractiveActivityType.SwfFile
                     } : null
                 }
             }).OrderBy(o => o.PhidgetType.Id);

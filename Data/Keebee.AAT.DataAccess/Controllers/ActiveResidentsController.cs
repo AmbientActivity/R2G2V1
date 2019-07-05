@@ -12,24 +12,24 @@ namespace Keebee.AAT.DataAccess.Controllers
     {
         private KeebeeAATContext db = new KeebeeAATContext();
 
-        // GET: odata/ActivetResidents
+        // GET: odata/ActiveResidents
         [EnableQuery]
         public IQueryable<ActiveResident> Get()
         {
             return db.ActiveResidents;
         }
 
-        // GET: odata/ActivetResidents(1)
+        // GET: odata/ActiveResidents(1)
         [EnableQuery]
         public SingleResult<ActiveResident> Get([FromODataUri] int key)
         {
             return SingleResult.Create(db.ActiveResidents.Where(activetResident => activetResident.Id == key));
         }
 
-        // PUT: odata/ActivetResidents(1)
+        // PUT: odata/ActiveResidents(1)
         public async Task<IHttpActionResult> Put([FromODataUri] int key, Delta<ActiveResident> patch)
         {
-            Validate(patch.GetEntity());
+            Validate(patch.GetInstance());
 
             if (!ModelState.IsValid)
             {
@@ -63,7 +63,7 @@ namespace Keebee.AAT.DataAccess.Controllers
             return Updated(activetResident);
         }
 
-        // POST: odata/ActivetResidents
+        // POST: odata/ActiveResidents
         public async Task<IHttpActionResult> Post(ActiveResident activetResident)
         {
             if (!ModelState.IsValid)
@@ -77,11 +77,11 @@ namespace Keebee.AAT.DataAccess.Controllers
             return Created(activetResident);
         }
 
-        // PATCH: odata/ActivetResidents(1)
+        // PATCH: odata/ActiveResidents(1)
         [AcceptVerbs("PATCH", "MERGE")]
         public async Task<IHttpActionResult> Patch([FromODataUri] int key, Delta<ActiveResident> patch)
         {
-            Validate(patch.GetEntity());
+            Validate(patch.GetInstance());
 
             if (!ModelState.IsValid)
             {
@@ -115,7 +115,7 @@ namespace Keebee.AAT.DataAccess.Controllers
             return Updated(activetResident);
         }
 
-        // DELETE: odata/ActivetResidents(1)
+        // DELETE: odata/ActiveResidents(1)
         public async Task<IHttpActionResult> Delete([FromODataUri] int key)
         {
             ActiveResident activetResident = await db.ActiveResidents.FindAsync(key);

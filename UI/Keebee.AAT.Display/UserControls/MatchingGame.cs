@@ -15,13 +15,7 @@ namespace Keebee.AAT.Display.UserControls
 {
     public partial class MatchingGame : UserControl
     {
-        private const string SwfFilename = "MatchingGame.swf";
-
-        private SystemEventLogger _systemEventLogger;
-        public SystemEventLogger SystemEventLogger
-        {
-            set { _systemEventLogger = value; }
-        }
+        private string _swfFile;
 
         // event handler
         public event EventHandler MatchingGameTimeoutExpiredEvent;
@@ -30,14 +24,13 @@ namespace Keebee.AAT.Display.UserControls
 
         private bool _isActiveEventLog;
         private bool _isAllowVideoCapture;
-
-        // delegate
-        private delegate void RaiseMatchingGameTimeoutExpiredDelegate();
-        private delegate void RaiseLogInteractiveActivityEventEventDelegate(string description, int difficultyLevel, bool? success);
-        private delegate void RaiseStartVideoCaptureDelegate();
-
         private int _initialDifficultyLevel;
         private bool _enableGameTimeout;
+
+        // delegate
+        private delegate void RaiseMatchingGameTimeoutExpiredEventDelegate();
+        private delegate void RaiseLogInteractiveActivityEventEventDelegate(string description, int difficultyLevel, bool? success);
+        private delegate void RaiseStartVideoCaptureEventDelegate();
 
         public MatchingGame()
         {
@@ -50,12 +43,14 @@ namespace Keebee.AAT.Display.UserControls
             axShockwaveFlash1.Dock = DockStyle.Fill;
         }
 
-        public void Play(string[] shapes, string[] sounds, int initialDifficultyLevel, bool enableTimeout, bool isActiveEventLog, bool isAllowVideoCapture)
+        public void Play(string[] shapes, string[] sounds, int initialDifficultyLevel, bool enableTimeout, bool isActiveEventLog, bool isAllowVideoCapture, string swfFile)
         {
             _initialDifficultyLevel = initialDifficultyLevel;
             _isActiveEventLog = isActiveEventLog;
             _isAllowVideoCapture = isAllowVideoCapture;
             _enableGameTimeout = enableTimeout;
+            _swfFile = swfFile;
+
             PlayGame(shapes, sounds);
         }
 
@@ -63,8 +58,11 @@ namespace Keebee.AAT.Display.UserControls
         {
             try
             {
-                var swf = Path.Combine(Application.StartupPath, SwfFilename);
-                axShockwaveFlash1.LoadMovie(0, swf);
+                if (axShockwaveFlash1.Movie == null)
+                {
+                    var swf = Path.Combine(Application.StartupPath, _swfFile);
+                    axShockwaveFlash1.LoadMovie(0, swf);
+                }
 
                 if (!shapes.Any()) return;
                 if (!sounds.Any()) return;
@@ -101,7 +99,7 @@ namespace Keebee.AAT.Display.UserControls
 
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"Display.MatchingGame.PlayGame{Environment.NewLine}{ex.Message}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"Display.MatchingGame.PlayGame{Environment.NewLine}{ex.Message}", SystemEventLogType.Display, EventLogEntryType.Error);
             }
         }
 
@@ -117,12 +115,12 @@ namespace Keebee.AAT.Display.UserControls
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"Display.MatchingGame.Stop{Environment.NewLine}{ex.Message}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"Display.MatchingGame.Stop{Environment.NewLine}{ex.Message}", SystemEventLogType.Display, EventLogEntryType.Error);
             }
             
         }
 
-        private string GetXmlString(IEnumerable<string> files)
+        private static string GetXmlString(IEnumerable<string> files)
         {
             var xmlBuilder = new StringBuilder();
 
@@ -138,7 +136,7 @@ namespace Keebee.AAT.Display.UserControls
 
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"Display.MatchingGame.GetXmlString{Environment.NewLine}{ex.Message}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"Display.MatchingGame.GetXmlString{Environment.NewLine}{ex.Message}", SystemEventLogType.Display, EventLogEntryType.Error);
             }
 
             return xmlBuilder.ToString();
@@ -211,7 +209,7 @@ namespace Keebee.AAT.Display.UserControls
 
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"Display.MatchingGame.FlashCall{Environment.NewLine}{ex.Message}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"Display.MatchingGame.FlashCall{Environment.NewLine}{ex.Message}", SystemEventLogType.Display, EventLogEntryType.Error);
             }
         }
 
@@ -221,7 +219,7 @@ namespace Keebee.AAT.Display.UserControls
 
             if (InvokeRequired)
             {
-                Invoke(new RaiseMatchingGameTimeoutExpiredDelegate(RaiseMatchingGameTimeoutExpiredEvent));
+                Invoke(new RaiseMatchingGameTimeoutExpiredEventDelegate(RaiseMatchingGameTimeoutExpiredEvent));
             }
             else
             {
@@ -257,7 +255,7 @@ namespace Keebee.AAT.Display.UserControls
 
             if (InvokeRequired)
             {
-                Invoke(new RaiseStartVideoCaptureDelegate(RaiseStartVideoCaptureEvent));
+                Invoke(new RaiseStartVideoCaptureEventDelegate(RaiseStartVideoCaptureEvent));
             }
             else
             {

@@ -28,31 +28,36 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.btnClose = new System.Windows.Forms.Button();
-            this.paintingActivity1 = new Keebee.AAT.Display.UserControls.PaintingActivity();
+            this.btnExit = new MetroFramework.Controls.MetroButton();
+            this.activityPlayer1 = new Keebee.AAT.Display.UserControls.ActivityPlayer();
             this.matchingGame1 = new Keebee.AAT.Display.UserControls.MatchingGame();
             this.SuspendLayout();
             // 
-            // btnClose
+            // btnExit
             // 
-            this.btnClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnClose.BackColor = System.Drawing.Color.Transparent;
-            this.btnClose.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnClose.Location = new System.Drawing.Point(439, -1);
-            this.btnClose.Name = "btnClose";
-            this.btnClose.Size = new System.Drawing.Size(60, 37);
-            this.btnClose.TabIndex = 8;
-            this.btnClose.Text = "Exit";
-            this.btnClose.UseVisualStyleBackColor = false;
-            this.btnClose.Click += new System.EventHandler(this.CloseButtonClick);
+            this.btnExit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnExit.BackColor = System.Drawing.SystemColors.ControlDarkDark;
+            this.btnExit.FontSize = MetroFramework.MetroButtonSize.Tall;
+            this.btnExit.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
+            this.btnExit.Location = new System.Drawing.Point(541, -1);
+            this.btnExit.Margin = new System.Windows.Forms.Padding(0);
+            this.btnExit.Name = "btnExit";
+            this.btnExit.Size = new System.Drawing.Size(100, 64);
+            this.btnExit.TabIndex = 2;
+            this.btnExit.Text = "Exit";
+            this.btnExit.UseCustomBackColor = true;
+            this.btnExit.UseCustomForeColor = true;
+            this.btnExit.UseSelectable = true;
+            this.btnExit.Click += new System.EventHandler(this.CloseButtonClick);
             // 
-            // paintingActivity1
+            // activityPlayer1
             // 
-            this.paintingActivity1.BackColor = System.Drawing.Color.Yellow;
-            this.paintingActivity1.Location = new System.Drawing.Point(161, 12);
-            this.paintingActivity1.Name = "paintingActivity1";
-            this.paintingActivity1.Size = new System.Drawing.Size(118, 54);
-            this.paintingActivity1.TabIndex = 1;
+            this.activityPlayer1.BackColor = System.Drawing.Color.Yellow;
+            this.activityPlayer1.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.activityPlayer1.Location = new System.Drawing.Point(161, 12);
+            this.activityPlayer1.Name = "activityPlayer1";
+            this.activityPlayer1.Size = new System.Drawing.Size(118, 54);
+            this.activityPlayer1.TabIndex = 1;
             // 
             // matchingGame1
             // 
@@ -67,9 +72,9 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.Gainsboro;
-            this.ClientSize = new System.Drawing.Size(498, 288);
-            this.Controls.Add(this.paintingActivity1);
-            this.Controls.Add(this.btnClose);
+            this.ClientSize = new System.Drawing.Size(640, 360);
+            this.Controls.Add(this.btnExit);
+            this.Controls.Add(this.activityPlayer1);
             this.Controls.Add(this.matchingGame1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Name = "InteractiveActivityPlayer";
@@ -82,7 +87,7 @@
         #endregion
 
         private UserControls.MatchingGame matchingGame1;
-        private System.Windows.Forms.Button btnClose;
-        private UserControls.PaintingActivity paintingActivity1;
+        private UserControls.ActivityPlayer activityPlayer1;
+        private MetroFramework.Controls.MetroButton btnExit;
     }
 }

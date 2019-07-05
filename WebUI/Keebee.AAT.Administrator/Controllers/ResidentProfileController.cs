@@ -1,15 +1,18 @@
-﻿using Keebee.AAT.Administrator.FileManagement;
-using Keebee.AAT.Administrator.ViewModels;
+﻿using Keebee.AAT.Administrator.ViewModels;
 using Keebee.AAT.ApiClient.Clients;
 using Keebee.AAT.ApiClient.Models;
 using Keebee.AAT.BusinessRules;
 using Keebee.AAT.Shared;
 using Keebee.AAT.SystemEventLogging;
+using Keebee.AAT.BusinessRules.Models;
+using Keebee.AAT.Administrator.Extensions;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
+using System.Web;
 using System.Web.Mvc;
-using CuteWebUI;
 
 namespace Keebee.AAT.Administrator.Controllers
 {
@@ -20,322 +23,292 @@ namespace Keebee.AAT.Administrator.Controllers
         private readonly IActiveResidentClient _activeResidentClient;
         private readonly IResidentMediaFilesClient _residentMediaFilesClient;
         private readonly IMediaPathTypesClient _mediaPathTypesClient;
+        private readonly IResponseTypesClient _responseTypesClient;
+        private readonly IThumbnailsClient _thumbnailsClient;
 
-        private readonly SystemEventLogger _systemEventLogger;
         private readonly MediaSourcePath _mediaSourcePath = new MediaSourcePath();
 
         public ResidentProfileController()
         {
-            _systemEventLogger = new SystemEventLogger(SystemEventLogType.AdminInterface);
-
             _residentsClient = new ResidentsClient();
             _residentMediaFilesClient = new ResidentMediaFilesClient();
             _activeResidentClient = new ActiveResidentClient();
             _mediaPathTypesClient = new MediaPathTypesClient();
+            _responseTypesClient = new ResponseTypesClient();
+            _thumbnailsClient = new ThumbnailsClient();
         }
 
         // GET: ResidentProfile
         [Authorize]
-        public ActionResult Index(
-            int id,
-            string idsearch,
-            string firstname,
-            string lastname,
-            string sortcolumn,
-            int? mediaPathTypeId,
-            string myuploader,
-            int? sortdescending)
+        public ActionResult Index(int id, string idsearch, string firstname, string lastname, string sortcolumn, int? sortdescending)
         {
-            // first time loading
-            if (mediaPathTypeId == null) mediaPathTypeId = MediaPathTypeId.Music;
-
-            var vm = LoadResidentProfileViewModel(id, idsearch, firstname, lastname, mediaPathTypeId, sortcolumn, sortdescending);
-
-            using (var uploader = new MvcUploader(System.Web.HttpContext.Current))
-            {
-                uploader.UploadUrl = Response.ApplyAppPathModifier("~/UploadHandler.ashx");
-                uploader.Name = "myuploader";
-                uploader.AllowedFileExtensions = ResidentRules.GetAllowedExtensions(mediaPathTypeId);
-                uploader.MultipleFilesUpload = true;
-                uploader.InsertButtonID = "uploadbutton";
-                vm.UploaderHtml = uploader.Render();
-
-                // GET:
-                if (string.IsNullOrEmpty(myuploader))
-                    return View(vm);
-
-                // POST:
-                var fileManager = new FileManager { EventLogger = _systemEventLogger };
-                var rules = new ResidentRules();
-
-                // for multiple files the value is string : guid/guid/guid 
-                foreach (var strguid in myuploader.Split('/'))
-                {
-                    var fileguid = new Guid(strguid);
-                    var file = uploader.GetUploadedFile(fileguid);
-                    if (file?.FileName == null) continue;
-
-                    if (!ResidentRules.IsValidFile(file.FileName, mediaPathTypeId)) continue;
-
-                    var mediaPath = rules.GetMediaPath(mediaPathTypeId);
-                    var filePath = $@"{_mediaSourcePath.ProfileRoot}\{id}\{mediaPath}\{file.FileName}";
-
-                    // delete it if it already exists
-                    var msg = fileManager.DeleteFile(filePath);
-
-                    if (msg.Length == 0)
-                    {
-                        file.MoveTo(filePath);
-                        AddResidentMediaFile(id, file.FileName, (int)mediaPathTypeId, mediaPath);
-                    }
-                }
-            }
-
-            return View(vm);
+            return View(LoadResidentProfileViewModel(id, idsearch, firstname, lastname, sortcolumn, sortdescending));
         }
 
         [HttpGet]
         [Authorize]
         public JsonResult GetData(int id, int mediaPathTypeId)
         {
-            var mediaPathTypes = _mediaPathTypesClient.Get()
-                .Where(x => !x.IsSystem)
-                .OrderBy(p => p.Description);
-
-            var fileList = GetFiles(id);
-
-            var vm = new
-            {
-                FileList = fileList,
-                MediaPathTypeList = mediaPathTypes.Select(x => new
-                {
-                    x.Id,
-                    x.Description,
-                    x.ShortDescription,
-                    x.IsPreviewable,
-                    x.IsSharable
-                })
-            };
-
-            return Json(vm, JsonRequestBehavior.AllowGet);
-        }
-
-        [HttpPost]
-        [Authorize]
-        public JsonResult AddFromSharedLibrary(Guid[] streamIds, int residentId, int mediaPathTypeId)
-        {
-            bool success;
-            var errormessage = string.Empty;
+            string errMsg = null;
+            MediaFileViewModel[] fileList = null;
+            MediaPathType[] mediaPathTypeList = null;
+            var isAdmin = false;
 
             try
             {
-                var responseTypeId = ResidentRules.GetResponseTypeId(mediaPathTypeId);
+                fileList = GetFiles(id).ToArray();
 
-                if (streamIds != null)
-                {
-                    foreach (var streamId in streamIds)
+                mediaPathTypeList = _mediaPathTypesClient.Get()
+                    .Where(x => !x.IsSystem)
+                    .OrderBy(p => p.Description)
+                    .Select(x => new MediaPathType
                     {
-                        var mf = new ResidentMediaFileEdit
-                        {
-                            StreamId = streamId,
-                            ResidentId = residentId,
-                            ResponseTypeId = responseTypeId,
-                            MediaPathTypeId = mediaPathTypeId,
-                            IsLinked = true
-                        };
+                        Id = x.Id,
+                        ResponseTypeId = x.ResponseTypeId,
+                        Category = x.Category,
+                        Description = x.Description,
+                        ShortDescription = x.ShortDescription,
+                        IsSharable = x.IsSharable,
+                        Path = x.Path,
+                        AllowedExts = x.AllowedExts.Replace(" ", string.Empty),
+                        AllowedTypes = x.AllowedTypes.Replace(" ", string.Empty),
+                        MaxFileBytes = x.MaxFileBytes,
+                        MaxFileUploads = x.MaxFileUploads
+                    }).ToArray();
 
-                        _residentMediaFilesClient.Post(mf);
-                    }
-                }
-                success = true;
+                isAdmin = System.Web.HttpContext.Current.User?.Identity?.Name?.ToLower() == "admin";
             }
             catch (Exception ex)
             {
-                success = false;
-                errormessage = ex.Message;
+                errMsg = ex.Message;
             }
 
-            return Json(new
+            var jsonResult = Json(new
             {
-                Success = success,
-                ErrorMessage = errormessage,
-                FileList = GetFiles(residentId)
+                Success = string.IsNullOrEmpty(errMsg),
+                ErrorMessage = errMsg,
+                FileList = fileList,
+                MediaPathTypeList = mediaPathTypeList,
+                IsAdmin = isAdmin
             }, JsonRequestBehavior.AllowGet);
-        }
 
-        [HttpGet]
-        [Authorize]
-        public PartialViewResult GetSharedLibarayLinkView(int residentId, int mediaPathTypeId)
-        {
-            var vm = LoadSharedLibaryAddViewModel(residentId, mediaPathTypeId);
+            jsonResult.MaxJsonLength = int.MaxValue;
 
-            return vm.SharedFiles.Any()
-                ? PartialView("_SharedLibraryLink", vm)
-                : null;
-        }
-
-        [HttpGet]
-        [Authorize]
-        public JsonResult GetUploaderHtml(int mediaPathTypeId)
-        {
-            string html;
-            using (var uploader = new MvcUploader(System.Web.HttpContext.Current))
-            {
-                uploader.UploadUrl = Response.ApplyAppPathModifier("~/UploadHandler.ashx");
-                uploader.Name = "myuploader";
-                uploader.AllowedFileExtensions = ResidentRules.GetAllowedExtensions(mediaPathTypeId); ;
-                uploader.MultipleFilesUpload = true;
-                uploader.InsertButtonID = "uploadbutton";
-                html = uploader.Render();
-            }
-
-            var rules = new ResidentRules();
-            return Json(new
-            {
-                UploaderHtml = html,
-                AddButtonText = $"Upload {rules.GetMediaPathShortDescription(mediaPathTypeId)}",
-            }, JsonRequestBehavior.AllowGet);
-        }
-
-        [HttpGet]
-        [Authorize]
-        public PartialViewResult GetImageViewerView(Guid streamId, string fileType)
-        {
-            var rules = new ImageViewerRules();
-            var m = rules.GetImageViewerModel(streamId, fileType);
-
-            return PartialView("_ImageViewer", new ImageViewerViewModel
-            {
-                FilePath = m.FilePath,
-                FileType = m.FileType,
-                Width = m.Width,
-                Height = m.Height,
-                PaddingLeft = m.PaddingLeft
-            });
+            return jsonResult;
         }
 
         [HttpPost]
         [Authorize]
-        public JsonResult DeleteSelected(int[] ids, int residentId, int mediaPathTypeId)
+        public JsonResult AddFiles(string[] filenames, int residentId, int mediaPathTypeId, int responseTypeId)
         {
-            bool success;
-            var errormessage = string.Empty;
+            string errMsg = null;
+            var newFiles = new Collection<MediaFileModel>();
+            const bool isLinked = false;
+
+            try
+            {
+                var dateAdded = DateTime.Now;
+                var rules = new ResidentRules();
+                var responseType = _responseTypesClient.Get(responseTypeId);
+                var mediaPathType = _mediaPathTypesClient.Get(mediaPathTypeId);
+
+                foreach (var filename in filenames.OrderByDescending(x => x))
+                {
+                    MediaFileModel newFile;
+                    errMsg = rules.AddMediaFileFromFilename(filename, residentId, mediaPathType, responseType, dateAdded, isLinked, out newFile);
+
+                    if (!string.IsNullOrEmpty(errMsg))
+                        throw new Exception(errMsg);
+
+                    newFiles.Add(newFile);
+                }
+            }
+            catch (Exception ex)
+            {
+                errMsg = ex.Message;
+                SystemEventLogger.WriteEntry($"ResidentProfile.AddFiles: {errMsg}", SystemEventLogType.AdminInterface, EventLogEntryType.Error);
+            }
+
+            return Json(new
+            {
+                Success = string.IsNullOrEmpty(errMsg),
+                ErrorMessage = errMsg,
+                FileList = newFiles
+            }, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        [Authorize]
+        public JsonResult UploadFile(HttpPostedFileBase file, int residentId, int mediaPathTypeId, string mediaPath, string mediaPathTypeCategory)
+        {
+            string errMsg = null;
+            string filename = null;
+
+            try
+            {
+                if (file != null)
+                {
+                    filename = file.FileName;
+                    var rules = new ResidentRules();
+
+                    errMsg = rules.SaveUploadedFile(
+                        filename,
+                        $@"{_mediaSourcePath.ProfileRoot}\{residentId}\{mediaPath}",
+                        file.InputStream,
+                        mediaPathTypeCategory);
+                }
+            }
+            catch (Exception ex)
+            {
+                errMsg = ex.Message;
+                SystemEventLogger.WriteEntry($"ResidentProfile.UploadFile: {errMsg}", SystemEventLogType.AdminInterface, EventLogEntryType.Error);
+            }
+
+            return Json(new
+            {
+                Filename = filename,
+                Success = string.IsNullOrEmpty(errMsg),
+                ErrorMessage = errMsg
+            }, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        [Authorize]
+        public JsonResult AddSharedMediaFiles(Guid[] streamIds, int residentId, string mediaPath, int mediaPathTypeId, int responseTypeId)
+        {
+            string errMsg = null;
+            var newFiles = new Collection<MediaFileModel>();
+            const bool isLinked = true;
+
+            try
+            {
+                if (streamIds != null)
+                {
+                    var rules = new ResidentRules();
+                    var dateAdded = DateTime.Now;
+                    var responseType = _responseTypesClient.Get(responseTypeId);
+                    var mediaPathType = _mediaPathTypesClient.Get(mediaPathTypeId);
+
+                    foreach (var streamId in streamIds)
+                    {
+                        MediaFileModel newFile;
+                        errMsg = rules.AddMediaFile(streamId, residentId, mediaPathType, responseType, dateAdded, isLinked, out newFile);
+
+                        if (!string.IsNullOrEmpty(errMsg))
+                            throw new Exception(errMsg);
+
+                        newFiles.Add(newFile);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                errMsg = ex.Message;
+                SystemEventLogger.WriteEntry($"ResidentProfile.AddSharedMediaFiles: {errMsg}", SystemEventLogType.AdminInterface, EventLogEntryType.Error);
+            }
+
+            return Json(new
+            {
+                Success = string.IsNullOrEmpty(errMsg),
+                ErrorMessage = errMsg,
+                FileList = newFiles
+            }, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpGet]
+        [Authorize]
+        public JsonResult GetImageViewerView(Guid streamId, string fileType)
+        {
+            string errMsg;
+            string html = null;
+
+            try
+            {
+                var rules = new ImageViewerRules();
+                var model = rules.GetImageViewerModel(streamId, fileType, out errMsg);
+                if (!string.IsNullOrEmpty(errMsg)) throw new Exception(errMsg);
+
+                html = this.RenderPartialViewToString("_ImageViewer", new ImageViewerViewModel
+                {
+                    FileType = model.FileType,
+                    Width = model.Width,
+                    Height = model.Height,
+                    Base64String = model.Base64String
+                });
+            }
+            catch (Exception ex)
+            {
+                errMsg = ex.Message;
+            }
+
+            return Json(new
+            {
+                Success = string.IsNullOrEmpty(errMsg),
+                ErrorMessage = errMsg,
+                Html = html
+            }, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        [Authorize]
+        public JsonResult DeleteSelected(int[] ids, int residentId, int responseTypeId)
+        {
+            var errMsg = string.Empty;
+            var deletedIds = new Collection<int>();
 
             try
             {
                 var activeResident = _activeResidentClient.Get();
                 if (activeResident.Resident.Id == residentId)
                 {
-                    errormessage = "The resident is currently engaging with R2G2. Media cannot be deleted at this time.";
+                    errMsg = "The resident is currently engaging with ABBY. Media cannot be deleted at this time.";
                 }
                 else
                 {
-                    if (ids.Length > 0)
+                    var rules = new ResidentRules();
+                    var responseType = _responseTypesClient.Get(responseTypeId);
+
+                    foreach (var id in ids)
                     {
-                        var rules = new ResidentRules();
-                        foreach (var id in ids)
-                        {
-                            var resdientMediaFile = _residentMediaFilesClient.Get(id);
-                            if (resdientMediaFile == null) continue;
+                        errMsg = rules.DeleteMediaFile(id, responseType);
+                        if (!string.IsNullOrEmpty(errMsg)) throw new Exception(errMsg);
 
-                            if (resdientMediaFile.MediaFile.IsLinked)
-                            {
-                                _residentMediaFilesClient.Delete(id);
-                            }
-                            else
-                            {
-                                var file = rules.GetMediaFile(id);
-                                if (file == null) continue;
-
-                                var fileManager = new FileManager { EventLogger = _systemEventLogger };
-                                errormessage = fileManager.DeleteFile($@"{file.Path}\{file.Filename}");
-
-                                if (errormessage.Length == 0)
-                                    _residentMediaFilesClient.Delete(id);
-                                else
-                                    break;
-                            }
-                        }
+                        deletedIds.Add(id);
                     }
                 }
-                success = (errormessage.Length == 0);
             }
             catch (Exception ex)
             {
-                success = false;
-                errormessage = ex.Message;
+                errMsg = ex.Message;
+                SystemEventLogger.WriteEntry($"ResidentProfile.DeleteSelected: {errMsg}", SystemEventLogType.AdminInterface, EventLogEntryType.Error);
             }
 
             return Json(new
             {
-                Success = success,
-                ErrorMessage = errormessage,
-                FileList = GetFiles(residentId)
+                Success = string.IsNullOrEmpty(errMsg),
+                ErrorMessage =  errMsg,
+                DeletedIds = deletedIds
             }, JsonRequestBehavior.AllowGet);
         }
 
-        private ResidentProfileViewModel LoadResidentProfileViewModel(
-            int id,
-            string idsearch,
-            string firstname,
-            string lastname,
-            int? mediaPathTypeId,
-            string sortcolumn,
-            int? sortdescending)
+        private ResidentProfileViewModel LoadResidentProfileViewModel(int id, string idsearch, string firstname, string lastname, string sortcolumn, int? sortdescending)
         {
             var resident = _residentsClient.Get(id);
             var fullName = (resident.LastName != null)
                 ? $"{resident.FirstName} {resident.LastName}"
                 : resident.FirstName;
-            var rules = new ResidentRules();
 
             var vm = new ResidentProfileViewModel
             {
                 ResidentId = resident.Id,
                 FullName = fullName,
-                AddButtonText = $"Upload {rules.GetMediaPathShortDescription(mediaPathTypeId)}",
+                ProfilePicture = ResidentRules.GetProfilePicture(resident.ProfilePicture) ?? ResidentRules.GetProfilePicturePlaceholder(),
                 IdSearch = idsearch,
                 FirstNameSearch = firstname,
                 LastNameSearch = lastname,
                 SortColumn = sortcolumn,
                 SortDescending = sortdescending,
-                SelectedMediaPathType = mediaPathTypeId ?? MediaPathTypeId.Music
-            };
-
-            return vm;
-        }
-
-        private void AddResidentMediaFile(int residentId, string filename, int mediaPathTypeId, string mediaPathType)
-        {
-            var fileManager = new FileManager { EventLogger = _systemEventLogger };
-            var streamId = fileManager.GetStreamId($@"{residentId}\{mediaPathType}", filename);
-            var responseTypeId = ResidentRules.GetResponseTypeId(mediaPathTypeId);
-
-            var mf = new ResidentMediaFileEdit
-            {
-                StreamId = streamId,
-                ResidentId = residentId,
-                ResponseTypeId = responseTypeId,
-                MediaPathTypeId = mediaPathTypeId,
-                IsLinked = false
-            };
-
-            _residentMediaFilesClient.Post(mf);
-        }
-
-        private static SharedLibraryLinkViewModel LoadSharedLibaryAddViewModel(int residentId, int mediaPathTypeId)
-        {
-            var rules = new ResidentRules();
-            var files = rules.GetAvailableSharedMediaFiles(residentId, mediaPathTypeId).ToArray();
-
-            var vm = new SharedLibraryLinkViewModel
-            {
-                SharedFiles = files
-                .Select(f => new SharedLibraryFileViewModel
-                {
-                    StreamId = f.StreamId,
-                    Filename = f.Filename
-                })
+                SelectedMediaPathTypeId = MediaPathTypeId.Music
             };
 
             return vm;
@@ -345,6 +318,7 @@ namespace Keebee.AAT.Administrator.Controllers
         {
             var list = new List<MediaFileViewModel>();
             var paths = _residentMediaFilesClient.GetForResident(id);
+            var thumbnails = _thumbnailsClient.Get().ToArray();
 
             if (paths == null) return list;
 
@@ -360,6 +334,7 @@ namespace Keebee.AAT.Administrator.Controllers
 
                 foreach (var file in files)
                 {
+                    var thumb = thumbnails.FirstOrDefault(x => x.StreamId == file.StreamId);
                     var item = new MediaFileViewModel
                     {
                         Id = file.Id,
@@ -369,14 +344,16 @@ namespace Keebee.AAT.Administrator.Controllers
                         FileSize = file.FileSize,
                         IsLinked = file.IsLinked,
                         Path = $@"{pathRoot}\{path.MediaPathType.Description}",
-                        MediaPathTypeId = path.MediaPathType.Id
+                        MediaPathTypeId = path.MediaPathType.Id,
+                        DateAdded = file.DateAdded,
+                        Thumbnail = ResidentRules.GetThumbnail(thumb?.Image)
                     };
 
                     list.Add(item);
                 }
             }
 
-            return list;
+            return list.OrderBy(x => x.Filename);
         }
     }
 }

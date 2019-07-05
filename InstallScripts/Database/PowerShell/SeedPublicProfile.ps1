@@ -29,7 +29,6 @@
             Write-Host "Public Profile has already been seeded."
         } 
         else {
-            
             $mediaProfiles = $mediaDestination + "\Profiles\*"
             If(test-path $mediaProfiles)
             {
@@ -38,6 +37,8 @@
 
             Write-Host "Transferring profile...” -NoNewline
             Copy-Item "$pathDeployments\Media\$pathProfilesPublic" $mediaDestination\$pathProfilesPublic -recurse -Force
+            # get rid of Thumbs.db
+            get-childitem $mediaDestination\$pathProfilesPublic -include *.db -recurse | foreach ($_) {remove-item $_.fullname}
             Write-Host "done.”
 
             Write-Host "Seeding profile...” -NoNewline

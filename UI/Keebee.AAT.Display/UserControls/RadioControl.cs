@@ -1,20 +1,14 @@
-﻿using Keebee.AAT.SystemEventLogging;
+﻿using Keebee.AAT.Display.Properties;
+using Keebee.AAT.MessageQueuing;
+using Keebee.AAT.SystemEventLogging;
 using System;
 using System.Diagnostics;
 using System.Windows.Forms;
-using Keebee.AAT.Display.Properties;
-using Keebee.AAT.MessageQueuing;
 
 namespace Keebee.AAT.Display.UserControls
 {
     public partial class RadioControl : UserControl
     {
-        private SystemEventLogger _systemEventLogger;
-        public SystemEventLogger SystemEventLogger
-        {
-            set { _systemEventLogger = value; }
-        }
-
         public class LogVideoActivityEventEventArgs : EventArgs
         {
             public string Description { get; set; }
@@ -74,7 +68,7 @@ namespace Keebee.AAT.Display.UserControls
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"RadioControl.MessageReceivedPhidgetContinuousRadio: {ex.Message}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"RadioControl.MessageReceivedPhidgetContinuousRadio: {ex.Message}", SystemEventLogType.Display, EventLogEntryType.Error);
             }
         }
 

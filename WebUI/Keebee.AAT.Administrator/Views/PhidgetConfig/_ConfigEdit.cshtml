@@ -1,24 +1,26 @@
 ﻿@model Keebee.AAT.Administrator.ViewModels.ConfigEditViewModel
 
-<div class="container edit-dialog-container">
+<div class="container container-config-edit">
     @if (Model.SourceConfigName != null)
     {
-         <h4>Create a duplicate of: <b>@Model.SourceConfigName</b></h4>
+         <h4>Duplicate <b>@Model.SourceConfigName</b></h4>
     }
     <div class="row">
         <div class="col-sm-12">
             <div class="label label-default">Name</div>
             <input type="text" id="txtDescription" class="form-control" value="@Model.Description" maxlength="50" />
         </div>
+    </div>
+    <div class="row">
         <div class="col-sm-12">
             <div class="label label-default">Turn On Event Logging</div>
             @if (Model.IsActiveEventLog)
             {
-                <div><input type="checkbox" id="chkIsActiveEventLog" checked /></div>
+                <div><input type="checkbox" class="form-control checkbox-size-lg" id="chkIsActiveEventLog" checked /></div>
             }
             else
             {
-                <div><input type="checkbox" id="chkIsActiveEventLog" /></div>
+                <div><input type="checkbox" class="form-control checkbox-size-lg" id="chkIsActiveEventLog" /></div>
             }
         </div>
     </div>

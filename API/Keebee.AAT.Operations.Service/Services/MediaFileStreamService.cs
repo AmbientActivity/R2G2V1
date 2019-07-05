@@ -19,10 +19,13 @@ namespace Keebee.AAT.Operations.Service.Services
         {
             var container = new Container(new Uri(ODataHost.Url));
 
-            var media = container.MediaFileStreams.ByKey(streamId)
-                .GetValue();
+            var media = container.MediaFileStreams.ByKey(streamId);
 
-            return media;
+            MediaFileStream result;
+            try { result = media.GetValue(); }
+            catch { result = null; }
+
+            return result;
         }
 
         public MediaFileStream GetSingleFromPath(string path, string filename)

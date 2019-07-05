@@ -22,6 +22,7 @@ Try
     # Video Capture Message Queue
     write-host "Removing Video Capture message queue..." -NoNewline
     RemoveMessageQueue "Video-Capture"
+    RemoveMessageQueue "Video-Capture-State"
     write-host "done."
 
     # Bluetooth Beacon Watcher Message Queues
@@ -53,6 +54,13 @@ Try
     # Phidget Continuous Radio Message Queue (sends constant phidget values to the radio user control)
     write-host "Removing Continuous Radio message queue..." -NoNewline
     RemoveMessageQueue "Phidget-Continuous-Radio"
+    write-host "done."
+
+    # Beacon Monitor message queus
+    write-host "Removing Beacon Monitor message queues..." -NoNewline
+    RemoveMessageQueue "Beacon-Monitor"
+    RemoveMessageQueue "Beacon-Monitor-Resident"
+    RemoveMessageQueue "Beacon-Monitor-State"
     write-host "done."
 }
 Catch

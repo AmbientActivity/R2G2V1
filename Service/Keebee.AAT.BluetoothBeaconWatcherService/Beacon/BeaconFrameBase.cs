@@ -1,8 +1,8 @@
-﻿using System;
+﻿using Keebee.AAT.BluetoothBeaconWatcherService.Annotations;
+using System;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using Keebee.AAT.BluetoothBeaconWatcherService.Annotations;
 
 namespace Keebee.AAT.BluetoothBeaconWatcherService.Beacon
 {
@@ -14,7 +14,7 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService.Beacon
     /// </summary>
     public abstract class BeaconFrameBase : INotifyPropertyChanged
     {
-        protected byte[] _payload;
+        private byte[] _payload;
 
         /// <summary>
         /// The raw byte payload of this beacon frame.
@@ -37,14 +37,10 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService.Beacon
                 if (_payload != null && _payload.SequenceEqual(value)) return;
                 _payload = new byte[value.Length];
                 Array.Copy(value, _payload, value.Length);
-                OnPropertyChanged();
             }
         }
 
-        protected BeaconFrameBase()
-        {
-
-        }
+        protected BeaconFrameBase(){}
 
         protected BeaconFrameBase(byte[] payload)
         {

@@ -1,9 +1,11 @@
-﻿using Keebee.AAT.BusinessRules.Models;
+﻿using System;
+using Keebee.AAT.BusinessRules.Models;
 using Keebee.AAT.ApiClient.Clients;
 using Keebee.AAT.ApiClient.Models;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
+using Keebee.AAT.Shared;
 
 namespace Keebee.AAT.BusinessRules
 {
@@ -30,27 +32,73 @@ namespace Keebee.AAT.BusinessRules
             return id;
         }
 
-        public int AttemptToLogin(string username, string password, out string errmsg)
+        public string GetByUsername(string username, out User user)
         {
-            var user = _usersClient.GetByUsername(username);
-            errmsg = null;
+            string errMsg = null;
+            user = null;
 
-            if (user.Id == 0)
-                errmsg = "User does not exist";
-
-            if (errmsg == null)
+            try
             {
-                if (password == null)
-                    errmsg = "Password is required";
+                user = _usersClient.GetByUsername(username);
+            }
+            catch (Exception ex)
+            {
+                errMsg = ex.Message;
+
+            }
+            return errMsg;
+        }
+
+        public string Login(string username, string password, out int userId)
+        {
+            string errMsg = null;
+            userId = -1;
+
+            try
+            {
+                var user = _usersClient.GetByUsername(username);
+
+                if (user != null)
+                    userId = user.Id;
+            }
+            catch (Exception ex)
+            {
+                errMsg = ex.Message;
             }
 
-            if (errmsg == null)
+            return errMsg;
+        }
+
+        public string ValidateLogin(string username, string password, out string errMsg)
+        {
+            errMsg = null;
+            string validateMsg = null;
+
+            try
             {
-                if (!VerifyHashPassword(password, user.Password.Trim()))
-                    errmsg = "Invalid password";
+                var user = _usersClient.GetByUsername(username);
+
+                if (user.Id == 0)
+                    validateMsg = "User does not exist";
+
+                if (string.IsNullOrEmpty(validateMsg))
+                {
+                    if (string.IsNullOrEmpty(password))
+                        validateMsg = "Password is required";
+                }
+
+                if (string.IsNullOrEmpty(validateMsg))
+                {
+                    if (!VerifyHashPassword(password, user.Password.Trim()))
+                        validateMsg = "Incorrect passowrd";
+                }
+            }
+            catch (Exception ex)
+            {
+                errMsg = ex.Message;
             }
 
-            return (errmsg == null) ? user.Id : 0;
+            return validateMsg;
         }
 
         public string GetUserRoles(int userId)
@@ -67,38 +115,54 @@ namespace Keebee.AAT.BusinessRules
             return s.ToString().Substring(0, s.ToString().Length - 1);
         }
 
-        public string ValidatePasswordChange(string username, string oldPassword, string newPassword, string retypeNewPassword, out int userId)
+        public string ValidatePasswordChange(string username, string existingPassword, string newPassword, string retypeNewPassword, out int userId)
         {
-            string errmsg = null;
+            string validateMsg = null;
+            userId = -1;
+
+            if (string.IsNullOrEmpty(existingPassword))
+                return "Old password cannot be blank";
+
+            if (string.IsNullOrEmpty(newPassword) && string.IsNullOrEmpty(retypeNewPassword))
+                return "New password cannot be blank";
+
             var user = _usersClient.GetByUsername(username);
             var passwordHash = user.Password.Trim();
 
             userId = user.Id;
 
             if (userId == 0)
-                errmsg = "User does not exist";
+                validateMsg = "User does not exist";
 
-            if (errmsg == null)
+            if (string.IsNullOrEmpty(validateMsg))
             {
-                if (!VerifyHashPassword(oldPassword, passwordHash))
-                    errmsg = "Invalid old password";
+                if (!VerifyHashPassword(existingPassword, passwordHash))
+                    validateMsg = "Invalid old password";
             }
 
-            if (errmsg == null)
+            if (string.IsNullOrEmpty(validateMsg))
             {
                 if (newPassword != retypeNewPassword)
-                    errmsg = "New and retyped passwords do not match";
+                    validateMsg = "New and retyped passwords do not match";
             }
             
-            return errmsg;
+            return validateMsg;
         }
 
-        public void ChangePassword(int userId, string password)
+        public string ChangePassword(int userId, string password)
         {
             var passwordHash = GeneratePasswordHash(password);
-
             var user = new User {Password = passwordHash};
-            _usersClient.Patch(userId, user);
+
+            return _usersClient.Patch(userId, user);
+        }
+
+        public string ResetCaregiver()
+        {
+            var caregiver = _usersClient.Get(UserId.Caregiver);
+            caregiver.Password = GeneratePasswordHash(UserDefaultPassword.Caregiver);
+
+            return _usersClient.Patch(UserId.Caregiver, caregiver);
         }
 
         private static bool VerifyHashPassword(string password, string hash)
@@ -115,13 +179,13 @@ namespace Keebee.AAT.BusinessRules
         {
             var md5 = new MD5CryptoServiceProvider();
 
-            byte[] tmpSource = Encoding.ASCII.GetBytes(password);
-            byte[] tmpHash = md5.ComputeHash(tmpSource);
+            var tmpSource = Encoding.ASCII.GetBytes(password);
+            var tmpHash = md5.ComputeHash(tmpSource);
 
             var sOutput = new StringBuilder(tmpHash.Length);
-            for (int i = 0; i < tmpHash.Length; i++)
+            foreach (var b in tmpHash)
             {
-                sOutput.Append(tmpHash[i].ToString("X2")); // X2 formats to hexadecimal
+                sOutput.Append(b.ToString("X2")); // X2 formats to hexadecimal
             }
             return sOutput.ToString();
         }

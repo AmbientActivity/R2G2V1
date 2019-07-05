@@ -8,7 +8,7 @@ using Keebee.AAT.Display.Volume;
 using Keebee.AAT.Display.Extensions;
 using Keebee.AAT.Display.Models;
 using Keebee.AAT.ApiClient.Clients;
-using System.Web.Script.Serialization;
+using Newtonsoft.Json;
 using System.Diagnostics;
 using System.Drawing;
 using System;
@@ -16,29 +16,18 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Windows.Forms;
 using System.Linq;
-using WMPLib;
 
 namespace Keebee.AAT.Display
 {
     public partial class Main : Form
     {
+        #region declaration
+
         internal enum ResponseValueChangeType
         {
             Increase = 0,
             Decrease = 1,
             NoDifference = 2
-        }
-
-        // api client
-        private readonly IPublicMediaFilesClient _publicMediaFilesClient;
-        private readonly IConfigsClient _configsClient;
-
-        #region declaration
-
-        private SystemEventLogger _systemEventLogger;
-        public SystemEventLogger EventLogger
-        {
-            set { _systemEventLogger = value; }
         }
 
         private string[] _ambientPlaylist;
@@ -47,16 +36,20 @@ namespace Keebee.AAT.Display
             set { _ambientPlaylist = value; }
         }
 
+        // api client
+        private readonly IPublicMediaFilesClient _publicMediaFilesClient;
+        private readonly IConfigsClient _configsClient;
+
         // delegate
         private delegate void ResumeAmbientDelegate();
         private delegate void PlayMediaDelegate(int responseTypeId, int responseValue);
         private delegate void PlaySlideShowDelegate();
-        private delegate void PlayMatchingGameDelegate();
+        private delegate void PlayMatchingGameDelegate(string swfFile);
         private delegate void ShowCaregiverDelegate();
         private delegate void KillDisplayDelegate();
         private delegate void ShowOffScreenDelegate();
         private delegate void ShowVolumeControlDelegate();
-        private delegate void PlayPaintingActivityDelegate();
+        private delegate void PlayActivityDelegate(int responseTypeId, int interactiveActivityTypeId, string swfFile);
 
         // message queue sender
         private readonly CustomMessageQueue _messageQueueDisplaySms;
@@ -65,16 +58,16 @@ namespace Keebee.AAT.Display
         private readonly CustomMessageQueue _messageQueueDisplayBluetoothBeaconWatcher;
         private readonly CustomMessageQueue _messageQueueVideoCapture;
 
-        // message queue listener
-        private readonly CustomMessageQueue _messageQueueResponse;
-
-        // current sensor values
-        private int _currentRadioSensorValue;
-        private int _currentTelevisionSensorValue;
+        // current sensor values (for 'rotational' response types)
+        private readonly Dictionary<int, int> _rotationalResponses;
 
         // current activity/response types
-        private int _currentResponseTypeId;
+        private ResponseTypeMessage _pendingResponse;
+        private ResponseTypeMessage _currentResponse;
         private int _currentPhidgetTypeId;
+
+        // ambient response
+        private readonly ResponseTypeMessage _ambientResponse;
 
         // active event logging
         private bool _currentIsActiveEventLog;
@@ -82,19 +75,17 @@ namespace Keebee.AAT.Display
         // active activity/response
         private ConfigDetailMessage _activeConfigDetail;
 
-        // list of all active response type ids
-        private int[] _activeResponseTypeIds;
-
         // active profile
         private ResidentMessage _activeResident;
 
         // flags
         private bool _isNewResponse;
         private bool _isMatchingGameTimeoutExpired;
-        private bool _isPaintingActivityTimeoutExpired;
+        private bool _isActivityTimeoutExpired;
 
         // caregiver interface
         private CaregiverInterface _caregiverInterface;
+        private readonly int _caregiverTimeout;
 
         // custom event loggers
         private readonly InteractiveActivityEventLogger _interactiveActivityEventLogger;
@@ -154,7 +145,7 @@ namespace Keebee.AAT.Display
             });
 
             // response message queue listener
-            _messageQueueResponse = new CustomMessageQueue(new CustomMessageQueueArgs
+            var q = new CustomMessageQueue(new CustomMessageQueueArgs
             {
                 QueueName = MessageQueueType.Response,
                 MessageReceivedCallback = MessageReceivedResponse
@@ -169,17 +160,32 @@ namespace Keebee.AAT.Display
             // response complete event handlers
             ambientPlayer1.ScreenTouchedEvent += AmbientScreenTouched;
             slideViewerFlash1.SlideShowCompleteEvent += SlideShowComplete;
-            mediaPlayer1.MediaPlayerCompleteEvent += MediaPlayerComplete;
+            audioVideoPlayer1.MediaPlayerCompleteEvent += AudioVideoPlayerComplete;
             offScreen1.OffScreenCompleteEvent += OffScreenComplete;
             matchingGame1.MatchingGameTimeoutExpiredEvent += MatchingGameTimeoutExpired;
             matchingGame1.LogInteractiveActivityEventEvent += LogInteractiveActivityEvent;
             matchingGame1.StartVideoCaptureEvent += StartVideoCaptureEvent;
-            mediaPlayer1.LogVideoActivityEventEvent += LogVideoActivityEvent;
-            paintingActivity1.PaintingActivityTimeoutExpiredEvent += PaintingActivityTimeoutExpired;
-            paintingActivity1.LogInteractiveActivityEventEvent += LogInteractiveActivityEvent;
-            paintingActivity1.StartVideoCaptureEvent += StartVideoCaptureEvent;
+            audioVideoPlayer1.LogVideoActivityEventEvent += LogVideoActivityEvent;
+            activityPlayer1.ActivityPlayerTimeoutExpiredEvent += ActivityPlayerTimeoutExpired;
+            activityPlayer1.LogInteractiveActivityEventEvent += LogInteractiveActivityEvent;
+            activityPlayer1.StartVideoCaptureEvent += StartVideoCaptureEvent;
 
-            _currentResponseTypeId = ResponseTypeId.Ambient;
+            // initialize ambient and current responses
+            _ambientResponse = new ResponseTypeMessage
+            {
+                Id = ResponseTypeId.Ambient,
+                ResponseTypeCategoryId = ResponseTypeCategoryId.System
+            };
+            _currentResponse = _ambientResponse;
+
+            // initialize rotational response sensor values
+            var responseTypesClient = new ResponseTypesClient();
+            _rotationalResponses = responseTypesClient.GeRotationalTypes()
+                .Select(r => new {  r.Id,  SensorValue = 0 })
+                .ToDictionary(r => r.Id, r => r.SensorValue);
+
+            // caregiver
+            _caregiverTimeout = Convert.ToInt32(ConfigurationManager.AppSettings["CaregiverTimeout"].Trim());
 
             InitializeStartupPosition();
         }
@@ -205,44 +211,24 @@ namespace Keebee.AAT.Display
 
         private void InitializeAmbientPlayer()
         {
-            // ambient invitation messages
             var durationInvitation = Convert.ToInt32(ConfigurationManager.AppSettings["AmbientInvitationDuration"].Trim());
             var durationVideo = Convert.ToInt32(ConfigurationManager.AppSettings["AmbientVideoDuration"].Trim());
 
-            var invitationMessage1 = ConfigurationManager.AppSettings["InvitationMessage1"].Trim();
-            var invitationMessage2 = ConfigurationManager.AppSettings["InvitationMessage2"].Trim();
-            var invitationMessage3 = ConfigurationManager.AppSettings["InvitationMessage3"].Trim();
-            var invitationMessage4 = ConfigurationManager.AppSettings["InvitationMessage4"].Trim();
-            var invitationMessage5 = ConfigurationManager.AppSettings["InvitationMessage5"].Trim();
-            var invitationMessage6 = ConfigurationManager.AppSettings["InvitationMessage6"].Trim();
-            var invitationMessage7 = ConfigurationManager.AppSettings["InvitationMessage7"].Trim();
-            var invitationMessage8 = ConfigurationManager.AppSettings["InvitationMessage8"].Trim();
-            var invitationMessage9 = ConfigurationManager.AppSettings["InvitationMessage9"].Trim();
-            var invitationMessage10 = ConfigurationManager.AppSettings["InvitationMessage10"].Trim();
+            var ambientInvitationsClient = new AmbientInvitationsClient();
+            var invitations = ambientInvitationsClient.Get().ToArray();
+            ambientPlayer1.InvitationMessages = invitations;
 
-            // ambient invitation response types
-            var invitationResponse1 = Convert.ToInt32(ConfigurationManager.AppSettings["InvitationResponse1"].Trim());
-            var invitationResponse2 = Convert.ToInt32(ConfigurationManager.AppSettings["InvitationResponse2"].Trim());
-            var invitationResponse3 = Convert.ToInt32(ConfigurationManager.AppSettings["InvitationResponse3"].Trim());
-            var invitationResponse4 = Convert.ToInt32(ConfigurationManager.AppSettings["InvitationResponse4"].Trim());
-            var invitationResponse5 = Convert.ToInt32(ConfigurationManager.AppSettings["InvitationResponse5"].Trim());
-            var invitationResponse6 = Convert.ToInt32(ConfigurationManager.AppSettings["InvitationResponse6"].Trim());
-            var invitationResponse7 = Convert.ToInt32(ConfigurationManager.AppSettings["InvitationResponse7"].Trim());
-            var invitationResponse8 = Convert.ToInt32(ConfigurationManager.AppSettings["InvitationResponse8"].Trim());
-            var invitationResponse9 = Convert.ToInt32(ConfigurationManager.AppSettings["InvitationResponse9"].Trim());
-            var invitationResponse10 = Convert.ToInt32(ConfigurationManager.AppSettings["InvitationResponse10"].Trim());
+            var responseTypesClient = new ResponseTypesClient();
+            var randomResponseTypes = responseTypesClient.GetRandomTypes()
+                .Select(x => new ResponseTypeMessage
+                    {
+                       Id = x.Id,
+                       ResponseTypeCategoryId = x.ResponseTypeCategory.Id,
+                       InteractiveActivityTypeId = x.InteractiveActivityType?.Id ?? 0,
+                       SwfFile = x.InteractiveActivityType?.SwfFile
+                    }).ToArray();
 
-            ambientPlayer1.InvitationMessages = AmbientInvitationMessages.Load(
-                new[]
-                {
-                    invitationMessage1, invitationMessage2, invitationMessage3, invitationMessage4, invitationMessage5,
-                    invitationMessage6, invitationMessage7, invitationMessage8, invitationMessage9, invitationMessage10
-                },
-                new[]
-                {
-                    invitationResponse1, invitationResponse2, invitationResponse3, invitationResponse4, invitationResponse5,
-                    invitationResponse6, invitationResponse7, invitationResponse8, invitationResponse9, invitationResponse10
-                });
+            ambientPlayer1.RandomResponseTypes = randomResponseTypes;
 
             ambientPlayer1.InitializeTimers(durationInvitation, durationVideo);
         }
@@ -253,9 +239,9 @@ namespace Keebee.AAT.Display
             ambientPlayer1.BringToFront();
             ambientPlayer1.Show();
 
-            mediaPlayer1.Dock = DockStyle.Fill;
-            mediaPlayer1.SendToBack();
-            mediaPlayer1.Hide();
+            audioVideoPlayer1.Dock = DockStyle.Fill;
+            audioVideoPlayer1.SendToBack();
+            audioVideoPlayer1.Hide();
 
             radioControl1.Dock = DockStyle.Fill;
             radioControl1.SendToBack();
@@ -269,9 +255,9 @@ namespace Keebee.AAT.Display
             matchingGame1.SendToBack();
             matchingGame1.Hide();
 
-            paintingActivity1.Dock = DockStyle.Fill;
-            paintingActivity1.SendToBack();
-            paintingActivity1.Hide();
+            activityPlayer1.Dock = DockStyle.Fill;
+            activityPlayer1.SendToBack();
+            activityPlayer1.Hide();
 
             offScreen1.Dock = DockStyle.Fill;
             offScreen1.SendToBack();
@@ -289,195 +275,213 @@ namespace Keebee.AAT.Display
             lblActiveResident.Hide();
         }
 
-        private void SetPostLoadProperties()
-        {
-            // the _systemEventLogger is not available in the constructor - this gets called later in MainShown()
-            _messageQueueDisplaySms.SystemEventLogger = _systemEventLogger;
-            _messageQueueDisplayPhidget.SystemEventLogger = _systemEventLogger;
-            _messageQueueResponse.SystemEventLogger = _systemEventLogger;
-
-            _interactiveActivityEventLogger.SystemEventLogger = _systemEventLogger;
-            _activityEventLogger.EventLogger = _systemEventLogger;
-
-            ambientPlayer1.SystemEventLogger = _systemEventLogger;
-            mediaPlayer1.SystemEventLogger = _systemEventLogger;
-            slideViewerFlash1.SystemEventLogger = _systemEventLogger;
-            matchingGame1.SystemEventLogger = _systemEventLogger;
-        }
-
         #endregion
 
-        private void ExecuteResponse(int responseTypeId, int sensorValue, bool isSystem)
+        #region core logic
+
+        private void MessageReceivedResponse(object source, MessageEventArgs e)
         {
-            if (!isSystem)
-                if (!ShouldExecute(responseTypeId)) return;
-
-            if (_currentResponseTypeId == ResponseTypeId.Caregiver && 
-                responseTypeId != ResponseTypeId.VolumeControl)  
-                return;
-
             try
             {
-                switch (responseTypeId)
-                {
-                    case ResponseTypeId.SlideShow:
-                        PlaySlideShow();
-                        break;
-                    case ResponseTypeId.MatchingGame:
-                        PlayMatchingGame();
-                        break;
-                    case ResponseTypeId.PaintingActivity:
-                        PlayPaintingActivity();
-                        break;
-                    case ResponseTypeId.KillDisplay:
-                        KillDisplay();
-                        break;
-                    case ResponseTypeId.Radio:
-                    case ResponseTypeId.Television:
-                    case ResponseTypeId.Cats:
-                        PlayMedia(responseTypeId, sensorValue);
-                        break;
-                    case ResponseTypeId.Caregiver:
-                        ShowCaregiver();
-                        break;
-                    case ResponseTypeId.Ambient:
-                        ResumeAmbient();
-                        break;
-                    case ResponseTypeId.VolumeControl:
-                        ShowVolumeControl();
-                        break;
-                    case ResponseTypeId.OffScreen:
-                        ShowOffScreen();
-                        break;
-                }
+                var responseMessage = JsonConvert.DeserializeObject<ResponseMessage>(e.MessageBody);
 
-                // save the current sensor values
-                switch (responseTypeId)
+                var resident = responseMessage.Resident;
+                var configDetail = responseMessage.ConfigDetail;
+                var responseType = configDetail.ResponseType;
+                var phidgetTypeId = configDetail.PhidgetTypeId;
+                var isActiveEventLog = responseMessage.IsActiveEventLog;
+
+                _isNewResponse =
+                    (responseType.Id != _currentResponse.Id) ||
+                    (phidgetTypeId != _currentPhidgetTypeId) ||
+                    (resident.Id != _activeResident?.Id);
+
+                // get the active resident
+                _activeResident = new ResidentMessage
                 {
-                    case ResponseTypeId.Radio:
-                        _currentRadioSensorValue = sensorValue;
-                        break;
-                    case ResponseTypeId.Television:
-                        _currentTelevisionSensorValue = sensorValue;
-                        break;
-                }
+                    Id = resident.Id,
+                    Name = resident.Name,
+                    GameDifficultyLevel = resident.GameDifficultyLevel,
+                    AllowVideoCapturing = resident.AllowVideoCapturing
+                };
+
+                // get the pending response type
+                _pendingResponse = new ResponseTypeMessage
+                {
+                    Id = responseType.Id,
+                    ResponseTypeCategoryId = responseType.ResponseTypeCategoryId,
+                    IsRandom = responseType.IsRandom,
+                    IsRotational = responseType.IsRotational,
+                    IsUninterrupted = responseType.IsUninterrupted,
+                    InteractiveActivityTypeId = responseType.InteractiveActivityTypeId,
+                    SwfFile = responseType.SwfFile
+                };
+
+                // store config id's (for event logging)
+                _activeConfigDetail = new ConfigDetailMessage
+                {
+                    Id = configDetail.Id,
+                    ConfigId = configDetail.ConfigId
+                };
+
+                _currentIsActiveEventLog = isActiveEventLog;
+                _currentPhidgetTypeId = phidgetTypeId;
+
+                ExecuteResponse(responseMessage.SensorValue);
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"Main.ExecuteResponse: {ex.Message}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"Main.MessageReceivedResponse: {ex.Message}", SystemEventLogType.Display, EventLogEntryType.Error);
             }
         }
 
-        private bool ShouldExecute(int responseTypeId)
+        private void ExecuteResponse(int sensorValue = 0)
         {
-            // if it is a new activity/response type then execute it
-            if (_isNewResponse) return true;
+            if (!ShouldExecutePending()) return;
 
-            // if it is a' media player' or 'off screen' response type then execute it
-            return (responseTypeId == ResponseTypeId.Television)
-                || (responseTypeId == ResponseTypeId.Radio)
-                || (responseTypeId == ResponseTypeId.OffScreen);
+            try
+            {
+                switch (_pendingResponse.ResponseTypeCategoryId)
+                {
+                    case ResponseTypeCategoryId.Image:
+                        PlaySlideShow();
+                        break;
+                    case ResponseTypeCategoryId.Interactive:
+                        switch (_pendingResponse.InteractiveActivityTypeId)
+                        {
+                            case InteractiveActivityTypeId.MatchingGame:
+                                PlayMatchingGame(_pendingResponse.SwfFile);
+                                break;
+                            default:  // any generic flash activities
+                                if (_pendingResponse.InteractiveActivityTypeId > 0)
+                                    PlayActivity(_pendingResponse.Id,
+                                        _pendingResponse.InteractiveActivityTypeId,
+                                        _pendingResponse.SwfFile);
+                                break;
+                        }
+                        break;
+
+                    case ResponseTypeCategoryId.System:
+                        switch (_pendingResponse.Id)
+                        {
+                            case ResponseTypeId.Ambient:
+                                ResumeAmbient();
+                                break;
+                            case ResponseTypeId.Caregiver:
+                                ShowCaregiver();
+                                break;
+                            case ResponseTypeId.VolumeControl:
+                                ShowVolumeControl();
+                                break;
+                            case ResponseTypeId.OffScreen:
+                                ShowOffScreen();
+                                break;
+                            case ResponseTypeId.KillDisplay:
+                                KillDisplay();
+                                break;
+                        }
+                        break;
+
+                    case ResponseTypeCategoryId.Audio:
+                    case ResponseTypeCategoryId.Video:
+                        PlayAudioVideo(_pendingResponse.Id, sensorValue);
+                        break;
+                }
+
+                // save the current rotational sensor value
+                if (_pendingResponse.IsRotational)
+                    _rotationalResponses[_pendingResponse.Id] = sensorValue;
+
+            }
+            catch (Exception ex)
+            {
+                SystemEventLogger.WriteEntry($"Main.ExecuteResponse: {ex.Message}", SystemEventLogType.Display, EventLogEntryType.Error);
+            }
         }
 
-        private void StopCurrentResponse(int newResponseTypeid = -1)
+        private bool ShouldExecutePending()
+        {
+            // dont'execute if current response is uninterrupted
+            if (_currentResponse.IsUninterrupted && _pendingResponse.Id != ResponseTypeId.VolumeControl) return false;
+
+            // execute if a system response
+            if (_pendingResponse.ResponseTypeCategoryId == ResponseTypeCategoryId.System)
+                return true;
+
+            // only execute if:
+            // new response
+            // OR 'rotational'
+            // OR volume control
+            return _isNewResponse
+                    || _pendingResponse.IsRotational
+                    || _pendingResponse.Id == ResponseTypeId.VolumeControl;
+        }
+
+        private void StopCurrentResponse(int previousResponseTypeCategoryId = -1)
         {
             try
             {
-                switch (_currentResponseTypeId)
+                switch (_currentResponse.ResponseTypeCategoryId)
                 {
-                    case ResponseTypeId.SlideShow:
+                    case ResponseTypeCategoryId.Image:
                         slideViewerFlash1.Hide();
                         slideViewerFlash1.SendToBack();
                         slideViewerFlash1.Stop();
-                        mediaPlayer1.Stop();
+                        audioVideoPlayer1.Stop();
                         break;
-                    case ResponseTypeId.MatchingGame:
-                        matchingGame1.Hide();
-                        matchingGame1.SendToBack();
-                        matchingGame1.Stop(_isMatchingGameTimeoutExpired);
+                    case ResponseTypeCategoryId.Interactive:
+                        switch (_currentResponse.Id)
+                        {
+                            case ResponseTypeId.MatchingGame:
+                                matchingGame1.Hide();
+                                matchingGame1.SendToBack();
+                                matchingGame1.Stop(_isMatchingGameTimeoutExpired);
+                                break;
+                            default: // generic interactive activities
+                                activityPlayer1.Hide();
+                                activityPlayer1.SendToBack();
+                                activityPlayer1.Stop(_isActivityTimeoutExpired);
+                                break;
+                        }
                         break;
-                    case ResponseTypeId.PaintingActivity:
-                        paintingActivity1.Hide();
-                        paintingActivity1.SendToBack();
-                        paintingActivity1.Stop(_isPaintingActivityTimeoutExpired);
-                        break;
-                    case ResponseTypeId.Radio:
-                    case ResponseTypeId.Television:
-                    case ResponseTypeId.Cats:
+                    case ResponseTypeCategoryId.Audio:
+                    case ResponseTypeCategoryId.Video:
                         radioControl1.Hide();
                         radioControl1.SendToBack();
-                        if (newResponseTypeid != ResponseTypeId.Television &&
-                            newResponseTypeid != ResponseTypeId.Cats)
+                        if (previousResponseTypeCategoryId != ResponseTypeCategoryId.Video)
                         {
-                            mediaPlayer1.SendToBack();
-                            mediaPlayer1.Hide();
+                            audioVideoPlayer1.SendToBack();
+                            audioVideoPlayer1.Hide();
                         }
-                        mediaPlayer1.Stop();
+                        audioVideoPlayer1.Stop();
                         break;
-                    case ResponseTypeId.Ambient:
-                        ambientPlayer1.Hide();
-                        ambientPlayer1.SendToBack();
-                        ambientPlayer1.Pause();
-                        break;
-                    case ResponseTypeId.OffScreen:
-                        offScreen1.Hide();
-                        offScreen1.SendToBack();
-                        offScreen1.Stop();
+                    case ResponseTypeCategoryId.System:
+                        switch (_currentResponse.Id)
+                        {
+                            case ResponseTypeId.Ambient:
+                                ambientPlayer1.Hide();
+                                ambientPlayer1.SendToBack();
+                                ambientPlayer1.Pause();
+                                break;
+                            case ResponseTypeId.OffScreen:
+                                offScreen1.Hide();
+                                offScreen1.SendToBack();
+                                offScreen1.Stop();
+                                audioVideoPlayer1.Stop();
+                                break;
+                        }
                         break;
                 }
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"Main.StopCurrentResponse: {ex.Message}", EventLogEntryType.Error);
-            }
-        }
-
-        private int _currentSequentialResponseTypeIndex = -1;
-        private void ExecuteSequential(IEnumerable<int> responseTypeIds)
-        {
-            var activeIds = responseTypeIds.Where(x => _activeResponseTypeIds.Contains(x)).ToArray();
-
-            if (!activeIds.Any())
-            {
-                ResumeAmbient();
-            }
-            else
-            {
-                if (_currentSequentialResponseTypeIndex < activeIds.Length - 1)
-                    _currentSequentialResponseTypeIndex++;
-                else
-                    _currentSequentialResponseTypeIndex = 0;
-
-                var responseTypeId = activeIds[_currentSequentialResponseTypeIndex];
-
-                switch (responseTypeId)
-                {
-                    case ResponseTypeId.MatchingGame:
-                        PlayMatchingGame();
-                        break;
-                    case ResponseTypeId.PaintingActivity:
-                        PlayPaintingActivity();
-                        break;
-                    case ResponseTypeId.SlideShow:
-                        PlaySlideShow();
-                        break;
-                    case ResponseTypeId.Radio:
-                        PlayMedia(ResponseTypeId.Radio, _currentRadioSensorValue);
-                        break;
-                    case ResponseTypeId.Television:
-                        PlayMedia(ResponseTypeId.Television, _currentTelevisionSensorValue);
-                        break;
-                    case ResponseTypeId.Cats:
-                        PlayMedia(ResponseTypeId.Cats, 0);
-                        break;
-                }
+                SystemEventLogger.WriteEntry($"Main.StopCurrentResponse: {ex.Message}", SystemEventLogType.Display, EventLogEntryType.Error);
             }
         }
 
         private void DisplayActiveResident()
         {
             lblActiveResident.Hide();
-            lblActiveResident.SendToBack();
             _residentDisplayTimer.Stop();
 
             lblActiveResident.Text = _activeResident.Name;
@@ -488,13 +492,15 @@ namespace Keebee.AAT.Display
             _residentDisplayTimer.Start();
         }
 
+        #endregion
+
         #region callback
 
-        private void PlayMedia(int responseTypeId, int responseValue)
+        private void PlayAudioVideo(int responseTypeId, int responseValue)
         {
             if (InvokeRequired)
             {
-                Invoke(new PlayMediaDelegate(PlayMedia), responseTypeId, responseValue);
+                Invoke(new PlayMediaDelegate(PlayAudioVideo), responseTypeId, responseValue);
             }
             else
             {
@@ -506,7 +512,7 @@ namespace Keebee.AAT.Display
                     if (!mediaFiles.Any()) return;
 
                     mediaFiles.Shuffle();
-                    StopCurrentResponse(responseTypeId);
+                    StopCurrentResponse(ResponseTypeCategoryId.Video);
 
                     switch (responseTypeId)
                     {
@@ -515,32 +521,34 @@ namespace Keebee.AAT.Display
                             radioControl1.BringToFront();
                             radioControl1.Show();
 #elif DEBUG
-                            mediaPlayer1.BringToFront();
-                            mediaPlayer1.Show();
+                            audioVideoPlayer1.BringToFront();
+                            audioVideoPlayer1.Show();
 #endif
                             break;
                         default:
-                            mediaPlayer1.BringToFront();
-                            mediaPlayer1.Show();
+                            audioVideoPlayer1.BringToFront();
+                            audioVideoPlayer1.Show();
                             break;
                     }
 
-                    mediaPlayer1.Play(responseValue, mediaFiles, _currentIsActiveEventLog, false);
+                    audioVideoPlayer1.Play(responseValue, mediaFiles, _currentIsActiveEventLog, false);
                     DisplayActiveResident();
 
-                    _currentResponseTypeId = responseTypeId;  // radio or television
+                    _currentResponse = _pendingResponse;
                 }
                 else
                 {
-                    var changeType = GetResponseValueChangeType(responseTypeId, responseValue);
+                    if (!_pendingResponse.IsRotational) return;
+
+                    var changeType = GetSensorValueChangeType(responseTypeId, responseValue);
 
                     switch (changeType)
                     {
                         case ResponseValueChangeType.Increase:
-                            mediaPlayer1.PlayNext();
+                            audioVideoPlayer1.PlayNext();
                             break;
                         case ResponseValueChangeType.Decrease:
-                            mediaPlayer1.PlayPrevious();
+                            audioVideoPlayer1.PlayPrevious();
                             break;
                         case ResponseValueChangeType.NoDifference:
                             break;
@@ -549,36 +557,25 @@ namespace Keebee.AAT.Display
             }
         }
 
-        private ResponseValueChangeType GetResponseValueChangeType(int responseTypeId, int responseValue)
+        private ResponseValueChangeType GetSensorValueChangeType(int responseTypeId, int sensorValue)
         {
-            int currentResponseValue;
-
-            switch (responseTypeId)
-            {
-                case ResponseTypeId.Radio:
-                    currentResponseValue = _currentRadioSensorValue;
-                    break;
-                case ResponseTypeId.Television:
-                    currentResponseValue = _currentTelevisionSensorValue;
-                    break;
-                default:
-                    return ResponseValueChangeType.NoDifference;
-            }
+            // save the current sensor values for the 'rotational' responses
+            var currentValue = _rotationalResponses[responseTypeId];
 
             // edge case 1 - going from Value5 to Value1 should be an INCREASE
-            if ((currentResponseValue == (int)RotationSensorStep.Value5) && (responseValue == (int)RotationSensorStep.Value1))
+            if ((currentValue == (int)RotationSensorStep.Value5) && (sensorValue == (int)RotationSensorStep.Value1))
                 return ResponseValueChangeType.Increase;
 
             // edge case 2 - going from Value1 to Value5 should be a DECREASE
-            if ((currentResponseValue == (int)RotationSensorStep.Value1) && (responseValue == (int)RotationSensorStep.Value5))
+            if ((currentValue == (int)RotationSensorStep.Value1) && (sensorValue == (int)RotationSensorStep.Value5))
                 return ResponseValueChangeType.Decrease;
 
             // no change
-            if (responseValue == currentResponseValue)
+            if (sensorValue == currentValue)
                 return ResponseValueChangeType.NoDifference;
 
             // all other scenarios
-            return (responseValue > currentResponseValue)
+            return (sensorValue > currentValue)
                     ? ResponseValueChangeType.Increase
                     : ResponseValueChangeType.Decrease;
         }
@@ -606,22 +603,22 @@ namespace Keebee.AAT.Display
                 slideViewerFlash1.Play(images, autoStart: true);
 
                 music.Shuffle();
-                mediaPlayer1.Play(0, new[] { music.First() }, false, false);
+                audioVideoPlayer1.Play(0, new[] { music.First() }, false, false);
 
                 DisplayActiveResident();
 
                 if (_currentIsActiveEventLog)
                     _activityEventLogger.Add(_activeConfigDetail.ConfigId, _activeConfigDetail.Id, _activeResident.Id);
 
-                _currentResponseTypeId = ResponseTypeId.SlideShow;
+                _currentResponse = _pendingResponse;
             }
         }
 
-        private void PlayMatchingGame()
+        private void PlayMatchingGame(string swfFile)
         {
             if (InvokeRequired)
             {
-                Invoke(new PlayMatchingGameDelegate(PlayMatchingGame));
+                Invoke(new PlayMatchingGameDelegate(PlayMatchingGame), swfFile);
             }
             else
             {
@@ -648,26 +645,33 @@ namespace Keebee.AAT.Display
                     _activityEventLogger.Add(_activeConfigDetail.ConfigId, _activeConfigDetail.Id, _activeResident.Id);
                     _interactiveActivityEventLogger.Add(_activeResident.Id, InteractiveActivityTypeId.MatchingGame, "New game has been initiated", _activeResident.GameDifficultyLevel);
                 }
-    
-                matchingGame1.Play(totalShapes, totalSounds, _activeResident.GameDifficultyLevel, true, _currentIsActiveEventLog, _activeResident.AllowVideoCapturing);
 
-                _currentResponseTypeId = ResponseTypeId.MatchingGame;
+                matchingGame1.Play(
+                    totalShapes, 
+                    totalSounds, 
+                    _activeResident.GameDifficultyLevel,
+                    true, 
+                    _currentIsActiveEventLog, 
+                    _activeResident.AllowVideoCapturing,
+                    swfFile);
+
+                _currentResponse = _pendingResponse;
             }
         }
 
-        private void PlayPaintingActivity()
+        private void PlayActivity(int responseTypeId, int interactiveActivityTypeId, string swfFile)
         {
             if (InvokeRequired)
             {
-                Invoke(new PlayPaintingActivityDelegate(PlayPaintingActivity));
+                Invoke(new PlayActivityDelegate(PlayActivity), responseTypeId, interactiveActivityTypeId, swfFile);
             }
             else
             {
                 StopCurrentResponse();
-                _isPaintingActivityTimeoutExpired = false;
 
-                paintingActivity1.BringToFront();
-                paintingActivity1.Show();
+                _isActivityTimeoutExpired = false;
+                activityPlayer1.BringToFront();
+                activityPlayer1.Show();
                 DisplayActiveResident();
 
                 if (_currentIsActiveEventLog)
@@ -675,9 +679,14 @@ namespace Keebee.AAT.Display
                     _activityEventLogger.Add(_activeConfigDetail.ConfigId, _activeConfigDetail.Id, _activeResident.Id);
                 }
 
-                paintingActivity1.Play(true, _currentIsActiveEventLog, _activeResident.AllowVideoCapturing);
+                activityPlayer1.Play(
+                    interactiveActivityTypeId,
+                    swfFile,
+                    enableTimeout: true,
+                    isActiveEventLog: _currentIsActiveEventLog,
+                    isAllowVideoCapture: _activeResident.AllowVideoCapturing);
 
-                _currentResponseTypeId = ResponseTypeId.PaintingActivity;
+                _currentResponse = _pendingResponse;
             }
         }
 
@@ -694,7 +703,7 @@ namespace Keebee.AAT.Display
                 ambientPlayer1.Show();
                 ambientPlayer1.Resume();
 
-                _currentResponseTypeId = ResponseTypeId.Ambient;
+                _currentResponse = _ambientResponse;
             }
         }
 
@@ -710,7 +719,7 @@ namespace Keebee.AAT.Display
                 if (volumeControl.IsOpen()) return;
 
                 _opaqueLayer.Show();
-                volumeControl.VolumeControlClosedEvent += VolumentControlClosed;
+                volumeControl.VolumeControlClosedEvent += VolumeControlClosed;
                 volumeControl.Show();
             }
         }
@@ -723,29 +732,13 @@ namespace Keebee.AAT.Display
             }
             else
             {
-                if (_currentResponseTypeId != ResponseTypeId.OffScreen)
-                {
-                    StopCurrentResponse();
-                    offScreen1.BringToFront();
-                    offScreen1.Show();
-                    offScreen1.Play();
-                    DisplayActiveResident();
+                StopCurrentResponse();
+                offScreen1.BringToFront();
+                offScreen1.Show();
+                offScreen1.Play();
+                DisplayActiveResident();
 
-                    _currentResponseTypeId = ResponseTypeId.OffScreen;
-                }
-                else
-                {
-                    offScreen1.Hide();
-                    offScreen1.Stop();
-
-                    // randomly execute one of the following reponse types
-                    ExecuteSequential(new [] {
-                        ResponseTypeId.MatchingGame,
-                        ResponseTypeId.PaintingActivity,
-                        ResponseTypeId.SlideShow});
-
-                    DisplayActiveResident();
-                }
+                _currentResponse = _pendingResponse;
             }
         }
 
@@ -766,17 +759,17 @@ namespace Keebee.AAT.Display
 
                 _caregiverInterface = new CaregiverInterface
                 {
-                    EventLogger = _systemEventLogger,
                     Config = config,
-                    PublicMediaFiles = mediaResponseTypes
+                    PublicMediaFiles = mediaResponseTypes,
+                    Timeout = _caregiverTimeout
                 };
 
-                _caregiverInterface.CaregiverCompleteEvent += CaregiverComplete;
+                _caregiverInterface.FormClosed += CaregiverFormClosed;
 
                 frmSplash.Close();
                 _caregiverInterface.Show();
 
-                _currentResponseTypeId = ResponseTypeId.Caregiver;
+                _currentResponse = _pendingResponse;
             }
         }
 
@@ -792,8 +785,13 @@ namespace Keebee.AAT.Display
                 // alert the State Machine Service that the display is no longer active or idle
                 _messageQueueDisplaySms.Send(CreateDisplayMessageBody(false));
                 _messageQueueDisplayPhidget.Send(CreateDisplayMessageBody(false));
-                _messageQueueDisplayVideoCapture.Send(CreateDisplayMessageBody(false));
-                _messageQueueDisplayBluetoothBeaconWatcher.Send(CreateDisplayMessageBody(false));
+
+                if (ServiceUtilities.IsInstalled(ServiceUtilities.ServiceType.BluetoothBeaconWatcher))
+                    _messageQueueDisplayBluetoothBeaconWatcher.Send(CreateDisplayMessageBody(false));
+
+                if (ServiceUtilities.IsInstalled(ServiceUtilities.ServiceType.VideoCapture))
+                    _messageQueueDisplayVideoCapture.Send(CreateDisplayMessageBody(false));
+
                 Application.Exit();
             }
         }
@@ -805,8 +803,7 @@ namespace Keebee.AAT.Display
                 IsActive = isActive
             };
 
-            var serializer = new JavaScriptSerializer();
-            var displayMessageBody = serializer.Serialize(displayMessage);
+            var displayMessageBody = JsonConvert.SerializeObject(displayMessage);
             return displayMessageBody;
         }
 
@@ -814,59 +811,20 @@ namespace Keebee.AAT.Display
 
         #region event handlers
 
-        private void MessageReceivedResponse(object source, MessageEventArgs e)
-        {
-            try
-            {
-                var serializer = new JavaScriptSerializer();
-                var response = serializer.Deserialize<ResponseMessage>(e.MessageBody);
-
-                _isNewResponse =
-                     (response.ConfigDetail.ResponseTypeId != _currentResponseTypeId) ||
-                     (response.ConfigDetail.PhidgetTypeId != _currentPhidgetTypeId) ||
-                     (response.Resident.Id != _activeResident?.Id);
-
-                _activeResident = response.Resident;
-                _activeConfigDetail = response.ConfigDetail;
-                _currentIsActiveEventLog = response.IsActiveEventLog;
-                _activeResponseTypeIds = response.ResponseTypeIds;
-                _currentPhidgetTypeId = response.ConfigDetail.PhidgetTypeId;
-
-                ExecuteResponse(response.ConfigDetail.ResponseTypeId, response.SensorValue, response.ConfigDetail.IsSystemReponseType);
-            }
-            catch (Exception ex)
-            {
-                _systemEventLogger.WriteEntry($"Main.MessageReceivedResponse: {ex.Message}", EventLogEntryType.Error);
-            }
-        }
-
         private void AmbientScreenTouched(object sender, EventArgs e)
         {
             try
             {
                 var args = (AmbientPlayer.ScreenTouchedEventEventArgs)e;
-                var responseTypeId = args.ResponseTypeId;
 
-                StopCurrentResponse();
-                switch (responseTypeId)
-                {
-                    case ResponseTypeId.SlideShow:
-                        PlaySlideShow();
-                        break;
-                    case ResponseTypeId.MatchingGame:
-                        PlayMatchingGame();
-                        break;
-                    case ResponseTypeId.Cats:
-                    case ResponseTypeId.Radio:
-                    case ResponseTypeId.Television:
-                        _isNewResponse = true;
-                        PlayMedia(responseTypeId, 0);
-                        break;
-                }
+                _pendingResponse = args.ResponseType;
+                _isNewResponse = true;
+
+                ExecuteResponse();
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"Main.AmbientScreenTouched: {ex.Message}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"Main.AmbientScreenTouched: {ex.Message}", SystemEventLogType.Display, EventLogEntryType.Error);
             }
         }
 
@@ -875,26 +833,26 @@ namespace Keebee.AAT.Display
             try
             {
                 slideViewerFlash1.Hide();
-                mediaPlayer1.Stop();
+                audioVideoPlayer1.Stop();
                 ResumeAmbient();
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"Main.SlideShowComplete: {ex.Message}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"Main.SlideShowComplete: {ex.Message}", SystemEventLogType.Display, EventLogEntryType.Error);
             }
         }
 
-        private void MediaPlayerComplete(object sender, EventArgs e)
+        private void AudioVideoPlayerComplete(object sender, EventArgs e)
         {
             try
             {
-                mediaPlayer1.Hide();
+                audioVideoPlayer1.Hide();
                 ResumeAmbient();
                 _isNewResponse = true;
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"Main.MediaPlayerComplete: {ex.Message}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"Main.AudioVideoPlayerComplete: {ex.Message}", SystemEventLogType.Display, EventLogEntryType.Error);
             }
         }
 
@@ -908,11 +866,11 @@ namespace Keebee.AAT.Display
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"Main.MediaPlayerComplete: {ex.Message}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"Main.AudioVideoPlayerComplete: {ex.Message}", SystemEventLogType.Display, EventLogEntryType.Error);
             }
         }
 
-        private void VolumentControlClosed(object sender, EventArgs e)
+        private void VolumeControlClosed(object sender, EventArgs e)
         {
             _opaqueLayer.Hide();
         }
@@ -926,7 +884,7 @@ namespace Keebee.AAT.Display
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"Main.LogInteractiveActivityEvent: {ex.Message}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"Main.LogInteractiveActivityEvent: {ex.Message}", SystemEventLogType.Display, EventLogEntryType.Error);
             }
         }
 
@@ -941,7 +899,7 @@ namespace Keebee.AAT.Display
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"Main.MatchingGameTimeoutExpiredEvent: {ex.Message}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"Main.MatchingGameTimeoutExpiredEvent: {ex.Message}", SystemEventLogType.Display, EventLogEntryType.Error);
             }
         }
 
@@ -953,22 +911,22 @@ namespace Keebee.AAT.Display
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"Main.StartVideoCaptureEvent: {ex.Message}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"Main.StartVideoCaptureEvent: {ex.Message}", SystemEventLogType.Display, EventLogEntryType.Error);
             }
         }
 
-        private void PaintingActivityTimeoutExpired(object sender, EventArgs e)
+        private void ActivityPlayerTimeoutExpired(object sender, EventArgs e)
         {
             try
             {
-                _isPaintingActivityTimeoutExpired = true;
-                paintingActivity1.Hide();
+                _isActivityTimeoutExpired = true;
+                activityPlayer1.Hide();
                 ResumeAmbient();
                 _isNewResponse = true;
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"Main.PaintingActivityTimeoutExpiredEvent: {ex.Message}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"Main.ActivityPlayerTimeoutExpired: {ex.Message}", SystemEventLogType.Display, EventLogEntryType.Error);
             }
         }
 
@@ -976,16 +934,16 @@ namespace Keebee.AAT.Display
         {
             try
             {
-                var args = (MediaPlayer.LogVideoActivityEventEventArgs)e;
+                var args = (AudioVideoPlayer.LogVideoActivityEventEventArgs)e;
                 _activityEventLogger.Add(_activeConfigDetail.ConfigId, _activeConfigDetail.Id, _activeResident.Id, args.Description);
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"Main.LogVideoActivityEvent: {ex.Message}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"Main.LogVideoActivityEvent: {ex.Message}", SystemEventLogType.Display, EventLogEntryType.Error);
             }
         }
 
-        private void CaregiverComplete(object sender, EventArgs e)
+        private void CaregiverFormClosed(object sender, EventArgs e)
         {
             try
             {
@@ -993,7 +951,7 @@ namespace Keebee.AAT.Display
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"Main.CaregiverComplete: {ex.Message}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"Main.CaregiverFormClosed: {ex.Message}", SystemEventLogType.Display, EventLogEntryType.Error);
             }
         }
 
@@ -1001,14 +959,15 @@ namespace Keebee.AAT.Display
         {
             try
             {
-                // set any properties that can't be set in the constructor (because they are not initialized until now)
-                SetPostLoadProperties();
-
                 // inform the services that the display is now active
                 _messageQueueDisplaySms.Send(CreateDisplayMessageBody(true));
                 _messageQueueDisplayPhidget.Send(CreateDisplayMessageBody(true));
-                _messageQueueDisplayVideoCapture.Send(CreateDisplayMessageBody(true));
-                _messageQueueDisplayBluetoothBeaconWatcher.Send(CreateDisplayMessageBody(true));
+
+                if (ServiceUtilities.IsInstalled(ServiceUtilities.ServiceType.BluetoothBeaconWatcher))
+                    _messageQueueDisplayBluetoothBeaconWatcher.Send(CreateDisplayMessageBody(true));
+
+                if (ServiceUtilities.IsInstalled(ServiceUtilities.ServiceType.VideoCapture))
+                    _messageQueueDisplayVideoCapture.Send(CreateDisplayMessageBody(true));
 
                 _activeResident = new ResidentMessage
                 {
@@ -1023,7 +982,7 @@ namespace Keebee.AAT.Display
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"Main.MainShown: {ex.Message}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"Main.MainShown: {ex.Message}", SystemEventLogType.Display, EventLogEntryType.Error);
             }
         }
 
@@ -1032,8 +991,8 @@ namespace Keebee.AAT.Display
             ambientPlayer1.Dock = DockStyle.None;
             slideViewerFlash1.Dock = DockStyle.None;
             matchingGame1.Dock = DockStyle.None;
-            paintingActivity1.Dock = DockStyle.None;
-            mediaPlayer1.Dock = DockStyle.None;
+            activityPlayer1.Dock = DockStyle.None;
+            audioVideoPlayer1.Dock = DockStyle.None;
             radioControl1.Dock = DockStyle.None;
             offScreen1.Dock = DockStyle.None;
         }

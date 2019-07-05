@@ -48,11 +48,11 @@ namespace Keebee.AAT.Operations.Controllers
                     x.Path,
                     Files = x.Files.Select(f => new
                     {
-                                f.StreamId,
-                                f.IsFolder,
-                                f.Filename,
-                                f.FileType,
-                                f.FileSize
+                        f.StreamId,
+                        f.IsFolder,
+                        f.Filename,
+                        f.FileType,
+                        f.FileSize
                      })
                 }).ToArray();
 
@@ -86,7 +86,7 @@ namespace Keebee.AAT.Operations.Controllers
 
         // GET: api/MediaFiles?residentId=5
         [HttpGet]
-        public async Task<DynamicJsonObject> GetForResident(int residentId)
+        public async Task<DynamicJsonArray> GetForResident(int residentId)
         {
             IEnumerable<MediaFile> media = new Collection<MediaFile>();
 
@@ -95,12 +95,9 @@ namespace Keebee.AAT.Operations.Controllers
                 media = _mediaFileService.GetForResident(residentId);
             });
 
-            if (media == null) return new DynamicJsonObject(new ExpandoObject());
-            if (!media.Any()) return new DynamicJsonObject(new ExpandoObject());
+            if (media == null) return new DynamicJsonArray(new DynamicJsonArray(new object[0]));
 
-            dynamic exObj = new ExpandoObject();
-
-            exObj.Media = media.GroupBy(m => m.Path)
+            var jArray = media.GroupBy(m => m.Path)
                 .Select(files => new { files.First().Path, Files = files })
                 .Select(x => new
                 {
@@ -113,9 +110,9 @@ namespace Keebee.AAT.Operations.Controllers
                         f.FileType,
                         f.FileSize
                     })
-                });
+                }).ToArray();
 
-            return new DynamicJsonObject(exObj);
+            return new DynamicJsonArray(jArray);
         }
 
         // GET: api/MediaFiles?path=Exports\EventLog

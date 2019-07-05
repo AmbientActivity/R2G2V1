@@ -1,0 +1,45 @@
+﻿<script type="text/javascript">
+    $(document).ready(function () {
+        account.services.init();
+    });
+</script>
+
+<div id="login-container" class="container container-login">
+    <div class="row row-login-banner">
+        <div class="col-sm-2">
+            <img src="~/Content/images/ABBY.png" width="70" height="60" alt=""/>
+        </div>
+        <div class="col-sm-10">
+            <h3 class="login-banner">ABBY Administrator Login</h3>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="label label-default">Username</div>
+            <select class="form-control" id="ddlUsernames" name="ddlUsernames">
+                <option value="admin">Administrator</option>
+                <option value="caregiver" selected>Caregiver</option>
+            </select>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="label label-default">Password</div>
+            <input type="password" id="txtPassword" class="form-control has-error" maxlength="50"/>
+        </div>
+    </div>
+    <hr/>
+    <div class="row row-login-button">
+        <div class="col-xs-12">
+            <button class="btn btn-edit login-button pull-right" id="login">Login</button>
+        </div>
+    </div>
+    <div class="validation-container" id="validation-container" hidden></div>
+</div>
+
+<div id="spinner-container" class="loading" hidden>
+    <div><h2>Loggin in...</h2></div>
+    <div><img src="~/Content/images/loading.gif" alt=""></div>
+</div>
+
+<div class="error-container" id="error-container" hidden></div>

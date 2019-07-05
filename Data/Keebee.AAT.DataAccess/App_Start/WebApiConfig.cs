@@ -23,16 +23,21 @@ namespace Keebee.AAT.DataAccess
             builder.EntitySet<ActiveResidentEventLog>("ActiveResidentEventLogs");
             builder.EntitySet<MediaFile>("MediaFiles");
             builder.EntitySet<MediaFileStream>("MediaFileStreams");
+            builder.EntitySet<Thumbnail>("Thumbnails");
             builder.EntitySet<MediaPathType>("MediaPathTypes");
+            builder.EntitySet<MediaPathTypeCategory>("MediaPathTypeCategories");
             builder.EntitySet<ResidentMediaFile>("ResidentMediaFiles");
             builder.EntitySet<PublicMediaFile>("PublicMediaFiles");
             builder.EntitySet<Resident>("Residents");
             builder.EntitySet<ActiveResident>("ActiveResidents");
+            builder.EntitySet<AmbientInvitation>("AmbientInvitations");
             builder.EntitySet<User>("Users");
             builder.EntitySet<Role>("Roles");
             builder.EntitySet<UserRole>("UserRoles");
 
             config.MapODataServiceRoute("odata", "odata", builder.GetEdmModel());
+            config.Count().Filter().OrderBy().Expand().Select().MaxTop(null);
+            config.EnsureInitialized();
         }
     }
 }

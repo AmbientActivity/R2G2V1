@@ -1,147 +1,185 @@
 ﻿/*!
- * 1.0 Keebee AAT Copyright © 2016
+ * 1.0 Keebee AAT Copyright © 2017
  * EventLogs/Index.js
  * Author: John Charlton
  * Date: 2016-08
  */
 
 ; (function ($) {
-
-    var highlightRowColour = "#e3e8ff";
-
     eventlogs.index = {
         init: function () {
-            var sortDescending = false;
-            var currentSortKey = "filename";
+            var isBinding = true;
 
+            var sortDescending = true;
+            var currentSortKey = "filename";
+            var primarySortKey = "filename";
+            
             var lists = {
                 EventLogList: []
             };
 
-            $.get({
-                url: site.url + "EventLogs/GetData/",
-                dataType: "json",
-                success: function (data) {
-                    $.extend(lists, data);
+            utilities.job.execute({
+                url: "EventLogs/GetData/"
+            })
+            .then(function (data) {
+                $.extend(lists, data);
 
-                    ko.applyBindings(new EventLogViewModel());
+                $("#loading-container").hide();
+                $("#table-header").show();
+                $("#table-detail").show();
 
-                    function EventLog(streamid, isfolder, filename, filetype, filesize, path) {
-                        var self = this;
-
-                        self.streamid = streamid;
-                        self.isfolder = isfolder;
-                        self.filename = filename;
-                        self.filetype = filetype;
-                        self.filesize = filesize;
-                        self.path = path;
-
-                        self.download = function (row) {
-                            window.location = "EventLogs/Download?streamId=" + row.streamid;
-                        };
+                ko.bindingHandlers.tableUpdated = {
+                    update: function (element, valueAccessor, allBindings) {
+                        ko.unwrap(valueAccessor());
+                        $("#txtSearchFilename").focus();
+                        isBinding = false;
                     }
+                }
 
-                    function EventLogViewModel() {
-                        var tblEventLog = $("#tblEventLog");
+                ko.bindingHandlers.tableRender = {
+                    update: function (element, valueAccessor) {
+                        ko.utils.unwrapObservable(valueAccessor());
 
-                        var self = this;
+                        var table = element.parentNode;
+                        var noRowsMessage = $("#no-rows-message");
 
-                        self.eventLogs = ko.observableArray([]);
-                        self.selectedEventLog = ko.observable();
-                        self.filenameSearch = ko.observable("");
-                        self.totalEventLogs = ko.observable(0);
+                        var tableDetailElement = $("#table-detail");
+                        var tableHeaderElement = $("#table-header");
 
-                        createEventLogArray(lists.EventLogList);
+                        if (table.rows.length > 0) {
+                            tableHeaderElement.show();
+                            tableDetailElement.show();
+                            noRowsMessage.hide();
 
-                        function createEventLogArray(list) {
-                            self.eventLogs.removeAll();
-                            $(list).each(function (index, value) {
-                                pushEventLog(value);
-                            });
-                        };
+                            // determine if there is table overflow (to cause a scrollbar)
+                            // if so, unhide the scrollbar header column
+                            // and adjust the width of the filename column
+                            var colScrollbar = $("#col-scrollbar");
 
-                        self.columns = ko.computed(function () {
-                            var arr = [];
-                            arr.push({ title: "Name", sortable: true, sortKey: "filename", numeric: false, cssClass: "" });
-                            arr.push({ title: "Path", sortable: true, sortKey: "path", numeric: false, cssClass: "" });
-                            arr.push({ title: "Type", sortable: true, sortKey: "filetype", numeric: false, cssClass: "col-filetype" });
-                            arr.push({ title: "Size", sortable: true, sortKey: "filesize", numeric: true, cssClass: "col-filesize" });
-                            return arr;
-                        });
-
-                        function pushEventLog(value) {
-                            self.eventLogs.push(new EventLog(value.StreamId, value.IsFolder, value.Filename, value.FileType, value.FileSize, value.Path));
-                        };
-
-                        self.selectedEventLog(self.eventLogs()[0]);
-
-                        self.sort = function (header) {
-                            var sortKey = header.sortKey;
-
-                            if (sortKey !== currentSortKey) {
-                                sortDescending = false;
+                            if (table.clientHeight > site.getMaxClientHeight) {
+                                colScrollbar.prop("hidden", false);
+                                colScrollbar.attr("style", "width: 1%; border-bottom: 1.5px solid #ddd;");
+                                tableDetailElement.addClass("container-height");
                             } else {
-                                sortDescending = !sortDescending;
+                                colScrollbar.prop("hidden", true);
+                                tableDetailElement.removeClass("container-height");
                             }
 
-                            currentSortKey = sortKey;
+                        } else {
+                            tableHeaderElement.hide();
+                            tableDetailElement.hide();
+                            noRowsMessage.show();
+                        }
+                    }
+                }
 
-                            $(self.columns()).each(function (index, value) {
-                                if (value.sortKey === sortKey) {
-                                    self.eventLogs.sort(function (a, b) {
-                                        if (value.numeric) {
-                                            if (sortDescending) {
-                                                return a[sortKey] > b[sortKey]
-                                                        ? -1 : a[sortKey] < b[sortKey] || a.filename > b.filename ? 1 : 0;
-                                            } else {
-                                                return a[sortKey] < b[sortKey]
-                                                    ? -1 : a[sortKey] > b[sortKey] || a.filename > b.filename ? 1 : 0;
-                                            }
-                                        } else {
-                                            if (sortDescending) {
-                                                return a[sortKey].toString().toLowerCase() > b[sortKey].toString().toLowerCase()
-                                                    ? -1 : a[sortKey].toString().toLowerCase() < b[sortKey].toString().toLowerCase()
-                                                    || a.filename.toLowerCase() > b.filename.toLowerCase() ? 1 : 0;
-                                            } else {
-                                                return a[sortKey].toString().toLowerCase() < b[sortKey].toString().toLowerCase()
-                                                    ? -1 : a[sortKey].toString().toLowerCase() > b[sortKey].toString().toLowerCase()
-                                                    || a.filename.toLowerCase() > b.filename.toLowerCase() ? 1 : 0;
-                                            }
-                                        }
-                                    });
-                                }
-                            });
-                        };
+                ko.applyBindings(new EventLogViewModel());
 
-                        self.filteredEventLogs = ko.computed(function () {
-                            return ko.utils.arrayFilter(self.eventLogs(), function (g) {
-                                return (
-                                    (self.filenameSearch().length === 0 || g.filename.toLowerCase().indexOf(self.filenameSearch().toLowerCase()) !== -1)
-                                );
-                            });
-                        });
+                function EventLog(streamid, isfolder, filename, filetype, filesize, path) {
+                    var self = this;
 
-                        self.eventLogsTable = ko.computed(function () {
-                            var filteredEventLogs = self.filteredEventLogs();
-                            self.totalEventLogs(filteredEventLogs.length);
+                    self.streamid = streamid;
+                    self.isfolder = isfolder;
+                    self.filename = filename;
+                    self.filetype = filetype;
+                    self.filesize = filesize;
+                    self.path = path;
 
-                            return filteredEventLogs;
-                        });
-
-                        self.highlightRow = function (row) {
-                            if (row == null) return;
-
-                            var rows = tblEventLog.find("tr:gt(0)");
-                            rows.each(function () {
-                                $(this).css("background-color", "#ffffff");
-                            });
-
-                            var r = tblEventLog.find("#row_" + row.streamid);
-                            r.css("background-color", highlightRowColour);
-                            $("#tblEventLog").attr("tr:hover", highlightRowColour);
-                        };
+                    self.download = function (row) {
+                        window.location = "EventLogs/Download?streamId=" + row.streamid;
                     };
                 }
+
+                function EventLogViewModel() {
+                    var tblEventLog = $("#tblEventLog");
+
+                    var self = this;
+
+                    self.eventLogs = ko.observableArray([]);
+                    self.selectedEventLog = ko.observable();
+                    self.filenameSearch = ko.observable("");
+                    self.totalEventLogs = ko.observable(0);
+
+                    createEventLogArray(lists.EventLogList);
+
+                    function createEventLogArray(list) {
+                        self.eventLogs.removeAll();
+                        $(list).each(function (index, value) {
+                            pushEventLog(value);
+                        });
+                    };
+
+                    self.columns = ko.computed(function () {
+                        var arr = [];
+                        arr.push({ title: "Filename", sortable: true, sortKey: "filename", numeric: false, cssClass: "col-filename-el" });
+                        arr.push({ title: "Type", sortable: true, sortKey: "filetype", numeric: false, cssClass: "col-filetype" });
+                        arr.push({ title: "Path", sortable: true, sortKey: "path", numeric: false, cssClass: "col-path" });
+                        arr.push({ title: "Size", sortable: true, sortKey: "filesize", numeric: true, cssClass: "col-filesize" });
+                        return arr;
+                    });
+
+                    function pushEventLog(value) {
+                        self.eventLogs.push(new EventLog(value.StreamId, value.IsFolder, value.Filename, value.FileType, value.FileSize, value.Path));
+                    };
+
+                    self.selectedEventLog(self.eventLogs()[0]);
+
+                    self.sort = function (header) {
+                        if (isBinding) return;
+                        var sortKey = header.sortKey;
+
+                        if (sortKey !== currentSortKey) {
+                            sortDescending = false;
+                        } else {
+                            sortDescending = !sortDescending;
+                        }
+
+                        currentSortKey = sortKey;
+
+                        var isboolean = false;
+                        if (typeof header.boolean !== "undefined") {
+                            isboolean = header.boolean;
+                        }
+
+                        self.eventLogs(utilities.sorting.sortArray(
+                            {
+                                fileArray: self.eventLogs(),
+                                columns: self.columns(),
+                                sortKey: sortKey,
+                                primarySortKey: primarySortKey,
+                                descending: sortDescending,
+                                boolean: isboolean
+                            }));
+                    };
+
+                    self.filteredEventLogs = ko.computed(function () {
+                        return ko.utils.arrayFilter(self.eventLogs(), function (g) {
+                            return (
+                                (self.filenameSearch().length === 0 || g.filename.toLowerCase().indexOf(self.filenameSearch().toLowerCase()) !== -1)
+                            );
+                        });
+                    });
+
+                    self.eventLogsTable = ko.computed(function () {
+                        var filteredEventLogs = self.filteredEventLogs();
+                        self.totalEventLogs(filteredEventLogs.length);
+
+                        return filteredEventLogs;
+                    });
+
+                    self.highlightRow = function (row) {
+                        var r = tblEventLog.find("#row_" + row.streamid);
+                        $(r).addClass("highlight").siblings().removeClass("highlight");
+                    };
+                };
+            })
+            .catch(function (error) {
+                $("#loading-container").hide();
+                $("#error-container")
+                    .html("<div><h2>Data load error:</h2></div>")
+                    .append("<div>" + error.message + "</div>")
+                    .append("<div><h3>Please try refreshing the page</h3></div>");
+                $("#error-container").show();
             });
         }
     }

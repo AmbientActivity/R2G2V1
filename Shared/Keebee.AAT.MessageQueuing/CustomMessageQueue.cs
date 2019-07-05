@@ -18,14 +18,13 @@ namespace Keebee.AAT.MessageQueuing
         VideoCapture = 9,
         ConfigSms = 10,
         ConfigPhidget = 11,
-        PhidgetContinuousRadio = 12
-#if DEBUG
-        , PhidgetMonitor = 13
-        , PhidgetMonitorState = 14
-        , BeaconMonitor = 15
-        , BeaconMonitorResident = 16,
-        BeaconMonitorState = 17
-#endif
+        PhidgetContinuousRadio = 12,
+        BeaconMonitor = 13,
+        BeaconMonitorResident = 14,
+        BeaconMonitorState = 15,
+        VideoCaptureState = 16,
+        PhidgetMonitor = 17,
+        PhidgetMonitorState = 18
     }
 
     public class MessageEventArgs : EventArgs
@@ -53,18 +52,17 @@ namespace Keebee.AAT.MessageQueuing
         private const string QueueNameConfigSms = "Config-SMS";
         private const string QueueNameConfigPhidget = "Config-Phidget";
         private const string QueueNamePhidgetContinuousRadio = "Phidget-Continuous-Radio";
-#if DEBUG
-        private const string QueueNamePhidgetMonitor = "Phidget-Monitor";
-        private const string QueueNamePhidgetMonitorState = "Phidget-Monitor-State";
-
         private const string QueueNameBeaconMonitor = "Beacon-Monitor";
         private const string QueueNameBeaconMonitorResident = "Beacon-Monitor-Resident";
         private const string QueueNameBeaconMonitorState = "Beacon-Monitor-State";
-#endif
-        private SystemEventLogger _systemEventLogger;
-        public SystemEventLogger SystemEventLogger
+        private const string QueueNameVideoCaptureState = "Video-Capture-State";
+        private const string QueueNamePhidgetMonitor = "Phidget-Monitor";
+        private const string QueueNamePhidgetMonitorState = "Phidget-Monitor-State";
+
+        private SystemEventLogType _eventLogType;
+        public SystemEventLogType SystemEventLogType
         {
-            set { _systemEventLogger = value; }
+            set { _eventLogType = value; }
         }
 
         public EventHandler<MessageEventArgs> MessageReceivedCallback;
@@ -99,7 +97,7 @@ namespace Keebee.AAT.MessageQueuing
 
             catch (Exception ex)
             {
-                _systemEventLogger?.WriteEntry($"CustomMessageQueue.Send: {ex.Message}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"CustomMessageQueue.Send: {ex.Message}", _eventLogType, EventLogEntryType.Error);
             }
 
             finally
@@ -116,7 +114,7 @@ namespace Keebee.AAT.MessageQueuing
             }
             catch (Exception ex)
             {
-                _systemEventLogger?.WriteEntry($"CustomMessageQueue.Send: {ex.Message}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"CustomMessageQueue.Send: {ex.Message}", _eventLogType, EventLogEntryType.Error);
             }
         }
 
@@ -162,13 +160,6 @@ namespace Keebee.AAT.MessageQueuing
                 case MessageQueueType.PhidgetContinuousRadio:
                     literal = QueueNamePhidgetContinuousRadio;
                     break;
-#if DEBUG
-                case MessageQueueType.PhidgetMonitor:
-                    literal = QueueNamePhidgetMonitor;
-                    break;
-                case MessageQueueType.PhidgetMonitorState:
-                    literal = QueueNamePhidgetMonitorState;
-                    break;
                 case MessageQueueType.BeaconMonitor:
                     literal = QueueNameBeaconMonitor;
                     break;
@@ -178,7 +169,15 @@ namespace Keebee.AAT.MessageQueuing
                 case MessageQueueType.BeaconMonitorState:
                     literal = QueueNameBeaconMonitorState;
                     break;
-#endif
+                case MessageQueueType.VideoCaptureState:
+                    literal = QueueNameVideoCaptureState;
+                    break;
+                case MessageQueueType.PhidgetMonitor:
+                    literal = QueueNamePhidgetMonitor;
+                    break;
+                case MessageQueueType.PhidgetMonitorState:
+                    literal = QueueNamePhidgetMonitorState;
+                    break;
             }
             return literal;
         }
@@ -204,7 +203,7 @@ namespace Keebee.AAT.MessageQueuing
             }
             catch (Exception ex)
             {
-                _systemEventLogger?.WriteEntry($"CustomMessageQueue.Create: {ex.Message}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"CustomMessageQueue.Create: {ex.Message}", _eventLogType, EventLogEntryType.Error);
                 return null;
             }
 

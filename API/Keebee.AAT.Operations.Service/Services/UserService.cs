@@ -32,19 +32,32 @@ namespace Keebee.AAT.Operations.Service.Services
         {
             var container = new Container(new Uri(ODataHost.Url));
 
-            var user = container.Users.ByKey(id).GetValue();
+            var user = container.Users.ByKey(id);
 
-            return user;
+            User result;
+            try { result = user.GetValue(); }
+            catch { result = null; }
+
+            return result;
         }
 
         public User GetByUsername(string username)
         {
             var container = new Container(new Uri(ODataHost.Url));
+            User u;
 
-            var user = container.Users.AddQueryOption("$filter",$"Username eq '{username}'")
-                .FirstOrDefault();
+            var user = container.Users.AddQueryOption("$filter", $"Username eq '{username}'");
 
-            return user;
+            try
+            {
+                u = user.FirstOrDefault();
+            }
+            catch
+            {
+                u = null;
+            }
+
+            return u;
         }
 
         public int GetCount()

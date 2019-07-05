@@ -40,7 +40,7 @@
             this.axShockwaveFlash1.Location = new System.Drawing.Point(0, 0);
             this.axShockwaveFlash1.Name = "axShockwaveFlash1";
             this.axShockwaveFlash1.OcxState = ((System.Windows.Forms.AxHost.State)(resources.GetObject("axShockwaveFlash1.OcxState")));
-            this.axShockwaveFlash1.Size = new System.Drawing.Size(394, 257);
+            this.axShockwaveFlash1.Size = new System.Drawing.Size(680, 360);
             this.axShockwaveFlash1.TabIndex = 0;
             this.axShockwaveFlash1.FlashCall += new AxShockwaveFlashObjects._IShockwaveFlashEvents_FlashCallEventHandler(this.FlashCall);
             // 
@@ -51,7 +51,7 @@
             this.BackColor = System.Drawing.Color.Yellow;
             this.Controls.Add(this.axShockwaveFlash1);
             this.Name = "MatchingGame";
-            this.Size = new System.Drawing.Size(394, 257);
+            this.Size = new System.Drawing.Size(680, 360);
             ((System.ComponentModel.ISupportInitialize)(this.axShockwaveFlash1)).EndInit();
             this.ResumeLayout(false);
 

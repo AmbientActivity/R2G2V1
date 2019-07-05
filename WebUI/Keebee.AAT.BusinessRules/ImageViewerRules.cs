@@ -1,8 +1,9 @@
 ﻿using Keebee.AAT.ApiClient.Clients;
-using Keebee.AAT.ApiClient.Models;
 using Keebee.AAT.BusinessRules.Models;
 using System;
 using System.Drawing;
+using System.Drawing.Imaging;
+using System.IO;
 
 namespace Keebee.AAT.BusinessRules
 {
@@ -10,8 +11,8 @@ namespace Keebee.AAT.BusinessRules
     {
         public static class PreviewConstants
         {
-            public const int MaxImagePreviewgWidth = 437;
-            public const int MaxImagePreviewHeight = 333;
+            public const int MaxImagePreviewgWidth = 500;
+            public const int MaxImagePreviewHeight = 500;
         }
 
         private struct ImageSize
@@ -20,49 +21,58 @@ namespace Keebee.AAT.BusinessRules
             public int Height;
         }
 
-        private readonly IMediaFilesClient _mediaFilesClient;
+        private readonly IMediaFileStreamsClient _mediaFileStreamsClient;
 
         public ImageViewerRules()
         {
-            _mediaFilesClient = new MediaFilesClient();
+            _mediaFileStreamsClient = new MediaFileStreamsClient();
         }
 
-        public ImageViewerModel GetImageViewerModel(Guid streamId, string fileType)
+        public ImageViewerModel GetImageViewerModel(Guid streamId, string fileType, out string errMsg)
         {
-            const int maxWidth = PreviewConstants.MaxImagePreviewgWidth;        
-            var file = _mediaFilesClient.Get(streamId);
+            errMsg = null;
+            var newSize = new ImageSize {Height = 0, Width = 0};
+            var base64String = string.Empty;
+            var prefix = string.Empty;
 
-            var originalSize = GetOriginalSize(file);
-            var size = GetImageSize(originalSize.Width, originalSize.Height);
+            try
+            {
+                var file = _mediaFileStreamsClient.Get(streamId);
 
-            var paddingLeft = (size.Width < maxWidth)
-                ? $"{(maxWidth - size.Width) / 2}px" : "0";
+                // get image from stream
+                Image image;
+                using (var ms = new MemoryStream(file.Stream))
+                {
+                    image = Image.FromStream(ms);
+                }
+
+                // figure out the best size for the image viewer dimensions
+                newSize = GetImageSize(image.Width, image.Height);
+
+                // resize the image
+                var resizedImage = (Image) new Bitmap(image,
+                    new Size {Height = newSize.Height, Width = newSize.Width});
+
+                // convert back to stream
+                var stream = new MemoryStream();
+                resizedImage.Save(stream, GetImageFormat(file.FileType));
+
+                // convert to base64 string and generate the prefix
+                base64String = Convert.ToBase64String(stream.ToArray());
+                prefix = $"data:image/{file.FileType.ToLower()};base64";
+            }
+            catch (Exception ex)
+            {
+                errMsg = ex.Message;
+            }
 
             return new ImageViewerModel
             {
-                FilePath = $@"{file.Path}\{file.Filename}",
                 FileType = fileType,
-                Width = size.Width,
-                Height = size.Height,
-                PaddingLeft = paddingLeft
+                Width = newSize.Width,
+                Height = newSize.Height,
+                Base64String = $"{prefix},{base64String}"
             };
-        }
-
-        private static ImageSize GetOriginalSize(MediaFilePath file)
-        {
-            int originalWidth;
-            int originalHeight;
-
-            using (var stream = System.IO.File.OpenRead($@"{file.Path}\{file.Filename}"))
-            {
-                using (var image = Image.FromStream(stream, false, false))
-                {
-                    originalWidth = image.Width;
-                    originalHeight = image.Height;
-                }
-            }
-
-            return new ImageSize { Width = originalWidth, Height = originalHeight };
         }
 
         private static ImageSize GetImageSize(int width, int height)
@@ -89,8 +99,8 @@ namespace Keebee.AAT.BusinessRules
                 // if the picture is "less square" than the screen
                 else
                 {
-                    newWidth = dialogWidth;
-                    newHeight = (int)(newWidth / imageRatio);
+                    newHeight = dialogHeight;
+                    newWidth = (int)(newHeight * imageRatio);
                 }
             }
 
@@ -102,6 +112,21 @@ namespace Keebee.AAT.BusinessRules
             }
 
             return new ImageSize { Width = newWidth, Height = newHeight };
+        }
+
+        private static ImageFormat GetImageFormat(string fileType)
+        {
+            switch (fileType.ToLower())
+            {
+                case "gif":
+                    return ImageFormat.Gif;
+                case "bmp":
+                    return ImageFormat.Bmp;
+                case "png":
+                    return ImageFormat.Png;
+                default:
+                    return ImageFormat.Jpeg;
+            }
         }
     }
 }

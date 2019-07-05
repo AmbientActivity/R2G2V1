@@ -20,11 +20,14 @@ Try
     # Phidget Message Queue
     write-host "Creating Phidget message queue..." -NoNewline
     CreateMessageQueue "Phidget"
+    CreateMessageQueue "Phidget-Monitor"
+    CreateMessageQueue "Phidget-Monitor-State"
     write-host "done."
 
     # Video Capture Message Queue
     write-host "Creating Video Capture message queue..." -NoNewline
     CreateMessageQueue "Video-Capture"
+    CreateMessageQueue "Video-Capture-State"
     write-host "done."
 
     # Bluetooth Beacon Watcher Message Queues
@@ -55,6 +58,13 @@ Try
     # Phidget Continuous Radio Message Queue (sends constant phidget values to the radio user control)
     write-host "Creating Continuous Radio message queue..." -NoNewline
     CreateMessageQueue "Phidget-Continuous-Radio"
+    write-host "done."
+
+    # Beaon Monitor Message Queues
+    write-host "Creating Beacon Monitor message queues..." -NoNewline
+    CreateMessageQueue "Beacon-Monitor"
+    CreateMessageQueue "Beacon-Monitor-Resident"
+    CreateMessageQueue "Beacon-Monitor-State"
     write-host "done."
 }
 Catch

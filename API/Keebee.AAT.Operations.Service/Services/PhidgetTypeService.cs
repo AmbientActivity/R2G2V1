@@ -31,10 +31,13 @@ namespace Keebee.AAT.Operations.Service.Services
         {
             var container = new Container(new Uri(ODataHost.Url));
 
-            var phidgetType = container.PhidgetTypes.ByKey(id)
-                .GetValue();
+            var phidgetType = container.PhidgetTypes.ByKey(id);
 
-            return phidgetType;
+            PhidgetType result;
+            try { result = phidgetType.GetValue(); }
+            catch { result = null; }
+
+            return result;
         }
 
         public void Post(PhidgetType phidgetType)

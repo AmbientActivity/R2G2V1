@@ -1,11 +1,11 @@
 ﻿using Keebee.AAT.Operations.Service.Keebee.AAT.DataAccess.Models;
 using Keebee.AAT.Operations.Service.KeebeeAAT;
+using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Linq;
 using System;
 using System.IO;
 using System.Net;
-using System.Web.Script.Serialization;
 
 namespace Keebee.AAT.Operations.Service.Services
 {
@@ -42,10 +42,13 @@ namespace Keebee.AAT.Operations.Service.Services
             var container = new Container(new Uri(ODataHost.Url));
 
             var activityEventLog = container.ActivityEventLogs.ByKey(id)
-                .Expand("Resident,ConfigDetail($expand=ResponseType($expand=ResponseTypeCategory))")
-                .GetValue();
+                .Expand("Resident,ConfigDetail($expand=ResponseType($expand=ResponseTypeCategory))");
 
-            return activityEventLog;
+            ActivityEventLog result;
+            try { result = activityEventLog.GetValue(); }
+            catch { result = null; }
+
+            return result;
         }
 
         public IEnumerable<ActivityEventLog> GetForDate(string date)
@@ -61,17 +64,20 @@ namespace Keebee.AAT.Operations.Service.Services
             var monthTo = (dateTo.Month < 10 ? "0" : "") + dateTo.Month;
             var dayTo = (dateTo.Day < 10 ? "0" : "") + dateTo.Day;
 
-            string from = $"{dateFrom.Year}-{monthFrom}-{dayFrom}";
-            string to = $"{dateTo.Year}-{monthTo}-{dayTo}";
+            string from = $"{dateFrom.Year}-{monthFrom}-{dayFrom}T00:00:00.000-00:00";
+            string to = $"{dateTo.Year}-{monthTo}-{dayTo}T00:00:00.000-00:00";
 
             string filter = $"DateEntry gt {from} and DateEntry lt {to}";
 
             var activityEventLogs = container.ActivityEventLogs
                 .AddQueryOption("$filter", filter)
-                .Expand("Resident,ConfigDetail($expand=PhidgetType,ResponseType($expand=ResponseTypeCategory))")
-                .ToList();
+                .Expand("Resident,ConfigDetail($expand=PhidgetType,ResponseType($expand=ResponseTypeCategory))");
 
-            return activityEventLogs;
+            var list = new List<ActivityEventLog>();
+            try { list = activityEventLogs.ToList(); }
+            catch {}
+
+            return list;
         }
 
         public IEnumerable<ActivityEventLog> GetForConfig(int configId)
@@ -124,22 +130,9 @@ namespace Keebee.AAT.Operations.Service.Services
                     var data = new StreamReader(stream);
                     var result = data.ReadToEnd();
 
-                    var serializer = new JavaScriptSerializer();
-                    detailsInUse = serializer.Deserialize<ActivityEventLogs>(result).value;
+                    detailsInUse = JsonConvert.DeserializeObject<ActivityEventLogs>(result).value;
                 }
             }
-
-            //var container = new Container(new Uri(ODataHost.Url));
-
-            //var detailsInUse = container.ActivityEventLogs
-            //    .Expand("ConfigDetail")
-            //    .AsEnumerable()
-            //    .GroupBy(x => new { x.ConfigDetail.ConfigId, x.ConfigDetailId }, (key, group) => new
-            //            ConfigDetail
-            //    {
-            //        Id = (int)key.ConfigDetailId,
-            //        ConfigId = key.ConfigId
-            //    }).AsEnumerable();
 
             return detailsInUse;
         }

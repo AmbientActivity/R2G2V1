@@ -22,7 +22,7 @@ namespace Keebee.AAT.Operations.Controllers
 
         // GET: api/Users
         [HttpGet]
-        public async Task<DynamicJsonObject> Get()
+        public async Task<DynamicJsonArray> Get()
         {
             IEnumerable<User> users = new Collection<User>();
 
@@ -31,17 +31,17 @@ namespace Keebee.AAT.Operations.Controllers
                 users = _userService.Get();
             });
 
-            if (users == null) return new DynamicJsonObject(new ExpandoObject());
+            if (users == null) return new DynamicJsonArray(new object[0]);
 
-            dynamic exObj = new ExpandoObject();
-            exObj.Users = users.Select(u => new
-            {
-                u.Id,
-                u.Username,
-                u.Password
-            }).OrderBy(o => o.Username);
+            var jArray = users
+                .Select(u => new
+                {
+                    u.Id,
+                    u.Username,
+                    u.Password
+                }).ToArray();
 
-            return new DynamicJsonObject(exObj);
+            return new DynamicJsonArray(jArray);
         }
 
         // GET: api/Users/5

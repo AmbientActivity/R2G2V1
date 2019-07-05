@@ -1,7 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.2\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props" Condition="Exists('..\..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.2\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" />
-  <Import Project="..\..\packages\Microsoft.Net.Compilers.2.0.0\build\Microsoft.Net.Compilers.props" Condition="Exists('..\..\packages\Microsoft.Net.Compilers.2.0.0\build\Microsoft.Net.Compilers.props')" />
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.Default.props" Condition="Exists('$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.Default.props')" />
+  <Import Project="..\..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.5\build\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props" Condition="Exists('..\..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.5\build\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" />
+  <Import Project="..\..\packages\Microsoft.Net.Compilers.2.2.0\build\Microsoft.Net.Compilers.props" Condition="Exists('..\..\packages\Microsoft.Net.Compilers.2.2.0\build\Microsoft.Net.Compilers.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -9,13 +10,14 @@
     <ProductVersion>
     </ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{B774C858-867E-4171-9EB3-22073E5FBC21}</ProjectGuid>
+    <ProjectGuid>{F70ADA08-B376-4430-B947-0B2560485B73}</ProjectGuid>
     <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Keebee.AAT.Administrator</RootNamespace>
     <AssemblyName>Keebee.AAT.Administrator</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <MvcBuildViews>false</MvcBuildViews>
     <UseIISExpress>false</UseIISExpress>
     <IISExpressSSLPort />
     <IISExpressAnonymousAuthentication />
@@ -24,7 +26,7 @@
     <UseGlobalApplicationHostFile />
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
-    <TargetFrameworkProfile />
+    <TypeScriptToolsVersion>1.8</TypeScriptToolsVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -48,102 +50,155 @@
       <HintPath>..\..\packages\Antlr.3.5.0.2\lib\Antlr3.Runtime.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="BundleTransformer.Core, Version=1.9.92.0, Culture=neutral, PublicKeyToken=973c344c93aac60d, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\BundleTransformer.Core.1.9.92\lib\net40\BundleTransformer.Core.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="BundleTransformer.JsMin, Version=1.9.117.0, Culture=neutral, PublicKeyToken=973c344c93aac60d, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\BundleTransformer.JsMin.1.9.117\lib\net40\BundleTransformer.JsMin.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="BundleTransformer.Less, Version=1.9.122.0, Culture=neutral, PublicKeyToken=973c344c93aac60d, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\BundleTransformer.Less.1.9.122\lib\net40\BundleTransformer.Less.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="BundleTransformer.Yui, Version=1.9.92.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\BundleTransformer.Yui.1.9.92\lib\net40\BundleTransformer.Yui.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="CuteWebUI.AjaxUploader, Version=4.0.0.0, Culture=neutral, PublicKeyToken=bc00d4b0e43ec38d, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\AjaxUploader.4.0.0.9\lib\CuteWebUI.AjaxUploader.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="DouglasCrockford.JsMin, Version=1.1.1.0, Culture=neutral, PublicKeyToken=99147aa1108448b7, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\DouglasCrockford.JsMin.1.1.1\lib\net40-client\DouglasCrockford.JsMin.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="EcmaScript.NET, Version=1.0.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\EcmaScript.Net.1.0.1.0\lib\net20\EcmaScript.NET.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="JavaScriptEngineSwitcher.Core, Version=2.0.0.0, Culture=neutral, PublicKeyToken=c608b2a8cc9e4472, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\JavaScriptEngineSwitcher.Core.2.0.0\lib\net451\JavaScriptEngineSwitcher.Core.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Microsoft.AspNet.Web.Optimization.WebForms, Version=1.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Microsoft.AspNet.Web.Optimization.WebForms.1.1.3\lib\net45\Microsoft.AspNet.Web.Optimization.WebForms.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform, Version=1.0.2.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.2\lib\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll</HintPath>
+    <Reference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform, Version=1.0.5.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.5\lib\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Microsoft.Web.Helpers, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.AspNet.WebHelpers.3.2.3\lib\net45\Microsoft.Web.Helpers.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
     <Reference Include="System.Web.ApplicationServices" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
-    <Reference Include="System" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Web.Extensions" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Web" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Web.Helpers, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.Helpers.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web.Mvc, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.AspNet.Mvc.5.2.3\lib\net45\System.Web.Mvc.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System.Web.Optimization, Version=1.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Microsoft.AspNet.Web.Optimization.1.1.3\lib\net40\System.Web.Optimization.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="System.Web.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.AspNet.Razor.3.2.3\lib\net45\System.Web.Razor.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web.WebPages, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Deployment, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.Deployment.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.Razor.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Web.Abstractions" />
+    <Reference Include="System.Web.Routing" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Web.Services" />
     <Reference Include="System.EnterpriseServices" />
-    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Net.Http">
+    </Reference>
+    <Reference Include="System.Net.Http.WebRequest">
+    </Reference>
     <Reference Include="WebGrease, Version=1.6.5135.21930, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\packages\WebGrease.1.6.0\lib\WebGrease.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="WindowsBase" />
-    <Reference Include="Yahoo.Yui.Compressor, Version=2.7.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\YUICompressor.NET.2.7.0.0\lib\NET20\Yahoo.Yui.Compressor.dll</HintPath>
+    <Reference Include="WebMatrix.Data, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.AspNet.WebPages.Data.3.2.3\lib\net45\WebMatrix.Data.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="WebMatrix.WebData, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.AspNet.WebPages.WebData.3.2.3\lib\net45\WebMatrix.WebData.dll</HintPath>
       <Private>True</Private>
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="System.Web.Razor">
-      <HintPath>..\..\packages\Microsoft.AspNet.Razor.3.2.3\lib\net45\System.Web.Razor.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Web.Webpages">
-      <HintPath>..\..\packages\Microsoft.AspNet.Webpages.3.2.3\lib\net45\System.Web.Webpages.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Web.Webpages.Deployment">
-      <HintPath>..\..\packages\Microsoft.AspNet.Webpages.3.2.3\lib\net45\System.Web.Webpages.Deployment.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Web.Webpages.Razor">
-      <HintPath>..\..\packages\Microsoft.AspNet.Webpages.3.2.3\lib\net45\System.Web.Webpages.Razor.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Web.Helpers">
-      <HintPath>..\..\packages\Microsoft.AspNet.Webpages.3.2.3\lib\net45\System.Web.Helpers.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Web.Infrastructure">
-      <HintPath>..\..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Web.Mvc">
-      <HintPath>..\..\packages\Microsoft.AspNet.Mvc.5.2.3\lib\net45\System.Web.Mvc.dll</HintPath>
-    </Reference>
+    <Compile Include="App_Start\BundleConfig.cs" />
+    <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\AmbientInvitationsController.cs" />
+    <Compile Include="Controllers\EventLogsController.cs" />
+    <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\MaintenanceController.cs" />
+    <Compile Include="Controllers\PhidgetConfigController.cs" />
+    <Compile Include="Controllers\PhidgetConfigDetailsController.cs" />
+    <Compile Include="Controllers\PublicProfileController.cs" />
+    <Compile Include="Controllers\ResidentProfileController.cs" />
+    <Compile Include="Controllers\ResidentsController.cs" />
+    <Compile Include="Controllers\ServicesController.cs" />
+    <Compile Include="Controllers\SharedLibraryController.cs" />
+    <Compile Include="Controllers\SystemProfileController.cs" />
+    <Compile Include="Controllers\VideoCapturesController.cs" />
+    <Compile Include="Extensions\ControllerExtensions.cs" />
+    <Compile Include="Extensions\ImageExtensions.cs" />
+    <Compile Include="Extensions\WebImageExtensions.cs" />
+    <Compile Include="Global.asax.cs">
+      <DependentUpon>Global.asax</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Controllers\SharedLibraryAddController.cs" />
+    <Content Include="Content\favicons\android-icon-144x144.png" />
+    <Content Include="Content\favicons\android-icon-192x192.png" />
+    <Content Include="Content\favicons\android-icon-36x36.png" />
+    <Content Include="Content\favicons\android-icon-48x48.png" />
+    <Content Include="Content\favicons\android-icon-72x72.png" />
+    <Content Include="Content\favicons\android-icon-96x96.png" />
+    <Content Include="Content\favicons\apple-icon-114x114.png" />
+    <Content Include="Content\favicons\apple-icon-120x120.png" />
+    <Content Include="Content\favicons\apple-icon-144x144.png" />
+    <Content Include="Content\favicons\apple-icon-152x152.png" />
+    <Content Include="Content\favicons\apple-icon-180x180.png" />
+    <Content Include="Content\favicons\apple-icon-57x57.png" />
+    <Content Include="Content\favicons\apple-icon-60x60.png" />
+    <Content Include="Content\favicons\apple-icon-72x72.png" />
+    <Content Include="Content\favicons\apple-icon-76x76.png" />
+    <Content Include="Content\favicons\apple-icon-precomposed.png" />
+    <Content Include="Content\favicons\apple-icon.png" />
+    <Content Include="Content\favicons\browserconfig.xml" />
+    <Content Include="Content\favicons\favicon-16x16.png" />
+    <Content Include="Content\favicons\favicon-32x32.png" />
+    <Content Include="Content\favicons\favicon-96x96.png" />
+    <Content Include="Content\favicons\favicon.ico" />
+    <Content Include="Content\favicons\ms-icon-144x144.png" />
+    <Content Include="Content\favicons\ms-icon-150x150.png" />
+    <Content Include="Content\favicons\ms-icon-310x310.png" />
+    <Content Include="Content\favicons\ms-icon-70x70.png" />
+    <Content Include="Content\Scripts\bootstrap-hover-dropdown.js" />
+    <Content Include="Content\Scripts\bootstrap-hover-dropdown.min.js" />
+    <Content Include="Scripts\AmbientInvitation\Index.js" />
+    <Content Include="Scripts\PhidgetConfig\_ConfigDetailEdit.js" />
+    <Content Include="Scripts\SharedLibraryAdd\_Index.js" />
+    <Content Include="Scripts\SharedLibrary\_LinkedProfiles.js" />
+    <Content Include="Scripts\Utilities\PartialView.js" />
+    <Compile Include="ViewModels\AmbientInvitationViewModel.cs" />
+    <Compile Include="ViewModels\ConfigViewModel.cs" />
+    <Compile Include="ViewModels\EventLogViewModel.cs" />
+    <Compile Include="ViewModels\ImageViewerViewModel.cs" />
+    <Compile Include="ViewModels\LoginViewModel.cs" />
+    <Compile Include="ViewModels\MediaFileViewModel.cs" />
+    <Compile Include="ViewModels\PublicProfileViewModel.cs" />
+    <Compile Include="ViewModels\ResidentViewModel.cs" />
+    <Compile Include="ViewModels\ServicesViewModel.cs" />
+    <Compile Include="ViewModels\SharedLibraryViewModel.cs" />
+    <Compile Include="ViewModels\VideoCaptureVidewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap-datepicker.css" />
@@ -159,23 +214,311 @@
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\Buttons.css" />
+    <Content Include="Content\font-awesome.css" />
+    <Content Include="Content\font-awesome.min.css" />
+    <Content Include="Content\foundation-icons\foundation-icons.css" />
+    <Content Include="Content\foundation-icons\foundation-icons.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-address-book.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-alert.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-align-center.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-align-justify.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-align-left.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-align-right.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-anchor.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-annotate.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-archive.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-arrow-down.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-arrow-left.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-arrow-right.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-arrow-up.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-arrows-compress.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-arrows-expand.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-arrows-in.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-arrows-out.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-asl.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-asterisk.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-at-sign.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-background-color.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-battery-empty.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-battery-full.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-battery-half.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-bitcoin-circle.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-bitcoin.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-blind.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-bluetooth.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-bold.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-book-bookmark.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-book.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-bookmark.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-braille.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-burst-new.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-burst-sale.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-burst.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-calendar.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-camera.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-check.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-checkbox.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-clipboard-notes.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-clipboard-pencil.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-clipboard.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-clock.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-closed-caption.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-cloud.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-comment-minus.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-comment-quotes.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-comment-video.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-comment.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-comments.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-compass.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-contrast.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-credit-card.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-crop.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-crown.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-css3.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-database.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-die-five.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-die-four.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-die-one.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-die-six.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-die-three.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-die-two.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-dislike.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-dollar-bill.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-dollar.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-download.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-eject.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-elevator.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-euro.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-eye.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-fast-forward.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-female-symbol.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-female.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-filter.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-first-aid.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-flag.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-folder-add.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-folder-lock.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-folder.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-foot.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-foundation.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-graph-bar.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-graph-horizontal.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-graph-pie.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-graph-trend.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-guide-dog.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-hearing-aid.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-heart.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-home.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-html5.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-indent-less.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-indent-more.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-info.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-italic.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-key.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-laptop.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-layout.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-lightbulb.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-like.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-link.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-list-bullet.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-list-number.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-list-thumbnails.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-list.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-lock.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-loop.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-magnifying-glass.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-mail.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-male-female.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-male-symbol.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-male.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-map.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-marker.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-megaphone.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-microphone.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-minus-circle.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-minus.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-mobile-signal.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-mobile.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-monitor.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-mountains.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-music.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-next.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-no-dogs.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-no-smoking.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-page-add.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-page-copy.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-page-csv.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-page-delete.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-page-doc.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-page-edit.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-page-export-csv.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-page-export-doc.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-page-export-pdf.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-page-export.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-page-filled.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-page-multiple.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-page-pdf.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-page-remove.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-page-search.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-page.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-paint-bucket.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-paperclip.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-pause.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-paw.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-paypal.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-pencil.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-photo.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-play-circle.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-play-video.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-play.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-plus.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-pound.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-power.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-previous.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-price-tag.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-pricetag-multiple.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-print.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-prohibited.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-projection-screen.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-puzzle.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-quote.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-record.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-refresh.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-results-demographics.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-results.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-rewind-ten.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-rewind.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-rss.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-safety-cone.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-save.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-share.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-sheriff-badge.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-shield.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-shopping-bag.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-shopping-cart.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-shuffle.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-skull.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-social-500px.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-social-adobe.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-social-amazon.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-social-android.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-social-apple.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-social-behance.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-social-bing.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-social-blogger.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-social-delicious.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-social-designer-news.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-social-deviant-art.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-social-digg.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-social-dribbble.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-social-drive.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-social-dropbox.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-social-evernote.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-social-facebook.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-social-flickr.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-social-forrst.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-social-foursquare.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-social-game-center.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-social-github.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-social-google-plus.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-social-hacker-news.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-social-hi5.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-social-instagram.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-social-joomla.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-social-lastfm.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-social-linkedin.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-social-medium.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-social-myspace.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-social-orkut.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-social-path.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-social-picasa.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-social-pinterest.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-social-rdio.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-social-reddit.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-social-skillshare.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-social-skype.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-social-smashing-mag.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-social-snapchat.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-social-spotify.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-social-squidoo.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-social-stack-overflow.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-social-steam.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-social-stumbleupon.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-social-treehouse.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-social-tumblr.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-social-twitter.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-social-vimeo.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-social-windows.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-social-xbox.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-social-yahoo.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-social-yelp.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-social-youtube.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-social-zerply.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-social-zurb.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-sound.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-star.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-stop.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-strikethrough.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-subscript.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-superscript.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-tablet-landscape.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-tablet-portrait.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-target-two.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-target.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-telephone-accessible.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-telephone.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-text-color.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-thumbnails.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-ticket.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-torso-business.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-torso-female.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-torso.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-torsos-all-female.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-torsos-all.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-torsos-female-male.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-torsos-male-female.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-torsos.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-trash.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-trees.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-trophy.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-underline.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-universal-access.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-unlink.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-unlock.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-upload-cloud.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-upload.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-usb.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-video.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-volume-none.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-volume-strike.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-volume.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-web.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-wheelchair.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-widget.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-wrench.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-x-circle.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-x.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-yen.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-zoom-in.svg" />
+    <Content Include="Content\foundation-icons\svgs\fi-zoom-out.svg" />
+    <Content Include="Content\images\loading.gif" />
     <Content Include="Content\images\mac-bar.png" />
-    <Content Include="Content\images\R2G2.png" />
+    <Content Include="Content\images\page-loading.gif" />
+    <Content Include="Content\images\ProfilePicturePlaceholder.jpg" />
+    <Content Include="Content\images\ABBY.png" />
     <Content Include="Content\images\win7-bar.png" />
     <Content Include="Content\images\win7-bg.png" />
-    <Content Include="Content\Site.css" />
+    <Content Include="fonts\fontawesome-webfont.svg" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
-    <Content Include="READ_ME.txt" />
-    <Content Include="Scripts\Account\Utilities.js" />
-    <Content Include="fonts\glyphicons-halflings-regular.woff2" />
-    <Content Include="fonts\glyphicons-halflings-regular.woff" />
-    <Content Include="fonts\glyphicons-halflings-regular.ttf" />
-    <Content Include="fonts\glyphicons-halflings-regular.eot" />
-    <Content Include="Content\bootstrap.min.css.map" />
-    <Content Include="Content\bootstrap.css.map" />
-    <Content Include="Content\bootstrap-theme.min.css.map" />
-    <Content Include="Content\bootstrap-theme.css.map" />
+    <Content Include="Content\Site.css" />
+    <Content Include="Scripts\Account\Services.js" />
+    <Content Include="Scripts\bootstrap-datepicker.js" />
+    <Content Include="Scripts\bootstrap-datepicker.min.js" />
+    <Content Include="Scripts\bootstrap-dialog.js" />
+    <Content Include="Scripts\bootstrap.js" />
+    <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Content\bootstrap-datepicker3.standalone.min.css.map" />
     <Content Include="Content\bootstrap-datepicker3.standalone.css.map" />
     <Content Include="Content\bootstrap-datepicker3.min.css.map" />
@@ -185,18 +528,33 @@
     <Content Include="Content\bootstrap-datepicker.min.css.map" />
     <Content Include="Content\bootstrap-datepicker.css.map" />
     <Content Include="Content\bootstrap-dialog.less" />
-    <Content Include="Scripts\bootstrap-datepicker.js" />
-    <Content Include="Scripts\bootstrap-datepicker.min.js" />
-    <Content Include="Scripts\bootstrap-dialog.js" />
-    <Content Include="Scripts\bootstrap.js" />
-    <Content Include="Scripts\bootstrap.min.js" />
-    <None Include="Scripts\jquery-3.1.1.intellisense.js" />
-    <Content Include="Scripts\jquery-3.1.1.js" />
-    <Content Include="Scripts\jquery-3.1.1.min.js" />
-    <Content Include="Scripts\jquery-3.1.1.slim.js" />
-    <Content Include="Scripts\jquery-3.1.1.slim.min.js" />
-    <Content Include="Scripts\knockout-3.4.0.debug.js" />
-    <Content Include="Scripts\knockout-3.4.0.js" />
+    <Content Include="fonts\glyphicons-halflings-regular.woff2" />
+    <Content Include="Content\bootstrap.min.css.map" />
+    <Content Include="Content\bootstrap.css.map" />
+    <Content Include="Content\bootstrap-theme.min.css.map" />
+    <Content Include="Content\bootstrap-theme.css.map" />
+    <Content Include="Content\foundation-icons\.fontcustom-data" />
+    <Content Include="Content\foundation-icons\foundation-icons.eot" />
+    <Content Include="Content\foundation-icons\foundation-icons.ttf" />
+    <Content Include="Content\foundation-icons\foundation-icons.woff" />
+    <Content Include="fonts\FontAwesome.otf" />
+    <Content Include="fonts\fontawesome-webfont.woff2" />
+    <Content Include="fonts\fontawesome-webfont.woff" />
+    <Content Include="fonts\fontawesome-webfont.ttf" />
+    <Content Include="fonts\fontawesome-webfont.eot" />
+    <Content Include="Content\favicons\manifest.json" />
+    <None Include="Scripts\jquery-1.10.2.intellisense.js" />
+    <Content Include="Scripts\EventLogs\Export.js" />
+    <Content Include="Scripts\EventLogs\Index.js" />
+    <Content Include="Scripts\jquery-1.10.2.js" />
+    <Content Include="Scripts\jquery-1.10.2.min.js" />
+    <None Include="Scripts\jquery.validate-vsdoc.js" />
+    <Content Include="Scripts\jquery.validate.js" />
+    <Content Include="Scripts\jquery.validate.min.js" />
+    <Content Include="Scripts\jquery.validate.unobtrusive.js" />
+    <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
+    <Content Include="Scripts\knockout-3.4.2.debug.js" />
+    <Content Include="Scripts\knockout-3.4.2.js" />
     <Content Include="Scripts\locales\bootstrap-datepicker.ar.min.js" />
     <Content Include="Scripts\locales\bootstrap-datepicker.az.min.js" />
     <Content Include="Scripts\locales\bootstrap-datepicker.bg.min.js" />
@@ -263,98 +621,87 @@
     <Content Include="Scripts\locales\bootstrap-datepicker.vi.min.js" />
     <Content Include="Scripts\locales\bootstrap-datepicker.zh-CN.min.js" />
     <Content Include="Scripts\locales\bootstrap-datepicker.zh-TW.min.js" />
+    <Content Include="Scripts\Maintenance\Index.js" />
+    <Content Include="Scripts\modernizr-2.6.2.js" />
+    <Content Include="Scripts\modernizr-2.8.3.js" />
     <Content Include="Scripts\moment-with-locales.js" />
     <Content Include="Scripts\moment-with-locales.min.js" />
     <Content Include="Scripts\moment.js" />
     <Content Include="Scripts\moment.min.js" />
     <Content Include="Scripts\PhidgetConfig\Index.js" />
-    <Content Include="Scripts\EventLogs\Export.js" />
-    <Content Include="Scripts\EventLogs\Index.js" />
-    <Content Include="Scripts\modernizr-2.8.3.js" />
     <Content Include="Scripts\PublicProfile\Index.js" />
     <Content Include="Scripts\ResidentProfile\Index.js" />
     <Content Include="Scripts\Residents\Index.js" />
-    <Content Include="Scripts\Maintenance\Index.js" />
+    <Content Include="Scripts\Residents\_ResidentEdit.js" />
+    <Content Include="Scripts\respond.js" />
+    <Content Include="Scripts\respond.matchmedia.addListener.js" />
+    <Content Include="Scripts\respond.matchmedia.addListener.min.js" />
+    <Content Include="Scripts\respond.min.js" />
+    <Content Include="Scripts\Services\Index.js" />
     <Content Include="Scripts\SharedLibrary\Index.js" />
+    <Content Include="Scripts\simpleUpload.js" />
+    <Content Include="Scripts\simpleUpload.min.js" />
     <Content Include="Scripts\Site\Namespaces.js" />
     <Content Include="Scripts\Site\Site.js" />
     <Content Include="Scripts\SystemProfile\Index.js" />
+    <Content Include="Scripts\Utilities\Alert.js" />
+    <Content Include="Scripts\Utilities\Confirm.js" />
+    <Content Include="Scripts\Utilities\ImageViewer.js" />
+    <Content Include="Scripts\Utilities\InProgress.js" />
+    <Content Include="Scripts\Utilities\JobExecution.js" />
+    <Content Include="Scripts\SharedLibraryAdd\PartialView.js" />
+    <Content Include="Scripts\Utilities\SessionExpiry.js" />
+    <Content Include="Scripts\Utilities\Sorting.js" />
+    <Content Include="Scripts\Utilities\Upload.js" />
+    <Content Include="Scripts\Utilities\VideoViewer.js" />
     <Content Include="Scripts\VideoCaptures\Index.js" />
-    <Content Include="Web.config">
-      <SubType>Designer</SubType>
+    <Content Include="Scripts\_references.js" />
+    <Content Include="Web.config" />
+    <Content Include="Web.Debug.config">
+      <DependentUpon>Web.config</DependentUpon>
     </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="App_Start\BundleConfig.cs" />
-    <Compile Include="App_Start\RouteConfig.cs" />
-    <Compile Include="Controllers\AccountController.cs" />
-    <Compile Include="Controllers\ImageViewerController.cs" />
-    <Compile Include="Controllers\PhidgetConfigController.cs" />
-    <Compile Include="Controllers\EventLogsController.cs" />
-    <Compile Include="Controllers\HomeController.cs" />
-    <Compile Include="Controllers\PublicProfileController.cs" />
-    <Compile Include="Controllers\ResidentProfileController.cs" />
-    <Compile Include="Controllers\ResidentsController.cs" />
-    <Compile Include="Controllers\MaintenanceController.cs" />
-    <Compile Include="Controllers\SharedLibraryController.cs" />
-    <Compile Include="Controllers\SystemProfileController.cs" />
-    <Compile Include="Controllers\VideoCapturesController.cs" />
-    <Compile Include="FileManagement\FileManager.cs" />
-    <Compile Include="Global.asax.cs">
-      <DependentUpon>Global.asax</DependentUpon>
-    </Compile>
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ViewModels\ConfigViewModel.cs" />
-    <Compile Include="ViewModels\EventLogViewModel.cs" />
-    <Compile Include="ViewModels\ImageViewerViewModel.cs" />
-    <Compile Include="ViewModels\LoginViewModel.cs" />
-    <Compile Include="ViewModels\MediaFileViewModel.cs" />
-    <Compile Include="ViewModels\PublicProfileViewModel.cs" />
-    <Compile Include="ViewModels\ResidentViewModel.cs" />
-    <Compile Include="ViewModels\SharedLibraryViewModel.cs" />
-    <Compile Include="ViewModels\VideoCaptureVidewModel.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Views\web.config" />
-    <Content Include="packages.config">
-      <SubType>Designer</SubType>
+    <Content Include="Web.Release.config">
+      <DependentUpon>Web.config</DependentUpon>
     </Content>
+    <Content Include="Views\Web.config" />
     <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
+    <Content Include="Views\Account\_ChangePassword.cshtml" />
     <Content Include="Views\EventLogs\Export.cshtml" />
     <Content Include="Views\EventLogs\Index.cshtml" />
+    <Content Include="Views\Maintenance\Index.cshtml" />
+    <Content Include="Views\PhidgetConfig\Index.cshtml" />
+    <Content Include="Views\PhidgetConfigDetails\_ConfigDetailEdit.cshtml" />
+    <Content Include="Views\PhidgetConfig\_ConfigEdit.cshtml" />
+    <Content Include="Views\PublicProfile\Index.cshtml" />
+    <Content Include="Views\ResidentProfile\Index.cshtml" />
     <Content Include="Views\Residents\Index.cshtml" />
     <Content Include="Views\Residents\_ResidentEdit.cshtml" />
-    <Content Include="Views\PhidgetConfig\Index.cshtml" />
-    <Content Include="Views\PhidgetConfig\_ConfigDetailEdit.cshtml" />
-    <Content Include="Views\PhidgetConfig\_ConfigEdit.cshtml" />
-    <Content Include="UploadHandler.ashx" />
-    <Content Include="Views\PublicProfile\Index.cshtml" />
-    <Content Include="Views\Maintenance\Index.cshtml" />
+    <Content Include="Views\Services\Index.cshtml" />
     <Content Include="Views\Shared\_ImageViewer.cshtml" />
-    <Content Include="Views\Account\_Login.cshtml" />
     <Content Include="Views\Shared\_LogOnPartial.cshtml" />
-    <Content Include="Views\Account\_ChangePassword.cshtml" />
-    <Content Include="Views\VideoCaptures\Index.cshtml" />
-    <Content Include="Views\VideoCaptures\Export.cshtml" />
-    <Content Include="Scripts\jquery-3.1.1.slim.min.map" />
-    <Content Include="Scripts\jquery-3.1.1.min.map" />
-    <Content Include="Views\Shared\_SharedLibraryLink.cshtml" />
     <Content Include="Views\SharedLibrary\Index.cshtml" />
-    <Content Include="Views\SharedLibrary\_LinkedResidentMedia.cshtml" />
+    <Content Include="Views\SharedLibrary\_LinkedProfiles.cshtml" />
     <Content Include="Views\SystemProfile\Index.cshtml" />
-    <Content Include="Views\ResidentProfile\Index.cshtml" />
-    <None Include="Web.Debug.config">
-      <DependentUpon>Web.config</DependentUpon>
-    </None>
-    <None Include="Web.Release.config">
-      <DependentUpon>Web.config</DependentUpon>
-    </None>
+    <Content Include="Views\VideoCaptures\Export.cshtml" />
+    <Content Include="Views\VideoCaptures\Index.cshtml" />
+    <Content Include="Views\Account\Login.cshtml" />
+    <Content Include="Views\SharedLibraryAdd\_Index.cshtml" />
+    <Content Include="Views\Account\_ResetCaregiver.cshtml" />
+    <Content Include="Views\AmbientInvitations\Index.cshtml" />
+    <Content Include="Views\AmbientInvitations\_AmbientInvitationEdit.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Content\themes\base\images\" />
-    <Folder Include="Content\themes\base\minified\images\" />
+    <Content Include="Scripts\Utilities\Validation.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="fonts\glyphicons-halflings-regular.woff" />
+    <Content Include="fonts\glyphicons-halflings-regular.ttf" />
+    <Content Include="fonts\glyphicons-halflings-regular.eot" />
+    <Content Include="packages.config" />
+    <None Include="Project_Readme.html" />
+    <Content Include="Scripts\jquery-1.10.2.min.map" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\APIClient\Keebee.AAT.ApiClient\Keebee.AAT.ApiClient.csproj">
@@ -377,25 +724,37 @@
       <Project>{6f0a1aef-997e-4355-bb38-a4acf6710edf}</Project>
       <Name>Keebee.AAT.SystemEventLogging</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Shared\Keebee.AAT.ThumbnailGeneration\Keebee.AAT.ThumbnailGeneration.csproj">
+      <Project>{b1653a19-0702-450c-ad9d-8d6bed9d3ff5}</Project>
+      <Name>Keebee.AAT.ThumbnailGeneration</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Keebee.AAT.BusinessRules\Keebee.AAT.BusinessRules.csproj">
       <Project>{8b0e0633-3be9-470c-8c3c-ea2960650194}</Project>
       <Name>Keebee.AAT.BusinessRules</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />
+  </ItemGroup>
+  <ItemGroup />
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
   </PropertyGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.targets" Condition="Exists('$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.targets')" />
   <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" Condition="false" />
+  <Target Name="MvcBuildViews" AfterTargets="AfterBuild" Condition="'$(MvcBuildViews)'=='true'">
+    <AspNetCompiler VirtualPath="temp" PhysicalPath="$(WebProjectOutputDir)" />
+  </Target>
   <ProjectExtensions>
     <VisualStudio>
       <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
         <WebProjectProperties>
           <UseIIS>True</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
-          <DevelopmentServerPort>63279</DevelopmentServerPort>
+          <DevelopmentServerPort>65235</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
           <IISUrl>http://localhost/Keebee.AAT.Administrator</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
@@ -411,14 +770,13 @@
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('..\..\packages\Microsoft.Net.Compilers.2.0.0\build\Microsoft.Net.Compilers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Microsoft.Net.Compilers.2.0.0\build\Microsoft.Net.Compilers.props'))" />
-    <Error Condition="!Exists('..\..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.2\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.2\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props'))" />
+    <Error Condition="!Exists('..\..\packages\Microsoft.Net.Compilers.2.2.0\build\Microsoft.Net.Compilers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Microsoft.Net.Compilers.2.2.0\build\Microsoft.Net.Compilers.props'))" />
+    <Error Condition="!Exists('..\..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.5\build\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.5\build\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props'))" />
   </Target>
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
   </Target>
   <Target Name="AfterBuild">
-  </Target>
-  -->
+  </Target> -->
 </Project>

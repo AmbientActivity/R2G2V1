@@ -1,8 +1,8 @@
 ﻿using Keebee.AAT.MessageQueuing;
 using Keebee.AAT.Shared;
 using Keebee.AAT.SystemEventLogging;
-using Keebee.AAT.ServiceModels;
 using Keebee.AAT.ApiClient.Clients;
+using Newtonsoft.Json;
 using Phidgets;
 using Phidgets.Events;
 using System.Configuration;
@@ -10,7 +10,6 @@ using System;
 using System.Diagnostics;
 using System.Linq;
 using System.ServiceProcess;
-using System.Web.Script.Serialization;
 
 namespace Keebee.AAT.PhidgetService
 {
@@ -40,21 +39,17 @@ namespace Keebee.AAT.PhidgetService
 
     internal partial class PhidgetService : ServiceBase
     {
+        #region declaration
 
         // api client
         private readonly IConfigsClient _configsClient;
 
-#if DEBUG
         private readonly CustomMessageQueue _messageQueuePhidgetMonitor;
         private bool _phidgetMonitorIsActive;
-#endif
 
         // message queue sender
         private readonly CustomMessageQueue _messageQueuePhidget;
         private readonly CustomMessageQueue _messageQueuePhidgetContinuousRadio;
-
-        // event logger
-        private readonly SystemEventLogger _systemEventLogger;
 
         // sensor value
         private const int DefaultTouchSensorThreshold = 990;
@@ -80,11 +75,12 @@ namespace Keebee.AAT.PhidgetService
 
         private readonly InterfaceKit _interfaceKit;
 
+        #endregion
+
         public PhidgetService()
         {
             InitializeComponent();
 
-            _systemEventLogger = new SystemEventLogger(SystemEventLogType.PhidgetService);
             _configsClient = new ConfigsClient();
             _sensorThreshold = ValidateSensorThreshold(ConfigurationManager.AppSettings["TouchSensorThreshold"]);
             _inputDebounceTime = int.Parse(ConfigurationManager.AppSettings["InputDebounceTime"]);
@@ -99,21 +95,18 @@ namespace Keebee.AAT.PhidgetService
             _messageQueuePhidget = new CustomMessageQueue(new CustomMessageQueueArgs
             {
                 QueueName = MessageQueueType.Phidget
-            })
-            { SystemEventLogger = _systemEventLogger };
+            });
 
             _messageQueuePhidgetContinuousRadio = new CustomMessageQueue(new CustomMessageQueueArgs
             {
                 QueueName = MessageQueueType.PhidgetContinuousRadio
-            })
-            { SystemEventLogger = _systemEventLogger };
+            });
 
-#if DEBUG
             _messageQueuePhidgetMonitor = new CustomMessageQueue(new CustomMessageQueueArgs
             {
                 QueueName = MessageQueueType.PhidgetMonitor
             });
-#endif
+
             // message queue listeners
             InitializeMessageQueueListeners();
 
@@ -121,33 +114,30 @@ namespace Keebee.AAT.PhidgetService
             openCmdLine(_interfaceKit);
         }
 
+        #region initialization
+
         private void InitializeMessageQueueListeners()
         {
             var q1 = new CustomMessageQueue(new CustomMessageQueueArgs
             {
                 QueueName = MessageQueueType.ConfigPhidget,
                 MessageReceivedCallback = MessageReceiveConfigPhidget
-            })
-
-            { SystemEventLogger = _systemEventLogger };
+            });
 
             var q2 = new CustomMessageQueue(new CustomMessageQueueArgs
             {
                 QueueName = MessageQueueType.DisplayPhidget,
                 MessageReceivedCallback = MessageReceivedDisplayPhidget
-            })
-            { SystemEventLogger = _systemEventLogger };
+            });
 
-#if DEBUG
             var q3 = new CustomMessageQueue(new CustomMessageQueueArgs
             {
                 QueueName = MessageQueueType.PhidgetMonitorState,
                 MessageReceivedCallback = PhidgetMonitorMessageReceived
             });
-#endif
         }
 
-        private int ValidateSensorThreshold(string threshold)
+        private static int ValidateSensorThreshold(string threshold)
         {
 
             int thresholdValue;
@@ -163,7 +153,7 @@ namespace Keebee.AAT.PhidgetService
                 return thresholdValue;
             }
 
-            _systemEventLogger.WriteEntry($"Invalid SensorThreshold value: {threshold}", EventLogEntryType.Error);
+            SystemEventLogger.WriteEntry($"Invalid SensorThreshold value: {threshold}", SystemEventLogType.PhidgetService, EventLogEntryType.Error);
             return DefaultTouchSensorThreshold;
         }
 
@@ -173,57 +163,33 @@ namespace Keebee.AAT.PhidgetService
             _totalInputs = _interfaceKit.inputs.Count;
         }
 
-        private void SensorChange(object sender, SensorChangeEventArgs e)
+        private void LoadConfig()
         {
-            // if the interface kit is still attaching, exit  
-            if (_currentSensor != _totalSensors)
+            var config = _configsClient.GetActiveDetails();
+            _activeConfig = new ConfigMessage
             {
-                _currentSensor++;
-                return;
-            }
-
-            try
-            {
-#if DEBUG
-                if (_phidgetMonitorIsActive)
-                {
-                    var message = CreateMessageBodyFromSensor(e.Index, e.Value);
-                    _messageQueuePhidgetMonitor.Send(message);
-                }
-#endif
-                if (!_isDisplayActive) return;
-
-                int sensorId;
-                int sensorValue = e.Value;
-
-                var isValid = int.TryParse(Convert.ToString(e.Index), out sensorId);
-                if (!isValid) return;
-
-                // PhidgetTypeId = SensorId + 1 (SensorId is base 0)
-                var phidgetTypeId = sensorId + 1;
-
-                if (_activeConfig.ConfigDetails.All(cd => cd.PhidgetTypeId != phidgetTypeId))
-                    return;
-
-                var configDetail = _activeConfig.ConfigDetails.Single(cd => cd.PhidgetTypeId == phidgetTypeId);
-
-                switch (configDetail.PhidgetStyleTypeId)
-                {
-                    case PhidgetStyleTypeIdId.Touch:
-                        ProcessTouchSensor(configDetail, sensorId, sensorValue);
-                        break;
-                    case PhidgetStyleTypeIdId.MultiTurn:
-                    case PhidgetStyleTypeIdId.StopTurn:
-                    case PhidgetStyleTypeIdId.Slider:
-                        ProcessIncrementalSensor(configDetail, sensorId, sensorValue);
-                        break;
-                }
-            }
-            catch (Exception ex)
-            {
-                _systemEventLogger.WriteEntry($"SensorChange: {ex.Message}", EventLogEntryType.Error);
-            }
+                ConfigDetails = config.ConfigDetails
+                    .Select(x => new
+                    ConfigDetailMessage
+                    {
+                        PhidgetTypeId = x.PhidgetType.Id,
+                        PhidgetStyleType = new PhidgetStyleTypeMessage
+                        {
+                            Id = x.PhidgetStyleType.Id,
+                            IsIncremental = x.PhidgetStyleType.IsIncremental
+                        },
+                        ResponseType = new ResponseTypeMessage
+                        {
+                            Id = x.ResponseType.Id
+                        }
+                    })
+            };
+            SystemEventLogger.WriteEntry($"The configuration '{config.Description}' has been activated", SystemEventLogType.PhidgetService);
         }
+
+        #endregion
+
+        #region sensor/input change events
 
         private void ProcessTouchSensor(ConfigDetailMessage configDetail, int sensorId, int sensorValue)
         {
@@ -231,7 +197,7 @@ namespace Keebee.AAT.PhidgetService
             {
                 if (sensorValue < _sensorThreshold) return;
 
-                if (configDetail.ResponseTypeId != ResponseTypeId.Radio)
+                if (configDetail.ResponseType.Id != ResponseTypeId.Radio)
                 {
                     _messageQueuePhidget.Send(CreateMessageBodyFromSensor(sensorId, sensorValue));
                 }
@@ -244,7 +210,7 @@ namespace Keebee.AAT.PhidgetService
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"ProcessTouchSensor: {ex.Message}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"ProcessTouchSensor: {ex.Message}", SystemEventLogType.PhidgetService, EventLogEntryType.Error);
             }
         }
 
@@ -262,14 +228,14 @@ namespace Keebee.AAT.PhidgetService
                 }
 
                 // send continuous value
-                if (configDetail.ResponseTypeId == ResponseTypeId.Radio)
+                if (configDetail.ResponseType.Id == ResponseTypeId.Radio)
                     _messageQueuePhidgetContinuousRadio.Send($"{sensorValue}");
 
                 // send step value
-                var stepValue = PhidgetUtil.GetSensorStepValue(sensorValue);
+                var stepValue = PhidgetUtility.GetSensorStepValue(sensorValue);
                 if (stepValue > 0)
                 {
-                    if (configDetail.ResponseTypeId != ResponseTypeId.Radio)
+                    if (configDetail.ResponseType.Id != ResponseTypeId.Radio)
                     {
                         _messageQueuePhidget.Send(CreateMessageBodyFromSensor(sensorId, stepValue));
                     }
@@ -285,29 +251,8 @@ namespace Keebee.AAT.PhidgetService
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"ProcessIncrementalSensor: {ex.Message}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"ProcessIncrementalSensor: {ex.Message}", SystemEventLogType.PhidgetService, EventLogEntryType.Error);
             }
-        }
-
-        // for debouncing
-        private DateTime _latestInputHit = DateTime.MinValue;
-        private void InputChange(object sender, InputChangeEventArgs e)
-        {
-            // if the interface kit is still attaching, exit  
-            if (_currentInput != _totalInputs)
-            {
-                _currentInput++;
-                return;
-            }
-
-            // debounce the switch - don't allow consecutive events < xx milliseconds apart
-            if (DateTime.Now - _latestInputHit  < TimeSpan.FromMilliseconds(_inputDebounceTime))
-            {
-                _latestInputHit = DateTime.Now;
-                return;  // too fast
-            }
-            _latestInputHit = DateTime.Now;
-            ProcessInputChange(e);
         }
 
         private void ProcessInputChange(InputChangeEventArgs e)
@@ -335,60 +280,83 @@ namespace Keebee.AAT.PhidgetService
 
                 var configDetail = _activeConfig.ConfigDetails.Single(cd => cd.PhidgetTypeId == phidgetTypeId);
 
+                // if input type is "On Only" or "Non-rotational", only send message if the value is "On"
+                if ((configDetail.PhidgetStyleType.Id == PhidgetStyleTypeId.OnOnly
+                    || configDetail.PhidgetStyleType.Id == PhidgetStyleTypeId.NonRotational) && !e.Value)
+                    return;
+
                 SetDiscreteStepValue();
+
                 _messageQueuePhidget.Send(CreateMessageBodyFromSensor(inputId + 8, (int)_currentDiscreteStepValue));
 
-                if (configDetail.ResponseTypeId == ResponseTypeId.Radio)
+                if (configDetail.ResponseType.Id == ResponseTypeId.Radio)
                     _messageQueuePhidgetContinuousRadio.Send($"{(int)_currentDiscreteStepValue}");
 
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"ProcessInputChange: {ex.Message}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"ProcessInputChange: {ex.Message}", SystemEventLogType.PhidgetService, EventLogEntryType.Error);
             }
         }
 
         // set discrete values for when inputs or touch sensors are used to navigate through a playlist
         private void SetDiscreteStepValue()
         {
-            if (_currentDiscreteStepValue == RotationSensorStep.Value1)
-                _currentDiscreteStepValue = RotationSensorStep.Value2;
-
-            else if (_currentDiscreteStepValue == RotationSensorStep.Value2)
-                _currentDiscreteStepValue = RotationSensorStep.Value3;
-
-            else if (_currentDiscreteStepValue == RotationSensorStep.Value3)
-                _currentDiscreteStepValue = RotationSensorStep.Value4;
-
-            else if (_currentDiscreteStepValue == RotationSensorStep.Value4)
-                _currentDiscreteStepValue = RotationSensorStep.Value5;
-
-            else if (_currentDiscreteStepValue == RotationSensorStep.Value5)
-                _currentDiscreteStepValue = RotationSensorStep.Value1;
+            switch (_currentDiscreteStepValue)
+            {
+                case RotationSensorStep.Value1:
+                    _currentDiscreteStepValue = RotationSensorStep.Value2;
+                    break;
+                case RotationSensorStep.Value2:
+                    _currentDiscreteStepValue = RotationSensorStep.Value3;
+                    break;
+                case RotationSensorStep.Value3:
+                    _currentDiscreteStepValue = RotationSensorStep.Value4;
+                    break;
+                case RotationSensorStep.Value4:
+                    _currentDiscreteStepValue = RotationSensorStep.Value5;
+                    break;
+                default:
+                    _currentDiscreteStepValue = RotationSensorStep.Value1;
+                    break;
+            }
         }
 
-        private static string CreateMessageBodyFromSensor(int sensorId, int sensorValue)
-        {
-            var phidgetMessage = new PhidgetMessage { SensorId = sensorId, SensorValue = sensorValue };
+        #endregion
 
-            var serializer = new JavaScriptSerializer();
-            var messageBody = serializer.Serialize(phidgetMessage);
-            return messageBody;
-        }
+        #region message send/receive
 
         private void MessageReceiveConfigPhidget(object source, MessageEventArgs e)
         {
             try
             {
-                _activeConfig = GetConfigFromMessageBody(e.MessageBody);
-                _isDisplayActive = _activeConfig.IsDisplayActive;
+                var config = JsonConvert.DeserializeObject<ConfigMessage>(e.MessageBody);
 
-                _systemEventLogger.WriteEntry($"The configuration '{_activeConfig.Description}' has been activated");
+                _activeConfig = new ConfigMessage
+                {
+                    ConfigDetails = config.ConfigDetails.Select(x => new ConfigDetailMessage
+                    {
+                        PhidgetTypeId = x.PhidgetTypeId,
+                        PhidgetStyleType = new PhidgetStyleTypeMessage
+                        {
+                            Id = x.PhidgetStyleType.Id,
+                            IsIncremental = x.PhidgetStyleType.IsIncremental
+                        },
+                        ResponseType = new ResponseTypeMessage
+                        {
+                            Id = x.ResponseType.Id
+                        }
+                    })
+                };
+
+                _isDisplayActive = config.IsDisplayActive;
+
+                SystemEventLogger.WriteEntry($"The configuration '{_activeConfig.Description}' has been activated", SystemEventLogType.PhidgetService);
                 
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"MessageReceiveConfigPhidget{Environment.NewLine}{ex.Message}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"MessageReceiveConfigPhidget{Environment.NewLine}{ex.Message}", SystemEventLogType.PhidgetService, EventLogEntryType.Error);
             }
         }
 
@@ -396,7 +364,7 @@ namespace Keebee.AAT.PhidgetService
         {
             try
             {
-                var displayMessage = GetDisplayStateFromMessageBody(e.MessageBody);
+                var displayMessage = JsonConvert.DeserializeObject<DisplayMessage>(e.MessageBody);
                 _isDisplayActive = displayMessage.IsActive;
 
                 if (!_isDisplayActive) return;
@@ -405,49 +373,10 @@ namespace Keebee.AAT.PhidgetService
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"MessageReceivedDisplayPhidget{Environment.NewLine}{ex.Message}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"MessageReceivedDisplayPhidget{Environment.NewLine}{ex.Message}", SystemEventLogType.PhidgetService, EventLogEntryType.Error);
             }
         }
 
-        private static ConfigMessage GetConfigFromMessageBody(string messageBody)
-        {
-            var serializer = new JavaScriptSerializer();
-            var config = serializer.Deserialize<ConfigMessage>(messageBody);
-            return config;
-        }
-
-        private static DisplayMessage GetDisplayStateFromMessageBody(string messageBody)
-        {
-            var serializer = new JavaScriptSerializer();
-            var display = serializer.Deserialize<DisplayMessage>(messageBody);
-            return display;
-        }
-
-        private void LoadConfig()
-        {
-            var config = _configsClient.GetActiveDetails();
-            _activeConfig = new ConfigMessage
-            {
-                Id = config.Id,
-                Description = config.Description,
-                IsActiveEventLog = config.IsActiveEventLog,
-                ConfigDetails = config.ConfigDetails
-                                    .Select(x => new
-                                    ConfigDetailMessage
-                                    {
-                                        Id = x.Id,
-                                        ConfigId = x.ConfigId,
-                                        ResponseTypeId = x.ResponseType.Id,
-                                        PhidgetTypeId = x.PhidgetType.Id,
-                                        PhidgetStyleTypeId = x.PhidgetStyleType.Id,
-                                        IsSystemReponseType = x.ResponseType.IsSystem
-                                    }
-                                    )
-            };
-            _systemEventLogger.WriteEntry($"The configuration '{config.Description}' has been activated");
-        }
-
-#if DEBUG
         private void PhidgetMonitorMessageReceived(object sender, MessageEventArgs e)
         {
             var message = (e.MessageBody);
@@ -455,19 +384,100 @@ namespace Keebee.AAT.PhidgetService
             var activeState = Convert.ToInt16(message);
             _phidgetMonitorIsActive = activeState > 0;
         }
-#endif
+
+        private static string CreateMessageBodyFromSensor(int sensorId, int sensorValue)
+        {
+            return JsonConvert.SerializeObject(new Tuple<int, int>(sensorId, sensorValue));
+        }
+
+        #endregion
+
+        #region event handlers
+
+        private void SensorChange(object sender, SensorChangeEventArgs e)
+        {
+            // if the interface kit is still attaching, exit  
+            if (_currentSensor != _totalSensors)
+            {
+                _currentSensor++;
+                return;
+            }
+
+            try
+            {
+                if (_phidgetMonitorIsActive)
+                {
+                    var message = CreateMessageBodyFromSensor(e.Index, e.Value);
+                    _messageQueuePhidgetMonitor.Send(message);
+                }
+
+                if (!_isDisplayActive) return;
+
+                int sensorId;
+                int sensorValue = e.Value;
+
+                var isValid = int.TryParse(Convert.ToString(e.Index), out sensorId);
+                if (!isValid) return;
+
+                // PhidgetTypeId = SensorId + 1 (SensorId is base 0)
+                var phidgetTypeId = sensorId + 1;
+
+                if (_activeConfig.ConfigDetails.All(cd => cd.PhidgetTypeId != phidgetTypeId))
+                    return;
+
+                var configDetail = _activeConfig.ConfigDetails.Single(cd => cd.PhidgetTypeId == phidgetTypeId);
+
+                if (configDetail.PhidgetStyleType.IsIncremental)
+                    ProcessIncrementalSensor(configDetail, sensorId, sensorValue);
+                else
+                    ProcessTouchSensor(configDetail, sensorId, sensorValue);
+            }
+            catch (Exception ex)
+            {
+                SystemEventLogger.WriteEntry($"SensorChange: {ex.Message}", SystemEventLogType.PhidgetService, EventLogEntryType.Error);
+            }
+        }
+
+        // for debouncing
+        private DateTime _latestInputHit = DateTime.MinValue;
+        private void InputChange(object sender, InputChangeEventArgs e)
+        {
+            // if the interface kit is still attaching, exit  
+            if (_currentInput != _totalInputs)
+            {
+                _currentInput++;
+                return;
+            }
+
+            if (_phidgetMonitorIsActive)
+            {
+                var message = CreateMessageBodyFromSensor(e.Index + 8, e.Value ? 1 : 0);
+                _messageQueuePhidgetMonitor.Send(message);
+            }
+
+            // debounce the switch - don't allow consecutive events < xx milliseconds apart
+            if (DateTime.Now - _latestInputHit < TimeSpan.FromMilliseconds(_inputDebounceTime))
+            {
+                _latestInputHit = DateTime.Now;
+                return;  // too fast
+            }
+            _latestInputHit = DateTime.Now;
+            ProcessInputChange(e);
+        }
+
         protected override void OnStart(string[] args)
         {
-            _systemEventLogger.WriteEntry("In OnStart");
+            SystemEventLogger.WriteEntry("In OnStart", SystemEventLogType.PhidgetService);
         }
 
         protected override void OnStop()
         {
-            _systemEventLogger.WriteEntry("In OnStop");
+            SystemEventLogger.WriteEntry("In OnStop", SystemEventLogType.PhidgetService);
         }
 
-        // phidget command line open functions
-        #region Command line open functions
+        #endregion
+
+        #region command line open functions
 
         private void openCmdLine(Phidget p, String pass = null)
         {

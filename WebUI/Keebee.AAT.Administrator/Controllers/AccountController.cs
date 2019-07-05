@@ -1,7 +1,8 @@
 ﻿using Keebee.AAT.Administrator.ViewModels;
 using Keebee.AAT.BusinessRules;
+using Keebee.AAT.ApiClient.Models;
+using Keebee.AAT.Administrator.Extensions;
 using System;
-using System.Collections.ObjectModel;
 using System.Configuration;
 using System.Web;
 using System.Web.Mvc;
@@ -11,25 +12,77 @@ namespace Keebee.AAT.Administrator.Controllers
 {
     public class AccountController : Controller
     {
-        public ActionResult Login(LoginViewModel vm)
+        [HttpGet]
+        public ActionResult Login()
         {
-            Response.Cache.SetCacheability(HttpCacheability.NoCache);
-
-            var rules = new AccountRules();
-            string errmsg;
-
-            var userId = rules.AttemptToLogin(vm.Username, vm.Password, out errmsg);
-            var success = (userId > 0);
-
-            if (success)
+            if (Request.IsAuthenticated)
             {
+                return Redirect(Url.Content("~/"));
+            }
+
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult LoginUser(LoginViewModel vm)
+        {
+            string errMsg;
+
+            try
+            {
+                Response.Cache.SetCacheability(HttpCacheability.NoCache);
+
+                var rules = new AccountRules();
+                int userId;
+
+                errMsg = rules.Login(vm.Username, vm.Password, out userId);
+
+                if (!string.IsNullOrEmpty(errMsg))
+                    throw new Exception(errMsg);
+
+                if (userId <= 0)
+                    throw new Exception("User not found");
+
                 CreateLoginAuthenticationTicket(vm.Username, userId);
+            }
+            catch (Exception ex)
+            {
+                errMsg = ex.Message;
             }
 
             return Json(new
             {
-                Success = success,
-                ErrorMessage = errmsg
+                Success = string.IsNullOrEmpty(errMsg),
+                ErrorMessage = errMsg
+            }, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        public ActionResult ValidateUser(LoginViewModel vm)
+        {
+            string errMsg;
+            string validateMsg = null;
+
+            try
+            {
+                Response.Cache.SetCacheability(HttpCacheability.NoCache);
+
+                var rules = new AccountRules();
+                validateMsg = rules.ValidateLogin(vm.Username, vm.Password, out errMsg);
+
+                if (!string.IsNullOrEmpty(errMsg))
+                    throw new Exception(errMsg);
+            }
+            catch (Exception ex)
+            {
+                errMsg = ex.Message;
+            }
+
+            return Json(new
+            {
+                Success = string.IsNullOrEmpty(errMsg),
+                ErrorMessage = errMsg,
+                ValidationMessage = validateMsg
             }, JsonRequestBehavior.AllowGet);
         }
 
@@ -37,63 +90,143 @@ namespace Keebee.AAT.Administrator.Controllers
         public ActionResult LogOff()
         {
             FormsAuthentication.SignOut();
-            return RedirectToAction("Index", "Home");
-        }
-
-        [HttpGet]
-        public PartialViewResult GetLoginView()
-        {
-            return PartialView("_Login", LoadLoginViewModel());
-        }
-
-        [HttpGet]
-        public PartialViewResult GetChangePasswordView()
-        {
-            return PartialView("_ChangePassword", new ChangePasswordViewModel());
+            return RedirectToAction("Login");
         }
 
         [HttpGet]
         [Authorize]
-        public JsonResult AttemptToChangePassword(ChangePasswordViewModel vm)
+        public JsonResult GetChangePasswordView()
         {
-            var username = System.Web.HttpContext.Current.User.Identity.Name;
-            int userId;
+            string errMsg = null;
+            string html = null;
 
-            var rules = new AccountRules();
-            var errmsg = rules.ValidatePasswordChange(username, vm.OldPassword, vm.NewPassword, vm.RetypedNewPassword, out userId);
-            var success = (userId > 0);
-
-            if (success)
+            try
             {
-                rules.ChangePassword(userId, vm.NewPassword);
+                html = this.RenderPartialViewToString("_ChangePassword", new ChangePasswordViewModel());
+            }
+            catch (Exception ex)
+            {
+                errMsg = ex.Message;
             }
 
             return Json(new
             {
-                Success = success,
-                ErrorMessage = errmsg
+                Success = string.IsNullOrEmpty(errMsg),
+                ErrorMessage = errMsg,
+                Html = html,
             }, JsonRequestBehavior.AllowGet);
         }
 
-        private static LoginViewModel LoadLoginViewModel()
+        [HttpGet]
+        [Authorize]
+        public JsonResult GetResetCaregiverView()
         {
-            var vm = new LoginViewModel
-            {
-                Usernames = new SelectList(new Collection<SelectListItem>
-                    {
-                        new SelectListItem {Value = "admin", Text = "Administrator"},
-                        new SelectListItem {Value = "caregiver", Text = "Caregiver"}
-                    },
-                    "Value", "Text", "caregiver")
-            };
+            string errMsg = null;
+            string html = null;
 
-            return vm;
+            try
+            {
+                html = this.RenderPartialViewToString("_ResetCaregiver", null);
+            }
+            catch (Exception ex)
+            {
+                errMsg = ex.Message;
+            }
+
+            return Json(new
+            {
+                Success = string.IsNullOrEmpty(errMsg),
+                ErrorMessage = errMsg,
+                Html = html,
+            }, JsonRequestBehavior.AllowGet);
         }
 
         [HttpGet]
-        public string GetCurrentSessionUser()
+        [Authorize]
+        public JsonResult ResetCaregiver()
         {
-            return (System.Web.HttpContext.Current.User.Identity.Name);
+            string errMsg;
+
+            try
+            {
+                var rules = new AccountRules();
+                errMsg = rules.ResetCaregiver();
+            }
+            catch (Exception ex)
+            {
+                errMsg = ex.Message;
+            }
+
+            return Json(new
+            {
+                Success = true,
+                ErrorMessage = errMsg
+            }, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        [Authorize]
+        public JsonResult ChangePassword(ChangePasswordViewModel vm)
+        {
+            string errMsg;
+
+            try
+            {
+                var username = System.Web.HttpContext.Current.User.Identity.Name;
+                var rules = new AccountRules();
+
+                User user;
+                errMsg = rules.GetByUsername(username, out user);
+
+                if (!string.IsNullOrEmpty(errMsg))
+                    throw new Exception(errMsg);
+
+                if (user.Id <= 0)
+                    throw new Exception("User not found");
+
+                errMsg = rules.ChangePassword(user.Id, vm.NewPassword);
+            }
+            catch (Exception ex)
+            {
+                errMsg = ex.Message;
+            }
+
+            return Json(new
+            {
+                Success = true,
+                ErrorMessage = errMsg
+            }, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        [Authorize]
+        public JsonResult ValidatePasswordChange(ChangePasswordViewModel vm)
+        {
+            string errMsg = null;
+            string validateMsg = null;
+
+            try
+            {
+                var username = System.Web.HttpContext.Current.User.Identity.Name;
+                int userId;
+
+                var rules = new AccountRules();
+                validateMsg = rules.ValidatePasswordChange(username, vm.OldPassword, vm.NewPassword, vm.RetypedNewPassword, out userId);
+
+                if (userId <= 0)
+                    throw new Exception("User not found");
+            }
+            catch (Exception ex)
+            {
+                errMsg = ex.Message;
+            }
+
+            return Json(new
+            {
+                Success = true,
+                ErrorMessage = errMsg,
+                ValidationMessage = validateMsg
+            }, JsonRequestBehavior.AllowGet);
         }
 
         private void CreateLoginAuthenticationTicket(string username, int userId)

@@ -1,24 +1,18 @@
 ﻿using Keebee.AAT.Administrator.ViewModels;
 using Keebee.AAT.Shared;
 using Keebee.AAT.BusinessRules;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Web.Mvc;
-using Keebee.AAT.SystemEventLogging;
 
 namespace Keebee.AAT.Administrator.Controllers
 {
     public class VideoCapturesController : Controller
     {
-        private readonly SystemEventLogger _systemEventLogger;
-
-        public VideoCapturesController()
-        {
-            _systemEventLogger = new SystemEventLogger(SystemEventLogType.AdminInterface);
-        }
-
-        // GET: VideoCaptures
+        [HttpGet]
+        [Authorize]
         public ActionResult Index()
         {
             return View();
@@ -35,7 +29,7 @@ namespace Keebee.AAT.Administrator.Controllers
         [Authorize]
         public ActionResult DoExport(string date)
         {
-            var rules = new VideoCaptureRules { EventLogger = _systemEventLogger };
+            var rules = new VideoCaptureRules();
             var filename = $"VideoCaptures_{date.Replace("/", "_")}.zip";
             var file = rules.GetZipFile(date);
 
@@ -46,12 +40,24 @@ namespace Keebee.AAT.Administrator.Controllers
         [Authorize]
         public JsonResult GetData()
         {
-            var vm = new
-            {
-                VideoCaptureList = GetVideoCaptureList()
-            };
+            string errMsg = null;
+            VideoCaptureViewModel[] videoCaptureList = null;
 
-            return Json(vm, JsonRequestBehavior.AllowGet);
+            try
+            {
+                videoCaptureList = GetVideoCaptureList().ToArray();
+            }
+            catch (Exception ex)
+            {
+                errMsg = ex.Message;
+            }
+
+            return Json(new
+            {
+                Success = string.IsNullOrEmpty(errMsg),
+                ErrorMessage = errMsg,
+                VideoCaptureList = videoCaptureList
+            }, JsonRequestBehavior.AllowGet);
         }
 
         [HttpGet]
@@ -67,7 +73,7 @@ namespace Keebee.AAT.Administrator.Controllers
         {
             var root = new DirectoryInfo(VideoCaptures.Path);
 
-            if (!root.Exists) return null;
+            if (!root.Exists) return new VideoCaptureViewModel[0];
 
             var folders = root.EnumerateDirectories().OrderBy(x => x.Name);
 

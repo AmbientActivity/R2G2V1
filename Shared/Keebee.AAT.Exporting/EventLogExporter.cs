@@ -15,15 +15,11 @@ namespace Keebee.AAT.Exporting
         private readonly IInteractiveActivityEventLogsClient _interactiveActivityEventLogsClient;
         private readonly IActiveResidentEventLogsClient _activeResidentEventLogsClient;
 
-        private readonly SystemEventLogger _systemEventLogger;
-
         public EventLogExporter()
         {
             _activityEventLogsClient = new ActivityEventLogsClient();
             _activeResidentEventLogsClient = new ActiveResidentEventLogsClient();
             _interactiveActivityEventLogsClient = new InteractiveActivityEventLogsClient();
-
-            _systemEventLogger = new SystemEventLogger(SystemEventLogType.EventLog);
         }
 
         // media path
@@ -161,7 +157,7 @@ namespace Keebee.AAT.Exporting
             }
             catch (Exception ex)
             {
-                _systemEventLogger?.WriteEntry($"Log.GetWorkbook: {ex.Message}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"Log.GetWorkbook: {ex.Message}", SystemEventLogType.EventLog, EventLogEntryType.Error);
             }
 
             return workbook;

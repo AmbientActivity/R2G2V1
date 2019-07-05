@@ -11,13 +11,13 @@ namespace Keebee.AAT.Operations.Service.Services
         IEnumerable<PublicMediaFile> Get();
         IEnumerable<PublicMediaFile> Get(bool isSystem);
         PublicMediaFile Get(int id);
-        IEnumerable<PublicMediaFile> GetForResponseType(int responseTypdId);
+        IEnumerable<PublicMediaFile> GetForResponseType(int responseTypeId);
         IEnumerable<PublicMediaFile> GetForMediaPathType(int mediaPathTypdId);
         IEnumerable<PublicMediaFile> GetForStreamId(Guid streamId);
         IEnumerable<PublicMediaFile> GetIdsForStreamId(Guid streamId);
         IEnumerable<PublicMediaFile> GetLinked();
         IEnumerable<PublicMediaFile> GetLinked(Guid streamId);
-        PublicMediaFile GetForResponseTypeFilename(int responseTypdId, string filename);
+        PublicMediaFile GetForResponseTypeFilename(int responseTypeId, string filename);
         int Post(PublicMediaFile publicMediaFile);
         void Patch(int id, PublicMediaFile publicMediaFile);
         void Delete(int id);
@@ -30,7 +30,8 @@ namespace Keebee.AAT.Operations.Service.Services
             var container = new Container(new Uri(ODataHost.Url));
 
             var media = container.PublicMediaFiles
-                .Expand("MediaFile,MediaPathType,ResponseType($expand=ResponseTypeCategory)")
+                .Expand(
+                    "MediaFile,MediaPathType($expand=MediaPathTypeCategory),ResponseType($expand=ResponseTypeCategory)")
                 .AsEnumerable();
 
             return media;
@@ -41,18 +42,23 @@ namespace Keebee.AAT.Operations.Service.Services
             var container = new Container(new Uri(ODataHost.Url));
 
             var media = container.PublicMediaFiles.ByKey(id)
-                .Expand("MediaFile,MediaPathType,ResponseType($expand=ResponseTypeCategory)");
+                .Expand(
+                    "MediaFile,MediaPathType($expand=MediaPathTypeCategory),ResponseType($expand=ResponseTypeCategory)");
 
-            return media.GetValue();
+            PublicMediaFile result;
+            try { result = media.GetValue(); }
+            catch { result = null; }
+
+            return result;
         }
 
-        public IEnumerable<PublicMediaFile> GetForResponseType(int responseTypdId)
+        public IEnumerable<PublicMediaFile> GetForResponseType(int responseTypeId)
         {
             var container = new Container(new Uri(ODataHost.Url));
 
             var media = container.PublicMediaFiles
-                .AddQueryOption("$filter", $"ResponseTypeId eq {responseTypdId}")
-                .Expand("MediaFile,MediaPathType,ResponseType($expand=ResponseTypeCategory)")
+                .AddQueryOption("$filter", $"ResponseTypeId eq {responseTypeId}")
+                .Expand("MediaFile,MediaPathType($expand=MediaPathTypeCategory),ResponseType($expand=ResponseTypeCategory)")
                 .AsEnumerable();
 
             return media;
@@ -64,7 +70,7 @@ namespace Keebee.AAT.Operations.Service.Services
 
             var media = container.PublicMediaFiles
                 .AddQueryOption("$filter", $"MediaPathTypeId eq {mediaPathTypdId}")
-                .Expand("MediaFile,MediaPathType,ResponseType")
+                .Expand("MediaFile,MediaPathType($expand=MediaPathTypeCategory),ResponseType")
                 .AsEnumerable();
 
             return media;
@@ -76,7 +82,7 @@ namespace Keebee.AAT.Operations.Service.Services
 
             var media = container.PublicMediaFiles
                 .AddQueryOption("$filter", $"StreamId eq {streamId}")
-                .Expand("MediaPathType,ResponseType")
+                .Expand("MediaPathType($expand=MediaPathTypeCategory),ResponseType")
                 .AsEnumerable();
 
             return media;
@@ -100,12 +106,12 @@ namespace Keebee.AAT.Operations.Service.Services
             if (isSystem)
                 return container.PublicMediaFiles
                     .AddQueryOption("$filter", "MediaPathType/IsSystem")
-                    .Expand("MediaFile,MediaPathType,ResponseType($expand=ResponseTypeCategory)")
+                    .Expand("MediaFile,MediaPathType($expand=MediaPathTypeCategory),ResponseType($expand=ResponseTypeCategory)")
                     .AsEnumerable();
             else
                 return container.PublicMediaFiles
                     .AddQueryOption("$filter", "MediaPathType/IsSystem eq false")
-                    .Expand("MediaFile,MediaPathType,ResponseType($expand=ResponseTypeCategory)")
+                    .Expand("MediaFile,MediaPathType($expand=MediaPathTypeCategory),ResponseType($expand=ResponseTypeCategory)")
                     .AsEnumerable();
         }
 
@@ -115,7 +121,7 @@ namespace Keebee.AAT.Operations.Service.Services
 
             var media = container.PublicMediaFiles
                 .AddQueryOption("$filter", "IsLinked")
-                .Expand("MediaFile,MediaPathType,ResponseType($expand=ResponseTypeCategory)")
+                .Expand("MediaFile,MediaPathType($expand=MediaPathTypeCategory),ResponseType($expand=ResponseTypeCategory)")
                 .AsEnumerable();
 
             return media;
@@ -127,18 +133,18 @@ namespace Keebee.AAT.Operations.Service.Services
 
             var media = container.PublicMediaFiles
                 .AddQueryOption("$filter", $"IsLinked and StreamId eq {streamId}")
-                .Expand("MediaFile,MediaPathType,ResponseType($expand=ResponseTypeCategory)")
+                .Expand("MediaFile,MediaPathType($expand=MediaPathTypeCategory),ResponseType($expand=ResponseTypeCategory)")
                 .AsEnumerable();
 
             return media;
         }
 
-        public PublicMediaFile GetForResponseTypeFilename(int responseTypdId, string filename)
+        public PublicMediaFile GetForResponseTypeFilename(int responseTypeId, string filename)
         {
             var container = new Container(new Uri(ODataHost.Url));
 
             var media = container.PublicMediaFiles
-                .AddQueryOption("$filter", $"ResponseTypeId eq {responseTypdId} and " +
+                .AddQueryOption("$filter", $"ResponseTypeId eq {responseTypeId} and " +
                                            $"MediaFile/Filename eq '{filename.Replace("'", "''").Replace("&", "%26")}'")
                 .ToList();
 

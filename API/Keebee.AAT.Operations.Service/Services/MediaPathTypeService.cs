@@ -23,6 +23,7 @@ namespace Keebee.AAT.Operations.Service.Services
             var container = new Container(new Uri(ODataHost.Url));
 
             var mediaPathTypes = container.MediaPathTypes
+                .Expand("MediaPathTypeCategory")
                 .AsEnumerable();
 
             return mediaPathTypes;
@@ -33,9 +34,13 @@ namespace Keebee.AAT.Operations.Service.Services
             var container = new Container(new Uri(ODataHost.Url));
 
             var mediaPathType = container.MediaPathTypes.ByKey(id)
-                .GetValue();
+                .Expand("MediaPathTypeCategory");
 
-            return mediaPathType;
+            MediaPathType result;
+            try { result = mediaPathType.GetValue(); }
+            catch { result = null; }
+
+            return result;
         }
 
         public IEnumerable<MediaPathType> Get(bool isSystem)
@@ -44,9 +49,11 @@ namespace Keebee.AAT.Operations.Service.Services
 
             var mediaPathTypes = (isSystem)
                 ? container.MediaPathTypes
+                    .Expand("MediaPathTypeCategory")
                     .AddQueryOption("$filter", "IsSystem")
                     .AsEnumerable()
                 : container.MediaPathTypes
+                    .Expand("MediaPathTypeCategory")
                     .AddQueryOption("$filter", "IsSystem eq false")
                     .AsEnumerable();
 
@@ -67,6 +74,36 @@ namespace Keebee.AAT.Operations.Service.Services
 
             var el = container.MediaPathTypes.Where(e => e.Id == id).SingleOrDefault();
             if (el == null) return;
+
+            if (mediaPathType.MediaPathTypeCategoryId > 0)
+                el.MediaPathTypeCategoryId = mediaPathType.MediaPathTypeCategoryId;
+
+            if (!string.IsNullOrEmpty(mediaPathType.Path))
+                el.Path = mediaPathType.Path;
+
+            if (!string.IsNullOrEmpty(mediaPathType.Description))
+                el.Description = mediaPathType.Description;
+
+            if (!string.IsNullOrEmpty(mediaPathType.ShortDescription))
+                el.ShortDescription = mediaPathType.ShortDescription;
+
+            if (!string.IsNullOrEmpty(mediaPathType.AllowedTypes))
+                el.AllowedTypes = mediaPathType.AllowedTypes;
+
+            if (mediaPathType.MaxFileBytes > 0)
+                el.MaxFileBytes = mediaPathType.MaxFileBytes;
+
+            if (mediaPathType.MaxFileUploads > 0)
+                el.MaxFileUploads = mediaPathType.MaxFileUploads;
+
+            if (!string.IsNullOrEmpty(mediaPathType.AllowedExts))
+                el.AllowedExts = mediaPathType.AllowedExts;
+
+            if (!string.IsNullOrEmpty(mediaPathType.AllowedTypes))
+                el.AllowedTypes = mediaPathType.AllowedTypes;
+
+            el.IsSystem = mediaPathType.IsSystem;
+            el.IsSharable = mediaPathType.IsSharable;
 
             container.UpdateObject(el);
             container.SaveChanges();

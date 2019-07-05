@@ -10,12 +10,6 @@ namespace Keebee.AAT.Display.Helpers
     {
         private readonly InteractiveActivityEventLogsClient _client = new InteractiveActivityEventLogsClient();
 
-        private SystemEventLogger _systemEventLogger;
-        public SystemEventLogger SystemEventLogger
-        {
-            set { _systemEventLogger = value; }
-        }
-
         public void Add(int residentId, int interactiveActivityTypeId, string description, int? difficultyLevel = null, bool? isSuccess = null)
         {
             try
@@ -33,7 +27,7 @@ namespace Keebee.AAT.Display.Helpers
             }
             catch (Exception ex)
             {
-                _systemEventLogger?.WriteEntry($"InteractiveActivityEventLogger.Add: {ex.Message}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"InteractiveActivityEventLogger.Add: {ex.Message}", SystemEventLogType.Display, EventLogEntryType.Error);
             }
         }
     }

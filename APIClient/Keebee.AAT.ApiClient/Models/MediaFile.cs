@@ -11,10 +11,11 @@ namespace Keebee.AAT.ApiClient.Models
         public string FileType { get; set; }
         public int FileSize { get; set; }
         public bool IsLinked { get; set; }
+        public DateTime DateAdded { get; set; }
         public int NumLinkedProfiles { get; set; }
     }
 
-    public class LinkedMediaFile : MediaFile
+    public class MediaFileLinked : MediaFile
     {
         public int Id { get; set; }
     }
@@ -26,13 +27,19 @@ namespace Keebee.AAT.ApiClient.Models
 
     public class MediaFileStream : MediaFile
     {
-        public byte[] Stream{ get; set; }
+        public string Path { get; set; }
+        public byte[] Stream { get; set; }
+    }
+
+    public class MediaFileThumbnail : MediaFile
+    {
+        public byte[] Thumbnail { get; set; }
     }
 
     public class MediaPathTypeFiles
     {
         public MediaPathType MediaPathType { get; set; }
-        public IEnumerable<LinkedMediaFile> Files;
+        public IEnumerable<MediaFileLinked> Files;
     }
 
     public class ResponseTypePaths

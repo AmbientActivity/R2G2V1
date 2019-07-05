@@ -21,12 +21,6 @@ namespace Keebee.AAT.Display.UserControls
         // event handler
         public event EventHandler SlideShowCompleteEvent;
 
-        private SystemEventLogger _systemEventLogger;
-        public SystemEventLogger SystemEventLogger
-        {
-            set { _systemEventLogger = value; }
-        }
-
         // delegate
         private delegate void RaiseSlideShowCompleteEventDelegate();
 
@@ -54,22 +48,20 @@ namespace Keebee.AAT.Display.UserControls
             {
                 // ensure files are the correct type
                 var validFiles = GetValidatedFiles(files);
+                if (!validFiles.Any()) return;
 
-                if (validFiles.Any())
-                {
-                    _totalImages = validFiles.Count();
-                    _currentImageIndex = 0;
-                    _images = validFiles;
+                _totalImages = validFiles.Count();
+                _currentImageIndex = 0;
+                _images = validFiles;
 
-                    InitializeFlash();
-                    DisplayImage();
+                InitializeFlash();
+                DisplayImage();
 
-                    if (autoStart) timer1.Start();
-                }
+                if (autoStart) timer1.Start();
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"SlideViewerFlash.Play: {ex.Message}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"SlideViewerFlash.Play: {ex.Message}", SystemEventLogType.Display, EventLogEntryType.Error);
             }
         }
 
@@ -129,7 +121,7 @@ namespace Keebee.AAT.Display.UserControls
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"SlideViewerFlash.GetValidatedFiles: {ex.Message}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"SlideViewerFlash.GetValidatedFiles: {ex.Message}", SystemEventLogType.Display, EventLogEntryType.Error);
             }
 
             return validFiles.ToList();
@@ -139,14 +131,17 @@ namespace Keebee.AAT.Display.UserControls
         {
             try
             {
-                var swf = Path.Combine(Application.StartupPath, SwfFilename);
-                axShockwaveFlash1.LoadMovie(0, swf);
+                if (axShockwaveFlash1.Movie == null)
+                {
+                    var swf = Path.Combine(Application.StartupPath, SwfFilename);
+                    axShockwaveFlash1.LoadMovie(0, swf);
+                }
 
                 axShockwaveFlash1.CallFunction("<invoke name=\"initializeMovie\"></invoke>");
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"SlideViewerFlash.InitializeFlash: {ex.Message}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"SlideViewerFlash.InitializeFlash: {ex.Message}", SystemEventLogType.Display, EventLogEntryType.Error);
             }
         }
 
@@ -163,7 +158,7 @@ namespace Keebee.AAT.Display.UserControls
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"SlideViewerFlash.DisplayImage: {ex.Message}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"SlideViewerFlash.DisplayImage: {ex.Message}", SystemEventLogType.Display, EventLogEntryType.Error);
             }
         }
 
@@ -175,7 +170,7 @@ namespace Keebee.AAT.Display.UserControls
             }
             catch (Exception ex)
             {
-                _systemEventLogger.WriteEntry($"SlideViewerFlash.HideImage: {ex.Message}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"SlideViewerFlash.HideImage: {ex.Message}", SystemEventLogType.Display, EventLogEntryType.Error);
             }
         }
 
@@ -247,7 +242,7 @@ namespace Keebee.AAT.Display.UserControls
                 var message = request.Substring(request.IndexOf(stringOpen) + stringOpen.Length,
                     request.IndexOf(stringClose) - request.IndexOf(stringOpen) - stringOpen.Length);
 
-                _systemEventLogger.WriteEntry($"SlideViewerFlash.DisplayImage: {message}", EventLogEntryType.Error);
+                SystemEventLogger.WriteEntry($"SlideViewerFlash.DisplayImage: {message}", SystemEventLogType.Display, EventLogEntryType.Error);
             }
         }
 

@@ -24,6 +24,7 @@ namespace Keebee.AAT.BluetoothBeaconWatcherService.Beacon
     /// <summary>
     /// Exception occured when parsing or assembling Bluetooth Beacons.
     /// </summary>
+    [Serializable]
     public class BeaconException : Exception
     {
         public BeaconException() { }

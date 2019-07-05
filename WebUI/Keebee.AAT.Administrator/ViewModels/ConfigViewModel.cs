@@ -29,31 +29,26 @@ namespace Keebee.AAT.Administrator.ViewModels
         public string Description { get; set; }
         public string Location { get; set; }
         public string ResponseType { get; set; }
-        public bool IsSystem { get; set; }
         public bool CanEdit { get; set; }
     }
 
-    public class ConfigEditViewModel
+    public class ConfigEditViewModel : ConfigViewModel
     {
-        public int Id { get; set; }
         public string SourceConfigName { get; set; }
-        public string Description { get; set; }
-        public bool IsActive { get; set; }
-        public bool IsActiveEventLog { get; set; }
     }
 
-    public class ConfigDetailEditViewModel
+    public class ConfigDetailEditViewModel : ConfigDetailViewModel
     {
-        public int Id { get; set; }
-        public int ConfigId { get; set; }
         public bool IsActive { get; set; }
-        public string Description { get; set; }
-        public string Location { get; set; }
         public int PhidgetTypeId { get; set; }
         public SelectList PhidgetTypes { get; set; }
         public int PhidgetStyleTypeId { get; set; }
         public SelectList PhidgetStyleTypes { get; set; }
         public int ResponseTypeId { get; set; }
         public SelectList ResponseTypes { get; set; }
+        public bool IsAdd { get; set; }
+        public int SelectedPhidgetStyleTypeId { get; set; }
+        public string AllowedInputStyleTypes { get; set; }
+        public string AllowedSensorStyleTypes { get; set; }
     }
 }

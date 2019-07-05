@@ -61,7 +61,7 @@
             this.Controls.Add(this.pbDial);
             this.Controls.Add(this.pbRadioPanel);
             this.Name = "RadioControl";
-            this.Size = new System.Drawing.Size(430, 288);
+            this.Size = new System.Drawing.Size(680, 360);
             ((System.ComponentModel.ISupportInitialize)(this.pbRadioPanel)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbDial)).EndInit();
             this.ResumeLayout(false);

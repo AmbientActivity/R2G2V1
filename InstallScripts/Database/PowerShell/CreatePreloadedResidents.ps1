@@ -37,11 +37,15 @@ Try
 
                     Write-Host "Transferring Profile $residentId..." -NoNewline  
                     Copy-Item "$pathDeployments\$pathProfiles\$residentId" $pathSqlProfiles -Recurse -Force
+                    # get rid of Thumbs.db
+                    get-childitem $pathSqlProfiles\$residentId -include *.db -recurse | foreach ($_) {remove-item $_.fullname}
                     Write-Host "done."
 
                     # create sql statement
-                    $sql = "DECLARE @pathProfiles varchar(max)`r`n" +
-                           "SET @pathProfiles = FileTableRootPath() + '\$pathProfiles\'"
+                    $sql = "DECLARE @pathProfiles varchar(100)`r`n" +
+                           "SET @pathProfiles = FileTableRootPath() + '\$pathProfiles\'" + "`r`n" +
+                           "DECLARE @mediaPathType varchar(100)" + "`r`n" +
+                           "DECLARE @allowedExts varchar(100)"
 
                     Write-Host "Creating Resident $residentId..."-NoNewline
                     $sql += "`r`n`r`n--- ResidentId $residentId ---`r`n`r`n" +
@@ -49,44 +53,62 @@ Try
                     "IF NOT EXISTS (SELECT * FROM Residents WHERE Id = $residentId)`r`n" +
                     "BEGIN`r`n" +
                         "SET IDENTITY_INSERT [dbo].[Residents] ON`r`n" +
-                        "INSERT [dbo].[Residents] ([Id], [FirstName], [LastName], [Gender], [GameDifficultyLevel], [AllowVideoCapturing], [DateCreated], [DateUpdated]) " +
-                        "VALUES($residentId, 'Resident $residentId', null, 'F', 1, 1, GetDate(), GetDate())`r`n" +
-                        "SET IDENTITY_INSERT [dbo].[Residents] OFF`r`n`r`n" +
+                        "INSERT [dbo].[Residents] ([Id], [FirstName], [LastName], [Gender], [GameDifficultyLevel], [AllowVideoCapturing], [DateCreated], [DateUpdated], [ProfilePicture]) " +
+                        "VALUES($residentId, 'Resident $residentId', null, 'F', 1, 1, GetDate(), GetDate(), CONVERT(VARBINARY(max), '0x', 1))`r`n" +
+                        "SET IDENTITY_INSERT [dbo].[Residents] OFF`r`n" +
             
-                        "--- Activity 1 - ResponseType 'SlideShow' ---`r`n" +
-                        "INSERT INTO ResidentMediaFiles (IsLinked, ResidentId, ResponseTypeId, MediaPathTypeId, StreamId)`r`n" +
-                        "SELECT 0, $residentId, 1, 3, StreamId FROM MediaFiles WHERE [Path] = @pathProfiles + " +
-                        "'$residentId\images\general\' AND [FileType] IN ('jpg', 'jpeg', 'png', 'bmp', 'gif')`r`n" + 
-                        "INSERT INTO ResidentMediaFiles (IsLinked, ResidentId, ResponseTypeId, MediaPathTypeId, StreamId)`r`n" +
-                        "SELECT 0, $residentId, 1, 4, StreamId FROM MediaFiles WHERE [Path] = @pathProfiles + " +
-                        "'$residentId\images\personal\' AND [FileType] IN ('jpg', 'jpeg', 'png', 'bmp', 'gif')" +
+                        "`r`n--- Activity 1 - ResponseType 'SlideShow' ---`r`n" +
+                        # images/general
+                        "SELECT @mediaPathType = [Path], @allowedExts = '''' + REPLACE(AllowedExts, ', ', ''', ''') + '''' FROM MediaPathTypes WHERE Id = 3 `r`n" +
+                        "INSERT INTO ResidentMediaFiles (IsLinked, ResidentId, ResponseTypeId, MediaPathTypeId, StreamId, DateAdded)`r`n" +
+                        "SELECT 0, $residentId, 1, 3, StreamId, GETDATE() FROM MediaFiles WHERE [Path] = @pathProfiles + " +
+                        "'$residentId\images\general\' AND (@allowedExts) LIKE '%' + [FileType] + '%'`r`n" +
 
-                        "`r`n`r`n--- Activity 2 - ResponseType 'MatchingGame' ---`r`n" + 
-                        "INSERT INTO ResidentMediaFiles (IsLinked, ResidentId, ResponseTypeId, MediaPathTypeId, StreamId)`r`n" + 
-                        "SELECT 0, $residentId, 2, 7, StreamId FROM MediaFiles WHERE [Path] = @pathProfiles + " +
-                        "'$residentId\activities\matching-game\shapes\' AND [FileType] = 'png'`r`n" + 
-                        "INSERT INTO ResidentMediaFiles (IsLinked, ResidentId, ResponseTypeId, MediaPathTypeId, StreamId)`r`n" +
-                        "SELECT 0, $residentId, 2, 8, StreamId FROM MediaFiles WHERE [Path] = @pathProfiles + " +
-                        "'$residentId\activities\matching-game\sounds\' AND [FileType] = 'mp3'" +
+                        # images/personal
+                        "INSERT INTO ResidentMediaFiles (IsLinked, ResidentId, ResponseTypeId, MediaPathTypeId, StreamId, DateAdded)`r`n" +
+                        "SELECT 0, $residentId, 1, 4, StreamId, GETDATE() FROM MediaFiles WHERE [Path] = @pathProfiles + " +
+                        "'$residentId\images\personal\' AND (@allowedExts) LIKE '%' + [FileType] + '%'`r`n" +
 
-                        "`r`n`r`n--- Activity 5 - ResponseType 'Radio' ---`r`n" +
-                        "INSERT INTO ResidentMediaFiles (IsLinked, ResidentId, ResponseTypeId, MediaPathTypeId, StreamId)`r`n" + 
-                        "SELECT 0, $residentId, 5, 1, StreamId FROM MediaFiles WHERE [Path] = @pathProfiles + " +
-                        "'$residentId\audio\music\' AND [FileType] = 'mp3'`r`n" +
-                        "INSERT INTO ResidentMediaFiles (IsLinked, ResidentId, ResponseTypeId, MediaPathTypeId, StreamId)`r`n" +
-                        "SELECT 0, $residentId, 5, 2, StreamId FROM MediaFiles WHERE [Path] = @pathProfiles + " +
-                        "'$residentId\audio\radio-shows\' AND [FileType] = 'mp3'" +
+                        "`r`n--- Activity 2 - ResponseType 'MatchingGame' ---`r`n" +
+                        # activities\matching-game\shapes\
+                        "SELECT @mediaPathType = [Path], @allowedExts = '''' + REPLACE(AllowedExts, ', ', ''', ''') + '''' FROM MediaPathTypes WHERE Id = 7 `r`n" +
+                        "INSERT INTO ResidentMediaFiles (IsLinked, ResidentId, ResponseTypeId, MediaPathTypeId, StreamId, DateAdded)`r`n" + 
+                        "SELECT 0, $residentId, 2, 7, StreamId, GETDATE() FROM MediaFiles WHERE [Path] = @pathProfiles + " +
+                        "'$residentId\activities\matching-game\shapes\' AND (@allowedExts) LIKE '%' + [FileType] + '%'`r`n" +
 
-                        "`r`n`r`n--- Activity 5 - ResponseType 'Television' ---`n" +
-                        "INSERT INTO ResidentMediaFiles (IsLinked, ResidentId, ResponseTypeId, MediaPathTypeId, StreamId)`r`n" +
-                        "SELECT 0, $residentId, 6, 5, StreamId FROM MediaFiles WHERE [Path] = @pathProfiles + " +
-                        "'$residentId\videos\tv-shows\' AND [FileType] = 'mp4'`r`n" +
-                        "INSERT INTO ResidentMediaFiles (IsLinked, ResidentId, ResponseTypeId, MediaPathTypeId, StreamId)`r`n" +
-                        "SELECT 0, $residentId, 6, 6, StreamId FROM MediaFiles WHERE [Path] = @pathProfiles + " +
-                        "'$residentId\videos\home-movies\' AND [FileType] = 'mp4'`r`n" +
+                        # activities\matching-game\sounds\
+                        "SELECT @mediaPathType = [Path], @allowedExts = '''' + REPLACE(AllowedExts, ', ', ''', ''') + '''' FROM MediaPathTypes WHERE Id = 8 `r`n" +
+                        "INSERT INTO ResidentMediaFiles (IsLinked, ResidentId, ResponseTypeId, MediaPathTypeId, StreamId, DateAdded)`r`n" +
+                        "SELECT 0, $residentId, 2, 8, StreamId, GETDATE() FROM MediaFiles WHERE [Path] = @pathProfiles + " +
+                        "'$residentId\activities\matching-game\sounds\' AND (@allowedExts) LIKE '%' + [FileType] + '%'`r`n" +
+
+                        "`r`n--- Activity 5 - ResponseType 'Radio' ---`r`n" +
+                        # audio\music\
+                        "SELECT @mediaPathType = [Path], @allowedExts = '''' + REPLACE(AllowedExts, ', ', ''', ''') + '''' FROM MediaPathTypes WHERE Id = 1 `r`n" +
+                        "INSERT INTO ResidentMediaFiles (IsLinked, ResidentId, ResponseTypeId, MediaPathTypeId, StreamId, DateAdded)`r`n" + 
+                        "SELECT 0, $residentId, 5, 1, StreamId, GETDATE() FROM MediaFiles WHERE [Path] = @pathProfiles + " +
+                        "'$residentId\audio\music\' AND (@allowedExts) LIKE '%' + [FileType] + '%'`r`n" +
+
+                        # audio\radio-shows\
+                        "SELECT @mediaPathType = [Path], @allowedExts = '''' + REPLACE(AllowedExts, ', ', ''', ''') + '''' FROM MediaPathTypes WHERE Id = 2 `r`n" +
+                        "INSERT INTO ResidentMediaFiles (IsLinked, ResidentId, ResponseTypeId, MediaPathTypeId, StreamId, DateAdded)`r`n" +
+                        "SELECT 0, $residentId, 5, 2, StreamId, GETDATE() FROM MediaFiles WHERE [Path] = @pathProfiles + " +
+                        "'$residentId\audio\radio-shows\' AND (@allowedExts) LIKE '%' + [FileType] + '%'`r`n" +
+
+                        "`r`n--- Activity 6 - ResponseType 'Television' ---`n" +
+                        # videos\tv-shows\
+                        "SELECT @mediaPathType = [Path], @allowedExts = '''' + REPLACE(AllowedExts, ', ', ''', ''') + '''' FROM MediaPathTypes WHERE Id = 5 `r`n" +
+                        "INSERT INTO ResidentMediaFiles (IsLinked, ResidentId, ResponseTypeId, MediaPathTypeId, StreamId, DateAdded)`r`n" +
+                        "SELECT 0, $residentId, 6, 5, StreamId, GETDATE() FROM MediaFiles WHERE [Path] = @pathProfiles + " +
+                        "'$residentId\videos\tv-shows\' AND (@allowedExts) LIKE '%' + [FileType] + '%'`r`n" +
+
+                        # videos\home-movies\
+                        "SELECT @mediaPathType = [Path], @allowedExts = '''' + REPLACE(AllowedExts, ', ', ''', ''') + '''' FROM MediaPathTypes WHERE Id = 6 `r`n" +
+                        "INSERT INTO ResidentMediaFiles (IsLinked, ResidentId, ResponseTypeId, MediaPathTypeId, StreamId, DateAdded)`r`n" +
+                        "SELECT 0, $residentId, 6, 6, StreamId, GETDATE() FROM MediaFiles WHERE [Path] = @pathProfiles + " +
+                        "'$residentId\videos\home-movies\' AND (@allowedExts) LIKE '%' + [FileType] + '%'`r`n" +
                     "END"
 
-                    #Write-Host `n$sql
                     Invoke-SqlQuery -Query $sql -Server $server -Database $database
                     Write-Host "done.`n"
                 }

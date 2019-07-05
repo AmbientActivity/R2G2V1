@@ -11,7 +11,7 @@ namespace Keebee.AAT.Operations.Service.Services
         IEnumerable<ResidentMediaFile> Get();
         ResidentMediaFile Get(int id);
         IEnumerable<ResidentMediaFile> GetForResident(int residentId);
-        IEnumerable<ResidentMediaFile> GetForResidentResponseType(int residentId, int responseTypdId);
+        IEnumerable<ResidentMediaFile> GetForResidentResponseType(int residentId, int responseTypeId);
         IEnumerable<ResidentMediaFile> GetLinked();
         IEnumerable<ResidentMediaFile> GetLinked(Guid streamId);
         IEnumerable<ResidentMediaFile> GetIdsForStreamId(Guid streamId);
@@ -27,7 +27,7 @@ namespace Keebee.AAT.Operations.Service.Services
             var container = new Container(new Uri(ODataHost.Url));
 
             var media = container.ResidentMediaFiles
-                .Expand("Resident,MediaFile,MediaPathType,ResponseType($expand=ResponseTypeCategory)")
+                .Expand("Resident,MediaFile,MediaPathType($expand=MediaPathTypeCategory),ResponseType($expand=ResponseTypeCategory)")
                 .AsEnumerable();
 
             return media;
@@ -38,9 +38,13 @@ namespace Keebee.AAT.Operations.Service.Services
             var container = new Container(new Uri(ODataHost.Url));
 
             var media = container.ResidentMediaFiles.ByKey(id)
-                .Expand("Resident,MediaFile,MediaPathType,ResponseType($expand=ResponseTypeCategory)");
+                .Expand("Resident,MediaFile,MediaPathType($expand=MediaPathTypeCategory),ResponseType($expand=ResponseTypeCategory)");
 
-            return media.GetValue();
+            ResidentMediaFile result;
+            try { result = media.GetValue(); }
+            catch { result = null; }
+
+            return result;
         }
 
         public IEnumerable<ResidentMediaFile> GetForResident(int residentId)
@@ -49,19 +53,19 @@ namespace Keebee.AAT.Operations.Service.Services
 
             var media = container.ResidentMediaFiles
                 .AddQueryOption("$filter",$"ResidentId eq {residentId}")
-                .Expand("Resident,MediaFile,MediaPathType,ResponseType($expand=ResponseTypeCategory)")
+                .Expand("Resident,MediaFile,MediaPathType($expand=MediaPathTypeCategory),ResponseType($expand=ResponseTypeCategory)")
                 .AsEnumerable();
 
             return media;
         }
 
-        public IEnumerable<ResidentMediaFile> GetForResidentResponseType(int residentId, int responseTypdId)
+        public IEnumerable<ResidentMediaFile> GetForResidentResponseType(int residentId, int responseTypeId)
         {
             var container = new Container(new Uri(ODataHost.Url));
 
             var media = container.ResidentMediaFiles
-                .AddQueryOption("$filter", $"ResidentId eq {residentId} and ResponseTypeId eq {responseTypdId}")
-                .Expand("Resident,MediaFile,MediaPathType,ResponseType($expand=ResponseTypeCategory)")
+                .AddQueryOption("$filter", $"ResidentId eq {residentId} and ResponseTypeId eq {responseTypeId}")
+                .Expand("Resident,MediaFile,MediaPathType($expand=MediaPathTypeCategory),ResponseType($expand=ResponseTypeCategory)")
                 .AsEnumerable();
 
             return media;
@@ -73,7 +77,7 @@ namespace Keebee.AAT.Operations.Service.Services
 
             var media = container.ResidentMediaFiles
                 .AddQueryOption("$filter", "IsLinked")
-                .Expand("Resident,MediaFile,MediaPathType,ResponseType($expand=ResponseTypeCategory)")
+                .Expand("Resident,MediaFile,MediaPathType($expand=MediaPathTypeCategory),ResponseType($expand=ResponseTypeCategory)")
                 .AsEnumerable();
 
             return media;
@@ -85,7 +89,7 @@ namespace Keebee.AAT.Operations.Service.Services
 
             var media = container.ResidentMediaFiles
                 .AddQueryOption("$filter", $"IsLinked and StreamId eq {streamId}")
-                .Expand("Resident,MediaFile,MediaPathType,ResponseType($expand=ResponseTypeCategory)")
+                .Expand("Resident,MediaFile,MediaPathType($expand=MediaPathTypeCategory),ResponseType($expand=ResponseTypeCategory)")
                 .AsEnumerable();
 
             return media;
@@ -119,7 +123,7 @@ namespace Keebee.AAT.Operations.Service.Services
             var el = container.ResidentMediaFiles.Where(e => e.Id == id).SingleOrDefault();
             if (el == null) return;
 
-            if (el.ResidentId != null)
+            if (residentMediaFile.ResidentId > 0)
                 el.ResidentId = residentMediaFile.ResidentId;
 
             container.UpdateObject(el);

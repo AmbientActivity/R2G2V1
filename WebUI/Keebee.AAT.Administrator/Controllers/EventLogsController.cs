@@ -4,6 +4,7 @@ using Keebee.AAT.ApiClient.Clients;
 using Keebee.AAT.Exporting;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Web.Mvc;
 
@@ -40,14 +41,11 @@ namespace Keebee.AAT.Administrator.Controllers
 
         [HttpGet]
         [Authorize]
-        public FileResult Download(string streamId)
+        public FileResult Download(Guid streamId)
         {
             var mediaFilesCLient = new MediaFilesClient();
-            var mediaFile = mediaFilesCLient.Get(new Guid(streamId));
+            var mediaFile = mediaFilesCLient.Get(streamId);
             var file = System.IO.File.ReadAllBytes($@"{mediaFile.Path}/{mediaFile.Filename}");
-
-            //TODO: figure out why this doesn't return the same thing as above
-            //var file = _opsClient.GetMediaFileStream(new Guid(streamId));
 
             return File(file, "application/vnd.ms-excel", mediaFile.Filename);
         }
@@ -56,27 +54,48 @@ namespace Keebee.AAT.Administrator.Controllers
         [Authorize]
         public JsonResult GetData()
         {
-            var vm = new
-            {
-                EventLogList = GetEventLogList()
-            };
+            string errMsg = null;
+            var eventLogList = new EventLogViewModel[0];
 
-            return Json(vm, JsonRequestBehavior.AllowGet);
+            try
+            {
+                eventLogList = GetEventLogList().ToArray();
+            }
+            catch (Exception ex)
+            {
+                errMsg = ex.Message;
+            }
+
+            return Json(new
+            {
+                Success = string.IsNullOrEmpty(errMsg),
+                ErrorMessage = errMsg,
+                EventLogList = eventLogList
+            }, JsonRequestBehavior.AllowGet);
         }
 
         private static IEnumerable<EventLogViewModel> GetEventLogList()
         {
-            var mediaFilesCLient = new MediaFilesClient();
-            var media = mediaFilesCLient.GetForPath(Exports.EventLogPath).Single();
+            var mediaFilesClient = new MediaFilesClient();
+            var paths = mediaFilesClient.GetForPath(Exports.EventLogPath).ToArray();
+
+            if (!paths.Any()) return new Collection<EventLogViewModel>();
+
+            var media = paths.Single();
 
             var list = media.Files
-                .Select(mediaFile => new EventLogViewModel
+                .Select(file =>
                 {
-                    StreamId = mediaFile.StreamId,
-                    Filename = mediaFile.Filename,
-                    FileType = mediaFile.FileType,
-                    FileSize = mediaFile.FileSize,
-                    Path = Exports.EventLogPath
+                    var filename = file.Filename.Replace($".{file.FileType}", string.Empty);
+                    //TODO: might be good to parse the date from the filename and display it in a separate column
+                    return new EventLogViewModel
+                    {
+                        StreamId = file.StreamId,
+                        Filename = filename,
+                        FileType = file.FileType.ToUpper(),
+                        FileSize = file.FileSize,
+                        Path = Exports.EventLogPath
+                    };
                 }).OrderByDescending(x => x.Filename);
 
             return list;

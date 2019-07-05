@@ -1,18 +1,23 @@
 ﻿using Keebee.AAT.Administrator.ViewModels;
 using Keebee.AAT.BusinessRules;
 using Keebee.AAT.Shared;
-using Keebee.AAT.Administrator.FileManagement;
 using Keebee.AAT.SystemEventLogging;
 using Keebee.AAT.MessageQueuing;
 using Keebee.AAT.ApiClient.Clients;
 using Keebee.AAT.ApiClient.Models;
+using Keebee.AAT.Administrator.Extensions;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Web.Mvc;
 using System;
-using System.Web.Script.Serialization;
+using System.Diagnostics;
+using System.Drawing;
+using System.Drawing.Imaging;
+using System.IO;
+using System.Web;
+using System.Web.Helpers;
 
 namespace Keebee.AAT.Administrator.Controllers
 {
@@ -22,13 +27,10 @@ namespace Keebee.AAT.Administrator.Controllers
         private readonly IResidentsClient _residentsClient;
         private readonly IActiveResidentClient _activeResidentClient;
 
-        private readonly SystemEventLogger _systemEventLogger;
         private readonly CustomMessageQueue _messageQueueBluetoothBeaconWatcherReload;
 
         public ResidentsController()
         {
-            _systemEventLogger = new SystemEventLogger(SystemEventLogType.AdminInterface);
-
             _residentsClient = new ResidentsClient();
             _activeResidentClient = new ActiveResidentClient();
 
@@ -41,67 +43,147 @@ namespace Keebee.AAT.Administrator.Controllers
 
         // GET: Resident
         [Authorize]
-        public ActionResult Index(int? id, string idsearch, string firstname, string lastname, string sortcolumn,
+        public ActionResult Index(
+            int? id, string 
+            firstname, 
+            string lastname, 
+            string idsearch, 
+            string sortcolumn,
             int? sortdescending)
         {
             return
-                View(LoadResidentsViewModel(id ?? 0, null, true, idsearch, firstname, lastname, sortcolumn, sortdescending));
+                View(LoadResidentsViewModel(
+                    id ?? 0,
+                    idsearch, 
+                    firstname, 
+                    lastname, 
+                    sortcolumn,
+                    sortdescending));
         }
 
         [HttpGet]
         [Authorize]
         public JsonResult GetData()
         {
-            var vm = new
-            {
-                ResidentList = GetResidentList()
-            };
+            string errMsg = null;
+            ResidentViewModel[] residentList = null;
 
-            return Json(vm, JsonRequestBehavior.AllowGet);
+            try
+            {
+                residentList = GetResidentList().ToArray();
+            }
+            catch (Exception ex)
+            {
+                errMsg = ex.Message;
+                SystemEventLogger.WriteEntry($"Residents.GetData: {errMsg}", SystemEventLogType.AdminInterface, EventLogEntryType.Error);
+            }
+
+            return Json(new
+            {
+                Success = string.IsNullOrEmpty(errMsg),
+                EerrorMessage = errMsg,
+                ResidentList = residentList,
+            }, JsonRequestBehavior.AllowGet);
         }
 
         [HttpGet]
         [Authorize]
-        public PartialViewResult GetResidentEditView(int id)
+        public JsonResult GetResidentEditView(int id)
         {
-            return PartialView("_ResidentEdit", LoadResidentEditViewModel(id));
+            string errMsg;
+            string html = null;
+
+            try
+            {
+                var vm = LoadResidentEditViewModel(id, out errMsg);
+                if (!string.IsNullOrEmpty(errMsg)) throw new Exception(errMsg);
+
+                html = this.RenderPartialViewToString("_ResidentEdit", vm);
+            }
+            catch (Exception ex)
+            {
+                errMsg = ex.Message;
+            }
+
+            return Json(new
+            {
+                Success = string.IsNullOrEmpty(errMsg),
+                ErrorMessage = errMsg,
+                Html = html,
+            }, JsonRequestBehavior.AllowGet);
         }
 
         [HttpPost]
         [Authorize]
-        public JsonResult Save(string resident)
+        public JsonResult Validate(ResidentEditViewModel resident)
         {
-            var r = JsonConvert.DeserializeObject<ResidentEditViewModel>(resident);
-            var residentId = r.Id;
-            var rules = new ResidentRules();
-            IEnumerable<ResidentViewModel> residentList = new Collection<ResidentViewModel>();
+            IEnumerable<string> validateMsgs = null;
+            string errMsg = null;
 
-            IEnumerable<string> msgs = rules.Validate(r.FirstName, r.LastName, r.Gender, residentId == 0);
-
-            if (residentId > 0)
+            try
             {
-                if (msgs == null)
-                    UpdateResident(r);
+                var rules = new ResidentRules();
+                validateMsgs = rules.Validate(resident.FirstName, resident.LastName, resident.Gender, resident.Id == 0);
             }
-            else
+            catch (Exception ex)
             {
-                if (msgs == null)
-                    residentId = AddResident(r);
+                errMsg = ex.Message;
+                SystemEventLogger.WriteEntry($"Residents.Validate: {errMsg}", SystemEventLogType.AdminInterface, EventLogEntryType.Error);
             }
-
-            residentList = GetResidentList();
-
-            var success = (null == msgs) && (residentId > 0);
-            if (success)
-                // alert the bluetooth beacon watcher to reload its residents
-                _messageQueueBluetoothBeaconWatcherReload.Send(CreateMessageBodyFromResidents(residentList));
 
             return Json(new
             {
-                ResidentList = residentList,
-                SelectedId = residentId,
-                Success = success,
-                ErrorMessages = msgs
+                Success = string.IsNullOrEmpty(errMsg),
+                ValidationMessages = validateMsgs,
+                ErrorMessage = errMsg
+            }, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        [Authorize]
+        public JsonResult Save(ResidentEditViewModel resident)
+        {
+            string errMsg;
+
+            try
+            {
+                var residentId = resident.Id;
+                var date = DateTime.Now;
+
+                if (residentId > 0)
+                {
+                    resident.DateUpdated = date;
+                    errMsg = UpdateResident(resident);
+                }
+                else
+                {
+                    resident.DateCreated = date;
+                    resident.DateUpdated = date;
+                    errMsg = AddResident(resident, out residentId);
+                    resident.Id = residentId;
+                }
+
+                if (!string.IsNullOrEmpty(errMsg)) throw new Exception(errMsg);
+
+                resident.LastName = resident.LastName ?? string.Empty;
+                resident.ProfilePicture = ResidentRules.GetProfilePicture(resident.ProfilePicture);
+                resident.ProfilePicturePlaceholder = ResidentRules.GetProfilePicturePlaceholder();
+
+                // send the bluetooth beacon watcher service the updated resident
+                if (ServiceUtilities.IsInstalled(ServiceUtilities.ServiceType.BluetoothBeaconWatcher))
+                    _messageQueueBluetoothBeaconWatcherReload.Send(CreateMessageBodyFromResident(resident));
+            }
+            catch (Exception ex)
+            {
+                errMsg = ex.Message;
+                SystemEventLogger.WriteEntry($"Residents.Save: {errMsg}", SystemEventLogType.AdminInterface, EventLogEntryType.Error);
+            }
+
+            return Json(new
+            {
+                Success = string.IsNullOrEmpty(errMsg),
+                ErrorMessage = errMsg,
+                ResidentList = new ResidentViewModel[] { resident }
             }, JsonRequestBehavior.AllowGet);
         }
 
@@ -109,55 +191,83 @@ namespace Keebee.AAT.Administrator.Controllers
         [Authorize]
         public JsonResult Delete(int id)
         {
-            string errormessage;
-            bool success;
-            IEnumerable<ResidentViewModel> residentList = new Collection<ResidentViewModel>();
-            
+            string errMsg;
+            var deletedId = 0;
+
             try
             {
                 var activeResident = _activeResidentClient.Get();
                 if (activeResident.Resident.Id == id)
                 {
-                    errormessage = "The resident is currently engaging with R2G2 and cannot be deleted at this time.";
+                    errMsg = "The resident is currently engaging with ABBY and cannot be deleted at this time.";
                 }
                 else
                 {
                     var rules = new ResidentRules();
-                    errormessage = rules.DeleteResident(id);
 
-                    if (errormessage.Length == 0)
-                    {
-                        var fileManager = new FileManager {EventLogger = _systemEventLogger};
-                        fileManager.DeleteFolders(id);
-                    }
+                    errMsg = rules.DeleteResident(id);
+                    if (!string.IsNullOrEmpty(errMsg)) throw new Exception(errMsg);
+
+                    errMsg = rules.DeleteFolders(id);
+                    if (!string.IsNullOrEmpty(errMsg)) throw new Exception(errMsg);
+
+                    deletedId = id;
                 }
 
-                residentList = GetResidentList();
-
-                success = (errormessage.Length == 0);    
-                if (success)
-                    // alert the bluetooth beacon watcher to reload its residents
-                    _messageQueueBluetoothBeaconWatcherReload.Send(CreateMessageBodyFromResidents(residentList));
-
+                if (ServiceUtilities.IsInstalled(ServiceUtilities.ServiceType.BluetoothBeaconWatcher))
+                {
+                    // send the bluetooth beacon watcher the deleted resident
+                    _messageQueueBluetoothBeaconWatcherReload.Send(CreateMessageBodyFromResident(
+                        new ResidentViewModel{ Id = id, FirstName = string.Empty }, isDeleted: true));
+                }
             }
             catch (Exception ex)
             {
-                success = false;
-                errormessage = ex.Message;
+                errMsg = ex.Message;
+                SystemEventLogger.WriteEntry($"Residents.Delete: {errMsg}", SystemEventLogType.AdminInterface, EventLogEntryType.Error);
             }
 
             return Json(new
             {
-                Success = success,
-                ErrorMessage = errormessage,
-                ResidentList = residentList,
+                Success = string.IsNullOrEmpty(errMsg),
+                ErrorMessage = errMsg,
+                DeletedId = deletedId
             }, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        [Authorize]
+        public string UploadProfilePicture(HttpPostedFileBase file)
+        {
+            try
+            {
+                // convert to image and orient correctly
+                var image = Image.FromStream(file.InputStream);
+                var orientedImg = image.Orient();
+
+                // convert back to stream
+                var stream = new MemoryStream();
+                orientedImg.Save(stream, ImageFormat.Jpeg);
+
+                // convert to web image and resize
+                var webImg = new WebImage(stream);
+
+                var croppedImage = webImg.CustomCrop(1);
+                webImg.Resize(96, 96, true, true).Crop(1, 1);
+
+                return Convert.ToBase64String(croppedImage.GetBytes());
+
+            }
+            catch (Exception ex)
+            {
+                SystemEventLogger.WriteEntry(ex.Message, SystemEventLogType.AdminInterface, EventLogEntryType.Error);
+            }
+
+            return null;
         }
 
         private static ResidentsViewModel LoadResidentsViewModel(
             int id, 
-            List<string> msgs, 
-            bool success, 
             string idsearch, 
             string firstname, 
             string lastname, 
@@ -167,45 +277,57 @@ namespace Keebee.AAT.Administrator.Controllers
             var vm = new ResidentsViewModel
             {
                 SelectedId = (int)id,
-                ErrorMessages = msgs,
-                Success = success,
-
                 IdSearch = idsearch,
                 FirstNameSearch = firstname,
                 LastNameSearch = lastname,
                 SortColumnName = sortcolumn,
-                SortDescending = sortdescending
+                SortDescending = sortdescending,
+                IsVideoCaptureServiceInstalled = ServiceUtilities.IsInstalled(ServiceUtilities.ServiceType.VideoCapture) ? 1 : 0
             };
 
             return vm;
         }
 
-        private ResidentEditViewModel LoadResidentEditViewModel(int id)
+        private ResidentEditViewModel LoadResidentEditViewModel(int id, out string errMsg)
         {
+            errMsg = null;
             Resident resident = null;
+            ResidentEditViewModel vm = null;
 
-            if (id > 0)
+            try
             {
-                resident = _residentsClient.Get(id);
+
+                if (id > 0)
+                {
+                    resident = _residentsClient.Get(id);
+                }
+
+                vm = new ResidentEditViewModel
+                {
+                    Id = resident?.Id ?? 0,
+                    FirstName = (resident != null) ? resident.FirstName : string.Empty,
+                    LastName = (resident != null) ? resident.LastName : string.Empty,
+                    Gender = resident?.Gender ?? string.Empty,
+                    GameDifficultyLevels = new SelectList(new Collection<SelectListItem>
+                        {
+                            new SelectListItem {Value = "1", Text = "1"},
+                            new SelectListItem {Value = "2", Text = "2"},
+                            new SelectListItem {Value = "3", Text = "3"},
+                            new SelectListItem {Value = "4", Text = "4"},
+                            new SelectListItem {Value = "5", Text = "5"}
+                        },
+                        "Value", "Text", resident?.GameDifficultyLevel),
+                    AllowVideoCapturing = resident?.AllowVideoCapturing ?? false,
+                    ProfilePicture = ResidentRules.GetProfilePicture(resident?.ProfilePicture),
+                    ProfilePicturePlaceholder = ResidentRules.GetProfilePicturePlaceholder(),
+                    IsVideoCaptureServiceInstalled =
+                        ServiceUtilities.IsInstalled(ServiceUtilities.ServiceType.VideoCapture)
+                };
             }
-            var vm = new ResidentEditViewModel
+            catch (Exception ex)
             {
-                Id = resident?.Id ?? 0,
-                FirstName = (resident != null) ? resident.FirstName : string.Empty,
-                LastName = (resident != null) ? resident.LastName : string.Empty,
-                Genders = new SelectList( new Collection<SelectListItem> {
-                    new SelectListItem { Value = "M", Text = "M" },
-                    new SelectListItem { Value = "F", Text = "F" }},
-                    "Value", "Text", resident?.Gender),
-                GameDifficultyLevels = new SelectList(new Collection<SelectListItem> {
-                    new SelectListItem { Value = "1", Text = "1" },
-                    new SelectListItem { Value = "2", Text = "2" },
-                    new SelectListItem { Value = "3", Text = "3" },
-                    new SelectListItem { Value = "4", Text = "4" },
-                    new SelectListItem { Value = "5", Text = "5" }},
-                    "Value", "Text", resident?.GameDifficultyLevel),
-                AllowVideoCapturing = resident?.AllowVideoCapturing ?? false,
-            };
+                errMsg = ex.Message;
+            }
 
             return vm;
         }
@@ -219,64 +341,82 @@ namespace Keebee.AAT.Administrator.Controllers
                 {
                     Id = resident.Id,
                     FirstName = resident.FirstName,
-                    LastName = resident.LastName,
+                    LastName = resident.LastName ?? string.Empty,
                     Gender = resident.Gender,
                     GameDifficultyLevel = resident.GameDifficultyLevel,
                     AllowVideoCapturing = resident.AllowVideoCapturing,
+                    ProfilePicture = ResidentRules.GetProfilePicture(resident?.ProfilePicture),
+                    ProfilePicturePlaceholder = ResidentRules.GetProfilePicturePlaceholder(),
                     DateCreated = resident.DateCreated,
-                    DateUpdated = resident.DateUpdated,
-                }).OrderBy(x => x.Id);
+                    DateUpdated = resident.DateUpdated
+                }).OrderBy(x => x.FirstName);
 
             return list;
         }
 
-        private void UpdateResident(ResidentEditViewModel residentDetail)
+        private string UpdateResident(ResidentViewModel residentDetail)
         {
-            var r = new ResidentEdit
+            var r = new Resident
             {
                 FirstName = residentDetail.FirstName,
-                LastName = residentDetail.LastName,
+                LastName = !string.IsNullOrEmpty(residentDetail.LastName) ? residentDetail.LastName : null,
                 Gender = residentDetail.Gender,
                 GameDifficultyLevel = residentDetail.GameDifficultyLevel,
-                AllowVideoCapturing = residentDetail.AllowVideoCapturing
+                AllowVideoCapturing = residentDetail.AllowVideoCapturing,
+                ProfilePicture = residentDetail.ProfilePicture != null 
+                    ? Convert.FromBase64String(residentDetail.ProfilePicture) 
+                    : null,
+                DateUpdated = residentDetail.DateUpdated
             };
 
-            _residentsClient.Patch(residentDetail.Id, r);
+            return _residentsClient.Patch(residentDetail.Id, r);
         }
 
-        private int AddResident(ResidentEditViewModel residentDetail)
+        private string AddResident(ResidentViewModel residentDetail, out int residentId)
         {
-            var r = new ResidentEdit
+            string errMsg = null;
+            residentId = -1;
+
+            try
             {
-                FirstName = residentDetail.FirstName,
-                LastName = residentDetail.LastName,
-                Gender = residentDetail.Gender,
-                GameDifficultyLevel = residentDetail.GameDifficultyLevel,
-                AllowVideoCapturing = residentDetail.AllowVideoCapturing
+                errMsg = _residentsClient.Post(new Resident
+                {
+                    FirstName = residentDetail.FirstName,
+                    LastName = !string.IsNullOrEmpty(residentDetail.LastName) ? residentDetail.LastName : null,
+                    Gender = residentDetail.Gender,
+                    GameDifficultyLevel = residentDetail.GameDifficultyLevel,
+                    AllowVideoCapturing = residentDetail.AllowVideoCapturing,
+                    ProfilePicture = residentDetail.ProfilePicture != null ? Convert.FromBase64String(residentDetail.ProfilePicture) : null,
+                    DateCreated = residentDetail.DateCreated,
+                    DateUpdated = residentDetail.DateUpdated
+                }, out residentId);
+
+                if (!string.IsNullOrEmpty(errMsg)) throw new Exception(errMsg);
+
+                var rules = new ResidentRules();
+                errMsg = rules.CreateFolders(residentId);
+                if (!string.IsNullOrEmpty(errMsg)) throw new Exception(errMsg);
+            }
+            catch (Exception ex)
+            {
+                errMsg = ex.Message;
+            }
+
+            return errMsg;
+        }
+
+        private static string CreateMessageBodyFromResident(ResidentViewModel resident, bool isDeleted = false)
+        {
+            var residentMessage = new ResidentMessage
+            {
+                Id = resident.Id,
+                Name = $"{resident.FirstName} {resident.LastName}".Trim(),
+                GameDifficultyLevel = resident.GameDifficultyLevel,
+                AllowVideoCapturing = resident.AllowVideoCapturing,
+                IsDeleted = isDeleted
             };
 
-            var id = _residentsClient.Post(r);
-
-            if (id <= 0) return id;
-
-            var fileManager = new FileManager {EventLogger = _systemEventLogger};
-            fileManager.CreateFolders(id);
-
-            return id;
-        }
-
-        private static string CreateMessageBodyFromResidents(IEnumerable<ResidentViewModel> residents)
-        {
-            var residentMessages = residents.Select(r => new ResidentMessage
-            {
-                Id = r.Id,
-                Name = $"{r.FirstName} {r.LastName}".Trim(),
-                GameDifficultyLevel = r.GameDifficultyLevel,
-                AllowVideoCapturing = r.AllowVideoCapturing
-            }).ToArray();
-
-            var serializer = new JavaScriptSerializer();
-            var messageBody = serializer.Serialize(residentMessages);
+            var messageBody = JsonConvert.SerializeObject(residentMessage);
 
             return messageBody;
         }

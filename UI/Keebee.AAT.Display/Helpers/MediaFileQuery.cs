@@ -19,7 +19,7 @@ namespace Keebee.AAT.Display.Helpers
 
         private readonly MediaSourcePath _mediaPath = new MediaSourcePath();
 
-        public string[] GetFilesForResponseType(int residentId, int responseTypeId, int mediaPatheTypeId = -1)
+        public string[] GetFilesForResponseType(int residentId, int responseTypeId, int mediaPathTypeId = -1)
         {
             var files = new string[0];
             var pathTypeFiles = new MediaPathTypeFiles[0];
@@ -36,7 +36,7 @@ namespace Keebee.AAT.Display.Helpers
                 if (pathTypeFiles.Any())
                 {
                     numFiles += pathTypeFiles
-                        .Where(p => mediaPatheTypeId < 0 || p.MediaPathType.Id == mediaPatheTypeId)
+                        .Where(p => mediaPathTypeId < 0 || p.MediaPathType.Id == mediaPathTypeId)
                         .SelectMany(p => p.Files).Count();
                 }
             }
@@ -52,7 +52,7 @@ namespace Keebee.AAT.Display.Helpers
                 if (pathTypeFiles.Any())
                 {
                     numFiles = pathTypeFiles
-                        .Where(p => mediaPatheTypeId < 0 || p.MediaPathType.Id == mediaPatheTypeId)
+                        .Where(p => mediaPathTypeId < 0 || p.MediaPathType.Id == mediaPathTypeId)
                         .SelectMany(p => p.Files).Count();
                 }
 
@@ -67,14 +67,14 @@ namespace Keebee.AAT.Display.Helpers
                         pathTypeFiles = publicPaths.ToArray();
 
                         numFiles = pathTypeFiles
-                            .Where(p => mediaPatheTypeId < 0 || p.MediaPathType.Id == mediaPatheTypeId)
+                            .Where(p => mediaPathTypeId < 0 || p.MediaPathType.Id == mediaPathTypeId)
                             .SelectMany(p => p.Files).Count();
                     }
                 }
             }
 
             return (pathTypeFiles.Any() && numFiles > 0)
-                ? GetAssembledFileList(pathTypeFiles, residentId, mediaPatheTypeId)
+                ? GetAssembledFileList(pathTypeFiles, residentId, mediaPathTypeId)
                 : files;
         }
 

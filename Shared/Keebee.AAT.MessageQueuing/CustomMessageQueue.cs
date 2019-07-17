@@ -69,7 +69,7 @@ namespace Keebee.AAT.MessageQueuing
 
         private readonly MessageQueue _messageQueue;
 
-        public EventHandler<MessageEventArgs> MessageRecevied { get; set; }
+        public EventHandler<MessageEventArgs> MessageReceived { get; set; }
 
         public CustomMessageQueue(CustomMessageQueueArgs args)
         {

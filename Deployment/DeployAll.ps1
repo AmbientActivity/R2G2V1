@@ -51,6 +51,14 @@ $pathDocumentation = "Install\Documentation\"
 # source code
 $pathSourceCode = "$rootDrive\Users\$env:USERNAME\Source\Repos\R2G2V1\"
 $filenameVSSolution = "Keebee.AAT.sln"
+$pathSolution  = "$($pathSourceCode)$($filenameVSSolution)"
+
+# msbuild
+$VS2019Folder  = "C:\Program Files (x86)\Microsoft Visual Studio\2019\"
+$MSBuildFolder = "\MSBuild\Current\Bin\MSBuild.exe"
+
+# nuget
+$nugetExe  = "$pathSourceCode\Deployment\nuget.exe"
 
 # media
 $pathSharedLibrary = "Media\SharedLibrary\"
@@ -62,6 +70,15 @@ $pathExportEventLog = "Media\Exports\EventLog\"
 $pathSourcePublicProfile = "$pathSourceCode\Media\Profiles\$pathPublicProfile*"
 $pathSourceSampleResidentProfile = "$pathSourceCode\Media\Profiles\$pathSampleResidentProfile*"
 $pathSourceSharedLibrary = "$pathSourceCode\Media\SharedLibrary\*"
+
+If (test-path "$($VS2019Folder)Professional$($MSBuildFolder)") 
+{
+    $msBuildExe = "$($VS2019Folder)Professional$($MSBuildFolder)"
+}
+Elseif (test-path "$($VS2019Folder)Community$($MSBuildFolder)")
+{
+    $msBuildExe = "$($VS2019Folder)Community$($MSBuildFolder)"
+}
 
 Try
 {
@@ -115,33 +132,27 @@ Try
 
     Write-Host -ForegroundColor yellow "`n--- Build Solution ---`n”
 
-    # register Build-VisualStudioSolution powershell module
-    $path = "C:\Users\$env:USERNAME\Documents\WindowsPowerShell\Modules\Build-VisualStudioSolution\"
-    If(!(test-path $path))
-    {
-        Write-Host "Registering Module Build-VisualStudioSolution...” -NoNewline
-        New-Item -ItemType Directory -Force -Path $path | Out-Null
-        Copy-Item C:\Users\$env:USERNAME\Source\Repos\R2G2V1\Deployment\Modules\Build-VisualStudioSolution\* $path -Recurse -Force
-        Write-Host "done.`n”
-    }
+    Write-Host "Restoring nuget packages..." -NoNewLine
+      & $nugetExe restore $pathSolution -verbosity quiet 
+    Write-Host "done."
 
-    Get-Module Build-VisualStudioSolution
+    Write-Host "Cleaning Debug..." -NoNewLine
+      & $msBuildExe $pathSolution /t:Clean /m /p:Configuration=Debug -nologo -verbosity:quiet
+    Write-Host "done."
 
-    # build debug
-    $buildResult = Build-VisualStudioSolution -SourceCodePath $pathSourceCode -SolutionFile $filenameVSSolution -BuildLogFile "ABBYBuildDebug.log" -Configuration "Debug" -CleanFirst;
+   Write-Host "Building Debug..." -NoNewLine 
+      & $msBuildExe $pathSolution /t:Build /m /p:Configuration=Debug -clp:ErrorsOnly  -nologo -verbosity:minimal
+   If ($LASTEXITCODE) { exit }
+   Write-Host -ForegroundColor green "success!"
 
-    If (!$buildResult)
-    {
-       exit
-    }
+    Write-Host "Cleaning Release..." -NoNewLine
+    & $msBuildExe $pathSolution /t:Clean /m /p:Configuration=Release  -nologo -verbosity:quiet  
+    Write-Host "done."
 
-    # build release
-    $buildResult = Build-VisualStudioSolution -SourceCodePath $pathSourceCode -SolutionFile $filenameVSSolution -BuildLogFile "ABBYBuildRelease.log" -Configuration "Release" -CleanFirst;
-
-    If (!$buildResult)
-    {
-        exit
-    }
+    Write-Host "Building Release..." -NoNewLine
+      & $msBuildExe $pathSolution /t:Build /m /p:Configuration=Release -clp:ErrorsOnly -nologo -verbosity:minimal 
+    If ($LASTEXITCODE) { exit }
+    Write-Host -ForegroundColor green "success!"
 
     # delpoy components
     Write-Host -ForegroundColor yellow "`n--- Deploy Components ---`n”

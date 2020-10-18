@@ -3,7 +3,9 @@ using Keebee.AAT.ApiClient.Models;
 using Keebee.AAT.Shared;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Configuration;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -16,29 +18,50 @@ namespace Keebee.AAT.Backup
         private const string RestorePublicProfileFilename = "RestorePublicProfile";
         private const string RestoreResidentsFilename = "RestoreResidents";
         private const string RestoreConfigurationsFilename = "RestoreConfigurations";
-        private const string InstallABBYFilename = "INSTALL_ABBY.ps1";
+        private const string InstallAbbyFilename = "INSTALL_ABBY.ps1";
+        private const string ProfilesFolder = "Profiles";
+        private const string MediaFolder = "Media";
+        private const string BackupLogsFolder = "BackupLogs";
+        private readonly string[] _applicationRoots = { "Install", "ScheduledTasks", "Services", "UI", "Web" };
 
-        private readonly string _pathDeployments;
-        private readonly string _pathVideoCaptures;
-        private readonly string _pathBackup;
 
-        private readonly string _pathSqlMedia;
+        private readonly string _rootDeployments;
+        private readonly string _rootVideoCaptures;
+        private readonly string _rootBackup;
+
         private readonly string _deploymentsFolder;
-        private readonly string _mediaBackupPath;
+        private readonly string _videoCapturesFolder;
+        private readonly string _pathMediaBackup;
 
+        private IEnumerable<MediaPathType> _mediaPathTypes;
+        private BackupFileModel[] _mediaFiles;
         private bool _residentsExist;
+        private int[] _residentIds;
+        private readonly MediaSourcePath _mediaSourcePath;
+
+        internal class BackupFileModel
+        {
+            public Guid StreamId { get; set; }
+            public int ResidentId { get; set; }
+            public int MediaPathTypeId { get; set; }
+            public string MediaPath { get; set; }
+            public string Filename { get; set; }
+            public string FolderPath { get; set; }
+            public string FullPath { get; set; }
+            public bool IsLinked { get; set; }
+        }
 
         public Engine()
         {
-            _pathDeployments = ConfigurationManager.AppSettings["DeploymentsPath"];
-            _pathVideoCaptures = ConfigurationManager.AppSettings["VideoCapturesPath"];
-            _pathBackup = ConfigurationManager.AppSettings["BackupPath"];
+            _rootDeployments = ConfigurationManager.AppSettings["DeploymentsPath"];
+            _rootVideoCaptures = ConfigurationManager.AppSettings["VideoCapturesPath"];
+            _rootBackup = ConfigurationManager.AppSettings["BackupPath"];
 
-            var computerName = Environment.MachineName;
-            _pathSqlMedia = $@"\\{computerName}\sqlexpress\{SqlFilestreamName}\Media";
+            _deploymentsFolder = _rootDeployments.Replace(Path.GetPathRoot(_rootDeployments), string.Empty);
+            _videoCapturesFolder = _rootVideoCaptures.Replace(Path.GetPathRoot(_rootVideoCaptures), string.Empty);
+            _pathMediaBackup = $@"{_deploymentsFolder}\{MediaFolder}";
 
-            _deploymentsFolder = _pathDeployments.Replace(Path.GetPathRoot(_pathDeployments), string.Empty);
-            _mediaBackupPath = $@"{_deploymentsFolder}\Media";
+            _mediaSourcePath = new MediaSourcePath();
         }
 
         public void DoBackup()
@@ -46,57 +69,82 @@ namespace Keebee.AAT.Backup
             try
             {
                 var logText = new StringBuilder();
-                var pathLogs = $@"{_pathBackup}\BackupLogs";
+                var pathLogs = $@"{_rootBackup}\{BackupLogsFolder}";
 
                 var logFilename = InitializeLogFile(pathLogs);
 #if DEBUG
                 Console.WriteLine($"{Environment.NewLine}Examining files...");
 #endif
+                IMediaPathTypesClient mediaPathTypesClient = new MediaPathTypesClient();
+                _mediaPathTypes = mediaPathTypesClient.Get().ToArray();
+
+                IResidentsClient residentsClient = new ResidentsClient();
+                _residentIds = residentsClient.Get().Select(r => r.Id).ToArray();
+
+                // retrieve and flatten media models
+                var mediaModels = GetMediaModels();
+                _mediaFiles = GetFlattenedMedia(mediaModels);
+
                 using (var w = File.AppendText(logFilename))
                 {
-                    var diBackup = new DirectoryInfo(_pathBackup);
+                    var diBackup = new DirectoryInfo(_rootBackup);
                     if (!diBackup.Exists) return;
 
-                    var rootBackup = Path.GetPathRoot(_pathBackup);
+                    var rootBackup = Path.GetPathRoot(_rootBackup);
                     var driveBackup = new DriveInfo(rootBackup);
 
                     if (driveBackup.IsReady)
                     {
                         // backup deployment folders (except media)
-                        logText.Append(BackupFiles(_pathDeployments, _pathBackup,
-                            excludeFolders: new[] { Path.Combine(_pathDeployments, "Media") }));
+                        logText.Append(BackupApplicationFiles(_rootDeployments, _rootBackup,
+                            excludeFolders: new[] { Path.Combine(_rootDeployments, MediaFolder) }));
 
                         // backup the media
-                        logText.Append(BackupFiles(_pathSqlMedia, _pathBackup));
+                        logText.Append(BackupMediaFiles());
 
                         // backup video captures
-                        logText.Append(BackupFiles(_pathVideoCaptures, _pathBackup));
+                        logText.Append(BackupApplicationFiles(_rootVideoCaptures, _rootBackup));
 
-                        // delete obsolete deployment folders (except media)
-                        logText.Append(RemoveObsoleteFolders(_pathDeployments, _pathBackup,
-                            excludeFolders: new[] { Path.Combine(_pathBackup, _mediaBackupPath) }));
+                        // delete obsolete deployment folders (ignore media)
+                        var deploymentFolders = GetDeploymentFolders();
+                        var rootFolder = Path.Combine(_rootBackup, _deploymentsFolder);
+                        var ignoreRoots = new [] { Path.Combine(_rootBackup, _pathMediaBackup) };
+                        logText.Append(DeleteFolders(rootFolder, foldersToKeep: deploymentFolders, ignoreRoots: ignoreRoots));
 
                         // delete obsolete media folders
-                        logText.Append(RemoveObsoleteFolders(_pathSqlMedia, _pathBackup));
+                        var mediaFolders = GetMediaFolders(mediaModels);
+                        rootFolder = Path.Combine(_rootBackup, _pathMediaBackup);
+                        logText.Append(DeleteFolders(rootFolder, foldersToKeep: mediaFolders));
 
                         // delete obsolete video capture folders
-                        logText.Append(RemoveObsoleteFolders(_pathVideoCaptures, _pathBackup));
+                        var videoCaptureFolders = GetVideoCaptureFolders();
+                        rootFolder = Path.Combine(_rootBackup, _videoCapturesFolder);
+                        logText.Append(DeleteFolders(rootFolder, videoCaptureFolders));
 
-                        // delete obsolete deployment files (except media)
-                        logText.Append(RemoveObsoleteFiles(_pathDeployments, _pathBackup,
-                                excludeFolders: new[] { Path.Combine(_pathBackup, _mediaBackupPath) }));
+                        // delete obsolete deployment files (except media and video captures)
+                        var deploymentModels = GetDeploymentFileModels();
+                        var excludeFolders = new []
+                        {
+                            Path.Combine(_rootBackup, _pathMediaBackup),
+                            Path.Combine(_rootBackup, _videoCapturesFolder),
+                            Path.Combine(_rootBackup, BackupLogsFolder)
+                        };
+                        logText.Append(DeleteFiles(_rootBackup, deploymentModels, recursive: true, excludeFolders: excludeFolders));
 
                         // delete obsolete media files
-                        logText.Append(RemoveObsoleteFiles(_pathSqlMedia, _pathBackup));
+                        rootFolder = Path.Combine(_rootBackup, _pathMediaBackup);
+                        logText.Append(DeleteFiles(rootFolder, _mediaFiles, recursive: true));
 
                         // delete obsolete video capture files
-                        logText.Append(RemoveObsoleteFiles(_pathVideoCaptures, _pathBackup));
+                        var videoCaptureFiles = GetVideoCaptureFileModels();
+                        rootFolder = Path.Combine(_rootBackup, _videoCapturesFolder);
+                        logText.Append(DeleteFiles(rootFolder, videoCaptureFiles, recursive: true));
 
                         // create the database scripts
-                        logText.Append(CreateScriptRestorePublicProfile($@"{_pathBackup}\{_deploymentsFolder}"));
-                        logText.Append(CreateScriptRestoreResidents($@"{_pathBackup}\{_deploymentsFolder}"));
-                        logText.Append(CreateScriptRestoreConfigurations($@"{_pathBackup}\{_deploymentsFolder}"));
-                        logText.Append(CreateInstallPowerShellScript($@"{_pathBackup}\{_deploymentsFolder}"));
+                        logText.Append(CreateScriptRestorePublicProfile($@"{_rootBackup}\{_deploymentsFolder}"));
+                        logText.Append(CreateScriptRestoreResidents($@"{_rootBackup}\{_deploymentsFolder}"));
+                        logText.Append(CreateScriptRestoreConfigurations($@"{_rootBackup}\{_deploymentsFolder}"));
+                        logText.Append(CreateInstallPowerShellScript($@"{_rootBackup}\{_deploymentsFolder}"));
                     }
                     else
                     {
@@ -209,9 +257,9 @@ namespace Keebee.AAT.Backup
                     }
 
                     var subPathSource = currentDir.Replace(driveSource, string.Empty);
-                    var pathDest = subPathSource.Contains("KeebeeAATFilestream")
+                    var pathDest = subPathSource.IndexOf(SqlFilestreamName, StringComparison.Ordinal) >= 0
                         ? Path.Combine(destination,
-                            $@"Deployments\{subPathSource.Replace(@"\KeebeeAATFilestream\", string.Empty)}")
+                            $@"Deployments\{subPathSource.Replace($@"\{SqlFilestreamName}\", string.Empty)}")
                         : Path.Combine(destination, subPathSource);
 
                     var directory = new DirectoryInfo(pathDest);
@@ -241,7 +289,7 @@ namespace Keebee.AAT.Backup
             return sb.ToString();
         }
 
-        private string BackupFiles(string source, string destination, string[] excludeFolders = null)
+        private string BackupApplicationFiles(string source, string destination, string[] excludeFolders = null)
         {
             var sb = new StringBuilder();
 
@@ -344,7 +392,7 @@ namespace Keebee.AAT.Backup
 
                             var pathSource = fiSource.DirectoryName.Replace(driveSource, string.Empty);
 
-                            var pathDest = pathSource.Contains(SqlFilestreamName)
+                            var pathDest = pathSource.IndexOf(SqlFilestreamName, StringComparison.Ordinal) >= 0
                                 ? Path.Combine(destination,
                                     $@"{_deploymentsFolder}\{pathSource.Replace($@"\{SqlFilestreamName}\", string.Empty)}")
                                 : Path.Combine(destination, pathSource);
@@ -354,7 +402,7 @@ namespace Keebee.AAT.Backup
 
                             var destFilePath = Path.Combine(pathDest, fiSource.Name);
 
-                            if (fiSource.Name == InstallABBYFilename)
+                            if (fiSource.Name == InstallAbbyFilename)
                                 continue;
 
                             if (File.Exists(destFilePath))
@@ -405,6 +453,291 @@ namespace Keebee.AAT.Backup
             return sb.ToString();
         }
 
+        private string BackupMediaFiles()
+        {
+            var sb = new StringBuilder();
+
+            try
+            {
+                foreach (var file in _mediaFiles)
+                {
+                    var sourcePath = file.IsLinked
+                        ? Path.Combine(_mediaSourcePath.MediaRoot, _mediaSourcePath.SharedLibrary, file.MediaPath)
+                        : Path.Combine(_mediaSourcePath.ProfileRoot, file.ResidentId.ToString(), file.MediaPath);
+                    var sourceFile = Path.Combine(sourcePath, file.Filename);
+                    var folder = file.FullPath.Replace($@"\{file.Filename}", string.Empty);
+                    if (!Directory.Exists(folder))
+                    {
+                        sb.Append(CreateFolder(folder));
+                        var message = $"Folder '{folder}' was created{Environment.NewLine}";
+#if DEBUG
+                        Console.Write(message);
+#endif
+                        sb.Append(message);
+                    }
+
+                    if (!File.Exists(file.FullPath))
+                    {
+                        sb.Append(CopyFile(sourceFile, file.FullPath));
+                        var message = $"File '{sourceFile}' was copied to '{file.FullPath}'{Environment.NewLine}";
+#if DEBUG
+                        Console.Write(message);
+#endif
+                        sb.Append(message);
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                var message = $"--- ERROR --- BackupFiles: {e.Message}{Environment.NewLine}";
+#if DEBUG
+                Console.Write(message);
+#endif
+                sb.Append(message);
+            }
+            return sb.ToString();
+        }
+
+        private static string CopyFile(string source, string destination)
+        {
+            var sb = new StringBuilder();
+
+            var cmd = $"copy \"{source}\" \"{destination}\"";
+            var startInfo = new ProcessStartInfo
+            {
+                CreateNoWindow = true,
+                UseShellExecute = false,
+                FileName = "cmd.exe",
+                WindowStyle = ProcessWindowStyle.Hidden,
+                Arguments = $@"/C {cmd}"
+            };
+
+            try
+            {
+                using (var exeProcess = Process.Start(startInfo))
+                {
+                    exeProcess?.WaitForExit();
+                }
+            }
+            catch (Exception e)
+            {
+                var message = $"--- ERROR --- BackupFiles: {e.Message}{Environment.NewLine}";
+#if DEBUG
+                Console.Write(message);
+#endif
+                sb.Append(message);
+            }
+
+            return sb.ToString();
+        }
+
+        private static string CreateFolder(string folder)
+        {
+            var sb = new StringBuilder();
+
+            var cmd = $"New-Item -ItemType Directory -Force -Path '{folder}'";
+
+            var startInfo = new ProcessStartInfo
+            {
+                CreateNoWindow = true,
+                UseShellExecute = false,
+                FileName = "cmd.exe",
+                WindowStyle = ProcessWindowStyle.Hidden,
+                Arguments = $@"/C powershell /C {cmd}"
+            };
+
+            try
+            {
+                using (var exeProcess = Process.Start(startInfo))
+                {
+                    exeProcess?.WaitForExit();
+                }
+            }
+            catch (Exception e)
+            {
+                var message = $"--- ERROR --- BackupFiles: {e.Message}{Environment.NewLine}";
+#if DEBUG
+                Console.Write(message);
+#endif
+                sb.Append(message);
+            }
+
+            return sb.ToString();
+        }
+
+        private Media[] GetMediaModels()
+        {
+            var folderSharedLibrary = _mediaSourcePath.SharedLibrary.ToLower();
+            var source = _mediaSourcePath.MediaRoot.ToLower();
+            var validPaths = new[]                {
+                Path.Combine(source, folderSharedLibrary),
+                Path.Combine(source.ToLower(), ProfilesFolder.ToLower())
+            };
+
+            IMediaFilesClient mediaFilesClient = new MediaFilesClient();
+            return mediaFilesClient.Get()
+                .Where(lm =>
+                {
+                    var index1 = lm.Path.ToLower().IndexOf(validPaths[0], StringComparison.Ordinal);
+                    var index2 = lm.Path.ToLower().IndexOf(validPaths[1], StringComparison.Ordinal);
+                    return index1 >= 0 || index2 >= 0;
+                })
+                .ToArray();
+        }
+
+        private BackupFileModel[] GetFlattenedMedia(IEnumerable<Media> mediaModels)
+        {
+            var root = _mediaSourcePath.MediaRoot.ToLower();
+
+            return mediaModels
+                .SelectMany(lm =>
+                {
+                    var path = lm.Path.ToLower();
+                    return lm.Files
+                        .Select(f =>
+                        {
+                            var mediaPathFullWithSlash = path.Replace(root, string.Empty);
+                            var mediaPathFull = mediaPathFullWithSlash.Remove(mediaPathFullWithSlash.Length - 1);
+
+                            var isProfilesFolder = path.IndexOf($@"\{ProfilesFolder.ToLower()}\", StringComparison.Ordinal) >= 0;
+                            var pathParts = mediaPathFull.Split('\\').Skip(1).ToArray();
+
+                            var residentId = isProfilesFolder
+                                ? int.Parse(pathParts[1])
+                                : -1;
+
+                            var mediaPathRoot = isProfilesFolder
+                                ? Path.Combine(pathParts[0], pathParts[1])
+                                : pathParts[0];
+
+                            var mediaPath = mediaPathFull.Replace($@"\{mediaPathRoot}\", string.Empty);
+
+                            var mediaPathTypeId = -1;
+                            if (_mediaPathTypes != null)
+                            {
+                                mediaPathTypeId = _mediaPathTypes.FirstOrDefault(pt => pt.Path == mediaPath)?.Id ?? -1;
+                            }
+
+                            var destPath = !isProfilesFolder
+                                ? Path.Combine(_rootBackup, _pathMediaBackup, _mediaSourcePath.SharedLibrary, mediaPath)
+                                : Path.Combine(_rootBackup, _pathMediaBackup, ProfilesFolder, residentId.ToString(), mediaPath);
+                            var destFile = Path.Combine(destPath, f.Filename);
+
+                            return new BackupFileModel
+                            {
+                                StreamId = f.StreamId,
+                                ResidentId = residentId,
+                                MediaPathTypeId = mediaPathTypeId,
+                                MediaPath = mediaPath,
+                                Filename = f.Filename,
+                                FolderPath = destPath,
+                                FullPath = destFile,
+                                IsLinked = !isProfilesFolder
+                            };
+                        });
+                }).ToArray();
+        }
+
+        private string[] GetMediaFolders(IEnumerable<Media> mediaModels)
+        {
+            const string activitiesPath = "activities";
+            var matchingGamePath = Path.Combine("activities", "matching-game");
+            const string audioPath = "audio";
+            const string imagesPath = "images";
+            const string videosPath = "videos";
+
+            var folders = new List<string>
+            {
+                Path.Combine(_rootBackup, _pathMediaBackup),
+                Path.Combine(_rootBackup, _pathMediaBackup, _mediaSourcePath.SharedLibrary)
+            };
+
+            var testPath = Path.Combine(_rootDeployments, MediaFolder, _mediaSourcePath.SharedLibrary, activitiesPath);
+            if (Directory.Exists(testPath))
+                folders.Add(Path.Combine(_rootBackup, _pathMediaBackup, _mediaSourcePath.SharedLibrary, activitiesPath));
+
+            testPath = Path.Combine(_rootDeployments, MediaFolder, _mediaSourcePath.SharedLibrary, matchingGamePath);
+            if (Directory.Exists(testPath))
+                folders.Add(Path.Combine(_rootBackup, _pathMediaBackup, _mediaSourcePath.SharedLibrary, matchingGamePath));
+
+            testPath = Path.Combine(_rootDeployments, MediaFolder, _mediaSourcePath.SharedLibrary, audioPath);
+            if (Directory.Exists(testPath))
+                folders.Add(Path.Combine(_rootBackup, _pathMediaBackup, _mediaSourcePath.SharedLibrary, audioPath));
+
+            testPath = Path.Combine(_rootDeployments, MediaFolder, _mediaSourcePath.SharedLibrary, imagesPath);
+            if (Directory.Exists(testPath))
+                folders.Add(Path.Combine(_rootBackup, _pathMediaBackup, _mediaSourcePath.SharedLibrary, imagesPath));
+
+            testPath = Path.Combine(_rootDeployments, MediaFolder, _mediaSourcePath.SharedLibrary, videosPath);
+            if (Directory.Exists(testPath))
+                folders.Add(Path.Combine(_rootBackup, _pathMediaBackup, _mediaSourcePath.SharedLibrary, videosPath));
+
+            foreach (var pathType in _mediaPathTypes)
+            {
+                testPath = Path.Combine(_rootDeployments, MediaFolder, _mediaSourcePath.SharedLibrary, pathType.Path);
+                if (Directory.Exists(testPath))
+                    folders.Add(Path.Combine(_rootBackup, _pathMediaBackup, _mediaSourcePath.SharedLibrary, pathType.Path));
+            }
+
+            folders.Add(Path.Combine(_rootBackup, _pathMediaBackup, ProfilesFolder));
+
+            var profileIds = new[] {PublicProfileSource.Id.ToString()}.Union(_residentIds.Select(id => id.ToString()));
+            foreach (var id in profileIds)
+            {
+                folders.Add(Path.Combine(_rootBackup, _pathMediaBackup, ProfilesFolder, id));
+
+                testPath = Path.Combine(_rootDeployments, MediaFolder, ProfilesFolder, id, activitiesPath);
+                if (Directory.Exists(testPath))
+                    folders.Add(Path.Combine(_rootBackup, _pathMediaBackup, ProfilesFolder, id, activitiesPath));
+
+                testPath = Path.Combine(_rootDeployments, MediaFolder, ProfilesFolder, id, matchingGamePath);
+                if (Directory.Exists(testPath))
+                    folders.Add(Path.Combine(_rootBackup, _pathMediaBackup, ProfilesFolder, id, matchingGamePath));
+
+                testPath = Path.Combine(_rootDeployments, MediaFolder, ProfilesFolder, id, audioPath);
+                if (Directory.Exists(testPath))
+                    folders.Add(Path.Combine(_rootBackup, _pathMediaBackup, ProfilesFolder, id, audioPath));
+
+                testPath = Path.Combine(_rootDeployments, MediaFolder, ProfilesFolder, id, imagesPath);
+                if (Directory.Exists(testPath))
+                    folders.Add(Path.Combine(_rootBackup, _pathMediaBackup, ProfilesFolder, id, imagesPath));
+
+                testPath = Path.Combine(_rootDeployments, MediaFolder, ProfilesFolder, id, videosPath);
+                if (Directory.Exists(testPath))
+                    folders.Add(Path.Combine(_rootBackup, _pathMediaBackup, ProfilesFolder, id, videosPath));
+
+                foreach (var pathType in _mediaPathTypes)
+                {
+                    testPath = Path.Combine(_rootDeployments, MediaFolder, ProfilesFolder, id, pathType.Path);
+                    if (Directory.Exists(testPath))
+                        folders.Add(Path.Combine(_rootBackup, _pathMediaBackup, ProfilesFolder, id, pathType.Path));
+                }
+            }
+
+            var mediaRoot = _mediaSourcePath.MediaRoot.ToLower();
+            var profileFolders = mediaModels
+                .Where(m =>
+                {
+                    var isProfilesFolder = m.Path.IndexOf($@"\{ProfilesFolder}\", StringComparison.Ordinal) >= 0;
+                    return isProfilesFolder;
+                })
+                .Select(m => 
+            {
+                var mediaPathFullWithSlash = m.Path.ToLower().Replace(mediaRoot, string.Empty);
+                var mediaPathFull = mediaPathFullWithSlash.Remove(mediaPathFullWithSlash.Length - 1);
+                var pathParts = mediaPathFull.Split('\\').Skip(1).ToArray();
+                var residentId = int.Parse(pathParts[1]);
+                var mediaPathRoot = Path.Combine(pathParts[0], pathParts[1]);
+                var mediaPath = mediaPathFull.Replace($@"\{mediaPathRoot}\", string.Empty);
+                var destPath = Path.Combine(_rootBackup, _pathMediaBackup, ProfilesFolder, residentId.ToString(), mediaPath);
+
+                return destPath;
+            }).ToArray();
+
+            folders.AddRange(profileFolders);
+            return folders.OrderBy(f => f).ToArray();
+        }
+
         private static bool IsFileIdentical(string file1, string file2)
         {
             return new FileInfo(file1).Length == new FileInfo(file2).Length
@@ -417,205 +750,110 @@ namespace Keebee.AAT.Backup
             //&& (File.ReadAllBytes(file1).SequenceEqual(File.ReadAllBytes(file2))); // causes OutOfMemory exception for large files
         }
 
-        private string RemoveObsoleteFolders(string source, string destination, string[] excludeFolders = null)
+        private BackupFileModel[] GetDeploymentFileModels()
         {
-            var sb = new StringBuilder();
-
-            try
+            var appRoots = new Collection<string>();
+            foreach (var appRoot in _applicationRoots)
             {
-                // Data structure to hold names of subfolders
-                var dirs = new Stack<string>(20);
-
-                var driveSource = source.Contains(SqlFilestreamName)
-                    ? source
-                    : Path.GetPathRoot(source);
-
-                var driveDest = Path.GetPathRoot(destination);
-
-                if (driveDest == null)
-                {
-                    var message = $"--- ERROR --- RemoveObsoleteFolders: Destination drive for {destination} is not available";
-#if DEBUG
-                    Console.Write(message);
-#endif
-                    return message;
-                }
-
-                var pathDestination = source.Contains(SqlFilestreamName)
-                    ? Path.Combine(destination, _mediaBackupPath)
-                    : Path.Combine(destination, source.Replace(driveSource, string.Empty));
-
-                if (!Directory.Exists(pathDestination))
-                {
-                    var message = $"--- WARNING --- RemoveObsoleteFolders: {pathDestination} does not exist{Environment.NewLine}";
-#if DEBUG
-                    Console.Write(message);
-#endif
-                    return string.Empty;
-                }
-
-                dirs.Push(pathDestination);
-
-                while (dirs.Count > 0)
-                {
-                    var currentDir = dirs.Pop();
-                    string[] subDirs;
-                    try
-                    {
-                        subDirs = Directory.GetDirectories(currentDir);
-                    }
-                    catch (UnauthorizedAccessException e)
-                    {
-                        var message = $"--- ERROR --- RemoveObsoleteFolders: {e.Message}{Environment.NewLine}";
-#if DEBUG
-                        Console.Write(message);
-#endif
-                        sb.Append(message);
-                        continue;
-                    }
-                    catch (DirectoryNotFoundException e)
-                    {
-                        var message = $"--- ERROR --- RemoveObsoleteFolders: {e.Message}{Environment.NewLine}";
-#if DEBUG
-                        Console.Write(message);
-#endif
-                        sb.Append(message);
-                        continue;
-                    }
-
-                    // remove trainling slash if it exists
-                    string pathDest;
-                    if (destination.EndsWith(@"\"))
-                    {
-                        var indexOfSlash = destination.LastIndexOf(@"\", StringComparison.Ordinal);
-                        pathDest = destination.Substring(0, indexOfSlash);
-                    }
-                    else
-                    {
-                        pathDest = destination;
-                    }
-
-                    var pathSource = source.Contains(SqlFilestreamName)
-                        ? $@"{source}{currentDir.Replace($@"{pathDest}\{_mediaBackupPath}", string.Empty)}"
-                        : $"{driveSource}{currentDir.Replace($@"{pathDest}\", string.Empty)}";
-
-                    var directorySource = new DirectoryInfo(pathSource);
-                    var directoryDest = new DirectoryInfo(currentDir);
-
-                    if (!directorySource.Exists)
-                    {
-                        directoryDest.Delete(true);
-                        var message = $"Obsolete folder '{directoryDest.FullName}' was deleted{Environment.NewLine}";
-#if DEBUG
-                        Console.Write(message);
-#endif
-                        sb.Append(message);
-                    }
-                    else
-                    {
-                        foreach (var dir in subDirs.Select(x => x).Except(excludeFolders ?? new string[0]))
-                            dirs.Push(dir);
-                    }
-                }
-            }
-            catch (Exception e)
-            {
-                var message = $"--- ERROR --- RemoveObsoleteFolders: {e.Message}{Environment.NewLine}";
-#if DEBUG
-                Console.Write(message);
-#endif
-                sb.Append(message);
+                appRoots.Add(Path.Combine(_rootDeployments, appRoot));
             }
 
-            return sb.ToString();
+            var files = Directory.GetFiles(_rootDeployments, "*.*", SearchOption.AllDirectories);
+            return files
+                .Where(f => appRoots.Any(r => f.IndexOf(r, StringComparison.Ordinal) >= 0))
+                .Select(f => new BackupFileModel
+            {
+                Filename = Path.GetFileName(f),
+                FullPath = f.Replace(_rootDeployments, Path.Combine(_rootBackup, _deploymentsFolder))
+            }).ToArray();
         }
 
-        private string RemoveObsoleteFiles(string source, string destination, string[] excludeFolders = null)
+        private BackupFileModel[] GetVideoCaptureFileModels()
         {
-            var sb = new StringBuilder();
+            var files = Directory.GetFiles(_rootVideoCaptures, "*.*", SearchOption.AllDirectories);
+            return files.Select(f => new BackupFileModel
+            {
+                Filename = Path.GetFileName(f),
+                FullPath = f.Replace(_rootVideoCaptures, Path.Combine(_rootBackup, _videoCapturesFolder))
+            }).ToArray();
+        }
+
+        private string[] GetDeploymentFolders()
+        {
+            var folders = Directory.GetDirectories(_rootDeployments, "*", SearchOption.AllDirectories);
+            return new [] { Path.Combine(_rootBackup, _deploymentsFolder) }
+                .Union(folders
+                .Where(f => f.IndexOf(_pathMediaBackup, StringComparison.Ordinal) < 0))
+                .Select(f =>
+                {
+                    var newRoot = Path.Combine(_rootBackup, _deploymentsFolder);
+                    var newFolder = f.Replace(_rootDeployments, newRoot);
+                    return newFolder;
+                })
+                .ToArray();
+        }
+
+        private string[] GetVideoCaptureFolders()
+        {
+            var folders = Directory.GetDirectories(_rootVideoCaptures, "*", SearchOption.AllDirectories);
+            var allFolders = new[] { Path.Combine(_rootBackup, _videoCapturesFolder) }
+                .Union(folders
+                .Select(f => f.Replace(_rootVideoCaptures,
+                    Path.Combine(_rootBackup, _videoCapturesFolder))))
+                .ToArray();
+
+            return allFolders;
+        }
+
+        private static string DeleteFiles(string root, BackupFileModel[] models, bool recursive = false, string[] excludeFolders = null, string[] excludeRootFolders = null)
+        {
+            var logText = new StringBuilder();
+            var fullName = string.Empty;
+            if (excludeFolders == null) excludeFolders = new string[0];
+            if (excludeRootFolders == null) excludeRootFolders = new string[0];
 
             try
             {
-                // Data structure to hold names of subfolders to be examined for files
+                if (!Directory.Exists(root)) return null;
+
+                // data structure to hold names of subfolders to be examined for files
                 var dirs = new Stack<string>(20);
-                var driveSource = source.Contains(SqlFilestreamName)
-                    ? source
-                    : Path.GetPathRoot(source);
 
-                var pathDest = source.Contains(SqlFilestreamName)
-                    ? Path.Combine(destination, _mediaBackupPath)
-                    : Path.Combine(destination, source.Replace(driveSource, string.Empty));
-
-                if (!Directory.Exists(source))
-                {
-                    return string.Empty;
-                }
-
-                if (!Directory.Exists(pathDest))
-                {
-                    var message = $"--- ERROR --- RemoveObsoleteFiles: Destination folder {pathDest} does not exist{Environment.NewLine}";
-#if DEBUG
-                    Console.Write(message);
-#endif
-                    return message;
-                }
-
-                dirs.Push(pathDest);
-
+                dirs.Push(root);
                 while (dirs.Count > 0)
                 {
                     var currentDir = dirs.Pop();
                     string[] subDirs;
                     try
                     {
-                        subDirs = Directory.GetDirectories(currentDir);
+                        subDirs = recursive
+                            ? Directory.GetDirectories(currentDir)
+                                .Where(d => !excludeFolders.Contains(d))
+                                .ToArray()
+                            : new string[0];
                     }
-                    catch (UnauthorizedAccessException e)
+                    catch (UnauthorizedAccessException)
                     {
-                        var message = $"--- ERROR --- RemoveObsoleteFiles: {e.Message}{Environment.NewLine}";
-#if DEBUG
-                        Console.Write(message);
-#endif
-                        sb.Append(message);
                         continue;
                     }
-                    catch (DirectoryNotFoundException e)
+                    catch (DirectoryNotFoundException)
                     {
-                        var message = $"--- ERROR --- RemoveObsoleteFiles: {e.Message}{Environment.NewLine}";
-#if DEBUG
-                        Console.Write(message);
-#endif
-                        sb.Append(message);
                         continue;
                     }
 
                     string[] files;
                     try
                     {
-                        files = Directory.GetFiles(currentDir)
-                            .Where(x => !x.Contains(RestorePublicProfileFilename))
-                            .Where(x => !x.Contains(RestoreResidentsFilename))
-                            .Where(x => !x.Contains(RestoreConfigurationsFilename))
-                            .ToArray();
+                        files = Directory.GetFiles(currentDir).ToArray();
                     }
 
-                    catch (UnauthorizedAccessException e)
+                    catch (UnauthorizedAccessException)
                     {
-                        var message = $"--- ERROR --- RemoveObsoleteFiles: {e.Message}{Environment.NewLine}";
-#if DEBUG
-                        Console.Write(message);
-#endif
-                        sb.Append(message);
                         continue;
                     }
 
-                    catch (DirectoryNotFoundException e)
+                    catch (DirectoryNotFoundException)
                     {
-                        var message = $"--- ERROR --- RemoveObsoleteFiles: {e.Message}{Environment.NewLine}";
-#if DEBUG
-                        Console.Write(message);
-#endif
-                        sb.Append(message);
                         continue;
                     }
 
@@ -624,66 +862,107 @@ namespace Keebee.AAT.Backup
                     {
                         try
                         {
-                            var fiDest = new FileInfo(file);
-                            if (fiDest.DirectoryName == null) continue;
+                            var fileInfo = new FileInfo(file);
 
-                            // remove trainling slash if it exists
-                            if (destination.EndsWith(@"\"))
-                            {
-                                var indexOfSlash = destination.LastIndexOf(@"\", StringComparison.Ordinal);
-                                pathDest = pathDest.Substring(0, indexOfSlash);
-                            }
-                            else
-                            {
-                                pathDest = destination;
-                            }
+                            if (models.Any(b => b.FullPath == fileInfo.FullName)) continue;
+                            var isRootFolderToExclude = excludeRootFolders?.Any(f => currentDir.IndexOf(f, StringComparison.Ordinal) >= 0) ?? false;
 
-                            var subPathDest = source.Contains(SqlFilestreamName)
-                                ? fiDest.DirectoryName.Replace($@"{pathDest}\{_mediaBackupPath}\", string.Empty)
-                                : fiDest.DirectoryName.Replace($@"{pathDest}\", string.Empty);
+                            if (isRootFolderToExclude) continue;
 
-                            var pathSource = source.Contains(SqlFilestreamName)
-                                ? Path.Combine(source, subPathDest)
-                                : $"{driveSource}{subPathDest}";
-
-                            var sourceFilePath = Path.Combine(pathSource, fiDest.Name);
-
-                            if (File.Exists(sourceFilePath)) continue;
-
+                            fullName = fileInfo.FullName;
                             File.Delete(file);
                             var message = $"Obsolete file '{file}' was deleted{Environment.NewLine}";
 #if DEBUG
                             Console.Write(message);
 #endif
-                            sb.Append(message);
+                            logText.Append(message);
                         }
-                        catch (FileNotFoundException e)
+                        catch (Exception ex)
                         {
-                            var message = $"--- ERROR --- RemoveObsoleteFiles: {e.Message}{Environment.NewLine}";
+                            var message = $"--- ERROR --- DeleteFiles: {ex.Message}{Environment.NewLine}";
 #if DEBUG
                             Console.Write(message);
 #endif
-                            sb.Append(message);
+                            logText.Append(message);
                         }
                     }
 
-                    foreach (var dir in subDirs.Select(x => x).Except(excludeFolders ?? new string[0]).ToArray())
+                    foreach (var dir in subDirs.Select(x => x))
                         dirs.Push(dir);
                 }
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                var message = $"--- ERROR --- RemoveObsoleteFiles: {e.Message}{Environment.NewLine}";
+                logText.Append($"ERROR - The following error occurred while deleting file '{fullName}':{ex.Message}");
+            }
+
+            return logText.ToString();
+        }
+
+        private static string DeleteFolders(string root, string[] foldersToKeep, string[] ignoreRoots = null)
+        {
+            var logText = new StringBuilder();
+            var ignores = ignoreRoots ?? new string[0];
+
+            try
+            {
+                if (!Directory.Exists(root)) return null;
+
+                // data structure to hold names of subfolders
+                var dirs = new Stack<string>(20);
+
+                dirs.Push(root);
+                while (dirs.Count > 0)
+                {
+                    var currentDir = dirs.Pop();
+                    string[] subDirs;
+                    try
+                    {
+                        subDirs = Directory.GetDirectories(currentDir)
+                            .Where(f => !ignores.Contains(f))
+                            .ToArray();
+                    }
+                    catch (UnauthorizedAccessException)
+                    {
+                        continue;
+                    }
+                    catch (DirectoryNotFoundException)
+                    {
+                        continue;
+                    }
+
+                    var directoryDest = new DirectoryInfo(currentDir);
+                    var isFolderToKeep = foldersToKeep.Contains(currentDir);
+
+                    if (!isFolderToKeep)
+                    {
+                        directoryDest.Delete(true);
+                        var message = $"Obsolete folder '{directoryDest.FullName}' was deleted{Environment.NewLine}";
+#if DEBUG
+                        Console.Write(message);
+#endif
+                        logText.Append(message);
+                    }
+                    else
+                    {
+                        foreach (var dir in subDirs.Select(x => x))
+                            dirs.Push(dir);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                var message = $"--- ERROR --- DeleteFolders: {ex.Message}{Environment.NewLine}";
 #if DEBUG
                 Console.Write(message);
 #endif
-                sb.Append(message);
+                logText.Append(message);
             }
 
-            return sb.ToString();
+            return logText.ToString();
         }
 
-        private static string GetPublicProfileLinkedFilenames(int responseTypeId, int mediaPathTypeId, ResponseTypePaths[] linked)
+        private static string GetPublicProfileLinkedFiles(int responseTypeId, int mediaPathTypeId, ResponseTypePaths[] linked)
         {
             if (linked == null) return string.Empty;
 
@@ -707,7 +986,7 @@ namespace Keebee.AAT.Backup
             return fileString.ToString().TrimEnd(',');
         }
 
-        private static string GetResidentLinkedFilenames(int residentId, int responseTypeId, int mediaPathTypeId, ResidentMedia[] linkedMedia)
+        private static string GetResidentLinkedFiles(int residentId, int responseTypeId, int mediaPathTypeId, ResidentMedia[] linkedMedia)
         {
             if (linkedMedia == null) return string.Empty;
 
@@ -789,7 +1068,7 @@ namespace Keebee.AAT.Backup
                         }
 
                         // From Shared Library
-                        var filenames = GetPublicProfileLinkedFilenames(responseType.Id, pathType.Id, linkedMedia);
+                        var filenames = GetPublicProfileLinkedFiles(responseType.Id, pathType.Id, linkedMedia);
                         if (filenames.Length > 0)
                         {
                             sw.WriteLine(
@@ -894,7 +1173,7 @@ namespace Keebee.AAT.Backup
                                 $@"'{r.Id}\{pathType.Path}\' AND (@allowedExts) LIKE '%' + [FileType] + '%'");
 
                             // From Shared Library
-                            var filenames = GetResidentLinkedFilenames(r.Id, responseType.Id, pathType.Id, linkedMedia);
+                            var filenames = GetResidentLinkedFiles(r.Id, responseType.Id, pathType.Id, linkedMedia);
                             if (filenames.Length > 0)
                             {
                                 sw.WriteLine();

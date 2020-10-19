@@ -28,7 +28,7 @@
 
     # backup
     Write-Host "Removing Backup task..." -NoNewline
-     RemoveScheduledTask "ABBY - Backup"
+    RemoveScheduledTask "ABBY - Backup"
     Write-Host "done."
 
     # system restart

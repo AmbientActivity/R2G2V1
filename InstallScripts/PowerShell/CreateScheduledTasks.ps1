@@ -85,10 +85,14 @@
     $task_name = "ABBY - Backup"
     $description = "Performs a full backup of the deployment folders and resident media " +
                      "and creates additional database scripts for restoring the data back to its original state."
-    $command = "$scheduledTasksPath\Backup\1.0.0.0\Keebee.AAT.Backup.exe" 
-    $start_time = "03:00"
+    $execute = "$scheduledTasksPath\Backup\1.0.0.0\Keebee.AAT.Backup.exe" 
 
-    CreateScheduledTask $task_name $description $command $start_time
+    $get_task = Get-ScheduledTask $task_name -ErrorAction SilentlyContinue
+    if (!$get_task) {
+        $action = New-ScheduledTaskAction -Execute $execute
+        $trigger = New-ScheduledTaskTrigger -Daily -AT "03:00"
+        Register-ScheduledTask -Action $action -Trigger $trigger -RunLevel Highest -TaskName $task_name -Description $description | Out-Null
+    }
     Write-Host "done."
 
     # system restart

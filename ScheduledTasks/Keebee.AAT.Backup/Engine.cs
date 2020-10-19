@@ -509,6 +509,7 @@ namespace Keebee.AAT.Backup
                 UseShellExecute = false,
                 FileName = "cmd.exe",
                 WindowStyle = ProcessWindowStyle.Hidden,
+                Verb = "runas",
                 Arguments = $@"/C {cmd}"
             };
 
@@ -868,6 +869,13 @@ namespace Keebee.AAT.Backup
                             var isRootFolderToExclude = excludeRootFolders?.Any(f => currentDir.IndexOf(f, StringComparison.Ordinal) >= 0) ?? false;
 
                             if (isRootFolderToExclude) continue;
+
+                            // don't delete the "restore" sql scripts which do not exist in the Deployments source location
+                            var filename = Path.GetFileName(fileInfo.FullName);
+                            if (filename == $"{RestorePublicProfileFilename}.sql"
+                                || filename == $"{RestoreResidentsFilename}.sql"
+                                || filename == $"{RestoreConfigurationsFilename}.sql")
+                                continue;
 
                             fullName = fileInfo.FullName;
                             File.Delete(file);

@@ -500,7 +500,7 @@ namespace Keebee.AAT.Backup
 
         private static string CopyFile(string source, string destination)
         {
-            var sb = new StringBuilder();
+            var logText = new StringBuilder();
 
             var cmd = $"copy \"{source}\" \"{destination}\"";
             var startInfo = new ProcessStartInfo
@@ -526,15 +526,15 @@ namespace Keebee.AAT.Backup
 #if DEBUG
                 Console.Write(message);
 #endif
-                sb.Append(message);
+                logText.Append(message);
             }
 
-            return sb.ToString();
+            return logText.ToString();
         }
 
         private static string CreateFolder(string folder)
         {
-            var sb = new StringBuilder();
+            var logText = new StringBuilder();
 
             var cmd = $"New-Item -ItemType Directory -Force -Path '{folder}'";
 
@@ -560,10 +560,10 @@ namespace Keebee.AAT.Backup
 #if DEBUG
                 Console.Write(message);
 #endif
-                sb.Append(message);
+                logText.Append(message);
             }
 
-            return sb.ToString();
+            return logText.ToString();
         }
 
         private Media[] GetMediaModels()
@@ -1028,16 +1028,16 @@ namespace Keebee.AAT.Backup
 
             try
             {
-                var mediaPathTypesClient = new MediaPathTypesClient();
+                IMediaPathTypesClient mediaPathTypesClient = new MediaPathTypesClient();
                 var mediaPathTypes = mediaPathTypesClient.Get()
                     .Where(pt => pt.IsSharable)
                     .OrderBy(pt => pt.ResponseTypeId)
                     .ToArray();
 
-                var responseTypesClient = new ResponseTypesClient();
+                IResponseTypesClient responseTypesClient = new ResponseTypesClient();
                 var responseTypes = responseTypesClient.Get().ToArray();
 
-                var publicMediaFilesClient = new PublicMediaFilesClient();
+                IPublicMediaFilesClient publicMediaFilesClient = new PublicMediaFilesClient();
                 var linkedMedia = publicMediaFilesClient.GetLinked().ToArray();
 
                 var pathScript = $@"{path}\Install\Database\SQL Server\{RestorePublicProfileFilename}.sql";
@@ -1108,10 +1108,10 @@ namespace Keebee.AAT.Backup
             try
             {
                 var mediaSourcePath = new MediaSourcePath();
-                var residentsClient = new ResidentsClient();
-                var mediaPathTypesClient = new MediaPathTypesClient();
-                var residentMediaFilesClient = new ResidentMediaFilesClient();
-                var responseTypesClient = new ResponseTypesClient();
+                IResidentsClient residentsClient = new ResidentsClient();
+                IMediaPathTypesClient mediaPathTypesClient = new MediaPathTypesClient();
+                IResidentMediaFilesClient residentMediaFilesClient = new ResidentMediaFilesClient();
+                IResponseTypesClient responseTypesClient = new ResponseTypesClient();
 
                 var residents = residentsClient.Get().ToArray();            
                 var mediaPathTypes = mediaPathTypesClient.Get(isSystem: false)
@@ -1233,13 +1233,13 @@ namespace Keebee.AAT.Backup
 
                 using (var sw = new StreamWriter(pathScript))
                 {
-                    sw.WriteLine("-- remove all exisiting confgis");
+                    sw.WriteLine("-- remove all existing confgs");
                     sw.WriteLine("DELETE FROM [dbo].[ConfigDetails]");
                     sw.WriteLine("GO");
                     sw.WriteLine("DELETE FROM [dbo].[Configs]");
                     sw.WriteLine("GO");
 
-                    // interate through configs
+                    // iterate through configs
                     foreach (var c in configs)
                     {
                         var isActive = c.IsActive ? 1 : 0;
@@ -1274,7 +1274,7 @@ namespace Keebee.AAT.Backup
                         sw.WriteLine();
                     }
 
-                    var ambientInvitationsClient = new AmbientInvitationsClient();
+                    IAmbientInvitationsClient ambientInvitationsClient = new AmbientInvitationsClient();
                     var invitations = ambientInvitationsClient.Get();
 
                     sw.WriteLine("--- ambient invitations");

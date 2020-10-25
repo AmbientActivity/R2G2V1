@@ -85,7 +85,7 @@
     $task_name = "ABBY - Backup"
     $description = "Performs a full backup of the deployment folders and resident media " +
                      "and creates additional database scripts for restoring the data back to its original state."
-    $execute = "$scheduledTasksPath\Backup\1.0.0.0\Keebee.AAT.Backup.exe" 
+    $execute = "$scheduledTaskPath\Keebee.AAT.Backup.exe" 
 
     $get_task = Get-ScheduledTask $task_name -ErrorAction SilentlyContinue
     if (!$get_task) {

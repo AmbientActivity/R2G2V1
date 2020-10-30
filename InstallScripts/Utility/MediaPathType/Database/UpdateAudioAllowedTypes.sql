@@ -1,0 +1,1 @@
+UPDATE MediaPathTypes SET AllowedExts = 'mp3, mpeg', AllowedTypes = 'audio/mp3, audio/mpeg' WHERE MediaPathTypeCategoryId = 1

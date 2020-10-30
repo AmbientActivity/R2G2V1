@@ -117,10 +117,11 @@ namespace Keebee.AAT.Backup
                         logText.Append(DeleteFolders(rootFolder, foldersToKeep: mediaFolders));
 
                         // delete obsolete video capture folders
-                        var videoCaptureFolders = GetVideoCaptureFolders();
-                        rootFolder = Path.Combine(_rootBackup, _videoCapturesFolder);
-                        logText.Append(DeleteFolders(rootFolder, videoCaptureFolders));
+                        //var videoCaptureFolders = GetVideoCaptureFolders();
+                        //rootFolder = Path.Combine(_rootBackup, _videoCapturesFolder);
+                        //logText.Append(DeleteFolders(rootFolder, videoCaptureFolders));
 
+                        
                         // delete obsolete deployment files (except media and video captures)
                         var deploymentModels = GetDeploymentFileModels();
                         var excludeFolders = new []
@@ -136,9 +137,9 @@ namespace Keebee.AAT.Backup
                         logText.Append(DeleteFiles(rootFolder, _mediaFiles, recursive: true));
 
                         // delete obsolete video capture files
-                        var videoCaptureFiles = GetVideoCaptureFileModels();
-                        rootFolder = Path.Combine(_rootBackup, _videoCapturesFolder);
-                        logText.Append(DeleteFiles(rootFolder, videoCaptureFiles, recursive: true));
+                        //var videoCaptureFiles = GetVideoCaptureFileModels();
+                        //rootFolder = Path.Combine(_rootBackup, _videoCapturesFolder);
+                        //logText.Append(DeleteFiles(rootFolder, videoCaptureFiles, recursive: true));
 
                         // create the database scripts
                         logText.Append(CreateScriptRestorePublicProfile($@"{_rootBackup}\{_deploymentsFolder}"));
@@ -158,6 +159,7 @@ namespace Keebee.AAT.Backup
                     w.Write(logText.Length <= 0
                         ? noChangesMessage
                         : logText.ToString());
+                    w.Close();
 #if DEBUG
                     Console.WriteLine($"{Environment.NewLine}Backup Completed{Environment.NewLine}");
                     if (logText.Length <= 0)
